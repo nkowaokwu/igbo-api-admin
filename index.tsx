@@ -42,7 +42,7 @@ const serviceAccount = config?.runtime?.env === 'production' ? (() => {
   }
   return {
     projectId: productionServiceAccount?.project_id || localProductionServiceAccount.project_id,
-    private_key: `${productionServiceAccount?.private_key || localProductionServiceAccount.private_key}`.replace(/\\n/g, '\n'),
+    private_key: productionServiceAccount?.private_key ? productionServiceAccount.private_key.replace(/(\\\\n|\\n)/g, '\n') : localProductionServiceAccount.private_key,
     client_email: productionServiceAccount?.client_email || localProductionServiceAccount.client_email,
   }
 })() : (() => {
@@ -52,7 +52,7 @@ const serviceAccount = config?.runtime?.env === 'production' ? (() => {
   }
   return {
     projectId: stagingServiceAccount?.project_id || localStagingServiceAccount.project_id,
-    private_key: `${stagingServiceAccount?.private_key || localStagingServiceAccount.private_key}`.replace(/\\n/g, '\n'),
+    private_key: stagingServiceAccount?.private_key ? stagingServiceAccount.private_key.replace(/(\\\\n|\\n)/g, '\n') : localStagingServiceAccount.private_key,
     client_email: stagingServiceAccount?.client_email || localStagingServiceAccount.client_email,
   };
  })();
