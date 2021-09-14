@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      // By default nobody can access the database, conditionally permission is given, not taken away.
+      allow read, write: if false;
+
+      match /admins/{adminID} {
+        // Nobody client SDK can read or write to this collection
+        allow read, write: if false;
+      }
+
+      match /applications/{applicantID} {
+        allow read, write: if false;
+      }
+    }
+  }
+}

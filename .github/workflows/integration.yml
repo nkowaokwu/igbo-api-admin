@@ -1,0 +1,55 @@
+name: CI Integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+env:
+  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
+  FIREBASE_STAGING_PROJECT_ID: ${{ secrets.FIREBASE_STAGING_PROJECT_ID }}
+  FIREBASE_STAGING_PRIVATE_KEY: ${{ secrets.FIREBASE_STAGING_PRIVATE_KEY }}
+  FIREBASE_STAGING_CLIENT_EMAIL: ${{ secrets.FIREBASE_STAGING_CLIENT_EMAIL }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_IMAGE: igbo_api_server
+
+jobs:
+  test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+    - name: Checkout Igbo API Admin Code
+      uses: actions/checkout@v2
+    - name: Use Node.js 12
+      uses: actions/setup-node@v2.1.2
+      with:
+        node-version: '12.x'
+    - name: Install Project Dependencies
+      run: |
+        yarn install
+        npm install -g firebase-tools
+    - name: Log into Docker Account
+      run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+    - name: Run Igbo API Docker Instance
+      run: |
+        docker pull $DOCKER_USERNAME/$DOCKER_IMAGE
+        yarn start:docker:ci -d
+    - name: Setup Firebase Environment
+      run: |
+        firebase use staging --token $FIREBASE_TOKEN
+        yarn build:dev
+    - name: Set Environment Variables
+      run: |
+        firebase functions:config:set runtime.env="cypress" --token $FIREBASE_TOKEN
+        firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
+        yarn functions:env
+    - name: Wait for Docker
+      run: sleep 10
+    - name: Run Cypress Tests
+      run: yarn test:ci --token $FIREBASE_TOKEN
+      env:
+        NODE_ENV: development
+    # - name: Run Firebase Unit Tests
+    #   run: yarn test:firebase:ci --token $FIREBASE_TOKEN

@@ -1,0 +1,12 @@
+{
+  "cSpell.words": [
+    "firebaseapp",
+    "firestore",
+    "personalizations"
+  ],
+  "cSpell.ignoreWords": [
+    "appspot"
+],
+"editor.tabSize": 2,
+"typescript.format.semicolons": "insert"
+}

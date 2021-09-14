@@ -1,0 +1,76 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: '12.x'
+      - name: Install Project Dependencies
+        run: |
+          yarn install
+          npm install -g firebase-tools
+      - name: Build Staging Project
+        run: |
+          firebase use staging --token $FIREBASE_TOKEN
+          firebase functions:config:set runtime.env="development" env.main_key=main_key --token $FIREBASE_TOKEN
+          firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
+          yarn build:dev
+        env:
+          FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
+          FIREBASE_STAGING_PROJECT_ID: ${{ secrets.FIREBASE_STAGING_PROJECT_ID }}
+          FIREBASE_STAGING_PRIVATE_KEY: ${{ secrets.FIREBASE_STAGING_PRIVATE_KEY }}
+          FIREBASE_STAGING_CLIENT_EMAIL: ${{ secrets.FIREBASE_STAGING_CLIENT_EMAIL }}
+      - name: Install Cloud Dependencies
+        run: cd functions; yarn; cd ..
+      - name: Deploy to staging
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --project=igbo-api-admin-staging --only "functions:app,createUserAccount,updatePermissions,assignUserToEditingGroup"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
+      - name: Build Production Project
+        run: |
+          firebase use default --token $FIREBASE_TOKEN
+          firebase functions:config:set runtime.production.project_id=$FIREBASE_PRODUCTION_PROJECT_ID runtime.production.private_key="$FIREBASE_PRODUCTION_PRIVATE_KEY" runtime.production.client_email=$FIREBASE_PRODUCTION_CLIENT_EMAIL --token $FIREBASE_TOKEN
+          firebase functions:config:set runtime.env="production" env.main_key=$MAIN_KEY env.mongo_uri=$MONGO_URI --token $FIREBASE_TOKEN
+          firebase functions:config:set sendgrid.api_key=$SENDGRID_API_KEY sendgrid.merged_suggestion_template=$SENDGRID_MERGED_SUGGESTION_TEMPLATE --token $FIREBASE_TOKEN
+          firebase functions:config:set sendgrid.rejected_suggestion_template=$SENDGRID_REJECTED_SUGGESTION_TEMPLATE sendgrid.merged_stats_template=$SENDGRID_MERGED_STATS_TEMPLATE sendgrid.suggestions_review_reminder_template=$SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE --token $FIREBASE_TOKEN
+          firebase functions:config:set sendgrid.new_user_notification_template=$SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE --token $FIREBASE_TOKEN
+          firebase functions:config:set aws.access_key=$AWS_ACCESS_KEY aws.secret_access_key=$AWS_SECRET_ACCESS_KEY aws.bucket=$AWS_BUCKET aws.region=$AWS_REGION
+          yarn build
+        env:
+          FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
+          FIREBASE_PRODUCTION_PROJECT_ID: ${{ secrets.FIREBASE_PRODUCTION_PROJECT_ID }}
+          FIREBASE_PRODUCTION_PRIVATE_KEY: ${{ secrets.FIREBASE_PRODUCTION_PRIVATE_KEY }}
+          FIREBASE_PRODUCTION_CLIENT_EMAIL: ${{ secrets.FIREBASE_PRODUCTION_CLIENT_EMAIL }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_MERGED_SUGGESTION_TEMPLATE: ${{ secrets.SENDGRID_MERGED_SUGGESTION_TEMPLATE }}
+          SENDGRID_REJECTED_SUGGESTION_TEMPLATE: ${{ secrets.SENDGRID_REJECTED_SUGGESTION_TEMPLATE }}
+          SENDGRID_MERGED_STATS_TEMPLATE: ${{ secrets.SENDGRID_MERGED_STATS_TEMPLATE }}
+          SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE: ${{ secrets.SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE }}
+          SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE: ${{ secrets.SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Deploy to prod
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --project=igbo-api-admin --only functions,hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.PROD_TOKEN }}

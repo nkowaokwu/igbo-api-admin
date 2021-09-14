@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo_api_platform
+    ports:
+      - 27017:27017
+  server:
+    container_name: igbo_api_backend
+    restart: always
+    image: ijemmao/igbo_api_server
+    ports:
+      - 8080:8080
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - mongodb

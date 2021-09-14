@@ -1,0 +1,31 @@
+/**
+ * This file defines the auth roles for the Igbo API Admin Platform
+ */
+enum UserRoles {
+  /**
+   * This role is for system administrators of the platform.
+   * They essentially have sudo access to all abilities.
+   *
+   * Additionally, only they can approve new applications
+   */
+  ADMIN = 'admin',
+
+  /**
+   * Mergers can also make new suggestions
+   */
+  MERGER = 'merger',
+
+  /**
+   * Editors are people who make suggestions for new words or phrases
+   * to be added to the API
+   */
+  EDITOR = 'editor',
+
+  /**
+   * Users are people who don't have any type of access to the platform
+   * but are recognized by the application.
+   */
+  USER = 'user',
+};
+
+export default UserRoles;

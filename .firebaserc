@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "igbo-api-admin",
+    "staging": "igbo-api-admin-staging"
+  }
+}

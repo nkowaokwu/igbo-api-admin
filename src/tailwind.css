@@ -1,0 +1,310 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  width: fit-content;
+}
+
+body {
+  font-size: 16px !important;
+}
+
+input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"] {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.MuiAppBar-root {
+  height: 60px !important;
+  @apply bg-gray-300 !important;
+  @apply shadow-sm !important;
+}
+
+.MuiToolbar-root {
+  height: 60px !important;
+  @apply bg-white !important;
+}
+
+[class*="RaList-bulkActionsDisplayed-"] {
+  @apply mt-0 !important;
+}
+
+[class*="RaBulkActionsToolbar-collapsed-"] {
+  @apply h-0 !important;
+}
+
+[class*="RaList-content-"] {
+  z-index: 0;
+}
+
+.TopToolbar {
+  justify-content: space-between !important;
+  padding-top: 16px ​!important;
+}
+
+.MuiTableHead-root {
+  @apply bg-gray-100 !important;
+}
+
+.MuiTableRow-root:hover {
+  @apply bg-gray-200 !important;
+}
+
+.MuiTableCell-head {
+  @apply bg-gray-100 !important;
+  @apply py-0 !important;
+}
+
+.list-page {
+  @apply bg-gray-200 !important;
+}
+
+.MuiListItemIcon-root .MuiSvgIcon-root {
+  fill: rgb(128, 128, 128) !important;
+}
+
+.MuiSvgIcon-root {
+  fill: rgb(128, 128, 128) !important;
+}
+
+.MuiButton-label .RaButton-smallIcon-78 {
+  fill: rgb(255, 255, 255) !important;
+}
+
+.ant-collapse-header svg {
+  margin-top: 5px !important;
+}
+
+/* Suggestion change styles */
+.addition-change {
+  @apply text-xl;
+  @apply bg-green-100;
+  @apply text-green-500;
+  @apply px-3;
+}
+
+.deletion-change {
+  @apply text-xl;
+  @apply bg-red-100;
+  @apply text-red-500;
+  @apply px-3;
+}
+
+.warning-change {
+  @apply text-xl;
+  @apply bg-yellow-100;
+  @apply text-yellow-500;
+}
+
+span.MuiTableSortLabel-root {
+  @apply py-0 !important;
+  @apply py-2 !important;
+  @apply mx-0 !important;
+}
+
+.MuiButtonBase-root {
+  @apply font-normal !important;
+  @apply py-2 !important;
+  @apply mx-1 !important;
+  @apply rounded-none !important;
+}
+
+.MuiButtonBase-text, .MuiButton-text {
+  @apply border !important;
+  @apply border-blue-600 !important;
+  @apply border-solid !important;
+  @apply font-normal !important;
+}
+
+.MuiButton-textPrimary, [class*="button-add-"] {
+  @apply bg-blue-600 !important;
+  @apply text-white !important;
+}
+
+.MuiButton-textPrimary:disabled, [class*="button-add-"]:disabled, button.MuiButton-root.Mui-disabled {
+  @apply bg-gray-300 !important;
+  @apply text-gray-700 !important;
+  @apply cursor-not-allowed !important;
+}
+
+.MuiButton-textPrimary:hover, [class*="button-add-"]:hover {
+  @apply bg-blue-100 !important;
+}
+
+button.MuiButton-textSecondary, button[class*="button-remove-"] {
+  @apply border !important;
+  @apply border-blue-600 !important;
+  @apply border-solid !important;
+  @apply text-blue-600 !important;
+}
+
+button.MuiButton-textSecondary:hover, button[class*="button-remove-"]:hover{
+  @apply border-blue-100 !important;
+  @apply bg-blue-100 !important;
+}
+
+.button-remove-definitions {
+  @apply text-blue-600 !important;
+}
+
+svg[class*="RaConfirm"].MuiSvgIcon-root, svg[class*="RaAppBar-menuButtonIcon"]{
+fill: rgb(128, 128, 128) !important;
+}
+
+button[class*="button-remove-definitions"] svg[class*="RaSimpleFormIterator-leftIcon"] {
+  fill: #3182ce !important;
+}
+
+.MuiDrawer-paper {
+  @apply bg-gray-100 !important;
+}
+
+.testing-app .MuiAppBar-positionFixed {
+  @apply absolute !important;
+}
+
+.testing-app [class*="RaDatagrid-headerCell"] {
+  @apply relative !important;
+}
+
+button[class*="RaPaginationActions-button"] {
+  @apply text-blue-600 !important;
+  @apply border-none !important;
+  @apply bg-transparent !important;
+}
+
+button[class*="RaPaginationActions-currentPageButton"] {
+  @apply border !important;
+  @apply border-blue-600 !important;
+  @apply border-solid !important;
+}
+
+input#word, input#igbo {
+  @apply h-8 !important;
+  @apply w-64 !important;
+  @apply rounded-lg !important;
+}
+
+#react-admin-title {
+  @apply text-gray-800 !important;
+}
+
+/* Form styles */
+.form-input {
+  @apply h-10;
+  @apply w-full;
+  @apply border-current;
+  @apply border-solid;
+  @apply border;
+  @apply border-gray-600;
+  @apply rounded-md;
+  @apply px-3;
+  @apply py-5;
+  @apply bg-white !important;
+}
+
+.form-textarea {
+  @apply w-full;
+  @apply border-current;
+  @apply border-solid;
+  @apply border;
+  @apply border-gray-600;
+  @apply rounded-md;
+  @apply px-3;
+  @apply py-2;
+}
+
+.list-container {
+  @apply flex;
+  @apply items-center;
+  @apply mb-10;
+}
+
+.primary-button {
+  @apply bg-green-600;
+  @apply rounded;
+  @apply text-gray-100 !important;
+}
+
+.form-header {
+  @apply text-xl;
+  @apply mb-2;
+  @apply mt-5;
+}
+
+.error {
+  @apply text-red-500;
+  @apply mt-3;
+}
+
+.link {
+  @apply transition;
+  @apply duration-300;
+  @apply underline;
+  @apply text-blue-400;
+}
+
+.link:hover {
+  @apply text-blue-600;
+}
+
+.form-buttons-container {
+  @apply flex;
+  @apply flex-col-reverse;
+  @apply w-full;
+  @apply justify-start;
+  @apply mt-4;
+  @apply px-3;
+  @apply fixed;
+  @apply space-y-2;
+  z-index: 1000;
+  bottom: .5em;
+  left: 0;
+}
+
+.accented-letter-builder-button {
+  @apply transition-all;
+  @apply duration-300;
+  @apply mx-2;
+  @apply mt-3;
+  @apply rounded-md;
+  @apply border;
+  @apply border-solid;
+  @apply border-gray-600;
+  @apply text-2xl;
+  @apply w-10;
+  @apply h-10;
+}
+
+.accented-letter-builder-button:hover {
+  @apply bg-gray-200;
+}
+
+
+.ant-checkbox-wrapper span {
+  @apply text-xl
+}
+.ant-checkbox-inner {
+  transform: scale(1.25);
+}
+
+@media (min-width: 1024px) {
+  html {
+    width: 100vw;
+  }
+
+  .form-buttons-container {
+    @apply flex;
+    @apply w-auto;
+    @apply flex-row;
+    @apply justify-end;
+    @apply mt-4;
+    @apply static;
+    @apply px-0;
+    z-index: 1;
+  }
+
+  .form-buttons-container button {
+    @apply mb-0;
+  }
+}

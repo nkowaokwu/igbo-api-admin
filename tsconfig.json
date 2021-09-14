@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es5",
+    "module": "es6",
+    "jsx": "react",
+    "baseUrl": "./",
+		"paths": {
+			"src": ["./src"]
+    },
+    "types": ["cypress", "@testing-library/cypress"],
+    "allowJs": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "downlevelIteration": true
+  },
+  "include": ["./src"],
+  "exclude": ["**/node_modules", "**/.*/"],
+}
