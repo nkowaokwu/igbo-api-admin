@@ -1,16 +1,21 @@
 import React, { useState, ReactElement } from 'react';
 import { Record } from 'react-admin';
-import { Box, Tag } from '@chakra-ui/react';
+import { Box, Spinner, Tag } from '@chakra-ui/react';
 
 const AudioRecordingPreview = (
   { record }:
   { record: { pronunciation: string } | Record },
 ): ReactElement => {
   const audio = new Audio(record.pronunciation);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAudioAvailable, setIsAudioAvailable] = useState(false);
-
   audio.addEventListener('canplay', () => {
     setIsAudioAvailable(true);
+    setIsLoading(false);
+  });
+  audio.addEventListener('error', () => {
+    setIsAudioAvailable(false);
+    setIsLoading(false);
   });
 
   const playAudio = () => {
@@ -25,7 +30,7 @@ const AudioRecordingPreview = (
           onClick={playAudio}
           type="button"
         >
-          {!isAudioAvailable ? 'Rerecord audio' : '🎙 Play'}
+          {isLoading ? <Spinner /> : !isAudioAvailable ? 'Rerecord audio' : '🎙 Play'}
         </Tag>
       ) : (
         <Tag colorScheme="red" className="text-center">No Recording</Tag>
