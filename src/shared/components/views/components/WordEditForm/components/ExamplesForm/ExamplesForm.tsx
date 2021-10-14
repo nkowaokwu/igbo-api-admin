@@ -23,10 +23,13 @@ const ExamplesForm = ({
   control,
 }: ExamplesFormInterface): ReactElement => (
   <>
-    <FormHeader
-      title="Examples"
-      tooltip="Example sentences should ideally in Standard Igbo."
-    />
+    <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+      <FormHeader
+        title="Examples"
+        tooltip="Example sentences should ideally in Standard Igbo."
+      />
+      <AddExampleButton examples={examples} setExamples={setExamples} />
+    </Box>
     <Box className="flex items-center my-5 w-full justify-between">
       <Accordion defaultIndex={[0]} allowMultiple className="w-full">
         <AccordionItem key="1">
@@ -39,8 +42,6 @@ const ExamplesForm = ({
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-
-            <AddExampleButton examples={examples} setExamples={setExamples} />
             {examples?.length ? examples.map(({
               igbo,
               english,
@@ -57,37 +58,44 @@ const ExamplesForm = ({
                     data-associated-words={associatedWords}
                     className="flex flex-col w-full space-y-3"
                   >
-                    <Controller
-                      render={(props) => (
-                        <Input
-                          {...props}
-                          className="form-input invisible"
-                          placeholder="Original Example Id"
-                          data-test={`examples-${index}-originalExampleId`}
-                        />
-                      )}
-                      name={`examples[${index}].originalExampleId`}
-                      defaultValue={originalExampleId}
-                      control={control}
-                    />
-                    <Controller
-                      render={(props) => (
-                        <Input
-                          {...props}
-                          className="form-input invisible"
-                          placeholder="Example Id"
-                          data-test={`examples-${index}-id`}
-                        />
-                      )}
-                      name={`examples[${index}].id`}
-                      defaultValue={id}
-                      control={control}
-                    />
+                    <Box position="absolute">
+                      <Controller
+                        render={(props) => (
+                          <Input
+                            {...props}
+                            className="form-input invisible"
+                            placeholder="Original Example Id"
+                            data-test={`examples-${index}-originalExampleId`}
+                          />
+                        )}
+                        name={`examples[${index}].originalExampleId`}
+                        defaultValue={originalExampleId}
+                        control={control}
+                      />
+                      <Controller
+                        render={(props) => (
+                          <Input
+                            {...props}
+                            className="form-input invisible"
+                            placeholder="Example Id"
+                            data-test={`examples-${index}-id`}
+                          />
+                        )}
+                        name={`examples[${index}].id`}
+                        defaultValue={id}
+                        control={control}
+                      />
+                    </Box>
                     <h3 className="text-gray-700">Igbo:</h3>
                     <Controller
-                      render={(props) => (
+                      render={({ onChange, ...props }) => (
                         <Input
                           {...props}
+                          onChange={(e) => {
+                            const updatedExamples = [...examples];
+                            updatedExamples[index].igbo = e.target.value;
+                            onChange(e);
+                          }}
                           className="form-input"
                           placeholder="Example in Igbo"
                           data-test={`examples-${index}-igbo-input`}
@@ -99,9 +107,14 @@ const ExamplesForm = ({
                     />
                     <h3 className="text-gray-700">English:</h3>
                     <Controller
-                      render={(props) => (
+                      render={({ onChange, ...props }) => (
                         <Input
                           {...props}
+                          onChange={(e) => {
+                            const updatedExamples = [...examples];
+                            updatedExamples[index].english = e.target.value;
+                            onChange(e);
+                          }}
                           className="form-input"
                           placeholder="Example in English"
                           data-test={`examples-${index}-english-input`}
