@@ -56,8 +56,9 @@ functions/node_modules
 functions/index.js
 functions/index.html
 functions/.runtimeconfig.json
-functions/prod-firebase-service-account.json
-functions/staging-firebase-service-account.json
+
+**/prod-firebase-service-account.json
+**/staging-firebase-service-account.json
 
 .runtimeconfig.json
 

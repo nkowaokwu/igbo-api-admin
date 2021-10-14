@@ -2,6 +2,8 @@
   "name": "igbo-api-admin",
   "version": "1.0.0",
   "description": "Editor platform for the Igbo API",
+  "license": "ISC",
+  "private": true,
   "scripts": {
     "build:css": "postcss src/tailwind.css -o src/styles.css",
     "build:app": "node_modules/.bin/babel src -d functions/src --extensions '.ts,.tsx'",
@@ -46,7 +48,6 @@
     "node": "12"
   },
   "author": "",
-  "license": "ISC",
   "husky": {
     "hooks": {
       "pre-commit": "yarn precommit"
@@ -179,6 +180,5 @@
       "@babel/plugin-transform-modules-commonjs",
       "@babel/plugin-proposal-optional-chaining"
     ]
-  },
-  "private": true
+  }
 }
