@@ -54,5 +54,6 @@
     "firebase-functions-test": "^0.2.0",
     "shx": "^0.3.3"
   },
-  "private": true
+  "private": true,
+  "license": "ISC"
 }

@@ -6,7 +6,7 @@ const AddExampleButton = (
   { examples, setExamples }:
   { examples: { igbo: string, english: string }[], setExamples: (array) => void },
 ): ReactElement => (
-  <Box className="w-full flex flex-row justify-end">
+  <Box className="w-full flex flex-row justify-end" mt={3}>
     <Button
       colorScheme="teal"
       aria-label="Add Example"

@@ -1,7 +1,8 @@
+import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { map, trim } from 'lodash';
 
-export default (req, res, next) => {
+export default (req: Request, res: Response, next: NextFunction): Response | void => {
   const { body: data } = req;
 
   if (data.originalWordId && !mongoose.Types.ObjectId.isValid(data.originalWordId)) {
