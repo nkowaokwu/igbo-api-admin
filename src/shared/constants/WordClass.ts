@@ -10,9 +10,13 @@ const WordClass = {
     value: 'ADV',
     label: 'Adverb',
   },
-  V: {
-    value: 'V',
-    label: 'Verb',
+  AV: {
+    value: 'AV',
+    label: 'Active verb',
+  },
+  PV: {
+    value: 'PV',
+    label: 'Passive verb',
   },
   CJN: {
     value: 'CJN',
