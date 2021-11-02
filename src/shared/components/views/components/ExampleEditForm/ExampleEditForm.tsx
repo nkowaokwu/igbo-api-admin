@@ -80,7 +80,7 @@ const ExampleEditForm = ({
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
         setIsSubmitting(false);
-        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`);
+        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
         redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
       },
       onFailure: (error: any) => {

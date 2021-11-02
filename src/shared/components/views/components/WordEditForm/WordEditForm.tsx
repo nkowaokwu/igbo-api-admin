@@ -171,8 +171,7 @@ const WordEditForm = ({
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
         setIsSubmitting(false);
-        console.log('saved data', data);
-        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`);
+        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
         redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
       },
       onFailure: (error: any) => {
