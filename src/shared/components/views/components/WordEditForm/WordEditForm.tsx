@@ -170,7 +170,8 @@ const WordEditForm = ({
     localStorage.removeItem('igbo-api-admin-form');
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
-        setIsSubmitting(true);
+        setIsSubmitting(false);
+        console.log('saved data', data);
         notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`);
         redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
       },
