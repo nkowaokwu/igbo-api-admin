@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins';
+import WordClass from '../shared/constants/WordClass';
 
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
@@ -9,7 +10,7 @@ const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 const { Schema } = mongoose;
 const wordSchema = new Schema({
   word: { type: String, required: true },
-  wordClass: { type: String, default: '' },
+  wordClass: { type: String, default: '', enum: Object.values(WordClass).map(({ value }) => value) },
   definitions: { type: [{ type: String }], default: [] },
   dialects: {
     type: Object,
