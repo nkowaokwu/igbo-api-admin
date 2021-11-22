@@ -79,7 +79,8 @@ const ExampleEditForm = ({
     localStorage.removeItem('igbo-api-admin-form');
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
-        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`);
+        setIsSubmitting(false);
+        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
         redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
       },
       onFailure: (error: any) => {

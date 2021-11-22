@@ -5,6 +5,7 @@ import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins';
 import { uploadPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
+import WordClass from '../shared/constants/WordClass';
 
 const REQUIRED_DIALECT_KEYS = [
   'word',
@@ -19,7 +20,7 @@ const wordSuggestionSchema = new Schema(
   {
     originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
     word: { type: String, required: true },
-    wordClass: { type: String, required: true },
+    wordClass: { type: String, required: true, enum: Object.values(WordClass).map(({ value }) => value) },
     definitions: {
       type: [{ type: String }],
       validate: (v) => Array.isArray(v) && v.length > 0,

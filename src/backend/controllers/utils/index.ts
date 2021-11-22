@@ -34,17 +34,35 @@ const constructRegexQuery = ({ user, searchWord }: { user: Interfaces.FormattedU
       : /^[.{0,}\n{0,}]/
 );
 
+const fallbackUser = {
+  uid: 'fallback-firebase-uid',
+  id: 'fallback-firebase-uid',
+  email: 'fallback@email.com',
+  display: 'Fallback Author',
+  role: 'editor',
+};
+
 /* Given a list of keys, where each key's value is a list of Firebase uids,
  * replace each uid with a user object */
 export const populateFirebaseUsers = async (
-  doc: { [key: string]: string | number | { [key: string]: string} },
+  doc: { [key: string]: string | number | { [key: string]: string } },
   keys: string[],
-): Promise<{ [key: string]: string | number | { [key: string]: string} }> => {
+): Promise<{ [key: string]: string | number | { [key: string]: string } }> => {
   const docWithPopulateFirebaseUsers = assign(doc);
   await Promise.all(map(keys, async (key) => {
-    docWithPopulateFirebaseUsers[key] = await Promise.all(map(compact(docWithPopulateFirebaseUsers[key]), findUser));
+    docWithPopulateFirebaseUsers[key] = await Promise.all(map(compact(docWithPopulateFirebaseUsers[key]), (id) => (
+      findUser(id)
+        .catch(() => {
+          console.warn(`The user with the id ${id} doesn't exist in this database`);
+          return fallbackUser;
+        })
+    )));
   }));
-  const res = await findUser(docWithPopulateFirebaseUsers.authorId) || {};
+  const res = await findUser(docWithPopulateFirebaseUsers.authorId)
+    .catch(() => {
+      console.warn(`The user with the id ${docWithPopulateFirebaseUsers.authorId} doesn't exist in this database`);
+      return fallbackUser;
+    }) || {};
   return assign(doc, { author: res });
 };
 
