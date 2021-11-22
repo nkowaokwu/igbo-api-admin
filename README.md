@@ -152,6 +152,14 @@ You should now be able to access the editor platform at [http://localhost:3030](
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
 that any users that create accounts and log in are stored in the project real Authentication.
 
+If an error is thrown, build the project by running:
+
+```
+yarn build:dev
+```
+
+Then go back to step 5 above.
+
 **Login**: You can login with the email `admin@example.com` and the password `password`
 
 ### Step 6: (Conditional) Seeding the Database
