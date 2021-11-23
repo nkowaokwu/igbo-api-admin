@@ -235,6 +235,7 @@ input#word, input#igbo {
 .error {
   @apply text-red-500;
   @apply mt-3;
+  @apply text-center;
 }
 
 .link {

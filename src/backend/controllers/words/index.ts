@@ -7,21 +7,21 @@ import {
   uniqBy,
   omit,
 } from 'lodash';
-import removePrefix from '../shared/utils/removePrefix';
-import Word from '../models/Word';
-import ExampleSuggestion from '../models/ExampleSuggestion';
-import { findSearchWord } from '../services/words';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
-import { NO_PROVIDED_TERM } from '../shared/constants/errorMessages';
-import WordClass from '../shared/constants/WordClass';
-import { getDocumentsIds } from '../shared/utils/documentUtils';
-import createRegExp from '../shared/utils/createRegExp';
+import removePrefix from '../../shared/utils/removePrefix';
+import Word from '../../models/Word';
+import ExampleSuggestion from '../../models/ExampleSuggestion';
+import { findSearchWord } from '../../services/words';
+import SuggestionTypes from '../../shared/constants/SuggestionTypes';
+import { NO_PROVIDED_TERM } from '../../shared/constants/errorMessages';
+import WordClass from '../../shared/constants/WordClass';
+import { getDocumentsIds } from '../../shared/utils/documentUtils';
+import createRegExp from '../../shared/utils/createRegExp';
 import {
   sortDocsBy,
   packageResponse,
   handleQueries,
   updateDocumentMerge,
-} from './utils';
+} from '../utils';
 import {
   searchIgboTextSearch,
   strictSearchIgboQuery,
@@ -29,16 +29,17 @@ import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
   searchForAssociatedSuggestions,
-} from './utils/queries';
-import { findWordsWithMatch } from './utils/buildDocs';
-import { createExample, executeMergeExample, findExampleByAssociatedWordId } from './examples';
-import { deleteWordSuggestionsByOriginalWordId } from './wordSuggestions';
-import { sendMergedEmail } from './email';
-import { DICTIONARY_APP_URL } from '../config';
-import Dialects from '../shared/constants/Dialects';
-import { renameAudioPronunciation } from './utils/AWS-API';
-import * as Interfaces from './utils/interfaces';
-import WordSuggestion from '../models/WordSuggestion';
+} from '../utils/queries';
+import { findWordsWithMatch } from '../utils/buildDocs';
+import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
+import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
+import { sendMergedEmail } from '../email';
+import { DICTIONARY_APP_URL } from '../../config';
+import Dialects from '../../shared/constants/Dialects';
+import { renameAudioPronunciation } from '../utils/AWS-API';
+import * as Interfaces from '../utils/interfaces';
+import WordSuggestion from '../../models/WordSuggestion';
+import { handleSyncingSynonyms } from './helpers';
 
 /* Gets words from JSON dictionary */
 export const getWordData = (req: Request, res: Response, next: NextFunction): Response | void => {
@@ -356,18 +357,19 @@ export const mergeWord = async (
   try {
     const { user, suggestionDoc } = req;
 
-    const result: Document<Interfaces.Word> | any = (suggestionDoc.originalWordId
+    const mergedWord: Document<Interfaces.Word> | any = (suggestionDoc.originalWordId
       ? await mergeIntoWord(suggestionDoc, user.uid)
       : await createWordFromSuggestion(suggestionDoc, user.uid)
     ) || {};
+    await handleSyncingSynonyms(mergedWord);
     await handleSendingMergedEmail({
-      ...(result.toObject ? result.toObject() : result),
+      ...(mergedWord.toObject ? mergedWord.toObject() : mergedWord),
       wordClass: WordClass[suggestionDoc.wordClass]?.label || 'No word class',
       authorEmail: suggestionDoc.authorEmail,
       authorId: suggestionDoc.authorId,
       editorsNotes: suggestionDoc.editorsNotes,
     });
-    return res.send(result);
+    return res.send(mergedWord);
   } catch (err) {
     return next(err);
   }
