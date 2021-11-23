@@ -33,6 +33,7 @@ import DefinitionsForm from './components/DefinitionsForm';
 import VariationsForm from './components/VariationsForm';
 import StemsForm from './components/StemsForm';
 import SynonymsForm from './components/SynonymsForm';
+import AntonymsForm from './components/AntonymsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import ExamplesForm from './components/ExamplesForm';
@@ -40,9 +41,6 @@ import AudioRecorder from './components/AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
 import { generateEmptyRecordDialects } from '../../utils';
-
-// TODO: after merging, the two documents connected as antonyms will have each other's ids
-// TODO: after merging, the two documents connected as hypernyms and hyponyms will have each other other's ids inversely
 
 const WordEditForm = ({
   view,
@@ -72,6 +70,7 @@ const WordEditForm = ({
         value: WordClass[record.wordClass]?.value || null,
       },
       synonyms: record.synonyms,
+      antonyms: record.antonyms,
     },
     ...WordEditFormResolver(),
   });
@@ -81,6 +80,7 @@ const WordEditForm = ({
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
   const [synonyms, setSynonyms] = useState(record.synonyms || []);
+  const [antonyms, setAntonyms] = useState(record.antonyms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentDialectView, setCurrentDialectView] = useState(isMobile ? [Dialects.NSA.value] : []);
   const watchDialects: { [key: string]: WordDialect } = watch('dialects');
@@ -157,6 +157,7 @@ const WordEditForm = ({
       definitions: sanitizeArray(data.definitions),
       variations: sanitizeArray(data.variations),
       synonyms: sanitizeArray(data.synonyms),
+      antonyms: sanitizeArray(data.antonyms),
       stems: sanitizeArray(data.stems),
       examples: sanitizeExamples(data.examples),
       wordClass: data.wordClass.value,
@@ -305,6 +306,13 @@ const WordEditForm = ({
               errors={errors}
               synonyms={synonyms}
               setSynonyms={setSynonyms}
+              control={control}
+              setValue={setValue}
+            />
+            <AntonymsForm
+              errors={errors}
+              antonyms={antonyms}
+              setAntonyms={setAntonyms}
               control={control}
               setValue={setValue}
             />

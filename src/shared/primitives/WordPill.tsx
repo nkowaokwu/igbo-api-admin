@@ -4,6 +4,7 @@ import {
   Box,
   IconButton,
   Text,
+  Tooltip,
   chakra,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
@@ -36,19 +37,21 @@ const WordPill = ({
         {truncate(definitions[0])}
       </Text>
     </Box>
-    <IconButton
-      variant="ghost"
-      color="red.400"
-      aria-label="Delete"
-      onClick={onDelete}
-      _hover={{
-        backgroundColor: 'transparent',
-      }}
-      _active={{
-        backgroundColor: 'transparent',
-      }}
-      icon={<CloseIcon boxSize={4} />}
-    />
+    <Tooltip label="Remove item">
+      <IconButton
+        variant="ghost"
+        color="red.400"
+        aria-label="Remove"
+        onClick={onDelete}
+        _hover={{
+          backgroundColor: 'transparent',
+        }}
+        _active={{
+          backgroundColor: 'transparent',
+        }}
+        icon={<CloseIcon boxSize={4} />}
+      />
+    </Tooltip>
   </>
 );
 

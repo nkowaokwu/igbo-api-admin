@@ -28,6 +28,9 @@ const schema = yup.object().shape({
   synonyms: yup.array().min(0).of(yup.string().test('synonyms', 'Synonyms must be word ids', (value) => (
     mongoose.Types.ObjectId.isValid(value)
   ))),
+  antonyms: yup.array().min(0).of(yup.string().test('antonyms', 'Antonyms must be word ids', (value) => (
+    mongoose.Types.ObjectId.isValid(value)
+  ))),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(yup.object().shape({
     igbo: yup.string(),

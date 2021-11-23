@@ -39,7 +39,7 @@ import Dialects from '../../shared/constants/Dialects';
 import { renameAudioPronunciation } from '../utils/AWS-API';
 import * as Interfaces from '../utils/interfaces';
 import WordSuggestion from '../../models/WordSuggestion';
-import { handleSyncingSynonyms } from './helpers';
+import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
 
 /* Gets words from JSON dictionary */
 export const getWordData = (req: Request, res: Response, next: NextFunction): Response | void => {
@@ -242,8 +242,8 @@ const updateSuggestionAfterMerge = async (
 
 /* Takes the suggestion word pronunciation and overwrites the existing Word document's pronunciation file */
 const overwriteWordPronunciation = async (
-  suggestion: Interfaces.WordSuggestion,
-  word: Interfaces.Word,
+  suggestion: Document<Interfaces.WordSuggestion> | Interfaces.WordSuggestion,
+  word: Document<Interfaces.Word> | Interfaces.Word,
 ): Promise<Document<Interfaces.Word>> => {
   try {
     /**
@@ -362,6 +362,7 @@ export const mergeWord = async (
       : await createWordFromSuggestion(suggestionDoc, user.uid)
     ) || {};
     await handleSyncingSynonyms(mergedWord);
+    await handleSyncingAntonyms(mergedWord);
     await handleSendingMergedEmail({
       ...(mergedWord.toObject ? mergedWord.toObject() : mergedWord),
       wordClass: WordClass[suggestionDoc.wordClass]?.label || 'No word class',

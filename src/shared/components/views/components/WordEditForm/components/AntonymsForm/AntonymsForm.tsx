@@ -10,34 +10,34 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
 import { Input, WordPill } from '../../../../../../primitives';
-import SynonymsFormInterface from './SynonymsFormInterface';
+import AntonymsFormInterface from './AntonymsFormInterface';
 import network from '../../../../../../../Core/Dashboard/network';
 
-const Synonyms = (
-  { synonymIds, updateSynonyms }
-  : { synonymIds: string[], updateSynonyms: (value: string[]) => void },
+const Antonyms = (
+  { antonymIds, updateAntonyms }
+  : { antonymIds: string[], updateAntonyms: (value: string[]) => void },
 ) => {
-  const [resolvedSynonyms, setResolvedSynonyms] = useState(null);
-  const [isLoadingSynonyms, setIsLoadingSynonyms] = useState(false);
+  const [resolvedAntonyms, setResolvedAntonyms] = useState(null);
+  const [isLoadingAntonyms, setIsLoadingAntonyms] = useState(false);
   useEffect(() => {
     (async () => {
-      setIsLoadingSynonyms(true);
+      setIsLoadingAntonyms(true);
       try {
-        setResolvedSynonyms(await Promise.all(synonymIds.map(async (synonymId) => {
-          const word = await network({ url: `/words/${synonymId}` }).then(({ json: word }) => word);
+        setResolvedAntonyms(await Promise.all(antonymIds.map(async (antonymId) => {
+          const word = await network({ url: `/words/${antonymId}` }).then(({ json: word }) => word);
           return word;
         })));
       } finally {
-        setIsLoadingSynonyms(false);
+        setIsLoadingAntonyms(false);
       }
     })();
-  }, [synonymIds]);
+  }, [antonymIds]);
 
-  return isLoadingSynonyms ? (
+  return isLoadingAntonyms ? (
     <Spinner />
-  ) : resolvedSynonyms && resolvedSynonyms.length ? (
+  ) : resolvedAntonyms && resolvedAntonyms.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3">
-      {resolvedSynonyms.map((word, index) => (
+      {resolvedAntonyms.map((word, index) => (
         <Box
           key={word.id}
           display="flex"
@@ -56,9 +56,9 @@ const Synonyms = (
             {...word}
             index={index}
             onDelete={() => {
-              const filteredSynonyms = [...synonymIds];
-              filteredSynonyms.splice(index, 1);
-              updateSynonyms(filteredSynonyms);
+              const filteredAntonyms = [...antonymIds];
+              filteredAntonyms.splice(index, 1);
+              updateAntonyms(filteredAntonyms);
             }}
           />
         </Box>
@@ -66,29 +66,29 @@ const Synonyms = (
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
-      <p className="text-gray-600">No synonyms</p>
+      <p className="text-gray-600">No antonyms</p>
     </Box>
   );
 };
 
-const SynonymsForm = ({
+const AntonymsForm = ({
   errors,
-  synonyms,
-  setSynonyms,
+  antonyms,
+  setAntonyms,
   control,
   setValue,
-}: SynonymsFormInterface): ReactElement => {
+}: AntonymsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
 
-  const updateSynonyms = (value) => {
-    setSynonyms(value);
-    setValue('synonyms', value);
+  const updateAntonyms = (value) => {
+    setAntonyms(value);
+    setValue('antonyms', value);
   };
 
-  const handleAddSynonym = async (userInput = input) => {
-    if (mongoose.Types.ObjectId.isValid(userInput) && !synonyms.includes(userInput)) {
+  const handleAddAntonym = async (userInput = input) => {
+    if (mongoose.Types.ObjectId.isValid(userInput) && !antonyms.includes(userInput)) {
       const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
-      updateSynonyms([...synonyms, word.id]);
+      updateAntonyms([...antonyms, word.id]);
     } else {
       console.log('Invalid Mongoose id:', userInput);
     }
@@ -98,15 +98,15 @@ const SynonymsForm = ({
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
       <Controller
         render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-        name="synonyms"
+        name="antonyms"
         control={control}
         defaultValue=""
       />
       <Box className="flex items-center my-5 w-full justify-between">
         <Box className="flex flex-col">
           <FormHeader
-            title="Synonyms"
-            tooltip={`Synonyms of the current word using Standard Igbo. 
+            title="Antonyms"
+            tooltip={`Antonyms of the current word using Standard Igbo. 
             You can search for a word or paste in the word id.`}
           />
         </Box>
@@ -117,27 +117,27 @@ const SynonymsForm = ({
           searchApi
           placeholder="Search for word or use word id"
           onChange={(e) => setInput(e.target.value)}
-          onSelect={(e) => handleAddSynonym(e.id)}
+          onSelect={(e) => handleAddAntonym(e.id)}
           className="form-input"
         />
-        <Tooltip label="Click this button to add the synonym">
+        <Tooltip label="Click this button to add the antonym">
           <IconButton
             colorScheme="teal"
-            aria-label="Add Synonym"
-            onClick={() => handleAddSynonym()}
+            aria-label="Add Antonym"
+            onClick={() => handleAddAntonym()}
             icon={<AddIcon />}
           />
         </Tooltip>
       </Box>
-      <Synonyms
-        synonymIds={synonyms}
-        updateSynonyms={updateSynonyms}
+      <Antonyms
+        antonymIds={antonyms}
+        updateAntonyms={updateAntonyms}
       />
-      {errors.synonyms && (
-        <p className="error">{errors.synonyms.message || errors.synonyms[0]?.message}</p>
+      {errors.antonyms && (
+        <p className="error">{errors.antonyms.message || errors.antonyms[0]?.message}</p>
       )}
     </Box>
   );
 };
 
-export default SynonymsForm;
+export default AntonymsForm;
