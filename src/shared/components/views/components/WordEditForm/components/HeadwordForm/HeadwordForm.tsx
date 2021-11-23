@@ -51,7 +51,7 @@ const HeadwordForm = ({
       defaultValue={record.word || getValues().word}
     />
     {errors.word && (
-      <span className="error">Word is required</span>
+      <p className="error">Word is required</p>
     )}
   </Box>
 );
