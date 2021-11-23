@@ -357,9 +357,10 @@ export const mergeWord = async (
   try {
     const { user, suggestionDoc } = req;
 
-    const mergedWord: Document<Interfaces.Word> | any = (suggestionDoc.originalWordId
-      ? await mergeIntoWord(suggestionDoc, user.uid)
-      : await createWordFromSuggestion(suggestionDoc, user.uid)
+    const mergedWord: Document<Interfaces.Word> | any = (
+      suggestionDoc.originalWordId
+        ? await mergeIntoWord(suggestionDoc, user.uid)
+        : await createWordFromSuggestion(suggestionDoc, user.uid)
     ) || {};
     await handleSyncingSynonyms(mergedWord);
     await handleSyncingAntonyms(mergedWord);

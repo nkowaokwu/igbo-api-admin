@@ -308,6 +308,7 @@ const WordEditForm = ({
               setSynonyms={setSynonyms}
               control={control}
               setValue={setValue}
+              record={record}
             />
             <AntonymsForm
               errors={errors}
@@ -315,6 +316,7 @@ const WordEditForm = ({
               setAntonyms={setAntonyms}
               control={control}
               setValue={setValue}
+              record={record}
             />
           </Box>
         </Box>

@@ -5,6 +5,7 @@ import {
   IconButton,
   Spinner,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
@@ -77,20 +78,35 @@ const SynonymsForm = ({
   setSynonyms,
   control,
   setValue,
+  record,
 }: SynonymsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
+  const toast = useToast();
 
   const updateSynonyms = (value) => {
     setSynonyms(value);
     setValue('synonyms', value);
   };
 
+  const canAddSynonym = (userInput) => (
+    mongoose.Types.ObjectId.isValid(userInput)
+    && !synonyms.includes(userInput)
+    && userInput !== record.id
+    && userInput !== record.originalWordId
+  );
+
   const handleAddSynonym = async (userInput = input) => {
-    if (mongoose.Types.ObjectId.isValid(userInput) && !synonyms.includes(userInput)) {
+    if (canAddSynonym(userInput)) {
       const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
       updateSynonyms([...synonyms, word.id]);
     } else {
-      console.log('Invalid Mongoose id:', userInput);
+      toast({
+        title: 'Unable to add synonym',
+        description: 'You have provided an either an word id or a the current word\'s or parent word\'s id.',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+      });
     }
     setInput('');
   };
@@ -115,7 +131,8 @@ const SynonymsForm = ({
         <Input
           value={input}
           searchApi
-          placeholder="Search for word or use word id"
+          data-test="synonym-search"
+          placeholder="Search for synonym or use word id"
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddSynonym(e.id)}
           className="form-input"

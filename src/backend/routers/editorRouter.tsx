@@ -11,7 +11,7 @@ import {
   putWord,
   mergeWord,
   getAssociatedWordSuggestions,
-} from '../controllers/words/index';
+} from '../controllers/words';
 import { putExample, mergeExample, getAssociatedExampleSuggestions } from '../controllers/examples';
 import {
   deleteExampleSuggestion,

@@ -5,6 +5,7 @@ import {
   IconButton,
   Spinner,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
@@ -77,20 +78,35 @@ const AntonymsForm = ({
   setAntonyms,
   control,
   setValue,
+  record,
 }: AntonymsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
+  const toast = useToast();
 
   const updateAntonyms = (value) => {
     setAntonyms(value);
     setValue('antonyms', value);
   };
 
+  const canAddAntonym = (userInput) => (
+    mongoose.Types.ObjectId.isValid(userInput)
+    && !antonyms.includes(userInput)
+    && userInput !== record.id
+    && userInput !== record.originalWordId
+  );
+
   const handleAddAntonym = async (userInput = input) => {
-    if (mongoose.Types.ObjectId.isValid(userInput) && !antonyms.includes(userInput)) {
+    if (canAddAntonym(userInput)) {
       const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
       updateAntonyms([...antonyms, word.id]);
     } else {
-      console.log('Invalid Mongoose id:', userInput);
+      toast({
+        title: 'Unable to add antonym',
+        description: 'You have provided an either an word id or a the current word\'s or parent word\'s id.',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+      });
     }
     setInput('');
   };
@@ -115,7 +131,8 @@ const AntonymsForm = ({
         <Input
           value={input}
           searchApi
-          placeholder="Search for word or use word id"
+          data-test="antonym-search"
+          placeholder="Search for antonym or use word id"
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddAntonym(e.id)}
           className="form-input"
