@@ -55,13 +55,9 @@ const App = (): React.ReactElement => {
     }
   }, []);
 
-  if (!client) {
-    return (
-      <PlatformLoader />
-    );
-  }
+  console.log('What are we going to render?:', client, !client ? 'PlatformLoader' : 'AsyncIgboAPIAdmin');
 
-  return <AsyncIgboAPIAdmin />;
+  return !client ? <PlatformLoader /> : <AsyncIgboAPIAdmin />;
 };
 
 export default (props: any): ReactElement => (
