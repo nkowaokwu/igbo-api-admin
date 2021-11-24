@@ -1,5 +1,4 @@
 import React, { useState, ReactElement, useEffect } from 'react';
-import mongoose from 'mongoose';
 import {
   Box,
   IconButton,
@@ -89,17 +88,20 @@ const SynonymsForm = ({
   };
 
   const canAddSynonym = (userInput) => (
-    mongoose.Types.ObjectId.isValid(userInput)
-    && !synonyms.includes(userInput)
+    !synonyms.includes(userInput)
     && userInput !== record.id
     && userInput !== record.originalWordId
   );
 
   const handleAddSynonym = async (userInput = input) => {
-    if (canAddSynonym(userInput)) {
-      const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
-      updateSynonyms([...synonyms, word.id]);
-    } else {
+    try {
+      if (canAddSynonym(userInput)) {
+        const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
+        updateSynonyms([...synonyms, word.id]);
+      } else {
+        throw new Error('Invalid word id');
+      }
+    } catch (err) {
       toast({
         title: 'Unable to add synonym',
         description: 'You have provided an either an word id or a the current word\'s or parent word\'s id.',
