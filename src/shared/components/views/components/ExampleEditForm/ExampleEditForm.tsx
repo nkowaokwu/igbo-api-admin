@@ -60,7 +60,7 @@ const ExampleEditForm = ({
     const cleanedData = {
       ...record,
       ...data,
-      associatedWords: sanitizeArray(data.associatedWords),
+      associatedWords: sanitizeArray(data.associatedWords || []),
     };
     return cleanedData;
   };
@@ -139,7 +139,7 @@ const ExampleEditForm = ({
           defaultValue={record.igbo || getValues().igbo}
         />
         {errors.igbo && (
-          <p className="error">Igbo is required</p>
+          <span className="error">Igbo is required</span>
         )}
       </Box>
       <Box className="flex flex-col">
@@ -161,7 +161,7 @@ const ExampleEditForm = ({
           defaultValue={record.english || getValues().english}
         />
         {errors.english && (
-          <p className="error">English is required</p>
+          <span className="error">English is required</span>
         )}
       </Box>
       <Box className="flex items-center my-5 w-full justify-between">
@@ -219,7 +219,7 @@ const ExampleEditForm = ({
         </>
       ))}
       {errors.associatedWords && (
-        <p className="error">An associated word Id is required</p>
+        <span className="error">An associated word Id is required</span>
       )}
       <Box className="flex flex-col">
         <FormHeader

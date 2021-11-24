@@ -9,7 +9,7 @@ describe('List', () => {
       cy.selectCollection('words');
     });
 
-    it('filter through filters', () => {
+    it.only('filter through filters', () => {
       cy.get('button').contains('Filters').scrollIntoView().click({ force: true });
       cy.findAllByRole('menuitemcheckbox').contains('Is Standard Igbo').click({ force: true });
       cy.get('[aria-checked="true"][value="isStandardIgbo"]').should('exist');

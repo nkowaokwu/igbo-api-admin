@@ -74,7 +74,7 @@ const DefinitionsForm = ({
       </Box>
     ))}
     {errors.definitions && (
-      <p className="error relative">Definition is required</p>
+      <span className="error relative">Definition is required</span>
     )}
   </Box>
 );

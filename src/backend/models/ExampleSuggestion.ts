@@ -17,7 +17,7 @@ const exampleSuggestionSchema = new Schema({
   updatedOn: { type: Date, default: Date.now() },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
   mergedBy: { type: String, default: null },
-}, { toObject: toObjectPlugin, timestamps: true });
+}, { toObject: toObjectPlugin });
 
 toJSONPlugin(exampleSuggestionSchema);
 updatedOnHook(exampleSuggestionSchema);
