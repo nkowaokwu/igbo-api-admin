@@ -7,7 +7,7 @@ import WordClass from '../shared/constants/WordClass';
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
-const { Schema } = mongoose;
+const { Schema, Types } = mongoose;
 const wordSchema = new Schema({
   word: { type: String, required: true },
   wordClass: { type: String, default: '', enum: Object.values(WordClass).map(({ value }) => value) },
@@ -28,8 +28,12 @@ const wordSchema = new Schema({
   variations: { type: [{ type: String }], default: [] },
   frequency: { type: Number },
   stems: { type: [{ type: String }], default: [] },
+  synonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   updatedOn: { type: Date, default: Date.now() },
-}, { toObject: toObjectPlugin });
+}, { toObject: toObjectPlugin, timestamps: true });
 
 wordSchema.index({ word: 'text', variations: 'text' });
 

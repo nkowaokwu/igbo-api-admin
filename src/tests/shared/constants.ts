@@ -16,6 +16,10 @@ export const WORD_KEYS = [
   'isStandardIgbo',
   'word',
   'wordClass',
+  'synonyms',
+  'antonyms',
+  'hypernyms',
+  'hyponyms',
   'updatedOn',
 ];
 export const EXAMPLE_KEYS = ['igbo', 'english', 'associatedWords', 'id', 'updatedOn'];

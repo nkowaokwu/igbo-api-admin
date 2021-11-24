@@ -1,7 +1,7 @@
 import { assign } from 'lodash';
 import { fetchUtils } from 'react-admin';
 
-export default (options) => {
+export default (options: { url: string, headers?: Headers }): Promise<any> => {
   const updatedOptions = assign(options);
   try {
     if (!updatedOptions.headers) {
