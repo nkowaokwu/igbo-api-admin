@@ -172,7 +172,7 @@ const ExampleEditForm = ({
         />
         <Button
           className="h-12 px-3"
-          colorScheme="teal"
+          colorScheme="green"
           aria-label="Add Associated Word Id"
           onClick={() => {
             const updateAssociatedWords = [...associatedWords];
@@ -254,7 +254,7 @@ const ExampleEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="teal"
+          colorScheme="green"
           variant="solid"
           className="m-0"
           isLoading={isSubmitting}

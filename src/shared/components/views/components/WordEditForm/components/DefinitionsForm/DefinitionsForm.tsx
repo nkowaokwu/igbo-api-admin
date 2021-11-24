@@ -21,7 +21,7 @@ const DefinitionsForm = ({
         />
       </Box>
       <Button
-        colorScheme="teal"
+        colorScheme="green"
         aria-label="Add Definition"
         onClick={() => {
           const updateDefinitions = [...definitions];

@@ -14,7 +14,7 @@ const AsyncIgboAPIAdmin = Loadable({
 
 const App = (): React.ReactElement => {
   const [client, setClient] = useState(false);
-  const [user, setUser] = useState(-1);
+  const [user, setUser] = useState<any>(-1);
 
   /* Once the Firebase user is found or not, then we render the platform */
   useEffect(() => {
@@ -24,10 +24,10 @@ const App = (): React.ReactElement => {
       return () => {};
     };
 
-    if (user !== undefined && user !== null && user?.displayName) {
+    if (user?.displayName) {
       (async () => {
-        // If the visitor is not authenticated then they will be redirected to the login page
         try {
+          // If an error occurs while checking auth, the user will be redirected to the login page
           const res = await authProvider.checkAuth();
           if (res?.message) {
             window.location.hash = '#/login';
@@ -37,6 +37,7 @@ const App = (): React.ReactElement => {
         }
       })();
     } else {
+      // If the visitor is not authenticated then they will be redirected to the login page
       window.location.hash = '#/login';
     }
     return () => {};

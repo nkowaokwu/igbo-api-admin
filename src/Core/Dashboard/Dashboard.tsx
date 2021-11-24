@@ -29,8 +29,11 @@ const Dashboard = (): ReactElement => {
       <Title title="Igbo API Editor Platform" />
       <Box style={{ minHeight: '120vh' }} className="w-full bg-gray-100">
         <Box
-          className="w-full bg-indigo-900 text-white flex flex-col justify-center items-center"
-          style={{ height: 275 }}
+          className="w-full text-white flex flex-col justify-center items-center"
+          style={{
+            height: 275,
+            background: 'linear-gradient(36deg, rgba(52,17,154,1) 0%, rgba(91,9,121,1) 28%, rgba(255,87,0,1) 100%)',
+          }}
         >
           <Heading fontSize="5xl" fontWeight="bold" className="text-center">
             {determineDashboardTitle()}

@@ -135,7 +135,7 @@ const Login = (): ReactElement => {
                   </Text>
                 ) : null}
                 <Box className="w-full flex flex-row justify-center items-center my-4">
-                  <Button colorScheme="teal" onClick={refreshPage}>
+                  <Button colorScheme="green" onClick={refreshPage}>
                     Refresh Page
                   </Button>
                 </Box>

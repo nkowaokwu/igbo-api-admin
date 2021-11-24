@@ -139,7 +139,7 @@ const SynonymsForm = ({
         />
         <Tooltip label="Click this button to add the synonym">
           <IconButton
-            colorScheme="teal"
+            colorScheme="green"
             aria-label="Add Synonym"
             onClick={() => handleAddSynonym()}
             icon={<AddIcon />}

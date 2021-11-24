@@ -139,7 +139,7 @@ const AntonymsForm = ({
         />
         <Tooltip label="Click this button to add the antonym">
           <IconButton
-            colorScheme="teal"
+            colorScheme="green"
             aria-label="Add Antonym"
             onClick={() => handleAddAntonym()}
             icon={<AddIcon />}

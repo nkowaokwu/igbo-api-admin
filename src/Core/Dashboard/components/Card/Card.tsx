@@ -39,10 +39,10 @@ const Card = ({
           <Text fontSize="4xl" textAlign="center">{icon}</Text>
           <Heading fontSize="2xl" textAlign="center">{heading}</Heading>
           <Text fontSize="lg" textAlign="center">{description}</Text>
-          {onClick ? <Button colorScheme="teal" onClick={onClick}>{buttonLabel}</Button> : null}
+          {onClick ? <Button colorScheme="green" onClick={onClick}>{buttonLabel}</Button> : null}
           {link ? (
-            <Link href={link} isExternal>
-              <Button colorScheme="teal">{buttonLabel}</Button>
+            <Link href={link} isExternal style={{ textDecoration: 'none' }}>
+              <Button colorScheme="green">{buttonLabel}</Button>
             </Link>
           ) : null}
         </>

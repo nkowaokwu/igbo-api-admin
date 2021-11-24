@@ -8,7 +8,7 @@ const AddExampleButton = (
 ): ReactElement => (
   <Box className="w-full flex flex-row justify-end" mt={3}>
     <Button
-      colorScheme="teal"
+      colorScheme="green"
       aria-label="Add Example"
       onClick={() => {
         const updateExamples = [...examples];

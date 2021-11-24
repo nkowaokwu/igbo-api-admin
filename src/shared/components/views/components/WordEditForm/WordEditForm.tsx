@@ -404,7 +404,7 @@ const WordEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="teal"
+          colorScheme="green"
           variant="solid"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}

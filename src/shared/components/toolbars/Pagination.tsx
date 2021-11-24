@@ -42,7 +42,7 @@ const Pagination = (): ReactElement => {
           )}
         </Menu>
         <Button
-          colorScheme="teal"
+          colorScheme="green"
           key="prev"
           isDisabled={page <= 1}
           onClick={() => setPage(page - 1)}
@@ -63,7 +63,7 @@ const Pagination = (): ReactElement => {
         {page + 2 < nbPages ? <Button onClick={() => setPage(page + 2)}>{page + 2}</Button> : null}
         {page !== nbPages ? <Button onClick={() => setPage(nbPages)}>{nbPages}</Button> : null}
         <Button
-          colorScheme="teal"
+          colorScheme="green"
           key="next"
           isDisabled={page === nbPages}
           onClick={() => setPage(page + 1)}
