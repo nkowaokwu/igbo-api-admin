@@ -109,8 +109,9 @@ const SynonymsForm = ({
         duration: 4000,
         isClosable: true,
       });
+    } finally {
+      setInput('');
     }
-    setInput('');
   };
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
