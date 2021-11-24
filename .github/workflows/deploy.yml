@@ -22,6 +22,7 @@ jobs:
           yarn install
           npm install -g firebase-tools
       - name: Build Staging Project
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           firebase use staging --token $FIREBASE_TOKEN
           firebase functions:config:set runtime.env="development" env.main_key=main_key --token $FIREBASE_TOKEN

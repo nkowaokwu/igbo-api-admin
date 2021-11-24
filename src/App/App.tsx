@@ -18,7 +18,9 @@ const App = (): React.ReactElement => {
 
   /* Once the Firebase user is found or not, then we render the platform */
   useEffect(() => {
+    console.log('Im setting the client to true:', client);
     setClient(true);
+    console.log('The client is now:', client);
     // If the user hasn't been updated yet, exit early
     if (user === -1) {
       return () => {};
@@ -53,13 +55,9 @@ const App = (): React.ReactElement => {
     }
   }, []);
 
-  if (!client) {
-    return (
-      <PlatformLoader />
-    );
-  }
+  console.log('What are we going to render?:', client, !client ? 'PlatformLoader' : 'AsyncIgboAPIAdmin');
 
-  return <AsyncIgboAPIAdmin />;
+  return !client ? <PlatformLoader /> : <AsyncIgboAPIAdmin />;
 };
 
 export default (props: any): ReactElement => (
