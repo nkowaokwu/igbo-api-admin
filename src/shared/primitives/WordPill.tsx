@@ -22,7 +22,14 @@ const WordPill = ({
   onDelete: () => void;
   index: number,
 }): ReactElement => (
-  <Box data-test={`word-pill-${index}`}>
+  <Box
+    data-test={`word-pill-${index}`}
+    width="full"
+    display="flex"
+    flexDirection="row"
+    justifyContent="space-between"
+    alignItems="center"
+  >
     <Box display="flex" flexDirection="column" className="space-y-1">
       <Box display="flex" flexDirection="row" alignItems="center" className="space-x-2">
         <Text fontSize="sm" color="blue.500" fontWeight="bold">

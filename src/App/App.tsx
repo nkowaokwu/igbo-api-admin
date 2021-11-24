@@ -1,16 +1,17 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import Loadable from 'react-loadable';
+// import Loadable from 'react-loadable';
 import { pick } from 'lodash';
 import firebase from 'firebase';
 import authProvider from '../utils/authProvider';
 import PlatformLoader from './PlatformLoader';
+import IgboAPIAdmin from './IgboAPIAdmin';
 import '../styles.css';
 
-const AsyncIgboAPIAdmin = Loadable({
-  loader: () => import('./IgboAPIAdmin'),
-  loading: PlatformLoader,
-});
+// const AsyncIgboAPIAdmin = Loadable({
+//   loader: () => import('./IgboAPIAdmin'),
+//   loading: PlatformLoader,
+// });
 
 const App = (): React.ReactElement => {
   const [client, setClient] = useState(false);
@@ -57,7 +58,8 @@ const App = (): React.ReactElement => {
 
   console.log('What are we going to render?:', client, !client ? 'PlatformLoader' : 'AsyncIgboAPIAdmin');
 
-  return !client ? <PlatformLoader /> : <AsyncIgboAPIAdmin />;
+  // return !client ? <PlatformLoader /> : <AsyncIgboAPIAdmin />;
+  return !client ? <PlatformLoader /> : <IgboAPIAdmin />;
 };
 
 export default (props: any): ReactElement => (
