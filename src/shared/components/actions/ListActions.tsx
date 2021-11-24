@@ -94,7 +94,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
               placeholder="Page #"
               name="page"
             />
-            <Button type="submit" className="px-3" minWidth={24} colorScheme="teal">Jump to page</Button>
+            <Button type="submit" className="px-3" minWidth={24} colorScheme="green">Jump to page</Button>
           </Box>
         </form>
         <Menu closeOnSelect={false} placement="bottom-end">

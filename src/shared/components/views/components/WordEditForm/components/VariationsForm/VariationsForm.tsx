@@ -17,7 +17,7 @@ const VariationsForm = (
         variations in spelling within the same dialect (Standard Igbo).`}
       />
       <Button
-        colorScheme="teal"
+        colorScheme="green"
         aria-label="Add Variation"
         onClick={() => setVariations([...variations, ''])}
         leftIcon={<AddIcon />}

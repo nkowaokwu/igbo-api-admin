@@ -19,7 +19,7 @@ const PlatformLoader = (): ReactElement => {
         thickness="4px"
         speed="0.65s"
         emptyColor="gray.200"
-        color="teal"
+        color="green"
         size="xl"
         label={loadingLabel.current}
       />

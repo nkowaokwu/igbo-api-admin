@@ -45,7 +45,7 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
         <Button
           onClick={() => window.history.go(-1)}
           leftIcon={<RepeatClockIcon />}
-          colorScheme="teal"
+          colorScheme="green"
         >
           Go back
         </Button>

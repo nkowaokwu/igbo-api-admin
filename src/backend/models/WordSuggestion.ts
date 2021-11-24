@@ -49,13 +49,17 @@ const wordSuggestionSchema = new Schema(
     authorEmail: { type: String, default: '' },
     authorId: { type: String, default: '' },
     stems: { type: [{ type: String }], default: [] },
+    synonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+    antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+    hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+    hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
     updatedOn: { type: Date, default: Date.now() },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },
   },
-  { toObject: toObjectPlugin },
+  { toObject: toObjectPlugin, timestamps: true },
 );
 
 toJSONPlugin(wordSuggestionSchema);

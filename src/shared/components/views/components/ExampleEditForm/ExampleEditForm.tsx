@@ -60,7 +60,7 @@ const ExampleEditForm = ({
     const cleanedData = {
       ...record,
       ...data,
-      associatedWords: sanitizeArray(data.associatedWords || []),
+      associatedWords: sanitizeArray(data.associatedWords),
     };
     return cleanedData;
   };
@@ -139,7 +139,7 @@ const ExampleEditForm = ({
           defaultValue={record.igbo || getValues().igbo}
         />
         {errors.igbo && (
-          <span className="error">Igbo is required</span>
+          <p className="error">Igbo is required</p>
         )}
       </Box>
       <Box className="flex flex-col">
@@ -161,7 +161,7 @@ const ExampleEditForm = ({
           defaultValue={record.english || getValues().english}
         />
         {errors.english && (
-          <span className="error">English is required</span>
+          <p className="error">English is required</p>
         )}
       </Box>
       <Box className="flex items-center my-5 w-full justify-between">
@@ -172,7 +172,7 @@ const ExampleEditForm = ({
         />
         <Button
           className="h-12 px-3"
-          colorScheme="teal"
+          colorScheme="green"
           aria-label="Add Associated Word Id"
           onClick={() => {
             const updateAssociatedWords = [...associatedWords];
@@ -219,7 +219,7 @@ const ExampleEditForm = ({
         </>
       ))}
       {errors.associatedWords && (
-        <span className="error">An associated word Id is required</span>
+        <p className="error">An associated word Id is required</p>
       )}
       <Box className="flex flex-col">
         <FormHeader
@@ -254,7 +254,7 @@ const ExampleEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="teal"
+          colorScheme="green"
           variant="solid"
           className="m-0"
           isLoading={isSubmitting}

@@ -17,7 +17,7 @@ const StemsForm = ({ stems, setStems, control }: StemsFormInterface): ReactEleme
         />
       </Box>
       <Button
-        colorScheme="teal"
+        colorScheme="green"
         aria-label="Add Stem"
         minWidth="130px"
         onClick={() => setStems([...stems, ''])}

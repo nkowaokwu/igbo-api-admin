@@ -63,7 +63,7 @@ const PartOfSpeechForm = ({
         />
       </Box>
       {errors.wordClass && (
-        <span className="error">Part of speech is required</span>
+        <p className="error">Part of speech is required</p>
       )}
     </Box>
   );

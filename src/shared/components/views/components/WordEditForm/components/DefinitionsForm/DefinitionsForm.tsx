@@ -21,7 +21,7 @@ const DefinitionsForm = ({
         />
       </Box>
       <Button
-        colorScheme="teal"
+        colorScheme="green"
         aria-label="Add Definition"
         onClick={() => {
           const updateDefinitions = [...definitions];
@@ -74,7 +74,7 @@ const DefinitionsForm = ({
       </Box>
     ))}
     {errors.definitions && (
-      <span className="error relative">Definition is required</span>
+      <p className="error relative">Definition is required</p>
     )}
   </Box>
 );

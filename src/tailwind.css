@@ -6,6 +6,11 @@ html {
   width: fit-content;
 }
 
+::selection {
+  @apply bg-green-400;
+  @apply text-gray-300;
+}
+
 body {
   font-size: 16px !important;
 }
@@ -69,6 +74,10 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
 
 .MuiButton-label .RaButton-smallIcon-78 {
   fill: rgb(255, 255, 255) !important;
+}
+
+[aria-label="Profile"] .MuiButton-label {
+  @apply text-gray-800;
 }
 
 .ant-collapse-header svg {
@@ -235,6 +244,7 @@ input#word, input#igbo {
 .error {
   @apply text-red-500;
   @apply mt-3;
+  @apply text-center;
 }
 
 .link {

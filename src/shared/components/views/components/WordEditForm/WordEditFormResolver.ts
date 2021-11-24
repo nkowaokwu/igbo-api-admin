@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -24,6 +25,12 @@ const schema = yup.object().shape({
     word: yup.string().optional(),
     pronunciation: yup.string().optional(),
   }),
+  synonyms: yup.array().min(0).of(yup.string().test('synonyms', 'Synonyms must be word ids', (value) => (
+    mongoose.Types.ObjectId.isValid(value)
+  ))),
+  antonyms: yup.array().min(0).of(yup.string().test('antonyms', 'Antonyms must be word ids', (value) => (
+    mongoose.Types.ObjectId.isValid(value)
+  ))),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(yup.object().shape({
     igbo: yup.string(),
