@@ -19,7 +19,6 @@ import DialectDiff from './diffFields/DialectDiff';
 import DiffField from './diffFields/DiffField';
 import ArrayDiffField from './diffFields/ArrayDiffField';
 import ExampleDiff from './diffFields/ExampleDiff';
-import ArrayDiff from './diffFields/ArrayDiff';
 import CompleteWordPreview from '../../CompleteWordPreview';
 
 const DIFF_FILTER_KEYS = [
@@ -72,6 +71,17 @@ const WordShow = (props: ShowProps): ReactElement => {
     genericWords: 'Generic Word',
     words: 'Word',
   };
+
+  const ArrayDiff = (
+    { recordField, value, index }:
+    { recordField: string, value: any, index: number },
+  ): ReactElement => (
+    <DiffField
+      path={`${recordField}.${index}`}
+      diffRecord={diffRecord}
+      fallbackValue={value}
+    />
+  );
 
   /* Grabs the original word if it exists */
   useEffect(() => {
@@ -165,7 +175,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     originalWordRecord={originalWordRecord}
                   >
                     {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="definitions" />
+                    <ArrayDiff recordField="definitions" />
                   </ArrayDiffField>
                 </Box>
                 <Box className="flex flex-col mt-5">
@@ -179,7 +189,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     originalWordRecord={originalWordRecord}
                   >
                     {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="variations" />
+                    <ArrayDiff recordField="variations" />
                   </ArrayDiffField>
                 </Box>
                 <Box className="flex flex-col mt-5">
@@ -193,47 +203,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     originalWordRecord={originalWordRecord}
                   >
                     {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="stems" />
-                  </ArrayDiffField>
-                </Box>
-                <Box className="flex flex-col mt-5">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Synonyms</Heading>
-                  {/* @ts-ignore */}
-                  <ArrayDiffField
-                    recordField="synonyms"
-                    recordFieldSingular="synonym"
-                    record={record}
-                    // @ts-ignore
-                    originalWordRecord={originalWordRecord}
-                  >
-                    {/* @ts-ignore */}
-                    <ArrayDiff
-                      diffRecord={diffRecord}
-                      recordField="synonyms"
-                      renderNestedObject={(wordId) => (
-                        <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{wordId}</a>
-                      )}
-                    />
-                  </ArrayDiffField>
-                </Box>
-                <Box className="flex flex-col mt-5">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Antonyms</Heading>
-                  {/* @ts-ignore */}
-                  <ArrayDiffField
-                    recordField="antonyms"
-                    recordFieldSingular="antonym"
-                    record={record}
-                    // @ts-ignore
-                    originalWordRecord={originalWordRecord}
-                  >
-                    {/* @ts-ignore */}
-                    <ArrayDiff
-                      diffRecord={diffRecord}
-                      recordField="antonyms"
-                      renderNestedObject={(wordId) => (
-                        <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{wordId}</a>
-                      )}
-                    />
+                    <ArrayDiff recordField="stems" />
                   </ArrayDiffField>
                 </Box>
                 <Box className="flex flex-col mt-5">

@@ -7,7 +7,7 @@ const exampleSchema = new Schema({
   english: { type: String, default: '' },
   associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   updatedOn: { type: Date, default: Date.now() },
-}, { toObject: toObjectPlugin, timestamps: true });
+}, { toObject: toObjectPlugin });
 
 toJSONPlugin(exampleSchema);
 updatedOnHook(exampleSchema);

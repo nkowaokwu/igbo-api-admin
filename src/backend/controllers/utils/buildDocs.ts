@@ -87,10 +87,6 @@ export const findWordsWithMatch = async (
       dialects: 1,
       isStandardIgbo: 1,
       pronunciation: 1,
-      synonyms: 1,
-      antonyms: 1,
-      hypernyms: 1,
-      hyponyms: 1,
       ...(examples ? { examples: 1 } : {}),
     })
     .skip(skip)

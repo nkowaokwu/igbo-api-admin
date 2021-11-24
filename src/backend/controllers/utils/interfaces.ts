@@ -42,10 +42,6 @@ export interface Word extends Document<any>, LeanDocument<any> {
   frequency: number,
   stems: string[],
   isStandardIgbo: boolean,
-  synonyms: string[],
-  antonyms: string[],
-  hypernyms: string[],
-  hyponyms: string[],
   updatedOn: Date,
   examples?: Example[],
 };
