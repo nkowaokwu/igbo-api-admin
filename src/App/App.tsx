@@ -18,7 +18,9 @@ const App = (): React.ReactElement => {
 
   /* Once the Firebase user is found or not, then we render the platform */
   useEffect(() => {
+    console.log('Im setting the client to true:', client);
     setClient(true);
+    console.log('The client is now:', client);
     // If the user hasn't been updated yet, exit early
     if (user === -1) {
       return () => {};
