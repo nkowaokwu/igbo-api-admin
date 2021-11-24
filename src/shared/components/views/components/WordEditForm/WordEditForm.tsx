@@ -32,6 +32,8 @@ import { Word, WordDialect } from '../../../../../backend/controllers/utils/inte
 import DefinitionsForm from './components/DefinitionsForm';
 import VariationsForm from './components/VariationsForm';
 import StemsForm from './components/StemsForm';
+import SynonymsForm from './components/SynonymsForm';
+import AntonymsForm from './components/AntonymsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import ExamplesForm from './components/ExamplesForm';
@@ -67,6 +69,8 @@ const WordEditForm = ({
         label: WordClass[record.wordClass]?.label || '[UPDATE PART OF SPEECH]',
         value: WordClass[record.wordClass]?.value || null,
       },
+      synonyms: record.synonyms,
+      antonyms: record.antonyms,
     },
     ...WordEditFormResolver(),
   });
@@ -75,6 +79,8 @@ const WordEditForm = ({
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
+  const [synonyms, setSynonyms] = useState(record.synonyms || []);
+  const [antonyms, setAntonyms] = useState(record.antonyms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentDialectView, setCurrentDialectView] = useState(isMobile ? [Dialects.NSA.value] : []);
   const watchDialects: { [key: string]: WordDialect } = watch('dialects');
@@ -98,7 +104,7 @@ const WordEditForm = ({
   const options = values(WordClass);
 
   /* Gets the original example id and associated words to prepare to send to the API */
-  const sanitizeExamples = (examples) => {
+  const sanitizeExamples = (examples = []) => {
     const examplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-example-id]');
     const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
     const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
@@ -148,10 +154,12 @@ const WordEditForm = ({
       ...record,
       ...data,
       ...dialects,
-      definitions: sanitizeArray(data.definitions || []),
-      variations: sanitizeArray(data.variations || []),
-      stems: sanitizeArray(data.stems || []),
-      examples: sanitizeExamples(data.examples || []),
+      definitions: sanitizeArray(data.definitions),
+      variations: sanitizeArray(data.variations),
+      synonyms: sanitizeArray(data.synonyms),
+      antonyms: sanitizeArray(data.antonyms),
+      stems: sanitizeArray(data.stems),
+      examples: sanitizeExamples(data.examples),
       wordClass: data.wordClass.value,
       pronunciation: getValues().pronunciation || '',
     };
@@ -293,6 +301,22 @@ const WordEditForm = ({
               stems={stems}
               setStems={setStems}
               control={control}
+            />
+            <SynonymsForm
+              errors={errors}
+              synonyms={synonyms}
+              setSynonyms={setSynonyms}
+              control={control}
+              setValue={setValue}
+              record={record}
+            />
+            <AntonymsForm
+              errors={errors}
+              antonyms={antonyms}
+              setAntonyms={setAntonyms}
+              control={control}
+              setValue={setValue}
+              record={record}
             />
           </Box>
         </Box>
