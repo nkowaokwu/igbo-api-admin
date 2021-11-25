@@ -152,7 +152,7 @@ You should now be able to access the editor platform at [http://localhost:3030](
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
 that any users that create accounts and log in are stored in the project real Authentication.
 
-If an error is thrown, build the project by running:
+If you encounter this error - ```Error: Cannot find module '/root-path/igbo-api-admin/functions/index.js'. Please verify that the package.json has a valid "main" entry``` - build the project by running:
 
 ```
 yarn build:dev
