@@ -13,6 +13,12 @@ we have a [home base Notion page](https://editor.igboapi.com/gettingstarted) for
 
 Click [here](./EDITORS.md) to read through the editor guidelines.
 
+
+### Contributing
+
+Contributions are always welcome. Before contributing please read the [Contribution Guide](https://github.com/ijemmao/igbo-api-admin/blob/main/CONTRIBUTING.md).
+
+
 ## Get Started
 
 This is an open-source project that requires that you create your own Firebase account.
