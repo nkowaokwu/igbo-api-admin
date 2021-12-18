@@ -34,6 +34,7 @@ const schema = yup.object().shape({
     id: yup.string().optional(),
     originalExampleId: yup.string().nullable().optional(),
   })),
+  isComplete: yup.boolean(),
 });
 
 const resolver = (): any => ({

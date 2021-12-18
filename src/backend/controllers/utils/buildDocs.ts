@@ -91,6 +91,7 @@ export const findWordsWithMatch = async (
       antonyms: 1,
       hypernyms: 1,
       hyponyms: 1,
+      isComplete: 1,
       ...(examples ? { examples: 1 } : {}),
     })
     .skip(skip)

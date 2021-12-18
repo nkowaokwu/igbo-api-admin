@@ -55,6 +55,7 @@ const wordSuggestionSchema = new Schema(
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
+    isComplete: { type: Boolean, default: false },
     updatedOn: { type: Date, default: Date.now() },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },

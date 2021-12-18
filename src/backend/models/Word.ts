@@ -32,6 +32,7 @@ const wordSchema = new Schema({
   antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  isComplete: { type: Boolean, default: false },
   updatedOn: { type: Date, default: Date.now() },
 }, { toObject: toObjectPlugin, timestamps: true });
 

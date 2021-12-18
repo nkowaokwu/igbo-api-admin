@@ -105,7 +105,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                 </Heading>
                 <EditDocumentIds collection="words" originalId={originalWordId} id={id} title="Origin Word Id:" />
               </Box>
-              <CompleteWordPreview record={record} className="my-5 lg:my-0" />
+              <CompleteWordPreview record={record} showFull className="my-5 lg:my-0" />
             </Box>
             <Box className="flex flex-col lg:flex-row w-full justify-between">
               <Box>
