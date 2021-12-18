@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 
 const CompleteWordPreview = (
-  { record, className }:
+  { record, className, showFull }:
   { record: {
     word: string,
     wordClass: string,
@@ -21,6 +21,7 @@ const CompleteWordPreview = (
     isComplete: boolean,
   } | Record,
   className: string,
+  showFull: boolean,
   },
 ): ReactElement => {
   const {
@@ -41,6 +42,7 @@ const CompleteWordPreview = (
     !pronunciation && 'An audio pronunciation is needed',
     !isStandardIgbo && 'The headword needs to be marked as Standard Igbo',
   ]);
+  const requirementsColor = isComplete ? 'orange.700' : 'red.400';
   return (
     <Box data-test="pronunciation-cell" className={className}>
       <Tooltip
@@ -49,22 +51,25 @@ const CompleteWordPreview = (
       >
         {completeWordRequirements.length ? (
           <Box data-test="incomplete-word-label">
-            <UnorderedList>
-              {completeWordRequirements.length > 2 ? (
-                <>
-                  <ListItem color="red.400">{completeWordRequirements[0]}</ListItem>
-                  <ListItem color="red.400">{completeWordRequirements[1]}</ListItem>
-                  <ListItem color="red.400" fontWeight="bold">
-                    {`${completeWordRequirements.length - 2} more 
-                    field${completeWordRequirements.length - 2 === 1 ? '' : 's'} necessary`}
-                  </ListItem>
-                </>
-              ) : (
-                completeWordRequirements.map((requirement) => (
-                  <ListItem color="red.400">{requirement}</ListItem>
-                ))
-              )}
-            </UnorderedList>
+            {isComplete ? <Text color="green.600">This word is manually set to complete</Text> : null}
+            {showFull || !isComplete ? (
+              <UnorderedList>
+                {completeWordRequirements.length > 2 ? (
+                  <>
+                    <ListItem color={requirementsColor}>{completeWordRequirements[0]}</ListItem>
+                    <ListItem color={requirementsColor}>{completeWordRequirements[1]}</ListItem>
+                    <ListItem color={requirementsColor} fontWeight="bold">
+                      {`${completeWordRequirements.length - 2} more 
+                      field${completeWordRequirements.length - 2 === 1 ? '' : 's'} necessary`}
+                    </ListItem>
+                  </>
+                ) : (
+                  completeWordRequirements.map((requirement) => (
+                    <ListItem color={requirementsColor}>{requirement}</ListItem>
+                  ))
+                )}
+              </UnorderedList>
+            ) : null}
           </Box>
         ) : <Text data-test="complete-word-label" color="green.400">This word is complete</Text>}
       </Tooltip>

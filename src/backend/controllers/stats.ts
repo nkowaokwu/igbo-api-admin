@@ -69,18 +69,23 @@ export const getCompleteWords = async (
       isStandardIgbo,
       pronunciation,
       examples,
-    }) => (
-      word
-      // String normalization check:
-      // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
-      // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
-      && word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g)
-      && wordClass
-      && Array.isArray(definitions) && definitions.length >= 1
-      && Array.isArray(examples) && examples.length >= 1
-      && pronunciation.length > 10
-      && isStandardIgbo
-    )).length;
+      isComplete,
+    }) => {
+      const automaticCheck = (
+        word
+        // String normalization check:
+        // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
+        // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
+        && word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g)
+        && wordClass
+        && Array.isArray(definitions) && definitions.length >= 1
+        && Array.isArray(examples) && examples.length >= 1
+        && pronunciation.length > 10
+        && isStandardIgbo
+      );
+      const manualCheck = isComplete;
+      return automaticCheck || manualCheck;
+    }).length;
     return res.send({ count });
   } catch (err) {
     return next(err);
