@@ -79,6 +79,7 @@ export const getUsers = async (req, res, next) => {
 };
 
 /* Looks into Firebase for user */
+// TODO: expand this function to look inside both Igbo API Editor Platform and Nkowaokwu Firebase projects
 export const findUser = async (uid: string): Promise<Interfaces.FormattedUser | string> => {
   if (process.env.NODE_ENV !== 'test') {
     const user = await admin.auth().getUser(uid);
