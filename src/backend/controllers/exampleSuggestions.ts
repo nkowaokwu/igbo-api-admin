@@ -183,7 +183,10 @@ export const removeExampleSuggestion = (id: string): Promise<Interfaces.ExampleS
       if (!exampleSuggestion) {
         throw new Error('No example suggestion exists with the provided id.');
       }
-      const { email: userEmail } = await findUser(exampleSuggestion.authorId) as Interfaces.FormattedUser;
+      const { email: userEmail } = (
+        (await findUser(exampleSuggestion.authorId) as Interfaces.FormattedUser)
+        || { email: '' }
+      );
       /* Sends rejection email to user if they provided an email and the exampleSuggestion isn't merged */
       if (userEmail && !exampleSuggestion.merged) {
         sendRejectedEmail({
