@@ -13,6 +13,12 @@ we have a [home base Notion page](https://editor.igboapi.com/gettingstarted) for
 
 Click [here](./EDITORS.md) to read through the editor guidelines.
 
+
+### Contributing
+
+Contributions are always welcome. Before contributing please read the [Contribution Guide](https://github.com/ijemmao/igbo-api-admin/blob/main/CONTRIBUTING.md).
+
+
 ## Get Started
 
 This is an open-source project that requires that you create your own Firebase account.
@@ -151,6 +157,14 @@ You should now be able to access the editor platform at [http://localhost:3030](
 **Note**: This will spin up a local version of the Firebase project `igbo-api-admin-staging` which 
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
 that any users that create accounts and log in are stored in the project real Authentication.
+
+If you encounter this error - ```Error: Cannot find module '/root-path/igbo-api-admin/functions/index.js'. Please verify that the package.json has a valid "main" entry``` - build the project by running:
+
+```
+yarn build:dev
+```
+
+Then go back to step 5 above.
 
 **Login**: You can login with the email `admin@example.com` and the password `password`
 
