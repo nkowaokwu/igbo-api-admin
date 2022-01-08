@@ -56,6 +56,7 @@ const WordShow = (props: ShowProps): ReactElement => {
     author,
     word,
     wordClass,
+    nsibidi,
     approvals,
     denials,
     editorsNotes,
@@ -116,12 +117,23 @@ const WordShow = (props: ShowProps): ReactElement => {
                   fallbackValue={isStandardIgbo}
                   renderNestedObject={(value) => <span>{String(value)}</span>}
                 />
-                <Box className="flex flex-col mt-5">
+                <Box className="flex flex-row">
                   <Heading fontSize="lg" className="text-xl text-gray-600">Word</Heading>
                   <DiffField
                     path="word"
                     diffRecord={diffRecord}
                     fallbackValue={word}
+                  />
+                </Box>
+                <Box className="flex flex-col mt-5 space-x-4">
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị</Heading>
+                  <DiffField
+                    path="nsibidi"
+                    diffRecord={diffRecord}
+                    fallbackValue={nsibidi}
+                    renderNestedObject={(value) => (
+                      <span className="akagu">{value}</span>
+                    )}
                   />
                 </Box>
                 <Box className="flex flex-col mt-5">

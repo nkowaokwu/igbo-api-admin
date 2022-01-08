@@ -38,6 +38,7 @@ const genericWordSchema = new Schema({
   antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  nsibidi: { type: String, default: '' },
   approvals: { type: [{ type: String }], default: [] },
   denials: { type: [{ type: String }], default: [] },
   updatedOn: { type: Date, default: Date.now() },

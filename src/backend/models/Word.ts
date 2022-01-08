@@ -33,6 +33,7 @@ const wordSchema = new Schema({
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   isComplete: { type: Boolean, default: false },
+  nsibidi: { type: String, default: '' },
   updatedOn: { type: Date, default: Date.now() },
 }, { toObject: toObjectPlugin, timestamps: true });
 
