@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Akagu';
+  src:  url("./assets/fonts/Akagu2020.ttf");
+}
+
 html {
   width: fit-content;
 }
@@ -10,6 +15,11 @@ html {
   @apply bg-green-400;
   @apply text-gray-300;
 }
+
+.akagu {
+  font-family: 'Akagu', 'sans-serif' !important;
+}
+
 
 body {
   font-size: 16px !important;

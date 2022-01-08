@@ -36,6 +36,7 @@ import SynonymsForm from './components/SynonymsForm';
 import AntonymsForm from './components/AntonymsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
+import NsibidiForm from './components/NsibidiForm';
 import ExamplesForm from './components/ExamplesForm';
 import AudioRecorder from './components/AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
@@ -71,6 +72,7 @@ const WordEditForm = ({
       },
       synonyms: record.synonyms,
       antonyms: record.antonyms,
+      nsibidi: record.nsibidi,
     },
     ...WordEditFormResolver(),
   });
@@ -249,12 +251,19 @@ const WordEditForm = ({
       <Box className="w-full">
         <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4">
           <Box className="flex flex-col w-full lg:w-1/2">
-            <HeadwordForm
-              errors={errors}
-              control={control}
-              record={record}
-              getValues={getValues}
-            />
+            <Box className="flex flex-row space-x-3 w-full">
+              <HeadwordForm
+                errors={errors}
+                control={control}
+                record={record}
+                getValues={getValues}
+              />
+              <NsibidiForm
+                control={control}
+                record={record}
+                getValues={getValues}
+              />
+            </Box>
             <PartOfSpeechForm
               errors={errors}
               control={control}

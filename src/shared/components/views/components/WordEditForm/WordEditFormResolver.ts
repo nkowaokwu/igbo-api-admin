@@ -35,6 +35,7 @@ const schema = yup.object().shape({
     originalExampleId: yup.string().nullable().optional(),
   })),
   isComplete: yup.boolean(),
+  nsibidi: yup.string(),
 });
 
 const resolver = (): any => ({
