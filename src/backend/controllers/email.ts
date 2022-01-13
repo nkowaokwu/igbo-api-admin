@@ -30,13 +30,11 @@ const constructMessage = (messageFields: Interfaces.EmailMessage): Interfaces.Co
 export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void> => (
   process.env.NODE_ENV !== 'test' ? sgMail.send(message)
     .then(() => {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('Email successfully sent.');
-      }
+      console.log('Email successfully sent.');
     })
     .catch((err) => {
+      console.trace('sendEmail error:', err.response.body);
       if (process.env.NODE_ENV !== 'production') {
-        console.log(err.response.body);
         return Promise.resolve(err.response.body);
       }
       throw err;
