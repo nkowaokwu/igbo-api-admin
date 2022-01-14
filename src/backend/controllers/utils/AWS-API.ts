@@ -52,40 +52,43 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
 };
 
 /* Deletes a .webm object in the AWS S3 Bucket */
-export const deleteAudioPronunciation = async (id): Promise<any> => {
+export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promise<any> => {
   if (!id) {
     throw new Error('No pronunciation id provided');
   }
   if (isCypress || !isProduction) {
     return `${dummyUriPath}${id}`;
   }
+  const extension = isMp3 ? 'mp3' : 'webm';
   const params = {
     ...baseParams,
-    Key: `${pronunciationPath}/${id}.webm`,
+    Key: `${pronunciationPath}/${id}.${extension}`,
   };
 
   return s3.deleteObject(params).promise();
 };
 /* Takes an old and new pronunciation id and copies it (copies) */
-export const copyAudioPronunciation = async (oldDocId: string, newDocId: string): Promise<any> => {
+export const copyAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
   if (isCypress || !isProduction) {
     return `${dummyUriPath}${newDocId}`;
   }
 
+  const extension = isMp3 ? 'mp3' : 'webm';
+
   const copyParams = {
     ...baseParams,
-    Key: `${pronunciationPath}/${newDocId}.webm`,
+    Key: `${pronunciationPath}/${newDocId}.${extension}`,
     ACL: 'public-read',
-    CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.webm`,
+    CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.${extension}`,
   };
 
   await s3.copyObject(copyParams).promise();
-  const copiedAudioPronunciationUri = `${uriPath}/${newDocId}.webm`;
+  const copiedAudioPronunciationUri = `${uriPath}/${newDocId}.${extension}`;
   return copiedAudioPronunciationUri;
 };
 
 /* Takes an old and new pronunciation id and renames it (copies and deletes) */
-export const renameAudioPronunciation = async (oldDocId: string, newDocId: string): Promise<any> => {
+export const renameAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
   if (isCypress || !isProduction) {
     if (!oldDocId) {
       return '';
@@ -102,7 +105,7 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     return '';
   }
 
-  const renamedAudioPronunciationUri = await copyAudioPronunciation(oldDocId, newDocId);
+  const renamedAudioPronunciationUri = await copyAudioPronunciation(oldDocId, newDocId, isMp3);
   await deleteAudioPronunciation(oldDocId);
 
   return renamedAudioPronunciationUri;
