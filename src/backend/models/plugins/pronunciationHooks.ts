@@ -29,13 +29,14 @@ export const uploadPronunciation = (schema: mongoose.Schema<Interfaces.WordSugge
       } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
         // If the pronunciation data for the headword is a uri, we will duplicate the uri
         // so that the new uri will only be associated with the suggestion
+        const isMp3 = this.pronunciation.includes('mp3');
         const oldId: string = last(compact(this.pronunciation.split(/.mp3|.webm/).join('').split('/')));
         const newId: string = id;
 
         /* If we are saving a new word suggestion, then we want to copy all the original audio files */
         this.pronunciation = await (this.isNew
-          ? copyAudioPronunciation(oldId, newId)
-          : renameAudioPronunciation(oldId, newId));
+          ? copyAudioPronunciation(oldId, newId, isMp3)
+          : renameAudioPronunciation(oldId, newId, isMp3));
       }
       /**
        * Steps through each dialect and checks to see if it has audio data to be saved in AWS
@@ -57,13 +58,14 @@ export const uploadPronunciation = (schema: mongoose.Schema<Interfaces.WordSugge
         } else if (pronunciation.startsWith('https://') && !pronunciation.includes(`${id}-${dialect}`)) {
           // If the pronunciation data in the current dialect is a uri, we will duplicate the uri
           // so that the new uri will only be associated with the suggestion
+          const isMp3 = pronunciation.includes('mp3');
           const oldId: string = last(compact(pronunciation.split(/.mp3|.webm/).join('').split('/')));
           const newId = `${id}-${dialect}`;
 
           /* If we are saving a new word suggestion, then we want to copy all the original audio files */
           this.dialects[dialect].pronunciation = await (this.isNew
-            ? copyAudioPronunciation(oldId, newId)
-            : renameAudioPronunciation(oldId, newId));
+            ? copyAudioPronunciation(oldId, newId, isMp3)
+            : renameAudioPronunciation(oldId, newId, isMp3));
         }
       }));
     }

@@ -198,10 +198,12 @@ export const deleteWordSuggestion = (
           throw new Error('No word suggestion exists with the provided id.');
         }
         /* Deletes all word pronunciations for the headword and dialects */
-        await deleteAudioPronunciation(id);
-        await Promise.all(Object.values(wordSuggestion.dialects).map(async ({ dialect }) => (
-          deleteAudioPronunciation(`${id}-${dialect}`)
-        )));
+        const isPronunciationMp3 = wordSuggestion.pronunciation && wordSuggestion.pronunciation.includes('mp3');
+        await deleteAudioPronunciation(id, isPronunciationMp3);
+        await Promise.all(Object.values(wordSuggestion.dialects).map(async ({ dialect, pronunciation }) => {
+          const dialectPronunciationMp3 = pronunciation && pronunciation.includes('mp3');
+          deleteAudioPronunciation(`${id}-${dialect}`, dialectPronunciationMp3);
+        }));
         const { email: userEmail } = await findUser(wordSuggestion.authorId) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
         if (userEmail && !wordSuggestion.merged) {
