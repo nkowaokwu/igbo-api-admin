@@ -251,19 +251,17 @@ const WordEditForm = ({
       <Box className="w-full">
         <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4">
           <Box className="flex flex-col w-full lg:w-1/2">
-            <Box className="flex flex-row space-x-3 w-full">
-              <HeadwordForm
-                errors={errors}
-                control={control}
-                record={record}
-                getValues={getValues}
-              />
-              <NsibidiForm
-                control={control}
-                record={record}
-                getValues={getValues}
-              />
-            </Box>
+            <HeadwordForm
+              errors={errors}
+              control={control}
+              record={record}
+              getValues={getValues}
+            />
+            <NsibidiForm
+              control={control}
+              record={record}
+              getValues={getValues}
+            />
             <PartOfSpeechForm
               errors={errors}
               control={control}
