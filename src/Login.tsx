@@ -119,7 +119,7 @@ const Login = (): ReactElement => {
           </Box>
           <Box
             className={`flex flex-col justify-center w-full h-full lg:w-1/2
-            space-y-3 lg:space-y-2 py-5 px-5 overflow-y-scroll`}
+            space-y-3 lg:space-y-2 py-5 px-5 overflow-y-overlay`}
           >
             {filledAuthForm ? (
               <Box>
