@@ -21,6 +21,7 @@ import ArrayDiffField from './diffFields/ArrayDiffField';
 import ExampleDiff from './diffFields/ExampleDiff';
 import ArrayDiff from './diffFields/ArrayDiff';
 import CompleteWordPreview from '../../CompleteWordPreview';
+import ResolvedWord from '../../ResolvedWord';
 
 const DIFF_FILTER_KEYS = [
   'id',
@@ -109,15 +110,17 @@ const WordShow = (props: ShowProps): ReactElement => {
               <CompleteWordPreview record={record} showFull className="my-5 lg:my-0" />
             </Box>
             <Box className="flex flex-col lg:flex-row w-full justify-between">
-              <Box>
-                <Heading fontSize="lg" className="text-xl text-gray-600">Is Standard Igbo</Heading>
-                <DiffField
-                  path="isStandardIgbo"
-                  diffRecord={diffRecord}
-                  fallbackValue={isStandardIgbo}
-                  renderNestedObject={(value) => <span>{String(value)}</span>}
-                />
-                <Box className="flex flex-row">
+              <Box className="space-y-3">
+                <Box className="flex flex-col">
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Is Standard Igbo</Heading>
+                  <DiffField
+                    path="isStandardIgbo"
+                    diffRecord={diffRecord}
+                    fallbackValue={isStandardIgbo}
+                    renderNestedObject={(value) => <span>{String(value)}</span>}
+                  />
+                </Box>
+                <Box className="flex flex-col">
                   <Heading fontSize="lg" className="text-xl text-gray-600">Word</Heading>
                   <DiffField
                     path="word"
@@ -125,14 +128,14 @@ const WordShow = (props: ShowProps): ReactElement => {
                     fallbackValue={word}
                   />
                 </Box>
-                <Box className="flex flex-col mt-5 space-x-4">
+                <Box className="flex flex-col mt-5">
                   <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị</Heading>
                   <DiffField
                     path="nsibidi"
                     diffRecord={diffRecord}
                     fallbackValue={nsibidi}
                     renderNestedObject={(value) => (
-                      <span className="akagu">{value}</span>
+                      <span className={value ? 'akagu' : ''}>{value || 'N/A'}</span>
                     )}
                   />
                 </Box>
@@ -205,7 +208,11 @@ const WordShow = (props: ShowProps): ReactElement => {
                     originalWordRecord={originalWordRecord}
                   >
                     {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="stems" />
+                    <ArrayDiff
+                      diffRecord={diffRecord}
+                      recordField="stems"
+                      renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
+                    />
                   </ArrayDiffField>
                 </Box>
                 <Box className="flex flex-col mt-5">
@@ -222,9 +229,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     <ArrayDiff
                       diffRecord={diffRecord}
                       recordField="synonyms"
-                      renderNestedObject={(wordId) => (
-                        <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{wordId}</a>
-                      )}
+                      renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
                     />
                   </ArrayDiffField>
                 </Box>
@@ -242,9 +247,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     <ArrayDiff
                       diffRecord={diffRecord}
                       recordField="antonyms"
-                      renderNestedObject={(wordId) => (
-                        <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{wordId}</a>
-                      )}
+                      renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
                     />
                   </ArrayDiffField>
                 </Box>

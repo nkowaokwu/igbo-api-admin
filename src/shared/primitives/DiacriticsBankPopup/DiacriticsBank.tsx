@@ -23,7 +23,12 @@ const DiacriticsBank = (
         {diacritics.map((diacritic) => {
           const diacriticString = String.fromCharCode(diacritic);
           return (
-            <Button onClick={() => insertLetter(inputRef, diacriticString)}>{diacriticString}</Button>
+            <Button
+              key={`diacritic-key-${diacriticString}`}
+              onClick={() => insertLetter(inputRef, diacriticString)}
+            >
+              {diacriticString}
+            </Button>
           );
         })}
       </Box>

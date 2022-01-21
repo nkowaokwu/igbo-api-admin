@@ -120,7 +120,7 @@ const Input = React.forwardRef(({
           ) : (
             autoCompleteWords.map((word, index) => (
               <Box
-                key={word}
+                key={word.id}
                 py={3}
                 px={2}
                 _hover={{ backgroundColor: 'selected' }}

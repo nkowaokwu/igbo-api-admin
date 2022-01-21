@@ -51,7 +51,7 @@ const ExamplesForm = ({
             }, index) => {
               const formData = getValues();
               return (
-                <Box className="list-container" key={`${igbo}-${english}`}>
+                <Box className="list-container" key={`${id}-${igbo}-${english}`}>
                   <Box
                     data-example-id={id}
                     data-original-example-id={originalExampleId}

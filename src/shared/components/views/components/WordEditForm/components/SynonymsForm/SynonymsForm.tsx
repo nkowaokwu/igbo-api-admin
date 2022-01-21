@@ -104,7 +104,7 @@ const SynonymsForm = ({
     } catch (err) {
       toast({
         title: 'Unable to add synonym',
-        description: 'You have provided an either an word id or a the current word\'s or parent word\'s id.',
+        description: 'You have provided an either an invalid word id or a the current word\'s or parent word\'s id.',
         status: 'warning',
         duration: 4000,
         isClosable: true,
@@ -122,13 +122,11 @@ const SynonymsForm = ({
         defaultValue=""
       />
       <Box className="flex items-center my-5 w-full justify-between">
-        <Box className="flex flex-col">
-          <FormHeader
-            title="Synonyms"
-            tooltip={`Synonyms of the current word using Standard Igbo. 
-            You can search for a word or paste in the word id.`}
-          />
-        </Box>
+        <FormHeader
+          title="Synonyms"
+          tooltip={`Synonyms of the current word using Standard Igbo. 
+          You can search for a word or paste in the word id.`}
+        />
       </Box>
       <Box className="flex flex-row mb-4 space-x-2">
         <Input
