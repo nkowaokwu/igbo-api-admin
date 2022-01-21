@@ -305,9 +305,12 @@ const WordEditForm = ({
               control={control}
             />
             <StemsForm
+              errors={errors}
               stems={stems}
               setStems={setStems}
               control={control}
+              setValue={setValue}
+              record={record}
             />
             <SynonymsForm
               errors={errors}

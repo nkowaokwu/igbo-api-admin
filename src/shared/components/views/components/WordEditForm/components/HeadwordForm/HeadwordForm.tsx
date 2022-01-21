@@ -29,7 +29,11 @@ const HeadwordForm = ({
           Add diacritic marks to denote the tone for the word. 
           All necessary accented characters will appear in the letter popup`}
         />
-        <Box display="flex" alignItems="center" className="lg:space-x-3">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="flex-start"
+        >
           <Controller
             render={({ onChange, value, ref }) => (
               <Checkbox
