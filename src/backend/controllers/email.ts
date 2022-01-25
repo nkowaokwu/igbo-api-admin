@@ -8,6 +8,7 @@ import {
   NKOWAOKWU_FROM_EMAIL,
   SUGGESTIONS_REVIEW_REMINDER_TEMPLATE,
   NEW_USER_NOTIFICATION_TEMPLATE,
+  UPDATED_ROLE_NOTIFICATION,
 } from '../config';
 import { findAdminUserEmails } from './users';
 import * as Interfaces from './utils/interfaces';
@@ -111,3 +112,15 @@ export const sendNewUserNotification = async (data: Interfaces.NewUserData): Pro
   });
   return sendEmail(message);
 };
+
+export const sendUpdatedRoleNotification = (
+  async (data: Interfaces.UpdatedRoleNotificationData): Promise<void> => {
+    const message = constructMessage({
+      from: { email: API_FROM_EMAIL, name: 'Igbo API' },
+      to: data.to,
+      templateId: UPDATED_ROLE_NOTIFICATION,
+      dynamic_template_data: omit(data, ['to']),
+    });
+    return sendEmail(message);
+  }
+);

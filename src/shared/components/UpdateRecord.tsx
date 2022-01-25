@@ -1,17 +1,25 @@
 import { map, compact } from 'lodash';
 import { Record } from 'react-admin';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 /* Changes the record's approvals and denials */
 const balanceRecordApprovalsAndDenials = (record) => {
-  record.approvals = map(compact(record.approvals), (approval: { uid: string }) => (
-    approval.uid ? approval.uid : approval
-  ));
+  record.approvals = map(
+    compact(record.approvals),
+    (approval: { uid: string }) => (approval.uid ? approval.uid : approval),
+  );
   record.denials = map(compact(record.denials), (denial: { uid: string }) => (
     denial.uid ? denial.uid : denial
   ));
 };
 
-const approveRecord = ({ uid, record }: { uid: string, record: Record }) : Record => {
+const approveRecord = ({
+  uid,
+  record,
+}: {
+  uid: string;
+  record: Record;
+}): Record => {
   if (!uid) {
     throw new Error('User uid does not exist.');
   }
@@ -31,11 +39,21 @@ const approveRecord = ({ uid, record }: { uid: string, record: Record }) : Recor
     const indexOfId = updatedDenials.indexOf(uid);
     updatedDenials.splice(indexOfId, 1);
   }
-  const updatedRecord = { ...record, approvals: updatedApprovals, denials: updatedDenials };
+  const updatedRecord = {
+    ...record,
+    approvals: updatedApprovals,
+    denials: updatedDenials,
+  };
   return updatedRecord;
 };
 
-const denyRecord = ({ uid, record }: { uid: string, record: Record }): Record => {
+const denyRecord = ({
+  uid,
+  record,
+}: {
+  uid: string;
+  record: Record;
+}): Record => {
   if (!uid) {
     throw new Error('User uid does not exist.');
   }
@@ -55,11 +73,21 @@ const denyRecord = ({ uid, record }: { uid: string, record: Record }): Record =>
     const indexOfId = updatedApprovals.indexOf(uid);
     updatedApprovals.splice(indexOfId, 1);
   }
-  const updatedRecord = { ...record, approvals: updatedApprovals, denials: updatedDenials };
+  const updatedRecord = {
+    ...record,
+    approvals: updatedApprovals,
+    denials: updatedDenials,
+  };
   return updatedRecord;
 };
 
-const mergeRecord = ({ uid, record }: { uid: string, record: Record }): Record => {
+const mergeRecord = ({
+  uid,
+  record,
+}: {
+  uid: string;
+  record: Record;
+}): Record => {
   if (!uid) {
     throw new Error('User uid does not exist.');
   }
@@ -72,7 +100,13 @@ const mergeRecord = ({ uid, record }: { uid: string, record: Record }): Record =
   return updatedRecord;
 };
 
-const convertUser = ({ uid, record }: { uid: string, record: Record }): { uid: string, adminUid: string } => {
+const convertUser = ({
+  uid,
+  record,
+}: {
+  uid: string;
+  record: Record;
+}): { uid: string; adminUid: string; role: UserRoles; email: string, displayName: string } => {
   if (!uid) {
     throw new Error('User uid does not exist.');
   }
@@ -80,7 +114,13 @@ const convertUser = ({ uid, record }: { uid: string, record: Record }): { uid: s
   if (!record) {
     throw new Error('Record does not exist.');
   }
-  return { uid: record.uid, adminUid: uid };
+  return {
+    uid: record.uid,
+    adminUid: uid,
+    email: record.email,
+    role: record.role,
+    displayName: record.displayName,
+  };
 };
 
 export {

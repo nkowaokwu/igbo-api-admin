@@ -5,7 +5,7 @@ import { Role } from '../../shared/constants/auth-types';
 import { successResponse, errorResponse } from '../../shared/server-validation';
 import { adminEmailList, prodAdminEmailList } from '../../shared/constants/emailList';
 import { canAssignEditingGroupNumber } from './utils';
-import { sendNewUserNotification } from '../controllers/email';
+import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.https.onCall(async (user) => {
@@ -59,7 +59,13 @@ export const onAssignUserToEditingGroup = functions.https
 
 /* Updates a users role based permissions */
 export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePermissions): Promise<string | Error> => {
-  const { uid, adminUid, role } = data;
+  const {
+    email,
+    uid,
+    adminUid,
+    role,
+    displayName,
+  } = data;
   const adminUser = await admin.auth().getUser(adminUid);
 
   if (adminUser.customClaims.role !== Role.ADMIN && !adminEmailList.includes(adminUser.email)) {
@@ -67,5 +73,11 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
   }
 
   await admin.auth().setCustomUserClaims(uid, { role });
+  try {
+    await sendUpdatedRoleNotification({ to: [email], role, displayName });
+  } catch (err) {
+    console.trace(err);
+    console.log('Unable to send update role notification email');
+  }
   return Promise.resolve(`Updated user ${uid} permissions to ${role}`);
 });
