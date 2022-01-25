@@ -19,7 +19,9 @@ export interface NewUserApplication {
 };
 
 export interface UpdatePermissions {
+  email: string,
   uid: string,
   adminUid: string,
   role: Role,
+  displayName: string,
 };
