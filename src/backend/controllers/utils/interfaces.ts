@@ -1,5 +1,6 @@
 import { Document, LeanDocument, Types } from 'mongoose';
 import { Request } from 'functions/node_modules/@types/express';
+import { Role } from '../../../shared/constants/auth-types';
 
 export interface EditorRequest extends Request {
   user: {
@@ -124,6 +125,12 @@ export interface SuggestionsReminderData {
 export interface NewUserData {
   newUserEmail: string,
 };
+
+export interface UpdatedRoleNotificationData {
+  to: [string],
+  displayName: string,
+  role: Role,
+}
 
 export interface EmailMessage {
   from?: {
