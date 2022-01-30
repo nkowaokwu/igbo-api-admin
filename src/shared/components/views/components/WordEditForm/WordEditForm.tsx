@@ -8,17 +8,10 @@ import {
 import {
   Box,
   Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItemOption,
-  MenuOptionGroup,
   useToast,
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
-import { isMobile } from 'react-device-detect';
 import { Textarea } from '../../../../primitives';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
@@ -27,7 +20,6 @@ import View from '../../../../constants/Views';
 import WordClass from '../../../../constants/WordClass';
 import { getWord } from '../../../../API';
 import useBeforeWindowUnload from '../../../../../hooks/useBeforeWindowUnload';
-import Dialects from '../../../../../backend/shared/constants/Dialects';
 import { Word, WordDialect } from '../../../../../backend/controllers/utils/interfaces';
 import DefinitionsForm from './components/DefinitionsForm';
 import VariationsForm from './components/VariationsForm';
@@ -41,7 +33,6 @@ import ExamplesForm from './components/ExamplesForm';
 import AudioRecorder from './components/AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
-import { generateEmptyRecordDialects } from '../../utils';
 
 const WordEditForm = ({
   view,
@@ -53,7 +44,7 @@ const WordEditForm = ({
 } : EditFormProps) : ReactElement => {
   /* Injected empty dialects object for new suggestions */
   if (!record?.dialects) {
-    record.dialects = generateEmptyRecordDialects();
+    record.dialects = {};
   };
   const {
     handleSubmit,
@@ -61,7 +52,6 @@ const WordEditForm = ({
     setValue,
     control,
     errors,
-    watch,
   } = useForm({
     defaultValues: {
       dialects: record.dialects,
@@ -84,24 +74,11 @@ const WordEditForm = ({
   const [synonyms, setSynonyms] = useState(record.synonyms || []);
   const [antonyms, setAntonyms] = useState(record.antonyms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentDialectView, setCurrentDialectView] = useState(isMobile ? [Dialects.NSA.value] : []);
-  const watchDialects: { [key: string]: WordDialect } = watch('dialects');
+  const [dialects, setDialects] = useState(Object.entries(record.dialects).map(([word, value]) => (
+    { ...value, word }
+  )));
   const notify = useNotify();
   const redirect = useRedirect();
-
-  /* Getting the initial selected dialects for word suggestions with pre-existing data */
-  const [selectedDialects, setSelectedDialects] = useState(Object.values(record.dialects || {})
-    .reduce((finalSelectedDialects: { dialect: string, word: string, pronunciation: string, variations: string[] }[], {
-      dialect,
-      word,
-      pronunciation,
-      variations,
-    }) => {
-      if (word || pronunciation || variations.length) {
-        finalSelectedDialects.push(dialect);
-      }
-      return finalSelectedDialects;
-    }, []));
   const toast = useToast();
   const options = values(WordClass);
 
@@ -129,24 +106,19 @@ const WordEditForm = ({
       .filter((example) => example.igbo && example.english);
   };
 
-  /* Prepares dialects to include all required keys for Mongoose schema validation */
+  /* Prepares dialects to include all required keys (dialectal word) for Mongoose schema validation */
   const prepareDialects = (): { dialects: { [key: string]: WordDialect } } => (
-    Object.keys(getValues().dialects).reduce((finalDialects, dialect) => {
-      /* The pronunciation, variations, and accented fields are required for Mongoose schema validation */
-      if (!watchDialects[dialect].pronunciation) {
-        watchDialects[dialect].pronunciation = '';
+    dialects.reduce((finalDialects, dialect) => (
+      /* The pronunciation, variations, and dialect are required for Mongoose schema validation */
+      {
+        ...finalDialects,
+        [dialect.word]: {
+          dialects: Array.from(new Set([...(finalDialects?.[dialect.dialects] || []), ...dialect.dialects])),
+          variations: Array.from(new Set([...(finalDialects?.[dialect.variations] || []), ...dialect.variations])),
+          pronunciation: !finalDialects?.[dialect.pronunciation] ? dialect.pronunciation : '',
+        },
       }
-      if (!watchDialects[dialect].variations) {
-        watchDialects[dialect].variations = record.dialects[dialect].variations;
-      }
-      if (!watchDialects[dialect].dialect) {
-        watchDialects[dialect].dialect = record.dialects[dialect].dialect;
-      }
-      watchDialects[dialect].word = watchDialects[dialect].word || record.dialects[dialect].word;
-
-      finalDialects.dialects[dialect] = watchDialects[dialect];
-      return finalDialects;
-    }, { dialects: generateEmptyRecordDialects() })
+    ), {})
   );
 
   /* Prepares the data to be cached */
@@ -155,7 +127,7 @@ const WordEditForm = ({
     const cleanedData = {
       ...record,
       ...data,
-      ...dialects,
+      dialects,
       definitions: sanitizeArray(data.definitions),
       variations: sanitizeArray(data.variations),
       synonyms: sanitizeArray(data.synonyms),
@@ -203,12 +175,6 @@ const WordEditForm = ({
     const data = getValues();
     const cleanedData = createCacheWordData(data, record);
     localStorage.setItem('igbo-api-admin-form', JSON.stringify(cleanedData));
-  };
-
-  const updateSelectedDialects = (dialect) => {
-    const updatedSelectedDialects = new Set(selectedDialects);
-    updatedSelectedDialects.add(dialect);
-    setSelectedDialects(Array.from(updatedSelectedDialects));
   };
 
   useBeforeWindowUnload();
@@ -278,7 +244,6 @@ const WordEditForm = ({
                   path="headword"
                   getFormValues={getValues}
                   setPronunciation={setValue}
-                  updateSelectedDialects={updateSelectedDialects}
                   record={record}
                   originalRecord={originalRecord}
                 />
@@ -344,43 +309,17 @@ const WordEditForm = ({
       <Box className="flex flex-row justify-between items-center">
         <FormHeader
           title="Current Dialects"
-          tooltip="These are the dialects that have been filled in by our editors."
+          tooltip="These are the dialectal (sound) variations with the current word."
         />
-        <Menu closeOnSelect={false}>
-          <MenuButton
-            as={Button}
-            variant="outline"
-            colorScheme="blue"
-            rightIcon={<ChevronDownIcon />}
-            data-test="dialect-views-menu"
-          >
-            Dialect Views...
-          </MenuButton>
-          <MenuList minWidth="240px">
-            <MenuOptionGroup
-              title="Dialects Views"
-              type="checkbox"
-              onChange={setCurrentDialectView}
-              defaultValue={currentDialectView}
-            >
-              {Object.values(Dialects).map(({ label, value }) => (
-                <MenuItemOption key={`${value}-view`} value={value}>
-                  {label}
-                </MenuItemOption>
-              ))}
-            </MenuOptionGroup>
-          </MenuList>
-        </Menu>
       </Box>
       <CurrentDialectsForms
-        currentDialectView={currentDialectView}
-        watchDialects={watchDialects}
         record={record}
         originalRecord={originalRecord}
         control={control}
         getValues={getValues}
         setValue={setValue}
-        updateSelectedDialects={updateSelectedDialects}
+        setDialects={setDialects}
+        dialects={dialects}
       />
       <Box className="flex flex-col">
         <FormHeader

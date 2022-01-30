@@ -17,13 +17,13 @@ const schema = yup.object().shape({
     }
     return false;
   }),
-  stems: yup.array().min(0).of(yup.string()),
   variations: yup.array().min(0).of(yup.string()),
   dialects: yup.object().shape({
     dialect: yup.string().optional(),
-    word: yup.string().optional(),
+    variations: yup.array().min(0).of(yup.string()).optional(),
     pronunciation: yup.string().optional(),
   }),
+  stems: yup.array().min(0).of(yup.string()),
   synonyms: yup.array().min(0).of(yup.string()),
   antonyms: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),

@@ -4,10 +4,8 @@ import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { DEFAULT_RECORD } from '../../../../../../constants';
-import Dialects from '../../../../../../../backend/shared/constants/Dialects';
 import { Word } from '../../../../../../../backend/controllers/utils/interfaces';
 import FormHeader from '../../../FormHeader';
-import MoveAudioPronunciation from '../MoveAudioPronunciation';
 import useRecorder from '../../../../../../../hooks/useRecorder';
 
 const AudioRecorder = ({
@@ -16,19 +14,17 @@ const AudioRecorder = ({
   setPronunciation,
   record,
   originalRecord: originalRecordProp,
-  updateSelectedDialects,
 }: {
   path: string,
   getFormValues: (key: string) => any,
   setPronunciation: (key: string, value: any) => any,
   record: Record | Word,
   originalRecord: Record,
-  updateSelectedDialects: (value: string) => void,
 }): ReactElement => {
   const originalRecord = record.originalWordId
     ? originalRecordProp
     : DEFAULT_RECORD;
-  const pathLabel = path === 'headword' ? 'Standard Igbo' : Dialects[path].label;
+  const pathLabel = path === 'headword' ? 'Standard Igbo' : path;
   const pronunciationPath = getFormValues(path === 'headword' ? 'pronunciation' : `dialects.${path}.pronunciation`);
   const [audioBlob, isRecording, startRecording, stopRecording] = useRecorder();
   const toast = useToast();
@@ -135,20 +131,6 @@ const AudioRecorder = ({
           ) : <span className="text-gray-700 italic">No audio pronunciation</span>}
         </Box>
       </Box>
-      {!isRecording ? (
-        <Box>
-          <FormHeader
-            title="Move Audio to Dialect..."
-            tooltip="Moves the current audio recording to a specified dialect"
-          />
-          <MoveAudioPronunciation
-            fromDialect={path}
-            pronunciation={pronunciationPath}
-            setPronunciation={setPronunciation}
-            updateSelectedDialects={updateSelectedDialects}
-          />
-        </Box>
-      ) : null}
     </Box>
   );
 };

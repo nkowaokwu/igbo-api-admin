@@ -35,7 +35,6 @@ import { createExample, executeMergeExample, findExampleByAssociatedWordId } fro
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
 import { DICTIONARY_APP_URL } from '../../config';
-import Dialects from '../../shared/constants/Dialects';
 import { renameAudioPronunciation } from '../utils/AWS-API';
 import * as Interfaces from '../utils/interfaces';
 import WordSuggestion from '../../models/WordSuggestion';
@@ -170,17 +169,6 @@ export const createWord = async (
     ...rest
   } = data;
 
-  const filledDialects = Object.keys(Dialects).reduce((dialectsObject, key) => ({
-    ...dialectsObject,
-    [key]: {
-      variations: [],
-      dialect: key,
-      pronunciation: '',
-      ...dialects[key],
-      word: dialects[key].word || word,
-    },
-  }), {});
-
   const wordData = {
     word,
     wordClass,
@@ -188,7 +176,7 @@ export const createWord = async (
     variations,
     stems,
     isStandardIgbo,
-    dialects: filledDialects,
+    dialects: {},
     ...rest,
   };
 
@@ -258,12 +246,12 @@ const overwriteWordPronunciation = async (
     suggestion.pronunciation = finalPronunciationUri;
     word.pronunciation = finalPronunciationUri;
 
-    await Promise.all(Object.values(suggestion.dialects).map(async ({
-      dialect,
-      pronunciation: suggestionPronunciation,
-    }) => {
-      const wordDialectPronunciationKey = `${word.id}-${dialect}`;
-      const suggestionDialectPronunciationKey = `${suggestion.id}-${dialect}`;
+    await Promise.all(Object.entries(suggestion.dialects).map(async ([
+      dialectalWord,
+      { pronunciation: suggestionPronunciation },
+    ]) => {
+      const wordDialectPronunciationKey = `${word.id}-${dialectalWord}`;
+      const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWord}`;
       /**
        * If the Word dialect's pronunciation doesn't include the Word's id,
        * the dialect's pronunciation uri key will get updated
@@ -273,8 +261,8 @@ const overwriteWordPronunciation = async (
         await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey)
       );
 
-      suggestion.dialects[dialect].pronunciation = finalDialectPronunciationUri;
-      word.dialects[dialect].pronunciation = finalDialectPronunciationUri;
+      suggestion.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
+      word.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
     }));
 
     // Since the word suggestion is no longer needed, we don't need to trigger any AWS-API.ts functions

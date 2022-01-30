@@ -1,15 +1,15 @@
 import { Record } from 'react-admin';
 import { Control } from 'react-hook-form';
+import { WordDialect } from 'src/backend/controllers/utils/interfaces';
 
 interface DialectForm {
-  dialect: string,
-  dialectLabel: string,
-  formData: any,
+  index: number,
   record: Record,
   control: Control,
   getValues: () => any,
-  setValue: (key: string, value: string) => void,
-  updateSelectedDialects: (value: string) => void,
+  setValue: (key: string, value: any) => any,
+  setDialects: (value: ({ word: string } & WordDialect)[]) => void,
+  dialects: ({ word: string } & WordDialect)[],
   originalRecord: any,
 };
 

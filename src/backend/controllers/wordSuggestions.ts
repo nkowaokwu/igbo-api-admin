@@ -200,9 +200,9 @@ export const deleteWordSuggestion = (
         /* Deletes all word pronunciations for the headword and dialects */
         const isPronunciationMp3 = wordSuggestion.pronunciation && wordSuggestion.pronunciation.includes('mp3');
         await deleteAudioPronunciation(id, isPronunciationMp3);
-        await Promise.all(Object.values(wordSuggestion.dialects).map(async ({ dialect, pronunciation }) => {
+        await Promise.all(Object.entries(wordSuggestion.dialects).map(async ([dialectalWord, { pronunciation }]) => {
           const dialectPronunciationMp3 = pronunciation && pronunciation.includes('mp3');
-          deleteAudioPronunciation(`${id}-${dialect}`, dialectPronunciationMp3);
+          deleteAudioPronunciation(`${id}-${dialectalWord}`, dialectPronunciationMp3);
         }));
         const { email: userEmail } = await findUser(wordSuggestion.authorId) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
