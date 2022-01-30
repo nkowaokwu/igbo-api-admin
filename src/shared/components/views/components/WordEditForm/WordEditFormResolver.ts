@@ -17,7 +17,6 @@ const schema = yup.object().shape({
     }
     return false;
   }),
-  stems: yup.array().min(0).of(yup.string()),
   variations: yup.array().min(0).of(yup.string()),
   dialects: yup.object().shape({
     dialect: yup.string().optional(),
@@ -26,6 +25,7 @@ const schema = yup.object().shape({
   }),
   synonyms: yup.array().min(0).of(yup.string()),
   antonyms: yup.array().min(0).of(yup.string()),
+  stems: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(yup.object().shape({
     igbo: yup.string(),
