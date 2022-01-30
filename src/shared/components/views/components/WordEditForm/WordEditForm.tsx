@@ -107,19 +107,30 @@ const WordEditForm = ({
   };
 
   /* Prepares dialects to include all required keys (dialectal word) for Mongoose schema validation */
-  const prepareDialects = (): { dialects: { [key: string]: WordDialect } } => (
-    dialects.reduce((finalDialects, dialect) => (
-      /* The pronunciation, variations, and dialect are required for Mongoose schema validation */
-      {
-        ...finalDialects,
-        [dialect.word]: {
-          dialects: Array.from(new Set([...(finalDialects?.[dialect.dialects] || []), ...dialect.dialects])),
-          variations: Array.from(new Set([...(finalDialects?.[dialect.variations] || []), ...dialect.variations])),
-          pronunciation: !finalDialects?.[dialect.pronunciation] ? dialect.pronunciation : '',
-        },
-      }
-    ), {})
-  );
+  const prepareDialects = (): { dialects: { [key: string]: WordDialect } } => {
+    const formDialects = getValues().dialects;
+    return (
+      dialects.reduce((finalDialects, dialect) => (
+        /* The pronunciation, variations, and dialect are required for Mongoose schema validation */
+        {
+          ...finalDialects,
+          [dialect.word]: {
+            dialects: Array.from(new Set([
+              ...(finalDialects?.[dialect.word]?.dialects || []),
+              ...dialect.dialects,
+            ])),
+            variations: Array.from(new Set([
+              ...(finalDialects?.[dialect.word]?.variations || []),
+              ...dialect.variations,
+            ])),
+            pronunciation: !finalDialects?.[dialect.word]?.pronunciation
+              ? formDialects[dialect.word]?.pronunciation
+              : '',
+          },
+        }
+      ), {})
+    );
+  };
 
   /* Prepares the data to be cached */
   const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {

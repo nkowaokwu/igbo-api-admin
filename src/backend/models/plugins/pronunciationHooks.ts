@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { compact, last } from 'lodash';
+import { compact, last, kebabCase } from 'lodash';
 import * as functions from 'firebase-functions';
 import {
   copyAudioPronunciation,
@@ -41,18 +41,23 @@ export const uploadPronunciation = (schema: mongoose.Schema<Interfaces.WordSugge
       /**
        * Steps through each dialect and checks to see if it has audio data to be saved in AWS
        */
-      await Promise.all(Object.entries(this.dialects).map(async ([dialectalWord, { pronunciation }]) => {
+      await Promise.all(Object.entries(this.dialects).map(async ([rawDialectalWord, { pronunciation }]) => {
+        /**
+         * Since dialectal words, which include spaces are used as the unique keys for these audio files,
+         * the spaces need to be replaced with dashes (-) to avoid any unexpected escaped character edge cases.
+         */
+        const dialectalWord = kebabCase(rawDialectalWord);
         if (isCypress && pronunciation) {
           // Going to mock creating and saving audio pronunciation while testing in Cypress (ref. !isCypress check)
-          this.dialects[dialectalWord].pronunciation = (
+          this.dialects[rawDialectalWord].pronunciation = (
             await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
           );
         } else if (pronunciation.startsWith('data:audio/webm')) {
-          this.dialects[dialectalWord].pronunciation = (
+          this.dialects[rawDialectalWord].pronunciation = (
             await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
           );
-        } else if (!isCypress && isDevelopment && this.dialects[dialectalWord].pronunciation) {
-          this.dialects[dialectalWord].pronunciation = (
+        } else if (!isCypress && isDevelopment && this.dialects[rawDialectalWord].pronunciation) {
+          this.dialects[rawDialectalWord].pronunciation = (
             await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
           );
         } else if (pronunciation.startsWith('https://') && !pronunciation.includes(`${id}-${dialectalWord}`)) {
@@ -63,7 +68,7 @@ export const uploadPronunciation = (schema: mongoose.Schema<Interfaces.WordSugge
           const newId = `${id}-${dialectalWord}`;
 
           /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-          this.dialects[dialectalWord].pronunciation = await (this.isNew
+          this.dialects[rawDialectalWord].pronunciation = await (this.isNew
             ? copyAudioPronunciation(oldId, newId, isMp3)
             : renameAudioPronunciation(oldId, newId, isMp3));
         }

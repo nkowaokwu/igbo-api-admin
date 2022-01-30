@@ -55,6 +55,12 @@ const DialectForm = ({
               const updatedDialects = [...dialects];
               updatedDialects[index].word = dialectalWord;
               setDialects(updatedDialects);
+              /**
+               * We are calling React Hook Form's setValue to update the current dialect's object.
+               * This step is necessary so we can have access to the latest updated dialect in React
+               * Hook Form when preparing our payload to send to the backend.
+               */
+              setValue(`dialects['${dialectalWord}']`, dialect);
             }}
             className="form-input"
             placeholder="Dialectal variation"
@@ -70,8 +76,14 @@ const DialectForm = ({
                 getFormValues={getValues}
                 setPronunciation={(path, value) => {
                   const updatedDialects = [...dialects];
-                  updatedDialects[index][path] = value;
+                  const pathWithoutDialectsPrefix = path.split('dialects.')[1];
+                  updatedDialects[index][pathWithoutDialectsPrefix] = value;
                   setDialects(updatedDialects);
+                  /**
+                   * We are calling React Hook Form's setValue to update the current dialect's pronunciation.
+                   * This step is necessary so we can have access to the latest updated pronunciation
+                   * when preparing our payload to send to the backend.
+                   */
                   setValue(path, value);
                 }}
                 record={record}
