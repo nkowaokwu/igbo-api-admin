@@ -24,6 +24,7 @@ import {
   getTotalHeadwordsWithAudioPronunciations,
   getTotalWordsInStandardIgbo,
   getTotalExampleSentences,
+  getTotalWordsWithNsibidi,
   getCompleteWords,
 } from '../controllers/stats';
 import {
@@ -80,6 +81,7 @@ editorRouter.get('/stats/completeWords', getCompleteWords);
 editorRouter.get('/stats/headwordAudioPronunciations', getTotalHeadwordsWithAudioPronunciations);
 editorRouter.get('/stats/isStandardIgbo', getTotalWordsInStandardIgbo);
 editorRouter.get('/stats/examples', getTotalExampleSentences);
+editorRouter.get('/stats/nsibidi', getTotalWordsWithNsibidi);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);
 editorRouter.get('/genericWords', getGenericWords);

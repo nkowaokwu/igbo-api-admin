@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
 import Example from '../models/Example';
 import Word from '../models/Word';
-import { searchForAllWordsWithAudioPronunciations, searchForAllWordsWithIsStandardIgbo } from './utils/queries';
+import {
+  searchForAllWordsWithAudioPronunciations,
+  searchForAllWordsWithIsStandardIgbo,
+  searchForAllWordsWithNsibidi,
+} from './utils/queries';
 import { findWordsWithMatch } from './utils/buildDocs';
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
@@ -44,6 +48,21 @@ export const getTotalExampleSentences = async (
     const exampleSentences = await Example
       .countDocuments({});
     return res.send({ count: exampleSentences });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Returns all Words with Nsịbịdị */
+export const getTotalWordsWithNsibidi = async (
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
+  try {
+    const wordsWithNsibidi = await Word
+      .countDocuments(searchForAllWordsWithNsibidi());
+    return res.send({ count: wordsWithNsibidi });
   } catch (err) {
     return next(err);
   }

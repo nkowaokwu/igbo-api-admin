@@ -132,6 +132,9 @@ export const searchForAllWordsWithAudioPronunciations = (): { pronunciation: any
 export const searchForAllWordsWithIsStandardIgbo = (): { isStandardIgbo: boolean } => ({
   isStandardIgbo: true,
 });
+export const searchForAllWordsWithNsibidi = (): { nsibidi: { $ne: string } } => ({
+  nsibidi: { $ne: '' },
+});
 export const searchForAssociatedSuggestions = (wordId: string): {
   originalWordId: string,
   merged: { [key: string]: null }

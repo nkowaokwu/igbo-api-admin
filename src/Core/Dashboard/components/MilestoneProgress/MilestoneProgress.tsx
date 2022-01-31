@@ -6,6 +6,7 @@ import network from '../../network';
 import {
   COMPLETE_WORDS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
+  WORDS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
   EXAMPLE_SENTENCES_GOAL,
 } from '../../../constants';
@@ -15,6 +16,7 @@ const MilestoneProgress = (): ReactElement => {
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
+  const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
 
   useEffect(() => {
     network({ url: '/stats/completeWords' })
@@ -25,6 +27,8 @@ const MilestoneProgress = (): ReactElement => {
       .then(({ json: isStandardIgbos }) => setTotalWordIsStandardIgbo(isStandardIgbos.count || 0));
     network({ url: '/stats/examples' })
       .then(({ json: exampleSentences }) => setTotalExampleSentences(exampleSentences.count || 0));
+    network({ url: '/stats/nsibidi' })
+      .then(({ json: wordsWithNsibidi }) => setTotalWordsWithNsibidi(wordsWithNsibidi.count || 0));
   }, []);
   return (
     <>
@@ -52,6 +56,14 @@ const MilestoneProgress = (): ReactElement => {
           with audio pronunciations on the platform.
           Our next goal is to record a total of ${HEADWORD_AUDIO_PRONUNCIATION_GOAL} headwords.`}
           isLoaded={totalHeadwordAudioPronunciation !== null}
+        />
+        <ProgressCard
+          totalCount={totalWordsWithNsibidi}
+          goal={WORDS_WITH_NSIBIDI_GOAL}
+          heading="Words with Nsịbịdị"
+          description={`There are currently ${totalWordsWithNsibidi} words with Nsịbịdị on the platform. 
+          Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`}
+          isLoaded={totalWordsWithNsibidi !== null}
         />
         <ProgressCard
           totalCount={totalWordIsStandardIgbo}
