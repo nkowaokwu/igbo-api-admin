@@ -13,6 +13,7 @@ import {
   ArrayPreview,
   AudioRecordingPreview,
   CompleteWordPreview,
+  HeadwordField,
   StandardIgboPreview,
   ListActions,
   Pagination,
@@ -40,7 +41,7 @@ export const WordList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid expand={<WordPanel />}>
-            <TextField label="Headword" source="word" />
+            <HeadwordField label="Headword" source="word" />
             <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
@@ -49,7 +50,7 @@ export const WordList = (props: ListProps): ReactElement => {
           <Datagrid expand={<WordPanel />}>
             <AudioRecordingPreview label="Audio Recording" />
             <StandardIgboPreview label="Is Standard Igbo" />
-            <TextField label="Headword" source="word" />
+            <HeadwordField label="Headword" source="word" />
             <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />

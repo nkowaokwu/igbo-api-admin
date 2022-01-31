@@ -7,6 +7,7 @@ import StandardIgboPreview from './StandardIgboPreview';
 import { ExampleSuggestionCreate, WordSuggestionCreate } from './views/creates';
 import { ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
+import HeadwordField from './HeadwordField';
 import ArrayPreview from './ArrayPreview';
 import ReviewPreview from './ReviewPreview';
 import EditToolbar from './toolbars/EditToolbar';
@@ -24,6 +25,7 @@ export {
   BulkSuggestionActions,
   CompleteWordPreview,
   Confirmation,
+  HeadwordField,
   StandardIgboPreview,
   ExampleSuggestionCreate,
   WordSuggestionCreate,

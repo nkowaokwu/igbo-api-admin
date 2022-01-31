@@ -18,6 +18,7 @@ import {
   AudioRecordingPreview,
   BulkSuggestionActions,
   CompleteWordPreview,
+  HeadwordField,
   ListActions,
   Pagination,
   ReviewPreview,
@@ -50,7 +51,7 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
         small={(
           <Datagrid expand={<WordPanel />}>
             <ReviewPreview label="Already Reviewed" />
-            <TextField label="Headword" source="word" />
+            <HeadwordField label="Headword" source="word" />
             <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
@@ -60,7 +61,7 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
             <AudioRecordingPreview label="Audio Recording" />
             <StandardIgboPreview label="Is Standard Igbo" />
             <ReviewPreview label="Already Reviewed" />
-            <TextField label="Headword" source="word" />
+            <HeadwordField label="Headword" source="word" />
             <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
