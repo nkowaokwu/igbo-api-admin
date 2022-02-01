@@ -75,7 +75,7 @@ const WordEditForm = ({
   const [synonyms, setSynonyms] = useState(record.synonyms || []);
   const [antonyms, setAntonyms] = useState(record.antonyms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dialects, setDialects] = useState(Object.entries(record.dialects).map(([word, value]) => (
+  const [dialects, setDialects] = useState(Object.entries(record.dialects || {}).map(([word, value]) => (
     { ...value, word }
   )));
   const notify = useNotify();
@@ -109,7 +109,7 @@ const WordEditForm = ({
 
   /* Prepares dialects to include all required keys (dialectal word) for Mongoose schema validation */
   const prepareDialects = (): { dialects: { [key: string]: WordDialect } } => {
-    const formDialects = getValues().dialects;
+    const formDialects = getValues().dialects || {};
     return (
       dialects.reduce((finalDialects, dialect) => (
         /* The pronunciation, variations, and dialect are required for Mongoose schema validation */
@@ -135,7 +135,7 @@ const WordEditForm = ({
 
   /* Prepares the data to be cached */
   const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {
-    const dialects = prepareDialects();
+    const dialects = prepareDialects() || {};
     const cleanedData = {
       ...record,
       ...data,
