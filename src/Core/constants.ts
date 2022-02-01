@@ -8,5 +8,6 @@ export const SOFTWARE_ENGINEERS_SLACK_CHANNEL = 'https://igboapi.slack.com/archi
 
 export const COMPLETE_WORDS_GOAL = 8095;
 export const HEADWORD_AUDIO_PRONUNCIATION_GOAL = 2700;
+export const WORDS_WITH_NSIBIDI_GOAL = 1000;
 export const IS_STANDARD_IGBO_GOAL = 1700;
 export const EXAMPLE_SENTENCES_GOAL = 4000;

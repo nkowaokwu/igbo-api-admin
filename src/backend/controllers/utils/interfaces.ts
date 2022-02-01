@@ -24,8 +24,7 @@ export interface WordClientData extends Word {
 }
 
 export interface WordDialect {
-  word: string,
-  dialect: string,
+  dialects: string[],
   variations: string[],
   pronunciation: string,
 }
@@ -69,10 +68,7 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   mergedBy?: string,
   examples?: ExampleSuggestion[],
   dialects?: {
-    [key: string]: {
-      dialect: string,
-      pronunciation: string,
-    },
+    [key: string]: WordDialect,
   }
 };
 

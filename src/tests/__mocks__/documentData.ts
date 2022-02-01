@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import Dialects from '../../backend/shared/constants/Dialects';
 
 const { ObjectId } = mongoose.Types;
 
@@ -9,15 +8,7 @@ const wordSuggestionData = {
   word: 'word',
   wordClass: 'wordClass',
   definitions: ['first'],
-  dialects: Object.keys(Dialects).reduce((dialectsObject, key) => ({
-    ...dialectsObject,
-    [key]: {
-      word: '',
-      variations: [],
-      dialect: key,
-      pronunciation: '',
-    },
-  }), {}),
+  dialects: {},
 };
 
 const wordSuggestionApprovedData = {

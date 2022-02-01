@@ -8,11 +8,10 @@ import {
   RedirectionSideEffect,
   TransformData,
 } from 'react-admin';
-import { Word } from '../../backend/controllers/utils/interfaces';
 
 export interface EditFormProps {
   view: string,
-  record: Record | Word,
+  record: Record,
   save: (record: Partial<Record>, redirect: RedirectionSideEffect, callbacks?: {
     onSuccess?: OnSuccess;
     onFailure?: OnFailure;
