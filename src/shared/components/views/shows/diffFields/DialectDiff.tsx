@@ -18,9 +18,10 @@ import * as Interfaces from '../../../../../backend/controllers/utils/interfaces
 
 /* Renders the visual red/green diff sections in the Show view */
 const DialectDiff = (
-  { record, diffRecord, resource }:
+  { record: propRecord, diffRecord, resource }:
   { record: Record, diffRecord: any, resource: string },
 ): ReactElement => {
+  const record = { ...(propRecord || {}), dialects: propRecord?.dialects || {} };
   const updatedDialects = [];
   // TODO: update this!!
   // diffRecord?.forEach(({ path = [] }) => {
@@ -32,7 +33,8 @@ const DialectDiff = (
   //     });
   // });
 
-  return record.word ? (
+  // @ts-ignore
+  return record?.word ? (
     <Box className="w-full">
       {updatedDialects.length ? updatedDialects.map(({ value, label }) => (
         <>
