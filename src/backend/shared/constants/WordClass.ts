@@ -14,6 +14,10 @@ const WordClass = {
     value: 'AV',
     label: 'Active verb',
   },
+  MV: {
+    value: 'MV',
+    label: 'Medial verb',
+  },
   PV: {
     value: 'PV',
     label: 'Passive verb',
