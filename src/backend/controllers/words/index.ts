@@ -420,23 +420,28 @@ export const deleteWord = async (req: Request, res: Response, next: NextFunction
     const { primaryWordId }: { primaryWordId: string } = data;
 
     const {
-      word,
+      pronunciation,
       definitions = [],
       variations = [],
       stems = [],
+      synonyms = [],
+      antonyms = [],
+      hypernyms = [],
+      hyponyms = [],
+      nsibidi,
     }: Document<Interfaces.Word> | any = await Word.findById(toBeDeletedWordId);
     const toBeDeletedWordExamples: Interfaces.Example[] | any = await findExampleByAssociatedWordId(toBeDeletedWordId);
     const savedCombinedWord = await findAndUpdateWord(primaryWordId, async (combineWord: Interfaces.Word) => {
       const updatedWord = assign(combineWord);
-      updatedWord.definitions = uniqBy(
-        [...(updatedWord.definitions || []), ...(definitions || [])],
-        (definition) => definition,
-      );
-      updatedWord.variations = uniqBy(
-        [...(updatedWord.variations || []), ...(variations || []), word],
-        (variation) => variation,
-      );
-      updatedWord.stems = uniqBy([...(updatedWord.stems || []), ...(stems || [])], (stem) => stem);
+      updatedWord.pronunciation = updatedWord.pronunciation || pronunciation;
+      updatedWord.definitions = Array.from(new Set([...updatedWord.definitions, ...definitions]));
+      updatedWord.variations = Array.from(new Set([...updatedWord.variations, ...variations]));
+      updatedWord.stems = Array.from(new Set([...updatedWord.stems, ...stems]));
+      updatedWord.synonyms = Array.from(new Set([...updatedWord.synonyms, ...synonyms]));
+      updatedWord.antonyms = Array.from(new Set([...updatedWord.antonyms, ...antonyms]));
+      updatedWord.hypernyms = Array.from(new Set([...updatedWord.hypernyms, ...hypernyms]));
+      updatedWord.hyponyms = Array.from(new Set([...updatedWord.hyponyms, ...hyponyms]));
+      updatedWord.nsibidi = updatedWord.nsibidi || nsibidi;
 
       /* Deletes the specified word and connected wordSuggestions regardless of their merged status */
       await Word.deleteOne({ _id: toBeDeletedWordId });
