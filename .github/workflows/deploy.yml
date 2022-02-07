@@ -51,6 +51,7 @@ jobs:
           firebase functions:config:set sendgrid.rejected_suggestion_template=$SENDGRID_REJECTED_SUGGESTION_TEMPLATE sendgrid.merged_stats_template=$SENDGRID_MERGED_STATS_TEMPLATE sendgrid.suggestions_review_reminder_template=$SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE --token $FIREBASE_TOKEN
           firebase functions:config:set sendgrid.new_user_notification_template=$SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE --token $FIREBASE_TOKEN
           firebase functions:config:set sendgrid.updated_role_notification=$SENDGRID_UPDATED_ROLE_NOTIFICATION --token $FIREBASE_TOKEN
+          firebase functions:config:set sendgrid.document_deletion_request_notification=$SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION --token $FIREBASE_TOKEN
           firebase functions:config:set sendgrid.sender_email=$SENDGRID_SENDER_EMAIL --token $FIREBASE_TOKEN
           firebase functions:config:set aws.access_key=$AWS_ACCESS_KEY aws.secret_access_key=$AWS_SECRET_ACCESS_KEY aws.bucket=$AWS_BUCKET aws.region=$AWS_REGION
           yarn build
@@ -68,6 +69,7 @@ jobs:
           SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE: ${{ secrets.SENDGRID_SUGGESTIONS_REVIEW_REMINDER_TEMPLATE }}
           SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE: ${{ secrets.SENDGRID_NEW_USER_NOTIFICATION_TEMPLATE }}
           SENDGRID_UPDATED_ROLE_NOTIFICATION: ${{ secrets.SENDGRID_UPDATED_ROLE_NOTIFICATION }}
+          SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION: ${{ secrets.SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION }}
           SENDGRID_SENDER_EMAIL: ${{ secrets.SENDGRID_SENDER_EMAIL }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

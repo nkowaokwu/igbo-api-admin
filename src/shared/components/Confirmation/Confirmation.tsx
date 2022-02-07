@@ -1,13 +1,14 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { has } from 'lodash';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { Input, useToast } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import { useRefresh } from 'react-admin';
 import ConfirmModal from '../ConfirmModal';
 import ActionTypes from '../../constants/ActionTypes';
 import Collections from '../../constants/Collections';
 import Views from '../../constants/Views';
-import { ConfirmationButtonInterface, ConfirmationInputInterface } from './ConfirmationInterface';
+import { ConfirmationButtonInterface } from './ConfirmationInterface';
 import useFirebaseUid from '../../../hooks/useFirebaseUid';
 import {
   approveRecord,
@@ -15,31 +16,10 @@ import {
   denyRecord,
   mergeRecord,
 } from '../UpdateRecord';
+import InputIdForm from './InputIdForm';
+import InputNoteForm from './InputNoteForm';
 
 const MAX_EDITING_GROUP_NUMBER = 3;
-
-/* Custom form for taking in word ids */
-const InputIdForm = (
-  {
-    onChange,
-    value,
-    onSubmit,
-    header,
-    ...rest
-  }: ConfirmationInputInterface,
-) => (
-  <form onSubmit={onSubmit}>
-    <h1 className="text-gray-700">{header}</h1>
-    <Input
-      required
-      className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border border-solid border-gray-400"
-      type="text"
-      value={value}
-      onChange={onChange}
-      {...rest}
-    />
-  </form>
-);
 
 const Confirmation = ({
   push,
@@ -62,13 +42,13 @@ const Confirmation = ({
 
   const buildUpdatedRecord = () => {
     switch (action.type) {
-      case 'Approve':
+      case ActionTypes.APPROVE:
         return approveRecord({ uid, record });
-      case 'Deny':
+      case ActionTypes.DENY:
         return denyRecord({ uid, record });
-      case 'Merge':
+      case ActionTypes.MERGE:
         return mergeRecord({ uid, record });
-      case 'Convert':
+      case ActionTypes.CONVERT:
         return convertUser({ uid, record });
       default:
         return record;
@@ -156,11 +136,13 @@ const Confirmation = ({
 
   const provideInputValueUponSubmit = (): void => {
     action.executeAction({
-      ...(action?.type === 'Combine'
+      ...(action?.type === ActionTypes.COMBINE
         ? { primaryWordId: idValue }
-        : action?.type === 'AssignEditingGroup'
+        : action?.type === ActionTypes.ASSIGN_EDITING_GROUP
           ? { groupNumber: idValue }
-          : {}),
+          : action?.type === ActionTypes.REQUEST_DELETE
+            ? { note: idValue }
+            : {}),
       resource,
       record,
     })
@@ -183,13 +165,16 @@ const Confirmation = ({
             isClosable: true,
           });
         }
-        push(`/${resource}`);
-        refresh();
+
+        if (!(has(data, 'redirect') && !data.redirect)) {
+          push(`/${resource}`);
+          refresh();
+        }
       })
       .catch((error) => {
         toast({
           title: 'Error',
-          description: `Error: ${error.response.data.error}`,
+          description: `Error: ${error?.response?.data?.error || error.message}`,
           status: 'error',
           duration: 4000,
           isClosable: true,
@@ -197,14 +182,19 @@ const Confirmation = ({
       });
   };
 
-  const handleConfirm = (): void => {
-    if (action?.type === 'Combine' || action?.type === 'AssignEditingGroup') {
+  const handleConfirm = (): any => {
+    if (
+      action?.type === ActionTypes.COMBINE
+      || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+      || action?.type === ActionTypes.REQUEST_DELETE
+    ) {
       provideInputValueUponSubmit();
     } else {
       handleClick();
     }
     setIsConfirmOpen(false);
     onClose();
+    setIdValue('');
   };
 
   const determineConfirmColorScheme = () => (
@@ -221,6 +211,7 @@ const Confirmation = ({
       title={action?.title}
       confirm={action?.type}
       cancel="Cancel"
+      isDisabled={!idValue}
       onConfirm={handleConfirm}
       confirmColorScheme={determineConfirmColorScheme()}
       onClose={() => {
@@ -229,7 +220,7 @@ const Confirmation = ({
       }}
     >
       {action?.content}
-      {action?.type === 'Combine' ? (
+      {action?.type === ActionTypes.COMBINE ? (
         <InputIdForm
           onSubmit={handleConfirm}
           onChange={(e) => setIdValue(e.target.value)}
@@ -240,7 +231,18 @@ const Confirmation = ({
           type="text"
         />
       ) : null}
-      {action?.type === 'AssignEditingGroup' ? (
+      {action?.type === ActionTypes.REQUEST_DELETE ? (
+        <InputNoteForm
+          onSubmit={handleConfirm}
+          onChange={(e) => setIdValue(e.target.value)}
+          value={idValue}
+          header="Provide as much detail as possible."
+          data-test="primary-word-id-input"
+          placeholder="Reason for deletion request"
+          type="text"
+        />
+      ) : null}
+      {action?.type === ActionTypes.ASSIGN_EDITING_GROUP ? (
         <InputIdForm
           onSubmit={handleConfirm}
           onChange={(e) => setIdValue(e.target.value)}

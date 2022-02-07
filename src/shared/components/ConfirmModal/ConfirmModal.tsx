@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -21,6 +22,7 @@ const ConfirmModal = ({
   confirmColorScheme,
   cancel,
   title,
+  isDisabled,
   children,
 }: ConfirmModalInterface): ReactElement => (
   <AlertDialog
@@ -47,8 +49,9 @@ const ConfirmModal = ({
         </Button>
         <Button
           colorScheme={confirmColorScheme}
-          onClick={onConfirm}
+          onClick={isDisabled ? noop : onConfirm}
           isLoading={isConfirming}
+          disabled={isDisabled}
           ml={3}
           data-test="confirmation-confirm-button"
         >
@@ -61,6 +64,11 @@ const ConfirmModal = ({
 
 ConfirmModal.propTypes = {
   onClose: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
+};
+
+ConfirmModal.defaultProps = {
+  isDisabled: false,
 };
 
 export default ConfirmModal;
