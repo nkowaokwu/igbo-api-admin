@@ -9,6 +9,7 @@ import {
   SUGGESTIONS_REVIEW_REMINDER_TEMPLATE,
   NEW_USER_NOTIFICATION_TEMPLATE,
   UPDATED_ROLE_NOTIFICATION,
+  DOCUMENT_DELETION_REQUEST_NOTIFICATION,
 } from '../config';
 import { findAdminUserEmails } from './users';
 import * as Interfaces from './utils/interfaces';
@@ -34,9 +35,9 @@ export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void>
       console.log('Email successfully sent.');
     })
     .catch((err) => {
-      console.trace('sendEmail error:', err.response.body);
+      console.trace('sendEmail error:', err.response?.body || err.message);
       if (process.env.NODE_ENV !== 'production') {
-        return Promise.resolve(err.response.body);
+        return Promise.resolve(err.response?.body || err.message);
       }
       throw err;
     }) : (async () => {
@@ -103,7 +104,7 @@ export const sendSuggestionsReminder = async (data: Interfaces.SuggestionsRemind
 
 /* Emails admins about new user accounts */
 export const sendNewUserNotification = async (data: Interfaces.NewUserData): Promise<void> => {
-  const adminEmails = await findAdminUserEmails();
+  const adminEmails = await findAdminUserEmails() as [string];
   const message = constructMessage({
     from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: adminEmails,
@@ -119,6 +120,19 @@ export const sendUpdatedRoleNotification = (
       from: { email: API_FROM_EMAIL, name: 'Igbo API' },
       to: data.to,
       templateId: UPDATED_ROLE_NOTIFICATION,
+      dynamic_template_data: omit(data, ['to']),
+    });
+    return sendEmail(message);
+  }
+);
+
+export const sendDocumentDeletionRequestNotification = (
+  async (data: Interfaces.DocumentDeletionRequestNotification): Promise<void> => {
+    const adminEmails = await findAdminUserEmails() as [string];
+    const message = constructMessage({
+      from: { email: API_FROM_EMAIL, name: 'Igbo API' },
+      to: adminEmails,
+      templateId: DOCUMENT_DELETION_REQUEST_NOTIFICATION,
       dynamic_template_data: omit(data, ['to']),
     });
     return sendEmail(message);

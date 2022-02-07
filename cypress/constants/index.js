@@ -91,6 +91,7 @@ export const DocumentSelectOptions = {
   VIEW: 'View',
   SUGGEST_NEW_EDIT: 'Suggest New Edit',
   COMBINE_WORD_INTO: 'Combine Word Into...',
+  REQUEST_DELETE: /(Request to Delete Word)|(Request to Delete Example)/,
 };
 
 export const SuggestionSelectOptions = {

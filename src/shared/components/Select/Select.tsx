@@ -12,6 +12,7 @@ import Select from 'react-select';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+import ActionTypes from '../../constants/ActionTypes';
 import Confirmation from '../Confirmation';
 import { hasAdminOrMergerPermissions, hasAdminPermissions } from '../../utils/permissions';
 import { determineCreateSuggestionRedirection } from '../../utils';
@@ -147,6 +148,16 @@ const CustomSelect = ({
       label: 'Combine Word Into...',
       onSelect: ({ setAction }) => setAction(actionsMap.Combine),
     }] : null),
+    {
+      value: 'requestDelete',
+      label: (() => (
+        <span className="text-red-500">
+          <DeleteIcon className="mr-2" />
+          {`Request to Delete ${resource === Collection.WORDS ? 'Word' : 'Example'}`}
+        </span>
+      ))(),
+      onSelect: ({ setAction }) => setAction(actionsMap[ActionTypes.REQUEST_DELETE]),
+    },
   ]));
 
   const options = resource === Collection.USERS

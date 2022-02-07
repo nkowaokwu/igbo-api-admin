@@ -7,6 +7,7 @@ interface ConfirmModal {
   cancel: string,
   onConfirm: () => void,
   onClose: () => void,
+  isDisabled?: boolean,
   children: any,
 };
 

@@ -14,6 +14,7 @@ import ActionTypes from './ActionTypes';
 
 const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
+const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
 
 export default {
   [ActionTypes.EDIT]: (resource: string, id: string): string => `/${resource}/${id}/edit`,
@@ -106,6 +107,18 @@ export default {
       return Promise.resolve();
     },
     successMessage: 'User role has been updated 👩🏾‍💻',
+  },
+  [ActionTypes.REQUEST_DELETE]: {
+    type: 'Send Delete Request',
+    title: 'Request to Delete Document',
+    content: 'Please explain why this document should be deleted. This note will be sent project admins for review.',
+    executeAction: (
+      { note, resource, record }:
+      { note: string, resource: string, record: Record },
+    ): Promise<any> => (
+      handleRequestDeleteDocument({ note, resource, record })
+    ),
+    successMessage: 'Your deletion request has been sent to admins 📨',
   },
   [ActionTypes.DELETE_USER]: {
     type: 'DeleteUser',

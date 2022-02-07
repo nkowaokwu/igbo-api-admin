@@ -15,6 +15,7 @@ export const MERGED_STATS_TEMPLATE = config?.sendgrid?.merged_stats_template;
 export const SUGGESTIONS_REVIEW_REMINDER_TEMPLATE = config?.sendgrid?.suggestions_review_reminder_template;
 export const NEW_USER_NOTIFICATION_TEMPLATE = config?.sendgrid?.new_user_notification_template;
 export const UPDATED_ROLE_NOTIFICATION = config?.sendgrid?.updated_role_notification;
+export const DOCUMENT_DELETION_REQUEST_NOTIFICATION = config?.sendgrid?.document_deletion_request_notification;
 export const API_FROM_EMAIL = config?.sendgrid?.sender_email;
 export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email;
 

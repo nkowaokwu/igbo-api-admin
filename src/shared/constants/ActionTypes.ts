@@ -16,6 +16,7 @@ enum ActionTypes {
   COMBINE = 'Combine',
   ASSIGN_EDITING_GROUP = 'AssignEditingGroup',
   CONVERT = 'Convert',
+  REQUEST_DELETE = 'Send Delete Request',
   DELETE_USER = 'DeleteUser',
 };
 

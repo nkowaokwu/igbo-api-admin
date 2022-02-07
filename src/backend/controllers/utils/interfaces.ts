@@ -126,7 +126,17 @@ export interface UpdatedRoleNotificationData {
   to: [string],
   displayName: string,
   role: Role,
-}
+};
+
+export interface DocumentDeletionRequestNotification {
+  translator: string,
+  translatorEmail: string,
+  note: string
+  resource: string,
+  id: string,
+  word: string,
+  definition: string,
+};
 
 export interface EmailMessage {
   from?: {
