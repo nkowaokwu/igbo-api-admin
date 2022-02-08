@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins';
-import { uploadPronunciation } from './plugins/pronunciationHooks';
+import { uploadWordPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
 import WordClass from '../shared/constants/WordClass';
 
@@ -63,7 +63,7 @@ const wordSuggestionSchema = new Schema(
 
 toJSONPlugin(wordSuggestionSchema);
 updatedOnHook(wordSuggestionSchema);
-uploadPronunciation(wordSuggestionSchema);
+uploadWordPronunciation(wordSuggestionSchema);
 
 wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
   const wordSuggestionId = this.getQuery()._id;

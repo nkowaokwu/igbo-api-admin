@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { compact } from 'lodash';
 import {
   Box,
   IconButton,
@@ -9,7 +10,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from '../../../../../primitives';
-import network from '../../../../../../Core/Dashboard/network';
+import { resolveWord } from '../../../../../API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
@@ -24,10 +25,11 @@ const AssociatedWords = (
     (async () => {
       setIsLoadingAssociatedWords(true);
       try {
-        setResolvedAssociatedWords(await Promise.all(associatedWordIds.map(async (associatedWordId) => {
-          const associatedWord = await network({ url: `/words/${associatedWordId}` }).then(({ json: word }) => word);
+        const associatedWordPromises = await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
+          const associatedWord = await resolveWord(associatedWordId);
           return associatedWord;
-        })));
+        }));
+        setResolvedAssociatedWords(associatedWordPromises);
       } finally {
         setIsLoadingAssociatedWords(false);
       }
@@ -38,9 +40,9 @@ const AssociatedWords = (
     <Spinner />
   ) : resolvedAssociatedWords && resolvedAssociatedWords.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3">
-      {resolvedAssociatedWords.map((word, index) => (
+      {resolvedAssociatedWords.map((associatedWord, index) => (
         <Box
-          key={word.id}
+          key={associatedWord.id}
           display="flex"
           flexDirection="row"
           justifyContent="space-between"
@@ -54,7 +56,7 @@ const AssociatedWords = (
           px={6}
         >
           <WordPill
-            {...word}
+            {...associatedWord}
             index={index}
             onDelete={() => {
               const filteredAssociatedWords = [...associatedWordIds];

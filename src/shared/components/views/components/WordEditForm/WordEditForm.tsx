@@ -30,7 +30,7 @@ import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import NsibidiForm from './components/NsibidiForm';
 import ExamplesForm from './components/ExamplesForm';
-import AudioRecorder from './components/AudioRecorder';
+import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
 

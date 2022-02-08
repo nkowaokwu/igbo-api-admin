@@ -5,7 +5,7 @@ import Select from 'react-select';
 import { Controller } from 'react-hook-form';
 import { Input } from '../../../../../primitives';
 import DialectFormInterface from './DialectFormInterface';
-import AudioRecorder from '../components/AudioRecorder';
+import AudioRecorder from '../../AudioRecorder';
 import Dialects from '../../../../../../backend/shared/constants/Dialects';
 
 const DialectForm = ({
