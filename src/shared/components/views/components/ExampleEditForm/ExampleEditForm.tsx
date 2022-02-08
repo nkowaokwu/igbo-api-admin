@@ -5,7 +5,6 @@ import {
   omit,
 } from 'lodash';
 import { Box, Button, useToast } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import ExampleEditFormSchemaResolver from './schema';
@@ -16,6 +15,7 @@ import useBeforeWindowUnload from '../../../../../hooks/useBeforeWindowUnload';
 import useCacheForm from '../../../../../hooks/useCacheForm';
 import { Textarea, Input } from '../../../../primitives';
 import FormHeader from '../FormHeader';
+import AssociatedWordsForm from './components/AssociatedWordsForm';
 
 const ExampleEditForm = ({
   view,
@@ -70,12 +70,17 @@ const ExampleEditForm = ({
    */
   const onSubmit = (data) => {
     setIsSubmitting(true);
-    const cleanedData = omit(assign({
-      ...record,
-      ...data,
-      approvals: map(record.approvals, (approval) => approval.uid),
-      denials: map(record.denials, (denial) => denial.uid),
-    }, createCacheExampleData(data, record)), [view === View.CREATE ? 'id' : '']);
+    const cleanedData = omit(assign(
+      {
+        ...record,
+        ...data,
+      },
+      createCacheExampleData(data, record),
+      {
+        approvals: map(record.approvals, (approval) => approval.uid),
+        denials: map(record.denials, (denial) => denial.uid),
+      },
+    ), [view === View.CREATE ? 'id' : '']);
     localStorage.removeItem('igbo-api-admin-form');
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
@@ -164,63 +169,14 @@ const ExampleEditForm = ({
           <p className="error">English is required</p>
         )}
       </Box>
-      <Box className="flex items-center my-5 w-full justify-between">
-        <FormHeader
-          title="Associated Word Ids"
-          tooltip={`The id of a word that is found in this example sentence. 
-          Adding word ids enables interlinking between words and example sentences`}
-        />
-        <Button
-          className="h-12 px-3"
-          colorScheme="green"
-          aria-label="Add Associated Word Id"
-          onClick={() => {
-            const updateAssociatedWords = [...associatedWords];
-            updateAssociatedWords.push('');
-            setAssociatedWords(updateAssociatedWords);
-          }}
-        >
-          Add Associated Word Id
-        </Button>
-      </Box>
-      {associatedWords.map((associatedWord, index) => (
-        <>
-          <Box className="list-container">
-            <h3 className="text-xl text-gray-600 mr-2">{`${index + 1}.`}</h3>
-            <Controller
-              render={(props) => (
-                <Input
-                  {...props}
-                  className="form-input"
-                  placeholder="Associated Word Id"
-                  data-test={`associated-words-${index}-input`}
-                />
-              )}
-              name={`associatedWords[${index}]`}
-              defaultValue={associatedWord}
-              control={control}
-            />
-            {index ? (
-              <Button
-                colorScheme="red"
-                aria-label="Delete Associated Word Id"
-                onClick={() => {
-                  const updateAssociatedWords = [...associatedWords];
-                  updateAssociatedWords.splice(index, 1);
-                  setAssociatedWords(updateAssociatedWords);
-                }}
-                className="ml-3"
-                leftIcon={<DeleteIcon />}
-              >
-                Delete
-              </Button>
-            ) : null}
-          </Box>
-        </>
-      ))}
-      {errors.associatedWords && (
-        <p className="error">An associated word Id is required</p>
-      )}
+      <AssociatedWordsForm
+        errors={errors}
+        associatedWords={associatedWords}
+        setAssociatedWords={setAssociatedWords}
+        control={control}
+        setValue={setValue}
+        record={record}
+      />
       <Box className="flex flex-col">
         <FormHeader
           title="Editor Comments"

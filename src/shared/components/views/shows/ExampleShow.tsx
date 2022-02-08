@@ -11,6 +11,7 @@ import { DEFAULT_RECORD } from '../../../constants';
 import View from '../../../constants/Views';
 import Collection from '../../../constants/Collections';
 import { determineDate } from '../utils';
+import ResolvedWord from '../../ResolvedWord';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const { record, resource } = useShowController(props);
@@ -62,12 +63,12 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               <Text className="text-2xl text-gray-800">{english}</Text>
             </Box>
             <Box className="flex flex-col mt-5">
-              <Text fontWeight="bold" className="text-xl text-gray-600">Associated Word Ids</Text>
+              <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
               {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (
-                <Text className="text-xl">
-                  <span className="text-gray-600">{`${index + 1}. `}</span>
-                  <a className="link" href={`#/words/${associatedWord}/show`}>{`${associatedWord}`}</a>
-                </Text>
+                <Box className="flex flex-row items-center space-x-2">
+                  <Text>{`${index + 1}. `}</Text>
+                  <ResolvedWord key={associatedWord} wordId={associatedWord} />
+                </Box>
               )) : <span className="text-gray-500 italic">No associated word Ids</span>}
             </Box>
             {resource !== Collection.EXAMPLES ? (
