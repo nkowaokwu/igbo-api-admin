@@ -8,9 +8,10 @@ const populateList = (items = [], source) => {
   if (!items?.length) {
     return [];
   }
+  const isResolvable = source === 'stems' || source === 'associatedWords';
   const itemsPreview = items.slice(0, 10).map((item) => (
     <li className="list-disc" key={item}>
-      {source === 'stems' ? (
+      {isResolvable ? (
         <ResolvedWord wordId={item} />
       ) : (
         truncate(item, { length: 120 })

@@ -399,7 +399,7 @@ describe('Edit', () => {
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
       cy.get('h1').contains('Igbo');
       cy.get('h1').contains('English');
-      cy.get('h1').contains('Associated Word Ids');
+      cy.get('h1').contains('Associated Words');
     });
 
     it('render the same values after suggesting edit for word', () => {

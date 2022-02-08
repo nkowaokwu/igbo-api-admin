@@ -43,7 +43,7 @@ export const ExampleList = (props: ListProps): ReactElement => {
           <Datagrid>
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
-            <ArrayPreview label="Associated Words Ids" source="associatedWords" />
+            <ArrayPreview label="Associated Words" source="associatedWords" />
             <TextField label="Id" source="id" />
             <Select collection="examples" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
