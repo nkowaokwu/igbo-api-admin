@@ -10,6 +10,7 @@ import {
 } from 'src/Core/constants';
 import ProgressCard from '../ProgressCard';
 
+const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
   const [totalCompleteWords, setTotalCompletedWords] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
@@ -17,19 +18,48 @@ const MilestoneProgress = (): ReactElement => {
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
 
+  const redirectToLogin = () => {
+    window.location.hash = '#/';
+  };
+
   useEffect(() => {
     network({ url: '/stats/completeWords' })
-      .then(({ body: completeWords }) => setTotalCompletedWords(JSON.parse(completeWords).count || 0));
+      .then(({ body: completeWords }) => setTotalCompletedWords(JSON.parse(completeWords).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/headwordAudioPronunciations' })
       .then(({ body: audioPronunciations }) => (
         setTotalHeadwordAudioPronunciation(JSON.parse(audioPronunciations).count || 0)
-      ));
+      ))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/isStandardIgbo' })
-      .then(({ body: isStandardIgbos }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbos).count || 0));
+      .then(({ body: isStandardIgbos }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbos).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/examples' })
-      .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0));
+      .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/nsibidi' })
-      .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0));
+      .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
   }, []);
   return (
     <>
