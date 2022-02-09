@@ -40,6 +40,12 @@ const Confirmation = ({
 
   useFirebaseUid(setUid);
 
+  const requiresInput = (
+    action?.type === ActionTypes.REQUEST_DELETE
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+  );
+
   const buildUpdatedRecord = () => {
     switch (action.type) {
       case ActionTypes.APPROVE:
@@ -211,7 +217,7 @@ const Confirmation = ({
       title={action?.title}
       confirm={action?.type}
       cancel="Cancel"
-      isDisabled={!idValue}
+      isDisabled={requiresInput && !idValue}
       onConfirm={handleConfirm}
       confirmColorScheme={determineConfirmColorScheme()}
       onClose={() => {
