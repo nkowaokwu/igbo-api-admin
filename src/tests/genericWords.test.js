@@ -1,6 +1,6 @@
 import chai from 'chai';
 import { forIn, forEach, isEqual } from 'lodash';
-import SortingDirections from '../../functions/src/backend/shared/constants/sortingDirections';
+import SortingDirections from 'src/../functions/src/backend/shared/constants/sortingDirections';
 import {
   approveGenericWord,
   getGenericWords,

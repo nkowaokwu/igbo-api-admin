@@ -1,7 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import { Tooltip } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
-import useFirebaseUid from '../../hooks/useFirebaseUid';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
 
 /* Determines whether or not current user has reviewed the current document */
 const ReviewPreview = ({ record }: { record: { approvals: string[], denials: string[] } }): ReactElement => {

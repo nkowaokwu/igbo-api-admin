@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { Box, Spinner, Tooltip } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
-import network from '../../Core/Dashboard/network';
+import network from 'src/Core/Dashboard/network';
 
 const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
   const [resolvedWord, setResolvedWord] = useState(null);

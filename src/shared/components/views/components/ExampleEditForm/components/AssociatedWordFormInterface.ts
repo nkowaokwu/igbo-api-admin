@@ -1,6 +1,6 @@
 import { Record } from 'react-admin';
 import { Control } from 'react-hook-form';
-import { Word } from '../../../../../../backend/controllers/utils/interfaces';
+import { Word } from 'src/backend/controllers/utils/interfaces';
 
 interface AssociatedWordssForm {
   errors: any,

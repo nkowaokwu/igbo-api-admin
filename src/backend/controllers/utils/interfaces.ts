@@ -1,6 +1,6 @@
 import { Document, LeanDocument, Types } from 'mongoose';
 import { Request } from 'functions/node_modules/@types/express';
-import { Role } from '../../../shared/constants/auth-types';
+import { Role } from 'src/shared/constants/auth-types';
 
 export interface EditorRequest extends Request {
   user: {

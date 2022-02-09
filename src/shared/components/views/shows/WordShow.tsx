@@ -3,25 +3,25 @@ import { ShowProps, useShowController } from 'react-admin';
 import { Box, Heading, Skeleton } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
+import { DEFAULT_RECORD } from 'src/shared/constants';
+import View from 'src/shared/constants/Views';
+import Collection from 'src/shared/constants/Collections';
+import WordClass from 'src/shared/constants/WordClass';
+import { getWord } from 'src/shared/API';
+import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
+import ResolvedWord from 'src/shared/components/ResolvedWord';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
   EditDocumentIds,
   Comments,
 } from '../components';
-import { DEFAULT_RECORD } from '../../../constants';
-import View from '../../../constants/Views';
-import Collection from '../../../constants/Collections';
-import WordClass from '../../../constants/WordClass';
-import { getWord } from '../../../API';
 import { determineDate } from '../utils';
 import DialectDiff from './diffFields/DialectDiff';
 import DiffField from './diffFields/DiffField';
 import ArrayDiffField from './diffFields/ArrayDiffField';
 import ExampleDiff from './diffFields/ExampleDiff';
 import ArrayDiff from './diffFields/ArrayDiff';
-import CompleteWordPreview from '../../CompleteWordPreview';
-import ResolvedWord from '../../ResolvedWord';
 
 const DIFF_FILTER_KEYS = [
   'id',

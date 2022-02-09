@@ -9,9 +9,9 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { compact } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { Input, WordPill } from '../../../../../../primitives';
-import network from '../../../../../../../Core/Dashboard/network';
-import { resolveWord } from '../../../../../../API';
+import { Input, WordPill } from 'src/shared/primitives';
+import network from 'src/Core/Dashboard/network';
+import { resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 

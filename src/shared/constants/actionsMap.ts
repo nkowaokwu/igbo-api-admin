@@ -1,7 +1,7 @@
 import { Record } from 'react-admin';
+import { EmptyResponse } from 'src/shared/server-validation';
+import { useCallable } from 'src/hooks/useCallable';
 import { Role } from './auth-types';
-import { EmptyResponse } from '../server-validation';
-import { useCallable } from '../../hooks/useCallable';
 import {
   approveDocument,
   denyDocument,

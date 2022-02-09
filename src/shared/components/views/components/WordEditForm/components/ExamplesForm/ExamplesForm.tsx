@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Input } from '../../../../../../primitives';
+import { Input } from 'src/shared/primitives';
 import AddExampleButton from './AddExampleButton';
 import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';

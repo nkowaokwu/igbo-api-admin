@@ -14,9 +14,9 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
-import getWord from '../../utils/getWord';
+import getWord from 'src/utils/getWord';
+import useEventListener from 'src/hooks/useEventListener';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
-import useEventListener from '../../hooks/useEventListener';
 import { handlePosition, handleIsEditing } from './utils/positions';
 
 const Input = React.forwardRef(({

@@ -9,8 +9,8 @@ import {
 } from 'lodash';
 import mongoose from 'mongoose';
 import * as functions from 'firebase-functions';
+import testGenericWordsDictionary from 'src/tests/__mocks__/genericWords_mock';
 import GenericWord from '../models/GenericWord';
-import testGenericWordsDictionary from '../../tests/__mocks__/genericWords_mock';
 import genericWordsDictionary from '../dictionaries/ig-en/ig-en_normalized_expanded.json';
 import SortingDirections from '../shared/constants/sortingDirections';
 import UserRoles from '../shared/constants/UserRoles';

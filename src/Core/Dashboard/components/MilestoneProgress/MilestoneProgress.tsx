@@ -1,15 +1,14 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import ProgressCard from '../ProgressCard';
-import network from '../../network';
-
+import network from 'src/Core/Dashboard/network';
 import {
   COMPLETE_WORDS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
   EXAMPLE_SENTENCES_GOAL,
-} from '../../../constants';
+} from 'src/Core/constants';
+import ProgressCard from '../ProgressCard';
 
 const MilestoneProgress = (): ReactElement => {
   const [totalCompleteWords, setTotalCompletedWords] = useState(null);

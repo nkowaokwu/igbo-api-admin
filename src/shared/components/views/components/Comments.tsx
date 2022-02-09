@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import NewLineText from '../../NewLineText';
-import { CommentsProps } from '../../../interfaces';
+import { CommentsProps } from 'src/shared/interfaces';
+import NewLineText from 'src/shared/components/NewLineText';
 
 const Comments = ({ editorsNotes, userComments }: CommentsProps): ReactElement => (
   <div className="flex flex-col mt-5">

@@ -8,7 +8,7 @@ import {
   Link,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import WordClass from '../../backend/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import AudioRecordingPreview from './AudioRecordingPreview';
 import StandardIgboPreview from './StandardIgboPreview';
 

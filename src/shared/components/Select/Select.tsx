@@ -12,14 +12,14 @@ import Select from 'react-select';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import ActionTypes from '../../constants/ActionTypes';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
+import ActionTypes from 'src/shared/constants/ActionTypes';
+import { hasAdminOrMergerPermissions, hasAdminPermissions } from 'src/shared/utils/permissions';
+import { determineCreateSuggestionRedirection } from 'src/shared/utils';
+import actionsMap from 'src/shared/constants/actionsMap';
+import Collection from 'src/shared/constants/Collections';
+import View from 'src/shared/constants/Views';
 import Confirmation from '../Confirmation';
-import { hasAdminOrMergerPermissions, hasAdminPermissions } from '../../utils/permissions';
-import { determineCreateSuggestionRedirection } from '../../utils';
-import actionsMap from '../../constants/actionsMap';
-import useFirebaseUid from '../../../hooks/useFirebaseUid';
-import Collection from '../../constants/Collections';
-import View from '../../constants/Views';
 import SelectInterface from './SelectInterface';
 
 const CustomSelect = ({

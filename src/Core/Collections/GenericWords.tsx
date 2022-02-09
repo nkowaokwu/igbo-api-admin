@@ -17,8 +17,8 @@ import {
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import Icon from '@material-ui/icons/Spellcheck';
-import { approvalAndDenialsFormatter } from '../../shared/utils';
-import { hasAdminOrMergerPermissions } from '../../shared/utils/permissions';
+import { approvalAndDenialsFormatter } from 'src/shared/utils';
+import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import {
   ArrayInput,
   ArrayPreview,
@@ -29,7 +29,7 @@ import {
   Select,
   WordShow as Show,
   WordSuggestionEdit as Edit,
-} from '../../shared/components';
+} from 'src/shared/components';
 import Empty from '../Empty';
 
 export const GenericWordIcon = Icon;

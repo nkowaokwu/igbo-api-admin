@@ -9,10 +9,10 @@ import {
   map,
   compact,
 } from 'lodash';
-import removePrefix from '../../shared/utils/removePrefix';
-import createQueryRegex from '../../shared/utils/createQueryRegex';
-import UserRoles from '../../shared/constants/UserRoles';
-import SortingDirections from '../../shared/constants/sortingDirections';
+import removePrefix from 'src/backend/shared/utils/removePrefix';
+import createQueryRegex from 'src/backend/shared/utils/createQueryRegex';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
+import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import { findUser } from '../users';
 import * as Interfaces from './interfaces';
 

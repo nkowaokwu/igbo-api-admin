@@ -14,6 +14,9 @@ module.exports = (_, argv) => ({
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
+    alias: {
+      src: path.resolve(__dirname, 'src'),
+    },
   },
   devServer: {
     port: clientPort,
@@ -55,6 +58,7 @@ module.exports = (_, argv) => ({
       }
     ],
   },
+  ignoreWarnings: [/Failed to parse source map/],
   plugins: [
     new SourceMapDevToolPlugin({
       filename: '[file].map',

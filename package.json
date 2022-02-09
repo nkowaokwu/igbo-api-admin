@@ -135,6 +135,7 @@
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "babel-loader": "^8.1.0",
+    "babel-plugin-module-resolver": "^4.1.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "clipboardy": "^2.3.0",

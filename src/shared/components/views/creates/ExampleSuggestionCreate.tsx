@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { useCreateController } from 'react-admin';
-import View from '../../../constants/Views';
-import { HistoryProps } from '../../../interfaces';
+import View from 'src/shared/constants/Views';
+import { HistoryProps } from 'src/shared/interfaces';
 import { ExampleEditForm } from '../components';
 
 const ExampleSuggestionCreate = (props: HistoryProps): ReactElement => {

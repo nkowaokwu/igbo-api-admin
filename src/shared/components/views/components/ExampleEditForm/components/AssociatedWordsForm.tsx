@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
-import { Input, WordPill } from '../../../../../primitives';
-import { resolveWord } from '../../../../../API';
+import { Input, WordPill } from 'src/shared/primitives';
+import { resolveWord } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 

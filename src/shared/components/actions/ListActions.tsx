@@ -12,9 +12,9 @@ import {
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { sanitizeListRestProps, TopToolbar, useListContext } from 'react-admin';
 import queryString from 'query-string';
-import Collections from '../../constants/Collections';
-import { CustomListActionProps } from '../../interfaces';
-import { CreateButton } from '../../primitives';
+import Collections from 'src/shared/constants/Collections';
+import { CustomListActionProps } from 'src/shared/interfaces';
+import { CreateButton } from 'src/shared/primitives';
 import Filter from '../Filter';
 
 /**

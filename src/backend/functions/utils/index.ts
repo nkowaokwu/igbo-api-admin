@@ -1,4 +1,4 @@
-import { Role } from '../../../shared/constants/auth-types';
+import { Role } from 'src/shared/constants/auth-types';
 
 /* Determines if user and groupNumber are valid */
 export const canAssignEditingGroupNumber = (role: string, groupNumber: number): boolean => {

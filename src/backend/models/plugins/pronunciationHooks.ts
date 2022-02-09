@@ -5,8 +5,8 @@ import {
   copyAudioPronunciation,
   renameAudioPronunciation,
   createAudioPronunciation,
-} from '../../controllers/utils/AWS-API';
-import * as Interfaces from '../../controllers/utils/interfaces';
+} from 'src/backend/controllers/utils/AWS-API';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 const config = functions.config();
 const isCypress = config?.runtime?.env === 'cypress';

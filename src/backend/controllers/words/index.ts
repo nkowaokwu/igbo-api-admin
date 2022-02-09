@@ -7,15 +7,17 @@ import {
   uniqBy,
   omit,
 } from 'lodash';
-import removePrefix from '../../shared/utils/removePrefix';
-import Word from '../../models/Word';
-import ExampleSuggestion from '../../models/ExampleSuggestion';
-import { findSearchWord } from '../../services/words';
-import SuggestionTypes from '../../shared/constants/SuggestionTypes';
-import { NO_PROVIDED_TERM } from '../../shared/constants/errorMessages';
-import WordClass from '../../shared/constants/WordClass';
-import { getDocumentsIds } from '../../shared/utils/documentUtils';
-import createRegExp from '../../shared/utils/createRegExp';
+import removePrefix from 'src/backend/shared/utils/removePrefix';
+import Word from 'src/backend/models/Word';
+import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
+import { findSearchWord } from 'src/backend/services/words';
+import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
+import { NO_PROVIDED_TERM } from 'src/backend/shared/constants/errorMessages';
+import WordClass from 'src/backend/shared/constants/WordClass';
+import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
+import createRegExp from 'src/backend/shared/utils/createRegExp';
+import WordSuggestion from 'src/backend/models/WordSuggestion';
+import { DICTIONARY_APP_URL } from 'src/config';
 import {
   sortDocsBy,
   packageResponse,
@@ -34,10 +36,8 @@ import { findWordsWithMatch } from '../utils/buildDocs';
 import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
-import { DICTIONARY_APP_URL } from '../../config';
 import { renameAudioPronunciation } from '../utils/AWS-API';
 import * as Interfaces from '../utils/interfaces';
-import WordSuggestion from '../../models/WordSuggestion';
 import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
 
 /* Gets words from JSON dictionary */

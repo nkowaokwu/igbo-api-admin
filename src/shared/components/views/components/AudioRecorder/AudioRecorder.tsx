@@ -3,10 +3,10 @@ import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { DEFAULT_RECORD } from '../../../../constants';
-import { Word } from '../../../../../backend/controllers/utils/interfaces';
+import { DEFAULT_RECORD } from 'src/shared/constants';
+import { Word } from 'src/backend/controllers/utils/interfaces';
+import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
-import useRecorder from '../../../../../hooks/useRecorder';
 
 const AudioRecorder = ({
   path,

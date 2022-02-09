@@ -16,7 +16,7 @@ import {
 } from 'react-admin';
 import RichTextInput from 'ra-input-rich-text';
 import Icon from '@material-ui/icons/Spellcheck';
-import { approvalAndDenialsFormatter } from '../../shared/utils';
+import { approvalAndDenialsFormatter } from 'src/shared/utils';
 import {
   EditToolbar,
   ArrayInput,
@@ -28,7 +28,7 @@ import {
   ReviewPreview,
   ListActions,
   Pagination,
-} from '../../shared/components';
+} from 'src/shared/components';
 import Empty from '../Empty';
 
 export const ExampleSuggestionIcon = Icon;

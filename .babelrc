@@ -5,6 +5,12 @@
   ],
   "plugins": [
     "@babel/plugin-transform-modules-commonjs",
-    "@babel/plugin-proposal-optional-chaining"
+    "@babel/plugin-proposal-optional-chaining",
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "src": "./src"
+      }
+    }]
   ]
 }

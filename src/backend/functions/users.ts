@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { UpdatePermissions } from '../../shared/constants/firestore-types';
-import { Role } from '../../shared/constants/auth-types';
-import { successResponse, errorResponse } from '../../shared/server-validation';
-import { adminEmailList, prodAdminEmailList } from '../../shared/constants/emailList';
+import { UpdatePermissions } from 'src/shared/constants/firestore-types';
+import { Role } from 'src/shared/constants/auth-types';
+import { successResponse, errorResponse } from 'src/shared/server-validation';
+import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
 import { canAssignEditingGroupNumber } from './utils';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 

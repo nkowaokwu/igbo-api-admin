@@ -1,5 +1,5 @@
 import { ButtonProps } from 'react-admin';
-import Views from '../../constants/Views';
+import Views from 'src/shared/constants/Views';
 
 export interface UpdateButtonProps extends ButtonProps {
   push: (value: string) => any,

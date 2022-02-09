@@ -11,7 +11,7 @@ import {
 import Icon from '@material-ui/icons/Person';
 import {
   Select,
-} from '../../shared/components';
+} from 'src/shared/components';
 
 export const UserIcon = Icon;
 
