@@ -38,7 +38,13 @@ const Confirmation = ({
   const refresh = useRefresh();
   const toast = useToast();
 
-  useFirebaseUid(setUid);
+  useFirebaseUid(setUid);  
+  
+  const requiresInput = (
+    action?.type === ActionTypes.REQUEST_DELETE
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+  );
 
   const buildUpdatedRecord = () => {
     switch (action.type) {
@@ -211,7 +217,7 @@ const Confirmation = ({
       title={action?.title}
       confirm={action?.type}
       cancel="Cancel"
-      isDisabled={!idValue}
+      isDisabled={requiresInput && !idValue}
       onConfirm={handleConfirm}
       confirmColorScheme={determineConfirmColorScheme()}
       onClose={() => {
