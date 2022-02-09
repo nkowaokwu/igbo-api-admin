@@ -7,6 +7,8 @@ import {
   trim,
   uniq,
 } from 'lodash';
+import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
+import { deleteAudioPronunciation } from 'src/backend/controllers/utils/AWS-API';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
@@ -16,7 +18,6 @@ import { searchExamplesRegexQuery, searchForAssociatedSuggestions } from './util
 import { findExampleSuggestionById } from './exampleSuggestions';
 import { sendMergedEmail } from './email';
 import * as Interfaces from './utils/interfaces';
-import ExampleSuggestion from '../models/ExampleSuggestion';
 
 /* Create a new Example object in MongoDB */
 export const createExample = (data: Interfaces.ExampleClientData): Promise<Document<any>> => {
@@ -249,6 +250,20 @@ export const getAssociatedExampleSuggestions = async (
     const { id } = req.params;
     const wordSuggestions = await ExampleSuggestion.find(searchForAssociatedSuggestions(id));
     return res.send(wordSuggestions);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Deletes the specified Example document */
+export const deleteExample = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  try {
+    const { id: exampleId } = req.params;
+
+    const example = await Example.findById(exampleId) as Interfaces.Example;
+    const isPronunciationMp3 = example.pronunciation && example.pronunciation.includes('.mp3');
+    await deleteAudioPronunciation(exampleId, isPronunciationMp3);
+    return res.send(true);
   } catch (err) {
     return next(err);
   }

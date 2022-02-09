@@ -76,6 +76,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   igbo?: string,
   english?: string,
   associatedWords: string[],
+  pronunciation: string,
   authorId: string,
   updatedOn: Date,
 }
