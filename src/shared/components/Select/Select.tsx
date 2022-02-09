@@ -1,14 +1,21 @@
 import React, { ReactElement, useState } from 'react';
 import { compact, flatten } from 'lodash';
 import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react';
+import {
   AddIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
   DeleteIcon,
   EditIcon,
   NotAllowedIcon,
   ViewIcon,
 } from '@chakra-ui/icons';
-import Select from 'react-select';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -22,7 +29,7 @@ import View from 'src/shared/constants/Views';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
-const CustomSelect = ({
+const Select = ({
   collection,
   record = { id: '', merged: null },
   permissions,
@@ -40,19 +47,19 @@ const CustomSelect = ({
   };
 
   const userCollectionOptions = [
-    { value: 'user', label: 'Set as User', onSelect: ({ setAction }) => setAction(actionsMap.Convert) },
-    { value: 'editor', label: 'Set as Editor', onSelect: ({ setAction }) => setAction(actionsMap.Convert) },
-    { value: 'merger', label: 'Set as Merger', onSelect: ({ setAction }) => setAction(actionsMap.Convert) },
-    { value: 'admin', label: 'Set as Admin', onSelect: ({ setAction }) => setAction(actionsMap.Convert) },
+    { value: 'user', label: 'Set as User', onSelect: () => setAction(actionsMap.Convert) },
+    { value: 'editor', label: 'Set as Editor', onSelect: () => setAction(actionsMap.Convert) },
+    { value: 'merger', label: 'Set as Merger', onSelect: () => setAction(actionsMap.Convert) },
+    { value: 'admin', label: 'Set as Admin', onSelect: () => setAction(actionsMap.Convert) },
     {
       value: 'assignGroup',
       label: 'Assign Editing Group',
-      onSelect: ({ setAction }) => setAction(actionsMap.AssignEditingGroup),
+      onSelect: () => setAction(actionsMap.AssignEditingGroup),
     },
     hasAdminPermissions(permissions, {
       value: 'deleteUser',
       label: 'Delete User',
-      onSelect: ({ setAction }) => setAction(actionsMap.DeleteUser),
+      onSelect: () => setAction(actionsMap.DeleteUser),
     }),
   ];
 
@@ -61,7 +68,7 @@ const CustomSelect = ({
       {
         value: 'merge',
         label: 'Merge',
-        onSelect: ({ setAction }) => setAction(actionsMap.Merge),
+        onSelect: () => setAction(actionsMap.Merge),
       },
     ])),
     {
@@ -94,7 +101,7 @@ const CustomSelect = ({
           {record?.approvals?.includes(uid) ? 'Approved' : 'Approve'}
         </span>
       ))(),
-      onSelect: ({ setAction }) => setAction(actionsMap.Approve),
+      onSelect: () => setAction(actionsMap.Approve),
     },
     {
       value: 'deny',
@@ -104,7 +111,7 @@ const CustomSelect = ({
           {record?.denials?.includes(uid) ? 'Denied' : 'Deny'}
         </span>
       ))(),
-      onSelect: ({ setAction }) => setAction(actionsMap.Deny),
+      onSelect: () => setAction(actionsMap.Deny),
     },
     hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
       {
@@ -115,7 +122,7 @@ const CustomSelect = ({
             Delete
           </span>
         ))(),
-        onSelect: ({ setAction }) => setAction(actionsMap.Delete),
+        onSelect: () => setAction(actionsMap.Delete),
       },
     ])),
   ]));
@@ -146,7 +153,7 @@ const CustomSelect = ({
     hasAdminPermissions(permissions, resource === Collection.WORDS ? [{
       value: 'combineWord',
       label: 'Combine Word Into...',
-      onSelect: ({ setAction }) => setAction(actionsMap.Combine),
+      onSelect: () => setAction(actionsMap.Combine),
     }] : null),
     {
       value: 'requestDelete',
@@ -156,7 +163,7 @@ const CustomSelect = ({
           {`Request to Delete ${resource === Collection.WORDS ? 'Word' : 'Example'}`}
         </span>
       ))(),
-      onSelect: ({ setAction }) => setAction(actionsMap[ActionTypes.REQUEST_DELETE]),
+      onSelect: () => setAction(actionsMap[ActionTypes.REQUEST_DELETE]),
     },
   ]));
 
@@ -177,29 +184,52 @@ const CustomSelect = ({
         onClose={clearConfirmOpen}
         view={view}
       />
-      <Select
-        className="test-select-options"
-        options={options}
-        styles={{
-          control: (styles) => ({ ...styles, width: '12em' }),
-        }}
-        placeholder="Action"
-        onChange={({ onSelect, value }) => {
-          setValue(value);
-          onSelect({
-            push,
-            setAction,
-            resource,
-            record,
-            id: record.id,
-          });
-        }}
-        label="Editor's Action"
-      />
+      <Menu className="test-select-options" label="Editor's Action">
+        <MenuButton
+          as={Button}
+          rightIcon={<ChevronDownIcon />}
+          data-test={`select-menu-${resource}`}
+          role="button"
+          fontWeight="normal"
+          backgroundColor="white"
+          borderWidth="1px"
+          borderColor="green.600"
+          borderRadius="md"
+          _hover={{
+            backgroundColor: 'gray.100',
+            color: 'gray.800',
+          }}
+          _active={{
+            backgroundColor: 'gray.100',
+            color: 'gray.800',
+          }}
+        >
+          Actions
+        </MenuButton>
+        <MenuList>
+          {options.map(({ value, label, onSelect }) => (
+            <MenuItem
+              key={value}
+              value={value}
+              onClick={() => {
+                setValue(value);
+                onSelect({
+                  push,
+                  resource,
+                  record,
+                  id: record.id,
+                });
+              }}
+            >
+              {label}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
     </>
   );
 };
 
 export default withRouter(connect(null, {
   push,
-})(CustomSelect));
+})(Select));

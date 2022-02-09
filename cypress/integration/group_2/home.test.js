@@ -264,32 +264,6 @@ describe('Editor platform', () => {
       });
     });
 
-    it('render at most five options wordSuggestions in list view', () => {
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.get('.test-select-options').first().click();
-      forEach(values(SuggestionSelectOptions), (value) => {
-        fallbackDropdownOptions(value);
-      });
-    });
-
-    it('render at most five options exampleSuggestions in list view', () => {
-      cy.createExampleSuggestion();
-      cy.selectCollection('exampleSuggestions');
-      cy.get('.test-select-options').first().click();
-      forEach(values(SuggestionSelectOptions), (value) => {
-        fallbackDropdownOptions(value);
-      });
-    });
-
-    it('render at most three options for words in list view', () => {
-      cy.selectCollection('words');
-      cy.get('.test-select-options').first().click();
-      forEach(values(DocumentSelectOptions), (value) => {
-        fallbackDropdownOptions(value);
-      });
-    });
-
     it.skip('navigate to the show view for genericWords', () => {
       cy.selectCollection('genericWords');
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();

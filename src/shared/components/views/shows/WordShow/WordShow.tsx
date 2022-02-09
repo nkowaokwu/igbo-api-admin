@@ -15,13 +15,13 @@ import {
   ShowDocumentStats,
   EditDocumentIds,
   Comments,
-} from '../components';
-import { determineDate } from '../utils';
-import DialectDiff from './diffFields/DialectDiff';
-import DiffField from './diffFields/DiffField';
-import ArrayDiffField from './diffFields/ArrayDiffField';
-import ExampleDiff from './diffFields/ExampleDiff';
-import ArrayDiff from './diffFields/ArrayDiff';
+} from '../../components';
+import { determineDate } from '../../utils';
+import DialectDiff from '../diffFields/DialectDiff';
+import DiffField from '../diffFields/DiffField';
+import ArrayDiffField from '../diffFields/ArrayDiffField';
+import ExampleDiff from '../diffFields/ExampleDiff';
+import ArrayDiff from '../diffFields/ArrayDiff';
 
 const DIFF_FILTER_KEYS = [
   'id',

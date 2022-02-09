@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { useCreateController } from 'react-admin';
-import View from '../../../constants/Views';
-import { HistoryProps } from '../../../interfaces';
+import View from 'src/shared/constants/Views';
+import { HistoryProps } from 'src/shared/interfaces';
 import { WordEditForm } from '../components';
 
 const WordSuggestionCreate = (props: HistoryProps): ReactElement => {
