@@ -20,15 +20,17 @@ const MilestoneProgress = (): ReactElement => {
 
   useEffect(() => {
     network({ url: '/stats/completeWords' })
-      .then(({ json: completeWords }) => setTotalCompletedWords(completeWords.count || 0));
+      .then(({ body: completeWords }) => setTotalCompletedWords(JSON.parse(completeWords).count || 0));
     network({ url: '/stats/headwordAudioPronunciations' })
-      .then(({ json: audioPronunciations }) => setTotalHeadwordAudioPronunciation(audioPronunciations.count || 0));
+      .then(({ body: audioPronunciations }) => (
+        setTotalHeadwordAudioPronunciation(JSON.parse(audioPronunciations).count || 0)
+      ));
     network({ url: '/stats/isStandardIgbo' })
-      .then(({ json: isStandardIgbos }) => setTotalWordIsStandardIgbo(isStandardIgbos.count || 0));
+      .then(({ body: isStandardIgbos }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbos).count || 0));
     network({ url: '/stats/examples' })
-      .then(({ json: exampleSentences }) => setTotalExampleSentences(exampleSentences.count || 0));
+      .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0));
     network({ url: '/stats/nsibidi' })
-      .then(({ json: wordsWithNsibidi }) => setTotalWordsWithNsibidi(wordsWithNsibidi.count || 0));
+      .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0));
   }, []);
   return (
     <>
