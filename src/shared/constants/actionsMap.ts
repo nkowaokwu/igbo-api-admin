@@ -11,10 +11,12 @@ import {
   assignUserToEditingGroup,
 } from '../API';
 import ActionTypes from './ActionTypes';
+import Collections from './Collections';
 
 const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
+const handleUpdateDocument = useCallable<any, EmptyResponse>('updateDocument');
 
 export default {
   [ActionTypes.EDIT]: (resource: string, id: string): string => `/${resource}/${id}/edit`,
@@ -24,18 +26,20 @@ export default {
     type: 'Approve',
     title: 'Approve Document',
     content: 'Are you sure you want to approve this document?',
-    executeAction: ({ record, resource } : { record: Record, resource: string }) : Promise<any> => (
-      approveDocument({ resource, record })
-    ),
+    executeAction: ({ record, resource } : { record: Record, resource: string }) : Promise<any> => {
+      approveDocument({ resource, record });
+      return handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
+    },
     successMessage: 'Document has been approved 🙌🏾',
   },
   [ActionTypes.DENY]: {
     type: 'Deny',
     title: 'Deny Document',
     content: 'Are you sure you want to deny this document?',
-    executeAction: ({ record, resource }: { record: Record, resource: string }) : Promise<any> => (
-      denyDocument({ resource, record })
-    ),
+    executeAction: ({ record, resource }: { record: Record, resource: string }) : Promise<any> => {
+      denyDocument({ resource, record });
+      return handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
+    },
     successMessage: 'Document has been denied 🙅🏾‍♀️',
   },
   [ActionTypes.MERGE]: {
@@ -44,10 +48,12 @@ export default {
     content: 'Are you sure you want to merge this document?',
     executeAction: ({
       record,
+      resource,
       collection,
-    }: { record: Record | { id: string }, collection: string }): Promise<any> => (
-      mergeDocument({ collection, record })
-    ),
+    }: { record: Record | { id: string }, resource: Collections, collection: Collections }): Promise<any> => {
+      mergeDocument({ collection, record });
+      return handleUpdateDocument({ type: ActionTypes.MERGE, resource, record });
+    },
     successMessage: 'Document has been merged 🎉',
     hasLink: true,
   },

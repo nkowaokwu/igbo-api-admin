@@ -1,6 +1,7 @@
 import { Document, LeanDocument, Types } from 'mongoose';
 import { Request } from 'functions/node_modules/@types/express';
 import { Role } from 'src/shared/constants/auth-types';
+import Collections from 'src/shared/constants/Collections';
 
 export interface EditorRequest extends Request {
   user: {
@@ -139,12 +140,23 @@ export interface DocumentDeletionRequestNotification {
   definition: string,
 };
 
+export interface DocumentUpdateNotification {
+  author: string,
+  to: string,
+  translator: string,
+  translatorEmail: string,
+  type: string,
+  resource: Collections,
+  id: string,
+  word: string,
+};
+
 export interface EmailMessage {
   from?: {
     email: string,
     name: string,
   },
-  to: [string],
+  to: string[],
   templateId: string,
   dynamic_template_data: any,
 };
