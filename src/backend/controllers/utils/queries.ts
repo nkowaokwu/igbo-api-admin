@@ -1,5 +1,5 @@
-import { LOOK_BACK_DATE } from '../../shared/constants/emailDates';
-import createRegExp from '../../shared/utils/createRegExp';
+import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
+import createRegExp from 'src/backend/shared/utils/createRegExp';
 
 interface ExampleSearchQuery {
   $or: [

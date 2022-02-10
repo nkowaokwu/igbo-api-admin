@@ -7,15 +7,17 @@ import {
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
+import { EditFormProps } from 'src/shared/interfaces';
+import { getExample } from 'src/shared/API';
+import View from 'src/shared/constants/Views';
+import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
+import useCacheForm from 'src/hooks/useCacheForm';
+import { Textarea, Input } from 'src/shared/primitives';
 import ExampleEditFormSchemaResolver from './schema';
 import { onCancel, sanitizeArray } from '../utils';
-import { EditFormProps } from '../../../../interfaces';
-import View from '../../../../constants/Views';
-import useBeforeWindowUnload from '../../../../../hooks/useBeforeWindowUnload';
-import useCacheForm from '../../../../../hooks/useCacheForm';
-import { Textarea, Input } from '../../../../primitives';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
+import AudioRecorder from '../AudioRecorder';
 
 const ExampleEditForm = ({
   view,
@@ -35,6 +37,7 @@ const ExampleEditForm = ({
     defaultValues: record,
     ...ExampleEditFormSchemaResolver,
   });
+  const [originalRecord, setOriginalRecord] = useState(null);
   const [associatedWords, setAssociatedWords] = useState(
     record?.associatedWords?.length ? record.associatedWords : [''],
   );
@@ -53,6 +56,11 @@ const ExampleEditForm = ({
         isClosable: true,
       });
     }
+    (async () => {
+      if (record.originalExampleId) {
+        setOriginalRecord(await getExample(record.originalExampleId));
+      }
+    })();
   }, []);
 
   /* Grabs the user form data that will be cached */
@@ -126,6 +134,25 @@ const ExampleEditForm = ({
             />
           </>
         ) : null }
+        <Box className="w-full lg:w-1/2 flex flex-col">
+          <Controller
+            render={() => (
+              <AudioRecorder
+                path="headword"
+                getFormValues={getValues}
+                setPronunciation={setValue}
+                record={record}
+                originalRecord={originalRecord}
+                formTitle="Igbo Sentence Recording"
+                formTooltip="Record the audio for the Igbo example sentence only one time.
+                You are able to record over pre-existing recordings."
+              />
+            )}
+            defaultValue={record.pronunciation}
+            name="pronunciation"
+            control={control}
+          />
+        </Box>
         <FormHeader
           title="Igbo"
           tooltip="The example sentence in Standard Igbo"
@@ -169,14 +196,16 @@ const ExampleEditForm = ({
           <p className="error">English is required</p>
         )}
       </Box>
-      <AssociatedWordsForm
-        errors={errors}
-        associatedWords={associatedWords}
-        setAssociatedWords={setAssociatedWords}
-        control={control}
-        setValue={setValue}
-        record={record}
-      />
+      <Box className="mt-2">
+        <AssociatedWordsForm
+          errors={errors}
+          associatedWords={associatedWords}
+          setAssociatedWords={setAssociatedWords}
+          control={control}
+          setValue={setValue}
+          record={record}
+        />
+      </Box>
       <Box className="flex flex-col">
         <FormHeader
           title="Editor Comments"

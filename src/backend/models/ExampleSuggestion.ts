@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins/index';
+import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
 
 const { Schema, Types } = mongoose;
 const exampleSuggestionSchema = new Schema({
@@ -7,6 +8,7 @@ const exampleSuggestionSchema = new Schema({
   igbo: { type: String, default: '' },
   english: { type: String, default: '' },
   associatedWords: { type: [{ type: Types.ObjectId }], default: [] },
+  pronunciation: { type: String, default: '' },
   exampleForSuggestion: { type: Boolean, default: false },
   editorsNotes: { type: String, default: '' },
   userComments: { type: String, default: '' },
@@ -21,5 +23,6 @@ const exampleSuggestionSchema = new Schema({
 
 toJSONPlugin(exampleSuggestionSchema);
 updatedOnHook(exampleSuggestionSchema);
+uploadExamplePronunciation(exampleSuggestionSchema);
 
 export default mongoose.model('ExampleSuggestion', exampleSuggestionSchema);

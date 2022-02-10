@@ -9,9 +9,10 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { compact } from 'lodash';
 import { Controller } from 'react-hook-form';
+import { Input, WordPill } from 'src/shared/primitives';
+import network from 'src/Core/Dashboard/network';
+import { resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
-import { Input, WordPill } from '../../../../../../primitives';
-import network from '../../../../../../../Core/Dashboard/network';
 import StemsFormInterface from './StemsFormInterface';
 
 const Stems = (
@@ -30,19 +31,7 @@ const Stems = (
          * to save the Word Suggestion, omitting the unwanted word.
          */
         const compactedResolvedStems = compact(await Promise.all(stemIds.map(async (stemId) => {
-          const word = await network({ url: `/words/${stemId}` })
-            .then(({ json: word }) => word)
-            .catch(async () => {
-              /**
-               * If there is a regular word string (not a MongoDB Id) then the platform
-               * will search the Igbo API and find the matching word and insert
-               * that word's id
-               */
-
-              const { json: wordsResults } = await network({ url: `/words?keyword=${stemId}` });
-              const fallbackWord = wordsResults.find(({ word }) => word.normalize('NFD') === stemId.normalize('NFD'));
-              return fallbackWord;
-            });
+          const word = await resolveWord(stemId);
           return word;
         })));
         setResolvedStems(compactedResolvedStems);

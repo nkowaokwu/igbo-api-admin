@@ -5,7 +5,7 @@ import {
   AWS_SECRET_ACCESS_KEY,
   AWS_BUCKET,
   AWS_REGION,
-} from '../../config';
+} from 'src/backend/config';
 
 const bucket = AWS_BUCKET;
 const region = AWS_REGION;

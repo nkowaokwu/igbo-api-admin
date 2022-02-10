@@ -3,10 +3,10 @@ import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
-import { Input } from '../../../../../primitives';
+import { Input } from 'src/shared/primitives';
+import Dialects from 'src/backend/shared/constants/Dialects';
 import DialectFormInterface from './DialectFormInterface';
-import AudioRecorder from '../components/AudioRecorder';
-import Dialects from '../../../../../../backend/shared/constants/Dialects';
+import AudioRecorder from '../../AudioRecorder';
 
 const DialectForm = ({
   index,

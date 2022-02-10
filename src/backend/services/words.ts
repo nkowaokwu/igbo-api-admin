@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import { reduce, keys } from 'lodash';
+import databaseDictionary from 'src/tests/__mocks__/genericWords_mock';
 import removePrefix from '../shared/utils/removePrefix';
-import databaseDictionary from '../../tests/__mocks__/genericWords_mock';
 
 // import databaseDictionary from '../dictionaries/ig-en/ig-en_expanded.json';
 

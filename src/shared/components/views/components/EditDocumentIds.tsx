@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
-import { DocumentIdsProps } from '../../../interfaces';
+import { DocumentIdsProps } from 'src/shared/interfaces';
 
 const EditDocumentIds = ({
   collection,

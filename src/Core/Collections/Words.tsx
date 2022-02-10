@@ -21,8 +21,8 @@ import {
   WordClassTextField,
   WordPanel,
   WordShow as Show,
-} from '../../shared/components';
-import { WordShowActions } from '../../actions/wordActions';
+} from 'src/shared/components';
+import { WordShowActions } from 'src/actions/wordActions';
 import Empty from '../Empty';
 
 export const WordIcon = Icon;

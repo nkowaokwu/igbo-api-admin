@@ -2,7 +2,10 @@
 /* eslint-disable import/extensions */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import * as app from '../../../functions/index';
+import * as app from 'src/../functions/index';
+import createRegExp from 'src/backend/shared/utils/createRegExp';
+import { resultsFromDictionarySearch } from 'src/backend/services/words';
+import { sendEmail } from 'src/backend/controllers/email';
 import {
   API_KEY,
   API_URL,
@@ -11,9 +14,6 @@ import {
   LOCAL_ROUTE,
   TEST_ROUTE,
 } from './constants';
-import createRegExp from '../../backend/shared/utils/createRegExp';
-import { resultsFromDictionarySearch } from '../../backend/services/words';
-import { sendEmail } from '../../backend/controllers/email';
 import mockedData from '../__mocks__/data_mock';
 
 chai.use(chaiHttp);

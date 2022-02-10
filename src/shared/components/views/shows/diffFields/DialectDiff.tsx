@@ -11,10 +11,10 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import ReactAudioPlayer from 'react-audio-player';
-import Dialects from '../../../../../backend/shared/constants/Dialects';
-import Collection from '../../../../constants/Collections';
+import Dialects from 'src/backend/shared/constants/Dialects';
+import Collection from 'src/shared/constants/Collections';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import DiffField from './DiffField';
-import * as Interfaces from '../../../../../backend/controllers/utils/interfaces';
 
 /* Renders the visual red/green diff sections in the Show view */
 const DialectDiff = (

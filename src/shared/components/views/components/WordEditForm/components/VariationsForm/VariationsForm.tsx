@@ -2,8 +2,8 @@ import React, { ReactElement } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
+import { Input } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
-import { Input } from '../../../../../../primitives';
 import VariationsFormInterface from './VariationsFormInterface';
 
 const VariationsForm = (

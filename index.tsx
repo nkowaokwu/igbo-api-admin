@@ -15,7 +15,7 @@ import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
 import { onCreateUserAccount, onAssignUserToEditingGroup, onUpdatePermissions } from './src/backend/functions/users';
-import { onRequestDeleteDocument } from './src/backend/functions/documents';
+import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
 import {
   TEST_MONGO_URI,
   LOCAL_MONGO_URI,
@@ -92,6 +92,7 @@ export const createUserAccount = onCreateUserAccount;
 export const assignUserToEditingGroup = onAssignUserToEditingGroup;
 export const updatePermissions = onUpdatePermissions;
 export const requestDeleteDocument = onRequestDeleteDocument;
+export const updateDocument = onUpdateDocument;
 
 /* Runs every Monday at 6AM PST */
 export const sendEditorStatsEmail = functions.pubsub.schedule('0 6 * * 1')

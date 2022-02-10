@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
-import WordClass from '../../../../../../constants/WordClass';
+import WordClass from 'src/shared/constants/WordClass';
 import FormHeader from '../../../FormHeader';
 import PartOfSpeechFormInterface from './PartOfSpeechFormInterface';
 

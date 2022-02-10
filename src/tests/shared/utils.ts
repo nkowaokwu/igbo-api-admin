@@ -7,6 +7,7 @@ import {
   every,
   isEqual,
 } from 'lodash';
+import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import {
   suggestNewWord,
   suggestNewExample,
@@ -14,7 +15,6 @@ import {
   createExample,
   getWord,
 } from './commands';
-import SortingDirections from '../../backend/shared/constants/sortingDirections';
 
 const { expect } = chai;
 

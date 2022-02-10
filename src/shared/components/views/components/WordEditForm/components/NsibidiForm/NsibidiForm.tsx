@@ -6,7 +6,7 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
-import { Input } from '../../../../../../primitives';
+import { Input } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
 import NsidibiFormInterface from './NsidibiFormInterface';
 

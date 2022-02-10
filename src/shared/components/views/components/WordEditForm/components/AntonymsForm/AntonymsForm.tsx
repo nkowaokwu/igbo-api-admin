@@ -8,10 +8,10 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
-import FormHeader from '../../../FormHeader';
-import { Input, WordPill } from '../../../../../../primitives';
+import { Input, WordPill } from 'src/shared/primitives';
+import { resolveWord } from 'src/shared/API';
 import AntonymsFormInterface from './AntonymsFormInterface';
-import network from '../../../../../../../Core/Dashboard/network';
+import FormHeader from '../../../FormHeader';
 
 const Antonyms = (
   { antonymIds, updateAntonyms }
@@ -24,7 +24,7 @@ const Antonyms = (
       setIsLoadingAntonyms(true);
       try {
         setResolvedAntonyms(await Promise.all(antonymIds.map(async (antonymId) => {
-          const word = await network({ url: `/words/${antonymId}` }).then(({ json: word }) => word);
+          const word = resolveWord(antonymId);
           return word;
         })));
       } finally {

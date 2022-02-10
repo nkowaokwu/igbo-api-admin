@@ -1,5 +1,5 @@
 import { compact, trim, map } from 'lodash';
-import View from '../../../constants/Views';
+import View from 'src/shared/constants/Views';
 
 /* Removes white space from arrays that contains spaces */
 export const sanitizeArray = (items = []) : string[] => compact(map(items, (item) => trim(item)));

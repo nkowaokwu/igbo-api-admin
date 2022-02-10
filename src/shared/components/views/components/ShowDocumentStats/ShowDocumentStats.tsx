@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { map, compact } from 'lodash';
 import { Box, Text } from '@chakra-ui/react';
+import Collection from 'src/shared/constants/Collections';
 import DocumentStatsInterface from './ShowDocumentStatsInterface';
-import Collection from '../../../../constants/Collections';
 
 const ShowDocumentStats = ({
   approvals,

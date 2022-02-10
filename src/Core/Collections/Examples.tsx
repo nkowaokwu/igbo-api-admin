@@ -15,8 +15,8 @@ import {
   ListActions,
   Pagination,
   Select,
-} from '../../shared/components';
-import { ExampleShowActions } from '../../actions/exampleActions';
+} from 'src/shared/components';
+import { ExampleShowActions } from 'src/actions/exampleActions';
 import Empty from '../Empty';
 
 export const ExampleIcon = Icon;

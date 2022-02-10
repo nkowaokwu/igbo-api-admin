@@ -3,6 +3,7 @@ import { Record } from 'react-admin';
 import { EmptyResponse } from './server-validation';
 import { useCallable } from '../hooks/useCallable';
 import { API_ROUTE } from './constants/index';
+import network from '../Core/Dashboard/network';
 
 const handleAssignUserToEditingGroup = (
   useCallable<{ groupNumber: string, uid: string }, EmptyResponse>('assignUserToEditingGroup')
@@ -26,6 +27,25 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
   method: 'get',
   url: `${API_ROUTE}/words/${id}?dialects=${dialects}`,
 })).data;
+
+export const getExample = async (id: string): Promise<any> => (await request({
+  method: 'get',
+  url: `${API_ROUTE}/examples/${id}`,
+})).data;
+
+export const resolveWord = (wordId: string): Promise<any> => network({ url: `/words/${wordId}` })
+  .then(({ json: word }) => word)
+  .catch(async () => {
+    /**
+     * If there is a regular word string (not a MongoDB Id) then the platform
+     * will search the Igbo API and find the matching word and insert
+     * that word's id
+     */
+
+    const { json: wordsResults } = await network({ url: `/words?keyword=${wordId}` });
+    const fallbackWord = wordsResults.find(({ word }) => word.normalize('NFD') === wordId.normalize('NFD'));
+    return fallbackWord;
+  });
 
 export const getAssociatedExampleSuggestions = async (id: string): Promise<any> => (await request({
   method: 'get',

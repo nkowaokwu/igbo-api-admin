@@ -1,4 +1,4 @@
-import { Role } from '../constants/auth-types';
+import { Role } from 'src/shared/constants/auth-types';
 
 export const hasNoPermissions = (
   permissions: { role?: string } = { role: '' },

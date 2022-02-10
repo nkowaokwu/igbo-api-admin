@@ -1,16 +1,16 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import { Box, Text } from '@chakra-ui/react';
-import ProgressCard from '../ProgressCard';
-import network from '../../network';
-
+import network from 'src/Core/Dashboard/network';
 import {
   COMPLETE_WORDS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
   EXAMPLE_SENTENCES_GOAL,
-} from '../../../constants';
+} from 'src/Core/constants';
+import ProgressCard from '../ProgressCard';
 
+const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
   const [totalCompleteWords, setTotalCompletedWords] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
@@ -18,17 +18,48 @@ const MilestoneProgress = (): ReactElement => {
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
 
+  const redirectToLogin = () => {
+    window.location.hash = '#/';
+  };
+
   useEffect(() => {
     network({ url: '/stats/completeWords' })
-      .then(({ json: completeWords }) => setTotalCompletedWords(completeWords.count || 0));
+      .then(({ body: completeWords }) => setTotalCompletedWords(JSON.parse(completeWords).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/headwordAudioPronunciations' })
-      .then(({ json: audioPronunciations }) => setTotalHeadwordAudioPronunciation(audioPronunciations.count || 0));
+      .then(({ body: audioPronunciations }) => (
+        setTotalHeadwordAudioPronunciation(JSON.parse(audioPronunciations).count || 0)
+      ))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/isStandardIgbo' })
-      .then(({ json: isStandardIgbos }) => setTotalWordIsStandardIgbo(isStandardIgbos.count || 0));
+      .then(({ body: isStandardIgbos }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbos).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/examples' })
-      .then(({ json: exampleSentences }) => setTotalExampleSentences(exampleSentences.count || 0));
+      .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
     network({ url: '/stats/nsibidi' })
-      .then(({ json: wordsWithNsibidi }) => setTotalWordsWithNsibidi(wordsWithNsibidi.count || 0));
+      .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
+      .catch(({ status }) => {
+        if (status === NO_PERMISSION_STATUS) {
+          redirectToLogin();
+        }
+      });
   }, []);
   return (
     <>

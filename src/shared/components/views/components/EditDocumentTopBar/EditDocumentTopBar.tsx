@@ -3,11 +3,11 @@ import { Button } from '@chakra-ui/react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import View from '../../../../constants/Views';
-import Collection from '../../../../constants/Collections';
-import { Select } from '../../..';
+import View from 'src/shared/constants/Views';
+import Collection from 'src/shared/constants/Collections';
+import { Select } from 'src/shared/components';
+import { determineCreateSuggestionRedirection } from 'src/shared/utils';
 import DocumentTopBarInterface from './DocumentTopBarInterface';
-import { determineCreateSuggestionRedirection } from '../../../../utils';
 
 const CreateSuggestion = ({
   record,

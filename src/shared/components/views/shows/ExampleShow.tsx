@@ -1,15 +1,15 @@
 import React, { ReactElement } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
 import { Box, Text } from '@chakra-ui/react';
+import { DEFAULT_RECORD } from 'src/shared/constants';
+import View from 'src/shared/constants/Views';
+import Collection from 'src/shared/constants/Collections';
 import {
   ShowDocumentStats,
   EditDocumentIds,
   EditDocumentTopBar,
   Comments,
 } from '../components';
-import { DEFAULT_RECORD } from '../../../constants';
-import View from '../../../constants/Views';
-import Collection from '../../../constants/Collections';
 import { determineDate } from '../utils';
 import ResolvedWord from '../../ResolvedWord';
 

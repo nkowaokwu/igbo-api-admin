@@ -2,9 +2,9 @@ import React, { ReactElement } from 'react';
 import { Box, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useListFilterContext } from 'react-admin';
-import Collection from '../../constants/Collections';
+import Collection from 'src/shared/constants/Collections';
+import Input from 'src/shared/primitives/Input';
 import FilterInterface from './FilterInterface';
-import Input from '../../primitives/Input';
 
 const CustomFilter = (props: FilterInterface): ReactElement => {
   const { setFilters, filterValues } = useListFilterContext(props);

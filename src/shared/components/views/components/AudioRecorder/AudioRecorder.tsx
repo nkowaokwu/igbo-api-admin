@@ -3,10 +3,10 @@ import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { DEFAULT_RECORD } from '../../../../../../constants';
-import { Word } from '../../../../../../../backend/controllers/utils/interfaces';
-import FormHeader from '../../../FormHeader';
-import useRecorder from '../../../../../../../hooks/useRecorder';
+import { DEFAULT_RECORD } from 'src/shared/constants';
+import { Word } from 'src/backend/controllers/utils/interfaces';
+import useRecorder from 'src/hooks/useRecorder';
+import FormHeader from '../FormHeader';
 
 const AudioRecorder = ({
   path,
@@ -14,12 +14,16 @@ const AudioRecorder = ({
   setPronunciation,
   record,
   originalRecord: originalRecordProp,
+  formTitle,
+  formTooltip,
 }: {
   path: string,
   getFormValues: (key: string) => any,
   setPronunciation: (key: string, value: any) => any,
   record: Record | Word,
   originalRecord: Record,
+  formTitle: string,
+  formTooltip: string,
 }): ReactElement => {
   const originalRecord = record.originalWordId
     ? originalRecordProp
@@ -71,8 +75,11 @@ const AudioRecorder = ({
   return (
     <Box className="flex flex-col w-full">
       <FormHeader
-        title="Word Pronunciation"
-        tooltip="Record the audio for the headword only one time. You are able to record over pre-existing recordings"
+        title={formTitle || 'Word Pronunciation'}
+        tooltip={
+          formTooltip
+          || 'Record the audio for the headword only one time. You are able to record over pre-existing recordings.'
+        }
       />
       <Box data-test="word-pronunciation-input-container">
         <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">

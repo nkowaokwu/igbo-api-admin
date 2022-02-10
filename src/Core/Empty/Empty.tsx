@@ -3,7 +3,7 @@ import { useListContext } from 'react-admin';
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import { startCase } from 'lodash';
-import { CreateButton } from '../../shared/primitives';
+import { CreateButton } from 'src/shared/primitives';
 
 const Empty = (): ReactElement => {
   const { basePath, resource } = useListContext();

@@ -29,8 +29,8 @@ import {
   WordShow as Show,
   WordSuggestionCreate as Create,
   WordSuggestionEdit as Edit,
-} from '../../shared/components';
-import { hasAdminOrMergerPermissions } from '../../shared/utils/permissions';
+} from 'src/shared/components';
+import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../Empty';
 
 export const WordSuggestionIcon = Icon;

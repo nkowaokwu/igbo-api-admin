@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { useToast } from '@chakra-ui/react';
 import { useRefresh } from 'react-admin';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
+import ActionTypes from 'src/shared/constants/ActionTypes';
+import Collections from 'src/shared/constants/Collections';
+import Views from 'src/shared/constants/Views';
 import ConfirmModal from '../ConfirmModal';
-import ActionTypes from '../../constants/ActionTypes';
-import Collections from '../../constants/Collections';
-import Views from '../../constants/Views';
 import { ConfirmationButtonInterface } from './ConfirmationInterface';
-import useFirebaseUid from '../../../hooks/useFirebaseUid';
 import {
   approveRecord,
   convertUser,
@@ -40,6 +40,12 @@ const Confirmation = ({
 
   useFirebaseUid(setUid);  
   
+  const requiresInput = (
+    action?.type === ActionTypes.REQUEST_DELETE
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
+  );
+
   const requiresInput = (
     action?.type === ActionTypes.REQUEST_DELETE
     || action?.type === ActionTypes.ASSIGN_EDITING_GROUP

@@ -10,6 +10,7 @@ import {
   NEW_USER_NOTIFICATION_TEMPLATE,
   UPDATED_ROLE_NOTIFICATION,
   DOCUMENT_DELETION_REQUEST_NOTIFICATION,
+  DOCUMENT_UPDATE_NOTIFICATION,
 } from '../config';
 import { findAdminUserEmails } from './users';
 import * as Interfaces from './utils/interfaces';
@@ -133,6 +134,19 @@ export const sendDocumentDeletionRequestNotification = (
       from: { email: API_FROM_EMAIL, name: 'Igbo API' },
       to: adminEmails,
       templateId: DOCUMENT_DELETION_REQUEST_NOTIFICATION,
+      dynamic_template_data: omit(data, ['to']),
+    });
+    return sendEmail(message);
+  }
+);
+
+export const sendDocumentUpdateNotification = (
+  async (data: Interfaces.DocumentUpdateNotification): Promise<void> => {
+    const adminEmails = await findAdminUserEmails() as [string];
+    const message = constructMessage({
+      from: { email: API_FROM_EMAIL, name: 'Igbo API' },
+      to: [...adminEmails, data.to],
+      templateId: DOCUMENT_UPDATE_NOTIFICATION,
       dynamic_template_data: omit(data, ['to']),
     });
     return sendEmail(message);

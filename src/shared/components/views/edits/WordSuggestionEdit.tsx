@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { useEditController } from 'react-admin';
-import View from '../../../constants/Views';
-import Collections from '../../../constants/Collections';
-import { HistoryProps } from '../../../interfaces';
+import View from 'src/shared/constants/Views';
+import Collections from 'src/shared/constants/Collections';
+import { HistoryProps } from 'src/shared/interfaces';
 import {
   WordEditForm,
   EditDocumentStats,

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
-import * as app from '../../functions/index';
+import * as app from 'src/../functions/index';
 import {
   closeServer,
   createExample,

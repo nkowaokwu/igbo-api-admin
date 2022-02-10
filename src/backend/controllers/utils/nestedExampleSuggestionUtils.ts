@@ -5,7 +5,7 @@ import {
   reduce,
   map,
 } from 'lodash';
-import ExampleSuggestion from '../../models/ExampleSuggestion';
+import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
 import {
   createExampleSuggestion,
   updateExampleSuggestion,

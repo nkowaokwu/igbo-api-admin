@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import Word from '../../models/Word';
+import Word from 'src/backend/models/Word';
 import * as Interfaces from '../utils/interfaces';
 
 /* Syncs up synonym links between word documents */

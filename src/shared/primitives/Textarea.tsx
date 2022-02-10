@@ -1,8 +1,8 @@
 import React, { useState, useRef, ReactElement } from 'react';
 import { Box, Textarea as ChakraTextarea } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
+import useEventListener from 'src/hooks/useEventListener';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
-import useEventListener from '../../hooks/useEventListener';
 import { handlePosition, handleIsEditing } from './utils/positions';
 
 const Textarea = React.forwardRef(({

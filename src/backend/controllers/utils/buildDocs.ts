@@ -1,6 +1,6 @@
 import { assign, map, forEach } from 'lodash';
 import accents from 'remove-accents';
-import Word from '../../models/Word';
+import Word from 'src/backend/models/Word';
 import * as Interfaces from './interfaces';
 
 /**
