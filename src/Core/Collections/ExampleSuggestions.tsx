@@ -18,6 +18,7 @@ import RichTextInput from 'ra-input-rich-text';
 import Icon from '@material-ui/icons/Spellcheck';
 import { approvalAndDenialsFormatter } from 'src/shared/utils';
 import {
+  AudioRecordingPreview,
   EditToolbar,
   ArrayInput,
   ExampleShow as Show,
@@ -56,6 +57,7 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         )}
         medium={(
           <Datagrid>
+            <AudioRecordingPreview label="Audio Recording" />
             <ReviewPreview label="Already Reviewed" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />

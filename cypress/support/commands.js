@@ -379,20 +379,5 @@ Cypress.Commands.add('seedDatabase', () => {
         timeout: 45000,
       });
     }
-    // DEPRECATED: No longer supporting Generic Words
-    // cy.request({
-    //   method: 'GET',
-    //   url: `${SITE_ROUTE}/genericWords`,
-    //   failOnStatusCode: false,
-    // }).then((response) => {
-    //   if (response.status >= 400 || !response.body.length || response.body.error) {
-    //     cy.request({
-    //       method: 'POST',
-    //       url: `${SITE_ROUTE}/test/genericWords`,
-    //       failOnStatusCode: false,
-    //       timeout: 45000,
-    //     });
-    //   }
-    // });
   });
 });

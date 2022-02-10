@@ -47,37 +47,6 @@ describe('Editor platform', () => {
       cy.selectCollection('wordSuggestions');
       cy.get('input[type="checkbox"]').should('exist');
     });
-
-    // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-    it.skip('change editingGroup for an editor and then see different segment', () => {
-      cy.cleanLogin();
-      cy.get('a[href="#/users"]').click();
-      cy.getActionsOption(UserSelectOptions.ASSIGN_EDITING_GROUP).click();
-      cy.findByTestId('editing-group-number-input').type('3');
-      cy.acceptConfirmation();
-      cy.logout();
-      cy.wait(2000);
-      cy.cleanLogin('dummy3@example.com', 'password');
-      cy.get('a[href="#/genericWords').click();
-      cy.getWordSuggestionDocumentDetails();
-      cy.get('@selectedId').then(([$thirdSegmentId]) => {
-        cy.logout();
-        cy.wait(2000); // Wait for localStorage to get cleared out
-        cy.cleanLogin();
-        cy.get('a[href="#/users"]').click();
-        cy.getActionsOption(UserSelectOptions.ASSIGN_EDITING_GROUP).click();
-        cy.findByTestId('editing-group-number-input').type('2');
-        cy.acceptConfirmation();
-        cy.wait(4000); // Wait for editingGroup number to update
-        cy.logout();
-        cy.wait(2000);
-        cy.cleanLogin('dummy3@example.com', 'password');
-        cy.get('a[href="#/genericWords').click();
-        cy.visit(`#/genericWords/${$thirdSegmentId.innerText}/show`);
-        cy.hash().should('eq', '#/genericWords');
-        cy.wrap(true).as('skipErrorMessageCheck');
-      });
-    });
   });
 
   describe('Merger Permissions', () => {
@@ -139,25 +108,6 @@ describe('Editor platform', () => {
       cy.selectCollection('wordSuggestions');
       cy.get('input[type="checkbox"]').should('exist');
     });
-
-    // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-    it.skip('render all merger actions in list view for genericWords', () => {
-      cy.createWordSuggestion();
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.MERGE);
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.DELETE);
-    });
-
-    // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-    it.skip('render all merger actions in show view for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.getActionsOption(SuggestionSelectOptions.MERGE);
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.getActionsOption(SuggestionSelectOptions.DELETE);
-    });
   });
 
   describe('Editor Permissions', () => {
@@ -218,24 +168,6 @@ describe('Editor platform', () => {
       cy.selectCollection('wordSuggestions');
       cy.get('input[type="checkbox"]').should('not.exist');
     });
-
-    // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-    it.skip('merger actions don\'t exist in list view for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.MERGE).should('not.exist');
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.DELETE).should('not.exist');
-    });
-
-    // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-    it.skip('merger actions don\'t exist in show view for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.getActionsOption(SuggestionSelectOptions.MERGE).should('not.exist');
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.getActionsOption(SuggestionSelectOptions.DELETE).should('not.exist');
-    });
   });
 
   describe('Select Options', () => {
@@ -255,42 +187,6 @@ describe('Editor platform', () => {
           cy.get('div').contains(value);
       }
     };
-
-    it.skip('render at most five options genericWords in list view', () => {
-      cy.selectCollection('genericWords');
-      cy.get('.test-select-options').first().click();
-      forEach(values(SuggestionSelectOptions), (value) => {
-        fallbackDropdownOptions(value);
-      });
-    });
-
-    it.skip('navigate to the show view for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.contains('Definitions');
-      cy.contains('Variations');
-    });
-
-    it.skip('open approve confirmation modal for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.APPROVE).click();
-      cy.contains('Approve Document');
-      cy.cancelConfirmation();
-    });
-
-    it.skip('open deny confirmation modal for genericWords', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.DENY).click();
-      cy.contains('Deny Document');
-      cy.cancelConfirmation();
-    });
-
-    it.skip('render the react select menu in the show view', () => {
-      cy.selectCollection('genericWords');
-      cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.get('.test-select-options').first().click();
-    });
-  });
 
   describe('Dashboard', () => {
     it('does not render the dashboard while not authenticated', () => {
@@ -314,7 +210,7 @@ describe('Editor platform', () => {
       cy.get('@selectedReviewedIcon').findByTestId('reviewed-icon');
     });
 
-    it.skip('render reviewed icon for exampleSuggestion', () => {
+    it('render reviewed icon for exampleSuggestion', () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
@@ -322,15 +218,8 @@ describe('Editor platform', () => {
       cy.acceptConfirmation();
       cy.get('@selectedReviewedIcon').find('[data-test="reviewed-icon"]');
     });
-
-    it.skip('render reviewed icon for genericWord', () => {
-      cy.selectCollection('genericWords');
-      cy.getWordSuggestionDocumentDetails();
-      cy.getActionsOption(SuggestionSelectOptions.APPROVE).click();
-      cy.acceptConfirmation();
-      cy.get('@selectedReviewedIcon').find('[data-test="reviewed-icon"]');
-    });
   });
+});
 
   describe('Jump to Page', () => {
     beforeEach(() => {

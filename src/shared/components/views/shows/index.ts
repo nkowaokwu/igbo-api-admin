@@ -1,4 +1,4 @@
-import ExampleShow from './ExampleShow';
+import ExampleShow from './ExampleShow/ExampleShow';
 import WordShow from './WordShow/WordShow';
 
 export {

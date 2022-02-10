@@ -43,38 +43,4 @@ describe('Delete', () => {
     cy.acceptConfirmation();
     cy.get('@selectedId').should('not.exist');
   });
-
-  it.skip('delete a genericWord in list view', () => {
-    cy.selectCollection('genericWords');
-    cy.getWordSuggestionDocumentDetails();
-    cy.getActionsOption(SuggestionSelectOptions.DELETE).click();
-    cy.acceptConfirmation();
-    cy.get('@selectedId').should('not.exist');
-  });
-
-  it.skip('delete a genericWord in show view', () => {
-    cy.selectCollection('genericWords');
-    cy.getWordSuggestionDocumentDetails();
-    cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-    cy.getActionsOption(SuggestionSelectOptions.DELETE).click();
-    cy.acceptConfirmation();
-    cy.get('@selectedId').should('not.exist');
-  });
-
-  it.skip('bulk delete all genericWords as merger', () => {
-    cy.selectCollection('genericWords');
-    cy.getWordSuggestionDocumentDetails();
-    cy.get('input[type="checkbox"]').first().click();
-    cy.findByText('Delete').click();
-    cy.get('html').click('bottomLeft');
-    cy.getWordSuggestionDocumentDetails();
-  });
-
-  // DEPRECATED: Test is skipped because generic words are not visible to non-admins
-  it.skip('unable to bulk delete all genericWords as editor', () => {
-    cy.cleanLogin('test@example.com', { role: 'editor', editingGroup: 1 });
-    cy.selectCollection('genericWords');
-    cy.get('input[type="checkbox"]').should('not.exist');
-    cy.getWordSuggestionDocumentDetails();
-  });
 });

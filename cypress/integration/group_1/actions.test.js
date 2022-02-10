@@ -10,41 +10,6 @@ describe('Actions', () => {
   });
 
   describe('Merge', () => {
-    it.skip('merge a genericWord into a new word from the list view', () => {
-      cy.selectCollection('genericWords');
-      cy.getWordSuggestionDocumentDetails();
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.findByTestId('word-input').then(([$word]) => {
-        cy.findByTestId('word-class-input-container').click();
-        cy.findAllByText(WordClassOptions.NNC.label).first().click();
-        cy.get('button[type="submit"]').click();
-        cy.selectCollection('genericWords');
-        cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-        cy.acceptConfirmation();
-        cy.get('@selectedWord').should('not.exist');
-        cy.selectCollection('words');
-        cy.searchForDocument($word.value);
-        cy.findAllByText($word.value).first();
-      });
-    });
-
-    it.skip('merge a genericWord into a new word from the show view', () => {
-      cy.selectCollection('genericWords');
-      cy.getWordSuggestionDocumentDetails();
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.findByTestId('word-input').then(([$word]) => {
-        cy.findByTestId('word-class-input-container').click();
-        cy.findAllByText(WordClassOptions.NNC.label).first().click();
-        cy.get('button[type="submit"]').click();
-        cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-        cy.acceptConfirmation();
-        cy.get('@selectedWord').should('not.exist');
-        cy.selectCollection('words');
-        cy.searchForDocument($word.value);
-        cy.findAllByText($word.value).first();
-      });
-    });
-
     it('merge a wordSuggestion into a new word in the list view then redirect to words', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
