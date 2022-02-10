@@ -113,43 +113,6 @@ describe('List', () => {
     });
   });
 
-  describe.skip('Generic Words', () => {
-    before(() => {
-      cy.cleanLogin();
-      cy.selectCollection('genericWords');
-    });
-
-    it('select 10 rows from table pagination', () => {
-      cy.get('#menu-button-per-page-menu').click();
-      cy.get('button[data-index="0"]').contains('10').click();
-      cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
-        expect(res.length).to.equal(10);
-      });
-    });
-
-    it('select 25 rows from table pagination', () => {
-      cy.intercept('GET', '**/genericWords/**').as('getGenericWords');
-      cy.get('#menu-button-per-page-menu').click();
-      cy.get('button[data-index="1"]').contains('25').click();
-      cy.wait('@getGenericWords').then(() => {
-        cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
-          expect(res.length).to.equal(25);
-        });
-      });
-    });
-
-    it('select 50 rows from table pagination', () => {
-      cy.intercept('GET', '**/genericWords/**').as('getGenericWords');
-      cy.get('#menu-button-per-page-menu').click();
-      cy.get('button[data-index="2"]').contains('50').click();
-      cy.wait('@getGenericWords').then(() => {
-        cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
-          expect(res.length).to.equal(50);
-        });
-      });
-    });
-  });
-
   describe('Word Suggestions', () => {
     before(() => {
       cy.cleanLogin();
