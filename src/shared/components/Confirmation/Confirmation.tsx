@@ -38,13 +38,7 @@ const Confirmation = ({
   const refresh = useRefresh();
   const toast = useToast();
 
-  useFirebaseUid(setUid);  
-  
-  const requiresInput = (
-    action?.type === ActionTypes.REQUEST_DELETE
-    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
-    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
-  );
+  useFirebaseUid(setUid);
 
   const requiresInput = (
     action?.type === ActionTypes.REQUEST_DELETE
