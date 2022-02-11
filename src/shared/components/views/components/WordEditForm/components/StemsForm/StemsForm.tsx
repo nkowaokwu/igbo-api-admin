@@ -10,8 +10,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { compact } from 'lodash';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from 'src/shared/primitives';
-import network from 'src/Core/Dashboard/network';
-import { resolveWord } from 'src/shared/API';
+import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 
@@ -107,7 +106,7 @@ const StemsForm = ({
   const handleAddStem = async (userInput = input) => {
     try {
       if (canAddStem(userInput)) {
-        const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
+        const word = await getWord(userInput);
         updateStems([...stems, word.id]);
       } else {
         throw new Error('Invalid word id');
