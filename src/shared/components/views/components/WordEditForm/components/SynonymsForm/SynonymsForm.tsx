@@ -9,7 +9,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from 'src/shared/primitives';
-import { resolveWord } from 'src/shared/API';
+import { getWord, resolveWord } from 'src/shared/API';
 import SynonymsFormInterface from './SynonymsFormInterface';
 import FormHeader from '../../../FormHeader';
 
@@ -24,7 +24,7 @@ const Synonyms = (
       setIsLoadingSynonyms(true);
       try {
         setResolvedSynonyms(await Promise.all(synonymIds.map(async (synonymId) => {
-          const word = resolveWord(synonymId);
+          const word = await resolveWord(synonymId);
           return word;
         })));
       } finally {
@@ -96,7 +96,7 @@ const SynonymsForm = ({
   const handleAddSynonym = async (userInput = input) => {
     try {
       if (canAddSynonym(userInput)) {
-        const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
+        const word = await getWord(userInput);
         updateSynonyms([...synonyms, word.id]);
       } else {
         throw new Error('Invalid word id');

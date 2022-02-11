@@ -9,7 +9,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from 'src/shared/primitives';
-import { resolveWord } from 'src/shared/API';
+import { getWord, resolveWord } from 'src/shared/API';
 import AntonymsFormInterface from './AntonymsFormInterface';
 import FormHeader from '../../../FormHeader';
 
@@ -24,7 +24,7 @@ const Antonyms = (
       setIsLoadingAntonyms(true);
       try {
         setResolvedAntonyms(await Promise.all(antonymIds.map(async (antonymId) => {
-          const word = resolveWord(antonymId);
+          const word = await resolveWord(antonymId);
           return word;
         })));
       } finally {
@@ -96,7 +96,7 @@ const AntonymsForm = ({
   const handleAddAntonym = async (userInput = input) => {
     try {
       if (canAddAntonym(userInput)) {
-        const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
+        const word = await getWord(userInput);
         updateAntonyms([...antonyms, word.id]);
       } else {
         throw new Error('Invalid word id');
