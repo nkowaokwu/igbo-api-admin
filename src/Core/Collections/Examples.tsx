@@ -13,6 +13,7 @@ import {
   AudioRecordingPreview,
   ArrayPreview,
   ExampleShow as Show,
+  IdField,
   ListActions,
   Pagination,
   Select,
@@ -46,7 +47,7 @@ export const ExampleList = (props: ListProps): ReactElement => {
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
-            <TextField label="Id" source="id" />
+            <IdField label="Id" source="id" />
             <Select collection="examples" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}

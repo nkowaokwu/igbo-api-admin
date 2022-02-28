@@ -24,6 +24,7 @@ import {
   ExampleShow as Show,
   ExampleSuggestionCreate as Create,
   ExampleSuggestionEdit as Edit,
+  IdField,
   Select,
   ArrayPreview,
   ReviewPreview,
@@ -74,7 +75,7 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
                 <span data-test="denial">{record.denials.length}</span>
               )}
             />
-            <TextField label="Id" source="id" />
+            <IdField label="Id" source="id" />
             <Select collection="examples" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
