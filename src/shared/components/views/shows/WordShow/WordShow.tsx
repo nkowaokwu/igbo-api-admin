@@ -3,7 +3,7 @@ import { ShowProps, useShowController } from 'react-admin';
 import { Box, Heading, Skeleton } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
-import { DEFAULT_RECORD } from 'src/shared/constants';
+import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collections';
 import WordClass from 'src/shared/constants/WordClass';
@@ -50,7 +50,7 @@ const WordShow = (props: ShowProps): ReactElement => {
   let { record } = showProps;
   const { permissions } = props;
 
-  record = record || DEFAULT_RECORD;
+  record = record || DEFAULT_WORD_RECORD;
 
   const {
     id,
@@ -263,6 +263,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   >
                     {/* @ts-ignore */}
                     <ExampleDiff
+                      record={record}
                       diffRecord={diffRecord}
                       // @ts-ignore
                       resource={resource}

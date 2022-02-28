@@ -9,7 +9,9 @@ import FilterInterface from './FilterInterface';
 const CustomFilter = (props: FilterInterface): ReactElement => {
   const { setFilters, filterValues } = useListFilterContext(props);
   const { resource } = props;
-  const filterKey = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS ? 'igbo' : 'word';
+  const filterKey = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
+    ? 'example'
+    : 'word';
   return (
     <Box className="flex items-end lg:ml-4">
       <InputGroup>

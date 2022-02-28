@@ -13,7 +13,7 @@ import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import useCacheForm from 'src/hooks/useCacheForm';
 import { Textarea, Input } from 'src/shared/primitives';
-import ExampleEditFormSchemaResolver from './schema';
+import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
@@ -35,7 +35,7 @@ const ExampleEditForm = ({
     errors,
   } = useForm({
     defaultValues: record,
-    ...ExampleEditFormSchemaResolver,
+    ...ExampleEditFormResolver,
   });
   const [originalRecord, setOriginalRecord] = useState(null);
   const [associatedWords, setAssociatedWords] = useState(

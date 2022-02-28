@@ -1,12 +1,20 @@
 import { FirebaseAuthProvider } from 'react-admin-firebase';
-import useFirebaseConfig from '../hooks/useFirebaseConfig';
+import { omit } from 'lodash';
+import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
+import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 
+const LOGIN_HASH = '#/login';
 const firebaseConfig = useFirebaseConfig();
 const firebaseAuthProvider = FirebaseAuthProvider(firebaseConfig, { lazyLoading: { enabled: true }, logging: false });
 export default {
   ...firebaseAuthProvider,
-  logout: (args) => {
-    window.localStorage.clear();
+  logout: (args: any): Promise<string | void> => {
+    if (window.location.hash !== LOGIN_HASH) {
+      localStorage.setItem(LocalStorageKeys.REDIRECT_URL, window.location.hash);
+    }
+    Object.keys(omit(LocalStorageKeys, ['REDIRECT_URL'])).forEach((key) => {
+      localStorage.removeItem(LocalStorageKeys[key]);
+    });
     return firebaseAuthProvider.logout(args);
   },
 };

@@ -4,7 +4,6 @@ import {
   Datagrid,
   SimpleForm,
   FunctionField,
-  TextField,
   SimpleShowLayout,
   Responsive,
   ListProps,
@@ -19,6 +18,7 @@ import {
   BulkSuggestionActions,
   CompleteWordPreview,
   HeadwordField,
+  IdField,
   ListActions,
   Pagination,
   ReviewPreview,
@@ -78,8 +78,8 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
                 <span data-test="denial">{record.denials.length}</span>
               )}
             />
-            <TextField label="Id" source="id" />
-            <TextField label="Origin Word Id" source="originalWordId" />
+            <IdField label="Id" source="id" />
+            <IdField label="Origin Word Id" source="originalWordId" />
             <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>

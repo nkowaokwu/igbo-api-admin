@@ -17,7 +17,15 @@ import * as Interfaces from './interfaces';
 export const placeExampleSuggestionsOnSuggestionDoc = async (
   wordSuggestion: Interfaces.WordSuggestion,
 ): Promise<Interfaces.WordSuggestion> => {
-  const LEAN_EXAMPLE_KEYS = 'igbo english associatedWords id exampleForSuggestion originalExampleId';
+  const LEAN_EXAMPLE_KEYS = [
+    'igbo',
+    'english',
+    'associatedWords',
+    'id',
+    'exampleForSuggestion',
+    'pronunciation',
+    'originalExampleId',
+  ].join(' ');
   const examples: Interfaces.ExampleSuggestion[] = await ExampleSuggestion
     .find({ associatedWords: wordSuggestion.id })
     .select(LEAN_EXAMPLE_KEYS);
@@ -71,6 +79,9 @@ export const updateNestedExampleSuggestions = (
   /* Updates all the word's children exampleSuggestions */
   Promise.all(map(clientExamples, (example) => (
     !example.id
+    // If the nested example sentence doesn't have an id
+    // then a brand new example suggestion needs to be created
+    // for the current word suggestion
       ? createExampleSuggestion({
         ...example,
         exampleForSuggestion: true,
@@ -80,6 +91,8 @@ export const updateNestedExampleSuggestions = (
           ),
         ),
       }) : (async () => (
+        // If the nested example sentence does have an id
+        // then the platform will update the existing word suggestion
         ExampleSuggestion.findById(example.id)
           .then((exampleSuggestion) => {
             if (!exampleSuggestion) {
@@ -87,8 +100,8 @@ export const updateNestedExampleSuggestions = (
             }
             return updateExampleSuggestion({ id: example.id, data: example });
           })
-          .catch(() => {
-            throw new Error('An error occurred while finding nested example suggestion.');
+          .catch((error) => {
+            throw new Error(error.message || 'An error occurred while finding nested example suggestion.');
           })
       ))()
   )))

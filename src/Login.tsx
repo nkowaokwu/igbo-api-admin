@@ -9,13 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
+import LocalStorageKeys from './shared/constants/LocalStorageKeys';
 import { Role } from './shared/constants/auth-types';
-
-const LOCAL_STORAGE_ACCESS_TOKEN = 'igbo-api-admin-access';
-const LOCAL_STORAGE_UID = 'igbo-api-admin-uid';
-const LOCAL_STORAGE_PERMISSIONS = 'igbo-api-admin-permissions';
-const LOCAL_STORAGE_FORM = 'igbo-api-admin-form';
-const ADMIN_NAME = 'Ijemma Onwuzulike';
 
 export interface SignupInfo {
   email: string,
@@ -36,16 +31,15 @@ const Login = (): ReactElement => {
     const hasPermission = userRole === Role.ADMIN || userRole === Role.MERGER || userRole === Role.EDITOR;
     if (!hasPermission) {
       firebase.auth().signOut();
-      localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
-      localStorage.removeItem(LOCAL_STORAGE_UID);
-      localStorage.removeItem(LOCAL_STORAGE_PERMISSIONS);
-      localStorage.removeItem(LOCAL_STORAGE_FORM);
+      window.localStorage.clear();
       setErrorUponSubmitting('You do not have permission to access the platform');
     }
-    localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, idTokenResult.token);
-    localStorage.setItem(LOCAL_STORAGE_UID, idTokenResult.claims.user_id);
-    localStorage.setItem(LOCAL_STORAGE_PERMISSIONS, idTokenResult.claims.role);
-    window.location.hash = '#/';
+    localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, idTokenResult.token);
+    localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
+    localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
+    const redirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
+    localStorage.removeItem(LocalStorageKeys.REDIRECT_URL);
+    window.location.hash = redirectUrl || '#/';
   };
 
   const uiConfig = {
@@ -66,10 +60,10 @@ const Login = (): ReactElement => {
         if (user.additionalUserInfo.isNewUser) {
           handleCreateUserAccount(user.user.toJSON());
           firebase.auth().signOut();
-          localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
-          localStorage.removeItem(LOCAL_STORAGE_UID);
-          localStorage.removeItem(LOCAL_STORAGE_PERMISSIONS);
-          localStorage.removeItem(LOCAL_STORAGE_FORM);
+          localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
+          localStorage.removeItem(LocalStorageKeys.UID);
+          localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
+          localStorage.removeItem(LocalStorageKeys.FORM);
           setSuccessfulCreateAccount(true);
           return false;
         }
@@ -131,7 +125,7 @@ const Login = (): ReactElement => {
                 ) : null}
                 {errorUponSubmitting ? (
                   <Text data-test="login-error-message" className="error text-red-500 mt-2 text-center">
-                    {`Error: ${errorUponSubmitting}. Reach out to ${ADMIN_NAME} if you have questions`}
+                    {`Error: ${errorUponSubmitting}. Reach out to ${LocalStorageKeys.ADMIN_NAME} if you have questions`}
                   </Text>
                 ) : null}
                 <Box className="w-full flex flex-row justify-center items-center my-4">

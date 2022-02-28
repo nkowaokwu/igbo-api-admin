@@ -55,7 +55,7 @@ const WordEditForm = ({
   } = useForm({
     defaultValues: {
       dialects: record.dialects,
-      examples: record.examples,
+      examples: record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' })),
       wordClass: {
         label: WordClass[record.wordClass]?.label || '[UPDATE PART OF SPEECH]',
         value: WordClass[record.wordClass]?.value || null,
@@ -89,7 +89,7 @@ const WordEditForm = ({
     const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
     const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
     return examples
-      .map(({ igbo, english }, index) => (
+      .map(({ igbo, english, pronunciation }, index) => (
         {
           igbo,
           english,
@@ -102,6 +102,7 @@ const WordEditForm = ({
             : {}
           ),
           associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
+          pronunciation,
         }
       ))
       .filter((example) => example.igbo && example.english);
@@ -312,6 +313,7 @@ const WordEditForm = ({
         examples={examples}
         setExamples={setExamples}
         getValues={getValues}
+        setValue={setValue}
         control={control}
       />
       {/*

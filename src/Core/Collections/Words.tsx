@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import {
   List,
   Datagrid,
-  TextField,
   SimpleShowLayout,
   Responsive,
   ListProps,
@@ -14,6 +13,7 @@ import {
   AudioRecordingPreview,
   CompleteWordPreview,
   HeadwordField,
+  IdField,
   StandardIgboPreview,
   ListActions,
   Pagination,
@@ -55,7 +55,7 @@ export const WordList = (props: ListProps): ReactElement => {
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
             <ArrayPreview label="Stems" source="stems" />
-            <TextField label="Id" source="id" />
+            <IdField label="Id" source="id" />
             <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
