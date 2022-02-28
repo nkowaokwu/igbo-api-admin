@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { DEFAULT_RECORD } from 'src/shared/constants';
-import { Word } from 'src/backend/controllers/utils/interfaces';
+import { DEFAULT_EXAMPLE_RECORD, DEFAULT_WORD_RECORD } from 'src/shared/constants';
+import { Example, Word } from 'src/backend/controllers/utils/interfaces';
 import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
 
@@ -20,26 +20,38 @@ const AudioRecorder = ({
   path: string,
   getFormValues: (key: string) => any,
   setPronunciation: (key: string, value: any) => any,
-  record: Record | Word,
+  record: Record | Example | Word,
   originalRecord: Record,
   formTitle: string,
   formTooltip: string,
 }): ReactElement => {
-  const originalRecord = record.originalWordId
+  const originalRecord = record.originalWordId || record.originalExampleId
     ? originalRecordProp
-    : DEFAULT_RECORD;
-  const pathLabel = path === 'headword' ? 'Standard Igbo' : path;
-  const pronunciationPath = getFormValues(path === 'headword' ? 'pronunciation' : `dialects.${path}.pronunciation`);
+    : record?.associatedWords
+      ? DEFAULT_EXAMPLE_RECORD
+      : DEFAULT_WORD_RECORD;
+  const pathLabel = path === 'headword'
+    ? 'Standard Igbo'
+    : path.startsWith('examples') // Handles path for nested examples
+      ? 'Example'
+      : path;
+  const valuePath = path === 'headword'
+    ? 'pronunciation'
+    : path.startsWith('examples') // Handles path for nested examples
+      ? `${path}.pronunciation`
+      : `dialects.${path}.pronunciation`;
+  const [pronunciationPath, setPronunciationPath] = useState(getFormValues(valuePath));
   const [audioBlob, isRecording, startRecording, stopRecording] = useRecorder();
   const toast = useToast();
 
   /* Resets the audio pronunciation to its original value */
   const resetRecording = () => {
-    const pronunciationPath = path === 'headword' ? 'pronunciation' : `dialects.${path}.pronunciation`;
+    const pronunciationPath = valuePath;
     const originalPronunciationValue = path === 'headword'
       ? originalRecord.pronunciation
       : originalRecord[`${pronunciationPath}`];
     setPronunciation(pronunciationPath, originalPronunciationValue);
+    setPronunciationPath(getFormValues(valuePath));
     toast({
       title: 'Reset Audio Pronunciation',
       description: 'The audio pronunciation for this slot has been reset to its original value',
@@ -59,7 +71,8 @@ const AudioRecorder = ({
   /* Listen to changes to the audioBlob for the current pronunciation and saves it */
   useEffect(() => {
     const base64data = audioBlob;
-    setPronunciation(path === 'headword' ? 'pronunciation' : `dialects.${path}.pronunciation`, base64data);
+    setPronunciation(valuePath, base64data);
+    setPronunciationPath(getFormValues(valuePath));
     if (base64data) {
       toast({
         title: 'Recorded new audio',

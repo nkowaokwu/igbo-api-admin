@@ -235,7 +235,7 @@ input#word, input#igbo {
 
 .list-container {
   @apply flex;
-  @apply items-center;
+  @apply items-start;
   @apply mb-10;
 }
 

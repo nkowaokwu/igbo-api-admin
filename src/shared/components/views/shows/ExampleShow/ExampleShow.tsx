@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
-import { DEFAULT_RECORD } from 'src/shared/constants';
+import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collections';
 import { getExample } from 'src/shared/API';
@@ -42,7 +42,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     associatedWords,
     originalExampleId,
     updatedOn,
-  } = record || DEFAULT_RECORD;
+  } = record || DEFAULT_EXAMPLE_RECORD;
 
   const DIFF_FILTER_KEYS = [
     'id',

@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
   isStandardIgbo: yup.boolean(),
@@ -26,15 +27,8 @@ const schema = yup.object().shape({
   stems: yup.array().min(0).of(yup.string()),
   synonyms: yup.array().min(0).of(yup.string()),
   antonyms: yup.array().min(0).of(yup.string()),
-  stems: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
-  examples: yup.array().min(0).of(yup.object().shape({
-    igbo: yup.string(),
-    english: yup.string(),
-    associatedWords: yup.array().min(0).of(yup.string()),
-    id: yup.string().optional(),
-    originalExampleId: yup.string().nullable().optional(),
-  })),
+  examples: yup.array().min(0).of(ExampleEditFormSchema),
   isComplete: yup.boolean(),
   nsibidi: yup.string(),
 });

@@ -15,9 +15,17 @@ export const onCreateUserAccount = functions.https.onCall(async (user) => {
         ? Role.ADMIN
         : process.env.NODE_ENV === 'production' && !prodAdminEmailList.includes(user.email)
           ? Role.USER
-          : process.env.NODE_ENV !== 'production' && adminEmailList.includes(user.email)
+          // Creates admin, merger, and editor accounts while using auth emulator
+          : (
+            process.env.NODE_ENV !== 'production'
+            && (adminEmailList.includes(user.email) || user.email.startsWith('admin_'))
+          )
             ? Role.ADMIN
-            : Role.USER,
+            : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge_')
+              ? Role.MERGER
+              : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor_')
+                ? Role.EDITOR
+                : Role.USER,
     };
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });

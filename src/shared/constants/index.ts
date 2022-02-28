@@ -2,7 +2,7 @@ export const API_ROUTE = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3030'
   : `https://${window.location.host}`;
 
-export const DEFAULT_RECORD = {
+export const DEFAULT_WORD_RECORD = {
   id: '',
   author: '',
   word: '',
@@ -15,13 +15,28 @@ export const DEFAULT_RECORD = {
   details: '',
   merged: '',
   isStandardIgbo: '',
-  igbo: '',
-  english: '',
   accented: '',
   pronunciation: '',
   stems: '',
-  associatedWords: [],
   originalWordId: '',
+  editorsNotes: '',
+  userComments: '',
+  updatedOn: '',
+};
+
+export const DEFAULT_EXAMPLE_RECORD = {
+  id: '',
+  author: '',
+  igbo: '',
+  english: '',
+  pronunciation: '',
+  associatedWords: [],
+  approvals: [],
+  denials: [],
+  details: '',
+  merged: '',
   originalExampleId: '',
+  editorsNotes: '',
+  userComments: '',
   updatedOn: '',
 };
