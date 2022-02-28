@@ -1,12 +1,10 @@
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 
-interface ExampleSearchQuery {
-  $or: [
-    { igbo: RegExp },
-    { english: RegExp },
-  ],
-}
+type ExampleSearchQuery = [
+  { igbo: RegExp },
+  { english: RegExp },
+];
 
 const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: string } => {
   const searchFilters = filters ? Object.entries(filters).reduce((allFilters, [key, value]) => {
@@ -23,6 +21,9 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'authorId':
         allFilters.authorId = { $eq: value };
+        break;
+      case 'example':
+        allFilters.$or = [{ igbo: new RegExp(value) }, { english: new RegExp(value) }];
         break;
       default:
         return allFilters;
@@ -45,7 +46,7 @@ const definitionsQuery = (regex: RegExp): { definitions: { $in: [RegExp] } } => 
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
 
 /* Regex match query used to later to defined the Content-Range response header */
-export const searchExamplesRegexQuery = (regex: RegExp): ExampleSearchQuery => (
+export const searchExamplesRegexQuery = (regex: RegExp): { $or: ExampleSearchQuery } => (
   ({ $or: [{ igbo: regex }, { english: regex }] })
 );
 export const searchExampleSuggestionsRegexQuery = (
