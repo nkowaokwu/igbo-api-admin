@@ -20,9 +20,9 @@ export const WORD_KEYS = [
   'antonyms',
   'hypernyms',
   'hyponyms',
-  'updatedOn',
+  'updatedAt',
 ];
-export const EXAMPLE_KEYS = ['igbo', 'english', 'associatedWords', 'id', 'updatedOn'];
+export const EXAMPLE_KEYS = ['igbo', 'english', 'associatedWords', 'id', 'updatedAt'];
 export const EXAMPLE_SUGGESTION_KEYS = [
   'originalExampleId',
   'igbo',
@@ -35,7 +35,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'authorId',
   'approvals',
   'denials',
-  'updatedOn',
+  'updatedAt',
   'merged',
   'mergedBy',
   'id',
@@ -51,7 +51,7 @@ export const GENERIC_WORD_KEYS = [
   'userComments',
   'approvals',
   'denials',
-  'updatedOn',
+  'updatedAt',
   'merged',
   'mergedBy',
   'id',
@@ -72,7 +72,7 @@ export const WORD_SUGGESTION_KEYS = [
   'stems',
   'approvals',
   'denials',
-  'updatedOn',
+  'updatedAt',
   'merged',
   'mergedBy',
   'id',

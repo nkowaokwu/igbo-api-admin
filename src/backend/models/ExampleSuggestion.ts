@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins/index';
+import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
 
 const { Schema, Types } = mongoose;
@@ -16,13 +16,11 @@ const exampleSuggestionSchema = new Schema({
   authorId: { type: String, default: '' },
   approvals: { type: [{ type: String }], default: [] },
   denials: { type: [{ type: String }], default: [] },
-  updatedOn: { type: Date, default: Date.now() },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
   mergedBy: { type: String, default: null },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSuggestionSchema);
-updatedOnHook(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
 
 export default mongoose.model('ExampleSuggestion', exampleSuggestionSchema);

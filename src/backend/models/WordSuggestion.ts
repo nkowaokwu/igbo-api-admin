@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
-import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins';
+import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadWordPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
 import WordClass from '../shared/constants/WordClass';
@@ -54,7 +54,6 @@ const wordSuggestionSchema = new Schema(
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
     isComplete: { type: Boolean, default: false },
-    updatedOn: { type: Date, default: Date.now() },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },
   },
@@ -62,7 +61,6 @@ const wordSuggestionSchema = new Schema(
 );
 
 toJSONPlugin(wordSuggestionSchema);
-updatedOnHook(wordSuggestionSchema);
 uploadWordPronunciation(wordSuggestionSchema);
 
 wordSuggestionSchema.pre('findOneAndDelete', async function (next) {

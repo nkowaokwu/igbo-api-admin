@@ -35,7 +35,7 @@ const DIFF_FILTER_KEYS = [
   'editorsNotes',
   'originalWordId',
   'id',
-  'updatedOn',
+  'updatedAt',
   'stems',
   'normalized',
   'mergedBy',
@@ -66,7 +66,7 @@ const WordShow = (props: ShowProps): ReactElement => {
     merged,
     pronunciation,
     originalWordId,
-    updatedOn,
+    updatedAt,
   } = record;
 
   const resourceTitle = {
@@ -103,7 +103,7 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Box>
                 <Heading fontSize="lg" className="text-xl text-gray-700">
                   {'Last Updated: '}
-                  {determineDate(updatedOn)}
+                  {determineDate(updatedAt)}
                 </Heading>
                 <EditDocumentIds collection="words" originalId={originalWordId} id={id} title="Origin Word Id:" />
               </Box>

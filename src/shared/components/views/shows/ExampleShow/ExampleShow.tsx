@@ -41,7 +41,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     userComments,
     associatedWords,
     originalExampleId,
-    updatedOn,
+    updatedAt,
   } = record || DEFAULT_EXAMPLE_RECORD;
 
   const DIFF_FILTER_KEYS = [
@@ -56,7 +56,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     'editorsNotes',
     'originalWordId',
     'id',
-    'updatedOn',
+    'updatedAt',
     'stems',
     'normalized',
     'mergedBy',
@@ -94,7 +94,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
           <Box className="flex flex-col flex-auto justify-between items-start">
             <h3 className="text-xl text-gray-700">
               {'Last Updated: '}
-              {determineDate(updatedOn)}
+              {determineDate(updatedAt)}
             </h3>
             <EditDocumentIds collection="examples" originalId={originalExampleId} id={id} title="Origin Example Id:" />
             <Box>

@@ -18,10 +18,10 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
       <Heading fontSize="2xl">Word Quick View</Heading>
       <Text className="italic text-gray-600">Word document details</Text>
       <Text>{`Id: ${record.id}`}</Text>
-      <Tooltip label={moment(record.updatedOn).format('MMMM Do YYYY, h:mm:ss a')} aria-label="A tooltip">
+      <Tooltip label={moment(record.updatedAt).format('MMMM Do YYYY, h:mm:ss a')} aria-label="A tooltip">
         <Box className="flex flex-row space-x-2">
           <Text>Last updated:</Text>
-          <Text className="font-bold">{moment(record.updatedOn).fromNow()}</Text>
+          <Text className="font-bold">{moment(record.updatedAt).fromNow()}</Text>
         </Box>
       </Tooltip>
       <Box className="flex flex-row space-x-2 items-center">

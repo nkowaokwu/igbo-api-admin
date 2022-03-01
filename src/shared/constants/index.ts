@@ -21,7 +21,7 @@ export const DEFAULT_WORD_RECORD = {
   originalWordId: '',
   editorsNotes: '',
   userComments: '',
-  updatedOn: '',
+  updatedAt: '',
 };
 
 export const DEFAULT_EXAMPLE_RECORD = {
@@ -38,5 +38,5 @@ export const DEFAULT_EXAMPLE_RECORD = {
   originalExampleId: '',
   editorsNotes: '',
   userComments: '',
-  updatedOn: '',
+  updatedAt: '',
 };

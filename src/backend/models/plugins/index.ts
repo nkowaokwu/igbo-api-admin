@@ -25,12 +25,3 @@ export const toObjectPlugin = ({
     delete ret.__v;
   },
 });
-
-export const updatedOnHook = (schema: mongoose.Schema): any => (
-  schema.pre('save', function (next) {
-    // @ts-ignore
-    this.updatedOn = Date.now();
-    next();
-    return this;
-  })
-);

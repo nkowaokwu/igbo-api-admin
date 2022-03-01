@@ -47,7 +47,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   antonyms: string[],
   hypernyms: string[],
   hyponyms: string[],
-  updatedOn: Date,
+  updatedAt: Date,
   examples?: Example[],
 };
 
@@ -64,7 +64,7 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   isStandardIgbo: boolean,
   approvals?: string[],
   denials?: string[],
-  updatedOn: Date,
+  updatedAt: Date,
   merged?: Types.ObjectId,
   mergedBy?: string,
   examples?: ExampleSuggestion[],
@@ -79,7 +79,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   associatedWords: string[],
   pronunciation: string,
   authorId: string,
-  updatedOn: Date,
+  updatedAt: Date,
 }
 
 export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
@@ -94,7 +94,7 @@ export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
   authorId: string,
   approvals: string[],
   denial: string[],
-  updatedOn: Date,
+  updatedAt: Date,
   merged: Types.ObjectId,
   mergedBy: string,
 };

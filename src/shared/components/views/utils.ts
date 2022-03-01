@@ -1,7 +1,7 @@
 /* Renders the date in a correct format */
-export const determineDate = (updatedOn: string | number): string | Date => {
-  if (!updatedOn) {
+export const determineDate = (updatedAt: string | number): string | Date => {
+  if (!updatedAt) {
     return 'N/A';
   }
-  return new Date(updatedOn).toLocaleString();
+  return new Date(updatedAt).toLocaleString();
 };

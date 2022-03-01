@@ -276,8 +276,8 @@ describe('MongoDB Words', function () {
                   expect(updateWordRes.status).to.equal(200);
                   forIn(updatedWordData, (value, key) => {
                     expect(isEqual(updateWordRes.body[key], value)).to.equal(true);
-                    expect(new Date(result.body.updatedOn))
-                      .to.be.lessThan(new Date(updateWordRes.body.updatedOn));
+                    expect(new Date(result.body.updatedAt))
+                      .to.be.lessThan(new Date(updateWordRes.body.updatedAt));
                   });
                   done();
                 });
