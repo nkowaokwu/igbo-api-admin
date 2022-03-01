@@ -31,6 +31,7 @@ export interface WordDialect {
 }
 
 export interface Word extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
   word: string,
   wordClass: string | { label: string },
   definitions: [string],
@@ -43,6 +44,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   frequency: number,
   stems: string[],
   isStandardIgbo: boolean,
+  nsibidi: string,
   synonyms: string[],
   antonyms: string[],
   hypernyms: string[],
@@ -52,6 +54,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
 };
 
 export interface WordSuggestion extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
   originalWordId?: Types.ObjectId,
   word: string,
   wordClass: string,
@@ -74,6 +77,7 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
 };
 
 export interface Example extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
   igbo?: string,
   english?: string,
   associatedWords: string[],
@@ -83,6 +87,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
 }
 
 export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
   originalExampleId?: Types.ObjectId,
   igbo?: string,
   english?: string,
