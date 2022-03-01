@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { has, get } from 'lodash';
 import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, useToast } from '@chakra-ui/react';
@@ -40,7 +41,7 @@ const AudioRecorder = ({
     : path.startsWith('examples') // Handles path for nested examples
       ? `${path}.pronunciation`
       : `dialects.${path}.pronunciation`;
-  const [pronunciationPath, setPronunciationPath] = useState(getFormValues(valuePath));
+  const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording] = useRecorder();
   const toast = useToast();
 
@@ -51,7 +52,7 @@ const AudioRecorder = ({
       ? originalRecord.pronunciation
       : originalRecord[`${pronunciationPath}`];
     setPronunciation(pronunciationPath, originalPronunciationValue);
-    setPronunciationPath(getFormValues(valuePath));
+    setPronunciationValue(getFormValues(valuePath));
     toast({
       title: 'Reset Audio Pronunciation',
       description: 'The audio pronunciation for this slot has been reset to its original value',
@@ -68,11 +69,26 @@ const AudioRecorder = ({
     return currentPronunciationPath && currentPronunciationPath.startsWith('data');
   };
 
-  /* Listen to changes to the audioBlob for the current pronunciation and saves it */
+  /* Grabbing the default pronunciation value for the word or example document */
+  useEffect(() => {
+    if (has(record, 'pronunciation') && !pronunciationValue) {
+      setPronunciationValue(get(record, valuePath));
+    }
+  }, [record]);
+
+  /** Listen to changes to the audioBlob for the
+   * current pronunciation and saves it. If getFormValues
+   * doesn't have a pronunciation key living on the object yet,
+   * the platform will not overwrite the pronunciationValue
+   * with undefined.
+   * */
   useEffect(() => {
     const base64data = audioBlob;
-    setPronunciation(valuePath, base64data);
-    setPronunciationPath(getFormValues(valuePath));
+    // @ts-expect-error
+    if (has(getFormValues(), 'pronunciation')) {
+      setPronunciation(valuePath, base64data);
+      setPronunciationValue(getFormValues(valuePath));
+    }
     if (base64data) {
       toast({
         title: 'Recorded new audio',
@@ -135,13 +151,13 @@ const AudioRecorder = ({
           )}
         </Box>
         <Box className="mt-3 text-center flex flex-row justify-center">
-          {pronunciationPath ? (
+          {pronunciationValue ? (
             <Box className="flex flex-col">
               <ReactAudioPlayer
                 data-test={`${path}-audio-playback`}
                 style={{ height: 40, width: 250 }}
                 id="audio"
-                src={pronunciationPath}
+                src={pronunciationValue}
                 controls
               />
               {shouldRenderNewPronunciationLabel() && (
