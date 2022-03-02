@@ -119,10 +119,10 @@ export const searchEnglishRegexQuery = (
   ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchForLastWeekQuery = (): {
-  updatedOn: { [key: string]: number },
+  updatedAt: { [key: string]: number },
   merged: { [key: string]: null },
 } => ({
-  updatedOn: { $gte: LOOK_BACK_DATE.valueOf() },
+  updatedAt: { $gte: LOOK_BACK_DATE.valueOf() },
   merged: { $ne: null },
 });
 export const searchDeveloperWithHostsQuery = hostsQuery;

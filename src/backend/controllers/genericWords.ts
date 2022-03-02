@@ -96,7 +96,7 @@ export const findGenericWordById = (id) => (
 const findGenericWordsAsEditor = async ({ regexMatch, skip, limit }) => (
   GenericWord
     .find(regexMatch)
-    .sort({ updatedOn: SortingDirections.ASCENDING })
+    .sort({ updatedAt: SortingDirections.ASCENDING })
     .skip(skip)
     .limit(limit)
 );

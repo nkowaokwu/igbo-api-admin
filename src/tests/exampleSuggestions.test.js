@@ -121,7 +121,7 @@ describe('MongoDB Example Suggestions', () => {
         });
     });
 
-    it('should update the updatedOn field', (done) => {
+    it('should update the updatedAt field', (done) => {
       getExampleSuggestions()
         .then((exampleSuggestionsRes) => {
           expect(exampleSuggestionsRes.status).to.equal(200);
@@ -129,7 +129,7 @@ describe('MongoDB Example Suggestions', () => {
           updateExampleSuggestion(exampleSuggestion)
             .end((_, res) => {
               expect(res.status).to.equal(200);
-              expect(Date.parse(exampleSuggestion.updatedOn)).to.be.lessThan(Date.parse(res.body.updatedOn));
+              expect(Date.parse(exampleSuggestion.updatedAt)).to.be.lessThan(Date.parse(res.body.updatedAt));
               done();
             });
         });

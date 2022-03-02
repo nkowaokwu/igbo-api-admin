@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
-import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins';
+import { toJSONPlugin, toObjectPlugin } from './plugins';
 import WordClass from '../shared/constants/WordClass';
 import * as Interfaces from '../controllers/utils/interfaces';
 
@@ -42,13 +42,11 @@ const wordSchema = new Schema({
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   isComplete: { type: Boolean, default: false },
   nsibidi: { type: String, default: '' },
-  updatedOn: { type: Date, default: Date.now() },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 wordSchema.index({ word: 'text', variations: 'text', nsibidi: 'text' });
 
 toJSONPlugin(wordSchema);
-updatedOnHook(wordSchema);
 
 const WordModel = mongoose.model('Word', wordSchema);
 WordModel.syncIndexes();

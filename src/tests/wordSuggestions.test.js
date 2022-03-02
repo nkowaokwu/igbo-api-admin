@@ -220,7 +220,7 @@ describe('MongoDB Word Suggestions', () => {
         });
     });
 
-    it('should update the updatedOn field', (done) => {
+    it('should update the updatedAt field', (done) => {
       getWordSuggestions()
         .then((wordSuggestionsRes) => {
           expect(wordSuggestionsRes.status).to.equal(200);
@@ -228,7 +228,7 @@ describe('MongoDB Word Suggestions', () => {
           updateWordSuggestion({ ...wordSuggestion, word: 'updated' })
             .end((_, res) => {
               expect(res.status).to.equal(200);
-              expect(Date.parse(wordSuggestion.updatedOn)).to.be.lessThan(Date.parse(res.body.updatedOn));
+              expect(Date.parse(wordSuggestion.updatedAt)).to.be.lessThan(Date.parse(res.body.updatedAt));
               done();
             });
         });

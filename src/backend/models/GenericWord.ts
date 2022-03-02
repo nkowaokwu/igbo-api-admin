@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
-import { toJSONPlugin, toObjectPlugin, updatedOnHook } from './plugins/index';
+import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import * as Interfaces from '../controllers/utils/interfaces';
 
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
@@ -41,13 +41,11 @@ const genericWordSchema = new Schema({
   nsibidi: { type: String, default: '' },
   approvals: { type: [{ type: String }], default: [] },
   denials: { type: [{ type: String }], default: [] },
-  updatedOn: { type: Date, default: Date.now() },
   merged: { type: Types.ObjectId, ref: 'Word', default: null },
   mergedBy: { type: String, default: null },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(genericWordSchema);
-updatedOnHook(genericWordSchema);
 
 genericWordSchema.pre('findOneAndDelete', async function (next) {
   // @ts-ignore
