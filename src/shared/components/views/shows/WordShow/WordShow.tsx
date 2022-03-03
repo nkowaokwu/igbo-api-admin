@@ -263,7 +263,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                   >
                     {/* @ts-ignore */}
                     <ExampleDiff
-                      record={record}
                       diffRecord={diffRecord}
                       // @ts-ignore
                       resource={resource}

@@ -4,13 +4,11 @@ import ReactAudioPlayer from 'react-audio-player';
 import DiffField from './DiffField';
 
 const ExampleDiff = ({
-  record,
   value,
   index,
   diffRecord,
   resource,
 } : {
-  record: any,
   value: any,
   index: number,
   diffRecord: Record,
@@ -29,7 +27,7 @@ const ExampleDiff = ({
         fallbackValue={value.english}
       />
       <ReactAudioPlayer
-        src={record.examples[index].pronunciation}
+        src={value.pronunciation}
         style={{ height: 40, width: 250 }}
         controls
       />
