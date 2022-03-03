@@ -51,8 +51,8 @@ export default {
       resource,
       collection,
     }: { record: Record | { id: string }, resource: Collections, collection: Collections }): Promise<any> => {
-      mergeDocument({ collection, record });
-      return handleUpdateDocument({ type: ActionTypes.MERGE, resource, record });
+      handleUpdateDocument({ type: ActionTypes.MERGE, resource, record });
+      return mergeDocument({ collection, record });
     },
     successMessage: 'Document has been merged 🎉',
     hasLink: true,

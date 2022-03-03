@@ -55,10 +55,9 @@ const WordEditForm = ({
   } = useForm({
     defaultValues: {
       dialects: record.dialects,
-      examples: (
-        record?.examples
-        && record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
-      ),
+      examples: record?.examples
+        ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
+        : [],
       wordClass: {
         label: WordClass[record.wordClass]?.label || '[UPDATE PART OF SPEECH]',
         value: WordClass[record.wordClass]?.value || null,
