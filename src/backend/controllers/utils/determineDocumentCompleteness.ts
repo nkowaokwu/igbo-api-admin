@@ -35,9 +35,9 @@ export default (record: Word | Record) : {
   const completeWordRequirements = compact([
     ...sufficientWordRequirements,
     !nsibidi && 'Nsịbịdị is needed',
-    !stems.length && 'A word stem is needed',
-    !synonyms.length && 'A synonym is needed',
-    !antonyms.length && 'A antonym is needed',
+    !stems?.length && 'A word stem is needed',
+    !synonyms?.length && 'A synonym is needed',
+    !antonyms?.length && 'A antonym is needed',
     (Array.isArray(examples)
       && examples.some(({ pronunciation }) => !pronunciation)
       && 'All example sentences need pronunciations'

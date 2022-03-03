@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Word } from 'src/backend/controllers/utils/interfaces';
+import determineDocumentCompleteness from 'src/backend/controllers/utils/determineDocumentCompleteness';
 import DocumentStatus from './DocumentStatus';
-import determineDocumentCompleteness from './utils/determineDocumentCompleteness';
 
 const CompleteWordPreview = (
   { record, className, showFull }:

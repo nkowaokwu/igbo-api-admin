@@ -2,6 +2,7 @@ import React, { useState, useEffect, ReactElement } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import network from 'src/Core/Dashboard/network';
 import {
+  SUFFICIENT_WORDS_GOAL,
   COMPLETE_WORDS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
@@ -12,7 +13,8 @@ import ProgressCard from '../ProgressCard';
 
 const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
-  const [totalCompleteWords, setTotalCompletedWords] = useState(null);
+  const [totalSufficientWords, setTotalSufficientWords] = useState(null);
+  const [totalCompletedWords, setTotalCompletedWords] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
@@ -22,44 +24,33 @@ const MilestoneProgress = (): ReactElement => {
     window.location.hash = '#/';
   };
 
+  const handleNoPermissionStatus = ({ status }) => {
+    if (status === NO_PERMISSION_STATUS) {
+      redirectToLogin();
+    }
+  };
+
   useEffect(() => {
-    network({ url: '/stats/completeWords' })
-      .then(({ body: completeWords }) => setTotalCompletedWords(JSON.parse(completeWords).count || 0))
-      .catch(({ status }) => {
-        if (status === NO_PERMISSION_STATUS) {
-          redirectToLogin();
-        }
-      });
+    network({ url: '/stats/sufficientWords' })
+      .then(({ body: sufficientWords }) => setTotalSufficientWords(JSON.parse(sufficientWords).count || 0))
+      .catch(handleNoPermissionStatus);
+    network({ url: '/stats/completedWords' })
+      .then(({ body: completedWords }) => setTotalCompletedWords(JSON.parse(completedWords).count || 0))
+      .catch(handleNoPermissionStatus);
     network({ url: '/stats/headwordAudioPronunciations' })
       .then(({ body: audioPronunciations }) => (
         setTotalHeadwordAudioPronunciation(JSON.parse(audioPronunciations).count || 0)
       ))
-      .catch(({ status }) => {
-        if (status === NO_PERMISSION_STATUS) {
-          redirectToLogin();
-        }
-      });
+      .catch(handleNoPermissionStatus);
     network({ url: '/stats/isStandardIgbo' })
-      .then(({ body: isStandardIgbos }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbos).count || 0))
-      .catch(({ status }) => {
-        if (status === NO_PERMISSION_STATUS) {
-          redirectToLogin();
-        }
-      });
+      .then(({ body: isStandardIgbo }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbo).count || 0))
+      .catch(handleNoPermissionStatus);
     network({ url: '/stats/examples' })
       .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0))
-      .catch(({ status }) => {
-        if (status === NO_PERMISSION_STATUS) {
-          redirectToLogin();
-        }
-      });
+      .catch(handleNoPermissionStatus);
     network({ url: '/stats/nsibidi' })
       .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
-      .catch(({ status }) => {
-        if (status === NO_PERMISSION_STATUS) {
-          redirectToLogin();
-        }
-      });
+      .catch(handleNoPermissionStatus);
   }, []);
   return (
     <>
@@ -72,12 +63,20 @@ const MilestoneProgress = (): ReactElement => {
       </Box>
       <Box className="space-y-3 grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3">
         <ProgressCard
-          totalCount={totalCompleteWords}
+          totalCount={totalCompletedWords}
           goal={COMPLETE_WORDS_GOAL}
           heading={'"Complete" Words'}
-          description={`There are currently ${totalCompleteWords} "complete" words on the platform.
+          description={`There are currently ${totalCompletedWords} "complete" words on the platform.
           Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
-          isLoaded={totalCompleteWords !== null}
+          isLoaded={totalCompletedWords !== null}
+        />
+        <ProgressCard
+          totalCount={totalSufficientWords}
+          goal={SUFFICIENT_WORDS_GOAL}
+          heading={'"Sufficient" Words'}
+          description={`There are currently ${totalSufficientWords} "sufficient" words on the platform.
+          Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`}
+          isLoaded={totalSufficientWords !== null}
         />
         <ProgressCard
           totalCount={totalHeadwordAudioPronunciation}

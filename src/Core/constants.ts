@@ -6,6 +6,7 @@ export const VOICE_OVER_RECORDERS_SLACK_CHANNEL = 'https://igboapi.slack.com/arc
 export const EDITORS_TRANSLATORS_SLACK_CHANNEL = 'https://igboapi.slack.com/archives/C01UZQDDJ73';
 export const SOFTWARE_ENGINEERS_SLACK_CHANNEL = 'https://igboapi.slack.com/archives/C01UCDVSP0U';
 
+export const SUFFICIENT_WORDS_GOAL = 8095;
 export const COMPLETE_WORDS_GOAL = 8095;
 export const HEADWORD_AUDIO_PRONUNCIATION_GOAL = 2700;
 export const WORDS_WITH_NSIBIDI_GOAL = 1000;
