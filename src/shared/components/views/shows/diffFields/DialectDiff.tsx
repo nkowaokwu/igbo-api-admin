@@ -23,16 +23,6 @@ const DialectDiff = (
 ): ReactElement => {
   const record = { ...(propRecord || {}), dialects: propRecord?.dialects || {} };
   const updatedDialects = [];
-  // TODO: update this!!
-  // diffRecord?.forEach(({ path = [] }) => {
-  //   Object.values(record.dialects || generateEmptyRecordDialects())
-  //     .forEach(({ dialect }) => {
-  //       if (path.includes(dialect)) {
-  //         updatedDialects.push(Dialects[dialect]);
-  //       }
-  //     });
-  // });
-
   // @ts-ignore
   return record?.word ? (
     <Box className="w-full">
@@ -76,7 +66,7 @@ const DialectDiff = (
           {Object.entries(record.dialects as Interfaces.WordDialect).map(([
             dialectalWord,
             {
-              variations,
+              variations = [],
               dialects,
               pronunciation,
             },

@@ -65,7 +65,7 @@ const CompleteWordPreview = (
                     </>
                   ) : (
                     sufficientWordRequirements.map((requirement) => (
-                      <ListItem color={requirementsColor}>{requirement}</ListItem>
+                      <ListItem key={`requirement-${requirement}`} color={requirementsColor}>{requirement}</ListItem>
                     ))
                   )}
                 </UnorderedList>
@@ -87,7 +87,7 @@ const CompleteWordPreview = (
                     </>
                   ) : (
                     completeWordRequirements.map((requirement) => (
-                      <ListItem color={requirementsColor}>{requirement}</ListItem>
+                      <ListItem key={`requirement-${requirement}`} color={requirementsColor}>{requirement}</ListItem>
                     ))
                   )}
                 </UnorderedList>
