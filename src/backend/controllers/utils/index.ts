@@ -1,5 +1,5 @@
 import { Document, Query, Model } from 'mongoose';
-import { Request, Response } from 'functions/node_modules/@types/express';
+import { Request, Response } from 'express';
 import stringSimilarity from 'string-similarity';
 import diacriticless from 'diacriticless';
 import {

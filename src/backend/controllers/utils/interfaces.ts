@@ -1,5 +1,5 @@
 import { Document, LeanDocument, Types } from 'mongoose';
-import { Request } from 'functions/node_modules/@types/express';
+import { Request } from 'express';
 import { Role } from 'src/shared/constants/auth-types';
 import Collections from 'src/shared/constants/Collections';
 

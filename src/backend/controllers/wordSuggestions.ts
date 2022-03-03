@@ -1,5 +1,5 @@
 import { Document, Query, Types } from 'mongoose';
-import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
+import { Request, Response, NextFunction } from 'express';
 import {
   assign,
   every,

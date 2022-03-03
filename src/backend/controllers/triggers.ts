@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
+import { Request, Response, NextFunction } from 'express';
 import { sendCreatedSuggestionNotification } from './email';
 
 /* If triggered by clients, a new suggestion email to all editors, mergers, and admins */
