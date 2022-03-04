@@ -4,6 +4,7 @@ import network from 'src/Core/Dashboard/network';
 import {
   SUFFICIENT_WORDS_GOAL,
   COMPLETE_WORDS_GOAL,
+  // DIALECTAL_VARIATIONS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
@@ -15,6 +16,7 @@ const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
   const [totalSufficientWords, setTotalSufficientWords] = useState(null);
   const [totalCompletedWords, setTotalCompletedWords] = useState(null);
+  // const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
@@ -31,11 +33,13 @@ const MilestoneProgress = (): ReactElement => {
   };
 
   useEffect(() => {
-    network({ url: '/stats/sufficientWords' })
-      .then(({ body: sufficientWords }) => setTotalSufficientWords(JSON.parse(sufficientWords).count || 0))
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/completedWords' })
-      .then(({ body: completedWords }) => setTotalCompletedWords(JSON.parse(completedWords).count || 0))
+    network({ url: '/stats/words' })
+      .then(({ body }) => {
+        const { sufficientWordsCount, completedWordsCount } = JSON.parse(body);
+        setTotalSufficientWords(sufficientWordsCount || 0);
+        setTotalCompletedWords(completedWordsCount || 0);
+        // setTotalDialectalVariations(dialectalVariationsCount || 0);
+      })
       .catch(handleNoPermissionStatus);
     network({ url: '/stats/headwordAudioPronunciations' })
       .then(({ body: audioPronunciations }) => (
@@ -63,14 +67,6 @@ const MilestoneProgress = (): ReactElement => {
       </Box>
       <Box className="space-y-3 grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3">
         <ProgressCard
-          totalCount={totalCompletedWords}
-          goal={COMPLETE_WORDS_GOAL}
-          heading={'"Complete" Words'}
-          description={`There are currently ${totalCompletedWords} "complete" words on the platform.
-          Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
-          isLoaded={totalCompletedWords !== null}
-        />
-        <ProgressCard
           totalCount={totalSufficientWords}
           goal={SUFFICIENT_WORDS_GOAL}
           heading={'"Sufficient" Words'}
@@ -78,6 +74,22 @@ const MilestoneProgress = (): ReactElement => {
           Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`}
           isLoaded={totalSufficientWords !== null}
         />
+        <ProgressCard
+          totalCount={totalCompletedWords}
+          goal={COMPLETE_WORDS_GOAL}
+          heading={'"Complete" Words'}
+          description={`There are currently ${totalCompletedWords} "complete" words on the platform.
+          Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
+          isLoaded={totalCompletedWords !== null}
+        />
+        {/* <ProgressCard
+          totalCount={totalDialectalVariations}
+          goal={COMPLETE_WORDS_GOAL}
+          heading={'"Complete" Words'}
+          description={`There are currently ${totalDialectalVariations} dialectal word variations on the platform.
+          Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`}
+          isLoaded={totalDialectalVariations !== null}
+        /> */}
         <ProgressCard
           totalCount={totalHeadwordAudioPronunciation}
           goal={HEADWORD_AUDIO_PRONUNCIATION_GOAL}

@@ -25,8 +25,7 @@ import {
   getTotalWordsInStandardIgbo,
   getTotalExampleSentences,
   getTotalWordsWithNsibidi,
-  getSufficientWords,
-  getCompletedWords,
+  getWordStats,
 } from '../controllers/stats';
 import {
   deleteGenericWord,
@@ -78,8 +77,7 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/stats/sufficientWords', getSufficientWords);
-editorRouter.get('/stats/completedWords', getCompletedWords);
+editorRouter.get('/stats/words', getWordStats);
 editorRouter.get('/stats/headwordAudioPronunciations', getTotalHeadwordsWithAudioPronunciations);
 editorRouter.get('/stats/isStandardIgbo', getTotalWordsInStandardIgbo);
 editorRouter.get('/stats/examples', getTotalExampleSentences);

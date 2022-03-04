@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box, Checkbox, Tooltip } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
+import determineIsAsCompleteAsPossible from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import { Input } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
 import HeadwordInterface from './HeadwordFormInterface';
@@ -11,30 +12,7 @@ const HeadwordForm = ({
   record,
   getValues,
 }: HeadwordInterface): ReactElement => {
-  const isAsCompleteAsPossible = (
-    record.word
-    && record.wordClass
-    && Array.isArray(record.definitions) && record.definitions.length
-    && (
-      Array.isArray(record.examples)
-      && record.examples.length
-      && record.examples.every(({ pronunciation }) => pronunciation)
-    )
-    && (
-      Object.entries(record.dialects)
-      && Object.entries(record.dialects).length
-      && Object.values(record.dialects).every(({ dialects, pronunciation }) => (
-        dialects.length && pronunciation
-      ))
-    )
-    && record.pronunciation
-    && record.isStandardIgbo
-    && record.nsibidi
-    && Array.isArray(record.stems) && record.stems.length
-    && Array.isArray(record.synonyms) && record.synonyms.length
-    && Array.isArray(record.antonyms) && record.antonyms.length
-
-  );
+  const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
 
   return (
     <Box className="flex flex-col w-full">
