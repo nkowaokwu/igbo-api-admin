@@ -18,7 +18,7 @@ const HeadwordForm = ({
     && (
       Array.isArray(record.examples)
       && record.examples.length
-      && record.every(({ pronunciation }) => pronunciation)
+      && record.examples.every(({ pronunciation }) => pronunciation)
     )
     && (
       Object.entries(record.dialects)

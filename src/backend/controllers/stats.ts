@@ -82,13 +82,29 @@ export const getSufficientWords = async (
       examples: true,
       limit: INCLUDE_ALL_WORDS_LIMIT,
     });
-    const count = words.filter((word) => {
-      const { sufficientWordRequirements } = determineDocumentCompleteness(word);
-      const manualCheck = word.isComplete;
-      return (
-        sufficientWordRequirements.length === 1
-        && sufficientWordRequirements.includes('The headword is needed')
-      ) || manualCheck;
+    const count = words.filter(({
+      word,
+      wordClass,
+      definitions,
+      isStandardIgbo,
+      pronunciation,
+      examples,
+      isComplete,
+    }) => {
+      const automaticCheck = (
+        word
+        // String normalization check:
+        // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
+        // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
+        && word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g)
+        && wordClass
+        && Array.isArray(definitions) && definitions.length >= 1
+        && Array.isArray(examples) && examples.length >= 1
+        && pronunciation.length > 10
+        && isStandardIgbo
+      );
+      const manualCheck = isComplete;
+      return automaticCheck || manualCheck;
     }).length;
     return res.send({ count });
   } catch (err) {
@@ -112,10 +128,10 @@ export const getCompletedWords = async (
     const count = words.filter((word) => {
       const { completeWordRequirements } = determineDocumentCompleteness(word);
       const manualCheck = word.isComplete;
-      return (
+      return manualCheck || !completeWordRequirements.length || (
         completeWordRequirements.length === 1
         && completeWordRequirements.includes('The headword is needed')
-      ) || manualCheck;
+      );
     }).length;
     return res.send({ count });
   } catch (err) {
