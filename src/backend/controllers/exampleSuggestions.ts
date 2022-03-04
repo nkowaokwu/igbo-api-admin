@@ -1,5 +1,5 @@
 import { Document, Query, Types } from 'mongoose';
-import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
+import { Request, Response, NextFunction } from 'express';
 import { assign, some, map } from 'lodash';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import Word from '../models/Word';

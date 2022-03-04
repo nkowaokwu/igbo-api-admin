@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { forIn } from 'lodash';
-import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
+import { Request, Response, NextFunction } from 'express';
 import AUTH_TOKEN from '../shared/constants/testAuthTokens';
 import UserRoles from '../shared/constants/UserRoles';
 

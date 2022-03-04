@@ -8,8 +8,6 @@ import Select from '../Select';
 
 configure({ testIdAttribute: 'data-test' });
 
-jest.mock('firebase');
-
 describe('Render Select', () => {
   beforeEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = '';

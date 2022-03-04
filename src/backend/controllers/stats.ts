@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'functions/node_modules/@types/express';
+import { Request, Response, NextFunction } from 'express';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import {
@@ -7,6 +7,7 @@ import {
   searchForAllWordsWithNsibidi,
 } from './utils/queries';
 import { findWordsWithMatch } from './utils/buildDocs';
+import determineDocumentCompleteness from './utils/determineDocumentCompleteness';
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
 export const getTotalHeadwordsWithAudioPronunciations = async (
@@ -68,8 +69,8 @@ export const getTotalWordsWithNsibidi = async (
   }
 };
 
-/* Returns all the Words that are "complete" */
-export const getCompleteWords = async (
+/* Returns all the Words that are "sufficient" */
+export const getSufficientWords = async (
   _: Request,
   res: Response,
   next: NextFunction,
@@ -81,29 +82,40 @@ export const getCompleteWords = async (
       examples: true,
       limit: INCLUDE_ALL_WORDS_LIMIT,
     });
-    const count = words.filter(({
-      word,
-      wordClass,
-      definitions,
-      isStandardIgbo,
-      pronunciation,
-      examples,
-      isComplete,
-    }) => {
-      const automaticCheck = (
-        word
-        // String normalization check:
-        // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
-        // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
-        && word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g)
-        && wordClass
-        && Array.isArray(definitions) && definitions.length >= 1
-        && Array.isArray(examples) && examples.length >= 1
-        && pronunciation.length > 10
-        && isStandardIgbo
-      );
-      const manualCheck = isComplete;
-      return automaticCheck || manualCheck;
+    const count = words.filter((word) => {
+      const { sufficientWordRequirements } = determineDocumentCompleteness(word);
+      const manualCheck = word.isComplete;
+      return (
+        sufficientWordRequirements.length === 1
+        && sufficientWordRequirements.includes('The headword is needed')
+      ) || manualCheck;
+    }).length;
+    return res.send({ count });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Returns all the Words that are "complete" */
+export const getCompletedWords = async (
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
+  try {
+    const INCLUDE_ALL_WORDS_LIMIT = 100000;
+    const words = await findWordsWithMatch({
+      match: { word: { $regex: /./ }, isStandardIgbo: { $eq: true } },
+      examples: true,
+      limit: INCLUDE_ALL_WORDS_LIMIT,
+    });
+    const count = words.filter((word) => {
+      const { completeWordRequirements } = determineDocumentCompleteness(word);
+      const manualCheck = word.isComplete;
+      return (
+        completeWordRequirements.length === 1
+        && completeWordRequirements.includes('The headword is needed')
+      ) || manualCheck;
     }).length;
     return res.send({ count });
   } catch (err) {
