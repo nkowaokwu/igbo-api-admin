@@ -15,9 +15,25 @@ const HeadwordForm = ({
     record.word
     && record.wordClass
     && Array.isArray(record.definitions) && record.definitions.length
-    && Array.isArray(record.examples) && record.examples.length
+    && (
+      Array.isArray(record.examples)
+      && record.examples.length
+      && record.every(({ pronunciation }) => pronunciation)
+    )
+    && (
+      Object.entries(record.dialects)
+      && Object.entries(record.dialects).length
+      && Object.values(record.dialects).every(({ dialects, pronunciation }) => (
+        dialects.length && pronunciation
+      ))
+    )
     && record.pronunciation
     && record.isStandardIgbo
+    && record.nsibidi
+    && Array.isArray(record.stems) && record.stems.length
+    && Array.isArray(record.synonyms) && record.synonyms.length
+    && Array.isArray(record.antonyms) && record.antonyms.length
+
   );
 
   return (
