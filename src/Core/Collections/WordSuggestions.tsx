@@ -14,7 +14,6 @@ import {
 import Icon from '@material-ui/icons/Spellcheck';
 import {
   ArrayPreview,
-  AudioRecordingPreview,
   BulkSuggestionActions,
   CompleteWordPreview,
   HeadwordField,
@@ -23,7 +22,6 @@ import {
   Pagination,
   ReviewPreview,
   Select,
-  StandardIgboPreview,
   WordClassTextField,
   WordPanel,
   WordShow as Show,
@@ -50,16 +48,15 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid expand={<WordPanel />}>
+            <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="Already Reviewed" />
             <HeadwordField label="Headword" source="word" />
-            <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
           <Datagrid expand={<WordPanel />}>
-            <AudioRecordingPreview label="Audio Recording" />
-            <StandardIgboPreview label="Is Standard Igbo" />
+            <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="Already Reviewed" />
             <HeadwordField label="Headword" source="word" />
             <WordClassTextField label="Part of Speech" source="wordClass" />
@@ -80,7 +77,6 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
             />
             <IdField label="Id" source="id" />
             <IdField label="Origin Word Id" source="originalWordId" />
-            <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
