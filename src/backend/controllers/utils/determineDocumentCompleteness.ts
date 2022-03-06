@@ -1,6 +1,7 @@
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Word } from 'src/backend/controllers/utils/interfaces';
+import WordClass from 'src/shared/constants/WordClass';
 
 export default (record: Word | Record) : {
   sufficientWordRequirements: string[],
@@ -36,8 +37,8 @@ export default (record: Word | Record) : {
     ...sufficientWordRequirements,
     !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
-    !synonyms?.length && 'A synonym is needed',
-    !antonyms?.length && 'An antonym is needed',
+    word.wordClass === WordClass.NNP.value ? null : !synonyms?.length && 'A synonym is needed',
+    word.wordClass === WordClass.NNP.value ? null : !antonyms?.length && 'An antonym is needed',
     (Array.isArray(examples)
       && examples.some(({ pronunciation }) => !pronunciation)
       && 'All example sentences need pronunciations'
