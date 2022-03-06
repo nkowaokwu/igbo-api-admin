@@ -1,4 +1,5 @@
 import { Record } from 'react-admin';
+import WordClass from 'src/shared/constants/WordClass';
 import { Word } from './interfaces';
 
 export default (word: Word | Record): boolean => !!(
@@ -21,6 +22,6 @@ export default (word: Word | Record): boolean => !!(
   && word.isStandardIgbo
   && word.nsibidi
   && Array.isArray(word.stems) && word.stems.length
-  && Array.isArray(word.synonyms) && word.synonyms.length
-  && Array.isArray(word.antonyms) && word.antonyms.length
+  && (word.wordClass === WordClass.NNP.value || (Array.isArray(word.synonyms) && word.synonyms.length))
+  && (word.wordClass === WordClass.NNP.value || (Array.isArray(word.antonyms) && word.antonyms.length))
 );
