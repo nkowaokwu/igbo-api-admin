@@ -52,33 +52,40 @@ const CompleteWordPreview = (
             ? ' Despite the document\'s status, the platform detects that there are more fields to be filled'
             : ''}
         </Text>
-        {requirements.length ? (
-          <Text fontWeight="bold" my="2">The following metadata are required for completion:</Text>
-        ) : ''}
-        <UnorderedList>
-          {
-            availableAudioStatuses?.length
-            && availableAudioStatuses.some((audioStatus) => audioStatus.pronunciation === false) ? (
-              <ListItem key="requirement-rerecord">The headword audio pronunciation needs to be rerecorded</ListItem>
-              ) : null
-          }
-          {requirements.map((requirement) => (
-            <ListItem key={`requirement-${requirement}`}>{requirement}</ListItem>
-          ))}
-          {
-            dialectStatusIndex !== -1
-            && Object.entries(availableAudioStatuses[dialectStatusIndex] || {}).map(([dialect, dialectAudioStatus]) => {
-              if (!dialectAudioStatus) {
-                return null;
+        {!showFull ? (
+          <>
+            {requirements.length ? (
+              <Text fontWeight="bold" my="2">The following metadata are required for completion:</Text>
+            ) : ''}
+            <UnorderedList>
+              {
+                availableAudioStatuses?.length
+                && availableAudioStatuses.some((audioStatus) => audioStatus.pronunciation === false) ? (
+                  <ListItem key="requirement-rerecord">
+                    The headword audio pronunciation needs to be rerecorded
+                  </ListItem>
+                  ) : null
               }
-              return (
-                <ListItem key={`requirement-${dialect}`}>
-                  {`The dialect variation "${dialect}" audio pronunciation needs to be rerecorded`}
-                </ListItem>
-              );
-            })
-          }
-        </UnorderedList>
+              {requirements.map((requirement) => (
+                <ListItem key={`requirement-${requirement}`}>{requirement}</ListItem>
+              ))}
+              {
+                dialectStatusIndex !== -1
+                && Object.entries(availableAudioStatuses[dialectStatusIndex] || {})
+                  .map(([dialect, dialectAudioStatus]) => {
+                    if (!dialectAudioStatus) {
+                      return null;
+                    }
+                    return (
+                      <ListItem key={`requirement-${dialect}`}>
+                        {`The dialect variation "${dialect}" audio pronunciation needs to be rerecorded`}
+                      </ListItem>
+                    );
+                  })
+                }
+            </UnorderedList>
+          </>
+        ) : null}
       </>
     );
   };
@@ -92,7 +99,7 @@ const CompleteWordPreview = (
   return (
     <Box data-test="pronunciation-cell" className={className}>
       <Tooltip
-        label={!showFull ? <TooltipLabel /> : null}
+        label={<TooltipLabel showFull={showFull} />}
         aria-label="A tooltip"
         backgroundColor={recommendRevisiting ? 'yellow.200' : documentStatus.tooltipColor}
         color="gray.600"
