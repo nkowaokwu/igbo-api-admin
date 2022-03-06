@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-import { uniq } from 'lodash';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { has, uniq } from 'lodash';
 import { Record } from 'react-admin';
 import {
   Badge,
@@ -12,6 +12,7 @@ import {
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 import determineDocumentCompleteness from 'src/backend/controllers/utils/determineDocumentCompleteness';
+import determineIsAudioAvailable from './determineIsAudioAvailable';
 import DocumentStatus from './DocumentStatus';
 
 const CompleteWordPreview = (
@@ -22,12 +23,14 @@ const CompleteWordPreview = (
     showFull: boolean
   },
 ): ReactElement => {
+  const [availableAudioStatuses, setAvailableAudioStatuses] = useState(null);
   const { isComplete } = record;
   const {
     sufficientWordRequirements,
     completeWordRequirements,
     recommendRevisiting,
   } = determineDocumentCompleteness(record);
+
   const requirements = uniq([...sufficientWordRequirements, ...completeWordRequirements]);
 
   const documentStatus = sufficientWordRequirements.length && !isComplete
@@ -36,31 +39,62 @@ const CompleteWordPreview = (
       ? DocumentStatus.COMPLETE
       : DocumentStatus.SUFFICIENT;
 
-  const TooltipLabel = () => (
-    <>
-      <Text>
-        {documentStatus.label}
-        {recommendRevisiting
-          ? ' Despite the document\'s status, the platform detects that there are more fields to be filled'
-          : ''}
-      </Text>
-      {requirements.length ? (
-        <Text fontWeight="bold" my="2">The following metadata are required:</Text>
-      ) : ''}
-      <UnorderedList>
-        {requirements.map((requirement) => (
-          <ListItem key={`requirement-${requirement}`}>{requirement}</ListItem>
-        ))}
-      </UnorderedList>
-    </>
-  );
+  const TooltipLabel = () => {
+    const dialectStatusIndex = (
+      availableAudioStatuses?.length
+      && availableAudioStatuses.findIndex((audioStatus) => has(audioStatus, 'dialect'))
+    );
+    return (
+      <>
+        <Text>
+          {documentStatus.label}
+          {recommendRevisiting
+            ? ' Despite the document\'s status, the platform detects that there are more fields to be filled'
+            : ''}
+        </Text>
+        {requirements.length ? (
+          <Text fontWeight="bold" my="2">The following metadata are required for completion:</Text>
+        ) : ''}
+        <UnorderedList>
+          {
+            availableAudioStatuses?.length
+            && availableAudioStatuses.some((audioStatus) => audioStatus.pronunciation === false) ? (
+              <ListItem key="requirement-rerecord">The headword audio pronunciation needs to be rerecorded</ListItem>
+              ) : null
+          }
+          {requirements.map((requirement) => (
+            <ListItem key={`requirement-${requirement}`}>{requirement}</ListItem>
+          ))}
+          {
+            dialectStatusIndex !== -1
+            && Object.entries(availableAudioStatuses[dialectStatusIndex]).map(([dialect, dialectAudioStatus]) => {
+              if (!dialectAudioStatus) {
+                return null;
+              }
+              return (
+                <ListItem key={`requirement-${dialect}`}>
+                  {`The dialect variation "${dialect}" audio pronunciation needs to be rerecorded`}
+                </ListItem>
+              );
+            })
+          }
+        </UnorderedList>
+      </>
+    );
+  };
+
+  useEffect(() => {
+    determineIsAudioAvailable(record, (res) => {
+      setAvailableAudioStatuses(res);
+    });
+  }, []);
 
   return (
     <Box data-test="pronunciation-cell" className={className}>
       <Tooltip
         label={!showFull ? <TooltipLabel /> : null}
         aria-label="A tooltip"
-        backgroundColor={documentStatus.tooltipColor}
+        backgroundColor={recommendRevisiting ? 'yellow.200' : documentStatus.tooltipColor}
         color="gray.600"
         cursor="default"
       >
@@ -68,13 +102,13 @@ const CompleteWordPreview = (
           <Box display="flex" flexDirection="row" alignItems="center">
             <Badge
               variant={documentStatus.variant}
-              colorScheme={documentStatus.colorScheme}
+              colorScheme={recommendRevisiting ? 'yellow' : documentStatus.colorScheme}
               data-test={documentStatus['data-test']}
               userSelect="none"
             >
               {documentStatus.badge}
             </Badge>
-            {recommendRevisiting ? <InfoOutlineIcon color="orange.600" width="4" className="ml-2" /> : null}
+            {recommendRevisiting ? <InfoOutlineIcon color="yellow.600" width="4" className="ml-2" /> : null}
           </Box>
           {showFull ? (
             <UnorderedList mt={2}>
