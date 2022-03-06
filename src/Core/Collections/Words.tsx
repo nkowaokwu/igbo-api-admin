@@ -10,11 +10,9 @@ import {
 import Icon from '@material-ui/icons/Book';
 import {
   ArrayPreview,
-  AudioRecordingPreview,
   CompleteWordPreview,
   HeadwordField,
   IdField,
-  StandardIgboPreview,
   ListActions,
   Pagination,
   Select,
@@ -41,22 +39,20 @@ export const WordList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid expand={<WordPanel />}>
+            <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
-            <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
           <Datagrid expand={<WordPanel />}>
-            <AudioRecordingPreview label="Audio Recording" />
-            <StandardIgboPreview label="Is Standard Igbo" />
+            <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
             <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
             <ArrayPreview label="Stems" source="stems" />
             <IdField label="Id" source="id" />
-            <CompleteWordPreview label="Is Complete Word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
