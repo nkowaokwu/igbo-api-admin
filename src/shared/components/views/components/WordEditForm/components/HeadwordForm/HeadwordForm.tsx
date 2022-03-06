@@ -55,7 +55,7 @@ const HeadwordForm = ({
                     onChange={(e) => onChange(e.target.checked)}
                     isChecked={value}
                     isDisabled={!isAsCompleteAsPossible}
-                    defaultIsChecked={record.isComplete}
+                    defaultIsChecked={isAsCompleteAsPossible && record.isComplete}
                     ref={ref}
                     data-test="isComplete-checkbox"
                     size="lg"
@@ -63,7 +63,7 @@ const HeadwordForm = ({
                     <span className="font-bold">Is Complete</span>
                   </Checkbox>
                 )}
-                defaultValue={record.isComplete || getValues().isComplete}
+                defaultValue={isAsCompleteAsPossible && (record.isComplete || getValues().isComplete)}
                 name="isComplete"
                 control={control}
               />
