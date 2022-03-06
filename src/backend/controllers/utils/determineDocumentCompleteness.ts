@@ -37,7 +37,7 @@ export default (record: Word | Record) : {
     !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
     !synonyms?.length && 'A synonym is needed',
-    !antonyms?.length && 'A antonym is needed',
+    !antonyms?.length && 'An antonym is needed',
     (Array.isArray(examples)
       && examples.some(({ pronunciation }) => !pronunciation)
       && 'All example sentences need pronunciations'
