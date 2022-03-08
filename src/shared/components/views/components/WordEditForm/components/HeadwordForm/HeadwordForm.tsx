@@ -12,8 +12,8 @@ const HeadwordForm = ({
   record,
   getValues,
 }: HeadwordInterface): ReactElement => {
+  const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
-
   return (
     <Box className="flex flex-col w-full">
       <Box className="flex flex-col lg:flex-row my-4 lg:my-0 space-y-2 lg:space-y-0 justify-between items-between">
@@ -54,17 +54,16 @@ const HeadwordForm = ({
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
                     isChecked={value}
-                    isDisabled={!isAsCompleteAsPossible}
-                    defaultIsChecked={isAsCompleteAsPossible && record.isComplete}
+                    defaultIsChecked={isHeadwordAccented && record.isAccented}
                     ref={ref}
-                    data-test="isComplete-checkbox"
+                    data-test="isAccented-checkbox"
                     size="lg"
                   >
-                    <span className="font-bold">Is Complete</span>
+                    <span className="font-bold">Is Accented</span>
                   </Checkbox>
                 )}
-                defaultValue={isAsCompleteAsPossible && (record.isComplete || getValues().isComplete)}
-                name="isComplete"
+                defaultValue={isHeadwordAccented && (record.isAccented || getValues().isAccented)}
+                name="isAccented"
                 control={control}
               />
             </Box>

@@ -78,6 +78,7 @@ const countSufficientWords = (words) => (
     isStandardIgbo,
     pronunciation,
     examples,
+    isAccented,
     isComplete,
   }) => {
     const automaticCheck = (
@@ -85,7 +86,7 @@ const countSufficientWords = (words) => (
       // String normalization check:
       // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
       // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
-      && word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g)
+      && (word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) || isAccented)
       && wordClass
       && Array.isArray(definitions) && definitions.length >= 1
       && Array.isArray(examples) && examples.length >= 1

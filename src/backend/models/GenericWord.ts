@@ -28,6 +28,7 @@ const genericWordSchema = new Schema({
   },
   pronunciation: { type: String, default: '' },
   isStandardIgbo: { type: Boolean, default: false },
+  isAccented: { type: Boolean, default: false },
   variations: { type: [{ type: String }], default: [] },
   editorsNotes: { type: String, default: '' },
   userComments: { type: String, default: '' },

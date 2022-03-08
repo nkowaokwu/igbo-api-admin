@@ -91,7 +91,7 @@ export const findWordsWithMatch = async (
       antonyms: 1,
       hypernyms: 1,
       hyponyms: 1,
-      isComplete: 1,
+      isAccented: 1,
       nsibidi: 1,
       ...(examples ? { examples: 1 } : {}),
     })

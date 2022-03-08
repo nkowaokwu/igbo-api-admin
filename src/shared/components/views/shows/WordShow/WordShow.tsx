@@ -63,6 +63,7 @@ const WordShow = (props: ShowProps): ReactElement => {
     editorsNotes,
     userComments,
     isStandardIgbo,
+    isAccented,
     merged,
     pronunciation,
     originalWordId,
@@ -117,6 +118,13 @@ const WordShow = (props: ShowProps): ReactElement => {
                     path="isStandardIgbo"
                     diffRecord={diffRecord}
                     fallbackValue={isStandardIgbo}
+                    renderNestedObject={(value) => <span>{String(value)}</span>}
+                  />
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Is Accented</Heading>
+                  <DiffField
+                    path="isAccented"
+                    diffRecord={diffRecord}
+                    fallbackValue={isAccented}
                     renderNestedObject={(value) => <span>{String(value)}</span>}
                   />
                 </Box>
