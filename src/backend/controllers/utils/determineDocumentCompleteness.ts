@@ -15,6 +15,7 @@ export default (record: Word | Record) : {
     isStandardIgbo,
     pronunciation,
     examples = [],
+    isAccented,
     isComplete,
     nsibidi,
     stems = [],
@@ -25,7 +26,8 @@ export default (record: Word | Record) : {
 
   const sufficientWordRequirements = compact([
     !word && 'The headword is needed',
-    !word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) && 'The headword needs to have accent marks',
+    (!word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) && !isAccented)
+    && 'The headword needs to have accent marks',
     !wordClass && 'The word class is needed',
     Array.isArray(definitions) && !definitions.length && 'At least one definition is needed',
     Array.isArray(examples) && !examples?.length && 'At least one example sentence is needed',

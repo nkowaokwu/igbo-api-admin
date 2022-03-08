@@ -29,6 +29,7 @@ const schema = yup.object().shape({
   antonyms: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(ExampleEditFormSchema),
+  isAccented: yup.boolean(),
   isComplete: yup.boolean(),
   nsibidi: yup.string(),
 });
