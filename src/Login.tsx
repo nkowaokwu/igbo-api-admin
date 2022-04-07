@@ -96,6 +96,7 @@ const Login = (): ReactElement => {
       <Heading size="xl" className="mb-6">{'Igbo API Editor\'s Platform'}</Heading>
       <Box
         className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-md rounded"
+        maxWidth="750px"
       >
         <Box
           className="h-full flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 lg:items-center rounded"
