@@ -68,6 +68,9 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
+          {errors.isAccented ? (
+            <p className="error relative">Is Accented must be selected</p>
+          ) : null}
         </Box>
       </Box>
       <Controller
