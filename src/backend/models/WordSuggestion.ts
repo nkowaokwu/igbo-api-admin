@@ -5,6 +5,7 @@ import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadWordPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
+import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 
 const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
@@ -33,6 +34,17 @@ const wordSuggestionSchema = new Schema(
           && every(dialectValue.dialects, (dialect) => Dialects[dialect].value)
           && typeof dialectValue.pronunciation === 'string'
           && Array.isArray(dialectValue.variations)
+        ));
+      },
+      required: false,
+      default: {},
+    },
+    tenses: {
+      type: Object,
+      validate: (v) => {
+        const tenseValues = Object.values(Tense);
+        Object.keys(v).every((key) => (
+          tenseValues.find(({ value: tenseValue }) => key === tenseValue)
         ));
       },
       required: false,
