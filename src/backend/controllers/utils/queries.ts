@@ -1,13 +1,24 @@
+import { has, omit } from 'lodash';
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
+import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 
 type ExampleSearchQuery = [
   { igbo: RegExp },
   { english: RegExp },
 ];
 
-const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: string } => {
-  const searchFilters = filters ? Object.entries(filters).reduce((allFilters, [key, value]) => {
+type Filters = {
+  $expr?: any,
+  $or?: any[],
+  isStandardIgbo?: any,
+  source?: any,
+  authorId?: any,
+};
+
+const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
+  let searchFilters: Filters = filters ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
+    allFilters.$or = allFilters.$or || [];
     switch (key) {
       case 'isStandardIgbo':
         allFilters.isStandardIgbo = { $eq: !!value };
@@ -16,20 +27,32 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         if (value) {
           allFilters.$expr = { $gt: [{ $strLenCP: '$pronunciation' }, 10] };
         } else {
-          allFilters.$or = [{ pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
+          allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
         }
+        break;
+      case SuggestionSource.COMMUNITY:
+        allFilters.source = { $eq: SuggestionSource.COMMUNITY };
+        break;
+      case SuggestionSource.INTERNAL:
+        allFilters.$or = [
+          ...allFilters.$or,
+          { source: { $eq: SuggestionSource.INTERNAL } }, { source: { $exists: false } },
+        ];
         break;
       case 'authorId':
         allFilters.authorId = { $eq: value };
         break;
       case 'example':
-        allFilters.$or = [{ igbo: new RegExp(value) }, { english: new RegExp(value) }];
+        allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
         break;
       default:
         return allFilters;
     };
     return allFilters;
   }, {}) : {};
+  if (has(searchFilters, '$or') && !searchFilters.$or.length) {
+    searchFilters = omit(searchFilters, '$or');
+  }
   return searchFilters;
 };
 

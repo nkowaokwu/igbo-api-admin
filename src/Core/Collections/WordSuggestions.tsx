@@ -16,6 +16,7 @@ import {
   ArrayPreview,
   BulkSuggestionActions,
   CompleteWordPreview,
+  SourceField,
   HeadwordField,
   IdField,
   ListActions,
@@ -56,6 +57,7 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
         )}
         medium={(
           <Datagrid expand={<WordPanel />}>
+            <SourceField label="Source" source="source" />
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="Already Reviewed" />
             <HeadwordField label="Headword" source="word" />
