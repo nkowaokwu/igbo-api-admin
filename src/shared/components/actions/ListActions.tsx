@@ -15,6 +15,7 @@ import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
+import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import Filter from '../Filter';
 
 /**
@@ -70,7 +71,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   };
   useEffect(() => {
     const updatedFilters = currentFilters.reduce((allFilters, filter) => {
-      allFilters[filter] = true;
+      if (filter !== 'word' && filter !== 'example') {
+        allFilters[filter] = true;
+      }
       return allFilters;
     }, {});
     setFilters(updatedFilters, []);
@@ -120,6 +123,14 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                 </MenuItemOption>,
                 <MenuItemOption value="pronunciation">
                   Has Pronunciation
+                </MenuItemOption>,
+              ] : null}
+              {resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS ? [
+                <MenuItemOption value={SuggestionSource.COMMUNITY}>
+                  From Nkọwa okwu
+                </MenuItemOption>,
+                <MenuItemOption value={SuggestionSource.INTERNAL}>
+                  From Igbo API Editor Platform
                 </MenuItemOption>,
               ] : null}
               {resource !== Collections.WORDS && resource !== Collections.EXAMPLES ? [
