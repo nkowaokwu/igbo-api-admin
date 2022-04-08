@@ -93,6 +93,7 @@ export const findWordsWithMatch = async (
       hyponyms: 1,
       isAccented: 1,
       nsibidi: 1,
+      tenses: 1,
       ...(examples ? { examples: 1 } : {}),
     })
     .skip(skip)

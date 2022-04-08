@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
+import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import * as Interfaces from '../controllers/utils/interfaces';
 
@@ -31,6 +32,17 @@ const wordSchema = new Schema({
     required: false,
     default: {},
   },
+  tenses: {
+    type: Object,
+    validate: (v) => {
+      const tenseValues = Object.values(Tense);
+      Object.keys(v).every((key) => (
+        tenseValues.find(({ value: tenseValue }) => key === tenseValue)
+      ));
+    },
+    required: false,
+    default: {},
+  },
   pronunciation: { type: String, default: '' },
   isStandardIgbo: { type: Boolean, default: false },
   isAccented: { type: Boolean, default: false },
@@ -44,6 +56,28 @@ const wordSchema = new Schema({
   isComplete: { type: Boolean, default: false },
   nsibidi: { type: String, default: '' },
 }, { toObject: toObjectPlugin, timestamps: true });
+
+// const tensesIndexes = Object.values(Tense).reduce((finalIndexes, tense) => ({
+//   ...finalIndexes,
+//   [`tenses.${tense.value}`]: 'text',
+// }), {});
+
+// wordSchema.index({
+//   word: 'text',
+//   variations: 'text',
+//   dialects: 'text',
+//   ...tensesIndexes,
+//   nsibidi: 'text',
+// }, {
+//   weights: {
+//     word: 10,
+//     tenses: 9,
+//     dialects: 8,
+//     vairations: 9,
+//     nsibidi: 5,
+//   },
+//   name: 'Word text index',
+// });
 
 wordSchema.index({ word: 'text', variations: 'text', nsibidi: 'text' });
 

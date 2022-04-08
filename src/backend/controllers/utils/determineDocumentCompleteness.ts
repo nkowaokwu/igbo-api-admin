@@ -1,7 +1,9 @@
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Word } from 'src/backend/controllers/utils/interfaces';
-import WordClass from 'src/shared/constants/WordClass';
+import Tense from 'src/backend/shared/constants/Tense';
+import WordClass from 'src/backend/shared/constants/WordClass';
+import isVerb from 'src/backend/shared/utils/isVerb';
 
 export default (record: Word | Record) : {
   sufficientWordRequirements: string[],
@@ -22,6 +24,7 @@ export default (record: Word | Record) : {
     synonyms = [],
     antonyms = [],
     dialects = {},
+    tenses = {},
   } = record;
 
   const sufficientWordRequirements = compact([
@@ -39,8 +42,13 @@ export default (record: Word | Record) : {
     ...sufficientWordRequirements,
     !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
-    word.wordClass === WordClass.NNP.value ? null : !synonyms?.length && 'A synonym is needed',
-    word.wordClass === WordClass.NNP.value ? null : !antonyms?.length && 'An antonym is needed',
+    wordClass === WordClass.NNP.value ? null : !synonyms?.length && 'A synonym is needed',
+    wordClass === WordClass.NNP.value ? null : !antonyms?.length && 'An antonym is needed',
+    isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
+      value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
+    ))
+      ? 'All verb tenses are needed'
+      : null,
     (Array.isArray(examples)
       && examples.some(({ pronunciation }) => !pronunciation)
       && 'All example sentences need pronunciations'

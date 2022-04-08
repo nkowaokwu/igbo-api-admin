@@ -3,6 +3,7 @@ import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import * as Interfaces from '../controllers/utils/interfaces';
+import Tense from '../shared/constants/Tense';
 
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
@@ -25,6 +26,17 @@ const genericWordSchema = new Schema({
         && dialectValue.dialect === Dialects[dialectValue.dialect].value
       ));
     },
+  },
+  tenses: {
+    type: Object,
+    validate: (v) => {
+      const tenseValues = Object.values(Tense);
+      Object.keys(v).every((key) => (
+        tenseValues.find(({ value: tenseValue }) => key === tenseValue)
+      ));
+    },
+    required: false,
+    default: {},
   },
   pronunciation: { type: String, default: '' },
   isStandardIgbo: { type: Boolean, default: false },

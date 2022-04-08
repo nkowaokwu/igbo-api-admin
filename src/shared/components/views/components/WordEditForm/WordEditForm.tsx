@@ -19,6 +19,7 @@ import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
+import isVerb from 'src/backend/shared/utils/isVerb';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -29,6 +30,7 @@ import AntonymsForm from './components/AntonymsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import NsibidiForm from './components/NsibidiForm';
+import TensesForm from './components/TensesForm';
 import ExamplesForm from './components/ExamplesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
@@ -52,6 +54,7 @@ const WordEditForm = ({
     setValue,
     control,
     errors,
+    watch,
   } = useForm({
     defaultValues: {
       dialects: record.dialects,
@@ -66,6 +69,7 @@ const WordEditForm = ({
       antonyms: record.antonyms || [],
       stems: record.stems || [],
       nsibidi: record.nsibidi,
+      tenses: record.tenses || {},
     },
     ...WordEditFormResolver(),
   });
@@ -84,6 +88,7 @@ const WordEditForm = ({
   const redirect = useRedirect();
   const toast = useToast();
   const options = values(WordClass);
+  const watchWordClass = watch('wordClass');
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -277,6 +282,13 @@ const WordEditForm = ({
               errors={errors}
               control={control}
             />
+            {isVerb(watchWordClass.value) ? (
+              <TensesForm
+                record={record}
+                errors={errors}
+                control={control}
+              />
+            ) : null}
           </Box>
           <Box className="flex flex-col w-full lg:w-1/2">
             <VariationsForm

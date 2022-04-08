@@ -73,9 +73,9 @@ const DefinitionsForm = ({
         </Box>
       </Box>
     ))}
-    {errors.definitions && (
+    {errors.definitions ? (
       <p className="error relative">Definition is required</p>
-    )}
+    ) : null}
   </Box>
 );
 export default DefinitionsForm;

@@ -27,7 +27,7 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
         </Link>
       </Text>
       {process.env.NODE_ENV !== 'production' && (
-        <Accordion allowMultiple className="w-full my-6">
+        <Accordion defaultIndex={[0]} allowMultiple className="w-full my-6">
           <AccordionItem>
             <AccordionButton>
               <Box className="w-full flex flex-row items-center">

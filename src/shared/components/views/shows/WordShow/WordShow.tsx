@@ -22,6 +22,7 @@ import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ExampleDiff from '../diffFields/ExampleDiff';
 import ArrayDiff from '../diffFields/ArrayDiff';
+import TenseDiff from '../diffFields/TenseDiff';
 
 const DIFF_FILTER_KEYS = [
   'id',
@@ -281,13 +282,22 @@ const WordShow = (props: ShowProps): ReactElement => {
                   <Comments editorsNotes={editorsNotes} userComments={userComments} />
                 ) : null}
               </Box>
-              <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Dialects</Heading>
-                <DialectDiff
-                  record={record}
-                  diffRecord={diffRecord}
-                  resource={resource}
-                />
+              <Box className="flex flex-col space-y-6 mt-5">
+                <Box>
+                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Dialects</Heading>
+                  <DialectDiff
+                    record={record}
+                    diffRecord={diffRecord}
+                    resource={resource}
+                  />
+                </Box>
+                <Box>
+                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Tenses</Heading>
+                  <TenseDiff
+                    record={record}
+                    resource={resource}
+                  />
+                </Box>
               </Box>
             </Box>
           </Box>

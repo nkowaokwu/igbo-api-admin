@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import Tense from 'src/backend/shared/constants/Tense';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
@@ -24,6 +25,10 @@ const schema = yup.object().shape({
     variations: yup.array().min(0).of(yup.string()).optional(),
     pronunciation: yup.string().optional(),
   }),
+  tenses: yup.object().shape(Object.values(Tense).reduce((finalSchema, tenseValue) => ({
+    ...finalSchema,
+    [tenseValue.value]: yup.string().optional(),
+  }), {})).optional(),
   stems: yup.array().min(0).of(yup.string()),
   synonyms: yup.array().min(0).of(yup.string()),
   antonyms: yup.array().min(0).of(yup.string()),

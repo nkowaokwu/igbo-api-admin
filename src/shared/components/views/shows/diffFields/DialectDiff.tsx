@@ -8,7 +8,9 @@ import {
   AccordionIcon,
   AccordionPanel,
   Box,
+  Heading,
   Spinner,
+  chakra,
 } from '@chakra-ui/react';
 import ReactAudioPlayer from 'react-audio-player';
 import Dialects from 'src/backend/shared/constants/Dialects';
@@ -28,9 +30,9 @@ const DialectDiff = (
     <Box className="w-full">
       {updatedDialects.length ? updatedDialects.map(({ value, label }) => (
         <>
-          <h1 className="text-xl mt-3">{label}</h1>
+          <Heading as="h1" className="text-xl mt-3">{label}</Heading>
           <Box className="flex flex-row items-center">
-            <h2 className="text-lg">Word:</h2>
+            <Heading as="h2" className="text-lg">Word:</Heading>
             <DiffField
               path={`dialects.${value}.dialects`}
               diffRecord={diffRecord}
@@ -47,7 +49,7 @@ const DialectDiff = (
                   style={{ height: 40, width: 250 }}
                   controls
                 />
-              ) : <span>No audio pronunciation</span>}
+              ) : <chakra.span>No audio pronunciation</chakra.span>}
               renderNestedObject={() => (
                 <ReactAudioPlayer
                   src={record.dialects[value].pronunciation}
@@ -60,7 +62,7 @@ const DialectDiff = (
         </>
       )) : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS ? (
         <Accordion
-          defaultIndex={0}
+          defaultIndex={[0]}
           allowMultiple
         >
           {Object.entries(record.dialects as Interfaces.WordDialect).map(([
@@ -72,27 +74,25 @@ const DialectDiff = (
             },
           ], index) => (
             <AccordionItem key={index}>
-              <h2>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left">
-                    {dialectalWord}
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
+              <AccordionButton>
+                <Heading as="h2" size="sm" className="text-left">
+                  {dialectalWord}
+                </Heading>
+                <AccordionIcon />
+              </AccordionButton>
               <AccordionPanel pb={4} className="space-y-3">
-                <h2>
-                  <span className="font-bold mr-2">Dialects:</span>
-                  <ul style={{ listStyle: 'inside' }}>
-                    {dialects.map((dialect) => (
-                      <li>{Dialects[dialect].label}</li>
-                    ))}
-                  </ul>
-                </h2>
-                <h2>
-                  <span className="font-bold mr-2">Variations:</span>
-                  {variations.length ? variations.join(', ') : 'No variations'}
-                </h2>
+                <Heading as="h2" size="sm" className="text-left mr-2">Dialects:</Heading>
+                <ul style={{ listStyle: 'inside' }}>
+                  {dialects.map((dialect) => (
+                    <li>{Dialects[dialect].label}</li>
+                  ))}
+                </ul>
+                <Heading as="h2" size="sm" className="text-left">
+                  <chakra.span className="mr-2">Variations:</chakra.span>
+                  <chakra.span fontWeight="normal" className="mr-2">
+                    {variations.length ? variations.join(', ') : 'No variations'}
+                  </chakra.span>
+                </Heading>
                 <ReactAudioPlayer
                   src={pronunciation}
                   style={{ height: 40, width: 250 }}
@@ -103,9 +103,9 @@ const DialectDiff = (
           ))}
         </Accordion>
       ) : (
-        <span className="text-gray-500 italic">
+        <chakra.span className="text-gray-500 italic">
           No dialect changes
-        </span>
+        </chakra.span>
       )}
     </Box>
   ) : <Spinner />;
