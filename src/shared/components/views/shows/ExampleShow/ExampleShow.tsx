@@ -12,6 +12,8 @@ import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collections';
 import { getExample } from 'src/shared/API';
+import SourceField from 'src/shared/components/SourceField';
+import ResolvedWord from 'src/shared/components/ResolvedWord';
 import DiffField from '../diffFields/DiffField';
 import {
   ShowDocumentStats,
@@ -20,7 +22,6 @@ import {
   Comments,
 } from '../../components';
 import { determineDate } from '../../utils';
-import ResolvedWord from '../../../ResolvedWord';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
@@ -143,7 +144,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
             </Box>
           </Box>
           {resource !== Collection.EXAMPLES && (
-            <Box className="mb-10 lg:mb-0">
+            <Box className="mb-10 lg:mb-0 flex flex-col items-end">
+              <SourceField record={record} source="source" />
               <ShowDocumentStats
                 approvals={approvals}
                 denials={denials}
