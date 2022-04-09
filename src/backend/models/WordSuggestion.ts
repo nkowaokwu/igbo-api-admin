@@ -7,6 +7,7 @@ import { uploadWordPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
+import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
@@ -67,6 +68,7 @@ const wordSuggestionSchema = new Schema(
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
     isComplete: { type: Boolean, default: false },
+    source: { type: String, defualt: SuggestionSource.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },
   },

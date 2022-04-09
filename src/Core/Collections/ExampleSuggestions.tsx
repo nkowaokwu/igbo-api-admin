@@ -30,6 +30,7 @@ import {
   ReviewPreview,
   ListActions,
   Pagination,
+  SourceField,
 } from 'src/shared/components';
 import Empty from '../Empty';
 
@@ -58,6 +59,7 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         )}
         medium={(
           <Datagrid>
+            <SourceField label="Source" source="source" />
             <AudioRecordingPreview label="Audio Recording" />
             <ReviewPreview label="Already Reviewed" />
             <TextField label="Igbo" source="igbo" />

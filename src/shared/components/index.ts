@@ -2,6 +2,7 @@ import AudioRecordingPreview from './AudioRecordingPreview';
 import ArrayInput from './ArrayInput';
 import BulkSuggestionActions from './BulkSuggestionActions';
 import CompleteWordPreview from './CompleteWordPreview';
+import SourceField from './SourceField';
 import Confirmation from './Confirmation';
 import StandardIgboPreview from './StandardIgboPreview';
 import { ExampleSuggestionCreate, WordSuggestionCreate } from './views/creates';
@@ -25,6 +26,7 @@ export {
   ArrayInput,
   BulkSuggestionActions,
   CompleteWordPreview,
+  SourceField,
   Confirmation,
   HeadwordField,
   IdField,

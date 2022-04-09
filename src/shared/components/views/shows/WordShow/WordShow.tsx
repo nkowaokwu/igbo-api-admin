@@ -10,6 +10,7 @@ import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
+import SourceField from 'src/shared/components/SourceField';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -302,7 +303,8 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
           </Box>
           {resource !== Collection.WORDS && (
-            <Box className="mb-10 lg:mb-0">
+            <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-end">
+              <SourceField record={record} source="source" />
               <ShowDocumentStats
                 approvals={approvals}
                 denials={denials}

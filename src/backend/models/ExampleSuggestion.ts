@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
+import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const { Schema, Types } = mongoose;
 const exampleSuggestionSchema = new Schema({
@@ -16,6 +17,7 @@ const exampleSuggestionSchema = new Schema({
   authorId: { type: String, default: '' },
   approvals: { type: [{ type: String }], default: [] },
   denials: { type: [{ type: String }], default: [] },
+  source: { type: String, default: SuggestionSource.INTERNAL },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
   mergedBy: { type: String, default: null },
 }, { toObject: toObjectPlugin, timestamps: true });
