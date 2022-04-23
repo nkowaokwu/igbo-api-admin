@@ -54,7 +54,7 @@ const HeadwordForm = ({
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
                     isChecked={value}
-                    defaultIsChecked={isHeadwordAccented && record.isAccented}
+                    defaultIsChecked={isHeadwordAccented || record.isAccented}
                     ref={ref}
                     data-test="isAccented-checkbox"
                     size="lg"
@@ -62,7 +62,7 @@ const HeadwordForm = ({
                     <span className="font-bold">Is Accented</span>
                   </Checkbox>
                 )}
-                defaultValue={isHeadwordAccented && (record.isAccented || getValues().isAccented)}
+                defaultValue={isHeadwordAccented || (record.isAccented || getValues().isAccented)}
                 name="isAccented"
                 control={control}
               />
