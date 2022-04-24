@@ -175,7 +175,9 @@ export const createWord = async (
     definitions,
     variations,
     stems,
-    isStandardIgbo,
+    attributes: {
+      isStandardIgbo,
+    },
     dialects: {},
     ...rest,
   };

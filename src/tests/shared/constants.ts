@@ -13,7 +13,7 @@ export const WORD_KEYS = [
   'stems',
   'examples',
   'id',
-  'isStandardIgbo',
+  'attributes',
   'word',
   'wordClass',
   'synonyms',

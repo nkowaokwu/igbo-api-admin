@@ -29,7 +29,9 @@ const record = {
   synonyms: [],
   antonyms: [],
   dialects: {},
-  isStandardIgbo: true,
+  attributes: {
+    isStandardIgbo: true,
+  },
   nsibidi: '',
 };
 

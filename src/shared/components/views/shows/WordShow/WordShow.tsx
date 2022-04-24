@@ -11,6 +11,7 @@ import { getWord } from 'src/shared/API';
 import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -64,8 +65,11 @@ const WordShow = (props: ShowProps): ReactElement => {
     denials,
     editorsNotes,
     userComments,
-    isStandardIgbo,
-    isAccented,
+    attributes: {
+      isStandardIgbo,
+      isAccented,
+      isSlang,
+    },
     merged,
     pronunciation,
     originalWordId,
@@ -115,19 +119,41 @@ const WordShow = (props: ShowProps): ReactElement => {
             <Box className="flex flex-col lg:flex-row w-full justify-between">
               <Box className="space-y-3">
                 <Box className="flex flex-col">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Is Standard Igbo</Heading>
+                  <Heading fontSize="lg" className="text-xl text-gray-600">
+                    {WordAttributes.IS_STANDARD_IGBO.label}
+                  </Heading>
                   <DiffField
-                    path="isStandardIgbo"
+                    path={`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`}
                     diffRecord={diffRecord}
                     fallbackValue={isStandardIgbo}
-                    renderNestedObject={(value) => <span>{String(value)}</span>}
+                    renderNestedObject={(value) => <span>{String(value || false)}</span>}
                   />
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Is Accented</Heading>
+                  <Heading fontSize="lg" className="text-xl text-gray-600">
+                    {WordAttributes.IS_ACCENTED.label}
+                  </Heading>
                   <DiffField
-                    path="isAccented"
+                    path={`attributes.${WordAttributes.IS_ACCENTED.value}`}
                     diffRecord={diffRecord}
                     fallbackValue={isAccented}
-                    renderNestedObject={(value) => <span>{String(value)}</span>}
+                    renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                  />
+                  <Heading fontSize="lg" className="text-xl text-gray-600">
+                    {WordAttributes.IS_SLANG.label}
+                  </Heading>
+                  <DiffField
+                    path={`attributes.${WordAttributes.IS_SLANG.value}`}
+                    diffRecord={diffRecord}
+                    fallbackValue={isSlang}
+                    renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                  />
+                  <Heading fontSize="lg" className="text-xl text-gray-600">
+                    {WordAttributes.IS_CONSTRUCTED_TERM.label}
+                  </Heading>
+                  <DiffField
+                    path={`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`}
+                    diffRecord={diffRecord}
+                    fallbackValue={isSlang}
+                    renderNestedObject={(value) => <span>{String(value || false)}</span>}
                   />
                 </Box>
                 <Box className="flex flex-col">

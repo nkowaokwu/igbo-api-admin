@@ -11,7 +11,9 @@ type ExampleSearchQuery = [
 type Filters = {
   $expr?: any,
   $or?: any[],
-  isStandardIgbo?: any,
+  attributes?: {
+    isStandardIgbo?: { $eq: boolean },
+  },
   source?: any,
   authorId?: any,
 };
@@ -21,7 +23,7 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
     allFilters.$or = allFilters.$or || [];
     switch (key) {
       case 'isStandardIgbo':
-        allFilters.isStandardIgbo = { $eq: !!value };
+        allFilters['attributes.isStandardIgbo'] = { $eq: !!value };
         break;
       case 'pronunciation':
         if (value) {
@@ -153,8 +155,9 @@ export const searchForAllWordsWithAudioPronunciations = (): { pronunciation: any
   pronunciation: { $exists: true },
   $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
 });
-export const searchForAllWordsWithIsStandardIgbo = (): { isStandardIgbo: boolean } => ({
-  isStandardIgbo: true,
+export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandardIgbo: boolean } } => ({
+  // @ts-ignore
+  'attributes.isStandardIgbo': true,
 });
 export const searchForAllWordsWithNsibidi = (): { nsibidi: { $ne: string } } => ({
   nsibidi: { $ne: '' },
