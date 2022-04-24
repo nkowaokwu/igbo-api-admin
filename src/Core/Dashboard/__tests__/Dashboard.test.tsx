@@ -16,16 +16,10 @@ fetchMock.enableMocks();
 
 it('render the dashboard', async () => {
   fetchMock.mockIf(/\/stats/, async (req) => {
-    if (req.url.endsWith('completedWords')) {
+    if (req.url.endsWith('words')) {
       return {
         status: 200,
-        body: JSON.stringify({ count: 100 }),
-      };
-    }
-    if (req.url.endsWith('sufficientWords')) {
-      return {
-        status: 200,
-        body: JSON.stringify({ count: 200 }),
+        body: JSON.stringify({ sufficientWordsCount: 200, completedWordsCount: 100 }),
       };
     }
     if (req.url.endsWith('headwordAudioPronunciations')) {
