@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TestContext } from 'ra-test';
+import TestContext from 'src/tests/components/TestContext';
+
 import { Role } from 'src/shared/constants/auth-types';
 import Collections from 'src/shared/constants/Collections';
 import Select from '../Select';
