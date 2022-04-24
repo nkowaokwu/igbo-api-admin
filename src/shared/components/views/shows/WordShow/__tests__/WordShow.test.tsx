@@ -2,7 +2,8 @@
 // https://github.com/marmelab/react-admin/pull/6753/files
 import React from 'react';
 import { render, configure } from '@testing-library/react';
-import { TestContext } from 'ra-test';
+import TestContext from 'src/tests/components/TestContext';
+
 import { DataProviderContext } from 'react-admin';
 import Collections from 'src/shared/constants/Collections';
 import WordClass from 'src/shared/constants/WordClass';
@@ -29,7 +30,9 @@ const record = {
   synonyms: [],
   antonyms: [],
   dialects: {},
-  isStandardIgbo: true,
+  attributes: {
+    isStandardIgbo: true,
+  },
   nsibidi: '',
 };
 
@@ -84,6 +87,9 @@ it('render all fields for words', async () => {
   await findByText('Word Document Details');
   await findByText('Audio Pronunciation');
   await findByText('Is Standard Igbo');
+  await findByText('Is Accented');
+  await findByText('Is Slang');
+  await findByText('Is Constructed Term');
   await findByText('Nsịbịdị');
   await findByText('Part of Speech');
   await findByText('Definitions');
@@ -113,6 +119,9 @@ it('render all fields for word suggestions', async () => {
   await findByText('Word Suggestion Document Details');
   await findByText('Audio Pronunciation');
   await findByText('Is Standard Igbo');
+  await findByText('Is Accented');
+  await findByText('Is Slang');
+  await findByText('Is Constructed Term');
   await findByText(record.word);
   await findByText('Nsịbịdị');
   await findByText('Part of Speech');
@@ -142,8 +151,7 @@ it('render as a sufficient word suggestion', async () => {
     </TestContext>,
   );
 
-  await findByTestId('incomplete-word-label');
-  await findByText('This word is sufficient');
+  await findByTestId('sufficient-word-label');
   await findByText('A word stem is needed');
 });
 
@@ -152,7 +160,7 @@ it('render as a complete word suggestion', async () => {
     data: completeRecord,
   });
 
-  const { findByText, findByTestId } = render(
+  const { findByTestId } = render(
     <TestContext
       enableReducers
       initialState={{ admin: { resources: { wordSuggestions: { data: {} } } } }}
@@ -163,6 +171,5 @@ it('render as a complete word suggestion', async () => {
       </DataProviderContext.Provider>
     </TestContext>,
   );
-  await findByTestId('incomplete-word-label');
-  await findByText('This word is complete');
+  await findByTestId('complete-word-label');
 });

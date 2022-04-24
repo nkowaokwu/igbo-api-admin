@@ -14,7 +14,9 @@ export const DEFAULT_WORD_RECORD = {
   denials: [],
   details: '',
   merged: '',
-  isStandardIgbo: '',
+  attributes: {
+    isStandardIgbo: '',
+  },
   accented: '',
   pronunciation: '',
   stems: '',

@@ -7,6 +7,7 @@ import { uploadWordPronunciation } from './plugins/pronunciationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
+import WordAttributes from '../shared/constants/WordAttributes';
 import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
@@ -52,8 +53,11 @@ const wordSuggestionSchema = new Schema(
       default: {},
     },
     pronunciation: { type: String, default: '' },
-    isStandardIgbo: { type: Boolean, default: false },
-    isAccented: { type: Boolean, default: false },
+    attributes: Object.entries(WordAttributes)
+      .reduce((finalAttributes, [, { value }]) => ({
+        ...finalAttributes,
+        [value]: { type: Boolean, default: false },
+      }), {}),
     variations: { type: [{ type: String }], default: [] },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
@@ -67,7 +71,6 @@ const wordSuggestionSchema = new Schema(
     nsibidi: { type: String, default: '' },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
-    isComplete: { type: Boolean, default: false },
     source: { type: String, defualt: SuggestionSource.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },

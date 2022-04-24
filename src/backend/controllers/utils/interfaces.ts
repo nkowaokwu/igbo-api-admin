@@ -43,7 +43,11 @@ export interface Word extends Document<any>, LeanDocument<any> {
   normalized: string,
   frequency: number,
   stems: string[],
-  isStandardIgbo: boolean,
+  attributes: {
+    isStandardIgbo: boolean,
+    isAccented: boolean,
+    isComplete: boolean,
+  }
   nsibidi: string,
   synonyms: string[],
   antonyms: string[],
@@ -64,7 +68,11 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   authorEmail?: string,
   authorId: string,
   pronunciation: string,
-  isStandardIgbo: boolean,
+  attributes: {
+    isStandardIgbo: boolean,
+    isAccented: boolean,
+    isComplete: boolean,
+  }
   approvals?: string[],
   denials?: string[],
   updatedAt: Date,

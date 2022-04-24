@@ -1,10 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Tense from 'src/backend/shared/constants/Tense';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
-  isStandardIgbo: yup.boolean(),
+  attributes: yup.object().shape(Object.entries(WordAttributes).reduce((finalAttributes, [, { value }]) => ({
+    ...finalAttributes,
+    [value]: (value === WordAttributes.IS_SLANG.value || value === WordAttributes.IS_CONSTRUCTED_TERM.value)
+      ? yup.boolean().optional()
+      : yup.boolean(),
+  }), {})),
   word: yup.string().required(),
   wordClass: yup.object().shape({
     value: yup.string().required(),
@@ -34,8 +40,6 @@ const schema = yup.object().shape({
   antonyms: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(ExampleEditFormSchema),
-  isAccented: yup.boolean(),
-  isComplete: yup.boolean(),
   nsibidi: yup.string(),
 });
 

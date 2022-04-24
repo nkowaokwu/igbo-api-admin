@@ -75,11 +75,13 @@ const countSufficientWords = (words) => (
     word,
     wordClass,
     definitions,
-    isStandardIgbo,
+    attributes: {
+      isStandardIgbo,
+      isAccented,
+      isComplete,
+    },
     pronunciation,
     examples,
-    isAccented,
-    isComplete,
   }) => {
     const automaticCheck = (
       word
@@ -125,7 +127,7 @@ export const getWordStats = async (
   try {
     const INCLUDE_ALL_WORDS_LIMIT = 100000;
     const words = await findWordsWithMatch({
-      match: { word: { $regex: /./ }, isStandardIgbo: { $eq: true } },
+      match: { word: { $regex: /./ }, 'attributes.isStandardIgbo': { $eq: true } },
       examples: true,
       limit: INCLUDE_ALL_WORDS_LIMIT,
     });

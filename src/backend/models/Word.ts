@@ -4,12 +4,14 @@ import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
+import WordAttributes from '../shared/constants/WordAttributes';
 import * as Interfaces from '../controllers/utils/interfaces';
 
 const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
 const { Schema, Types } = mongoose;
+// @ts-ignore
 const wordSchema = new Schema({
   word: { type: String, required: true },
   wordClass: { type: String, default: '', enum: Object.values(WordClass).map(({ value }) => value) },
@@ -44,8 +46,11 @@ const wordSchema = new Schema({
     default: {},
   },
   pronunciation: { type: String, default: '' },
-  isStandardIgbo: { type: Boolean, default: false },
-  isAccented: { type: Boolean, default: false },
+  attributes: Object.entries(WordAttributes)
+    .reduce((finalAttributes, [, { value }]) => ({
+      ...finalAttributes,
+      [value]: { type: Boolean, default: false },
+    }), {}),
   variations: { type: [{ type: String }], default: [] },
   frequency: { type: Number },
   stems: { type: [{ type: String }], default: [] },
@@ -53,31 +58,8 @@ const wordSchema = new Schema({
   antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
-  isComplete: { type: Boolean, default: false },
   nsibidi: { type: String, default: '' },
 }, { toObject: toObjectPlugin, timestamps: true });
-
-// const tensesIndexes = Object.values(Tense).reduce((finalIndexes, tense) => ({
-//   ...finalIndexes,
-//   [`tenses.${tense.value}`]: 'text',
-// }), {});
-
-// wordSchema.index({
-//   word: 'text',
-//   variations: 'text',
-//   dialects: 'text',
-//   ...tensesIndexes,
-//   nsibidi: 'text',
-// }, {
-//   weights: {
-//     word: 10,
-//     tenses: 9,
-//     dialects: 8,
-//     vairations: 9,
-//     nsibidi: 5,
-//   },
-//   name: 'Word text index',
-// });
 
 wordSchema.index({ word: 'text', variations: 'text', nsibidi: 'text' });
 

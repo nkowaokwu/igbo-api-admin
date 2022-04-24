@@ -4,6 +4,7 @@ import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
+import WordAttributes from '../shared/constants/WordAttributes';
 
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
@@ -39,8 +40,11 @@ const genericWordSchema = new Schema({
     default: {},
   },
   pronunciation: { type: String, default: '' },
-  isStandardIgbo: { type: Boolean, default: false },
-  isAccented: { type: Boolean, default: false },
+  attributes: Object.entries(WordAttributes)
+    .reduce((finalAttributes, [, { value }]) => ({
+      ...finalAttributes,
+      [value]: { type: Boolean, default: false },
+    }), {}),
   variations: { type: [{ type: String }], default: [] },
   editorsNotes: { type: String, default: '' },
   userComments: { type: String, default: '' },

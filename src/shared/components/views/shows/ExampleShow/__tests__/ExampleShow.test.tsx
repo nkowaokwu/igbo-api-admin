@@ -2,7 +2,8 @@
 // https://github.com/marmelab/react-admin/pull/6753/files
 import React from 'react';
 import { render } from '@testing-library/react';
-import { TestContext } from 'ra-test';
+import TestContext from 'src/tests/components/TestContext';
+
 import { DataProviderContext } from 'react-admin';
 import Collections from 'src/shared/constants/Collections';
 import ExampleShow from '../ExampleShow';

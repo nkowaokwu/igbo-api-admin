@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TestContext } from 'ra-test';
+import TestContext from 'src/tests/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import WordEditForm from '../WordEditForm';
@@ -26,6 +26,10 @@ it('render word edit form', async () => {
   );
   await findByText('Headword');
   await findByText('Nsịbịdị');
+  await findByText('Is Standard Igbo');
+  await findByText('Is Accented');
+  await findByText('Is Slang');
+  await findByText('Is Constructed Term');
   await findByText('Definitions');
   await findByText('Word Pronunciation');
   await findByText('Spelling Variations');
