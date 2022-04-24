@@ -56,6 +56,8 @@ functions/node_modules
 functions/index.js
 functions/index.html
 functions/.runtimeconfig.json
+functions/src/shared/__mocks__
+functions/src/tests
 
 **/prod-firebase-service-account.json
 **/staging-firebase-service-account.json
