@@ -7,6 +7,8 @@ import {
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
+import Select from 'react-select';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { EditFormProps } from 'src/shared/interfaces';
 import { getExample } from 'src/shared/API';
 import View from 'src/shared/constants/Views';
@@ -134,7 +136,38 @@ const ExampleEditForm = ({
             />
           </>
         ) : null }
-        <Box className="w-full lg:w-1/2 flex flex-col">
+        <Box
+          className="w-full flex flex-col lg:flex-row justify-between
+          items-center space-y-4 lg:space-y-0 lg:space-x-6"
+        >
+          <Box className="flex flex-col w-full">
+            <FormHeader
+              title="Sentence Style"
+              tooltip="Select the style or figure of speech that this sentence is using."
+            />
+            <Box data-test="word-class-input-container">
+              <Controller
+                render={({ onChange, ...rest }) => (
+                  <Select
+                    {...rest}
+                    onChange={(e) => {
+                      onChange(e);
+                      cacheForm();
+                    }}
+                    options={Object.values(ExampleStyle)}
+                  />
+                )}
+                name="style"
+                control={control}
+                defaultValue={Object.values(ExampleStyle).find(({ value }) => (
+                  value === (record.style || getValues().style)
+                ))}
+              />
+            </Box>
+            {errors.wordClass && (
+              <p className="error">Part of speech is required</p>
+            )}
+          </Box>
           <Controller
             render={() => (
               <AudioRecorder
@@ -162,7 +195,7 @@ const ExampleEditForm = ({
             <Input
               {...props}
               className="form-input"
-              placeholder="Please"
+              placeholder="Biko"
               data-test="igbo-input"
             />
           )}
@@ -177,14 +210,14 @@ const ExampleEditForm = ({
       <Box className="flex flex-col">
         <FormHeader
           title="English"
-          tooltip="The example sentence in English"
+          tooltip="The example sentence in English. This is the the literal English translation of the Igbo sentence."
         />
         <Controller
           render={(props) => (
             <Input
               {...props}
               className="form-input"
-              placeholder="Bia"
+              placeholder="Please"
               data-test="english-input"
             />
           )}
@@ -194,6 +227,28 @@ const ExampleEditForm = ({
         />
         {errors.english && (
           <p className="error">English is required</p>
+        )}
+      </Box>
+      <Box className="flex flex-col">
+        <FormHeader
+          title="Meaning"
+          tooltip="This field is for sentences that use figure of speech or where its literal translation isn't clear."
+        />
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              className="form-input"
+              placeholder="Asking politely"
+              data-test="meaning-input"
+            />
+          )}
+          name="meaning"
+          control={control}
+          defaultValue={record.meaning || getValues().meaning}
+        />
+        {errors.english && (
+          <p className="error">{errors.english}</p>
         )}
       </Box>
       <Box className="mt-2">
@@ -228,12 +283,13 @@ const ExampleEditForm = ({
           control={control}
         />
       </Box>
-      <Box className="flex flex-row items-center form-buttons-container space-y-4 lg:space-x-4">
+      <Box className="flex flex-row items-center form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
         <Button
           className="mt-3 lg:my-0"
           backgroundColor="gray.300"
           onClick={() => onCancel({ view, resource, history })}
           disabled={isSubmitting}
+          width="full"
         >
           Cancel
         </Button>
@@ -244,6 +300,7 @@ const ExampleEditForm = ({
           className="m-0"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
+          width="full"
         >
           {view === View.CREATE ? 'Submit' : 'Update'}
         </Button>

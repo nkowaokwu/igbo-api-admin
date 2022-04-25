@@ -376,6 +376,7 @@ const WordEditForm = ({
           backgroundColor="gray.300"
           onClick={() => onCancel({ view, resource, history })}
           disabled={isSubmitting}
+          width="full"
         >
           Cancel
         </Button>
@@ -385,6 +386,7 @@ const WordEditForm = ({
           variant="solid"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
+          width="full"
         >
           {view === View.CREATE ? 'Submit' : 'Update'}
         </Button>

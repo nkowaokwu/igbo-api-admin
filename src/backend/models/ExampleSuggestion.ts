@@ -1,13 +1,21 @@
 import mongoose from 'mongoose';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
-import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const { Schema, Types } = mongoose;
+// @ts-ignore
 const exampleSuggestionSchema = new Schema({
   originalExampleId: { type: Types.ObjectId, ref: 'Example', default: null },
   igbo: { type: String, default: '' },
   english: { type: String, default: '' },
+  meaning: { type: String, default: '' },
+  style: {
+    type: String,
+    enum: Object.values(ExampleStyle).map(({ value }) => value),
+    default: ExampleStyle.NO_STYLE.value,
+  },
   associatedWords: { type: [{ type: Types.ObjectId }], default: [] },
   pronunciation: { type: String, default: '' },
   exampleForSuggestion: { type: Boolean, default: false },
