@@ -54,7 +54,7 @@ const HeadwordForm = ({
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
                     isChecked={value}
-                    defaultIsChecked={isHeadwordAccented || record.attributes?.WordAttributes.IS_ACCENTED.value}
+                    defaultIsChecked={isHeadwordAccented || record.attributes?.[WordAttributes.IS_ACCENTED.value]}
                     ref={ref}
                     data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
                     size="lg"
