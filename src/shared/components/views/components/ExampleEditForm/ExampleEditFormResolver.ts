@@ -6,9 +6,10 @@ export const ExampleEditFormSchema = yup.object().shape({
   igbo: yup.string(),
   english: yup.string(),
   meaning: yup.string().optional(),
-  style: yup.mixed()
-    .oneOf(Object.values(ExampleStyle).map(({ value }) => value))
-    .default(ExampleStyle.NO_STYLE.value),
+  style: yup.object().shape({
+    value: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ value }) => value)),
+    label: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ label }) => label)),
+  }).required(),
   associatedWords: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
   originalExampleId: yup.string().nullable().optional(),

@@ -41,7 +41,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const { basePath, filterValues, setFilters } = useListContext();
   const [jumpToPage, setJumpToPage] = useState('');
   const [currentFilters, setCurrentFilters] = useState(getDefaultFilters(filterValues));
-  const isSuggestion = resource === 'wordSuggestions' || resource === 'exampleSuggestions';
+  const isSuggestionResource = (
+    resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS
+  );
+  const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
 
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
@@ -81,7 +84,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
 
   return (
     <TopToolbar
-      className={`${className} ${isSuggestion ? 'space-x-2' : ''} TopToolbar w-full`}
+      className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full`}
       {...sanitizeListRestProps(rest)}
     >
       <Filter {...props} />
@@ -114,10 +117,15 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             <MenuOptionGroup
               defaultValue={currentFilters}
               onChange={setCurrentFilters}
-              title="Word Attributes"
+              title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
               type="checkbox"
             >
-              {resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS ? [
+              {!isWordResource ? [
+                <MenuItemOption value="isProverb">
+                  Is Proverb
+                </MenuItemOption>,
+              ] : null}
+              {isWordResource ? [
                 <MenuItemOption value="isStandardIgbo">
                   Is Standard Igbo
                 </MenuItemOption>,
@@ -125,7 +133,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   Has Pronunciation
                 </MenuItemOption>,
               ] : null}
-              {resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS ? [
+              {isSuggestionResource ? [
                 <MenuItemOption value={SuggestionSource.COMMUNITY}>
                   From Nkọwa okwu
                 </MenuItemOption>,
@@ -133,7 +141,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   From Igbo API Editor Platform
                 </MenuItemOption>,
               ] : null}
-              {resource !== Collections.WORDS && resource !== Collections.EXAMPLES ? [
+              {isSuggestionResource ? [
                 <MenuItemOption value="authorId">
                   Is Author
                 </MenuItemOption>,
@@ -141,7 +149,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </MenuOptionGroup>
           </MenuList>
         </Menu>
-        {isSuggestion ? (
+        {isSuggestionResource ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>

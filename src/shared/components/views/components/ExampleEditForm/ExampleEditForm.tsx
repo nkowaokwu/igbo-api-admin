@@ -3,6 +3,7 @@ import {
   assign,
   map,
   omit,
+  pick,
 } from 'lodash';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -29,6 +30,7 @@ const ExampleEditForm = ({
   history,
   isPreExistingSuggestion,
 }: EditFormProps) : ReactElement => {
+  const style = pick(Object.values(ExampleStyle).find(({ value }) => value === record.style), ['value', 'label']);
   const {
     handleSubmit,
     getValues,
@@ -36,7 +38,10 @@ const ExampleEditForm = ({
     control,
     errors,
   } = useForm({
-    defaultValues: record,
+    defaultValues: {
+      ...record,
+      style,
+    },
     ...ExampleEditFormResolver,
   });
   const [originalRecord, setOriginalRecord] = useState(null);
@@ -47,6 +52,7 @@ const ExampleEditForm = ({
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
+  const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -70,6 +76,7 @@ const ExampleEditForm = ({
     const cleanedData = {
       ...record,
       ...data,
+      style: data.style.value,
       associatedWords: sanitizeArray(data.associatedWords),
     };
     return cleanedData;
@@ -84,6 +91,7 @@ const ExampleEditForm = ({
       {
         ...record,
         ...data,
+        style: data.style.value,
       },
       createCacheExampleData(data, record),
       {
@@ -145,7 +153,7 @@ const ExampleEditForm = ({
               title="Sentence Style"
               tooltip="Select the style or figure of speech that this sentence is using."
             />
-            <Box data-test="word-class-input-container">
+            <Box data-test="sentence-style-input-container">
               <Controller
                 render={({ onChange, ...rest }) => (
                   <Select
@@ -154,19 +162,17 @@ const ExampleEditForm = ({
                       onChange(e);
                       cacheForm();
                     }}
-                    options={Object.values(ExampleStyle)}
+                    options={options}
                   />
                 )}
                 name="style"
                 control={control}
-                defaultValue={Object.values(ExampleStyle).find(({ value }) => (
-                  value === (record.style || getValues().style)
-                ))}
+                defaultValue={style}
               />
             </Box>
-            {errors.wordClass && (
-              <p className="error">Part of speech is required</p>
-            )}
+            {errors.style ? (
+              <p className="error">{errors.style.message}</p>
+            ) : null}
           </Box>
           <Controller
             render={() => (
@@ -203,9 +209,9 @@ const ExampleEditForm = ({
           control={control}
           defaultValue={record.igbo || getValues().igbo}
         />
-        {errors.igbo && (
+        {errors.igbo ? (
           <p className="error">Igbo is required</p>
-        )}
+        ) : null}
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -225,9 +231,9 @@ const ExampleEditForm = ({
           control={control}
           defaultValue={record.english || getValues().english}
         />
-        {errors.english && (
+        {errors.english ? (
           <p className="error">English is required</p>
-        )}
+        ) : null}
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -247,9 +253,9 @@ const ExampleEditForm = ({
           control={control}
           defaultValue={record.meaning || getValues().meaning}
         />
-        {errors.english && (
-          <p className="error">{errors.english}</p>
-        )}
+        {errors.meaning ? (
+          <p className="error">{errors.meaning.message}</p>
+        ) : null}
       </Box>
       <Box className="mt-2">
         <AssociatedWordsForm

@@ -95,7 +95,9 @@ const Input = React.forwardRef(({
         value={value}
         onChange={(e) => {
           onChange(e);
-          debounceInput(e.target.value);
+          if (searchApi) {
+            debounceInput(e.target.value);
+          }
         }}
         className={`${className} ${width}`}
         {...rest}

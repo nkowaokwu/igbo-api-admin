@@ -38,6 +38,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     pronunciation,
     igbo,
     english,
+    meaning,
+    style,
     editorsNotes,
     userComments,
     associatedWords,
@@ -99,6 +101,15 @@ const ExampleShow = (props: ShowProps): ReactElement => {
             </h3>
             <EditDocumentIds collection="examples" originalId={originalExampleId} id={id} title="Origin Example Id:" />
             <Box>
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                Sentence Style
+              </Heading>
+              <DiffField
+                path="style"
+                diffRecord={diffRecord}
+                fallbackValue={style}
+                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              />
               <Box className="flex flex-col mt-5">
                 <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
                 {/* TODO: check this part! */}
@@ -121,14 +132,33 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   )}
                 />
               </Box>
-              <Box className="flex flex-col mt-5">
-                <Text fontWeight="bold" className="text-xl text-gray-600">Igbo</Text>
-                <Text className="text-2xl text-gray-800">{igbo}</Text>
-              </Box>
-              <Box className="flex flex-col mt-5">
-                <Text fontWeight="bold" className="text-xl text-gray-600">English</Text>
-                <Text className="text-2xl text-gray-800">{english}</Text>
-              </Box>
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                Igbo
+              </Heading>
+              <DiffField
+                path="igbo"
+                diffRecord={diffRecord}
+                fallbackValue={igbo}
+                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              />
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                English
+              </Heading>
+              <DiffField
+                path="english"
+                diffRecord={diffRecord}
+                fallbackValue={english}
+                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              />
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                Meaning
+              </Heading>
+              <DiffField
+                path="meaning"
+                diffRecord={diffRecord}
+                fallbackValue={meaning}
+                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              />
               <Box className="flex flex-col mt-5">
                 <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
                 {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (

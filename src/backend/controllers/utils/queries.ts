@@ -2,6 +2,7 @@ import { has, omit } from 'lodash';
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
 type ExampleSearchQuery = [
   { igbo: RegExp },
@@ -16,6 +17,7 @@ type Filters = {
   },
   source?: any,
   authorId?: any,
+  style?: any,
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
@@ -47,6 +49,9 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
       case 'example':
         allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
         break;
+      case 'isProverb':
+        allFilters.style = { $eq: ExampleStyle.PROVERB.value };
+        break;
       default:
         return allFilters;
     };
@@ -71,8 +76,14 @@ const definitionsQuery = (regex: RegExp): { definitions: { $in: [RegExp] } } => 
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
 
 /* Regex match query used to later to defined the Content-Range response header */
-export const searchExamplesRegexQuery = (regex: RegExp): { $or: ExampleSearchQuery } => (
-  ({ $or: [{ igbo: regex }, { english: regex }] })
+export const searchExamplesRegexQuery = (
+  regex: RegExp,
+  filters: { [key: string]: string },
+): { $or: ExampleSearchQuery } => (
+  {
+    $or: [{ igbo: regex }, { english: regex }],
+    ...(filters ? generateSearchFilters(filters) : {}),
+  }
 );
 export const searchExampleSuggestionsRegexQuery = (
   regex: RegExp,

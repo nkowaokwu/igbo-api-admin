@@ -17,6 +17,7 @@ import {
   ListActions,
   Pagination,
   Select,
+  StyleField,
 } from 'src/shared/components';
 import { ExampleShowActions } from 'src/actions/exampleActions';
 import Empty from '../Empty';
@@ -44,6 +45,7 @@ export const ExampleList = (props: ListProps): ReactElement => {
         medium={(
           <Datagrid>
             <AudioRecordingPreview label="Audio Recording" />
+            <StyleField label="Style" source="style" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
