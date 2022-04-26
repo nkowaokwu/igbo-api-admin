@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import WordClass from 'src/shared/constants/WordClass';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
@@ -13,8 +14,8 @@ const schema = yup.object().shape({
   }), {})),
   word: yup.string().required(),
   wordClass: yup.object().shape({
-    value: yup.string().required(),
-    label: yup.string().required(),
+    value: yup.mixed().oneOf(Object.values(WordClass).map(({ value }) => value)),
+    label: yup.mixed().oneOf(Object.values(WordClass).map(({ label }) => label)),
   }).required(),
   definitions: yup.mixed().test('definition-types', 'Definition is required', (value) => {
     if (Array.isArray(value)) {

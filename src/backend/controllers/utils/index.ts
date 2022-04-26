@@ -22,17 +22,23 @@ const MAX_RESPONSE_LIMIT = 100;
 /* Determines if an empty response should be returned
  * if the request comes from an unauthed user in production
  */
-const constructRegexQuery = ({ user, searchWord }: { user: Interfaces.FormattedUser, searchWord: string }) => (
-  user.role && (
-    user.role === UserRoles.EDITOR
-    || user.role === UserRoles.MERGER
-    || user.role === UserRoles.ADMIN
-  )
-    ? createQueryRegex(searchWord)
-    : searchWord
-      ? createQueryRegex(searchWord)
-      : /^[.{0,}\n{0,}]/
-);
+const constructRegexQuery = (
+  { user, searchWord, example }
+  : { user: Interfaces.FormattedUser, searchWord: string, example: string },
+) => {
+  const queryValue = example || searchWord;
+  return (
+    user.role && (
+      user.role === UserRoles.EDITOR
+      || user.role === UserRoles.MERGER
+      || user.role === UserRoles.ADMIN
+    )
+      ? createQueryRegex(queryValue)
+      : queryValue
+        ? createQueryRegex(queryValue)
+        : /^[.{0,}\n{0,}]/
+  );
+};
 
 const fallbackUser = {
   uid: 'fallback-firebase-uid',
@@ -204,9 +210,9 @@ export const handleQueries = (
     filter: filterQuery,
     strict: strictQuery,
   } = query;
-  const { word, ...filters } = parseFilter(filterQuery, user);
+  const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
-  const regexKeyword = constructRegexQuery({ user, searchWord });
+  const regexKeyword = constructRegexQuery({ user, searchWord, example });
   const page = parseInt(pageQuery, 10);
   const range = parseRange(rangeQuery);
   const { skip, limit } = convertToSkipAndLimit({ page, range });

@@ -44,9 +44,10 @@ export const getExamples = async (
       regexKeyword,
       skip,
       limit,
+      filters,
       ...rest
     } = handleQueries(req);
-    const regexMatch = searchExamplesRegexQuery(regexKeyword);
+    const regexMatch = searchExamplesRegexQuery(regexKeyword, filters);
     const examples = await searchExamples({ query: regexMatch, skip, limit });
 
     return packageResponse({
