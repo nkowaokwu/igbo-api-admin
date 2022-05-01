@@ -11,9 +11,11 @@ import actionsMap from '../constants/actionsMap';
 import Collection from '../constants/Collections';
 
 const BulkSuggestionActions = ({
+  resource,
   selectedIds,
 }: {
-  selectedIds: string[];
+  resource?: Collection,
+  selectedIds?: string[];
 }): ReactElement => {
   const refresh = useRefresh();
   const toast = useToast();
@@ -38,14 +40,28 @@ const BulkSuggestionActions = ({
             onConfirm: async () => {
               try {
                 setIsConfirming(true);
-                await Promise.all(
-                  selectedIds.map((selectedId) => (
-                    actionsMap.Merge.executeAction({
-                      collection: Collection.WORDS,
-                      record: { id: selectedId },
-                    })
-                  )),
-                );
+                if (resource === Collection.WORD_SUGGESTIONS) {
+                  await Promise.all(
+                    selectedIds.map((selectedId) => (
+                      actionsMap.Merge.executeAction({
+                        collection: Collection.WORDS,
+                        resource,
+                        record: { id: selectedId },
+                      })
+                    )),
+                  );
+                } else if (resource === Collection.EXAMPLE_SUGGESTIONS) {
+                  await Promise.all(
+                    selectedIds.map((selectedId) => (
+                      actionsMap.Merge.executeAction({
+                        collection: Collection.EXAMPLES,
+                        resource,
+                        record: { id: selectedId },
+                      })
+                    )),
+                  );
+                }
+
                 toast({
                   title: 'Success',
                   description: actionsMap.Merge.successMessage,
@@ -82,6 +98,11 @@ const BulkSuggestionActions = ({
       </ConfirmModal>
     </Box>
   );
+};
+
+BulkSuggestionActions.defaultProps = {
+  resource: '',
+  selectedIds: [],
 };
 
 export default BulkSuggestionActions;

@@ -20,7 +20,7 @@ const CompleteWordPreview = (
   {
     record: Word | Record,
     className: string,
-    showFull: boolean
+    showFull: boolean,
   },
 ): ReactElement => {
   const [availableAudioStatuses, setAvailableAudioStatuses] = useState(null);

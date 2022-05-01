@@ -19,6 +19,7 @@ import Icon from '@material-ui/icons/Spellcheck';
 import { approvalAndDenialsFormatter } from 'src/shared/utils';
 import {
   AudioRecordingPreview,
+  BulkSuggestionActions,
   EditToolbar,
   ArrayInput,
   ExampleShow as Show,
@@ -32,6 +33,7 @@ import {
   Pagination,
   SourceField,
 } from 'src/shared/components';
+import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../Empty';
 
 export const ExampleSuggestionIcon = Icon;
@@ -43,9 +45,9 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
       {...props}
       title="Example Suggestions"
       actions={<ListActions />}
+      bulkActionButtons={hasAdminOrMergerPermissions(permissions, <BulkSuggestionActions />)}
       pagination={<Pagination />}
       empty={<Empty />}
-      bulkActionButtons={false}
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Responsive
