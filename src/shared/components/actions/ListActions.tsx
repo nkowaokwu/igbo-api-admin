@@ -90,12 +90,15 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
 
   return (
     <TopToolbar
-      className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full`}
+      className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
       <Filter {...props} />
-      <Box className="flex flex-row justify-end items-center space-x-3">
-        <form onSubmit={handleJumpToPage} className="flex flex-row">
+      <Box
+        className="flex flex-col lg:flex-row justify-end items-end
+        lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
+      >
+        <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
           <Box className="flex flex-row space-x-2">
             <Input
               width={32}
