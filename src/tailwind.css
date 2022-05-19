@@ -36,8 +36,11 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
 }
 
 .MuiToolbar-root {
-  height: 60px !important;
   @apply bg-white !important;
+}
+
+[class*="RaLayout-appFrame"] {
+  width: 100vw;
 }
 
 [class*="RaList-bulkActionsDisplayed-"] {

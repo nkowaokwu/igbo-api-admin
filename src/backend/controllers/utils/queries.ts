@@ -18,6 +18,7 @@ type Filters = {
   source?: any,
   authorId?: any,
   style?: any,
+  wordClass?: any,
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
@@ -51,6 +52,9 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'isProverb':
         allFilters.style = { $eq: ExampleStyle.PROVERB.value };
+        break;
+      case 'wordClass':
+        allFilters.wordClass = { $in: value };
         break;
       default:
         return allFilters;

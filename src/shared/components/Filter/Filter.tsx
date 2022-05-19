@@ -25,7 +25,7 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
           className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border border-solid border-gray-400"
           onChange={(e) => setFilters({ ...filterValues, [filterKey]: e.target.value }, null)}
           placeholder="Search by word"
-          defaultValue={typeof filterValues[filterKey] === 'string' ? filterValues[filterKey] : ''}
+          defaultValue={typeof filterValues?.[filterKey] === 'string' ? filterValues[filterKey] : ''}
           style={{ paddingLeft: 34 }}
         />
       </InputGroup>
