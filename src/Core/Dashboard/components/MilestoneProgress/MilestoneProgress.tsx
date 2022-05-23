@@ -4,7 +4,7 @@ import network from 'src/Core/Dashboard/network';
 import {
   SUFFICIENT_WORDS_GOAL,
   COMPLETE_WORDS_GOAL,
-  // DIALECTAL_VARIATIONS_GOAL,
+  DIALECTAL_VARIATIONS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
@@ -16,7 +16,7 @@ const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
   const [totalSufficientWords, setTotalSufficientWords] = useState(null);
   const [totalCompletedWords, setTotalCompletedWords] = useState(null);
-  // const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
+  const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
@@ -35,10 +35,10 @@ const MilestoneProgress = (): ReactElement => {
   useEffect(() => {
     network({ url: '/stats/words' })
       .then(({ body }) => {
-        const { sufficientWordsCount, completedWordsCount } = JSON.parse(body);
+        const { sufficientWordsCount, completedWordsCount, dialectalVariationsCount } = JSON.parse(body);
         setTotalSufficientWords(sufficientWordsCount || 0);
         setTotalCompletedWords(completedWordsCount || 0);
-        // setTotalDialectalVariations(dialectalVariationsCount || 0);
+        setTotalDialectalVariations(dialectalVariationsCount || 0);
       })
       .catch(handleNoPermissionStatus);
     network({ url: '/stats/headwordAudioPronunciations' })
@@ -82,14 +82,14 @@ const MilestoneProgress = (): ReactElement => {
           Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
           isLoaded={totalCompletedWords !== null}
         />
-        {/* <ProgressCard
+        <ProgressCard
           totalCount={totalDialectalVariations}
-          goal={COMPLETE_WORDS_GOAL}
-          heading={'"Complete" Words'}
+          goal={DIALECTAL_VARIATIONS_GOAL}
+          heading="Dialectal variations"
           description={`There are currently ${totalDialectalVariations} dialectal word variations on the platform.
           Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`}
           isLoaded={totalDialectalVariations !== null}
-        /> */}
+        />
         <ProgressCard
           totalCount={totalHeadwordAudioPronunciation}
           goal={HEADWORD_AUDIO_PRONUNCIATION_GOAL}
