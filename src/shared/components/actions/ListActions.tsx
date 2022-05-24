@@ -32,6 +32,19 @@ const getDefaultFilters = (filters): string[] => (
   }, [])
 );
 
+/**
+ * The filter props comes from parsing the URL for parts of speech
+ * we want to set the default filters on first load
+ * */
+const getDefaultPartOfSpeechFilters = (filters): string[] => (
+  Object.keys(filters).reduce((allFilters, key) => {
+    if (key === 'wordClass') {
+      allFilters.push(key);
+    }
+    return allFilters;
+  }, [])
+);
+
 const ListActions = (props: CustomListActionProps): ReactElement => {
   const {
     className,
@@ -42,7 +55,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const { basePath, filterValues, setFilters } = useListContext();
   const [jumpToPage, setJumpToPage] = useState('');
   const [currentFilters, setCurrentFilters] = useState(getDefaultFilters(filterValues));
-  const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(getDefaultFilters(filterValues));
+  const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
+    getDefaultPartOfSpeechFilters(filterValues),
+  );
+  const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
   const isSuggestionResource = (
     resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS
@@ -121,12 +137,12 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
           <Menu closeOnSelect={false} placement="bottom-end">
             <MenuButton
               as={Button}
-              colorScheme={!currentFilters.length ? 'blue' : 'yellow'}
-              backgroundColor={currentFilters.length ? 'yellow.100' : 'white'}
+              colorScheme={selectedFilters ? 'yellow' : 'blue'}
+              backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
               variant="outline"
               rightIcon={<ChevronDownIcon />}
             >
-              {!currentFilters.length ? 'Filters' : 'Filters selected'}
+              {!selectedFilters ? 'Filters' : 'Filters selected'}
             </MenuButton>
             <MenuList minWidth="240px" zIndex={10}>
               <MenuOptionGroup
