@@ -1,11 +1,12 @@
 import React, { ReactElement } from 'react';
+import PropTypes from 'prop-types';
 import { useListContext } from 'react-admin';
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import { startCase } from 'lodash';
 import { CreateButton } from 'src/shared/primitives';
 
-const Empty = (): ReactElement => {
+const Empty = ({ showCreate } : { showCreate: boolean }): ReactElement => {
   const { basePath, resource } = useListContext();
   return (
     <Box className="flex flex-col justify-center items-center text-center pt-6 lg:py-12 lg:px-6">
@@ -16,11 +17,19 @@ const Empty = (): ReactElement => {
           <Text fontSize="lg">
             Create one or import from a file
           </Text>
-          <CreateButton basePath={basePath} />
+          {showCreate ? <CreateButton basePath={basePath} /> : null}
         </Box>
       </Box>
     </Box>
   );
+};
+
+Empty.propTypes = {
+  showCreate: PropTypes.bool,
+};
+
+Empty.defaultProps = {
+  showCreate: true,
 };
 
 export default Empty;

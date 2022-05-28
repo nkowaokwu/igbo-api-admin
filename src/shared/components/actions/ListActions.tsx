@@ -10,7 +10,13 @@ import {
   MenuOptionGroup,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { sanitizeListRestProps, TopToolbar, useListContext } from 'react-admin';
+import {
+  sanitizeListRestProps,
+  TopToolbar,
+  useListContext,
+  useGetPermissions,
+} from 'react-admin';
+import { Role } from 'src/shared/constants/auth-types';
 import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
@@ -53,11 +59,14 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     ...rest
   } = props;
   const { basePath, filterValues, setFilters } = useListContext();
+  const [permissions, setPermissions] = useState([]);
   const [jumpToPage, setJumpToPage] = useState('');
   const [currentFilters, setCurrentFilters] = useState(getDefaultFilters(filterValues));
   const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
     getDefaultPartOfSpeechFilters(filterValues),
   );
+  const getPermissions = useGetPermissions();
+
   const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
   const isSuggestionResource = (
@@ -66,6 +75,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
   const isPollResource = resource === Collections.POLLS;
   const isUserResource = resource === Collections.USERS;
+
+  useEffect(() => {
+    getPermissions().then((permissions) => setPermissions(permissions));
+  }, []);
 
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
@@ -228,7 +241,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {isSuggestionResource || isPollResource ? (
+        {isSuggestionResource || (isPollResource && permissions.role === Role.ADMIN) ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>

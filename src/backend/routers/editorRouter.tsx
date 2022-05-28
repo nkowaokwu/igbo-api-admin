@@ -33,6 +33,7 @@ import {
   putGenericWord,
   getGenericWord,
 } from '../controllers/genericWords';
+import { getPolls } from '../controllers/polls';
 import validId from '../middleware/validId';
 import authentication from '../middleware/authentication';
 import authorization from '../middleware/authorization';
@@ -92,5 +93,7 @@ editorRouter.delete(
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   deleteGenericWord,
 );
+
+editorRouter.get('/polls', getPolls);
 
 export default editorRouter;
