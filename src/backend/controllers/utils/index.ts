@@ -15,6 +15,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import { findUser } from '../users';
 import * as Interfaces from './interfaces';
+import HandledQueriesType from './HandledQueriesType';
 
 const DEFAULT_RESPONSE_LIMIT = 10;
 const MAX_RESPONSE_LIMIT = 100;
@@ -200,8 +201,8 @@ const parseSortKeys = (sort: string): { key: string, direction: string } | null 
 /* Handles all the queries for searching in the database */
 export const handleQueries = (
   { query = {}, user = {} }:
-  Request<{ query: any, user: any }>, // TODO: create query interface
-): any => {
+  Request<{ query?: any, user?: any }>,
+): HandledQueriesType => {
   const {
     keyword = '',
     page: pageQuery = 0,

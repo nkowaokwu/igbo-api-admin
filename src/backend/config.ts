@@ -1,11 +1,18 @@
 import * as functions from 'firebase-functions';
 
 const config = functions.config();
-export const { CI } = process.env;
+export const { CI, NODE_ENV, PORT = 8080 } = process.env;
+export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
+
 // Igbo API
-export const IGBO_API_ROOT = config?.runtime?.env !== 'cypress' && process.env.NODE_ENV === 'production'
+export const IGBO_API_ROOT = config?.runtime?.env !== 'cypress' && NODE_ENV === 'production'
   ? 'https://www.igboapi.com/api/v1'
   : 'http://localhost:8080/api/v1';
+
+// Igbo API Editor Platform
+export const IGBO_API_EDITOR_PLATFORM_ROOT = config?.runtime?.env !== 'cypress' && isProduction
+  ? 'https://editor.igboapi.com'
+  : 'http://127.0.0.1:3030';
 
 // SendGrid API
 export const SENDGRID_API_KEY = config?.sendgrid?.api_key;
@@ -33,8 +40,6 @@ export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
 // Database
 const DB_NAME = 'igbo_api';
 const TEST_DB_NAME = 'test_igbo_api';
-
-export const PORT = process.env.PORT || 8080;
 export const MONGO_HOST = 'localhost'; // Connects to MongoDB Docker container
 export const MONGO_ROOT = `mongodb://${MONGO_HOST}:27017`;
 export const TEST_MONGO_URI = `${MONGO_ROOT}/${TEST_DB_NAME}`;
@@ -50,7 +55,7 @@ const PROD_CORS_ORIGINS = [
 
 /* Prevents non-approved cross-origin sites from accessing certain routes */
 export const CORS_CONFIG = {
-  origin: process.env.CI || process.env.NODE_ENV === 'development' ? true : PROD_CORS_ORIGINS,
+  origin: CI || NODE_ENV === 'development' ? true : PROD_CORS_ORIGINS,
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
 };
 
@@ -65,7 +70,11 @@ export const GET_MAIN_KEY = (): string => {
   if (config?.runtime?.env === 'production') {
     return config?.env?.main_key;
   }
-  return CI || config?.runtime?.env === 'cypress' || process.env.NODE_ENV !== 'production'
+  return CI || config?.runtime?.env === 'cypress' || NODE_ENV !== 'production'
     ? 'main_key'
     : config?.env?.main_key;
 };
+
+// Twitter API
+export const TWITTER_CLIENT_ID = config?.twitter?.client_id;
+export const TWITTER_CLIENT_SECRET = config?.twitter?.client_secret;
