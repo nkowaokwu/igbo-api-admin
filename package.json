@@ -111,6 +111,7 @@
     "remove-accents": "^0.4.2",
     "string-similarity": "^4.0.3",
     "tailwindcss": "^1.9.6",
+    "twitter-api-v2": "^1.12.2",
     "wave-visualizer": "^1.0.6",
     "yup": "^0.32.8"
   },

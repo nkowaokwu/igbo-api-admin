@@ -10,7 +10,7 @@ const IdField = ({ source, record = {} }: IdFieldProps): ReactElement => {
 
   const handleCopyId = () => {
     if (navigator) {
-      navigator.clipboard.writeText(record[source]);
+      navigator.clipboard.writeText(get(record, source));
       toast({
         title: 'Copied to clipboard 📋',
         description: 'Document id has been copied to your clipboard',

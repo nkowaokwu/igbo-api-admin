@@ -64,6 +64,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS
   );
   const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
+  const isPoll = resource === Collections.POLLS;
 
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
@@ -109,86 +110,90 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
       className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
-      <Filter {...props} />
+      {isPoll ? null : <Filter {...props} />}
       <Box
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
-        <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
-          <Box className="flex flex-row space-x-2">
-            <Input
-              width={32}
-              value={jumpToPage}
-              type="number"
-              data-test="jump-to-page-input"
-              onChange={handleOnJumpToPageChange}
-              placeholder="Page #"
-              name="page"
-            />
-            <Button type="submit" className="px-3" minWidth={24} colorScheme="green">Jump to page</Button>
-          </Box>
-        </form>
-        <Box
-          data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
-          display="flex"
-          justifyContent="flex-end"
-          className="lg:space-x-3"
-        >
-          <Menu closeOnSelect={false} placement="bottom-end">
-            <MenuButton
-              as={Button}
-              colorScheme={selectedFilters ? 'yellow' : 'blue'}
-              backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
-              variant="outline"
-              rightIcon={<ChevronDownIcon />}
-            >
-              {!selectedFilters ? 'Filters' : 'Filters selected'}
-            </MenuButton>
-            <MenuList minWidth="240px" zIndex={10}>
-              <MenuOptionGroup
-                defaultValue={currentFilters}
-                onChange={(value) => {
-                  const cleanedValue = Array.isArray(value)
-                    ? value.filter((v) => v !== 'wordClass')
-                    : value === 'wordClass'
-                      ? ['']
-                      : [value];
-                  setCurrentFilters(cleanedValue);
-                }}
-                title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
-                type="checkbox"
+        {isPoll ? null : (
+          <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
+            <Box className="flex flex-row space-x-2">
+              <Input
+                width={32}
+                value={jumpToPage}
+                type="number"
+                data-test="jump-to-page-input"
+                onChange={handleOnJumpToPageChange}
+                placeholder="Page #"
+                name="page"
+              />
+              <Button type="submit" className="px-3" minWidth={24} colorScheme="green">Jump to page</Button>
+            </Box>
+          </form>
+        )}
+        {isPoll ? null : (
+          <Box
+            data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
+            display="flex"
+            justifyContent="flex-end"
+            className="lg:space-x-3"
+          >
+            <Menu closeOnSelect={false} placement="bottom-end">
+              <MenuButton
+                as={Button}
+                colorScheme={selectedFilters ? 'yellow' : 'blue'}
+                backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
+                variant="outline"
+                rightIcon={<ChevronDownIcon />}
               >
-                {!isWordResource ? [
-                  <MenuItemOption value="isProverb">
-                    Is Proverb
-                  </MenuItemOption>,
-                ] : null}
-                {isWordResource ? [
-                  <MenuItemOption value="isStandardIgbo">
-                    Is Standard Igbo
-                  </MenuItemOption>,
-                  <MenuItemOption value="pronunciation">
-                    Has Pronunciation
-                  </MenuItemOption>,
-                ] : null}
-                {isSuggestionResource ? [
-                  <MenuItemOption value={SuggestionSource.COMMUNITY}>
-                    From Nkọwa okwu
-                  </MenuItemOption>,
-                  <MenuItemOption value={SuggestionSource.INTERNAL}>
-                    From Igbo API Editor Platform
-                  </MenuItemOption>,
-                ] : null}
-                {isSuggestionResource ? [
-                  <MenuItemOption value="authorId">
-                    Is Author
-                  </MenuItemOption>,
-                ] : null}
-              </MenuOptionGroup>
-            </MenuList>
-          </Menu>
-        </Box>
-        {isWordResource ? (
+                {!selectedFilters ? 'Filters' : 'Filters selected'}
+              </MenuButton>
+              <MenuList minWidth="240px" zIndex={10}>
+                <MenuOptionGroup
+                  defaultValue={currentFilters}
+                  onChange={(value) => {
+                    const cleanedValue = Array.isArray(value)
+                      ? value.filter((v) => v !== 'wordClass')
+                      : value === 'wordClass'
+                        ? ['']
+                        : [value];
+                    setCurrentFilters(cleanedValue);
+                  }}
+                  title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
+                  type="checkbox"
+                >
+                  {!isWordResource ? [
+                    <MenuItemOption value="isProverb">
+                      Is Proverb
+                    </MenuItemOption>,
+                  ] : null}
+                  {isWordResource ? [
+                    <MenuItemOption value="isStandardIgbo">
+                      Is Standard Igbo
+                    </MenuItemOption>,
+                    <MenuItemOption value="pronunciation">
+                      Has Pronunciation
+                    </MenuItemOption>,
+                  ] : null}
+                  {isSuggestionResource ? [
+                    <MenuItemOption value={SuggestionSource.COMMUNITY}>
+                      From Nkọwa okwu
+                    </MenuItemOption>,
+                    <MenuItemOption value={SuggestionSource.INTERNAL}>
+                      From Igbo API Editor Platform
+                    </MenuItemOption>,
+                  ] : null}
+                  {isSuggestionResource ? [
+                    <MenuItemOption value="authorId">
+                      Is Author
+                    </MenuItemOption>,
+                  ] : null}
+                </MenuOptionGroup>
+              </MenuList>
+            </Menu>
+          </Box>
+        )}
+        {isWordResource && !isPoll ? (
           <Box
             data-test="part-of-speech-filter"
             display="flex"
@@ -222,7 +227,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {isSuggestionResource ? (
+        {isSuggestionResource || isPoll ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>

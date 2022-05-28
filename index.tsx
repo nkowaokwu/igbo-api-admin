@@ -1,5 +1,5 @@
+import { MONGO_URI } from './src/backend/services/initializeAdmin';
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
@@ -16,51 +16,14 @@ import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
 import { onCreateUserAccount, onAssignUserToEditingGroup, onUpdatePermissions } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
+import { onTwitterAuth, onTwitterCallback } from './src/backend/controllers/polls';
 import {
-  TEST_MONGO_URI,
-  LOCAL_MONGO_URI,
-  PROD_MONGO_URI,
   CORS_CONFIG,
   EXPRESS_PORT,
   IGBO_API_VOLUNTEER_HOME_BASE,
   WORD_CHECKLIST_URL,
+  isProduction,
 } from './src/backend/config';
-
-const config = functions.config();
-const productionServiceAccount = config?.runtime?.production;
-const stagingServiceAccount = config?.runtime?.staging;
-const MONGO_URI = config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test'
-? TEST_MONGO_URI
-: config?.runtime?.env === 'development'
-? LOCAL_MONGO_URI
-: config?.runtime?.env === 'production'
-? PROD_MONGO_URI
-: LOCAL_MONGO_URI;
-const serviceAccount = config?.runtime?.env === 'production' ? (() => {
-  let localProductionServiceAccount;
-  if (!productionServiceAccount?.project_id) {
-    localProductionServiceAccount = require('./prod-firebase-service-account.json');
-  }
-  return {
-    projectId: productionServiceAccount?.project_id || localProductionServiceAccount.project_id,
-    private_key: productionServiceAccount?.private_key ? productionServiceAccount.private_key.replace(/(\\\\n|\\n)/g, '\n') : localProductionServiceAccount.private_key,
-    client_email: productionServiceAccount?.client_email || localProductionServiceAccount.client_email,
-  }
-})() : (() => {
-  let localStagingServiceAccount;
-  if (!stagingServiceAccount?.project_id) {
-    localStagingServiceAccount = require('./staging-firebase-service-account.json');
-  }
-  return {
-    projectId: stagingServiceAccount?.project_id || localStagingServiceAccount.project_id,
-    private_key: stagingServiceAccount?.private_key ? stagingServiceAccount.private_key.replace(/(\\\\n|\\n)/g, '\n') : localStagingServiceAccount.private_key,
-    client_email: stagingServiceAccount?.client_email || localStagingServiceAccount.client_email,
-  };
- })();
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
 
 const server = express();
 const index = fs.readFileSync(`${__dirname}/index.html`, 'utf-8');
@@ -70,13 +33,14 @@ server.options('*', cors(CORS_CONFIG));
 server.use(cors(CORS_CONFIG));
 server.use(afterRes(MONGO_URI)); // Handles closing MongoDB connections after each request
 server.use('/favicon.ico', (_, res) => res.send('favicon'));
-
-if (config?.runtime?.env !== 'production' && process.env.NODE_ENV !== 'production') {
+if (isProduction) {
   server.use('/test', testRouter);
 }
 server.get('/gettingstarted', (_, res) => res.redirect(301, IGBO_API_VOLUNTEER_HOME_BASE));
 server.get('/checklist', (_, res) => res.redirect(301, WORD_CHECKLIST_URL));
 server.use('/triggers', triggersRouter);
+server.get('/twitter_auth', onTwitterAuth);
+server.get('/twitter_callback', onTwitterCallback);
 server.use(apiRouter);
 server.use(editorRouter);
 server.use(adminRouter);
@@ -88,6 +52,7 @@ server.get('**', (_, res) => {
 });
 server.use(errorHandler);
 
+// Firebase Functions
 export const createUserAccount = onCreateUserAccount;
 export const assignUserToEditingGroup = onAssignUserToEditingGroup;
 export const updatePermissions = onUpdatePermissions;

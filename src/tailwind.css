@@ -57,7 +57,7 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
 
 .TopToolbar {
   justify-content: space-between !important;
-  padding-top: 16px ​!important;
+  padding-top: 16px !important;
 }
 
 .MuiTableHead-root {

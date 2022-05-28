@@ -6,6 +6,7 @@ enum Collection {
   EXAMPLE_SUGGESTIONS = 'exampleSuggestions',
   GENERIC_WORDS = 'genericWords',
   USERS = 'users',
+  POLLS = 'polls',
 };
 
 export default Collection;
