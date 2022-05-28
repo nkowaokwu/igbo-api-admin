@@ -1,4 +1,5 @@
 /* Get all users from Firebase */
+import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
 import { filter, compact, reduce } from 'lodash';
 import UserRoles from '../shared/constants/UserRoles';
@@ -65,10 +66,16 @@ export const findPermittedUserEmails = async (): Promise<string[]> => {
 };
 
 /* Grab all users in the Firebase database */
-export const getUsers = async (req, res, next) => {
+export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
   try {
-    const { skip, limit } = handleQueries(req);
-    const users = await findUsers();
+    const { skip, limit, filters } = handleQueries(req);
+    const users = (await findUsers()).filter((user) => (
+      Object.values(filters).every((value: string) => {
+        const displayName = user.displayName.toLowerCase();
+        const { email } = user;
+        return displayName.includes(value.toLowerCase()) || email.includes(value.toLowerCase());
+      })
+    ));
     const paginatedUsers = users.slice(skip, (skip + 1) + limit);
     res.setHeader('Content-Range', users.length);
     res.status(200);

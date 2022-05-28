@@ -64,7 +64,8 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS
   );
   const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
-  const isPoll = resource === Collections.POLLS;
+  const isPollResource = resource === Collections.POLLS;
+  const isUserResource = resource === Collections.USERS;
 
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
@@ -110,12 +111,12 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
       className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
-      {isPoll ? null : <Filter {...props} />}
+      {isPollResource ? null : <Filter {...props} />}
       <Box
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
-        {isPoll ? null : (
+        {isPollResource ? null : (
           <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
             <Box className="flex flex-row space-x-2">
               <Input
@@ -131,7 +132,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           </form>
         )}
-        {isPoll ? null : (
+        {isPollResource || isUserResource ? null : (
           <Box
             data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
             display="flex"
@@ -193,7 +194,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         )}
-        {isWordResource && !isPoll ? (
+        {isWordResource && !isPollResource && !isUserResource ? (
           <Box
             data-test="part-of-speech-filter"
             display="flex"
@@ -227,7 +228,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {isSuggestionResource || isPoll ? (
+        {isSuggestionResource || isPollResource ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>

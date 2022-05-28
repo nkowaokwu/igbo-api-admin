@@ -11,7 +11,14 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
   const { resource } = props;
   const filterKey = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
     ? 'example'
-    : 'word';
+    : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
+      ? 'word'
+      : 'displayName';
+  const placeholderText = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
+    ? 'example'
+    : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
+      ? 'word'
+      : 'name or email';
   return (
     <Box className="flex items-end lg:ml-4">
       <InputGroup>
@@ -24,7 +31,7 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
           data-test="search-bar"
           className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border border-solid border-gray-400"
           onChange={(e) => setFilters({ ...filterValues, [filterKey]: e.target.value }, null)}
-          placeholder="Search by word"
+          placeholder={`Search by ${placeholderText}`}
           defaultValue={typeof filterValues?.[filterKey] === 'string' ? filterValues[filterKey] : ''}
           style={{ paddingLeft: 34 }}
         />

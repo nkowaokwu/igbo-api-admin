@@ -10,6 +10,8 @@ import {
 } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 import {
+  ListActions,
+  Pagination,
   Select,
 } from 'src/shared/components';
 
@@ -18,7 +20,12 @@ export const UserIcon = Icon;
 export const UserList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
-    <List {...props} actions={null} bulkActionButtons={false}>
+    <List
+      {...props}
+      actions={<ListActions />}
+      bulkActionButtons={false}
+      pagination={<Pagination />}
+    >
       <Responsive
         small={(
           <Datagrid>
