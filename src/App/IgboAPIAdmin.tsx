@@ -90,6 +90,15 @@ const IgboAPIAdmin = (): ReactElement => (
             show={(props) => <ExampleSuggestionShow {...props} permissions={permissions} />}
             icon={ExampleSuggestionIcon}
           />,
+          <Resource
+            name="polls"
+            options={{ label: 'Constructed Term Polls' }}
+            list={(props) => <PollsList {...props} permissions={permissions} />}
+            {...hasAdminPermissions(permissions, true)
+              ? { create: PollsCreate }
+              : { create: null }
+            }
+          />,
           hasAdminPermissions(permissions, ([
             <Resource
               name="genericWords"
@@ -103,11 +112,6 @@ const IgboAPIAdmin = (): ReactElement => (
               name="users"
               list={(props) => <UserList {...props} permissions={permissions} />}
               icon={UserIcon}
-            />,
-            <Resource
-              name="polls"
-              list={PollsList}
-              create={PollsCreate}
             />,
           ])),
         ])));

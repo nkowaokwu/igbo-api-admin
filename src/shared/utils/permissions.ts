@@ -7,7 +7,7 @@ export const hasNoPermissions = (
   if (permissions.role !== Role.ADMIN && permissions.role !== Role.MERGER && permissions.role !== Role.EDITOR) {
     return returnWithPermission;
   }
-  return false;
+  return null;
 };
 
 export const hasAdminOrMergerPermissions = (
@@ -17,15 +17,15 @@ export const hasAdminOrMergerPermissions = (
   if (permissions.role === Role.ADMIN || permissions.role === Role.MERGER) {
     return returnWithPermission;
   }
-  return false;
+  return null;
 };
 
 export const hasAdminPermissions = (
   permissions: { role?: string } = { role: '' },
   returnWithPermission: any,
-): any | void => {
+): any | null => {
   if (permissions.role === Role.ADMIN) {
     return returnWithPermission;
   }
-  return false;
+  return null;
 };

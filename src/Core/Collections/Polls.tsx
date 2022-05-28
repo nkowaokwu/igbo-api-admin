@@ -14,37 +14,41 @@ import {
   PollsCreate as Create,
   ListActions,
 } from 'src/shared/components';
+import { Role } from 'src/shared/constants/auth-types';
 import Empty from '../Empty';
 
-export const PollsList = (props: ListProps): ReactElement => (
-  <List
-    {...props}
-    title="Constructed Term Polls"
-    actions={<ListActions />}
-    hasCreate
-    pagination={<Pagination />}
-    empty={<Empty />}
-    sort={{ field: 'approvals', order: 'DESC' }}
-  >
-    <Responsive
-      small={(
-        <Datagrid>
-          <TextField label="Word" source="word" />
-          <TweetField label="Constructed Term" source="constructedTerm" />
-          <TweetField label="Definition" source="definition" />
-        </Datagrid>
-      )}
-      medium={(
-        <Datagrid>
-          <TextField label="Constructed Term" source="constructedTerm" />
-          <TextField label="English Term" source="englishTerm" />
-          <TextField label="Definitions" source="definition" />
-          <TweetField label="Tweet Link" source="id" />
-        </Datagrid>
-      )}
-    />
-  </List>
-);
+export const PollsList = (props: ListProps): ReactElement => {
+  const { permissions } = props;
+  return (
+    <List
+      {...props}
+      title="Constructed Term Polls"
+      actions={<ListActions />}
+      hasCreate
+      pagination={<Pagination />}
+      empty={<Empty showCreate={permissions.role === Role.ADMIN} />}
+      sort={{ field: 'approvals', order: 'DESC' }}
+    >
+      <Responsive
+        small={(
+          <Datagrid>
+            <TextField label="Word" source="word" />
+            <TweetField label="Constructed Term" source="constructedTerm" />
+            <TweetField label="Definition" source="definition" />
+          </Datagrid>
+        )}
+        medium={(
+          <Datagrid>
+            <TextField label="Constructed Term" source="constructedTerm" />
+            <TextField label="English Term" source="englishTerm" />
+            <TextField label="Definitions" source="definition" />
+            <TweetField label="Tweet Link" source="id" />
+          </Datagrid>
+        )}
+      />
+    </List>
+  );
+};
 
 export const PollsCreate = (props: CreateProps): ReactElement => (
   <Create title="Create a Constructed Term Poll" undoable={false} {...props}>
