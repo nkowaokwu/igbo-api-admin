@@ -1,6 +1,6 @@
 export default [
   {
-    text: `We are creating new Igbo words and we need your feedback!\nThe first word that we created is {constructedTerm} which means {englishTerm}. We wanted to get Igbo speakers' thoughts on whether it means {englishTerm} to you, as in {definition}` // eslint-disable-line
+    text: 'We are creating new Igbo words and we need your feedback!\n',
   },
   {
     text: `Why do we care to create new Igbo words?\nIgbo is officially a threatened language and is on track to becoming extinct. One of our goals at @nkowaokwu is not only to preserve the Igbo language but also to expand it, which includes creating new words.` // eslint-disable-line

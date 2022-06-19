@@ -73,9 +73,7 @@ export const onSubmitConstructedTermPoll = async (req: Request, res: Response): 
     await dbPollsRef.doc(tweets[0].data.id).set({
       created_at: moment().unix(),
       id: tweets[0].data.id,
-      constructedTerm: body.constructedTerm,
-      englishTerm: body.englishTerm,
-      definition: body.definition,
+      text: body.text,
       thread: tweets.map(({ data }) => data.id).slice(1, 4),
     });
 

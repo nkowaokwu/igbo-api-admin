@@ -6,7 +6,6 @@ import {
   List,
   Datagrid,
   TextField,
-  Responsive,
 } from 'react-admin';
 import {
   TweetField,
@@ -29,23 +28,10 @@ export const PollsList = (props: ListProps): ReactElement => {
       empty={<Empty showCreate={permissions.role === Role.ADMIN} />}
       sort={{ field: 'approvals', order: 'DESC' }}
     >
-      <Responsive
-        small={(
-          <Datagrid>
-            <TextField label="Word" source="word" />
-            <TweetField label="Constructed Term" source="constructedTerm" />
-            <TweetField label="Definition" source="definition" />
-          </Datagrid>
-        )}
-        medium={(
-          <Datagrid>
-            <TextField label="Constructed Term" source="constructedTerm" />
-            <TextField label="English Term" source="englishTerm" />
-            <TextField label="Definitions" source="definition" />
-            <TweetField label="Tweet Link" source="id" />
-          </Datagrid>
-        )}
-      />
+      <Datagrid>
+        <TextField label="Tweet body" source="text" />
+        <TweetField label="Tweet Link" source="id" />
+      </Datagrid>
     </List>
   );
 };
