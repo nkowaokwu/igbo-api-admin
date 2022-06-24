@@ -22,7 +22,7 @@ const MINIMUM_POLL_OPTIONS = 2;
 const MAXIMUM_POLL_OPTIONS = 4;
 const PollsCreate = (): ReactElement => {
   const [tweetBody, setTweetBody] = useState('');
-  const [pollOptions, setPollOptions] = useState(['Yes', 'No']);
+  const [pollOptions, setPollOptions] = useState(['Ee', 'Mba']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
