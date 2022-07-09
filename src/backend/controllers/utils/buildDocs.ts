@@ -50,7 +50,7 @@ export const findWordsWithMatch = async (
   }:
   {
     match: any,
-    examples?: bool,
+    examples?: boolean,
     skip?: number,
     limit?: number,
   },
