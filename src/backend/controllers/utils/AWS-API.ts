@@ -29,7 +29,7 @@ const s3 = (() => {
 const config = functions.config();
 const isProduction = config?.runtime?.env === 'production';
 const isCypress = config?.runtime?.env === 'cypress';
-/* Puts a new .webm object in the AWS S3 Bucket */
+/* Puts a new .mp3 object in the AWS S3 Bucket */
 export const createAudioPronunciation = async (id: string, pronunciationData: string): Promise<string> => {
   if (!id || !pronunciationData) {
     throw new Error('id and pronunciation must be provided');
@@ -40,11 +40,11 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
   const base64Data = Buffer.from(pronunciationData.replace(/^data:.+;base64,/, ''), 'base64');
   const params = {
     ...baseParams,
-    Key: `${pronunciationPath}/${id}.webm`,
+    Key: `${pronunciationPath}/${id}.mp3`,
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
-    ContentType: 'audio/webm',
+    ContentType: 'audio/mp3',
   };
 
   const { Location } = await s3.upload(params).promise();

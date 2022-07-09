@@ -22,7 +22,7 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
       if (isCypress && this.pronunciation) {
       // Going to mock creating and saving audio pronunciation while testing in Cypress
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('data:audio/webm')) {
+      } else if (this.pronunciation.startsWith('data:audio/mp3')) {
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
       } else if (!isCypress && isDevelopment && this.pronunciation) {
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
@@ -52,7 +52,7 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
           this.dialects[rawDialectalWord].pronunciation = (
             await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
           );
-        } else if (pronunciation.startsWith('data:audio/webm')) {
+        } else if (pronunciation.startsWith('data:audio/mp3')) {
           this.dialects[rawDialectalWord].pronunciation = (
             await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
           );
@@ -89,7 +89,7 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
       if (isCypress && this.pronunciation) {
       // Going to mock creating and saving audio pronunciation while testing in Cypress
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('data:audio/webm')) {
+      } else if (this.pronunciation.startsWith('data:audio/mp3')) {
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
       } else if (!isCypress && isDevelopment && this.pronunciation) {
         this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
