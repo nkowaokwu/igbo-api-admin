@@ -243,7 +243,7 @@ const overwriteWordPronunciation = async (
      * Word document
      */
     const suggestionDocId = suggestion.pronunciation ? suggestion.id : '';
-    const isMp3 = word.pronunciation.includes('mp3');
+    const isMp3 = suggestion.pronunciation.includes('mp3');
     const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id, isMp3);
 
     suggestion.pronunciation = finalPronunciationUri;
@@ -260,7 +260,7 @@ const overwriteWordPronunciation = async (
        * the dialect's pronunciation uri key will get updated
        */
       const suggestionDialectDocId = suggestionPronunciation ? suggestionDialectPronunciationKey : '';
-      const isMp3 = word.dialects[dialectalWord].pronunciation.includes('mp3');
+      const isMp3 = suggestionPronunciation.includes('mp3');
       const finalDialectPronunciationUri = (
         await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey, isMp3)
       );
