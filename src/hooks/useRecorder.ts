@@ -5,7 +5,7 @@ import { useToast } from '@chakra-ui/react';
 import Wave from 'wave-visualizer';
 import MicRecorder from 'mic-recorder-to-mp3';
 
-const MAX_AUDIO_SIZE = 100000;
+const MAX_AUDIO_SIZE = 1000000;
 const useRecorder = (): [string, boolean, () => void, () => void] => {
   const [wave] = useState(new Wave());
   const [audioBlob, setAudioBlob] = useState('');
