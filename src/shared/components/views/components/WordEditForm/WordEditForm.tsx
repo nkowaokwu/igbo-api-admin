@@ -20,6 +20,7 @@ import { getWord } from 'src/shared/API';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
+import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -173,6 +174,7 @@ const WordEditForm = ({
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
         setIsSubmitting(false);
+        handleUpdateDocument({ resource, record: data });
         notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
         redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
       },
