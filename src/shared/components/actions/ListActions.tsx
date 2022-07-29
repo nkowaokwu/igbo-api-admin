@@ -59,9 +59,11 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     ...rest
   } = props;
   const { basePath, filterValues, setFilters } = useListContext();
-  const [permissions, setPermissions] = useState([]);
+  const [permissions, setPermissions] = useState<any[]>([]);
   const [jumpToPage, setJumpToPage] = useState('');
-  const [currentFilters, setCurrentFilters] = useState(getDefaultFilters(filterValues));
+  const [currentFilters, setCurrentFilters] = useState(
+    getDefaultFilters(filterValues),
+  );
   const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
     getDefaultPartOfSpeechFilters(filterValues),
   );
@@ -70,7 +72,8 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
   const isSuggestionResource = (
-    resource === Collections.WORD_SUGGESTIONS || resource === Collections.EXAMPLE_SUGGESTIONS
+    resource === Collections.WORD_SUGGESTIONS
+    || resource === Collections.EXAMPLE_SUGGESTIONS
   );
   const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
   const isPollResource = resource === Collections.POLLS;
@@ -83,8 +86,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
     const parsedHashQueries = queryString.parse(window.location.hash);
-    // @ts-ignore
-    setJumpToPage(parsedHashQueries[`/${resource}?page`] || parsedHashQueries.page || '');
+    setJumpToPage(
+      // @ts-expect-error string
+      parsedHashQueries[`/${resource}?page`] || parsedHashQueries.page || '',
+    );
   }, [window.location.hash]);
 
   /* Jumps to user-specified page */
@@ -96,23 +101,31 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     } else {
       parsedHashQueries.page = jumpToPage;
     }
-    window.location.hash = queryString.stringify(parsedHashQueries)
+    window.location.hash = queryString
+      .stringify(parsedHashQueries)
       .replace('%2F', '/')
       .replace('%3F', '?')
       .replace(`/${resource}&`, `/${resource}?`);
   };
 
   /* Handles input from user */
-  const handleOnJumpToPageChange = ({ target }: { target: { value: string } }) => {
+  const handleOnJumpToPageChange = ({
+    target,
+  }: {
+    target: { value: string };
+  }) => {
     setJumpToPage(target.value);
   };
   useEffect(() => {
-    const updatedFilters: { wordClass?: string[] } = currentFilters.reduce((allFilters, filter) => {
-      if (filter !== 'word' && filter !== 'example') {
-        allFilters[filter] = true;
-      }
-      return allFilters;
-    }, {});
+    const updatedFilters: { wordClass?: string[] } = currentFilters.reduce(
+      (allFilters, filter) => {
+        if (filter !== 'word' && filter !== 'example') {
+          allFilters[filter] = true;
+        }
+        return allFilters;
+      },
+      {},
+    );
     if (currentPartOfSpeechFilter.length) {
       updatedFilters.wordClass = currentPartOfSpeechFilter;
     }
@@ -121,7 +134,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
 
   return (
     <TopToolbar
-      className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
+      className={`${className} ${
+        isSuggestionResource ? 'space-x-2' : ''
+      } TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
       {isPollResource ? null : <Filter {...props} />}
@@ -130,7 +145,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
         {isPollResource ? null : (
-          <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
+          <form
+            onSubmit={handleJumpToPage}
+            className="flex flex-col lg:flex-row"
+          >
             <Box className="flex flex-row space-x-2">
               <Input
                 width={32}
@@ -141,13 +159,24 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                 placeholder="Page #"
                 name="page"
               />
-              <Button type="submit" className="px-3" minWidth={24} colorScheme="green">Jump to page</Button>
+              <Button
+                type="submit"
+                className="px-3"
+                minWidth={24}
+                colorScheme="green"
+              >
+                Jump to page
+              </Button>
             </Box>
           </form>
         )}
         {isPollResource || isUserResource ? null : (
           <Box
-            data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
+            data-test={
+              isWordResource
+                ? 'word-attributes-filter'
+                : 'example-attributes-filter'
+            }
             display="flex"
             justifyContent="flex-end"
             className="lg:space-x-3"
@@ -173,35 +202,48 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         : [value];
                     setCurrentFilters(cleanedValue);
                   }}
-                  title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
+                  title={
+                    isWordResource ? 'Word Attributes' : 'Example Attributes'
+                  }
                   type="checkbox"
                 >
-                  {!isWordResource ? [
-                    <MenuItemOption value="isProverb">
-                      Is Proverb
-                    </MenuItemOption>,
-                  ] : null}
-                  {isWordResource ? [
-                    <MenuItemOption value="isStandardIgbo">
-                      Is Standard Igbo
-                    </MenuItemOption>,
-                    <MenuItemOption value="pronunciation">
-                      Has Pronunciation
-                    </MenuItemOption>,
-                  ] : null}
-                  {isSuggestionResource ? [
-                    <MenuItemOption value={SuggestionSource.COMMUNITY}>
-                      From Nkọwa okwu
-                    </MenuItemOption>,
-                    <MenuItemOption value={SuggestionSource.INTERNAL}>
-                      From Igbo API Editor Platform
-                    </MenuItemOption>,
-                  ] : null}
-                  {isSuggestionResource ? [
-                    <MenuItemOption value="authorId">
-                      Is Author
-                    </MenuItemOption>,
-                  ] : null}
+                  {!isWordResource
+                    ? [
+                      <MenuItemOption value="isProverb">
+                        Is Proverb
+                      </MenuItemOption>,
+                    ]
+                    : null}
+                  {isWordResource
+                    ? [
+                      <MenuItemOption value="isStandardIgbo">
+                        Is Standard Igbo
+                      </MenuItemOption>,
+                      <MenuItemOption value="pronunciation">
+                        Has Pronunciation
+                      </MenuItemOption>,
+                      <MenuItemOption value="nsibidi">
+                        Has Nsịbịdị
+                      </MenuItemOption>,
+                    ]
+                    : null}
+                  {isSuggestionResource
+                    ? [
+                      <MenuItemOption value={SuggestionSource.COMMUNITY}>
+                        From Nkọwa okwu
+                      </MenuItemOption>,
+                      <MenuItemOption value={SuggestionSource.INTERNAL}>
+                        From Igbo API Editor Platform
+                      </MenuItemOption>,
+                    ]
+                    : null}
+                  {isSuggestionResource
+                    ? [
+                      <MenuItemOption value="authorId">
+                        Is Author
+                      </MenuItemOption>,
+                    ]
+                    : null}
                 </MenuOptionGroup>
               </MenuList>
             </Menu>
@@ -217,16 +259,23 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             <Menu closeOnSelect={false} placement="bottom-end">
               <MenuButton
                 as={Button}
-                colorScheme={!currentPartOfSpeechFilter.length ? 'blue' : 'yellow'}
-                backgroundColor={currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'}
+                colorScheme={
+                  !currentPartOfSpeechFilter.length ? 'blue' : 'yellow'
+                }
+                backgroundColor={
+                  currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'
+                }
                 variant="outline"
                 rightIcon={<ChevronDownIcon />}
               >
-                {!currentPartOfSpeechFilter.length ? 'Part of Speech' : 'Part of Speech selected'}
+                {!currentPartOfSpeechFilter.length
+                  ? 'Part of Speech'
+                  : 'Part of Speech selected'}
               </MenuButton>
               <MenuList minWidth="240px" zIndex={10}>
                 <MenuOptionGroup
                   defaultValue={currentPartOfSpeechFilter}
+                  // @ts-expect-error onChange
                   onChange={setCurrentPartOfSpeechFilter}
                   title="Part of speech"
                   type="checkbox"
@@ -241,7 +290,8 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {isSuggestionResource || (isPollResource && permissions.role === Role.ADMIN) ? (
+        {/* @ts-expect-error permissions.role */}
+        {isSuggestionResource || (isPollResource && permissions?.role === Role.ADMIN) ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>
