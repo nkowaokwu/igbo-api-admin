@@ -35,6 +35,13 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
           allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
         }
         break;
+      case 'nsibidi':
+        if (value) {
+          allFilters.nsibidi = { $ne: '' };
+        } else {
+          allFilters.$or = [...allFilters.$or, { nsibidi: { $eq: null } }, { nsibidi: { $eq: '' } }];
+        }
+        break;
       case SuggestionSource.COMMUNITY:
         allFilters.source = { $eq: SuggestionSource.COMMUNITY };
         break;
