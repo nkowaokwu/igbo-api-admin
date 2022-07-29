@@ -16,7 +16,7 @@ import Collections from './Collections';
 const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
-const handleUpdateDocument = useCallable<any, EmptyResponse>('updateDocument');
+export const handleUpdateDocument = useCallable<any, EmptyResponse>('updateDocument');
 
 export default {
   [ActionTypes.EDIT]: (resource: string, id: string): string => `/${resource}/${id}/edit`,
