@@ -7,6 +7,7 @@ import {
   DIALECTAL_VARIATIONS_GOAL,
   HEADWORD_AUDIO_PRONUNCIATION_GOAL,
   WORDS_WITH_NSIBIDI_GOAL,
+  WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
   EXAMPLE_SENTENCES_GOAL,
 } from 'src/Core/constants';
@@ -21,6 +22,7 @@ const MilestoneProgress = (): ReactElement => {
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
   const [totalExampleSentences, setTotalExampleSentences] = useState(null);
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
+  const [totalWordSuggestionsWithNsibidi, setTotalWordSuggestionsWithNsibidi] = useState(null);
 
   const redirectToLogin = () => {
     window.location.hash = '#/';
@@ -54,6 +56,11 @@ const MilestoneProgress = (): ReactElement => {
       .catch(handleNoPermissionStatus);
     network({ url: '/stats/nsibidi' })
       .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
+      .catch(handleNoPermissionStatus);
+    network({ url: '/stats/nsibidi-suggestions' })
+      .then(({ body: wordSuggestionsWithNsibidi }) => (
+        setTotalWordSuggestionsWithNsibidi(JSON.parse(wordSuggestionsWithNsibidi).count || 0)
+      ))
       .catch(handleNoPermissionStatus);
   }, []);
   return (
@@ -106,6 +113,15 @@ const MilestoneProgress = (): ReactElement => {
           description={`There are currently ${totalWordsWithNsibidi} words with Nsịbịdị on the platform. 
           Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`}
           isLoaded={totalWordsWithNsibidi !== null}
+        />
+        <ProgressCard
+          totalCount={totalWordSuggestionsWithNsibidi}
+          goal={WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL}
+          heading="Word Suggesitons with Nsịbịdị"
+          description={`There are currently ${totalWordSuggestionsWithNsibidi} word suggestions 
+          with Nsịbịdị on the platform. Our next goal is to record a total of 
+          ${WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL} word suggestions with Nsịbịdị.`}
+          isLoaded={totalWordSuggestionsWithNsibidi !== null}
         />
         <ProgressCard
           totalCount={totalWordIsStandardIgbo}

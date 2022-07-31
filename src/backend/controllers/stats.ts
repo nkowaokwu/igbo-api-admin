@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Example from '../models/Example';
 import Word from '../models/Word';
+import WordSuggestion from '../models/WordSuggestion';
 import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
@@ -65,6 +66,21 @@ export const getTotalWordsWithNsibidi = async (
     const wordsWithNsibidi = await Word
       .countDocuments(searchForAllWordsWithNsibidi());
     return res.send({ count: wordsWithNsibidi });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Returns all Word Suggestions with Nsịbịdị */
+export const getTotalWordSuggestionsWithNsibidi = async (
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
+  try {
+    const wordSuggestionsWithNsibidi = await WordSuggestion
+      .countDocuments(searchForAllWordsWithNsibidi());
+    return res.send({ count: wordSuggestionsWithNsibidi });
   } catch (err) {
     return next(err);
   }
