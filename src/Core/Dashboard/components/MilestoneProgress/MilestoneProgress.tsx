@@ -117,7 +117,7 @@ const MilestoneProgress = (): ReactElement => {
         <ProgressCard
           totalCount={totalWordSuggestionsWithNsibidi}
           goal={WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL}
-          heading="Word Suggesitons with Nsịbịdị"
+          heading="Word Suggestions with Nsịbịdị"
           description={`There are currently ${totalWordSuggestionsWithNsibidi} word suggestions 
           with Nsịbịdị on the platform. Our next goal is to record a total of 
           ${WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL} word suggestions with Nsịbịdị.`}
