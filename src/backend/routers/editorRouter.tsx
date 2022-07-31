@@ -25,6 +25,7 @@ import {
   getTotalWordsInStandardIgbo,
   getTotalExampleSentences,
   getTotalWordsWithNsibidi,
+  getTotalWordSuggestionsWithNsibidi,
   getWordStats,
 } from '../controllers/stats';
 import {
@@ -41,6 +42,7 @@ import validateExampleBody from '../middleware/validateExampleBody';
 import validateExampleMerge from '../middleware/validateExampleMerge';
 import validateWordBody from '../middleware/validateWordBody';
 import validateWordMerge from '../middleware/validateWordMerge';
+import cacheControl from '../middleware/cacheControl';
 import UserRoles from '../shared/constants/UserRoles';
 
 const editorRouter = express.Router();
@@ -78,11 +80,12 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/stats/words', getWordStats);
-editorRouter.get('/stats/headwordAudioPronunciations', getTotalHeadwordsWithAudioPronunciations);
-editorRouter.get('/stats/isStandardIgbo', getTotalWordsInStandardIgbo);
-editorRouter.get('/stats/examples', getTotalExampleSentences);
-editorRouter.get('/stats/nsibidi', getTotalWordsWithNsibidi);
+editorRouter.get('/stats/words', cacheControl, getWordStats);
+editorRouter.get('/stats/headwordAudioPronunciations', cacheControl, getTotalHeadwordsWithAudioPronunciations);
+editorRouter.get('/stats/isStandardIgbo', cacheControl, getTotalWordsInStandardIgbo);
+editorRouter.get('/stats/examples', cacheControl, getTotalExampleSentences);
+editorRouter.get('/stats/nsibidi', cacheControl, getTotalWordsWithNsibidi);
+editorRouter.get('/stats/nsibidi-suggestions', cacheControl, getTotalWordSuggestionsWithNsibidi);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);
 editorRouter.get('/genericWords', getGenericWords);
