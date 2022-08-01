@@ -12,6 +12,7 @@ type ExampleSearchQuery = [
 type Filters = {
   $expr?: any,
   $or?: any[],
+  $and?: any[],
   attributes?: {
     isStandardIgbo?: { $eq: boolean },
   },
@@ -37,7 +38,7 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'nsibidi':
         if (value) {
-          allFilters.nsibidi = { $ne: '' };
+          allFilters.$and = [{ nsibidi: { $ne: null } }, { nsibidi: { $ne: '' } }];
         } else {
           allFilters.$or = [...allFilters.$or, { nsibidi: { $eq: null } }, { nsibidi: { $eq: '' } }];
         }
@@ -181,8 +182,8 @@ export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandar
   // @ts-ignore
   'attributes.isStandardIgbo': true,
 });
-export const searchForAllWordsWithNsibidi = (): { nsibidi: { $ne: string } } => ({
-  nsibidi: { $ne: '' },
+export const searchForAllWordsWithNsibidi = (): { $and: any } => ({
+  $and: [{ nsibidi: { $ne: null } }, { nsibidi: { $ne: '' } }],
 });
 export const searchForAssociatedSuggestions = (wordId: string): {
   originalWordId: string,
