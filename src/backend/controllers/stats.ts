@@ -79,7 +79,7 @@ export const getTotalWordSuggestionsWithNsibidi = async (
 ) : Promise<Response | void> => {
   try {
     const wordSuggestionsWithNsibidi = await WordSuggestion
-      .countDocuments(searchForAllWordsWithNsibidi());
+      .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
     return res.send({ count: wordSuggestionsWithNsibidi });
   } catch (err) {
     return next(err);
