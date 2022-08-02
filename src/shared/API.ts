@@ -37,6 +37,11 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
   url: `${API_ROUTE}/words/${id}?dialects=${dialects}`,
 })).data;
 
+export const getWords = async (word: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `${API_ROUTE}/words?keyword=${word}`,
+})).data;
+
 export const getExample = async (id: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/examples/${id}`,
