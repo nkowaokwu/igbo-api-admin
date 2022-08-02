@@ -244,6 +244,7 @@ const WordEditForm = ({
               control={control}
               record={record}
               getValues={getValues}
+              watch={watch}
             />
             <NsibidiForm
               control={control}

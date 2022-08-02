@@ -26,7 +26,7 @@ const SuggestedWords = ({ word } : { word: string }) => {
       const words = await getWords(word);
       setSuggestedWords(words);
     })();
-  }, []);
+  }, [word]);
 
   return (
     <Box onMouseLeave={() => setOpenWordPopover(null)}>
@@ -91,9 +91,11 @@ const HeadwordForm = ({
   control,
   record,
   getValues,
+  watch,
 }: HeadwordInterface): ReactElement => {
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
+  const watchedWord = watch('word');
   return (
     <Box className="flex flex-col w-full">
       <Box className="flex flex-col my-2 space-y-2 justify-between items-between">
@@ -211,7 +213,7 @@ const HeadwordForm = ({
         control={control}
         defaultValue={record.word || getValues().word}
       />
-      <SuggestedWords word={record.word || getValues().word} />
+      <SuggestedWords word={watchedWord} />
       {errors.word && (
         <p className="error">Word is required</p>
       )}

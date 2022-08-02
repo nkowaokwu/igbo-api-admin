@@ -5,6 +5,7 @@ interface HeadwordForm {
   errors: any,
   control: Control,
   record: Record,
+  watch: any,
   getValues: (key: string) => any,
 };
 
