@@ -54,7 +54,7 @@ const VariationsForm = (
       </Box>
     )) : (
       <Box className="flex w-full justify-center">
-        <p className="text-gray-600">No spelling variations</p>
+        <p className="text-gray-600 mb-4">No spelling variations</p>
       </Box>
     )}
   </Box>

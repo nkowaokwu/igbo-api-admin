@@ -76,7 +76,7 @@ const Stems = (
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
-      <p className="text-gray-600">No synonyms</p>
+      <p className="text-gray-600 mb-4">No stems</p>
     </Box>
   );
 };
