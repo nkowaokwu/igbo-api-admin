@@ -259,6 +259,23 @@ const WordEditForm = ({
               options={options}
               record={record}
             />
+            <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 lg:mt-3">
+              <Box className="w-full">
+                <DefinitionsForm
+                  definitions={definitions}
+                  setDefinitions={setDefinitions}
+                  errors={errors}
+                  control={control}
+                />
+                {isVerb(watchWordClass.value) ? (
+                  <TensesForm
+                    record={record}
+                    errors={errors}
+                    control={control}
+                  />
+                ) : null}
+              </Box>
+            </Box>
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
             <Controller
@@ -275,54 +292,31 @@ const WordEditForm = ({
               name="pronunciation"
               control={control}
             />
-          </Box>
-        </Box>
-        <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 lg:mt-3">
-          <Box className="w-full lg:w-1/2">
-            <DefinitionsForm
-              definitions={definitions}
-              setDefinitions={setDefinitions}
-              errors={errors}
-              control={control}
-            />
-            {isVerb(watchWordClass.value) ? (
-              <TensesForm
-                record={record}
-                errors={errors}
-                control={control}
+            <Box className="flex flex-row justify-between items-center">
+              <FormHeader
+                title="Dialectal Variations"
+                tooltip="These are the dialectal (sound) variations with the current word."
               />
-            ) : null}
-          </Box>
-          <Box className="flex flex-col w-full lg:w-1/2">
-            <VariationsForm
-              variations={variations}
-              setVariations={setVariations}
-              control={control}
-            />
-            <StemsForm
-              errors={errors}
-              stems={stems}
-              setStems={setStems}
-              control={control}
-              setValue={setValue}
+            </Box>
+            <CurrentDialectsForms
               record={record}
-            />
-            <SynonymsForm
-              errors={errors}
-              synonyms={synonyms}
-              setSynonyms={setSynonyms}
+              originalRecord={originalRecord}
               control={control}
+              getValues={getValues}
               setValue={setValue}
-              record={record}
+              setDialects={setDialects}
+              dialects={dialects}
             />
-            <AntonymsForm
-              errors={errors}
-              antonyms={antonyms}
-              setAntonyms={setAntonyms}
-              control={control}
-              setValue={setValue}
-              record={record}
-            />
+            <Box className="flex flex-col w-full">
+              <StemsForm
+                errors={errors}
+                stems={stems}
+                setStems={setStems}
+                control={control}
+                setValue={setValue}
+                record={record}
+              />
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -333,25 +327,31 @@ const WordEditForm = ({
         setValue={setValue}
         control={control}
       />
+      <VariationsForm
+        variations={variations}
+        setVariations={setVariations}
+        control={control}
+      />
+      <SynonymsForm
+        errors={errors}
+        synonyms={synonyms}
+        setSynonyms={setSynonyms}
+        control={control}
+        setValue={setValue}
+        record={record}
+      />
+      <AntonymsForm
+        errors={errors}
+        antonyms={antonyms}
+        setAntonyms={setAntonyms}
+        control={control}
+        setValue={setValue}
+        record={record}
+      />
       {/*
         * Must use record.dialects in order for all dialects to render on first pain
         * in order for react-hook-form to initialize all their values in the form.
         */}
-      <Box className="flex flex-row justify-between items-center">
-        <FormHeader
-          title="Current Dialects"
-          tooltip="These are the dialectal (sound) variations with the current word."
-        />
-      </Box>
-      <CurrentDialectsForms
-        record={record}
-        originalRecord={originalRecord}
-        control={control}
-        getValues={getValues}
-        setValue={setValue}
-        setDialects={setDialects}
-        dialects={dialects}
-      />
       <Box className="flex flex-col">
         <FormHeader
           title="Editor Comments"

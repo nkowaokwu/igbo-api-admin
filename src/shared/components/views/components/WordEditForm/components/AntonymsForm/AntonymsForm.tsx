@@ -66,7 +66,7 @@ const Antonyms = (
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
-      <p className="text-gray-600">No antonyms</p>
+      <p className="text-gray-600 mb-4">No antonyms</p>
     </Box>
   );
 };

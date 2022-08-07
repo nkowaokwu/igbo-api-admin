@@ -13,7 +13,7 @@ const CurrentDialectsForms = ({
   setDialects,
   dialects,
 }: CurrentDialectFormsInterface): ReactElement => (
-  <Box>
+  <Box className="mb-4">
     <Button
       onClick={() => {
         setDialects([
@@ -33,7 +33,7 @@ const CurrentDialectsForms = ({
     </Button>
     <Box
       className={'grid grid-flow-row grid-cols-1 '
-      + `${dialects.length !== 1 ? 'lg:grid-cols-2' : 'lg:grid-cols-1'} gap-4`}
+      + `${dialects.length !== 1 ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} gap-4`}
     >
       {dialects.map((dialect, index) => (
         <Box key={`dialectal-variation-${dialect.word}`}>
