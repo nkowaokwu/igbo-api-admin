@@ -14,7 +14,7 @@ const VariationsForm = (
       <FormHeader
         title="Spelling Variations"
         tooltip={`Unlike dialects, spelling variations capture the
-        variations in spelling within the same dialect (Standard Igbo).`}
+        variations in spelling within Standard Igbo.`}
       />
       <Button
         colorScheme="green"
