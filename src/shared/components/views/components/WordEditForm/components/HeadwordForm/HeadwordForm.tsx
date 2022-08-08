@@ -1,9 +1,16 @@
-import React, { ReactElement } from 'react';
-import { Box, Checkbox, Tooltip } from '@chakra-ui/react';
+import React, { ReactElement, useEffect, useState } from 'react';
+import {
+  Box,
+  Checkbox,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import determineIsAsCompleteAsPossible from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import { Input } from 'src/shared/primitives';
+import generateFlags from 'src/shared/utils/flagHeadword';
 import FormHeader from '../../../FormHeader';
 import HeadwordInterface from './HeadwordFormInterface';
 import SuggestedWords from './SuggestedWords';
@@ -15,9 +22,15 @@ const HeadwordForm = ({
   getValues,
   watch,
 }: HeadwordInterface): ReactElement => {
+  const [flags, setFlags] = useState({});
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
   const watchedWord = watch('word');
+
+  useEffect(() => {
+    const { flags: generatedFlags } = generateFlags({ word: { ...(record || {}), word: watchedWord }, flags: {} });
+    setFlags(generatedFlags);
+  }, [watchedWord]);
   return (
     <Box className="flex flex-col w-full">
       <Box className="flex flex-col my-2 space-y-2 justify-between items-between">
@@ -26,6 +39,7 @@ const HeadwordForm = ({
           tooltip={`This is the headword that should ideally be in to Standard Igbo.
           Add diacritic marks to denote the tone for the word. 
           All necessary accented characters will appear in the letter popup`}
+          color={Object.values(flags).length ? 'orange.600' : ''}
         />
         <Box
           className="w-full grid grid-flow-row grid-cols-2 gap-4 px-3"
@@ -135,7 +149,15 @@ const HeadwordForm = ({
         control={control}
         defaultValue={record.word || getValues().word}
       />
-      <SuggestedWords word={watchedWord} />
+      {Object.values(flags).map((message: string) => (
+        message ? (
+          <Box key={message} className="flex flex-row items-start">
+            <WarningIcon boxSize={3} mr={2} mt={2} color="orange.600" />
+            <Text color="orange.600" fontSize="sm">{message}</Text>
+          </Box>
+        ) : null
+      ))}
+      <SuggestedWords word={watchedWord || ''} />
       {errors.word && (
         <p className="error">Word is required</p>
       )}

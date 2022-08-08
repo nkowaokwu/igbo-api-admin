@@ -1,24 +1,38 @@
 import React, { ReactElement } from 'react';
 import { noop } from 'lodash';
-import { Box, Tooltip } from '@chakra-ui/react';
+import { Box, Heading, Tooltip } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 const FormHeader = (
-  { title, tooltip, onClick }
-  : { title: string, tooltip: string, onClick?: () => any },
+  {
+    title,
+    tooltip,
+    color,
+    onClick,
+  }
+  : { title: string, tooltip: string, color?: string, onClick?: () => any },
 ): ReactElement => (
   <Box
     className={`flex flex-row items-center${onClick ? ' cursor-pointer' : ''}`}
     onClick={onClick || noop}
   >
-    <h2 className={`form-header${onClick ? ' hover:underline' : ''}`}>{title}</h2>
+    <Heading
+      as="h2"
+      className={`form-header${onClick ? ' hover:underline' : ''}`}
+      fontSize="xl"
+      fontWeight="normal"
+      color={color}
+    >
+      {title}
+    </Heading>
     <Tooltip label={tooltip}>
-      <InfoOutlineIcon color="gray.600" className="ml-2" />
+      <InfoOutlineIcon color={color} className="ml-2" />
     </Tooltip>
   </Box>
 );
 
 FormHeader.defaultProps = {
+  color: 'gray.700',
   onClick: null,
 };
 
