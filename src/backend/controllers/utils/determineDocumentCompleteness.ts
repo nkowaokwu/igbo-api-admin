@@ -2,8 +2,8 @@ import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 import Tense from 'src/backend/shared/constants/Tense';
-import WordClass from 'src/backend/shared/constants/WordClass';
 import isVerb from 'src/backend/shared/utils/isVerb';
+import { invalidNymsWordClass } from './determineIsAsCompleteAsPossible';
 
 export default (record: Word | Record) : {
   sufficientWordRequirements: string[],
@@ -24,7 +24,6 @@ export default (record: Word | Record) : {
     nsibidi,
     stems = [],
     synonyms = [],
-    antonyms = [],
     dialects = {},
     tenses = {},
   } = record;
@@ -44,8 +43,7 @@ export default (record: Word | Record) : {
     ...sufficientWordRequirements,
     !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
-    wordClass === WordClass.NNP.value ? null : !synonyms?.length && 'A synonym is needed',
-    wordClass === WordClass.NNP.value ? null : !antonyms?.length && 'An antonym is needed',
+    invalidNymsWordClass.includes(wordClass) ? null : !synonyms?.length && 'A synonym is needed',
     isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
       value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
     ))

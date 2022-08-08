@@ -21,6 +21,7 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
+import { invalidNymsWordClass } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -337,22 +338,26 @@ const WordEditForm = ({
         setVariations={setVariations}
         control={control}
       />
-      <SynonymsForm
-        errors={errors}
-        synonyms={synonyms}
-        setSynonyms={setSynonyms}
-        control={control}
-        setValue={setValue}
-        record={record}
-      />
-      <AntonymsForm
-        errors={errors}
-        antonyms={antonyms}
-        setAntonyms={setAntonyms}
-        control={control}
-        setValue={setValue}
-        record={record}
-      />
+      {!invalidNymsWordClass.includes(watchWordClass.value) ? (
+        <>
+          <SynonymsForm
+            errors={errors}
+            synonyms={synonyms}
+            setSynonyms={setSynonyms}
+            control={control}
+            setValue={setValue}
+            record={record}
+          />
+          <AntonymsForm
+            errors={errors}
+            antonyms={antonyms}
+            setAntonyms={setAntonyms}
+            control={control}
+            setValue={setValue}
+            record={record}
+          />
+        </>
+      ) : null}
       {/*
         * Must use record.dialects in order for all dialects to render on first pain
         * in order for react-hook-form to initialize all their values in the form.
