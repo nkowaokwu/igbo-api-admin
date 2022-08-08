@@ -1,6 +1,12 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Heading, Skeleton } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Skeleton,
+  Tooltip,
+} from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
@@ -12,6 +18,7 @@ import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import generateFlags from 'src/shared/utils/flagHeadword';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -52,6 +59,7 @@ const WordShow = (props: ShowProps): ReactElement => {
   const { resource } = showProps;
   let { record } = showProps;
   const { permissions } = props;
+  const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} })).length;
 
   record = record || DEFAULT_WORD_RECORD;
 
@@ -157,7 +165,26 @@ const WordShow = (props: ShowProps): ReactElement => {
                   />
                 </Box>
                 <Box className="flex flex-col">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Word</Heading>
+                  <Tooltip
+                    placement="top"
+                    backgroundColor="orange.300"
+                    color="gray.800"
+                    label={hasFlags
+                      ? 'This word has been flagged as invalid due to the headword not '
+                        + 'following the Dictionary Editing Standards document. Please edit this word for more details.'
+                      : ''}
+                  >
+                    <Box className="flex flex-row items-center cursor-default">
+                      {hasFlags ? <WarningIcon color="orange.600" boxSize={3} mr={2} /> : null}
+                      <Heading
+                        fontSize="lg"
+                        className="text-xl text-gray-600"
+                        color={hasFlags ? 'orange.600' : ''}
+                      >
+                        Word
+                      </Heading>
+                    </Box>
+                  </Tooltip>
                   <DiffField
                     path="word"
                     diffRecord={diffRecord}
