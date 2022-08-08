@@ -2,7 +2,7 @@ import { Record } from 'react-admin';
 import { Control } from 'react-hook-form';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 
-interface SynonymsForm {
+interface RelatedTermsForm {
   errors: any,
   synonyms: string[],
   setSynonyms: (array: string[]) => void,
@@ -11,4 +11,4 @@ interface SynonymsForm {
   record: Record | Word,
 };
 
-export default SynonymsForm;
+export default RelatedTermsForm;

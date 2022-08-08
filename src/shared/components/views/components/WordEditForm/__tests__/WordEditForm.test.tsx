@@ -60,7 +60,7 @@ it('add a word stem to word suggestion', async () => {
   await findByText('resolved word definition');
 });
 
-it('add a word synonym to word suggestion', async () => {
+it('add a word relatedTerm to word suggestion', async () => {
   const { findByText, findByPlaceholderText } = render(
     <TestContext>
       <WordEditForm
@@ -73,7 +73,7 @@ it('add a word synonym to word suggestion', async () => {
     </TestContext>,
   );
 
-  userEvent.type(await findByPlaceholderText('Search for synonym or use word id'), 'cat');
+  userEvent.type(await findByPlaceholderText('Search for a related term or use word id'), 'cat');
   userEvent.click(await findByText('retrieved word'));
   await findByText('ADJ');
   await findByText('resolved word definition');

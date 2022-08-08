@@ -2,7 +2,7 @@ import { Record } from 'react-admin';
 import WordClass from 'src/shared/constants/WordClass';
 import { Word } from './interfaces';
 
-export const invalidNymsWordClass = [
+export const invalidRelatedTermsWordClasses = [
   WordClass.CJN.value,
   WordClass.DEM.value,
   WordClass.NM.value,
@@ -35,5 +35,6 @@ export default (word: Word | Record): boolean => !!(
   && word.attributes.isStandardIgbo
   && word.nsibidi
   && Array.isArray(word.stems) && word.stems.length
-  && (invalidNymsWordClass.includes(word.wordClass) || (Array.isArray(word.synonyms) && word.synonyms.length))
+  && (invalidRelatedTermsWordClasses.includes(word.wordClass)
+    || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))
 );

@@ -160,17 +160,15 @@ describe('Edit', () => {
       cy.findAllByText('Definitions');
     });
 
-    it('render warning message after providing invalid synonym or antonym', () => {
+    it('render warning message after providing invalid relatedTerm', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.findByLabelText('Add Synonym').click();
-      cy.findByText('Unable to add synonym');
-      cy.findByLabelText('Add Antonym').click();
-      cy.findByText('Unable to add antonym');
+      cy.findByLabelText('Add Related Term').click();
+      cy.findByText('Unable to add related term');
     });
 
-    it('render the word view after adding synonym and antonym and merge', () => {
+    it('render the word view after adding relatedTerm and merge', () => {
       cy.createWordSuggestion().then((word) => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
@@ -179,12 +177,9 @@ describe('Edit', () => {
             cy.selectCollection('wordSuggestions');
             cy.searchForDocument(word);
             cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findByTestId('synonym-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Synonym').click();
+            cy.findByTestId('relatedTerms-search').clear().type(id.innerText);
+            cy.findByLabelText('Add Related Term').click();
             cy.findByTestId('word-pill-0');
-            cy.findByTestId('antonym-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Antonym').click();
-            cy.findAllByTestId('word-pill-0').should('have.length', 2);
             cy.get('button[type="submit"]').click();
             cy.findAllByText(id.innerText).should('have.length', 2);
             cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
@@ -195,7 +190,7 @@ describe('Edit', () => {
       });
     });
 
-    it('render the word suggesiton, delete the synonym, and merge', () => {
+    it('render the word suggesiton, delete the relatedTerm, and merge', () => {
       cy.createWordSuggestion().then((word) => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
@@ -204,12 +199,9 @@ describe('Edit', () => {
             cy.selectCollection('wordSuggestions');
             cy.searchForDocument(word);
             cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findByTestId('synonym-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Synonym').click();
+            cy.findByTestId('relatedTerm-search').clear().type(id.innerText);
+            cy.findByLabelText('Add Related Term').click();
             cy.findByTestId('word-pill-0');
-            cy.findByTestId('antonym-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Antonym').click();
-            cy.findAllByTestId('word-pill-0').should('have.length', 2);
             cy.get('button[type="submit"]').click();
             cy.findAllByText(id.innerText).should('have.length', 2);
             cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
@@ -223,35 +215,6 @@ describe('Edit', () => {
           });
         });
     });
-
-    it('render the word suggesiton, delete the antonym, and merge', () => {
-      cy.createWordSuggestion();
-      cy.selectCollection('words');
-      cy.searchForDocument('onye');
-        cy.getWordDetails(0);
-        cy.get('@selectedId').then(([id]) => {
-          cy.selectCollection('wordSuggestions');
-          cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-          cy.findByTestId('synonym-search').clear().type(id.innerText);
-          cy.findByLabelText('Add Synonym').click();
-          cy.findByTestId('word-pill-0');
-          cy.findByTestId('antonym-search').clear().type(id.innerText);
-          cy.findByLabelText('Add Antonym').click();
-          cy.findAllByTestId('word-pill-0').should('have.length', 2);
-          cy.get('button[type="submit"]').click();
-          cy.findAllByText(id.innerText).should('have.length', 2);
-          cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-          cy.findAllByLabelText('Remove').eq(2).click();
-          cy.get('button[type="submit"]').click();
-          cy.findAllByText(id.innerText).should('have.length', 1);
-          cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-          cy.acceptConfirmation();
-          cy.findByText('Word Document Details');
-          cy.findAllByText(id.innerText).should('have.length', 1);
-        });
-    });
-
-
 
     it('render the same amount of nested examples', () => {
       const word = uuidv4();
@@ -379,9 +342,6 @@ describe('Edit', () => {
       cy.findByText(`${firstIgboSentence}${extraText}`);
     });
 
-    it('render the word synonyms', () => {
-
-    })
   });
 
   describe('Edit Form', () => {

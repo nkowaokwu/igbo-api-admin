@@ -5,6 +5,7 @@ import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
 import WordAttributes from '../shared/constants/WordAttributes';
+import WordTags from '../shared/constants/WordTags';
 
 const REQUIRED_DIALECT_KEYS = ['word', 'variations', 'dialect', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
@@ -27,6 +28,13 @@ const genericWordSchema = new Schema({
         && dialectValue.dialect === Dialects[dialectValue.dialect].value
       ));
     },
+  },
+  tags: {
+    type: [String],
+    default: [],
+    validate: (v) => (
+      v.every((tag) => Object.values(WordTags).map(({ value }) => value).includes(tag))
+    ),
   },
   tenses: {
     type: Object,
@@ -51,8 +59,7 @@ const genericWordSchema = new Schema({
   authorEmail: { type: String, default: '' },
   authorId: { type: String, default: '' },
   stems: { type: [{ type: String }], default: [] },
-  synonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
-  antonyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+  relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   nsibidi: { type: String, default: '' },

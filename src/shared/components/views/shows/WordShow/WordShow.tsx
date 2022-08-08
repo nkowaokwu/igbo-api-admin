@@ -270,11 +270,11 @@ const WordShow = (props: ShowProps): ReactElement => {
               </ArrayDiffField>
             </Box>
             <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Synonyms</Heading>
+              <Heading fontSize="lg" className="text-xl text-gray-600">Related Terms</Heading>
               {/* @ts-ignore */}
               <ArrayDiffField
-                recordField="synonyms"
-                recordFieldSingular="synonym"
+                recordField="relatedTerms"
+                recordFieldSingular="relatedTerm"
                 record={record}
                 // @ts-ignore
                 originalWordRecord={originalWordRecord}
@@ -282,25 +282,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                 {/* @ts-ignore */}
                 <ArrayDiff
                   diffRecord={diffRecord}
-                  recordField="synonyms"
-                  renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
-                />
-              </ArrayDiffField>
-            </Box>
-            <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Antonyms</Heading>
-              {/* @ts-ignore */}
-              <ArrayDiffField
-                recordField="antonyms"
-                recordFieldSingular="antonym"
-                record={record}
-                // @ts-ignore
-                originalWordRecord={originalWordRecord}
-              >
-                {/* @ts-ignore */}
-                <ArrayDiff
-                  diffRecord={diffRecord}
-                  recordField="antonyms"
+                  recordField="relatedTerms"
                   renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
                 />
               </ArrayDiffField>
