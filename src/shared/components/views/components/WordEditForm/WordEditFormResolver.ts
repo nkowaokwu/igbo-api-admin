@@ -17,6 +17,7 @@ const schema = yup.object().shape({
     value: yup.mixed().oneOf(Object.values(WordClass).map(({ value }) => value)),
     label: yup.mixed().oneOf(Object.values(WordClass).map(({ label }) => label)),
   }).required(),
+  tags: yup.array().min(0).of(yup.string()),
   definitions: yup.mixed().test('definition-types', 'Definition is required', (value) => {
     if (Array.isArray(value)) {
       return value.length >= 1 && value[0].length >= 1;
