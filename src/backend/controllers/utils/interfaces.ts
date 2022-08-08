@@ -49,8 +49,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
     isComplete: boolean,
   }
   nsibidi: string,
-  synonyms: string[],
-  antonyms: string[],
+  relatedTerms: string[],
   hypernyms: string[],
   hyponyms: string[],
   updatedAt: Date,

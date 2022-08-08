@@ -27,8 +27,7 @@ const record = {
   }],
   pronunciation: '1234',
   stems: [],
-  synonyms: [],
-  antonyms: [],
+  relatedTerms: [],
   dialects: {},
   attributes: {
     isStandardIgbo: true,
@@ -46,8 +45,7 @@ const completeRecord = {
   }],
   pronunciation: 'word-pronunciation',
   stems: ['stemId'],
-  synonyms: ['synonymId'],
-  antonyms: ['antonymId'],
+  relatedTerms: ['relatedTermId'],
   dialects: {
     word: {
       variations: [],

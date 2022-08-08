@@ -8,7 +8,7 @@ import {
 } from 'lodash';
 
 /* Ignores depth and instantly matches to the following keys */
-const QUICK_MATCH_KEYS = ['definitions', 'variations', 'examples', 'synonyms', 'antonyms'];
+const QUICK_MATCH_KEYS = ['definitions', 'variations', 'examples', 'relatedTerms'];
 const DiffField = ({
   path,
   diffRecord,

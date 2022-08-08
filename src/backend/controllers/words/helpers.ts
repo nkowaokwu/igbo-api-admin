@@ -2,16 +2,16 @@ import { Document } from 'mongoose';
 import Word from 'src/backend/models/Word';
 import * as Interfaces from '../utils/interfaces';
 
-/* Syncs up synonym links between word documents */
+/* Syncs up relatedTerms links between word documents */
 export const handleSyncingSynonyms = async (
   wordDoc: Document<Interfaces.Word> | Interfaces.Word,
 ): Promise<Document<Interfaces.Word>> => {
   // Remove the current Word document id from other Word document ids
-  const wordDocsWithCurrentWord: Document<Interfaces.Word>[] = await Word.find({ synonyms: [wordDoc.id] });
+  const wordDocsWithCurrentWord: Document<Interfaces.Word>[] = await Word.find({ relatedTerms: [wordDoc.id] });
   await Promise.all(wordDocsWithCurrentWord.map(async (wordDocWithCurrentWord: Interfaces.Word) => {
     try {
-      wordDocWithCurrentWord.synonyms = wordDocWithCurrentWord.synonyms.filter((synonym) => (
-        synonym.toString() !== wordDoc.id.toString()
+      wordDocWithCurrentWord.relatedTerms = wordDocWithCurrentWord.relatedTerms.filter((relatedTerm) => (
+        relatedTerm.toString() !== wordDoc.id.toString()
       ));
       return wordDocWithCurrentWord.save();
     } catch (err) {
@@ -19,13 +19,13 @@ export const handleSyncingSynonyms = async (
     }
   }));
 
-  // Place the current Word document id in other Word document synonyms array
+  // Place the current Word document id in other Word document relatedTerms array
   const wordDocsWithoutCurrentWord: Document<Interfaces.Word>[] = (
-    await Word.find({ _id: { $in: wordDoc.synonyms }, synonyms: { $nin: [wordDoc.id] } })
+    await Word.find({ _id: { $in: wordDoc.relatedTerms }, relatedTerms: { $nin: [wordDoc.id] } })
   );
   await Promise.all(wordDocsWithoutCurrentWord.map(async (wordDocWithoutCurrentWord: Interfaces.Word) => {
     try {
-      wordDocWithoutCurrentWord.synonyms.push(wordDoc.id);
+      wordDocWithoutCurrentWord.relatedTerms.push(wordDoc.id);
       return wordDocWithoutCurrentWord.save();
     } catch (err) {
       return null;
@@ -53,7 +53,7 @@ export const handleSyncingAntonyms = async (
 
   // Place the current Word document id in other Word document antonyms array
   const wordDocsWithoutCurrentWord: Document<Interfaces.Word>[] = (
-    await Word.find({ _id: { $in: wordDoc.antonyms }, synonyms: { $nin: [wordDoc.id] } })
+    await Word.find({ _id: { $in: wordDoc.antonyms }, relatedTerms: { $nin: [wordDoc.id] } })
   );
   await Promise.all(wordDocsWithoutCurrentWord.map(async (wordDocWithoutCurrentWord: Interfaces.Word) => {
     try {

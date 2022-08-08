@@ -21,14 +21,13 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
-import { invalidNymsWordClass } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
+import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import VariationsForm from './components/VariationsForm';
 import StemsForm from './components/StemsForm';
-import SynonymsForm from './components/SynonymsForm';
-import AntonymsForm from './components/AntonymsForm';
+import RelatedTermsForm from './components/RelatedTermsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import TagsForm from './components/TagsForm';
@@ -68,8 +67,7 @@ const WordEditForm = ({
         label: WordClass[record.wordClass]?.label || '[UPDATE PART OF SPEECH]',
         value: WordClass[record.wordClass]?.value || null,
       },
-      synonyms: record.synonyms || [],
-      antonyms: record.antonyms || [],
+      relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
       nsibidi: record.nsibidi,
       tenses: record.tenses || {},
@@ -81,8 +79,7 @@ const WordEditForm = ({
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
-  const [synonyms, setSynonyms] = useState(record.synonyms || []);
-  const [antonyms, setAntonyms] = useState(record.antonyms || []);
+  const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialects, setDialects] = useState(Object.entries(record.dialects || {}).map(([word, value]) => (
     { ...value, word }
@@ -153,8 +150,7 @@ const WordEditForm = ({
       dialects,
       definitions: sanitizeArray(data.definitions),
       variations: sanitizeArray(data.variations),
-      synonyms: sanitizeArray(data.synonyms),
-      antonyms: sanitizeArray(data.antonyms),
+      relatedTerms: sanitizeArray(data.relatedTerms),
       stems: sanitizeArray(data.stems),
       examples: sanitizeExamples(data.examples),
       wordClass: data.wordClass.value,
@@ -338,25 +334,15 @@ const WordEditForm = ({
         setVariations={setVariations}
         control={control}
       />
-      {!invalidNymsWordClass.includes(watchWordClass.value) ? (
-        <>
-          <SynonymsForm
-            errors={errors}
-            synonyms={synonyms}
-            setSynonyms={setSynonyms}
-            control={control}
-            setValue={setValue}
-            record={record}
-          />
-          <AntonymsForm
-            errors={errors}
-            antonyms={antonyms}
-            setAntonyms={setAntonyms}
-            control={control}
-            setValue={setValue}
-            record={record}
-          />
-        </>
+      {!invalidRelatedTermsWordClasses.includes(watchWordClass.value) ? (
+        <RelatedTermsForm
+          errors={errors}
+          relatedTerms={relatedTerms}
+          setRelatedTerms={setRelatedTerms}
+          control={control}
+          setValue={setValue}
+          record={record}
+        />
       ) : null}
       {/*
         * Must use record.dialects in order for all dialects to render on first pain

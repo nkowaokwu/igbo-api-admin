@@ -113,7 +113,7 @@ const StemsForm = ({
       }
     } catch (err) {
       toast({
-        title: 'Unable to add synonym',
+        title: 'Unable to add stem',
         description: 'You have provided an either an invalid word id or a the current word\'s or parent word\'s id.',
         status: 'warning',
         duration: 4000,

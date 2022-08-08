@@ -10,34 +10,34 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
-import AntonymsFormInterface from './AntonymsFormInterface';
+import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
 
-const Antonyms = (
-  { antonymIds, updateAntonyms }
-  : { antonymIds: string[], updateAntonyms: (value: string[]) => void },
+const RelatedTerms = (
+  { relatedTermIds, updateRelatedTerms }
+  : { relatedTermIds: string[], updateRelatedTerms: (value: string[]) => void },
 ) => {
-  const [resolvedAntonyms, setResolvedAntonyms] = useState(null);
-  const [isLoadingAntonyms, setIsLoadingAntonyms] = useState(false);
+  const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
+  const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
   useEffect(() => {
     (async () => {
-      setIsLoadingAntonyms(true);
+      setIsLoadingRelatedTerms(true);
       try {
-        setResolvedAntonyms(await Promise.all(antonymIds.map(async (antonymId) => {
-          const word = await resolveWord(antonymId);
+        setResolvedRelatedTerms(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
+          const word = await resolveWord(relatedTermId);
           return word;
         })));
       } finally {
-        setIsLoadingAntonyms(false);
+        setIsLoadingRelatedTerms(false);
       }
     })();
-  }, [antonymIds]);
+  }, [relatedTermIds]);
 
-  return isLoadingAntonyms ? (
+  return isLoadingRelatedTerms ? (
     <Spinner />
-  ) : resolvedAntonyms && resolvedAntonyms.length ? (
+  ) : resolvedRelatedTerms && resolvedRelatedTerms.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3">
-      {resolvedAntonyms.map((word, index) => (
+      {resolvedRelatedTerms.map((word, index) => (
         <Box
           key={word.id}
           display="flex"
@@ -56,9 +56,9 @@ const Antonyms = (
             {...word}
             index={index}
             onDelete={() => {
-              const filteredAntonyms = [...antonymIds];
-              filteredAntonyms.splice(index, 1);
-              updateAntonyms(filteredAntonyms);
+              const filteredRelatedTerms = [...relatedTermIds];
+              filteredRelatedTerms.splice(index, 1);
+              updateRelatedTerms(filteredRelatedTerms);
             }}
           />
         </Box>
@@ -66,44 +66,44 @@ const Antonyms = (
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
-      <p className="text-gray-600 mb-4">No antonyms</p>
+      <p className="text-gray-600 mb-4">No related terms</p>
     </Box>
   );
 };
 
-const AntonymsForm = ({
+const RelatedTermsForm = ({
   errors,
-  antonyms,
-  setAntonyms,
+  relatedTerms,
+  setRelatedTerms,
   control,
   setValue,
   record,
-}: AntonymsFormInterface): ReactElement => {
+}: RelatedTermsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
 
-  const updateAntonyms = (value) => {
-    setAntonyms(value);
-    setValue('antonyms', value);
+  const updateRelatedTerms = (value) => {
+    setRelatedTerms(value);
+    setValue('relatedTerms', value);
   };
 
-  const canAddAntonym = (userInput) => (
-    !antonyms.includes(userInput)
+  const canAddRelatedTerm = (userInput) => (
+    !relatedTerms.includes(userInput)
     && userInput !== record.id
     && userInput !== record.originalWordId
   );
 
-  const handleAddAntonym = async (userInput = input) => {
+  const handleAddRelatedTerm = async (userInput = input) => {
     try {
-      if (canAddAntonym(userInput)) {
+      if (canAddRelatedTerm(userInput)) {
         const word = await getWord(userInput);
-        updateAntonyms([...antonyms, word.id]);
+        updateRelatedTerms([...relatedTerms, word.id]);
       } else {
         throw new Error('Invalid word id');
       }
     } catch (err) {
       toast({
-        title: 'Unable to add antonym',
+        title: 'Unable to add related term',
         description: 'You have provided an either an invalid word id or a the current word\'s or parent word\'s id.',
         status: 'warning',
         duration: 4000,
@@ -117,14 +117,14 @@ const AntonymsForm = ({
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
       <Controller
         render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-        name="antonyms"
+        name="relatedTerms"
         control={control}
         defaultValue=""
       />
       <Box className="flex items-center my-5 w-full justify-between">
         <FormHeader
-          title="Antonyms"
-          tooltip={`Antonyms of the current word using Standard Igbo. 
+          title="Related Terms"
+          tooltip={`Related terms of the current word using Standard Igbo. 
           You can search for a word or paste in the word id.`}
         />
       </Box>
@@ -132,30 +132,30 @@ const AntonymsForm = ({
         <Input
           value={input}
           searchApi
-          data-test="antonym-search"
-          placeholder="Search for antonym or use word id"
+          data-test="relatedTerm-search"
+          placeholder="Search for a related term or use word id"
           onChange={(e) => setInput(e.target.value)}
-          onSelect={(e) => handleAddAntonym(e.id)}
+          onSelect={(e) => handleAddRelatedTerm(e.id)}
           className="form-input"
         />
-        <Tooltip label="Click this button to add the antonym">
+        <Tooltip label="Click this button to add the related term">
           <IconButton
             colorScheme="green"
-            aria-label="Add Antonym"
-            onClick={() => handleAddAntonym()}
+            aria-label="Add Related Term"
+            onClick={() => handleAddRelatedTerm()}
             icon={<AddIcon />}
           />
         </Tooltip>
       </Box>
-      <Antonyms
-        antonymIds={antonyms}
-        updateAntonyms={updateAntonyms}
+      <RelatedTerms
+        relatedTermIds={relatedTerms}
+        updateRelatedTerms={updateRelatedTerms}
       />
-      {errors.antonyms && (
-        <p className="error">{errors.antonyms.message || errors.antonyms[0]?.message}</p>
+      {errors.relatedTerms && (
+        <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>
       )}
     </Box>
   );
 };
 
-export default AntonymsForm;
+export default RelatedTermsForm;
