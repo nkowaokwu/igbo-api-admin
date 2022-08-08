@@ -24,7 +24,6 @@ export default (record: Word | Record) : {
     nsibidi,
     stems = [],
     synonyms = [],
-    antonyms = [],
     dialects = {},
     tenses = {},
   } = record;
@@ -45,7 +44,6 @@ export default (record: Word | Record) : {
     !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
     wordClass === WordClass.NNP.value ? null : !synonyms?.length && 'A synonym is needed',
-    wordClass === WordClass.NNP.value ? null : !antonyms?.length && 'An antonym is needed',
     isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
       value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
     ))

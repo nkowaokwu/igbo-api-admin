@@ -24,5 +24,4 @@ export default (word: Word | Record): boolean => !!(
   && word.nsibidi
   && Array.isArray(word.stems) && word.stems.length
   && (word.wordClass === WordClass.NNP.value || (Array.isArray(word.synonyms) && word.synonyms.length))
-  && (word.wordClass === WordClass.NNP.value || (Array.isArray(word.antonyms) && word.antonyms.length))
 );
