@@ -7,7 +7,7 @@ import generateFlags from 'src/shared/utils/flagHeadword';
 const HeadwordField = ({ record, source }: { record?: Record, source: string }): ReactElement => {
   const { nsibidi } = record;
   const headword = record[source];
-  const hasFlags = !!Object.values(generateFlags({ word: record, flags: {} })).length;
+  const hasFlags = !!Object.values(generateFlags({ word: record, flags: {} }).flags).length;
   return (
     <>
       {nsibidi ? <Text fontSize="md" className="akagu text-green-800">{nsibidi}</Text> : null}
