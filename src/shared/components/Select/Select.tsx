@@ -16,6 +16,7 @@ import {
   NotAllowedIcon,
   ViewIcon,
 } from '@chakra-ui/icons';
+import { MergeType } from '@material-ui/icons';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -67,7 +68,12 @@ const Select = ({
     hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
       {
         value: 'merge',
-        label: 'Merge',
+        label: (() => (
+          <span>
+            <MergeType className="-ml-1 mr-0" />
+            Merge
+          </span>
+        ))(),
         onSelect: () => setAction(actionsMap.Merge),
       },
     ])),

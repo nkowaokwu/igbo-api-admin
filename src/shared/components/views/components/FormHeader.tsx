@@ -10,7 +10,7 @@ const FormHeader = (
     color,
     onClick,
   }
-  : { title: string, tooltip: string, color?: string, onClick?: () => any },
+  : { title: string, tooltip?: string, color?: string, onClick?: () => any },
 ): ReactElement => (
   <Box
     className={`flex flex-row items-center${onClick ? ' cursor-pointer' : ''}`}
@@ -25,13 +25,16 @@ const FormHeader = (
     >
       {title}
     </Heading>
-    <Tooltip label={tooltip}>
-      <InfoOutlineIcon color={color} className="ml-2" />
-    </Tooltip>
+    {tooltip ? (
+      <Tooltip label={tooltip}>
+        <InfoOutlineIcon color={color} className="ml-2" />
+      </Tooltip>
+    ) : null}
   </Box>
 );
 
 FormHeader.defaultProps = {
+  tooltip: '',
   color: 'gray.700',
   onClick: null,
 };

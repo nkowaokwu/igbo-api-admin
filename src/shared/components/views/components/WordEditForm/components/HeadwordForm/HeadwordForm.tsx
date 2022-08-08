@@ -134,6 +134,28 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
+          <Tooltip label="Check this checkbox if this word is borrowed from another language">
+            <Box display="flex">
+              <Controller
+                render={({ onChange, value, ref }) => (
+                  <Checkbox
+                    onChange={(e) => onChange(e.target.checked)}
+                    isChecked={value}
+                    defaultIsChecked={record.attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
+                    ref={ref}
+                    data-test={`${WordAttributes.IS_BORROWED_TERM.label}-checkbox`}
+                    size="lg"
+                  >
+                    <span className="font-bold">{WordAttributes.IS_BORROWED_TERM.label}</span>
+                  </Checkbox>
+                )}
+                defaultValue={record.attribute?.[WordAttributes.IS_BORROWED_TERM.value]
+                  || getValues().attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
+                name={`attributes.${WordAttributes.IS_BORROWED_TERM.value}`}
+                control={control}
+              />
+            </Box>
+          </Tooltip>
         </Box>
       </Box>
       <Controller
