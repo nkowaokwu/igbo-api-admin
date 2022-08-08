@@ -122,6 +122,20 @@ const WordShow = (props: ShowProps): ReactElement => {
             <Box className="flex flex-col lg:flex-row w-full justify-between">
               <Attributes record={record} diffRecord={diffRecord} />
               <Box className="flex flex-col space-y-6 mt-5">
+                <Box className="flex flex-col mt-5">
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
+                  {/* @ts-ignore */}
+                  <ArrayDiffField
+                    recordField="tags"
+                    recordFieldSingular="tag"
+                    record={record}
+                    // @ts-ignore
+                    originalWordRecord={originalWordRecord}
+                  >
+                    {/* @ts-ignore */}
+                    <ArrayDiff diffRecord={diffRecord} recordField="tags" />
+                  </ArrayDiffField>
+                </Box>
                 <Box>
                   <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Dialects</Heading>
                   <DialectDiff

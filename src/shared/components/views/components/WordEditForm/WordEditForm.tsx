@@ -30,6 +30,7 @@ import SynonymsForm from './components/SynonymsForm';
 import AntonymsForm from './components/AntonymsForm';
 import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
+import TagsForm from './components/TagsForm';
 import NsibidiForm from './components/NsibidiForm';
 import TensesForm from './components/TensesForm';
 import ExamplesForm from './components/ExamplesForm';
@@ -245,6 +246,10 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
               watch={watch}
+            />
+            <TagsForm
+              control={control}
+              record={record}
             />
             <NsibidiForm
               control={control}

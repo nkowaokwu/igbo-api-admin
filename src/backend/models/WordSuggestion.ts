@@ -8,6 +8,7 @@ import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import WordAttributes from '../shared/constants/WordAttributes';
+import WordTags from '../shared/constants/WordTags';
 import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
@@ -40,6 +41,13 @@ const wordSuggestionSchema = new Schema(
       },
       required: false,
       default: {},
+    },
+    tags: {
+      type: [String],
+      default: [],
+      validate: (v) => (
+        v.every((tag) => Object.values(WordTags).map(({ value }) => value).includes(tag))
+      ),
     },
     tenses: {
       type: Object,
