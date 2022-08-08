@@ -20,4 +20,8 @@ export default {
     value: 'isConstructedTerm',
     label: 'Is Constructed Term',
   },
+  IS_BORROWED_TERM: {
+    value: 'isBorrowedTerm',
+    label: 'Is Borrowed Term',
+  },
 };
