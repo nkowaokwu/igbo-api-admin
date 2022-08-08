@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import WordSuggestion from '../models/WordSuggestion';
+import ExampleSuggestion from '../models/ExampleSuggestion';
 import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
@@ -151,6 +152,37 @@ export const getWordStats = async (
     const completedWordsCount = countCompletedWords(words);
     const dialectalVariationsCount = countDialectalVariations(words);
     return res.send({ sufficientWordsCount, completedWordsCount, dialectalVariationsCount });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user } = req;
+    const wordSuggestions = await WordSuggestion.find({});
+    const exampleSuggestions = await ExampleSuggestion.find({});
+
+    const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(user.uid)).length;
+    const deniedWordSuggestionsCount = wordSuggestions.filter(({ denials }) => denials.includes(user.uid)).length;
+    const approvedExampleSuggestionsCount = exampleSuggestions
+      .filter(({ approvals }) => approvals.includes(user.uid)).length;
+    const deniedExampleSuggestionsCount = exampleSuggestions.filter(({ denials }) => denials.includes(user.uid)).length;
+    const authoredWordSuggestionsCount = wordSuggestions.filter(({ author }) => author === user.uid).length;
+    const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === user.uid).length;
+    const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
+    const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
+
+    return res.send({
+      approvedWordSuggestionsCount,
+      deniedWordSuggestionsCount,
+      approvedExampleSuggestionsCount,
+      deniedExampleSuggestionsCount,
+      authoredWordSuggestionsCount,
+      authoredExampleSuggestionsCount,
+      mergedWordSuggestionsCount,
+      mergedExampleSuggestionsCount,
+    });
   } catch (err) {
     return next(err);
   }

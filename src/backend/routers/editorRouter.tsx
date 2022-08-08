@@ -27,6 +27,7 @@ import {
   getTotalWordsWithNsibidi,
   getTotalWordSuggestionsWithNsibidi,
   getWordStats,
+  getUserStats,
 } from '../controllers/stats';
 import {
   deleteGenericWord,
@@ -86,6 +87,7 @@ editorRouter.get('/stats/isStandardIgbo', cacheControl, getTotalWordsInStandardI
 editorRouter.get('/stats/examples', cacheControl, getTotalExampleSentences);
 editorRouter.get('/stats/nsibidi', cacheControl, getTotalWordsWithNsibidi);
 editorRouter.get('/stats/nsibidi-suggestions', cacheControl, getTotalWordSuggestionsWithNsibidi);
+editorRouter.get('/stats/user', cacheControl, getUserStats);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);
 editorRouter.get('/genericWords', getGenericWords);
