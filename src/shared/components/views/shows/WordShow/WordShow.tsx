@@ -59,7 +59,7 @@ const WordShow = (props: ShowProps): ReactElement => {
   const { resource } = showProps;
   let { record } = showProps;
   const { permissions } = props;
-  const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} })).length;
+  const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} }).flags).length;
 
   record = record || DEFAULT_WORD_RECORD;
 
