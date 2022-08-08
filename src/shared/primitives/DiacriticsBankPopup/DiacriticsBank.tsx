@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box, Button, Text } from '@chakra-ui/react';
 
-const diacritics = [803, 768, 769, 772, 775, 614];
+const diacritics = [803, 768, 772, 775, 614];
 
 const insertLetter = (inputRef, letter) => {
   inputRef.current.focus();
