@@ -57,48 +57,53 @@ const DiffField = ({
     renderNestedObject ? renderNestedObject(value, hasChanged) : value
   );
 
+  const ValueLabel = ({ children } : { children: any }) => (
+    typeof fallbackValue === 'boolean' ? (
+      <code className={`text-lg text-gray-800 ${className}`}>{children}</code>
+    ) : (
+      <h2 className={`text-xl text-gray-800 ${className}`}>{children}</h2>
+    ));
+
   return diffFromPath ? (
     diffFromPath.kind === DIFF_KEYS.Edit ? (
       <div className="flex flex-col" data-test={`${path}-diff-field`}>
-        <h2 className={`text-xl text-gray-600 ${className}`}>
+        <ValueLabel>
           {'Old: '}
           <span className="deletion-change">
             {renderValue(diffFromPath.lhs, true)}
           </span>
-        </h2>
-        <h2 className={`text-xl text-gray-600 ${className}`}>
+        </ValueLabel>
+        <ValueLabel>
           {'New: '}
           <span className="addition-change">
             {renderValue(diffFromPath.rhs, true)}
           </span>
-        </h2>
+        </ValueLabel>
       </div>
     ) : diffFromPath.kind === DIFF_KEYS.Array && diffFromPath.item.kind === DIFF_KEYS.New ? (
-      <h2 className={`text-xl text-gray-600 ${className}`}>
+      <ValueLabel>
         {'New: '}
         <span className="addition-change">
           {renderValue(diffFromPath.item.rhs, true)}
         </span>
-      </h2>
+      </ValueLabel>
     ) : diffFromPath.kind === DIFF_KEYS.Array && diffFromPath.item.kind === DIFF_KEYS.Deletion ? (
-      <h2 className={`text-xl text-gray-600 ${className}`}>
+      <ValueLabel>
         {'Deleting: '}
         <span className="deletion-change line-through">
           {renderValue(diffFromPath.item.lhs, true)}
         </span>
-      </h2>
+      </ValueLabel>
     ) : diffFromPath.kind === DIFF_KEYS.New ? (
-      <h2 className={`text-xl text-gray-600 ${className}`}>
+      <ValueLabel>
         {'New: '}
         <span className="addition-change">
           {renderValue(diffFromPath.rhs, true)}
         </span>
-      </h2>
+      </ValueLabel>
     ) : (
       <h2 className="warning-change">{`[NEED TO HANDLE ${diffFromPath.kind} for ${path}]`}</h2>
-    )) : (
-      <h2 className={`text-xl text-gray-800 ${className}`}>{renderValue(fallbackValue, false)}</h2>
-  );
+    )) : <ValueLabel>{renderValue(fallbackValue, false)}</ValueLabel>;
 };
 
 DiffField.defaultProps = {

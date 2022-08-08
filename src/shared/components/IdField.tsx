@@ -26,7 +26,7 @@ const IdField = ({ source, record = {} }: IdFieldProps): ReactElement => {
       <span className="MuiTypography-root MuiTypography-body2">{get(record, source)}</span>
       {get(record, source) ? (
         <Tooltip label="Copy document id">
-          <FileCopyIcon className="cursor-pointer" onClick={handleCopyId} />
+          <FileCopyIcon className="cursor-pointer" style={{ height: 20 }} onClick={handleCopyId} />
         </Tooltip>
       ) : null}
     </Box>

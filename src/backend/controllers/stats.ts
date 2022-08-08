@@ -160,8 +160,8 @@ export const getWordStats = async (
 export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { user } = req;
-    const wordSuggestions = await WordSuggestion.find({});
-    const exampleSuggestions = await ExampleSuggestion.find({});
+    const wordSuggestions = await WordSuggestion.find({}).lean();
+    const exampleSuggestions = await ExampleSuggestion.find({}).lean();
 
     const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(user.uid)).length;
     const deniedWordSuggestionsCount = wordSuggestions.filter(({ denials }) => denials.includes(user.uid)).length;

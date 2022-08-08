@@ -1,6 +1,11 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { Box, Spinner, Tooltip } from '@chakra-ui/react';
-import { InfoOutlineIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Spinner,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
+import { WarningIcon } from '@chakra-ui/icons';
 import network from 'src/Core/Dashboard/network';
 
 const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
@@ -23,15 +28,17 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
     isLinked ? (
       <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{resolvedWord.word}</a>
     ) : (
-      <Box display="flex" alignItems="center" className="space-x-2">
-        <p>{resolvedWord.word}</p>
-        <Tooltip
-          label={`This word metadata is not linked. To properly link this 
-          metadata to the word, edit this word and link this metadata.`}
-        >
-          <InfoOutlineIcon color="orange.600" width="4" className="ml-2" />
-        </Tooltip>
-      </Box>
+      <Tooltip
+        label={`This word metadata is not linked. To properly link this 
+        metadata to the word, edit this word and link this metadata.`}
+        backgroundColor="orange.300"
+        color="black"
+      >
+        <Box display="flex" alignItems="center" className="space-x-2">
+          <Text color="orange.600" fontWeight="bold" cursor="default">{resolvedWord.word}</Text>
+          <WarningIcon color="orange.600" boxSize={3} className="ml-2" />
+        </Box>
+      </Tooltip>
     )
   ) : <Spinner />;
 };
