@@ -1,5 +1,11 @@
-import React, { ReactElement } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import React, { ReactElement, useEffect, useState } from 'react';
+import {
+  Box,
+  Heading,
+  Text,
+  Skeleton,
+  chakra,
+} from '@chakra-ui/react';
 import { Title } from 'react-admin';
 import firebase from 'firebase';
 import Card from './components/Card';
@@ -11,18 +17,54 @@ import {
   SOFTWARE_ENGINEERS_SLACK_CHANNEL,
 } from '../constants';
 import MilestoneProgress from './components/MilestoneProgress';
+import network from './network';
+
+const userStatsLabel = {
+  approvedWordSuggestionsCount: {
+    label: 'Total approved word suggestions',
+  },
+  deniedWordSuggestionsCount: {
+    label: 'Total denied word suggestions',
+  },
+  approvedExampleSuggestionsCount: {
+    label: 'Total approved example suggestions',
+  },
+  deniedExampleSuggestionsCount: {
+    label: 'Total denied example suggestions',
+  },
+  authoredWordSuggestionsCount: {
+    label: 'Total authored word suggestions',
+  },
+  authoredExampleSuggestionsCount: {
+    label: 'Total authored exampled suggestions',
+  },
+  mergedWordSuggestionsCount: {
+    label: 'Total merged word suggestions',
+  },
+  mergedExampleSuggestionsCount: {
+    label: 'Total merged exampled suggestions',
+  },
+};
 
 const Dashboard = (): ReactElement => {
+  const [userStats, setUserStats] = useState(null);
   const user = firebase.auth().currentUser;
 
   const determineDashboardTitle = () => {
-    const WELCOME_HEADER = 'Welcome on board';
+    const WELCOME_HEADER = 'Welcome';
     if (user?.displayName) {
       const firstName = user.displayName.split(' ')[0] || user.displayName;
       return `${WELCOME_HEADER}, ${firstName}!`;
     }
     return `${WELCOME_HEADER}!`;
   };
+
+  useEffect(() => {
+    (async () => {
+      const res = await network({ url: '/stats/user' });
+      setUserStats(res.json);
+    })();
+  }, []);
 
   return (
     <Box>
@@ -38,7 +80,27 @@ const Dashboard = (): ReactElement => {
           <Heading fontSize="5xl" fontWeight="bold" className="text-center">
             {determineDashboardTitle()}
           </Heading>
-          <Text fontSize="xl">{'Let\'s get back to work!'}</Text>
+          <Text fontSize="xl">So much progress has been made!</Text>
+        </Box>
+        <Box className="mb-24">
+          <Box mt={4}>
+            <Text fontSize="3xl" fontWeight="bold" className="text-center">Personal Contributions</Text>
+            <Text fontSize="lg" className="text-gray-800 text-center">
+              {'Take a look at how much you\'ve contributed to the community!'}
+            </Text>
+          </Box>
+          <Skeleton isLoaded={userStats} minHeight={32}>
+            <Box className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(userStats || {}).map(([key, value]) => (
+                <Box className="flex justify-center items-center rounded bg-white shadow-sm p-3">
+                  <Text key={key}>
+                    <chakra.span fontWeight="bold">{`${userStatsLabel[key].label}: `}</chakra.span>
+                    {`${value}`}
+                  </Text>
+                </Box>
+              ))}
+            </Box>
+          </Skeleton>
         </Box>
         <Box className="w-full grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3 lg:-mt-12">
           <Card

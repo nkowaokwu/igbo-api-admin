@@ -66,7 +66,7 @@ const MilestoneProgress = (): ReactElement => {
   return (
     <>
       <Box className="flex flex-col items-center text-center my-5">
-        <Text fontSize="3xl" fontWeight="bold">Milestone Progress</Text>
+        <Text fontSize="3xl" fontWeight="bold">Community Milestone Progress</Text>
         <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
           {`We are trying to make the most robust Igbo-English dictionary. 
           Here is the progress that we've all made so far!`}
