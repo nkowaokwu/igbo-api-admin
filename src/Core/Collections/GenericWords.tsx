@@ -53,7 +53,7 @@ export const GenericWordList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid>
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <TextField label="Word" source="word" />
             <ArrayPreview label="Definitions" source="definitions" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
@@ -61,7 +61,7 @@ export const GenericWordList = (props: ListProps): ReactElement => {
         )}
         medium={(
           <Datagrid>
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <TextField label="Word" source="word" />
             <TextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />

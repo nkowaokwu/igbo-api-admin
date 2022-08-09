@@ -53,7 +53,7 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={(
           <Datagrid>
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <Select collection="examples" label="Editor's Actions" permissions={permissions} />
@@ -63,7 +63,7 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
           <Datagrid>
             <SourceField label="Source" source="source" />
             <AudioRecordingPreview label="Audio Recording" />
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
