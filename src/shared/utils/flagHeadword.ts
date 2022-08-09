@@ -56,8 +56,9 @@ const invalidToneMarkPairings = (
           + 'present in this word, the vowel before the macron vowel must be a high tone.';
             break topLoop;
           }
-          if (i === 0) {
+          if (i === 0 || previousVowel) {
             delete flags.accentedPair;
+            break topLoop;
           }
         }
         if (k === word.length - 1) {
