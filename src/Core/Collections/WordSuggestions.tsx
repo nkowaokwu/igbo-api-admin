@@ -50,7 +50,7 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
         small={(
           <Datagrid expand={<WordPanel />}>
             <CompleteWordPreview label="Word Status" />
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
             <Select collection="words" label="Editor's Actions" permissions={permissions} />
           </Datagrid>
@@ -59,7 +59,7 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
           <Datagrid expand={<WordPanel />}>
             <SourceField label="Source" source="source" />
             <CompleteWordPreview label="Word Status" />
-            <ReviewPreview label="Already Reviewed" />
+            <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
             <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />

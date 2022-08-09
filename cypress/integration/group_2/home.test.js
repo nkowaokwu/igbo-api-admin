@@ -196,7 +196,7 @@ describe('Editor platform', () => {
     });
   });
 
-  describe('Already Reviewed Icons', () => {
+  describe('You Reviewed Icons', () => {
     before(() => {
       cy.cleanLogin();
     });
