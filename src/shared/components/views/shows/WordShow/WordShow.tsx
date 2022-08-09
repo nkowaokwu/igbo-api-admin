@@ -117,41 +117,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                 </Heading>
                 <EditDocumentIds collection="words" originalId={originalWordId} id={id} title="Origin Word Id:" />
               </Box>
-              <CompleteWordPreview record={record} showFull className="my-5 lg:my-0" />
-            </Box>
-            <Box className="flex flex-col lg:flex-row w-full justify-between">
-              <Attributes record={record} diffRecord={diffRecord} />
-              <Box className="flex flex-col space-y-6 mt-5">
-                <Box className="flex flex-col mt-5">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
-                  {/* @ts-ignore */}
-                  <ArrayDiffField
-                    recordField="tags"
-                    recordFieldSingular="tag"
-                    record={record}
-                    // @ts-ignore
-                    originalWordRecord={originalWordRecord}
-                  >
-                    {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="tags" />
-                  </ArrayDiffField>
-                </Box>
-                <Box>
-                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Dialects</Heading>
-                  <DialectDiff
-                    record={record}
-                    diffRecord={diffRecord}
-                    resource={resource}
-                  />
-                </Box>
-                <Box>
-                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Tenses</Heading>
-                  <TenseDiff
-                    record={record}
-                    resource={resource}
-                  />
-                </Box>
-              </Box>
             </Box>
             <Box className="flex flex-row items-center space-x-6 mt-5">
               <Box className="flex flex-col">
@@ -309,18 +274,57 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Comments editorsNotes={editorsNotes} userComments={userComments} />
             ) : null}
           </Box>
-          {resource !== Collection.WORDS && (
-            <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-end">
-              <SourceField record={record} source="source" />
-              <ShowDocumentStats
-                approvals={approvals}
-                denials={denials}
-                merged={merged}
-                author={author}
-                collection="words"
-              />
+          <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
+            {resource !== Collection.WORDS && (
+              <>
+                <Box className="flex flex-row justify-start items-center space-x-3">
+                  <SourceField record={record} source="source" />
+                  <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
+                </Box>
+                <ShowDocumentStats
+                  approvals={approvals}
+                  denials={denials}
+                  merged={merged}
+                  author={author}
+                  collection="words"
+                />
+              </>
+            )}
+            <Box className="flex flex-col w-full justify-between">
+              <Attributes record={record} diffRecord={diffRecord} />
+              <Box className="flex flex-col space-y-6 mt-5">
+                <Box className="flex flex-col mt-5">
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
+                  {/* @ts-ignore */}
+                  <ArrayDiffField
+                    recordField="tags"
+                    recordFieldSingular="tag"
+                    record={record}
+                    // @ts-ignore
+                    originalWordRecord={originalWordRecord}
+                  >
+                    {/* @ts-ignore */}
+                    <ArrayDiff diffRecord={diffRecord} recordField="tags" />
+                  </ArrayDiffField>
+                </Box>
+                <Box>
+                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Dialects</Heading>
+                  <DialectDiff
+                    record={record}
+                    diffRecord={diffRecord}
+                    resource={resource}
+                  />
+                </Box>
+                <Box>
+                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Tenses</Heading>
+                  <TenseDiff
+                    record={record}
+                    resource={resource}
+                  />
+                </Box>
+              </Box>
             </Box>
-          )}
+          </Box>
         </Box>
       </Box>
     </Skeleton>
