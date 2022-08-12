@@ -1,4 +1,5 @@
 import React, { useState, ReactElement, useEffect } from 'react';
+import { compact } from 'lodash';
 import {
   Box,
   IconButton,
