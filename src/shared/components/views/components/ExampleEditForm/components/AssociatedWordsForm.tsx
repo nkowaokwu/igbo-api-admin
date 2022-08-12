@@ -25,10 +25,12 @@ const AssociatedWords = (
     (async () => {
       setIsLoadingAssociatedWords(true);
       try {
-        const associatedWordPromises = await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
-          const associatedWord = await resolveWord(associatedWordId);
-          return associatedWord;
-        }));
+        const associatedWordPromises = compact(
+          await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
+            const associatedWord = await resolveWord(associatedWordId).catch(() => null);
+            return associatedWord;
+          })),
+        );
         setResolvedAssociatedWords(associatedWordPromises);
       } finally {
         setIsLoadingAssociatedWords(false);

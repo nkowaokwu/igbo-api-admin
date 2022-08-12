@@ -23,10 +23,10 @@ const RelatedTerms = (
     (async () => {
       setIsLoadingRelatedTerms(true);
       try {
-        setResolvedRelatedTerms(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
-          const word = await resolveWord(relatedTermId);
+        setResolvedRelatedTerms(compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
+          const word = await resolveWord(relatedTermId).catch(() => null);
           return word;
-        })));
+        }))));
       } finally {
         setIsLoadingRelatedTerms(false);
       }
