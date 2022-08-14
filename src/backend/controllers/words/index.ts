@@ -102,7 +102,7 @@ export const getWords = async (
       word?: any,
       text?: any
       definitions?: any
-    } = !strict ? searchIgboTextSearch(searchWord, filters) : strictSearchIgboQuery(searchWord);
+    } = !strict ? searchIgboTextSearch(searchWord, regexKeyword, filters) : strictSearchIgboQuery(searchWord);
     const words = await searchWordUsingIgbo({ query, ...searchQueries });
     if (!words.length) {
       query = searchEnglishRegexQuery(regexKeyword, filters);

@@ -55,7 +55,7 @@ export default (record: Word | Record) : {
     ),
     Object.entries(dialects) && !Object.entries(dialects).length && 'A dialectal variation is needed',
     (Object.entries(dialects)
-      && Object.values(dialects).some(({ dialects, pronunciation }) => !dialects.length || !pronunciation)
+      && Object.values(dialects).some(({ dialects, pronunciation }) => !dialects?.length || !pronunciation)
       && 'All dialect variations need all fields filled'
     ),
   ]);

@@ -3,6 +3,7 @@ import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import Tense from 'src/backend/shared/constants/Tense';
 
 type ExampleSearchQuery = [
   { igbo: RegExp },
@@ -78,10 +79,22 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
 const wordQuery = (regex: RegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex } });
 const fullTextSearchQuery = (
   keyword: string,
-): { word?: { $regex: RegExp }, $text?: { $search: string } } => (
+  regex: RegExp,
+): { word?: { $regex: RegExp }, $or?: any } => (
   !keyword
     ? { word: { $regex: /./ } }
-    : { $text: { $search: keyword } }
+    : ({
+      $or: [
+        { word: { $regex: regex } },
+        { variations: { $regex: regex } },
+        { 'dialects.*.value': { $regex: regex } },
+        { nsibidi: { $regex: regex } },
+        ...Object.values(Tense).reduce((finalIndexes, tense) => ([
+          ...finalIndexes,
+          { [`tenses.${tense.value}`]: { $regex: regex } },
+        ]), []),
+      ],
+    })
 );
 const variationsQuery = (regex: RegExp): { variations: { $in: [RegExp] } } => ({ variations: { $in: [regex] } });
 const definitionsQuery = (regex: RegExp): { definitions: { $in: [RegExp] } } => ({ definitions: { $in: [regex] } });
@@ -149,9 +162,10 @@ export const searchPreExistingGenericWordsRegexQuery = (regex: RegExp): { $or: a
 });
 export const searchIgboTextSearch = (
   keyword: string,
+  regex: RegExp,
   filters?: { [key: string]: string },
 ): { [key: string]: any } => ({
-  ...fullTextSearchQuery(keyword),
+  ...fullTextSearchQuery(keyword, regex),
   ...(filters ? generateSearchFilters(filters) : {}),
 });
 /* Since the word field is not non-accented yet,

@@ -68,8 +68,6 @@ const wordSchema = new Schema({
   nsibidi: { type: String, default: '' },
 }, { toObject: toObjectPlugin, timestamps: true });
 
-wordSchema.index({ word: 'text', variations: 'text', nsibidi: 'text' });
-
 toJSONPlugin(wordSchema);
 
 const WordModel = mongoose.model('Word', wordSchema);
