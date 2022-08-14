@@ -79,19 +79,18 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
 const wordQuery = (regex: RegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex } });
 const fullTextSearchQuery = (
   keyword: string,
-  regex: RegExp,
 ): { word?: { $regex: RegExp }, $or?: any } => (
   !keyword
     ? { word: { $regex: /./ } }
     : ({
       $or: [
-        { word: { $regex: regex } },
-        { variations: { $regex: regex } },
-        { 'dialects.*.value': { $regex: regex } },
-        { nsibidi: { $regex: regex } },
+        { word: keyword },
+        { variations: keyword },
+        { nsibidi: keyword },
+        { [`dialects.${keyword}`]: { $exists: true } },
         ...Object.values(Tense).reduce((finalIndexes, tense) => ([
           ...finalIndexes,
-          { [`tenses.${tense.value}`]: { $regex: regex } },
+          { [`tenses.${tense.value}`]: keyword },
         ]), []),
       ],
     })
@@ -162,10 +161,9 @@ export const searchPreExistingGenericWordsRegexQuery = (regex: RegExp): { $or: a
 });
 export const searchIgboTextSearch = (
   keyword: string,
-  regex: RegExp,
   filters?: { [key: string]: string },
 ): { [key: string]: any } => ({
-  ...fullTextSearchQuery(keyword, regex),
+  ...fullTextSearchQuery(keyword),
   ...(filters ? generateSearchFilters(filters) : {}),
 });
 /* Since the word field is not non-accented yet,
