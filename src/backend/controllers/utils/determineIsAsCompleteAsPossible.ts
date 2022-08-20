@@ -1,5 +1,7 @@
 import { Record } from 'react-admin';
 import WordClass from 'src/shared/constants/WordClass';
+import Tense from 'src/backend/shared/constants/Tense';
+import isVerb from 'src/backend/shared/utils/isVerb';
 import { Word } from './interfaces';
 
 export const invalidRelatedTermsWordClasses = [
@@ -37,4 +39,7 @@ export default (word: Word | Record): boolean => !!(
   && Array.isArray(word.stems) && word.stems.length
   && (invalidRelatedTermsWordClasses.includes(word.wordClass)
     || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))
+  && isVerb(word.wordClass) && !Object.entries(word.tenses).every(([key, value]) => (
+    value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
+  ))
 );
