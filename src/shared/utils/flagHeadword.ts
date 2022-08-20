@@ -10,6 +10,7 @@ type FlagsType = {
 };
 
 const vowels = ['a', 'e', 'i', 'ị', 'ị', 'o', 'ọ', 'ọ', 'u', 'ụ', 'ụ'];
+const nOrM = ['n', 'N', 'm', 'M'];
 const GRAVE_ACCENT = 768;
 const ACUTE_ACCENT = 769;
 const MACRON_ACCENT = 772;
@@ -33,11 +34,14 @@ const invalidToneMarkPairings = (
 ): { word: { word: string, wordClass: string }, flags: FlagsType } => {
   const { word } = wordDocument;
   if (word) {
+    const firstLetter = word[0];
+    const startsWithNOrMConsonantCluster = nOrM.includes(firstLetter) && word[1] && !vowels.includes(word[1]);
     topLoop:
     for (let k = 0; k < word.length; k += 1) {
       const letter = word[k];
       if (vowels.includes(letter) && word.charCodeAt(k + 1) === MACRON_ACCENT) {
         let previousVowel = null;
+        let previousVowelIndex = -1;
         if (k === 0) {
           flags.accentedPair = `In order to have a down step (${String.fromCharCode(MACRON_ACCENT)}) accent `
           + 'present in this word, the vowel before the macron vowel must be a high tone.';
@@ -46,18 +50,27 @@ const invalidToneMarkPairings = (
         for (let i = k - 1; i >= 0; i -= 1) {
           const currentLetter = word[i];
           previousVowel = vowels.includes(currentLetter) ? currentLetter : null;
-          if (vowels.includes(currentLetter) && accents.includes(word.charCodeAt(i + 1))) {
+          previousVowelIndex = i;
+          const isMarkedVowel = vowels.includes(currentLetter) && accents.includes(word.charCodeAt(i + 1));
+          const isPreviousVowelMarked = previousVowel
+            && vowels.includes(previousVowel)
+            && accents.includes(word.charCodeAt(previousVowelIndex + 1));
+          if (
+            (isMarkedVowel && !startsWithNOrMConsonantCluster)
+            || (startsWithNOrMConsonantCluster && isPreviousVowelMarked && isMarkedVowel)
+          ) {
             flags.accentedPair = `In order to have a down step (${String.fromCharCode(MACRON_ACCENT)}) accent `
           + 'present in this word, the vowel before the macron vowel must be a high tone.';
             break topLoop;
           }
-          if (i === 0 && !previousVowel) {
+          if (
+            i === 0
+            && (
+              (!previousVowel && !startsWithNOrMConsonantCluster)
+              || (startsWithNOrMConsonantCluster && isPreviousVowelMarked && isMarkedVowel)
+            )) {
             flags.accentedPair = `In order to have a down step (${String.fromCharCode(MACRON_ACCENT)}) accent `
           + 'present in this word, the vowel before the macron vowel must be a high tone.';
-            break topLoop;
-          }
-          if (i === 0 || previousVowel) {
-            delete flags.accentedPair;
             break topLoop;
           }
         }

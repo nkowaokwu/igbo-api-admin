@@ -35,7 +35,7 @@ const SuggestedWords = ({ word } : { word: string }): ReactElement => {
       </Tooltip>
 
       <Box className="flex flex-row flex-wrap">
-        {suggestedWords.map(({
+        {suggestedWords.length ? suggestedWords.map(({
           word,
           nsibidi,
           wordClass,
@@ -77,7 +77,7 @@ const SuggestedWords = ({ word } : { word: string }): ReactElement => {
               </PopoverContent>
             </Popover>
           </Box>
-        ))}
+        )) : <Text color="gray.400" fontStyle="italic" fontSize="sm">No similar words</Text>}
       </Box>
     </Box>
   );
