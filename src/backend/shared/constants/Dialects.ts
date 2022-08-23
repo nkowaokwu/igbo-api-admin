@@ -89,4 +89,19 @@ export default {
     value: 'OBO',
     label: 'Obosi',
   },
+  NKA: {
+    code: 'ibo-nka',
+    value: 'NKA',
+    label: 'Nkanu',
+  },
+  OGI: {
+    code: 'ibo-ogi',
+    value: 'OGI',
+    label: 'Ogodi',
+  },
+  NKP: {
+    code: 'ibo-nkp',
+    value: 'NKP',
+    label: 'Nkpor',
+  },
 };
