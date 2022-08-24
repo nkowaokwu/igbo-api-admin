@@ -39,7 +39,7 @@ export default (word: Word | Record): boolean => !!(
   && Array.isArray(word.stems) && word.stems.length
   && (invalidRelatedTermsWordClasses.includes(word.wordClass)
     || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))
-  && isVerb(word.wordClass) && !Object.entries(word.tenses).every(([key, value]) => (
+  && isVerb(word.wordClass) && !Object.entries(word.tenses || {}).every(([key, value]) => (
     value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
   ))
 );
