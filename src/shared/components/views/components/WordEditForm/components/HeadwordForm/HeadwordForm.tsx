@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { get } from 'lodash';
 import {
   Box,
   Checkbox,
@@ -179,7 +180,7 @@ const HeadwordForm = ({
           </Box>
         ) : null
       ))}
-      <SuggestedWords word={watchedWord || ''} />
+      <SuggestedWords word={watchedWord || ''} id={get(record, 'id')} />
       {errors.word && (
         <p className="error">Word is required</p>
       )}
