@@ -5,11 +5,11 @@ import Tense from 'src/backend/shared/constants/Tense';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { invalidRelatedTermsWordClasses } from './determineIsAsCompleteAsPossible';
 
-export default (record: Word | Record) : {
+export default async (record: Word | Record) : Promise<{
   sufficientWordRequirements: string[],
   completeWordRequirements: string[],
   recommendRevisiting: boolean,
-} => {
+}> => {
   const {
     word,
     wordClass,
@@ -27,6 +27,22 @@ export default (record: Word | Record) : {
     dialects = {},
     tenses = {},
   } = record;
+  const audio = new Audio(pronunciation);
+
+  const isAudioAvailable = await new Promise((resolve) => {
+    audio.addEventListener('canplay', () => {
+      resolve(true);
+    });
+    audio.addEventListener('error', () => {
+      if (
+        window.location.origin !== 'https://editor.igboapi.com'
+        && pronunciation?.startsWith?.('https://igbo-api-test-local/')
+      ) {
+        return resolve(true);
+      }
+      return resolve(false);
+    });
+  });
 
   const sufficientWordRequirements = compact([
     !word && 'The headword is needed',
@@ -35,7 +51,7 @@ export default (record: Word | Record) : {
     !wordClass && 'The word class is needed',
     Array.isArray(definitions) && !definitions.length && 'At least one definition is needed',
     Array.isArray(examples) && !examples?.length && 'At least one example sentence is needed',
-    !pronunciation && 'An audio pronunciation is needed',
+    (!pronunciation || !isAudioAvailable) && 'An audio pronunciation is needed',
     !isStandardIgbo && 'The headword needs to be marked as Standard Igbo',
   ]);
 

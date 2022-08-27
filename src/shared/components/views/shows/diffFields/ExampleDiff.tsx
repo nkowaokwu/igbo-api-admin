@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box } from '@chakra-ui/react';
 import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import DiffField from './DiffField';
@@ -14,8 +15,8 @@ const ExampleDiff = ({
   diffRecord: Record,
   resource: string,
 }): ReactElement => (
-  <div className="flex flex-row items-end space-x-4">
-    <div className="flex flex-col">
+  <Box className="flex flex-row items-end space-x-4">
+    <Box className="flex flex-col">
       <DiffField
         path={`examples.${index}.igbo`}
         diffRecord={diffRecord}
@@ -31,14 +32,14 @@ const ExampleDiff = ({
         style={{ height: 40, width: 250 }}
         controls
       />
-    </div>
+    </Box>
     <a
       className="link"
       href={`#/${resource === 'words' ? 'examples' : 'exampleSuggestions'}/${value.id}/show`}
     >
       Link to Example
     </a>
-  </div>
+  </Box>
 );
 
 export default ExampleDiff;

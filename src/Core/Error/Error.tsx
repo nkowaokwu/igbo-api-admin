@@ -41,7 +41,7 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
           </AccordionItem>
         </Accordion>
       )}
-      <div>
+      <Box>
         <Button
           onClick={() => window.history.go(-1)}
           leftIcon={<RepeatClockIcon />}
@@ -49,7 +49,7 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
         >
           Go back
         </Button>
-      </div>
+      </Box>
     </Box>
   </Box>
 );

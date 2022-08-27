@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
@@ -34,7 +35,7 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
   setOnFailure(() => {});
 
   return record ? (
-    <div className="bg-white shadow-sm p-10 mt-10">
+    <Box className="bg-white shadow-sm p-10 mt-10">
       <EditDocumentTopBar
         record={record}
         resource={resource}
@@ -42,10 +43,10 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
         title="Edit Example Suggestion"
         id={id}
       />
-      <div className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
+      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
         <EditDocumentIds collection="examples" originalId={originalExampleId} id={id} title="Origin Example Id:" />
         <EditDocumentStats approvals={approvals} denials={denials} />
-      </div>
+      </Box>
       {record ? (
         <ExampleEditForm
           view={View.EDIT}
@@ -56,7 +57,7 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
           isPreExistingSuggestion={isPreExistingSuggestion}
         />
       ) : null}
-    </div>
+    </Box>
   ) : null;
 };
 

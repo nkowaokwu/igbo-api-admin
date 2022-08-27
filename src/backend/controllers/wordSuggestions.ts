@@ -80,7 +80,7 @@ const findWordSuggestions = async (
   { regexMatch: RegExp, skip: number, limit: number },
 ): Promise<Interfaces.WordSuggestion[] | any> => (
   WordSuggestion
-    .find(regexMatch)
+    .find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
     .limit(limit)
 );

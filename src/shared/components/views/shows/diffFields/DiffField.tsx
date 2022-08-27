@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box, chakra } from '@chakra-ui/react';
 import {
   find,
   isEqual,
@@ -66,40 +67,40 @@ const DiffField = ({
 
   return diffFromPath ? (
     diffFromPath.kind === DIFF_KEYS.Edit ? (
-      <div className="flex flex-col" data-test={`${path}-diff-field`}>
+      <Box className="flex flex-col" data-test={`${path}-diff-field`}>
         <ValueLabel>
           {'Old: '}
-          <span className="deletion-change">
+          <chakra.span className="deletion-change">
             {renderValue(diffFromPath.lhs, true)}
-          </span>
+          </chakra.span>
         </ValueLabel>
         <ValueLabel>
           {'New: '}
-          <span className="addition-change">
+          <chakra.span className="addition-change">
             {renderValue(diffFromPath.rhs, true)}
-          </span>
+          </chakra.span>
         </ValueLabel>
-      </div>
+      </Box>
     ) : diffFromPath.kind === DIFF_KEYS.Array && diffFromPath.item.kind === DIFF_KEYS.New ? (
       <ValueLabel>
         {'New: '}
-        <span className="addition-change">
+        <chakra.span className="addition-change">
           {renderValue(diffFromPath.item.rhs, true)}
-        </span>
+        </chakra.span>
       </ValueLabel>
     ) : diffFromPath.kind === DIFF_KEYS.Array && diffFromPath.item.kind === DIFF_KEYS.Deletion ? (
       <ValueLabel>
         {'Deleting: '}
-        <span className="deletion-change line-through">
+        <chakra.span className="deletion-change line-through">
           {renderValue(diffFromPath.item.lhs, true)}
-        </span>
+        </chakra.span>
       </ValueLabel>
     ) : diffFromPath.kind === DIFF_KEYS.New ? (
       <ValueLabel>
         {'New: '}
-        <span className="addition-change">
+        <chakra.span className="addition-change">
           {renderValue(diffFromPath.rhs, true)}
-        </span>
+        </chakra.span>
       </ValueLabel>
     ) : (
       <h2 className="warning-change">{`[NEED TO HANDLE ${diffFromPath.kind} for ${path}]`}</h2>

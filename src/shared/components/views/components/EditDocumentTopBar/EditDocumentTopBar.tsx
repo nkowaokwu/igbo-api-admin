@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Button } from '@chakra-ui/react';
+import { Box, Button, Heading } from '@chakra-ui/react';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -40,15 +40,15 @@ const EditDocumentTopBar = ({
 
   return (
     view === View.EDIT ? (
-      <div className="flex flex-col lg:flex-row lg:justify-between">
-        <h1 className="text-3xl text-gray-800 mb-3">{title}</h1>
-      </div>
+      <Box className="flex flex-col lg:flex-row lg:justify-between">
+        <Heading as="h1" className="text-3xl text-gray-800 mb-3">{title}</Heading>
+      </Box>
     ) : (
-      <div className="flex flex-col lg:flex-row justify-between">
-        <h1 className="text-3xl text-gray-800 mb-3 lg:mb-0">{title}</h1>
+      <Box className="flex flex-col lg:flex-row justify-between">
+        <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0">{title}</Heading>
         {resource !== Collection.EXAMPLES && resource !== Collection.WORDS ? (
-          <div className="flex flex-col mb-5">
-            <h1 className="text-2xl text-gray-800">Editor Actions:</h1>
+          <Box className="flex flex-col mb-5">
+            <Heading as="h1" className="text-2xl text-gray-800">Editor Actions:</Heading>
             <Select
               view={View.SHOW}
               resource={resource}
@@ -57,7 +57,7 @@ const EditDocumentTopBar = ({
               permissions={permissions}
               label="Editor's Actions"
             />
-          </div>
+          </Box>
         ) : (
           <CreateSuggestion
             record={record}
@@ -65,7 +65,7 @@ const EditDocumentTopBar = ({
             push={push}
           />
         )}
-      </div>
+      </Box>
     )
   );
 };

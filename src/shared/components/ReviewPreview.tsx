@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { Tooltip } from '@chakra-ui/react';
+import { Box, Tooltip } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 
@@ -10,7 +10,7 @@ const ReviewPreview = ({ record }: { record: { approvals: string[], denials: str
 
   const hasReviewed = record.approvals.includes(uid) || record.denials.includes(uid) || record.authorId === uid;
   return (
-    <div data-test="review-cell" className="flex w-full justify-center items-center">
+    <Box data-test="review-cell" className="flex w-full justify-center items-center">
       {record && hasReviewed ? (
         <Tooltip label="You have already reviewed this document." aria-label="A tooltip">
           <CheckIcon color="green.500" data-test="reviewed-icon" />
@@ -20,7 +20,7 @@ const ReviewPreview = ({ record }: { record: { approvals: string[], denials: str
           <CloseIcon color="yellow.500" data-test="not-reviewed-icon" />
         </Tooltip>
       )}
-    </div>
+    </Box>
   );
 };
 

@@ -24,12 +24,30 @@ const CompleteWordPreview = (
   },
 ): ReactElement => {
   const [availableAudioStatuses, setAvailableAudioStatuses] = useState(null);
+  const [documentCompleteness, setDocumentCompleteness] = useState(null);
   const { isComplete } = record;
+
+  useEffect(() => {
+    (async () => {
+      setDocumentCompleteness(await determineDocumentCompleteness(record));
+    })();
+  }, [record]);
+
+  useEffect(() => {
+    determineIsAudioAvailable(record, (res) => {
+      setAvailableAudioStatuses(res);
+    });
+  }, []);
+
+  if (!documentCompleteness) {
+    return null;
+  }
+
   const {
     sufficientWordRequirements,
     completeWordRequirements,
     recommendRevisiting,
-  } = determineDocumentCompleteness(record);
+  } = documentCompleteness;
 
   const requirements = uniq([...sufficientWordRequirements, ...completeWordRequirements]);
 
@@ -89,12 +107,6 @@ const CompleteWordPreview = (
       </>
     );
   };
-
-  useEffect(() => {
-    determineIsAudioAvailable(record, (res) => {
-      setAvailableAudioStatuses(res);
-    });
-  }, []);
 
   return (
     <Box data-test="pronunciation-cell" className={className}>

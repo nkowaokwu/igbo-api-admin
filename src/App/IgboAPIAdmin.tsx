@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box } from '@chakra-ui/react';
 import { Admin, Resource, Layout } from 'react-admin';
 import { flatten, compact } from 'lodash';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
@@ -48,7 +49,7 @@ const handleNoPermissions = (permissions) => {
 
 const IgboAPIAdmin = (): ReactElement => (
   // @ts-ignore
-  <div className={!!window.Cypress ? 'testing-app' : ''}>
+  <Box className={!!window.Cypress ? 'testing-app' : ''}>
     <Admin
       dashboard={Dashboard}
       layout={(props) => <Layout {...props} error={Error} />}
@@ -117,7 +118,7 @@ const IgboAPIAdmin = (): ReactElement => (
         ])));
       }}
     </Admin>
-  </div>
+  </Box>
 );
 
 export default IgboAPIAdmin;

@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import Collections from 'src/shared/constants/Collections';
@@ -35,7 +36,7 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
   setOnFailure(() => {});
 
   return record ? (
-    <div className="bg-white shadow-sm p-10 mt-10">
+    <Box className="bg-white shadow-sm p-10 mt-10">
       <EditDocumentTopBar
         record={record}
         resource={resource}
@@ -43,10 +44,10 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
         title={resource === 'genericWords' ? 'Edit Generic Word' : 'Edit Word Suggestion'}
         id={id}
       />
-      <div className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
+      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
         <EditDocumentIds collection={Collections.WORDS} originalId={originalWordId} id={id} title="Origin Word Id:" />
         <EditDocumentStats approvals={approvals} denials={denials} />
-      </div>
+      </Box>
       {record ? (
         <WordEditForm
           view={View.EDIT}
@@ -57,7 +58,7 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
           isPreExistingSuggestion={isPreExistingSuggestion}
         />
       ) : null}
-    </div>
+    </Box>
   ) : null;
 };
 
