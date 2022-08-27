@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { Box, Heading } from '@chakra-ui/react';
 import { useCreateController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
@@ -14,8 +15,8 @@ const WordSuggestionCreate = (props: HistoryProps): ReactElement => {
   const isPreExistingSuggestion = history.location?.state?.isPreExistingSuggestion || false;
 
   return (
-    <div className="bg-white shadow-sm p-10 mt-10">
-      <h1 className="text-3xl text-gray-800 mb-3">Create New Word Suggestion</h1>
+    <Box className="bg-white shadow-sm p-10 mt-10">
+      <Heading as="h1" className="text-3xl text-gray-800 mb-3">Create New Word Suggestion</Heading>
       {record ? (
         <WordEditForm
           view={View.CREATE}
@@ -26,7 +27,7 @@ const WordSuggestionCreate = (props: HistoryProps): ReactElement => {
           isPreExistingSuggestion={isPreExistingSuggestion}
         />
       ) : null}
-    </div>
+    </Box>
   );
 };
 
