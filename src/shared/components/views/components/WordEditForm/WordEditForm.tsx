@@ -245,6 +245,7 @@ const WordEditForm = ({
               watch={watch}
             />
             <TagsForm
+              errors={errors}
               control={control}
               record={record}
             />

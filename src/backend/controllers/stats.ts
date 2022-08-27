@@ -117,10 +117,10 @@ const countSufficientWords = (words) => (
   }).length
 );
 
-const countCompletedWords = (words) => (
-  words.filter((word) => {
+const countCompletedWords = async (words) => (
+  words.filter(async (word) => {
     const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(word);
-    const { completeWordRequirements } = determineDocumentCompleteness(word);
+    const { completeWordRequirements } = await determineDocumentCompleteness(word);
     const manualCheck = word.isComplete && isAsCompleteAsPossible;
     return manualCheck || !completeWordRequirements.length || (
       completeWordRequirements.length === 1
@@ -149,7 +149,7 @@ export const getWordStats = async (
       limit: INCLUDE_ALL_WORDS_LIMIT,
     });
     const sufficientWordsCount = countSufficientWords(words);
-    const completedWordsCount = countCompletedWords(words);
+    const completedWordsCount = await countCompletedWords(words);
     const dialectalVariationsCount = countDialectalVariations(words);
     return res.send({ sufficientWordsCount, completedWordsCount, dialectalVariationsCount });
   } catch (err) {

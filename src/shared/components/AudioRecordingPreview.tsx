@@ -1,10 +1,11 @@
 import React, { useState, ReactElement } from 'react';
+import { get } from 'lodash';
 import { Record } from 'react-admin';
 import { Box, Spinner, Tag } from '@chakra-ui/react';
 
 const AudioRecordingPreview = (
-  { record }:
-  { record: { pronunciation: string } | Record },
+  { record, audioPath = 'pronunciation' }:
+  { record: { pronunciation: string } | Record, audioPath?: string },
 ): ReactElement => {
   const audio = new Audio(record.pronunciation);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,12 +24,11 @@ const AudioRecordingPreview = (
   };
   return (
     <Box data-test="pronunciation-cell">
-      {record.pronunciation ? (
+      {get(record, audioPath) ? (
         <Tag
           colorScheme={!isAudioAvailable ? 'yellow' : 'green'}
           className="text-center cursor-pointer"
           onClick={playAudio}
-          type="button"
         >
           {isLoading ? <Spinner /> : !isAudioAvailable ? 'Rerecord audio' : '🎙 Play'}
         </Tag>
@@ -37,6 +37,10 @@ const AudioRecordingPreview = (
       )}
     </Box>
   );
+};
+
+AudioRecordingPreview.defaultProps = {
+  audioPath: 'pronunciation',
 };
 
 export default AudioRecordingPreview;

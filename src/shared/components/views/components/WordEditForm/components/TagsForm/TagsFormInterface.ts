@@ -1,12 +1,10 @@
 import { Record } from 'react-admin';
 import { Control } from 'react-hook-form';
 
-interface HeadwordForm {
+interface TagsForm {
   errors: any,
   control: Control,
   record: Record,
-  watch: any,
-  getValues: (key: string) => any,
 };
 
-export default HeadwordForm;
+export default TagsForm;

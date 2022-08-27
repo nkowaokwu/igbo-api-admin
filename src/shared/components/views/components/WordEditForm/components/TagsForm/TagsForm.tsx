@@ -6,9 +6,9 @@ import WordTags from 'src/backend/shared/constants/WordTags';
 import FormHeader from '../../../FormHeader';
 import TagsInterface from './TagsFormInterface';
 
-const TagsForm = ({ control, record }: TagsInterface): ReactElement => {
-  const handleMultiSelectTags = (callback) => (selectedTags) => {
-    callback(selectedTags.map(({ value }) => value));
+const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
+  const handleMultiSelectTags = (callback) => (selectedTags = []) => {
+    callback((selectedTags || []).map(({ value }) => value));
   };
 
   const generateDefaultTags = () => {
@@ -38,12 +38,14 @@ const TagsForm = ({ control, record }: TagsInterface): ReactElement => {
                 isMulti
               />
             )}
-            defaultValue={generateDefaultTags()}
             name="tags"
             control={control}
           />
         </Box>
       </Box>
+      {errors.tags ? (
+        <p className="error relative">{errors.tags.message}</p>
+      ) : null}
     </Box>
   );
 };

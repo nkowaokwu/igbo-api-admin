@@ -122,7 +122,7 @@ const findExampleSuggestions = (
   { regexMatch: RegExp, skip: number, limit: number },
 ): Query<any, Document<Interfaces.ExampleSuggestion>> => (
   ExampleSuggestion
-    .find(regexMatch)
+    .find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
     .limit(limit)
 );
