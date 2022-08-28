@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactElement } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Heading, Text } from '@chakra-ui/react';
 import network from 'src/Core/Dashboard/network';
 import {
   SUFFICIENT_WORDS_GOAL,
@@ -17,10 +17,11 @@ const NO_PERMISSION_STATUS = 403;
 const MilestoneProgress = (): ReactElement => {
   const [totalSufficientWords, setTotalSufficientWords] = useState(null);
   const [totalCompletedWords, setTotalCompletedWords] = useState(null);
+  const [totalSufficientExamples, setTotalSufficientExamples] = useState(null);
+  const [totalCompletedExamples, setTotalCompletedExamples] = useState(null);
   const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
-  const [totalExampleSentences, setTotalExampleSentences] = useState(null);
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
   const [totalWordSuggestionsWithNsibidi, setTotalWordSuggestionsWithNsibidi] = useState(null);
 
@@ -37,9 +38,9 @@ const MilestoneProgress = (): ReactElement => {
   useEffect(() => {
     network({ url: '/stats/words' })
       .then(({ body }) => {
-        const { sufficientWordsCount, completedWordsCount, dialectalVariationsCount } = JSON.parse(body);
+        const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = JSON.parse(body);
         setTotalSufficientWords(sufficientWordsCount || 0);
-        setTotalCompletedWords(completedWordsCount || 0);
+        setTotalCompletedWords(completeWordsCount || 0);
         setTotalDialectalVariations(dialectalVariationsCount || 0);
       })
       .catch(handleNoPermissionStatus);
@@ -52,7 +53,11 @@ const MilestoneProgress = (): ReactElement => {
       .then(({ body: isStandardIgbo }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbo).count || 0))
       .catch(handleNoPermissionStatus);
     network({ url: '/stats/examples' })
-      .then(({ body: exampleSentences }) => setTotalExampleSentences(JSON.parse(exampleSentences).count || 0))
+      .then(({ body }) => {
+        const { sufficientExamplesCount, completedExamplesCount } = JSON.parse(body);
+        setTotalSufficientExamples(sufficientExamplesCount || 0);
+        setTotalCompletedExamples(completedExamplesCount || 0);
+      })
       .catch(handleNoPermissionStatus);
     network({ url: '/stats/nsibidi' })
       .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
@@ -72,73 +77,99 @@ const MilestoneProgress = (): ReactElement => {
           Here is the progress that we've all made so far!`}
         </Text>
       </Box>
-      <Box className="space-y-3 grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3">
-        <ProgressCard
-          totalCount={totalSufficientWords}
-          goal={SUFFICIENT_WORDS_GOAL}
-          heading={'"Sufficient" Words'}
-          description={`There are currently ${totalSufficientWords} "sufficient" words on the platform.
-          Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`}
-          isLoaded={totalSufficientWords !== null}
-        />
-        <ProgressCard
-          totalCount={totalCompletedWords}
-          goal={COMPLETE_WORDS_GOAL}
-          heading={'"Complete" Words'}
-          description={`There are currently ${totalCompletedWords} "complete" words on the platform.
-          Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
-          isLoaded={totalCompletedWords !== null}
-        />
-        <ProgressCard
-          totalCount={totalDialectalVariations}
-          goal={DIALECTAL_VARIATIONS_GOAL}
-          heading="Dialectal variations"
-          description={`There are currently ${totalDialectalVariations} dialectal word variations on the platform.
-          Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`}
-          isLoaded={totalDialectalVariations !== null}
-        />
-        <ProgressCard
-          totalCount={totalHeadwordAudioPronunciation}
-          goal={HEADWORD_AUDIO_PRONUNCIATION_GOAL}
-          heading="Headwords with Audio Pronunciations"
-          description={`There are currently ${totalHeadwordAudioPronunciation} headwords 
-          with audio pronunciations on the platform.
-          Our next goal is to record a total of ${HEADWORD_AUDIO_PRONUNCIATION_GOAL} headwords.`}
-          isLoaded={totalHeadwordAudioPronunciation !== null}
-        />
-        <ProgressCard
-          totalCount={totalWordsWithNsibidi}
-          goal={WORDS_WITH_NSIBIDI_GOAL}
-          heading="Words with Nsịbịdị"
-          description={`There are currently ${totalWordsWithNsibidi} words with Nsịbịdị on the platform. 
-          Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`}
-          isLoaded={totalWordsWithNsibidi !== null}
-        />
-        <ProgressCard
-          totalCount={totalWordSuggestionsWithNsibidi}
-          goal={WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL}
-          heading="Word Suggestions with Nsịbịdị"
-          description={`There are currently ${totalWordSuggestionsWithNsibidi} word suggestions 
-          with Nsịbịdị on the platform. Our next goal is to record a total of 
-          ${WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL} word suggestions with Nsịbịdị.`}
-          isLoaded={totalWordSuggestionsWithNsibidi !== null}
-        />
-        <ProgressCard
-          totalCount={totalWordIsStandardIgbo}
-          goal={IS_STANDARD_IGBO_GOAL}
-          heading="Standard Igbo Words"
-          description={`There are currently ${totalWordIsStandardIgbo} words marked as Standard Igbo on the platform.
-          Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`}
-          isLoaded={totalWordIsStandardIgbo !== null}
-        />
-        <ProgressCard
-          totalCount={totalExampleSentences}
-          goal={EXAMPLE_SENTENCES_GOAL}
-          heading="Igbo Example Sentences"
-          description={`There are currently ${totalExampleSentences} example sentences on the platform.
-          Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} example sentences.`}
-          isLoaded={totalWordIsStandardIgbo !== null}
-        />
+      <Box className="flex flex-col">
+        <Box className="space-y-3">
+          <Heading as="h2">Word Stats</Heading>
+          <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ProgressCard
+              totalCount={totalSufficientWords}
+              goal={SUFFICIENT_WORDS_GOAL}
+              heading={'"Sufficient" Words'}
+              description={`There are currently ${totalSufficientWords} "sufficient" words on the platform.
+              Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`}
+              isLoaded={totalSufficientWords !== null}
+            />
+            <ProgressCard
+              totalCount={totalCompletedWords}
+              goal={COMPLETE_WORDS_GOAL}
+              heading={'"Complete" Words'}
+              description={`There are currently ${totalCompletedWords} "complete" words on the platform.
+              Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`}
+              isLoaded={totalCompletedWords !== null}
+            />
+            <ProgressCard
+              totalCount={totalDialectalVariations}
+              goal={DIALECTAL_VARIATIONS_GOAL}
+              heading="Dialectal variations"
+              description={`There are currently ${totalDialectalVariations} dialectal word variations on the platform.
+              Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`}
+              isLoaded={totalDialectalVariations !== null}
+            />
+            <ProgressCard
+              totalCount={totalHeadwordAudioPronunciation}
+              goal={HEADWORD_AUDIO_PRONUNCIATION_GOAL}
+              heading="Headwords with Audio Pronunciations"
+              description={`There are currently ${totalHeadwordAudioPronunciation} headwords 
+              with audio pronunciations on the platform.
+              Our next goal is to record a total of ${HEADWORD_AUDIO_PRONUNCIATION_GOAL} headwords.`}
+              isLoaded={totalHeadwordAudioPronunciation !== null}
+            />
+            <ProgressCard
+              totalCount={totalWordIsStandardIgbo}
+              goal={IS_STANDARD_IGBO_GOAL}
+              heading="Standard Igbo Words"
+              description={`There are currently ${totalWordIsStandardIgbo} words marked as Standard Igbo 
+              on the platform. Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`}
+              isLoaded={totalWordIsStandardIgbo !== null}
+            />
+          </Box>
+        </Box>
+        <Box className="flex flex-col lg:flex-row lg:space-x-6 my-3">
+          <Box className="space-y-3">
+            <Heading as="h2">Nsịbịdị Stats</Heading>
+            <Box className="flex flex-col space-y-4">
+              <ProgressCard
+                totalCount={totalWordsWithNsibidi}
+                goal={WORDS_WITH_NSIBIDI_GOAL}
+                heading="Words with Nsịbịdị"
+                description={`There are currently ${totalWordsWithNsibidi} words with Nsịbịdị on the platform. 
+                Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`}
+                isLoaded={totalWordsWithNsibidi !== null}
+              />
+              <ProgressCard
+                totalCount={totalWordSuggestionsWithNsibidi}
+                goal={WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL}
+                heading="Word Suggestions with Nsịbịdị"
+                description={`There are currently ${totalWordSuggestionsWithNsibidi} word suggestions 
+                with Nsịbịdị on the platform. Our next goal is to record a total of 
+                ${WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL} word suggestions with Nsịbịdị.`}
+                isLoaded={totalWordSuggestionsWithNsibidi !== null}
+              />
+            </Box>
+          </Box>
+          <Box className="space-y-3">
+            <Heading as="h2">Example Stats</Heading>
+            <Box className="flex flex-col space-y-4">
+              <ProgressCard
+                totalCount={totalSufficientExamples}
+                goal={EXAMPLE_SENTENCES_GOAL}
+                heading="Sufficient Igbo Example Sentences"
+                description={`There are currently ${totalSufficientExamples} sufficient example 
+                sentences on the platform. Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} 
+                sufficient example sentences.`}
+                isLoaded={totalSufficientExamples !== null}
+              />
+              <ProgressCard
+                totalCount={totalCompletedExamples}
+                goal={EXAMPLE_SENTENCES_GOAL}
+                heading="Complete Igbo Example Sentences"
+                description={`There are currently ${totalCompletedExamples} complete example sentences on the platform.
+                Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} complete example sentences.`}
+                isLoaded={totalCompletedExamples !== null}
+              />
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </>
   );

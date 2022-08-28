@@ -1,6 +1,7 @@
 import AudioRecordingPreview from './AudioRecordingPreview';
 import ArrayInput from './ArrayInput';
 import BulkSuggestionActions from './BulkSuggestionActions';
+import CompleteExamplePreview from './CompleteExamplePreview';
 import CompleteWordPreview from './CompleteWordPreview';
 import SourceField from './SourceField';
 import StyleField from './StyleField';
@@ -27,6 +28,7 @@ export {
   AudioRecordingPreview,
   ArrayInput,
   BulkSuggestionActions,
+  CompleteExamplePreview,
   CompleteWordPreview,
   SourceField,
   StyleField,

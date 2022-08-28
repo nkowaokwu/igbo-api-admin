@@ -19,7 +19,7 @@ it('render the dashboard', async () => {
     if (req.url.endsWith('words')) {
       return {
         status: 200,
-        body: JSON.stringify({ sufficientWordsCount: 200, completedWordsCount: 100 }),
+        body: JSON.stringify({ sufficientWordsCount: 200, completeWordsCount: 100 }),
       };
     }
     if (req.url.endsWith('headwordAudioPronunciations')) {

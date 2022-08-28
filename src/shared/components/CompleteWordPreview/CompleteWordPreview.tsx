@@ -13,7 +13,7 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 import determineDocumentCompleteness from 'src/backend/controllers/utils/determineDocumentCompleteness';
 import determineIsAudioAvailable from './determineIsAudioAvailable';
-import DocumentStatus from './DocumentStatus';
+import DocumentStatus from '../../constants/DocumentStatus';
 
 const CompleteWordPreview = (
   { record, className, showFull }:
@@ -111,7 +111,7 @@ const CompleteWordPreview = (
   return (
     <Box data-test="pronunciation-cell" className={className}>
       <Tooltip
-        label={<TooltipLabel showFull={showFull} />}
+        label={<TooltipLabel />}
         aria-label="A tooltip"
         backgroundColor={recommendRevisiting ? 'yellow.200' : documentStatus.tooltipColor}
         color="gray.600"
