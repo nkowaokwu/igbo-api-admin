@@ -10,7 +10,7 @@ import {
 } from 'react-admin';
 import Icon from '@material-ui/icons/ChatBubble';
 import {
-  AudioRecordingPreview,
+  CompleteExamplePreview,
   ArrayPreview,
   ExampleShow as Show,
   IdField,
@@ -37,6 +37,7 @@ export const ExampleList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid>
+            <CompleteExamplePreview label="Example Status" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <Select collection="examples" label="Editor's Actions" permissions={permissions} />
@@ -44,7 +45,7 @@ export const ExampleList = (props: ListProps): ReactElement => {
         )}
         medium={(
           <Datagrid>
-            <AudioRecordingPreview label="Audio Recording" />
+            <CompleteExamplePreview label="Example Status" />
             <StyleField label="Style" source="style" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />

@@ -28,7 +28,7 @@ const ProgressCard = ({
       px={3}
     >
       <Box>
-        <Heading fontSize="3xl">{heading}</Heading>
+        <Heading fontSize="3xl" className="text-gray-800">{heading}</Heading>
         <Text fontSize="md" className="text-gray-700 italic">
           {description}
         </Text>

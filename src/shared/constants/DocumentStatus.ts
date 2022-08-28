@@ -6,7 +6,7 @@ export default {
     tooltipColor: 'red.200',
     variant: 'solid',
     badge: 'Insufficient',
-    'data-test': 'insufficient-word-label',
+    'data-test': 'insufficient-document-label',
   },
   SUFFICIENT: {
     value: 'sufficient',
@@ -15,7 +15,7 @@ export default {
     tooltipColor: 'green.200',
     variant: 'outline',
     badge: 'Sufficient',
-    'data-test': 'sufficient-word-label',
+    'data-test': 'sufficient-document-label',
   },
   COMPLETE: {
     value: 'complete',
@@ -24,6 +24,6 @@ export default {
     tooltipColor: 'blue.200',
     variant: 'solid',
     badge: 'Complete',
-    'data-test': 'complete-word-label',
+    'data-test': 'complete-document-label',
   },
 };

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Word } from 'src/backend/controllers/utils/interfaces';
@@ -27,21 +28,16 @@ export default async (record: Word | Record) : Promise<{
     dialects = {},
     tenses = {},
   } = record;
-  const audio = new Audio(pronunciation);
 
   const isAudioAvailable = await new Promise((resolve) => {
-    audio.addEventListener('canplay', () => {
-      resolve(true);
-    });
-    audio.addEventListener('error', () => {
-      if (
-        window.location.origin !== 'https://editor.igboapi.com'
-        && pronunciation?.startsWith?.('https://igbo-api-test-local/')
-      ) {
-        return resolve(true);
-      }
-      return resolve(false);
-    });
+    axios.get(pronunciation)
+      .then(() => resolve(true))
+      .catch(() => {
+        if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
+          return resolve(true);
+        }
+        return resolve(false);
+      });
   });
 
   const sufficientWordRequirements = compact([

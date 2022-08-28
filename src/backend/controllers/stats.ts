@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { compact } from 'lodash';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import WordSuggestion from '../models/WordSuggestion';
@@ -10,6 +11,7 @@ import {
 } from './utils/queries';
 import { findWordsWithMatch } from './utils/buildDocs';
 import determineDocumentCompleteness from './utils/determineDocumentCompleteness';
+import determineExampleCompleteness from './utils/determineExampleCompleteness';
 import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPossible';
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
@@ -27,7 +29,7 @@ export const getTotalHeadwordsWithAudioPronunciations = async (
   }
 };
 
-/* Returns all the WordSuggestions that's in Standard Igbo */
+/* Returns all the Words that's in Standard Igbo */
 export const getTotalWordsInStandardIgbo = async (
   _: Request,
   res: Response,
@@ -37,21 +39,6 @@ export const getTotalWordsInStandardIgbo = async (
     const isStandardIgboWords = await Word
       .countDocuments(searchForAllWordsWithIsStandardIgbo());
     return res.send({ count: isStandardIgboWords });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-/* Returns all the Examples that are on the platform */
-export const getTotalExampleSentences = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-) : Promise<Response | void> => {
-  try {
-    const exampleSentences = await Example
-      .countDocuments({});
-    return res.send({ count: exampleSentences });
   } catch (err) {
     return next(err);
   }
@@ -87,53 +74,33 @@ export const getTotalWordSuggestionsWithNsibidi = async (
   }
 };
 
-const countSufficientWords = (words) => (
-  words.filter(({
-    word,
-    wordClass,
-    definitions,
-    attributes: {
-      isStandardIgbo,
-      isAccented,
-      isComplete,
-    },
-    pronunciation,
-    examples,
-  }) => {
-    const automaticCheck = (
-      word
-      // String normalization check:
-      // https://www.codegrepper.com/code-examples/javascript/check+if+word+has+accented+or+unaccented+javascript
-      // Filtering character in regex code: https://regex101.com/r/mL0eG4/1
-      && (word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) || isAccented)
-      && wordClass
-      && Array.isArray(definitions) && definitions.length >= 1
-      && Array.isArray(examples) && examples.length >= 1
-      && pronunciation.length > 10
-      && isStandardIgbo
-    );
-    const manualCheck = isComplete;
-    return automaticCheck || manualCheck;
-  }).length
-);
-
-const countCompletedWords = async (words) => (
-  words.filter(async (word) => {
+const countWords = async (words) => {
+  let sufficientWordsCount = 0;
+  let completeWordsCount = 0;
+  let dialectalVariationsCount = 0;
+  await Promise.all(words.map(async (word) => {
     const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(word);
-    const { completeWordRequirements } = await determineDocumentCompleteness(word);
+    const { sufficientWordRequirements, completeWordRequirements } = await determineDocumentCompleteness(word);
     const manualCheck = word.isComplete && isAsCompleteAsPossible;
-    return manualCheck || !completeWordRequirements.length || (
+    // Tracks total sufficient words
+    const isSufficientWord = !sufficientWordRequirements.length;
+    if (isSufficientWord) {
+      sufficientWordsCount += 1;
+    }
+    // Tracks total complete words
+    const isCompleteWord = manualCheck || !completeWordRequirements.length || (
       completeWordRequirements.length === 1
       && completeWordRequirements.includes('The headword is needed')
     );
-  }).length
-);
+    if (isCompleteWord) {
+      completeWordsCount += 1;
+    }
+    // Tracks total dialectal variations
+    dialectalVariationsCount += (Object.keys(word.dialects || {}).length + 1);
+  }));
 
-const countDialectalVariations = (words) => (
-  words.reduce((dialectalVariationsCount, word) => (
-    dialectalVariationsCount + Object.keys(word.dialects || {}).length + 1
-  ), 0)
-);
+  return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
+};
 
 /* Returns all the Words that are "sufficient" */
 export const getWordStats = async (
@@ -148,10 +115,37 @@ export const getWordStats = async (
       examples: true,
       limit: INCLUDE_ALL_WORDS_LIMIT,
     });
-    const sufficientWordsCount = countSufficientWords(words);
-    const completedWordsCount = await countCompletedWords(words);
-    const dialectalVariationsCount = countDialectalVariations(words);
-    return res.send({ sufficientWordsCount, completedWordsCount, dialectalVariationsCount });
+    const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
+    return res.send({ sufficientWordsCount, completeWordsCount, dialectalVariationsCount });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const countCompletedExamples = async (examples) => {
+  const sufficientExamplesCount = compact(await Promise.all(examples.map(async (example) => (
+    !(await determineExampleCompleteness(example)).completeExampleRequirements.length)))).length;
+  return sufficientExamplesCount;
+};
+
+/* Returns all the Examples that are on the platform */
+export const getExampleStats = async (
+  _: Request,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
+  try {
+    const examples = await Example
+      .find({
+        $and: [
+          { $expr: { $gt: [{ $strLenCP: '$igbo' }, 3] } },
+          { $expr: { $gte: ['$english', '$igbo'] } },
+          { 'associatedWords.0': { $exists: true } },
+        ],
+      });
+    const sufficientExamplesCount = examples.length;
+    const completedExamplesCount = await countCompletedExamples(examples);
+    return res.send({ sufficientExamplesCount, completedExamplesCount });
   } catch (err) {
     return next(err);
   }
