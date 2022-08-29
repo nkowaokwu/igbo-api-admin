@@ -24,19 +24,20 @@ const RelatedTerms = (
   const resolveRelatedTerms = (callback) => async () => {
     setIsLoadingRelatedTerms(true);
     try {
-      setResolvedRelatedTerms(compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
+      const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
         const word = await resolveWord(relatedTermId).catch(() => null);
         return word;
-      }))));
-      callback();
+      })));
+      setResolvedRelatedTerms(compactedResolvedRelatedTerms);
+      callback(compactedResolvedRelatedTerms);
     } finally {
       setIsLoadingRelatedTerms(false);
     }
   };
   useEffect(() => {
-    resolveRelatedTerms(() => {
+    resolveRelatedTerms((relatedTerms) => {
       // Remove stale, invalid Word Ids
-      updateRelatedTerms(resolvedRelatedTerms.map(({ id }) => id));
+      updateRelatedTerms(relatedTerms.map(({ id }) => id));
     })();
   }, []);
   useEffect(() => {
