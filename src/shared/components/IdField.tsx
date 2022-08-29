@@ -5,7 +5,7 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { IdFieldProps } from '../interfaces';
 
 /* Enables editors to copy document ids */
-const IdField = ({ source, record = {} }: IdFieldProps): ReactElement => {
+const IdField = ({ source, record = { id: null } }: IdFieldProps): ReactElement => {
   const toast = useToast();
 
   const handleCopyId = () => {

@@ -37,7 +37,7 @@ const RelatedTerms = (
   return isLoadingRelatedTerms ? (
     <Spinner />
   ) : resolvedRelatedTerms && resolvedRelatedTerms.length ? (
-    <Box display="flex" flexDirection="column" className="space-y-3">
+    <Box display="flex" flexDirection="column" className="space-y-3 py-4">
       {resolvedRelatedTerms.map((word, index) => (
         <Box
           key={word.id}

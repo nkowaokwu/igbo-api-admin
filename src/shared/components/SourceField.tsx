@@ -4,7 +4,14 @@ import { Badge, Tooltip } from '@chakra-ui/react';
 import { Record } from 'react-admin';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 
-const SourceField = ({ record, source } : { record: Record, source: string }): ReactElement => {
+const SourceField = ({
+  record = { id: null },
+  source,
+} : {
+  label?: string,
+  record?: Record,
+  source: string,
+}): ReactElement => {
   const value = get(record, source);
   const badgeLabel = value === SuggestionSource.COMMUNITY
     ? 'Nkọwa okwu'
@@ -20,6 +27,10 @@ const SourceField = ({ record, source } : { record: Record, source: string }): R
       </Badge>
     </Tooltip>
   );
+};
+
+SourceField.defaultProps = {
+  record: { id: null },
 };
 
 export default SourceField;

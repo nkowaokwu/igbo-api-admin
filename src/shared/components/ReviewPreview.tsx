@@ -4,7 +4,12 @@ import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 
 /* Determines whether or not current user has reviewed the current document */
-const ReviewPreview = ({ record }: { record: { approvals: string[], denials: string[] } }): ReactElement => {
+const ReviewPreview = ({
+  record = { id: null, approvals: [], denials: [] },
+}: {
+  label?: string,
+  record?: { id: string | null, approvals: string[], denials: string[] },
+}): ReactElement => {
   const [uid, setUid] = useState('');
   useFirebaseUid(setUid);
 
@@ -22,6 +27,11 @@ const ReviewPreview = ({ record }: { record: { approvals: string[], denials: str
       )}
     </Box>
   );
+};
+
+ReviewPreview.defaultProps = {
+  label: '',
+  record: { id: null, approvals: [], denials: [] },
 };
 
 export default ReviewPreview;

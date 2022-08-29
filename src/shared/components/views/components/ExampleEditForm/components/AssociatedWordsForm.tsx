@@ -10,7 +10,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input, WordPill } from 'src/shared/primitives';
-import { resolveWord } from 'src/shared/API';
+import { resolveWord, getWord, getWords } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
@@ -41,7 +41,7 @@ const AssociatedWords = (
   return isLoadingAssociatedWords ? (
     <Spinner />
   ) : resolvedAssociatedWords && resolvedAssociatedWords.length ? (
-    <Box display="flex" flexDirection="column" className="space-y-3">
+    <Box display="flex" flexDirection="column" className="space-y-3 py-4">
       {resolvedAssociatedWords.map((associatedWord, index) => (
         <Box
           key={associatedWord.id}
@@ -101,7 +101,7 @@ const AssociatedWordsForm = ({
   const handleAddAssociatedWord = async (userInput = input) => {
     try {
       if (canAddAssociatedWord(userInput)) {
-        const word = await network({ url: `/words/${userInput}` }).then(({ json: word }) => word);
+        const word = await getWord(userInput) || (await getWords(userInput))?.[0];
         updateAssociatedWords([...associatedWords, word.id]);
       } else {
         throw new Error('Invalid word id');
@@ -146,7 +146,7 @@ const AssociatedWordsForm = ({
           <IconButton
             colorScheme="green"
             aria-label="Add Associated Word"
-            onClick={() => handleAddAssociatedWord()}
+            onClick={handleAddAssociatedWord}
             icon={<AddIcon />}
           />
         </Tooltip>
