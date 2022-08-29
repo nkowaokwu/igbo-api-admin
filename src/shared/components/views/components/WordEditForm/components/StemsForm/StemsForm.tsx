@@ -34,7 +34,7 @@ const Stems = (
         return word;
       })));
       setResolvedStems(compactedResolvedStems);
-      callback();
+      callback(compactedResolvedStems);
       if (!(resolvedStems && resolvedStems.every(({ id }, index) => stemIds[index] === id))) {
         updateStems(compactedResolvedStems.map(({ id }) => id));
       }
@@ -44,9 +44,9 @@ const Stems = (
   };
 
   useEffect(() => {
-    resolveStems(() => {
+    resolveStems((stems) => {
       // Remove stale, invalid Word Ids
-      updateStems(resolvedStems.map(({ id }) => id));
+      updateStems(stems.map(({ id }) => id));
     })();
   }, []);
   useEffect(() => {

@@ -31,16 +31,16 @@ const AssociatedWords = (
         })),
       );
       setResolvedAssociatedWords(resolvedAssociatedWords);
-      callback();
+      callback(resolvedAssociatedWords);
     } finally {
       setIsLoadingAssociatedWords(false);
     }
   };
 
   useEffect(() => {
-    resolveAssociatedWords(() => {
+    resolveAssociatedWords((words) => {
       // Removes stale, invalid Word Ids
-      updateAssociatedWords(resolvedAssociatedWords.map(({ id }) => id));
+      updateAssociatedWords(words.map(({ id }) => id));
     })();
   }, []);
 
