@@ -4,7 +4,14 @@ import { Badge, Tooltip } from '@chakra-ui/react';
 import { Record } from 'react-admin';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
-const SourceField = ({ record, source } : { record: Record, source: string }): ReactElement => {
+const StyleField = ({
+  record = { id: null },
+  source,
+} : {
+  label?: string,
+  record?: Record,
+  source: string,
+}): ReactElement => {
   const style = Object.values(ExampleStyle).find(({ value }) => value === get(record, source));
 
   return (
@@ -16,4 +23,8 @@ const SourceField = ({ record, source } : { record: Record, source: string }): R
   );
 };
 
-export default SourceField;
+StyleField.defaultProps = {
+  record: { id: null },
+};
+
+export default StyleField;

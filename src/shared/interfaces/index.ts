@@ -59,8 +59,9 @@ export interface ArrayInputProps {
 }
 
 export interface IdFieldProps {
+  label?: string,
   source: string,
-  record: Record,
+  record?: Record,
 }
 
 export interface CustomListActionProps extends ListActionsProps {

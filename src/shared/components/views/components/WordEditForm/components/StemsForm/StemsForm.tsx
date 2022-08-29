@@ -46,7 +46,7 @@ const Stems = (
   return isLoadingStems ? (
     <Spinner />
   ) : resolvedStems && resolvedStems.length ? (
-    <Box display="flex" flexDirection="column" className="space-y-3">
+    <Box display="flex" flexDirection="column" className="space-y-3 py-4">
       {resolvedStems.map((word, index) => (
         <Box
           key={word.id}

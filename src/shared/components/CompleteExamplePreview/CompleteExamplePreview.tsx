@@ -16,11 +16,12 @@ import { getWord } from 'src/shared/API';
 import DocumentStatus from '../../constants/DocumentStatus';
 
 const CompleteExamplePreview = (
-  { record, className, showFull }:
+  { record = { id: null }, className, showFull }:
   {
-    record: Word | Record,
-    className: string,
-    showFull: boolean,
+    label?: string,
+    record?: Word | Record,
+    className?: string,
+    showFull?: boolean,
   },
 ): ReactElement => {
   const [exampleCompleteness, setExampleCompleteness] = useState(null);
@@ -125,6 +126,12 @@ const CompleteExamplePreview = (
       </Tooltip>
     </Box>
   );
+};
+
+CompleteExamplePreview.defaultProps = {
+  record: { id: null },
+  className: '',
+  showFull: false,
 };
 
 export default CompleteExamplePreview;

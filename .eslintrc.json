@@ -30,6 +30,8 @@
     "no-underscore-dangle": "off",
     "react/jsx-props-no-spreading": "off",
     "react/self-closing-comp": "warn",
+    "react/no-unused-prop-types": "off",
+    "react/require-default-props": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-extra-semi": "off",
     "@typescript-eslint/no-explicit-any": "off",
