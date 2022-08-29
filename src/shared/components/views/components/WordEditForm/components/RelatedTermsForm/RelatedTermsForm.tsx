@@ -105,7 +105,7 @@ const RelatedTermsForm = ({
     } catch (err) {
       toast({
         title: 'Unable to add related term',
-        description: 'You have provided an either an invalid word id or a the current word\'s or parent word\'s id.',
+        description: 'You have provided either an invalid word id or a the current word\'s or parent word\'s id.',
         status: 'warning',
         duration: 4000,
         isClosable: true,
