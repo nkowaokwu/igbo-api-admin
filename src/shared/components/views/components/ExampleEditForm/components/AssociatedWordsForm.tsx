@@ -21,21 +21,31 @@ const AssociatedWords = (
   const [resolvedAssociatedWords, setResolvedAssociatedWords] = useState(null);
   const [isLoadingAssociatedWords, setIsLoadingAssociatedWords] = useState(false);
 
+  const resolveAssociatedWords = (callback) => async () => {
+    setIsLoadingAssociatedWords(true);
+    try {
+      const resolvedAssociatedWords = compact(
+        await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
+          const associatedWord = await resolveWord(associatedWordId).catch(() => null);
+          return associatedWord;
+        })),
+      );
+      setResolvedAssociatedWords(resolvedAssociatedWords);
+      callback();
+    } finally {
+      setIsLoadingAssociatedWords(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      setIsLoadingAssociatedWords(true);
-      try {
-        const associatedWordPromises = compact(
-          await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
-            const associatedWord = await resolveWord(associatedWordId).catch(() => null);
-            return associatedWord;
-          })),
-        );
-        setResolvedAssociatedWords(associatedWordPromises);
-      } finally {
-        setIsLoadingAssociatedWords(false);
-      }
+    resolveAssociatedWords(() => {
+      // Removes stale, invalid Word Ids
+      updateAssociatedWords(resolvedAssociatedWords.map(({ id }) => id));
     })();
+  }, []);
+
+  useEffect(() => {
+    resolveAssociatedWords(() => {})();
   }, [associatedWordIds]);
 
   return isLoadingAssociatedWords ? (

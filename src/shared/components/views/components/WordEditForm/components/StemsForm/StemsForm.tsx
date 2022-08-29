@@ -20,27 +20,37 @@ const Stems = (
 ) => {
   const [resolvedStems, setResolvedStems] = useState(null);
   const [isLoadingStems, setIsLoadingStems] = useState(false);
-  useEffect(() => {
-    (async () => {
-      setIsLoadingStems(true);
-      try {
-        /**
-         * We compact the resolved stems so that if a word cannot be found
-         * by its MongoDB Id or regular word search, the compact array will be used
-         * to save the Word Suggestion, omitting the unwanted word.
-         */
-        const compactedResolvedStems = compact(await Promise.all(stemIds.map(async (stemId) => {
-          const word = await resolveWord(stemId).catch(() => null);
-          return word;
-        })));
-        setResolvedStems(compactedResolvedStems);
-        if (!(resolvedStems && resolvedStems.every(({ id }, index) => stemIds[index] === id))) {
-          updateStems(compactedResolvedStems.map(({ id }) => id));
-        }
-      } finally {
-        setIsLoadingStems(false);
+
+  const resolveStems = (callback) => async () => {
+    setIsLoadingStems(true);
+    try {
+      /**
+       * We compact the resolved stems so that if a word cannot be found
+       * by its MongoDB Id or regular word search, the compact array will be used
+       * to save the Word Suggestion, omitting the unwanted word.
+       */
+      const compactedResolvedStems = compact(await Promise.all(stemIds.map(async (stemId) => {
+        const word = await resolveWord(stemId).catch(() => null);
+        return word;
+      })));
+      setResolvedStems(compactedResolvedStems);
+      callback();
+      if (!(resolvedStems && resolvedStems.every(({ id }, index) => stemIds[index] === id))) {
+        updateStems(compactedResolvedStems.map(({ id }) => id));
       }
+    } finally {
+      setIsLoadingStems(false);
+    }
+  };
+
+  useEffect(() => {
+    resolveStems(() => {
+      // Remove stale, invalid Word Ids
+      updateStems(resolvedStems.map(({ id }) => id));
     })();
+  }, []);
+  useEffect(() => {
+    resolveStems(() => {})();
   }, [stemIds]);
 
   return isLoadingStems ? (

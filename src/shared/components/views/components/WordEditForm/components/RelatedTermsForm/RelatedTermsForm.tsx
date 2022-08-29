@@ -20,18 +20,27 @@ const RelatedTerms = (
 ) => {
   const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
   const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
+
+  const resolveRelatedTerms = (callback) => async () => {
+    setIsLoadingRelatedTerms(true);
+    try {
+      setResolvedRelatedTerms(compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
+        const word = await resolveWord(relatedTermId).catch(() => null);
+        return word;
+      }))));
+      callback();
+    } finally {
+      setIsLoadingRelatedTerms(false);
+    }
+  };
   useEffect(() => {
-    (async () => {
-      setIsLoadingRelatedTerms(true);
-      try {
-        setResolvedRelatedTerms(compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
-          const word = await resolveWord(relatedTermId).catch(() => null);
-          return word;
-        }))));
-      } finally {
-        setIsLoadingRelatedTerms(false);
-      }
+    resolveRelatedTerms(() => {
+      // Remove stale, invalid Word Ids
+      updateRelatedTerms(resolvedRelatedTerms.map(({ id }) => id));
     })();
+  }, []);
+  useEffect(() => {
+    resolveRelatedTerms(() => {})();
   }, [relatedTermIds]);
 
   return isLoadingRelatedTerms ? (
