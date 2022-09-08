@@ -86,7 +86,7 @@ export const denyDocument = ({ resource, record }: { resource: string, record: R
 export const mergeDocument = ({ collection, record }: { collection: string, record: Record }): Promise<any> => request({
   method: 'POST',
   url: `${API_ROUTE}/${collection}`,
-  data: { id: record.id },
+  data: { id: record.id, originalWordId: record.originalWordId ? record.originalWordId : null },
 });
 
 export const deleteDocument = async (
