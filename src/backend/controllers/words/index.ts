@@ -107,7 +107,7 @@ export const getWords = async (
     if (!words.length) {
       query = searchEnglishRegexQuery(regexKeyword, filters);
       const englishWords = await searchWordUsingEnglish({ query, ...searchQueries });
-      return packageResponse({
+      return await packageResponse({
         res,
         docs: englishWords,
         model: Word,
@@ -115,7 +115,7 @@ export const getWords = async (
         ...rest,
       });
     }
-    return packageResponse({
+    return await packageResponse({
       res,
       docs: words,
       model: Word,
@@ -274,7 +274,7 @@ const overwriteWordPronunciation = async (
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
     await Word.findOneAndUpdate({ _id: word.id }, word.toObject());
-    return word.save();
+    return await word.save();
   } catch (err) {
     console.log('An error while merging audio pronunciations failed:', err.message);
     console.log(err.stack);
@@ -348,9 +348,12 @@ export const mergeWord = async (
 ): Promise<Response | void> => {
   try {
     const { user, suggestionDoc } = req;
+    const {
+      originalWordId,
+    }: Document<Interfaces.WordSuggestion> | any = await WordSuggestion.findById(suggestionDoc.id);
 
     const mergedWord: Document<Interfaces.Word> | any = (
-      suggestionDoc.originalWordId
+      originalWordId
         ? await mergeIntoWord(suggestionDoc, user.uid)
         : await createWordFromSuggestion(suggestionDoc, user.uid)
     ) || {};
