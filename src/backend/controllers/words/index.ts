@@ -351,9 +351,12 @@ export const mergeWord = async (
 ): Promise<Response | void> => {
   try {
     const { user, suggestionDoc } = req;
+    const {
+      originalWordId,
+    }: Document<Interfaces.WordSuggestion> | any = await WordSuggestion.findById(suggestionDoc.id);
 
     const mergedWord: Document<Interfaces.Word> | any = (
-      suggestionDoc.originalWordId
+      originalWordId
         ? await mergeIntoWord(suggestionDoc, user.uid)
         : await createWordFromSuggestion(suggestionDoc, user.uid)
     ) || {};
