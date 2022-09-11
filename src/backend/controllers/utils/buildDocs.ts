@@ -97,6 +97,7 @@ export const findWordsWithMatch = async (
       source: 1,
       ...(examples ? { examples: 1 } : {}),
     })
+    .sort({ definitions: -1 })
     .skip(skip)
     .limit(limit);
 
