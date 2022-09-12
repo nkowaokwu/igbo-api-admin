@@ -7,7 +7,7 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { Title } from 'react-admin';
-import firebase from 'firebase';
+import { getAuth } from 'firebase/auth';
 import Card from './components/Card';
 import {
   IGBO_API_VOLUNTEER_HOME_BASE,
@@ -19,6 +19,7 @@ import {
 import MilestoneProgress from './components/MilestoneProgress';
 import network from './network';
 
+const auth = getAuth();
 const userStatsLabel = {
   approvedWordSuggestionsCount: {
     label: 'Total approved word suggestions',
@@ -48,7 +49,7 @@ const userStatsLabel = {
 
 const Dashboard = (): ReactElement => {
   const [userStats, setUserStats] = useState(null);
-  const user = firebase.auth().currentUser;
+  const { currentUser: user } = auth;
 
   const determineDashboardTitle = () => {
     const WELCOME_HEADER = 'Welcome';

@@ -22,7 +22,7 @@ const Card = ({
   heading?: string,
   description?: string,
   onClick?: () => void,
-  link?: '',
+  link?: string,
   buttonLabel?: string,
   render?: any,
   isLoaded?: boolean,

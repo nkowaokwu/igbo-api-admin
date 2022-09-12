@@ -20,15 +20,7 @@ import {
   putExampleSuggestion,
   postExampleSuggestion,
 } from '../controllers/exampleSuggestions';
-import {
-  getTotalHeadwordsWithAudioPronunciations,
-  getTotalWordsInStandardIgbo,
-  getExampleStats,
-  getTotalWordsWithNsibidi,
-  getTotalWordSuggestionsWithNsibidi,
-  getWordStats,
-  getUserStats,
-} from '../controllers/stats';
+import { getStats, getUserStats } from '../controllers/stats';
 import {
   deleteGenericWord,
   getGenericWords,
@@ -81,12 +73,7 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/stats/words', cacheControl, getWordStats);
-editorRouter.get('/stats/headwordAudioPronunciations', cacheControl, getTotalHeadwordsWithAudioPronunciations);
-editorRouter.get('/stats/isStandardIgbo', cacheControl, getTotalWordsInStandardIgbo);
-editorRouter.get('/stats/examples', cacheControl, getExampleStats);
-editorRouter.get('/stats/nsibidi', cacheControl, getTotalWordsWithNsibidi);
-editorRouter.get('/stats/nsibidi-suggestions', cacheControl, getTotalWordSuggestionsWithNsibidi);
+editorRouter.get('/stats/full', getStats);
 editorRouter.get('/stats/user', cacheControl, getUserStats);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);

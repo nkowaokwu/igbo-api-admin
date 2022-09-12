@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import './src/backend/shared/utils/wrapConsole';
 import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/services/emailJobs';
+import { onUpdateDashboardStats } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import apiRouter from './src/backend/routers/apiRouter';
 import editorRouter from './src/backend/routers/editorRouter';
@@ -63,9 +64,15 @@ export const updateDocument = onUpdateDocument;
 export const sendEditorStatsEmail = functions.pubsub.schedule('0 6 * * 1')
   .timeZone('America/Los_Angeles')
   .onRun(sendWeeklyStats);
+
 export const sendEditorReminderEmail = functions.pubsub.schedule('0 6 */4 * *')
   .timeZone('America/Los_Angeles')
   .onRun(onSendEditorReminderEmail);
+
+/* Runs at minute 0, 10, 20, 30, 40, and 50 past every hour from 8AM through 10PM WAT */
+export const calculateDashboardStats = functions.pubsub.schedule('0,10,20,30,40,50 8-22 * * *')
+  .timeZone('Africa/Lagos')
+  .onRun(onUpdateDashboardStats)
 
 /**
  * Determines whether or not in a backend testing environment or in a
