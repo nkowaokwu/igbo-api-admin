@@ -1,8 +1,4 @@
 /* eslint-disable max-len */
-export const HOST = 'localhost';
-export const FIRESTORE_PORT = 8081;
-export const EMULATOR_PORT = 5002;
-
 export const PROD_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyBdVZrCXPN5wZiNbbVkqz9SF35KkMoqpMo',
   authDomain: 'igbo-api-admin.firebaseapp.com',

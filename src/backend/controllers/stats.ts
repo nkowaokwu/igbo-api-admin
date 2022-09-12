@@ -4,6 +4,7 @@ import Example from '../models/Example';
 import Word from '../models/Word';
 import WordSuggestion from '../models/WordSuggestion';
 import ExampleSuggestion from '../models/ExampleSuggestion';
+import Stat from '../models/Stat';
 import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
@@ -13,65 +14,61 @@ import { findWordsWithMatch } from './utils/buildDocs';
 import determineDocumentCompleteness from './utils/determineDocumentCompleteness';
 import determineExampleCompleteness from './utils/determineExampleCompleteness';
 import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPossible';
+import StatTypes from '../shared/constants/StatTypes';
+
+const findStat = async ({ statType, authorId = 'SYSTEM' }) => {
+  let stat = await Stat.findOne({ type: statType, authorId });
+  if (!stat) {
+    // The stat hasn't been created, let's create a new one
+    const newState = new Stat({ type: statType, authorId });
+    stat = newState.save();
+  }
+  return stat;
+};
+
+const updateStat = async ({ statType, authorId = 'SYSTEM', value }) => {
+  if ((!value && typeof value !== 'number')) {
+    throw new Error('Valid truthy valid must be provided');
+  }
+
+  const stat = await findStat({ statType, authorId });
+  stat.value = value;
+  stat.markModified('value');
+  return stat.save();
+};
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
-export const getTotalHeadwordsWithAudioPronunciations = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    const audioPronunciationWords = await Word
-      .countDocuments(searchForAllWordsWithAudioPronunciations());
-    return res.send({ count: audioPronunciationWords });
-  } catch (err) {
-    return next(err);
-  }
+const calculateTotalHeadwordsWithAudioPronunciations = async ():
+Promise<{ audioPronunciationWords: number } | void> => {
+  const audioPronunciationWords = await Word
+    .countDocuments(searchForAllWordsWithAudioPronunciations());
+  await updateStat({ statType: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
+  return { audioPronunciationWords };
 };
 
 /* Returns all the Words that's in Standard Igbo */
-export const getTotalWordsInStandardIgbo = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    const isStandardIgboWords = await Word
-      .countDocuments(searchForAllWordsWithIsStandardIgbo());
-    return res.send({ count: isStandardIgboWords });
-  } catch (err) {
-    return next(err);
-  }
+const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWords: number } | void> => {
+  const isStandardIgboWords = await Word
+    .countDocuments(searchForAllWordsWithIsStandardIgbo());
+  await updateStat({ statType: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
+  return { isStandardIgboWords };
 };
 
 /* Returns all Words with Nsịbịdị */
-export const getTotalWordsWithNsibidi = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-) : Promise<Response | void> => {
-  try {
-    const wordsWithNsibidi = await Word
-      .countDocuments(searchForAllWordsWithNsibidi());
-    return res.send({ count: wordsWithNsibidi });
-  } catch (err) {
-    return next(err);
-  }
+const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: number } | void> => {
+  const wordsWithNsibidi = await Word
+    .countDocuments(searchForAllWordsWithNsibidi());
+  await updateStat({ statType: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
+
+  return { wordsWithNsibidi };
 };
 
 /* Returns all Word Suggestions with Nsịbịdị */
-export const getTotalWordSuggestionsWithNsibidi = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-) : Promise<Response | void> => {
-  try {
-    const wordSuggestionsWithNsibidi = await WordSuggestion
-      .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
-    return res.send({ count: wordSuggestionsWithNsibidi });
-  } catch (err) {
-    return next(err);
-  }
+const calculateTotalWordSuggestionsWithNsibidi = async () : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
+  const wordSuggestionsWithNsibidi = await WordSuggestion
+    .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
+  await updateStat({ statType: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
+  return { wordSuggestionsWithNsibidi };
 };
 
 const countWords = async (words) => {
@@ -103,23 +100,20 @@ const countWords = async (words) => {
 };
 
 /* Returns all the Words that are "sufficient" */
-export const getWordStats = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-) : Promise<Response | void> => {
-  try {
-    const INCLUDE_ALL_WORDS_LIMIT = 100000;
-    const words = await findWordsWithMatch({
-      match: { word: { $regex: /./ }, 'attributes.isStandardIgbo': { $eq: true } },
-      examples: true,
-      limit: INCLUDE_ALL_WORDS_LIMIT,
-    });
-    const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
-    return res.send({ sufficientWordsCount, completeWordsCount, dialectalVariationsCount });
-  } catch (err) {
-    return next(err);
-  }
+const calculateWordStats = async ():
+Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
+  const INCLUDE_ALL_WORDS_LIMIT = 100000;
+  const words = await findWordsWithMatch({
+    match: { word: { $regex: /./ }, 'attributes.isStandardIgbo': { $eq: true } },
+    examples: true,
+    limit: INCLUDE_ALL_WORDS_LIMIT,
+  });
+  const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
+  await updateStat({ statType: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
+  await updateStat({ statType: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
+  await updateStat({ statType: StatTypes.DIALECTAL_VARIATONS, value: dialectalVariationsCount });
+
+  return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
 };
 
 const countCompletedExamples = async (examples) => {
@@ -129,26 +123,23 @@ const countCompletedExamples = async (examples) => {
 };
 
 /* Returns all the Examples that are on the platform */
-export const getExampleStats = async (
-  _: Request,
-  res: Response,
-  next: NextFunction,
-) : Promise<Response | void> => {
-  try {
-    const examples = await Example
-      .find({
-        $and: [
-          { $expr: { $gt: [{ $strLenCP: '$igbo' }, 3] } },
-          { $expr: { $gte: ['$english', '$igbo'] } },
-          { 'associatedWords.0': { $exists: true } },
-        ],
-      });
-    const sufficientExamplesCount = examples.length;
-    const completedExamplesCount = await countCompletedExamples(examples);
-    return res.send({ sufficientExamplesCount, completedExamplesCount });
-  } catch (err) {
-    return next(err);
-  }
+const calculateExampleStats = async ():
+Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | void> => {
+  const examples = await Example
+    .find({
+      $and: [
+        { $expr: { $gt: [{ $strLenCP: '$igbo' }, 3] } },
+        { $expr: { $gte: ['$english', '$igbo'] } },
+        { 'associatedWords.0': { $exists: true } },
+      ],
+    });
+  const sufficientExamplesCount = examples.length;
+  await updateStat({ statType: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount });
+
+  const completedExamplesCount = await countCompletedExamples(examples);
+  await updateStat({ statType: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount });
+
+  return { sufficientExamplesCount, completedExamplesCount };
 };
 
 export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
@@ -180,4 +171,25 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
   } catch (err) {
     return next(err);
   }
+};
+
+export const getStats = async (_: Request, res: Response, next: NextFunction) => {
+  try {
+    const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } });
+    return res.send(stats.reduce((finalObject, stat) => ({
+      ...finalObject,
+      [stat.type]: stat,
+    }), {}));
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const onUpdateDashboardStats = async () => {
+  await calculateExampleStats();
+  await calculateWordStats();
+  await calculateTotalWordSuggestionsWithNsibidi();
+  await calculateTotalWordsWithNsibidi();
+  await calculateTotalWordsInStandardIgbo();
+  await calculateTotalHeadwordsWithAudioPronunciations();
 };

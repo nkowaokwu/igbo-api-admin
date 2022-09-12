@@ -1,5 +1,12 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import firebase from 'firebase';
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  GoogleAuthProvider,
+  EmailAuthProvider,
+  FacebookAuthProvider,
+} from 'firebase/auth';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {
   Box,
@@ -19,6 +26,7 @@ export interface SignupInfo {
   role: Role.USER,
 }
 
+const auth = getAuth();
 const Login = (): ReactElement => {
   const [successfulCreateAccount, setSuccessfulCreateAccount] = useState(null);
   const [errorUponSubmitting, setErrorUponSubmitting] = useState(null);
@@ -30,7 +38,7 @@ const Login = (): ReactElement => {
     const userRole = idTokenResult.claims.role;
     const hasPermission = userRole === Role.ADMIN || userRole === Role.MERGER || userRole === Role.EDITOR;
     if (!hasPermission) {
-      firebase.auth().signOut();
+      signOut(auth);
       window.localStorage.clear();
       setErrorUponSubmitting('You do not have permission to access the platform');
     }
@@ -46,11 +54,11 @@ const Login = (): ReactElement => {
     signInFlow: 'popup',
     signInSuccessUrl: '#/',
     signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      GoogleAuthProvider.PROVIDER_ID,
+      FacebookAuthProvider.PROVIDER_ID,
       {
-        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        signInMethod: firebase.auth.EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD,
+        provider: EmailAuthProvider.PROVIDER_ID,
+        signInMethod: EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD,
         requireDisplayName: true,
       },
     ],
@@ -59,7 +67,7 @@ const Login = (): ReactElement => {
       signInSuccessWithAuthResult: (user) => {
         if (user.additionalUserInfo.isNewUser) {
           handleCreateUserAccount(user.user.toJSON());
-          firebase.auth().signOut();
+          signOut(auth);
           localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
           localStorage.removeItem(LocalStorageKeys.UID);
           localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
@@ -76,15 +84,13 @@ const Login = (): ReactElement => {
 
   // Listen to the Firebase Auth state and set the local state.
   useEffect(() => {
-    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(async () => {
-      const user = firebase.auth().currentUser;
+    onAuthStateChanged(auth, async (user) => {
       if (!user) {
         return false;
       }
       await handleRedirect(user);
       return false;
     });
-    return () => unregisterAuthObserver();
   }, []);
 
   const refreshPage = () => window.location.reload();
@@ -135,7 +141,7 @@ const Login = (): ReactElement => {
                   </Button>
                 </Box>
               </Box>
-            ) : <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />}
+            ) : <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />}
           </Box>
         </Box>
       </Box>

@@ -1,6 +1,6 @@
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getApp } from 'firebase/app';
 import { CallableFunctionInputs, CallableFunctionResponse, CallableFunction } from '../shared/server-validation';
-import { useFirebase } from './useFirebase';
-import useFirebaseConfig from './useFirebaseConfig';
 
 /**
  * Custom hook for using Firebase callable functions
@@ -8,11 +8,8 @@ import useFirebaseConfig from './useFirebaseConfig';
  */
 export const useCallable = (
   <CallableInputs extends CallableFunctionInputs, CallableOutputs extends CallableFunctionResponse>(name: string) => {
-    const firebaseConfig = useFirebaseConfig();
-    const firebase = useFirebase(firebaseConfig);
-    const callableFunction = firebase
-      .functions()
-      .httpsCallable(name) as CallableFunction<CallableInputs, CallableOutputs>;
+    const functions = getFunctions(getApp());
+    const callableFunction = httpsCallable(functions, name) as CallableFunction<CallableInputs, CallableOutputs>;
     return callableFunction;
   }
 );

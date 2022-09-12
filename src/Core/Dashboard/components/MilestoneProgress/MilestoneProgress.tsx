@@ -36,36 +36,29 @@ const MilestoneProgress = (): ReactElement => {
   };
 
   useEffect(() => {
-    network({ url: '/stats/words' })
+    network({ url: '/stats/full' })
       .then(({ body }) => {
-        const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = JSON.parse(body);
-        setTotalSufficientWords(sufficientWordsCount || 0);
-        setTotalCompletedWords(completeWordsCount || 0);
-        setTotalDialectalVariations(dialectalVariationsCount || 0);
+        const {
+          sufficient_words,
+          complete_words,
+          dialectal_variations,
+          headword_audio_pronunciations,
+          standard_igbo,
+          sufficient_examples,
+          complete_examples,
+          nsibidi_words,
+          nsibidi_word_suggestions,
+        } = JSON.parse(body);
+        setTotalSufficientWords(sufficient_words?.value || 0);
+        setTotalCompletedWords(complete_words?.value || 0);
+        setTotalDialectalVariations(dialectal_variations?.value || 0);
+        setTotalHeadwordAudioPronunciation(headword_audio_pronunciations?.value || 0);
+        setTotalWordIsStandardIgbo(standard_igbo?.value || 0);
+        setTotalSufficientExamples(sufficient_examples?.value || 0);
+        setTotalCompletedExamples(complete_examples?.value || 0);
+        setTotalWordsWithNsibidi(nsibidi_words?.value || 0);
+        setTotalWordSuggestionsWithNsibidi(nsibidi_word_suggestions?.value || 0);
       })
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/headwordAudioPronunciations' })
-      .then(({ body: audioPronunciations }) => (
-        setTotalHeadwordAudioPronunciation(JSON.parse(audioPronunciations).count || 0)
-      ))
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/isStandardIgbo' })
-      .then(({ body: isStandardIgbo }) => setTotalWordIsStandardIgbo(JSON.parse(isStandardIgbo).count || 0))
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/examples' })
-      .then(({ body }) => {
-        const { sufficientExamplesCount, completedExamplesCount } = JSON.parse(body);
-        setTotalSufficientExamples(sufficientExamplesCount || 0);
-        setTotalCompletedExamples(completedExamplesCount || 0);
-      })
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/nsibidi' })
-      .then(({ body: wordsWithNsibidi }) => setTotalWordsWithNsibidi(JSON.parse(wordsWithNsibidi).count || 0))
-      .catch(handleNoPermissionStatus);
-    network({ url: '/stats/nsibidi-suggestions' })
-      .then(({ body: wordSuggestionsWithNsibidi }) => (
-        setTotalWordSuggestionsWithNsibidi(JSON.parse(wordSuggestionsWithNsibidi).count || 0)
-      ))
       .catch(handleNoPermissionStatus);
   }, []);
   return (

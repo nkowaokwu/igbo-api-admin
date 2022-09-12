@@ -10,10 +10,10 @@
 
 import '@testing-library/cypress/add-commands';
 import { v4 as uuidv4 } from 'uuid';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/database';
-import 'firebase/firestore';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/database';
+import 'firebase/compat/firestore';
 import 'cypress-localstorage-commands';
 import { times } from 'lodash';
 import { attachCustomCommands } from 'cypress-firebase';

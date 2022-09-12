@@ -2,11 +2,12 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import Loadable from 'react-loadable';
 import { pick } from 'lodash';
-import firebase from 'firebase';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import authProvider from '../utils/authProvider';
 import PlatformLoader from './PlatformLoader';
 import '../styles.css';
 
+const auth = getAuth();
 const AsyncIgboAPIAdmin = Loadable({
   loader: () => import('./IgboAPIAdmin'),
   loading: PlatformLoader,
@@ -46,7 +47,7 @@ const App = (): React.ReactElement => {
   /* Checks to see if the user is logged in before loading the platform */
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      firebase.auth().onAuthStateChanged((rawUser) => {
+      onAuthStateChanged(auth, (rawUser) => {
         const cleanedUser = pick(rawUser, ['displayName', 'email', 'photoURL', 'uid']);
         setUser(cleanedUser);
       });
