@@ -77,7 +77,7 @@ const countWords = async (words) => {
   let dialectalVariationsCount = 0;
   await Promise.all(words.map(async (word) => {
     const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(word);
-    const { sufficientWordRequirements, completeWordRequirements } = await determineDocumentCompleteness(word);
+    const { sufficientWordRequirements, completeWordRequirements } = await determineDocumentCompleteness(word, true);
     const manualCheck = word.isComplete && isAsCompleteAsPossible;
     // Tracks total sufficient words
     const isSufficientWord = !sufficientWordRequirements.length;
@@ -142,7 +142,7 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
   return { sufficientExamplesCount, completedExamplesCount };
 };
 
-export const getUserStats = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const { user } = req;
     const wordSuggestions = await WordSuggestion.find({}).lean();
@@ -173,7 +173,7 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const getStats = async (_: Request, res: Response, next: NextFunction) => {
+export const getStats = async (_: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } });
     return res.send(stats.reduce((finalObject, stat) => ({
@@ -185,11 +185,11 @@ export const getStats = async (_: Request, res: Response, next: NextFunction) =>
   }
 };
 
-export const onUpdateDashboardStats = async () => {
+export const onUpdateDashboardStats = async (): Promise<void> => {
   await calculateExampleStats();
-  await calculateWordStats();
   await calculateTotalWordSuggestionsWithNsibidi();
   await calculateTotalWordsWithNsibidi();
   await calculateTotalWordsInStandardIgbo();
   await calculateTotalHeadwordsWithAudioPronunciations();
+  await calculateWordStats();
 };
