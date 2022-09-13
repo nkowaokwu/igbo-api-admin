@@ -6,7 +6,7 @@ import Tense from 'src/backend/shared/constants/Tense';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { invalidRelatedTermsWordClasses } from './determineIsAsCompleteAsPossible';
 
-export default async (record: Word | Record) : Promise<{
+export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
   sufficientWordRequirements: string[],
   completeWordRequirements: string[],
   recommendRevisiting: boolean,
@@ -47,7 +47,7 @@ export default async (record: Word | Record) : Promise<{
     !wordClass && 'The word class is needed',
     Array.isArray(definitions) && !definitions.length && 'At least one definition is needed',
     Array.isArray(examples) && !examples?.length && 'At least one example sentence is needed',
-    (!pronunciation || !isAudioAvailable) && 'An audio pronunciation is needed',
+    (!pronunciation || (!skipAudioCheck && !isAudioAvailable)) && 'An audio pronunciation is needed',
     !isStandardIgbo && 'The headword needs to be marked as Standard Igbo',
   ]);
 
