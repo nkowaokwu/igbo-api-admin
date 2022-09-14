@@ -100,6 +100,7 @@ export const SuggestionSelectOptions = {
   VIEW: 'View',
   APPROVE: /Approve|Approved/,
   DENY: /Deny|Denied/,
+  NOTIFY: 'Notify',
   DELETE: 'Delete',
 };
 

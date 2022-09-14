@@ -81,6 +81,7 @@ const wordSuggestionSchema = new Schema(
     source: { type: String, defualt: SuggestionSource.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },
+    userInteractions: { type: [{ type: String }], default: [] },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

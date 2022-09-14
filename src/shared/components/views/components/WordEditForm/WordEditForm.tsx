@@ -351,7 +351,7 @@ const WordEditForm = ({
         */}
       <Box className="flex flex-col">
         <FormHeader
-          title="Editor Comments"
+          title="Editor's Comments"
           tooltip={`Leave a comment for other editors to read to 
           understand your reasoning behind your change. 
           Leave your name on your comment!`}
@@ -365,7 +365,7 @@ const WordEditForm = ({
               rows={8}
             />
           )}
-          name="userComments"
+          name="editorsNotes"
           defaultValue={record.userComments || getValues().userComments}
           control={control}
         />

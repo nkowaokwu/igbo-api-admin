@@ -80,7 +80,8 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   examples?: ExampleSuggestion[],
   dialects?: {
     [key: string]: WordDialect,
-  }
+  },
+  userInteractions?: string[],
 };
 
 export interface Example extends Document<any>, LeanDocument<any> {
@@ -109,6 +110,7 @@ export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
   updatedAt: Date,
   merged: Types.ObjectId,
   mergedBy: string,
+  userInteractions?: string[],
 };
 
 export interface ExampleClientData {

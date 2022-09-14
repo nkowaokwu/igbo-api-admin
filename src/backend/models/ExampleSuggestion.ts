@@ -28,6 +28,7 @@ const exampleSuggestionSchema = new Schema({
   source: { type: String, default: SuggestionSource.INTERNAL },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
   mergedBy: { type: String, default: null },
+  userInteractions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSuggestionSchema);

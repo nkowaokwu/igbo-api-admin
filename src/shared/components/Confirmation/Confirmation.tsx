@@ -148,7 +148,9 @@ const Confirmation = ({
           ? { groupNumber: idValue }
           : action?.type === ActionTypes.REQUEST_DELETE
             ? { note: idValue }
-            : {}),
+            : action?.type === ActionTypes.NOTIFY
+              ? { editorsNotes: `${record?.editorsNotes || ''}\n\n${idValue}` }
+              : {}),
       resource,
       record,
     })
@@ -193,6 +195,7 @@ const Confirmation = ({
       action?.type === ActionTypes.COMBINE
       || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
       || action?.type === ActionTypes.REQUEST_DELETE
+      || action?.type === ActionTypes.NOTIFY
     ) {
       provideInputValueUponSubmit();
     } else {
@@ -258,6 +261,17 @@ const Confirmation = ({
           placeholder="Editing Group Number"
           type="number"
           max={MAX_EDITING_GROUP_NUMBER}
+        />
+      ) : null}
+      {action?.type === ActionTypes.NOTIFY ? (
+        <InputNoteForm
+          onSubmit={handleConfirm}
+          onChange={(e) => setIdValue(e.target.value)}
+          value={idValue}
+          header=""
+          data-test="notify-input"
+          placeholder="Add a message to send to all associated editors"
+          type="text"
         />
       ) : null}
     </ConfirmModal>

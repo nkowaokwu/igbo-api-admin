@@ -145,7 +145,7 @@ export const sendDocumentUpdateNotification = (
     const adminEmails = await findAdminUserEmails() as [string];
     const message = constructMessage({
       from: { email: API_FROM_EMAIL, name: 'Igbo API' },
-      to: [...adminEmails, data.to],
+      to: adminEmails.concat(data.to),
       templateId: DOCUMENT_UPDATE_NOTIFICATION,
       dynamic_template_data: omit(data, ['to']),
     });

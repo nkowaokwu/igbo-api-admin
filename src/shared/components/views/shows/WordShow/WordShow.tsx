@@ -88,11 +88,19 @@ const WordShow = (props: ShowProps): ReactElement => {
   /* Grabs the original word if it exists */
   useEffect(() => {
     (async () => {
-      const originalWord = record?.originalWordId ? await getWord(record.originalWordId) : null;
-      const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
-      setOriginalWordRecord(originalWord);
-      setDiffRecord(differenceRecord);
-      setIsLoading(false);
+      try {
+        const originalWord = record?.originalWordId ? await getWord(record.originalWordId).catch((err) => {
+          // Unable to retrieve word
+          console.log(err);
+        }) : null;
+        const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
+        setOriginalWordRecord(originalWord);
+        setDiffRecord(differenceRecord);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
     })();
   }, [record]);
 

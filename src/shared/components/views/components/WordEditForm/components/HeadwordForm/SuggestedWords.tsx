@@ -73,7 +73,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                     <Text fontStyle="italic">{WordClass[wordClass]?.label || wordClass}</Text>
                     <Box>
                       {definitions.map((definition, index) => (
-                        <Text>{`${index + 1}. ${definition}`}</Text>
+                        <Text key={definition}>{`${index + 1}. ${definition}`}</Text>
                       ))}
                     </Box>
                   </PopoverContent>

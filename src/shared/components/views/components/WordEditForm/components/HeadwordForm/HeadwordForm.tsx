@@ -72,7 +72,8 @@ const HeadwordForm = ({
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
                     isChecked={value}
-                    defaultIsChecked={isHeadwordAccented || record.attributes?.[WordAttributes.IS_ACCENTED.value]}
+                    defaultIsChecked={isHeadwordAccented?.length
+                      || record.attributes?.[WordAttributes.IS_ACCENTED.value]}
                     ref={ref}
                     data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
                     size="lg"
@@ -80,7 +81,7 @@ const HeadwordForm = ({
                     <span className="font-bold">{WordAttributes.IS_ACCENTED.label}</span>
                   </Checkbox>
                 )}
-                defaultValue={isHeadwordAccented
+                defaultValue={isHeadwordAccented?.length
                   || record.attributes?.[WordAttributes.IS_ACCENTED.value]
                   || getValues().attributes?.[WordAttributes.IS_ACCENTED.value]}
                 name={`attributes.${WordAttributes.IS_ACCENTED.value}`}
@@ -113,7 +114,7 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
-          <Tooltip label="Check this checkbox if this is a newly constructed Igbo word">
+          <Tooltip label="Check this checkbox if this is a newly coined, aka constructed, Igbo word">
             <Box display="flex">
               <Controller
                 render={({ onChange, value, ref }) => (

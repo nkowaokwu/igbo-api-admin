@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import {
   AddIcon,
+  AtSignIcon,
   CheckCircleIcon,
   ChevronDownIcon,
   DeleteIcon,
@@ -118,6 +119,16 @@ const Select = ({
         </span>
       ))(),
       onSelect: () => setAction(actionsMap.Deny),
+    },
+    {
+      value: 'notify',
+      label: (() => (
+        <span>
+          <AtSignIcon className="mr-2" />
+          Notify Editors
+        </span>
+      ))(),
+      onSelect: () => setAction(actionsMap.Notify),
     },
     hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
       {

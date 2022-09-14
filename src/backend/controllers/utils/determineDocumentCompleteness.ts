@@ -21,7 +21,7 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       isStandardIgbo,
       isAccented,
       isComplete,
-    },
+    } = {},
     nsibidi,
     stems = [],
     relatedTerms = [],

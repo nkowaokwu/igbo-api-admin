@@ -38,7 +38,7 @@ it('render word edit form', async () => {
   await findByText('Antonyms');
   await findByText('Examples');
   await findByText('Current Dialects');
-  await findByText('Editor Comments');
+  await findByText('Editor\'s Comments');
 });
 
 it('add a word stem to word suggestion', async () => {
