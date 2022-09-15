@@ -8,8 +8,10 @@ import {
   MenuList,
   MenuItemOption,
   MenuOptionGroup,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   sanitizeListRestProps,
   TopToolbar,
@@ -191,6 +193,16 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
               >
                 {!selectedFilters ? 'Filters' : 'Filters selected'}
               </MenuButton>
+              {selectedFilters ? (
+                <Tooltip label="Clear filters">
+                  <IconButton
+                    aria-label="Clear filters"
+                    variant="ghost"
+                    icon={<DeleteIcon color="red" />}
+                    onClick={() => setCurrentFilters([])}
+                  />
+                </Tooltip>
+              ) : null}
               <MenuList minWidth="240px" zIndex={10}>
                 <MenuOptionGroup
                   defaultValue={currentFilters}
