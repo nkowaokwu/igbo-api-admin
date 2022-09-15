@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "igbo-api-admin",
+    "default": "igbo-api-admin-production",
     "staging": "igbo-api-admin-staging"
   }
 }

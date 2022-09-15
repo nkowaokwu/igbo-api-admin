@@ -57,19 +57,23 @@ export const getWordData = (req: Request, res: Response, next: NextFunction): Re
 
 /* Searches for a word with Igbo stored in MongoDB */
 export const searchWordUsingIgbo = async (
-  { query, searchWord, ...rest }:
-  { query: any, searchWord: string },
+  {
+    query, searchWord, constructedTerms, ...rest
+  }:
+  { query: any, searchWord: string, constructedTerms: boolean },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
+  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, constructedTerms, ...rest });
   return sortDocsBy(searchWord, words, 'word');
 };
 
 /* Searches for word with English stored in MongoDB */
 export const searchWordUsingEnglish = async (
-  { query, searchWord, ...rest }:
-  { query: any, searchWord: string },
+  {
+    query, searchWord, constructedTerms, ...rest
+  }:
+  { query: any, searchWord: string, constructedTerms: boolean },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
+  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, constructedTerms, ...rest });
   return sortDocsBy(searchWord, words, 'definitions[0]');
 };
 
@@ -90,6 +94,7 @@ export const getWords = async (
       dialects,
       filters,
       user,
+      constructedTerms,
       ...rest
     } = handleQueries(req);
     const searchQueries = {
@@ -98,6 +103,7 @@ export const getWords = async (
       limit,
       dialects,
       examples: true,
+      constructedTerms,
     };
     let query: {
       word?: any,
@@ -125,6 +131,20 @@ export const getWords = async (
       query,
       ...rest,
     });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// Get only constructedTerms from the dictionary
+export const getConstructedTerms = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    req.query.constructedTerms = true;
+    return await getWords(req, res, next);
   } catch (err) {
     return next(err);
   }
