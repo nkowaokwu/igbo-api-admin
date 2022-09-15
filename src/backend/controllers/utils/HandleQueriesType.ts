@@ -9,6 +9,7 @@ type HandledQueries = {
   filters: string,
   user: string,
   strict: boolean,
+  constructedTerms: boolean,
 };
 
 export default HandledQueries;

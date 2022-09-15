@@ -14,6 +14,7 @@ export interface EditorRequest extends Request {
     sort?: string,
     filter?: string,
     strict?: string,
+    constructedTerms?: boolean,
   },
   suggestionDoc?: any,
   body: any,

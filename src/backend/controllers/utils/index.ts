@@ -15,7 +15,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import { findUser } from '../users';
 import * as Interfaces from './interfaces';
-import HandledQueriesType from './HandledQueriesType';
+import HandledQueriesType from './HandleQueriesType';
 
 const DEFAULT_RESPONSE_LIMIT = 10;
 const MAX_RESPONSE_LIMIT = 100;
@@ -225,6 +225,7 @@ export const handleQueries = (
     sort: sortQuery,
     filter: filterQuery,
     strict: strictQuery,
+    constructedTerms = false,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -244,6 +245,7 @@ export const handleQueries = (
     filters,
     user,
     strict,
+    constructedTerms,
   };
 };
 
