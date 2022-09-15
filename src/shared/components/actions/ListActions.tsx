@@ -235,6 +235,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                       <MenuItemOption value={SuggestionSource.INTERNAL}>
                         From Igbo API Editor Platform
                       </MenuItemOption>,
+                      <MenuItemOption value="userInteractions">
+                        Is Currently Editing
+                      </MenuItemOption>,
                     ]
                     : null}
                   {isSuggestionResource

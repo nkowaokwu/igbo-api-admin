@@ -11,6 +11,7 @@ enum ActionTypes {
   SUGGEST_EDIT = 'SuggestionEdit',
   APPROVE = 'Approve',
   DENY = 'Deny',
+  NOTIFY = 'Notify',
   MERGE = 'Merge',
   DELETE = 'Delete',
   COMBINE = 'Combine',

@@ -20,23 +20,35 @@ import MilestoneProgress from './components/MilestoneProgress';
 import network from './network';
 
 const auth = getAuth();
-const userStatsLabel = {
+const userStatBodies = {
   approvedWordSuggestionsCount: {
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"approvals"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total approved word suggestions',
   },
   deniedWordSuggestionsCount: {
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"denials"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total denied word suggestions',
   },
   approvedExampleSuggestionsCount: {
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"approvals"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total approved example suggestions',
   },
   deniedExampleSuggestionsCount: {
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"denials"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total denied example suggestions',
   },
   authoredWordSuggestionsCount: {
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"authorId"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total authored word suggestions',
   },
   authoredExampleSuggestionsCount: {
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"authorId"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
     label: 'Total authored exampled suggestions',
   },
   mergedWordSuggestionsCount: {
@@ -44,6 +56,16 @@ const userStatsLabel = {
   },
   mergedExampleSuggestionsCount: {
     label: 'Total merged exampled suggestions',
+  },
+  currentEditingWordSuggestionsCount: {
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"userInteractions"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Total currently editing word suggestions',
+  },
+  currentEditingExampleSuggestionsCount: {
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"userInteractions"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Total currently editing example suggestions',
   },
 };
 
@@ -87,15 +109,25 @@ const Dashboard = (): ReactElement => {
           <Box mt={4}>
             <Text fontSize="3xl" fontWeight="bold" className="text-center">Personal Contributions</Text>
             <Text fontSize="lg" className="text-gray-800 text-center">
-              {'Take a look at how much you\'ve contributed to the community!'}
+              {'Take a look at how much you\'ve contributed to the community! '
+              + 'You can click on each stat to see the associated documents'}
             </Text>
           </Box>
           <Skeleton isLoaded={userStats} minHeight={32}>
-            <Box className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Box className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {Object.entries(userStats || {}).map(([key, value]) => (
-                <Box className="flex justify-center items-center rounded bg-white shadow-sm p-3">
+                <Box
+                  className={`flex justify-center items-center rounded-lg bg-white
+                  shadow-sm p-4 transition-all duration-200 border border-gray-200
+                  ${userStatBodies[key].hash ? 'cursor-pointer hover:bg-blue-100' : ''}`}
+                  onClick={() => {
+                    if (userStatBodies[key].hash) {
+                      window.location.hash = userStatBodies[key].hash;
+                    }
+                  }}
+                >
                   <Text key={key}>
-                    <chakra.span fontWeight="bold">{`${userStatsLabel[key].label}: `}</chakra.span>
+                    <chakra.span fontWeight="bold">{`${userStatBodies[key].label}: `}</chakra.span>
                     {`${value}`}
                   </Text>
                 </Box>

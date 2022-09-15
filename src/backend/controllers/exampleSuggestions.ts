@@ -135,6 +135,7 @@ export const getExampleSuggestions = (req: Request, res: Response, next: NextFun
       skip,
       limit,
       filters,
+      user,
       ...rest
     } = handleQueries(req);
     const regexMatch = searchExampleSuggestionsRegexQuery(regexKeyword, filters);

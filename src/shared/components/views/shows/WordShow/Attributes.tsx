@@ -21,6 +21,12 @@ const Attributes = (
       isSlang,
       isConstructedTerm,
       isBorrowedTerm,
+    } = {
+      isStandardIgbo: false,
+      isAccented: false,
+      isSlang: false,
+      isConstructedTerm: false,
+      isBorrowedTerm: false,
     },
   } = record;
 

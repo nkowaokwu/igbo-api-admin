@@ -19,7 +19,7 @@ export const invalidRelatedTermsWordClasses = [
 export default (word: Word | Record): boolean => !!(
   word.word
   && word.wordClass
-  && (word.word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) || word.attributes.isAccented)
+  && (word.word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) || (word.attributes || {}).isAccented)
   && Array.isArray(word.definitions) && word.definitions.length
   && (
     Array.isArray(word.examples)

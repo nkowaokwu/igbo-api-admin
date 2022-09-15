@@ -89,6 +89,7 @@ export const getWords = async (
       strict,
       dialects,
       filters,
+      user,
       ...rest
     } = handleQueries(req);
     const searchQueries = {
@@ -102,12 +103,14 @@ export const getWords = async (
       word?: any,
       text?: any
       definitions?: any
-    } = !strict ? searchIgboTextSearch(searchWord, regexKeyword, filters) : strictSearchIgboQuery(searchWord);
+    } = !strict
+      ? searchIgboTextSearch(searchWord, regexKeyword, filters)
+      : strictSearchIgboQuery(searchWord);
     const words = await searchWordUsingIgbo({ query, ...searchQueries });
     if (!words.length) {
       query = searchEnglishRegexQuery(regexKeyword, filters);
       const englishWords = await searchWordUsingEnglish({ query, ...searchQueries });
-      return packageResponse({
+      return await packageResponse({
         res,
         docs: englishWords,
         model: Word,
@@ -115,7 +118,7 @@ export const getWords = async (
         ...rest,
       });
     }
-    return packageResponse({
+    return await packageResponse({
       res,
       docs: words,
       model: Word,
@@ -274,7 +277,7 @@ const overwriteWordPronunciation = async (
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
     await Word.findOneAndUpdate({ _id: word.id }, word.toObject());
-    return word.save();
+    return await word.save();
   } catch (err) {
     console.log('An error while merging audio pronunciations failed:', err.message);
     console.log(err.stack);

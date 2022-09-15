@@ -32,21 +32,48 @@ export const onRequestDeleteDocument = functions.https.onCall(async (
   }
 });
 
-/* sends email to document authors about updates to their suggestions */
+/**
+ * Sends a notification email to associated editors
+ * If the includeEditors flag is on, then all editors who approved or denied, along with
+ * the author, will be notified
+ */
 export const onUpdateDocument = functions.https.onCall(async (
-  { type, resource, record }:
+  {
+    type,
+    resource,
+    record,
+    includeEditors,
+  }:
   {
     type: ActionTypes,
     resource: Collections,
-    record: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion
+    record: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
+    includeEditors: boolean,
   },
   context,
 ): Promise<Error | { redirect: boolean }> => {
   try {
     // The email will only be sent if non-authors make changes to a suggestion
+    let to;
     let author;
     try {
-      author = await findUser(record.author);
+      if (includeEditors) {
+        // Will notify anyone who is the author, has denied, approved, or edited the suggestion
+        // Excluding the notification initiator
+        const editorIds = [record.author]
+          .concat(record.denials || [])
+          .concat(record.approvals || [])
+          .concat(record.userInteractions || [])
+          .filter((uid) => uid !== context.auth.uid);
+        author = await findUser(record.author);
+        to = await Promise.all(editorIds.map(async (editorId) => {
+          const editor = await findUser(editorId);
+          return typeof editor === 'string' ? editor : editor.uid;
+        }));
+      } else {
+        author = await findUser(record.author);
+        to = author.email;
+      }
     } catch {
       author = null;
     }
@@ -54,13 +81,14 @@ export const onUpdateDocument = functions.https.onCall(async (
     if (author && context.auth.uid !== record.author) {
       await sendDocumentUpdateNotification({
         author: author.displayName,
-        to: author.email,
+        to,
         translator: context.auth.token.name,
         translatorEmail: context.auth.token.email,
         type,
         resource,
         id: record.id,
         word: record.word || record.igbo,
+        editorsNotes: record.editorsNotes,
       });
     }
     return { redirect: false };

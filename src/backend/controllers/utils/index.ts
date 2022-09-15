@@ -162,6 +162,15 @@ const parseFilter = (
     if (parsedFilter.authorId) {
       parsedFilter.authorId = user.uid;
     }
+    if (parsedFilter.userInteractions) {
+      parsedFilter.userInteractions = user.uid;
+    }
+    if (parsedFilter.approvals) {
+      parsedFilter.approvals = user.uid;
+    }
+    if (parsedFilter.denials) {
+      parsedFilter.denials = user.uid;
+    }
     return parsedFilter;
   } catch {
     throw new Error(`Invalid filter query syntax. Expected: {"word":"filter"}, Received: ${filter}`);

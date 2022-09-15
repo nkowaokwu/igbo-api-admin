@@ -271,7 +271,7 @@ const ExampleEditForm = ({
       </Box>
       <Box className="flex flex-col">
         <FormHeader
-          title="Editor Comments"
+          title="Editor's Comments"
           tooltip={`Leave a comment for other editors to read to 
           understand your reasoning behind your change. 
           Leave your name on your comment!`}

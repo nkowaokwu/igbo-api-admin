@@ -45,12 +45,13 @@ export const getExamples = async (
       skip,
       limit,
       filters,
+      user,
       ...rest
     } = handleQueries(req);
     const regexMatch = searchExamplesRegexQuery(regexKeyword, filters);
     const examples = await searchExamples({ query: regexMatch, skip, limit });
 
-    return packageResponse({
+    return await packageResponse({
       res,
       docs: examples,
       model: Example,

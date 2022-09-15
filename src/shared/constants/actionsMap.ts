@@ -13,6 +13,20 @@ import {
 import ActionTypes from './ActionTypes';
 import Collections from './Collections';
 
+const prepareRecord = (record) => {
+  const approvals = record?.approvals || [];
+  const denials = record?.denials || [];
+  return {
+    ...record,
+    approvals: approvals.some((approval) => typeof approval === 'string')
+      ? approvals.map((approval) => approval?.uid ? approval.uid : approval)
+      : approvals,
+    denials: denials.some((denial) => typeof denial === 'string')
+      ? denials.map((denial) => denial?.uid ? denial.uid : denial)
+      : denials,
+  };
+};
+
 const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
@@ -27,7 +41,7 @@ export default {
     title: 'Approve Document',
     content: 'Are you sure you want to approve this document?',
     executeAction: ({ record, resource } : { record: Record, resource: string }) : Promise<any> => {
-      approveDocument({ resource, record });
+      approveDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
     },
     successMessage: 'Document has been approved 🙌🏾',
@@ -37,10 +51,25 @@ export default {
     title: 'Deny Document',
     content: 'Are you sure you want to deny this document?',
     executeAction: ({ record, resource }: { record: Record, resource: string }) : Promise<any> => {
-      denyDocument({ resource, record });
+      denyDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
     },
     successMessage: 'Document has been denied 🙅🏾‍♀️',
+  },
+  [ActionTypes.NOTIFY]: {
+    type: 'Notify',
+    title: 'Directly Notify Editors About Changes',
+    content: 'Are you sure you want to notify editors?',
+    executeAction: ({ editorsNotes, record, resource }:
+    { editorsNotes: string, record: Record, resource: string }) : Promise<any> => (
+      handleUpdateDocument({
+        type: ActionTypes.NOTIFY,
+        resource,
+        record: prepareRecord({ ...record, editorsNotes }),
+        includeEditors: true,
+      })
+    ),
+    successMessage: 'Notification has been sent 📬',
   },
   [ActionTypes.MERGE]: {
     type: 'Merge',

@@ -157,6 +157,12 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
     const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === user.uid).length;
     const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
     const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
+    const currentEditingWordSuggestionsCount = wordSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
+      !mergedBy && userInteractions.includes(user.uid)
+    )).length;
+    const currentEditingExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
+      !mergedBy && userInteractions.includes(user.uid)
+    )).length;
 
     return res.send({
       approvedWordSuggestionsCount,
@@ -167,6 +173,8 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
       authoredExampleSuggestionsCount,
       mergedWordSuggestionsCount,
       mergedExampleSuggestionsCount,
+      currentEditingWordSuggestionsCount,
+      currentEditingExampleSuggestionsCount,
     });
   } catch (err) {
     return next(err);

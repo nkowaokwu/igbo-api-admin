@@ -21,6 +21,9 @@ type Filters = {
   authorId?: any,
   style?: any,
   wordClass?: any,
+  userInteractions?: any,
+  approvals?: any,
+  denials?: any,
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
@@ -64,6 +67,15 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'wordClass':
         allFilters.wordClass = { $in: value };
+        break;
+      case 'userInteractions':
+        allFilters.userInteractions = { $in: value };
+        break;
+      case 'approvals':
+        allFilters.approvals = { $in: value };
+        break;
+      case 'denials':
+        allFilters.denials = { $in: value };
         break;
       default:
         return allFilters;
