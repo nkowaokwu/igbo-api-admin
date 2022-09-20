@@ -3,7 +3,7 @@ import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
 import { API_ROUTE } from '../shared/constants';
 
-const httpClient = async (url: string, options?: { headers: any }): Promise<any | void> => {
+export const httpClient = async (url: string, options?: { headers: any }): Promise<any | void> => {
   const updatedOptions = assign(options);
   try {
     if (!updatedOptions.headers) {
