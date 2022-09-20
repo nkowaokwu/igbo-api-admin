@@ -81,6 +81,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
+  const isConstructedTermResource = resource === Collections.CONSTRUCTED_TERMS;
 
   useEffect(() => {
     getPermissions().then((permissions) => setPermissions(permissions));
@@ -147,7 +148,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
-        {isPollResource ? null : (
+        {isPollResource || isConstructedTermResource ? null : (
           <form
             onSubmit={handleJumpToPage}
             className="flex flex-col lg:flex-row"
@@ -173,7 +174,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           </form>
         )}
-        {isPollResource || isUserResource ? null : (
+        {isPollResource || isUserResource || isConstructedTermResource ? null : (
           <Box
             data-test={
               isWordResource
@@ -307,7 +308,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
           </Box>
         ) : null}
         {/* @ts-expect-error permissions.role */}
-        {isSuggestionResource || (isPollResource && permissions?.role === Role.ADMIN) ? (
+        {isSuggestionResource || isConstructedTermResource || (isPollResource && permissions?.role === Role.ADMIN) ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>

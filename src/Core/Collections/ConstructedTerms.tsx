@@ -2,10 +2,8 @@ import React, { ReactElement } from 'react';
 import {
   List,
   Datagrid,
-  SimpleShowLayout,
   Responsive,
   ListProps,
-  ShowProps,
 } from 'react-admin';
 import Icon from '@material-ui/icons/Book';
 import {
@@ -17,9 +15,7 @@ import {
   Select,
   WordClassTextField,
   WordPanel,
-  WordShow as Show,
 } from 'src/shared/components';
-import { WordShowActions } from 'src/actions/wordActions';
 
 export const ConstructedTermIcon = Icon;
 
@@ -58,18 +54,3 @@ export const ConstructedTermList = (props: ListProps): ReactElement => {
     </List>
   );
 };
-
-const ConstructedTermTitle = ({ record }: Record<any, any>): ReactElement => (
-  <span>{`Word ${record ? `"${record.word}"` : ''}`}</span>
-);
-
-export const ConstructedTermShow = (props: ShowProps): ReactElement => (
-  <Show
-    actions={<WordShowActions />}
-    title={<ConstructedTermTitle />}
-    {...props}
-  >
-    <SimpleShowLayout>
-    </SimpleShowLayout>
-  </Show>
-);

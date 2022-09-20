@@ -8,6 +8,7 @@ enum Collection {
   USERS = 'users',
   POLLS = 'polls',
   NOTIFICATIONS = 'notifications',
+  CONSTRUCTED_TERMS = 'constructedTerms',
 };
 
 export default Collection;
