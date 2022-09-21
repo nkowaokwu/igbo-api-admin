@@ -1,4 +1,9 @@
-import React, { useState, useRef, ReactElement } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  ReactElement,
+} from 'react';
 import { Box, Textarea as ChakraTextarea } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
 import useEventListener from 'src/hooks/useEventListener';
@@ -35,12 +40,17 @@ const Textarea = React.forwardRef(({
   useEventListener('scroll', (e) => handlePosition({ e, ...eventListenerData }));
   useEventListener('resize', (e) => handlePosition({ e, ...eventListenerData }));
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.addEventListener('change', onChange);
+    }
+  }, []);
+
   return (
     <Box className="relative w-full">
       <ChakraTextarea
         ref={inputRef}
         value={value}
-        onChange={onChange}
         className={className}
         {...rest}
       />
