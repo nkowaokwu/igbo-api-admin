@@ -88,17 +88,22 @@ const Input = React.forwardRef(({
     }
   }, [isSearchingAutoCompleteWords]);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.addEventListener('change', (e) => {
+        onChange(e);
+        if (searchApi) {
+          debounceInput(e.target.value);
+        }
+      });
+    }
+  }, []);
+
   return (
     <Box className="relative w-full">
       <ChakraInput
         ref={inputRef}
         value={value}
-        onChange={(e) => {
-          onChange(e);
-          if (searchApi) {
-            debounceInput(e.target.value);
-          }
-        }}
         className={`${className} ${width}`}
         {...rest}
       />
