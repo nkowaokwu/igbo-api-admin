@@ -17,9 +17,10 @@ import {
   NotAllowedIcon,
   ViewIcon,
 } from '@chakra-ui/icons';
-import { MergeType } from '@material-ui/icons';
+import { MergeType, Person } from '@material-ui/icons';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
+import { useRedirect } from 'react-admin';
 import { push } from 'react-router-redux';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ActionTypes from 'src/shared/constants/ActionTypes';
@@ -42,6 +43,7 @@ const Select = ({
   const [value, setValue] = useState(null);
   const [action, setAction] = useState(null);
   const [uid, setUid] = useState('');
+  const redirect = useRedirect();
   useFirebaseUid(setUid);
 
   const clearConfirmOpen = () => {
@@ -49,6 +51,16 @@ const Select = ({
   };
 
   const userCollectionOptions = [
+    {
+      value: 'view',
+      label: (() => (
+        <span>
+          <Person className="-ml-1 mr-0" />
+          View User
+        </span>
+      ))(),
+      onSelect: () => redirect(View.SHOW, '/users', record.uid),
+    },
     { value: 'user', label: 'Set as User', onSelect: () => setAction(actionsMap.Convert) },
     { value: 'editor', label: 'Set as Editor', onSelect: () => setAction(actionsMap.Convert) },
     { value: 'merger', label: 'Set as Merger', onSelect: () => setAction(actionsMap.Convert) },
