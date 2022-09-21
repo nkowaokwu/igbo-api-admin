@@ -36,7 +36,7 @@ import {
   GenericWordIcon,
 } from 'src/Core/Collections/GenericWords';
 import { PollsList, PollsCreate } from 'src/Core/Collections/Polls';
-import { UserList, UserIcon } from 'src/Core/Collections/Users';
+import { UserList, UserShow, UserIcon } from 'src/Core/Collections/Users';
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
@@ -123,6 +123,7 @@ const IgboAPIAdmin = (): ReactElement => {
               <Resource
                 name="users"
                 list={(props) => <UserList {...props} permissions={permissions} />}
+                show={(props) => <UserShow {...props} permissions={permissions} />}
                 icon={UserIcon}
               />,
             ])),

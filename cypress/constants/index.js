@@ -105,6 +105,7 @@ export const SuggestionSelectOptions = {
 };
 
 export const UserSelectOptions = {
+  VIEW: 'View User',
   SET_AS_USER: 'Set as User',
   SET_AS_EDITOR: 'Set as Editor',
   SET_AS_MERGER: 'Set as Merger',

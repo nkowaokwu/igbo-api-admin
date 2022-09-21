@@ -148,24 +148,25 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
 
 export const getUserStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { user } = req;
+    const { user, params: { uid } } = req;
+    const userId = uid || user.uid;
     const wordSuggestions = await WordSuggestion.find({}).lean();
     const exampleSuggestions = await ExampleSuggestion.find({}).lean();
 
-    const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(user.uid)).length;
-    const deniedWordSuggestionsCount = wordSuggestions.filter(({ denials }) => denials.includes(user.uid)).length;
+    const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(userId)).length;
+    const deniedWordSuggestionsCount = wordSuggestions.filter(({ denials }) => denials.includes(userId)).length;
     const approvedExampleSuggestionsCount = exampleSuggestions
-      .filter(({ approvals }) => approvals.includes(user.uid)).length;
-    const deniedExampleSuggestionsCount = exampleSuggestions.filter(({ denials }) => denials.includes(user.uid)).length;
-    const authoredWordSuggestionsCount = wordSuggestions.filter(({ author }) => author === user.uid).length;
-    const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === user.uid).length;
-    const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
-    const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === user.uid).length;
+      .filter(({ approvals }) => approvals.includes(userId)).length;
+    const deniedExampleSuggestionsCount = exampleSuggestions.filter(({ denials }) => denials.includes(userId)).length;
+    const authoredWordSuggestionsCount = wordSuggestions.filter(({ author }) => author === userId).length;
+    const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === userId).length;
+    const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
+    const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
     const currentEditingWordSuggestionsCount = wordSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
-      !mergedBy && userInteractions.includes(user.uid)
+      !mergedBy && userInteractions.includes(userId)
     )).length;
     const currentEditingExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
-      !mergedBy && userInteractions.includes(user.uid)
+      !mergedBy && userInteractions.includes(userId)
     )).length;
 
     return res.send({

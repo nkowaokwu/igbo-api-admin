@@ -19,7 +19,7 @@ import EditToolbar from './toolbars/EditToolbar';
 import ListActions from './actions/ListActions';
 import Pagination from './toolbars/Pagination';
 import Select from './Select';
-import { ExampleShow, WordShow } from './views/shows';
+import { ExampleShow, UserShow, WordShow } from './views/shows';
 import NewLineText from './NewLineText';
 import WordClassTextField from './WordClassTextField';
 import WordPanel from './WordPanel';
@@ -50,6 +50,7 @@ export {
   Pagination,
   Select,
   ExampleShow,
+  UserShow,
   WordShow,
   NewLineText,
   WordClassTextField,

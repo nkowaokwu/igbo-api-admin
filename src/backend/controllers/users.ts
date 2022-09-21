@@ -11,6 +11,7 @@ const formatUser = (user = { customClaims: {}, metadata: {} }): Interfaces.Forma
   return {
     uid: user.uid,
     id: user.uid,
+    photoURL: user.photoURL,
     email: user.email || '',
     displayName: user.displayName || '',
     role: customClaims?.role || '',
@@ -96,7 +97,7 @@ export const findUser = async (uid: string): Promise<Interfaces.FormattedUser | 
 };
 
 /* Grab a single user from the Firebase database */
-export const getUser = async (req, res, next) => {
+export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const { uid } = req.params;
     const user = await findUser(uid);
@@ -107,7 +108,7 @@ export const getUser = async (req, res, next) => {
   }
 };
 
-export const testGetUsers = (_, res) => {
+export const testGetUsers = (_: Request, res: Response): Response<any> => {
   res.status(200);
   return res.send([{}]);
 };
