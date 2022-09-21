@@ -8,7 +8,7 @@ const firebaseConfig = useFirebaseConfig();
 const firebaseAuthProvider = FirebaseAuthProvider(firebaseConfig, { lazyLoading: { enabled: true }, logging: false });
 export default {
   ...firebaseAuthProvider,
-  logout: (args: any): Promise<string | false | void> => {
+  logout: (args?: { [key: string]: any }): Promise<string | false | void> => {
     if (window.location.hash !== LOGIN_HASH) {
       localStorage.setItem(LocalStorageKeys.REDIRECT_URL, window.location.hash);
     }

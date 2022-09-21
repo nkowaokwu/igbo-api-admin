@@ -47,7 +47,7 @@ export const getExample = async (id: string): Promise<any> => (await request({
   url: `${API_ROUTE}/examples/${id}`,
 })).data;
 
-export const resolveWord = (wordId: string): Promise<any> => network({ url: `/words/${wordId}` })
+export const resolveWord = (wordId: string): Promise<any> => network(`/words/${wordId}`)
   .then(({ json: word }) => word)
   .catch(async () => {
     /**
@@ -56,7 +56,7 @@ export const resolveWord = (wordId: string): Promise<any> => network({ url: `/wo
      * that word's id
      */
 
-    const { json: wordsResults } = await network({ url: `/words?keyword=${wordId}` });
+    const { json: wordsResults } = await network(`/words?keyword=${wordId}`);
     const fallbackWord = wordsResults.find(({ word }) => word.normalize('NFD') === wordId.normalize('NFD'));
     return fallbackWord;
   });

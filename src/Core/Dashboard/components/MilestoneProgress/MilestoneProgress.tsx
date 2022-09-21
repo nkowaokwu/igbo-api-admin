@@ -36,7 +36,7 @@ const MilestoneProgress = (): ReactElement => {
   };
 
   useEffect(() => {
-    network({ url: '/stats/full' })
+    network('/stats/full')
       .then(({ body }) => {
         const {
           sufficient_words,

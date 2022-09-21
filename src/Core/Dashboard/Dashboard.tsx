@@ -84,7 +84,7 @@ const Dashboard = (): ReactElement => {
 
   useEffect(() => {
     (async () => {
-      const res = await network({ url: '/stats/user' });
+      const res = await network('/stats/user');
       setUserStats(res.json);
     })();
   }, []);
