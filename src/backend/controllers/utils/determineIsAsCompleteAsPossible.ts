@@ -36,7 +36,6 @@ export default (word: Word | Record): boolean => !!(
   )
   && word.pronunciation
   && word.attributes.isStandardIgbo
-  && word.nsibidi
   && Array.isArray(word.stems) && word.stems.length
   && (invalidRelatedTermsWordClasses.includes(word.wordClass)
     || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))

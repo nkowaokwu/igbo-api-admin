@@ -22,14 +22,13 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       isAccented,
       isComplete,
     } = {},
-    nsibidi,
     stems = [],
     relatedTerms = [],
     dialects = {},
     tenses = {},
   } = record;
 
-  const isAudioAvailable = await new Promise((resolve) => {
+  const isAudioAvailable = !skipAudioCheck && await new Promise((resolve) => {
     axios.get(pronunciation)
       .then(() => resolve(true))
       .catch(() => {
@@ -53,7 +52,6 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
 
   const completeWordRequirements = compact([
     ...sufficientWordRequirements,
-    !nsibidi && 'Nsịbịdị is needed',
     !stems?.length && 'A word stem is needed',
     invalidRelatedTermsWordClasses.includes(wordClass) ? null : !relatedTerms?.length && 'A related term is needed',
     isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
