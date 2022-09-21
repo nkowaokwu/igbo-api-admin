@@ -104,7 +104,11 @@ const calculateWordStats = async ():
 Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
   const INCLUDE_ALL_WORDS_LIMIT = 100000;
   const words = await findWordsWithMatch({
-    match: { word: { $regex: /./ }, 'attributes.isStandardIgbo': { $eq: true } },
+    match: {
+      word: { $regex: /./ },
+      'attributes.isStandardIgbo': { $eq: true },
+      'attributes.isAccented': { $eq: true },
+    },
     examples: true,
     limit: INCLUDE_ALL_WORDS_LIMIT,
   });
