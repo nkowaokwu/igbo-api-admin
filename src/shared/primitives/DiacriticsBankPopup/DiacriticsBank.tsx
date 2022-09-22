@@ -7,7 +7,7 @@ const insertLetter = (inputRef, letter) => {
   const element = inputRef.current;
   const [start, end] = [element.selectionStart, element.selectionEnd];
   element.setRangeText(letter, start, end, 'select');
-  element.dispatchEvent(new Event('change'));
+  element.dispatchEvent(new Event('insertDiacritic'));
 };
 
 const DiacriticsBank = (
