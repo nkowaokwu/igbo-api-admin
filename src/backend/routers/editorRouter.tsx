@@ -39,6 +39,7 @@ import validateWordMerge from '../middleware/validateWordMerge';
 import cacheControl from '../middleware/cacheControl';
 import interactWithSuggsetion from '../middleware/interactWithSuggsetion';
 import UserRoles from '../shared/constants/UserRoles';
+import { postConstructedTerm } from '../controllers/constructedTerms';
 
 const editorRouter = express.Router();
 editorRouter.use(authentication, authorization([UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN]));
@@ -52,6 +53,15 @@ editorRouter.get('/words/:id/wordSuggestions', validId, getAssociatedWordSuggest
 editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateExampleMerge, mergeExample);
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
+
+editorRouter.post(
+  '/constructedTerms',
+  authorization([]),
+  validateWordBody,
+  interactWithSuggsetion,
+  postConstructedTerm,
+);
+// editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggsetion, putWordSuggestion);
 
 editorRouter.get('/wordSuggestions', getWordSuggestions);
 editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggsetion, postWordSuggestion);

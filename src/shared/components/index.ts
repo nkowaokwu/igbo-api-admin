@@ -7,7 +7,12 @@ import SourceField from './SourceField';
 import StyleField from './StyleField';
 import Confirmation from './Confirmation';
 import StandardIgboPreview from './StandardIgboPreview';
-import { ExampleSuggestionCreate, WordSuggestionCreate, PollsCreate } from './views/creates';
+import {
+  ExampleSuggestionCreate,
+  WordSuggestionCreate,
+  PollsCreate,
+  ConstructedTermCreate,
+} from './views/creates';
 import { ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
@@ -41,6 +46,7 @@ export {
   ExampleSuggestionCreate,
   WordSuggestionCreate,
   PollsCreate,
+  ConstructedTermCreate,
   ExampleSuggestionEdit,
   WordSuggestionEdit,
   Filter,

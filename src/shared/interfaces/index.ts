@@ -19,6 +19,7 @@ export interface EditFormProps {
   }) => void,
   resource: string,
   history: any,
+  isConstructedTerm?: boolean,
   isPreExistingSuggestion?: boolean,
 };
 

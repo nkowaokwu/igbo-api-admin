@@ -136,20 +136,6 @@ export const getWords = async (
   }
 };
 
-// Get only constructedTerms from the dictionary
-export const getConstructedTerms = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    req.query.constructedTerms = true;
-    return await getWords(req, res, next);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 /* Returns a word from MongoDB using an id */
 export const getWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {

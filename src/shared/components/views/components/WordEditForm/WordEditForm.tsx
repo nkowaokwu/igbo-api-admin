@@ -45,6 +45,7 @@ const WordEditForm = ({
   resource = '',
   history,
   isPreExistingSuggestion,
+  isConstructedTerm,
 } : EditFormProps) : ReactElement => {
   /* Injected empty dialects object for new suggestions */
   if (!record?.dialects) {
@@ -155,6 +156,7 @@ const WordEditForm = ({
       examples: sanitizeExamples(data.examples),
       wordClass: data.wordClass.value,
       pronunciation: getValues().pronunciation || '',
+      attributes: isConstructedTerm ? { isConstructedTerm: true } : {},
     };
     return cleanedData;
   };
@@ -174,7 +176,12 @@ const WordEditForm = ({
         setIsSubmitting(false);
         handleUpdateDocument({ resource, record: data });
         notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-        redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
+        redirect(
+          View.SHOW,
+          isConstructedTerm ? '/constructedTerms' : '/wordSuggestions',
+          data.id || record.id,
+          { ...data, id: data.id || record.id },
+        );
       },
       onFailure: (error: any) => {
         const { body } = error;
@@ -243,6 +250,7 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
               watch={watch}
+              isConstructedTerm
             />
             <PartOfSpeechForm
               errors={errors}

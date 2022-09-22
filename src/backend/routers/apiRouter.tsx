@@ -1,5 +1,6 @@
 import express from 'express';
-import { getWords, getWord, getConstructedTerms } from '../controllers/words';
+import { getWords, getWord } from '../controllers/words';
+import { getConstructedTerms } from '../controllers/constructedTerms';
 import { getExamples, getExample } from '../controllers/examples';
 import authentication from '../middleware/authentication';
 import authorization from '../middleware/authorization';

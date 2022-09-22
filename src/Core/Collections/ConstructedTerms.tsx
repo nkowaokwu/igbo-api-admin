@@ -4,6 +4,8 @@ import {
   Datagrid,
   Responsive,
   ListProps,
+  CreateProps,
+  SimpleForm,
 } from 'react-admin';
 import Icon from '@material-ui/icons/Book';
 import {
@@ -14,6 +16,7 @@ import {
   ListActions,
   Select,
   WordClassTextField,
+  ConstructedTermCreate as Create,
   WordPanel,
 } from 'src/shared/components';
 
@@ -54,3 +57,10 @@ export const ConstructedTermList = (props: ListProps): ReactElement => {
     </List>
   );
 };
+
+export const ConstructedTermCreate = (props: CreateProps): ReactElement => (
+  <Create title="Create a Constructed term" undoable={false} {...props}>
+    <SimpleForm toolbar={null}>
+    </SimpleForm>
+  </Create>
+);

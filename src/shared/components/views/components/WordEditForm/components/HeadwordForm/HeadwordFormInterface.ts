@@ -7,6 +7,7 @@ interface HeadwordForm {
   record: Record,
   watch: any,
   getValues: (key: string) => any,
+  isConstructedTerm: boolean,
 };
 
 export default HeadwordForm;

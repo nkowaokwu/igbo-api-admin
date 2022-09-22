@@ -34,7 +34,10 @@ import {
   ExampleSuggestionShow,
   ExampleSuggestionIcon,
 } from 'src/Core/Collections/ExampleSuggestions';
-import { ConstructedTermList } from 'src/Core/Collections/ConstructedTerms';
+import {
+  ConstructedTermList,
+  ConstructedTermCreate,
+} from 'src/Core/Collections/ConstructedTerms';
 import {
   GenericWordList,
   GenericWordEdit,
@@ -95,7 +98,12 @@ const IgboAPIAdmin = (): ReactElement => {
               name="constructedTerms"
               options={{ label: 'Constructed Terms' }}
               list={(props) => <ConstructedTermList {...props} permissions={permissions} />}
+              show={WordShow}
               icon={ExampleIcon}
+              {...hasAdminPermissions(permissions, true)
+                ? { create: ConstructedTermCreate }
+                : { create: null }
+              }
             />,
             <Resource
               name="wordSuggestions"
