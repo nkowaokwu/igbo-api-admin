@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import WordClass from 'src/shared/constants/WordClass';
+import View from 'src/shared/constants/Views';
 import { getWords } from 'src/shared/API';
 
 const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): ReactElement => {
@@ -52,7 +53,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                 >
                   <Link
                     color="blue.400"
-                    href={`/words/${id}`}
+                    href={`#/words/${id}/${View.SHOW}`}
                     target="_blank"
                     onMouseEnter={() => setOpenWordPopover(id)}
                     mr={1}
