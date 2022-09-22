@@ -90,7 +90,7 @@ const Input = React.forwardRef(({
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.addEventListener('change', (e) => {
+      inputRef.current.addEventListener('insertDiacritic', (e) => {
         onChange(e);
         if (searchApi) {
           debounceInput(e.target.value);
@@ -105,6 +105,12 @@ const Input = React.forwardRef(({
         ref={inputRef}
         value={value}
         className={`${className} ${width}`}
+        onChange={(e) => {
+          onChange(e);
+          if (searchApi) {
+            debounceInput(e.target.value);
+          }
+        }}
         {...rest}
       />
       {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteWords) ? (

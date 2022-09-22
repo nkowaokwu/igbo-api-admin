@@ -42,7 +42,7 @@ const Textarea = React.forwardRef(({
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.addEventListener('change', onChange);
+      inputRef.current.addEventListener('insertDiacritic', onChange);
     }
   }, []);
 
@@ -52,6 +52,7 @@ const Textarea = React.forwardRef(({
         ref={inputRef}
         value={value}
         className={className}
+        onChange={onChange}
         {...rest}
       />
       <DiacriticsBankPopup
