@@ -60,25 +60,25 @@ export const onUpdateDocument = functions.https.onCall(async (
       if (includeEditors) {
         // Will notify anyone who is the author, has denied, approved, or edited the suggestion
         // Excluding the notification initiator
-        const editorIds = [record.author]
+        const editorIds = [record.authorId]
           .concat(record.denials || [])
           .concat(record.approvals || [])
           .concat(record.userInteractions || [])
           .filter((uid) => uid !== context.auth.uid);
-        author = await findUser(record.author);
+        author = await findUser(record.authorId);
         to = await Promise.all(editorIds.map(async (editorId) => {
           const editor = await findUser(editorId);
           return typeof editor === 'string' ? editor : editor.uid;
         }));
       } else {
-        author = await findUser(record.author);
+        author = await findUser(record.authorId);
         to = author.email;
       }
     } catch {
       author = null;
     }
 
-    if (author && context.auth.uid !== record.author) {
+    if (author && context.auth.uid !== record.authorId) {
       await sendDocumentUpdateNotification({
         author: author.displayName,
         to,
