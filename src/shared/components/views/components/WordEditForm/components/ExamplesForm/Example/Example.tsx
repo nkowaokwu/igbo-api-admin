@@ -108,7 +108,7 @@ const Example = ({
           control={control}
         />
         <Controller
-          render={() => typeof getValues(`examples[${index}].pronunciation`) === 'string' ? (
+          render={() => (
             <div>
               <AudioRecorder
                 path={`examples[${index}]`}
@@ -121,7 +121,7 @@ const Example = ({
                 You are able to record over pre-existing recordings."
               />
             </div>
-          ) : <div />}
+          )}
           defaultValue={pronunciation}
           name={`examples[${index}].pronunciation`}
           control={control}

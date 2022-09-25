@@ -87,7 +87,7 @@ const AudioRecorder = ({
    * */
   useEffect(() => {
     const base64data = audioBlob;
-    if (typeof getFormValues(formValuePath) === 'string' && base64data) {
+    if (base64data) {
       setPronunciation(formValuePath, base64data);
       setPronunciationValue(getFormValues(formValuePath));
     }
