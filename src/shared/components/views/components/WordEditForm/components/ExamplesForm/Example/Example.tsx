@@ -68,19 +68,6 @@ const Example = ({
             defaultValue={id}
             control={control}
           />
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Example Pronunciation"
-                data-test={`examples-${index}-pronunciation`}
-              />
-            )}
-            name={`examples[${index}].pronunciation`}
-            defaultValue={id}
-            control={control}
-          />
         </Box>
         <h3 className="text-gray-700">Igbo:</h3>
         <Controller
@@ -121,18 +108,20 @@ const Example = ({
           control={control}
         />
         <Controller
-          render={() => (
-            <AudioRecorder
-              path={`examples[${index}]`}
-              getFormValues={getValues}
-              setPronunciation={setValue}
-              record={example}
-              originalRecord={originalRecord}
-              formTitle="Igbo Sentence Recording"
-              formTooltip="Record the audio for the Igbo example sentence only one time.
-              You are able to record over pre-existing recordings."
-            />
-          )}
+          render={() => typeof getValues(`examples[${index}].pronunciation`) === 'string' ? (
+            <div>
+              <AudioRecorder
+                path={`examples[${index}]`}
+                getFormValues={getValues}
+                setPronunciation={setValue}
+                record={example}
+                originalRecord={originalRecord}
+                formTitle="Igbo Sentence Recording"
+                formTooltip="Record the audio for the Igbo example sentence only one time.
+                You are able to record over pre-existing recordings."
+              />
+            </div>
+          ) : <div />}
           defaultValue={pronunciation}
           name={`examples[${index}].pronunciation`}
           control={control}

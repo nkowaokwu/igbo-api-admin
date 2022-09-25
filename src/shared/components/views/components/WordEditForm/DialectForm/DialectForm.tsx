@@ -70,7 +70,7 @@ const DialectForm = ({
         </Box>
         <Box flex={2} className="w-full">
           <Controller
-            render={() => (
+            render={() => typeof getValues(`dialects.${dialect.word}.pronunciation`) === 'string' ? (
               <AudioRecorder
                 path={dialect.word}
                 getFormValues={getValues}
@@ -89,7 +89,7 @@ const DialectForm = ({
                 record={record}
                 originalRecord={originalRecord}
               />
-            )}
+            ) : <div />}
             name={`dialects.${dialect.word}.pronunciation`}
             defaultValue={dialect.pronunciation}
             control={control}
