@@ -38,6 +38,11 @@ const AudioRecorder = ({
       : path;
   const valuePath = path === 'headword'
     ? 'pronunciation'
+    : path.startsWith('examples')
+      ? 'pronunciation'
+      : `dialects.${path}.pronunciation`;
+  const formValuePath = path === 'headword'
+    ? 'pronunciation'
     : path.startsWith('examples') // Handles path for nested examples
       ? `${path}.pronunciation`
       : `dialects.${path}.pronunciation`;
@@ -63,9 +68,7 @@ const AudioRecorder = ({
   };
 
   const shouldRenderNewPronunciationLabel = () => {
-    const currentPronunciationPath = getFormValues(path === 'headword'
-      ? 'pronunciation'
-      : `dialects.${path}.pronunciation`);
+    const currentPronunciationPath = getFormValues(valuePath);
     return currentPronunciationPath && currentPronunciationPath.startsWith('data');
   };
 
@@ -87,7 +90,7 @@ const AudioRecorder = ({
     // @ts-expect-error
     if (has(getFormValues(), 'pronunciation')) {
       setPronunciation(valuePath, base64data);
-      setPronunciationValue(getFormValues(valuePath));
+      setPronunciationValue(getFormValues(formValuePath));
     }
     if (base64data) {
       toast({

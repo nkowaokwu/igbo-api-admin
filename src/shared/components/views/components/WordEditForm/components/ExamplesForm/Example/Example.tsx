@@ -73,7 +73,7 @@ const Example = ({
               <Input
                 {...props}
                 className="form-input invisible"
-                placeholder="Example Id"
+                placeholder="Example Pronunciation"
                 data-test={`examples-${index}-pronunciation`}
               />
             )}
