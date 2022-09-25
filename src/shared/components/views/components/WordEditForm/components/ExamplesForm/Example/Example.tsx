@@ -134,7 +134,7 @@ const Example = ({
             />
           )}
           defaultValue={pronunciation}
-          name={`example[${index}]pronunciation`}
+          name={`examples[${index}].pronunciation`}
           control={control}
         />
       </Box>
