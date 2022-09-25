@@ -25,7 +25,7 @@ import { deleteAudioPronunciation } from './utils/AWS-API';
 
 const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
 
-const assignDefaultDialectValues = (data) => (
+export const assignDefaultDialectValues = (data) => (
   Object.entries(data.dialects).reduce((finalDialects, [key, value]) => ({
     ...finalDialects,
     [key]: {

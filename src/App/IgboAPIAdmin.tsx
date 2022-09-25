@@ -37,6 +37,8 @@ import {
 import {
   ConstructedTermList,
   ConstructedTermCreate,
+  ConstructedTermEdit,
+  ConstructedTermIcon,
 } from 'src/Core/Collections/ConstructedTerms';
 import {
   GenericWordList,
@@ -99,7 +101,8 @@ const IgboAPIAdmin = (): ReactElement => {
               options={{ label: 'Constructed Terms' }}
               list={(props) => <ConstructedTermList {...props} permissions={permissions} />}
               show={WordShow}
-              icon={ExampleIcon}
+              edit={ConstructedTermEdit}
+              icon={ConstructedTermIcon}
               {...hasAdminPermissions(permissions, true)
                 ? { create: ConstructedTermCreate }
                 : { create: null }

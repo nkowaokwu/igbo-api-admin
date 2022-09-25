@@ -20,6 +20,7 @@ import { getWord } from 'src/shared/API';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
+import Collections from 'src/shared/constants/Collections';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordEditFormResolver from './WordEditFormResolver';
@@ -45,7 +46,6 @@ const WordEditForm = ({
   resource = '',
   history,
   isPreExistingSuggestion,
-  isConstructedTerm,
 } : EditFormProps) : ReactElement => {
   /* Injected empty dialects object for new suggestions */
   if (!record?.dialects) {
@@ -90,6 +90,7 @@ const WordEditForm = ({
   const toast = useToast();
   const options = values(WordClass);
   const watchWordClass = watch('wordClass');
+  const isConstructedTermResource = resource === Collections.CONSTRUCTED_TERMS;
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -156,7 +157,7 @@ const WordEditForm = ({
       examples: sanitizeExamples(data.examples),
       wordClass: data.wordClass.value,
       pronunciation: getValues().pronunciation || '',
-      attributes: isConstructedTerm ? { isConstructedTerm: true } : {},
+      attributes: isConstructedTermResource ? { isConstructedTerm: true } : {},
     };
     return cleanedData;
   };
@@ -171,6 +172,7 @@ const WordEditForm = ({
       denials: map(record.denials, (denial) => denial.uid),
     }), [view === View.CREATE ? 'id' : '']);
     localStorage.removeItem('igbo-api-admin-form');
+    console.log({ isConstructedTermResource });
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
         setIsSubmitting(false);
@@ -178,7 +180,7 @@ const WordEditForm = ({
         notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
         redirect(
           View.SHOW,
-          isConstructedTerm ? '/constructedTerms' : '/wordSuggestions',
+          `/${resource}`,
           data.id || record.id,
           { ...data, id: data.id || record.id },
         );
@@ -250,7 +252,7 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
               watch={watch}
-              isConstructedTerm
+              isConstructedTerm={isConstructedTermResource}
             />
             <PartOfSpeechForm
               errors={errors}

@@ -22,6 +22,7 @@ const HeadwordForm = ({
   record,
   getValues,
   watch,
+  isConstructedTerm,
 }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
@@ -114,13 +115,16 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
-          <Tooltip label="Check this checkbox if this is a newly coined, aka constructed, Igbo word">
+          <Tooltip label={isConstructedTerm
+            ? 'This box is checked by default because this is a constructed term'
+            : 'Check this checkbox if this is a newly coined, aka constructed, Igbo word'}
+          >
             <Box display="flex">
               <Controller
                 render={({ onChange, value, ref }) => (
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
+                    isChecked={isConstructedTerm || value}
                     defaultIsChecked={record.attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]}
                     ref={ref}
                     data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.label}-checkbox`}

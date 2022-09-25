@@ -57,23 +57,19 @@ export const getWordData = (req: Request, res: Response, next: NextFunction): Re
 
 /* Searches for a word with Igbo stored in MongoDB */
 export const searchWordUsingIgbo = async (
-  {
-    query, searchWord, constructedTerms, ...rest
-  }:
-  { query: any, searchWord: string, constructedTerms: boolean },
+  { query, searchWord, ...rest }:
+  { query: any, searchWord: string },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, constructedTerms, ...rest });
+  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
   return sortDocsBy(searchWord, words, 'word');
 };
 
 /* Searches for word with English stored in MongoDB */
 export const searchWordUsingEnglish = async (
-  {
-    query, searchWord, constructedTerms, ...rest
-  }:
-  { query: any, searchWord: string, constructedTerms: boolean },
+  { query, searchWord, ...rest }:
+  { query: any, searchWord: string },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, constructedTerms, ...rest });
+  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
   return sortDocsBy(searchWord, words, 'definitions[0]');
 };
 
@@ -94,7 +90,6 @@ export const getWords = async (
       dialects,
       filters,
       user,
-      constructedTerms,
       ...rest
     } = handleQueries(req);
     const searchQueries = {
@@ -103,7 +98,6 @@ export const getWords = async (
       limit,
       dialects,
       examples: true,
-      constructedTerms,
     };
     let query: {
       word?: any,
@@ -378,7 +372,7 @@ export const mergeWord = async (
   }
 };
 
-const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<Interfaces.Word> => {
+export const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<Interfaces.Word> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(!id ? 'No word id provided' : 'Invalid word id provided');
   }

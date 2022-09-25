@@ -148,7 +148,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
-        {isPollResource || isConstructedTermResource ? null : (
+        {isPollResource ? null : (
           <form
             onSubmit={handleJumpToPage}
             className="flex flex-col lg:flex-row"
@@ -174,7 +174,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           </form>
         )}
-        {isPollResource || isUserResource || isConstructedTermResource ? null : (
+        {isPollResource || isUserResource ? null : (
           <Box
             data-test={
               isWordResource

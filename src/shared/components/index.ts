@@ -13,7 +13,7 @@ import {
   PollsCreate,
   ConstructedTermCreate,
 } from './views/creates';
-import { ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
+import { ConstructedTermEdit, ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
 import TweetField from './TweetField';
@@ -49,6 +49,7 @@ export {
   ConstructedTermCreate,
   ExampleSuggestionEdit,
   WordSuggestionEdit,
+  ConstructedTermEdit,
   Filter,
   ArrayPreview,
   ReviewPreview,

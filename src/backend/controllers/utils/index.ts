@@ -225,7 +225,6 @@ export const handleQueries = (
     sort: sortQuery,
     filter: filterQuery,
     strict: strictQuery,
-    constructedTerms = false,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -245,7 +244,6 @@ export const handleQueries = (
     filters,
     user,
     strict,
-    constructedTerms,
   };
 };
 

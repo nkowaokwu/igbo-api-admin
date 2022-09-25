@@ -47,17 +47,14 @@ export const findWordsWithMatch = async (
     examples,
     skip = 0,
     limit = 10,
-    constructedTerms = false,
   }:
   {
     match: any,
     examples?: boolean,
     skip?: number,
     limit?: number,
-    constructedTerms?: boolean,
   },
 ): Promise<Interfaces.Word[]> => {
-  match = constructedTerms ? { ...match, 'attributes.isConstructedTerm': { $eq: true } } : match;
   let words = Word.aggregate()
     .match(match)
     .sort(determineSorting(match));

@@ -83,6 +83,7 @@ const WordShow = (props: ShowProps): ReactElement => {
     wordSuggestions: 'Word Suggestion',
     genericWords: 'Generic Word',
     words: 'Word',
+    constructedTerms: 'Constructed Term',
   };
 
   /* Grabs the original word if it exists */

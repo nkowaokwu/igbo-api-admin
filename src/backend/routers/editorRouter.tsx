@@ -37,9 +37,9 @@ import validateExampleMerge from '../middleware/validateExampleMerge';
 import validateWordBody from '../middleware/validateWordBody';
 import validateWordMerge from '../middleware/validateWordMerge';
 import cacheControl from '../middleware/cacheControl';
-import interactWithSuggsetion from '../middleware/interactWithSuggsetion';
+import interactWithSuggestion from '../middleware/interactWithSuggsetion';
 import UserRoles from '../shared/constants/UserRoles';
-import { postConstructedTerm } from '../controllers/constructedTerms';
+import { getConstructedTerms, postConstructedTerm, putConstructedTerm } from '../controllers/constructedTerms';
 
 const editorRouter = express.Router();
 editorRouter.use(authentication, authorization([UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN]));
@@ -54,18 +54,25 @@ editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
 
+editorRouter.get('/constructedTerms', getConstructedTerms);
+editorRouter.get('/constructedTerms/:id', validId, getWordSuggestion);
 editorRouter.post(
   '/constructedTerms',
-  authorization([]),
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   validateWordBody,
-  interactWithSuggsetion,
+  interactWithSuggestion,
   postConstructedTerm,
 );
-// editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggsetion, putWordSuggestion);
+editorRouter.put(
+  '/constructedTerms/:id',
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
+  putConstructedTerm,
+);
 
 editorRouter.get('/wordSuggestions', getWordSuggestions);
-editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggsetion, postWordSuggestion);
-editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggsetion, putWordSuggestion);
+editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggestion, postWordSuggestion);
+editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggestion, putWordSuggestion);
 editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
 editorRouter.delete(
   '/wordSuggestions/:id',
@@ -79,10 +86,10 @@ editorRouter.post(
   '/exampleSuggestions',
   authorization([]),
   validateExampleBody,
-  interactWithSuggsetion,
+  interactWithSuggestion,
   postExampleSuggestion,
 );
-editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggsetion, putExampleSuggestion);
+editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggestion, putExampleSuggestion);
 editorRouter.get('/exampleSuggestions/:id', validId, getExampleSuggestion);
 editorRouter.delete(
   '/exampleSuggestions/:id',
