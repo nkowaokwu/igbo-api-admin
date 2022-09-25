@@ -20,11 +20,11 @@ const AudioRecorder = ({
 }: {
   path: string,
   getFormValues: (key: string) => any,
-  setPronunciation: (key: string, value: any) => any,
+  setPronunciation: (path: string, value: any) => any,
   record: Record | Example | Word,
   originalRecord: Record,
-  formTitle: string,
-  formTooltip: string,
+  formTitle?: string,
+  formTooltip?: string,
 }): ReactElement => {
   const originalRecord = record.originalWordId || record.originalExampleId
     ? originalRecordProp
@@ -56,8 +56,8 @@ const AudioRecorder = ({
     const originalPronunciationValue = path === 'headword'
       ? originalRecord.pronunciation
       : originalRecord[`${pronunciationPath}`];
-    setPronunciation(pronunciationPath, originalPronunciationValue);
-    setPronunciationValue(getFormValues(valuePath));
+    setPronunciation(formValuePath, originalPronunciationValue);
+    setPronunciationValue(getFormValues(formValuePath));
     toast({
       title: 'Reset Audio Pronunciation',
       description: 'The audio pronunciation for this slot has been reset to its original value',
@@ -87,9 +87,8 @@ const AudioRecorder = ({
    * */
   useEffect(() => {
     const base64data = audioBlob;
-    // @ts-expect-error
-    if (has(getFormValues(), 'pronunciation')) {
-      setPronunciation(valuePath, base64data);
+    if (typeof getFormValues(formValuePath) === 'string' && base64data) {
+      setPronunciation(formValuePath, base64data);
       setPronunciationValue(getFormValues(formValuePath));
     }
     if (base64data) {
@@ -107,11 +106,8 @@ const AudioRecorder = ({
   return (
     <Box className="flex flex-col w-full">
       <FormHeader
-        title={formTitle || 'Word Pronunciation'}
-        tooltip={
-          formTooltip
-          || 'Record the audio for the headword only one time. You are able to record over pre-existing recordings.'
-        }
+        title={formTitle}
+        tooltip={formTooltip}
       />
       <Box data-test="word-pronunciation-input-container">
         <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">
@@ -172,6 +168,11 @@ const AudioRecorder = ({
       </Box>
     </Box>
   );
+};
+
+AudioRecorder.defaultProps = {
+  formTitle: 'Word Pronunciation',
+  formTooltip: 'Record the audio for the headword only one time. You are able to record over pre-existing recordings.',
 };
 
 export default AudioRecorder;
