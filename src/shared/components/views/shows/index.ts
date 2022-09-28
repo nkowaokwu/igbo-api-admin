@@ -1,6 +1,6 @@
-import ExampleShow from './ExampleShow/ExampleShow';
-import UserShow from './UserShow/UserShow';
-import WordShow from './WordShow/WordShow';
+import ExampleShow from './ExampleShow';
+import UserShow from './UserShow';
+import WordShow from './WordShow';
 
 export {
   ExampleShow,

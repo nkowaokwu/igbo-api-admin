@@ -7,6 +7,7 @@ enum Collection {
   GENERIC_WORDS = 'genericWords',
   USERS = 'users',
   POLLS = 'polls',
+  NOTIFICATIONS = 'notifications',
 };
 
 export default Collection;

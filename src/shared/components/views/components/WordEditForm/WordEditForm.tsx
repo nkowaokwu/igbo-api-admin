@@ -244,9 +244,12 @@ const WordEditForm = ({
               getValues={getValues}
               watch={watch}
             />
-            <TagsForm
+            <PartOfSpeechForm
               errors={errors}
               control={control}
+              getValues={getValues}
+              cacheForm={cacheForm}
+              options={options}
               record={record}
             />
             <NsibidiForm
@@ -254,12 +257,9 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
             />
-            <PartOfSpeechForm
+            <TagsForm
               errors={errors}
               control={control}
-              getValues={getValues}
-              cacheForm={cacheForm}
-              options={options}
               record={record}
             />
             <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 lg:mt-3">

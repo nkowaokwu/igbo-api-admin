@@ -4,6 +4,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { findUser } from 'src/backend/controllers/users';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import { sendDocumentDeletionRequestNotification, sendDocumentUpdateNotification } from '../controllers/email';
+import { postNotification } from '../controllers/notifications';
 
 /* Sends email to project admins to see request */
 export const onRequestDeleteDocument = functions.https.onCall(async (
@@ -57,6 +58,7 @@ export const onUpdateDocument = functions.https.onCall(async (
     let to;
     let author;
     try {
+      author = await findUser(record.authorId);
       if (includeEditors) {
         // Will notify anyone who is the author, has denied, approved, or edited the suggestion
         // Excluding the notification initiator
@@ -65,13 +67,11 @@ export const onUpdateDocument = functions.https.onCall(async (
           .concat(record.approvals || [])
           .concat(record.userInteractions || [])))
           .filter((uid) => uid !== context.auth.uid);
-        author = await findUser(record.authorId);
         to = await Promise.all(editorIds.map(async (editorId) => {
           const editor = await findUser(editorId);
           return typeof editor === 'string' ? editor : editor.email;
         }));
       } else {
-        author = await findUser(record.authorId);
         to = author.email;
       }
     } catch {
@@ -79,6 +79,17 @@ export const onUpdateDocument = functions.https.onCall(async (
     }
 
     if (to.length) {
+      await postNotification({
+        // @ts-expect-error
+        data: {
+          type,
+          resource,
+          record,
+          includeEditors,
+        },
+        author,
+        context,
+      });
       await sendDocumentUpdateNotification({
         author: author.displayName,
         to,

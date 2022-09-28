@@ -1,9 +1,14 @@
 import React, { ReactElement, useEffect } from 'react';
 import { Box } from '@chakra-ui/react';
-import { Admin, Resource, Layout } from 'react-admin';
+import { Admin, Resource } from 'react-admin';
 import { flatten, compact } from 'lodash';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
-import { Dashboard, Error, NotFound } from 'src/Core';
+import {
+  Dashboard,
+  Layout,
+  Error,
+  NotFound,
+} from 'src/Core';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import {
   WordList,
@@ -36,6 +41,7 @@ import {
   GenericWordIcon,
 } from 'src/Core/Collections/GenericWords';
 import { PollsList, PollsCreate } from 'src/Core/Collections/Polls';
+import { NotificationList, NotificationIcon } from 'src/Core/Collections/Notifications';
 import { UserList, UserShow, UserIcon } from 'src/Core/Collections/Users';
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
@@ -59,7 +65,7 @@ const IgboAPIAdmin = (): ReactElement => {
   }, []);
 
   return (
-    // @ts-ignore
+    // @ts-expect-error Cypress
     <Box className={!!window.Cypress ? 'testing-app' : ''}>
       <Admin
         dashboard={Dashboard}
@@ -101,6 +107,12 @@ const IgboAPIAdmin = (): ReactElement => {
               create={ExampleSuggestionCreate}
               show={(props) => <ExampleSuggestionShow {...props} permissions={permissions} />}
               icon={ExampleSuggestionIcon}
+            />,
+            <Resource
+              name="notifications"
+              options={{ label: 'Platform Notifications' }}
+              list={(props) => <NotificationList {...props} permissions={permissions} />}
+              icon={NotificationIcon}
             />,
             <Resource
               name="polls"
