@@ -56,6 +56,23 @@ export interface Word extends Document<any>, LeanDocument<any> {
   examples?: Example[],
 };
 
+export interface Notification {
+  initiator: {
+    email: string,
+    displayName: string,
+    photoURL: string,
+    uid: string,
+  },
+  title: string,
+  message: string,
+  data: any,
+  type: string,
+  recipient: string,
+  opened: boolean,
+  link: string,
+  created_at?: number | string,
+}
+
 export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   originalWordId?: Types.ObjectId,

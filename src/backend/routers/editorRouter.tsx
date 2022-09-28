@@ -28,6 +28,7 @@ import {
   getGenericWord,
 } from '../controllers/genericWords';
 import { getPolls } from '../controllers/polls';
+import { getNotifications, getNotification, deleteNotification } from '../controllers/notifications';
 import validId from '../middleware/validId';
 import authentication from '../middleware/authentication';
 import authorization from '../middleware/authorization';
@@ -94,5 +95,9 @@ editorRouter.delete(
 );
 
 editorRouter.get('/polls', getPolls);
+
+editorRouter.get('/notifications', getNotifications);
+editorRouter.get('/notifications/:id', getNotification);
+editorRouter.delete('/notifications/:id', deleteNotification);
 
 export default editorRouter;

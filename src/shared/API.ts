@@ -106,7 +106,13 @@ export const combineDocument = (
   data: { primaryWordId },
 });
 
-export const assignUserToEditingGroup = ({ groupNumber, record }): Promise<any> => {
+export const assignUserToEditingGroup = ({
+  groupNumber,
+  record,
+} : {
+  groupNumber: number | string,
+  record: Record,
+}): Promise<any> => {
   const { id: uid } = record;
   return handleAssignUserToEditingGroup({ groupNumber, uid });
 };

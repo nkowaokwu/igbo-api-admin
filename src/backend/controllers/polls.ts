@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import admin from 'firebase-admin';
 import TwitterApi from 'twitter-api-v2';
 import moment from 'moment';
+import Collections from 'src/shared/constants/Collections';
 import { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET, IGBO_API_EDITOR_PLATFORM_ROOT } from '../config';
 import ConstructedPollThread from '../shared/constants/ConstructedPollThread';
 import { handleQueries } from './utils';
@@ -55,7 +56,7 @@ export const onTwitterCallback = async (req: Request, res: Response): Promise<vo
 export const onSubmitConstructedTermPoll = async (req: Request, res: Response): Promise<any> => {
   const { refreshToken } = (await dbRef.get()).data();
   const { body } = req;
-  const dbPollsRef = db.collection('polls');
+  const dbPollsRef = db.collection(Collections.POLLS);
 
   try {
     const {
@@ -89,7 +90,7 @@ export const getPolls = async (req: Request, res: Response, next: NextFunction):
     const { skip, limit } = handleQueries(req);
     const { refreshToken } = (await dbRef.get()).data();
     const dbPollsRef = db.collection('polls');
-    const dbPollsWindowRef = db.collection('polls').orderBy('created_at').startAt(skip);
+    const dbPollsWindowRef = db.collection('polls').orderBy('created_at', 'desc');
     const {
       accessToken,
       refreshToken: newRefreshToken,
@@ -97,7 +98,7 @@ export const getPolls = async (req: Request, res: Response, next: NextFunction):
 
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
 
-    const polls = (await dbPollsWindowRef.get()).docs.map((doc) => doc.data()).slice(0, limit);
+    const polls = (await dbPollsWindowRef.get()).docs.map((doc) => doc.data()).slice(skip, skip + limit - 1);
     const totalPolls = (await dbPollsRef.get()).docs;
     res.setHeader('Content-Range', totalPolls.length);
     return res

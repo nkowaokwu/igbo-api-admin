@@ -23,6 +23,7 @@ import { ExampleShow, UserShow, WordShow } from './views/shows';
 import NewLineText from './NewLineText';
 import WordClassTextField from './WordClassTextField';
 import WordPanel from './WordPanel';
+import ShowNotificationButtonField from './ShowNotificationButtonField';
 
 export {
   AudioRecordingPreview,
@@ -55,4 +56,5 @@ export {
   NewLineText,
   WordClassTextField,
   WordPanel,
+  ShowNotificationButtonField,
 };

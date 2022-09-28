@@ -26,6 +26,7 @@ const ConfirmModal = ({
   children,
 }: ConfirmModalInterface): ReactElement => (
   <AlertDialog
+    closeOnEsc={false}
     isOpen={isOpen}
     onClose={onClose}
   >

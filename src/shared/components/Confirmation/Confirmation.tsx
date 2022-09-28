@@ -225,6 +225,7 @@ const Confirmation = ({
       confirmColorScheme={determineConfirmColorScheme()}
       onClose={() => {
         setIsConfirmOpen(false);
+        setIdValue('');
         onClose();
       }}
     >

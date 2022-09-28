@@ -15,7 +15,7 @@ const Empty = ({ showCreate } : { showCreate: boolean }): ReactElement => {
         <Box textAlign="center" m={1} className="lg:space-y-2">
           <Heading fontSize="xl">{`No ${startCase(resource)} available`}</Heading>
           <Text fontSize="lg">
-            Create one or import from a file
+            Create one to get started
           </Text>
           {showCreate ? <CreateButton basePath={basePath} /> : null}
         </Box>

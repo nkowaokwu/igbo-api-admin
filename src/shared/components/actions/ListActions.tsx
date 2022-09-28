@@ -79,6 +79,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   );
   const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
   const isPollResource = resource === Collections.POLLS;
+  const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
 
   useEffect(() => {
@@ -141,7 +142,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
       } TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
-      {isPollResource ? null : <Filter {...props} />}
+      {isPollResource || isNotificationResource ? null : <Filter {...props} />}
       <Box
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"

@@ -1,8 +1,9 @@
+import { Request, Response, NextFunction } from 'express';
 import { GET_MAIN_KEY } from '../config';
 import UserRoles from '../shared/constants/UserRoles';
 
 /* Determines API permission levels based on user role */
-const authorization = (permittedRoles = []) => (req, res, next) => {
+const authorization = (permittedRoles = []) => (req: Request, res: Response, next: NextFunction): Response | void => {
   const { user = {} } = req;
 
   /* As long as the user has a valid Firebase uid then they have access */
