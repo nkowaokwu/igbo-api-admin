@@ -15,7 +15,12 @@ import adminRouter from './src/backend/routers/adminRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
-import { onCreateUserAccount, onAssignUserToEditingGroup, onUpdatePermissions } from './src/backend/functions/users';
+import {
+  onCreateUserAccount,
+  onDeleteUser,
+  onAssignUserToEditingGroup,
+  onUpdatePermissions,
+} from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
 import { onTwitterAuth, onTwitterCallback } from './src/backend/controllers/polls';
 import {
@@ -55,6 +60,7 @@ server.use(errorHandler);
 
 // Firebase Functions
 export const createUserAccount = onCreateUserAccount;
+export const deleteUser = onDeleteUser;
 export const assignUserToEditingGroup = onAssignUserToEditingGroup;
 export const updatePermissions = onUpdatePermissions;
 export const requestDeleteDocument = onRequestDeleteDocument;
