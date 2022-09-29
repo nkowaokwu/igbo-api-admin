@@ -4,9 +4,11 @@ import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import { Role } from 'src/shared/constants/auth-types';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
+import Collections from 'src/shared/constants/Collections';
 import { canAssignEditingGroupNumber } from './utils';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 
+const db = admin.firestore();
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.https.onCall(async (user) => {
   try {
@@ -35,6 +37,55 @@ export const onCreateUserAccount = functions.https.onCall(async (user) => {
   }
 });
 
+/* Helper function to delete nested collection data */
+const deleteQueryBatch = async (query, resolve) => {
+  const snapshot = await query.get();
+
+  const batchSize = snapshot.size;
+  if (batchSize === 0) {
+    // When there are no documents left, we are done
+    resolve();
+    return;
+  }
+
+  // Delete documents in a batch
+  const batch = db.batch();
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  await batch.commit();
+
+  // Recurse on the next process tick, to avoid
+  // exploding the stack.
+  process.nextTick(() => {
+    deleteQueryBatch(query, resolve);
+  });
+};
+
+const deleteCollection = (collectionPath, batchSize = 100000) => {
+  const collectionRef = db.collection(collectionPath);
+  const query = collectionRef.limit(batchSize);
+
+  return new Promise((resolve, reject) => {
+    deleteQueryBatch(query, resolve).catch(reject);
+  });
+};
+
+/* Deletes the specified user */
+export const onDeleteUser = functions.https.onCall(async (user: UpdatePermissions) => {
+  try {
+    // Delete all associated user data
+    await deleteCollection(`${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`);
+    // Delete top-level user data
+    await db.collection(`${Collections.USERS}`).doc(user.uid).delete();
+    // Delete user
+    await admin.auth().deleteUser(user.uid);
+    return `Successfully deleted user ${user.displayName} with uid of ${user.uid}`;
+  } catch (err) {
+    return errorResponse(err);
+  }
+});
+
 /* Assigns an editor to a segment of GenericWords */
 export const onAssignUserToEditingGroup = functions.https
   .onCall(async (data: { groupNumber: string, uid: string }, context) => {
@@ -51,7 +102,7 @@ export const onAssignUserToEditingGroup = functions.https
         const { customClaims } = editorUser;
         if (canAssignEditingGroupNumber(customClaims.role, groupNumber)) {
           await admin.auth().setCustomUserClaims(uid, { ...customClaims, editingGroup: groupNumber });
-          return Promise.resolve(`Successfully assigned editor ${uid} into group ${groupNumber}`);
+          return `Successfully assigned editor ${uid} into group ${groupNumber}`;
         }
         return new functions.https.HttpsError(
           'invalid-argument',

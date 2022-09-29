@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { has } from 'lodash';
+import { has, startCase } from 'lodash';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 import { useToast } from '@chakra-ui/react';
@@ -218,7 +218,7 @@ const Confirmation = ({
     <ConfirmModal
       isOpen={isConfirmOpen}
       title={action?.title}
-      confirm={action?.type}
+      confirm={startCase(action?.type)}
       cancel="Cancel"
       isDisabled={requiresInput && !idValue}
       onConfirm={handleConfirm}

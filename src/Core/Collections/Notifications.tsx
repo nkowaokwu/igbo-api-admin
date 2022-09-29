@@ -23,7 +23,7 @@ export const NotificationList = (props: ListProps): React.ReactElement => (
     title="Platform Notifications"
     actions={<ListActions />}
     pagination={<Pagination />}
-    empty={<Empty />}
+    empty={<Empty showCreate={false} />}
     sort={{ field: 'approvals', order: 'DESC' }}
   >
     <Responsive
