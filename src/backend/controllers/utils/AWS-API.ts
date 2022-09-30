@@ -79,6 +79,7 @@ export const copyAudioPronunciation = async (oldDocId: string, newDocId: string,
     ...baseParams,
     Key: `${pronunciationPath}/${newDocId}.${extension}`,
     ACL: 'public-read',
+    MetadataDirective: 'COPY',
     CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.${extension}`,
   };
 

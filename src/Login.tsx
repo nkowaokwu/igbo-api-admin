@@ -7,7 +7,6 @@ import {
   EmailAuthProvider,
   FacebookAuthProvider,
 } from 'firebase/auth';
-import { useRedirect } from 'react-admin';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {
   Box,
@@ -33,7 +32,6 @@ const Login = (): ReactElement => {
   const [errorUponSubmitting, setErrorUponSubmitting] = useState(null);
   const handleCreateUserAccount = useCallable<any, EmptyResponse>('createUserAccount');
   const filledAuthForm = successfulCreateAccount || errorUponSubmitting;
-  const redirect = useRedirect();
 
   const handleRedirect = async (user) => {
     const idTokenResult = await user.getIdTokenResult();
@@ -48,7 +46,7 @@ const Login = (): ReactElement => {
     localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
     localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
     const redirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    redirect((redirectUrl || '#/').replace('#/', '') || '/');
+    window.location.hash = redirectUrl;
   };
 
   const uiConfig = {
