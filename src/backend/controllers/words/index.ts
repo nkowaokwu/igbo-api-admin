@@ -372,7 +372,7 @@ export const mergeWord = async (
   }
 };
 
-export const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<Interfaces.Word> => {
+const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<Interfaces.Word> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(!id ? 'No word id provided' : 'Invalid word id provided');
   }

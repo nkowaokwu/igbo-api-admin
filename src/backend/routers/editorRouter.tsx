@@ -36,10 +36,11 @@ import validateExampleBody from '../middleware/validateExampleBody';
 import validateExampleMerge from '../middleware/validateExampleMerge';
 import validateWordBody from '../middleware/validateWordBody';
 import validateWordMerge from '../middleware/validateWordMerge';
+import validateConstructedTermBody from '../middleware/validateConstructedTermBody';
 import cacheControl from '../middleware/cacheControl';
 import interactWithSuggestion from '../middleware/interactWithSuggsetion';
 import UserRoles from '../shared/constants/UserRoles';
-import { getConstructedTerms, postConstructedTerm, putConstructedTerm } from '../controllers/constructedTerms';
+import { getConstructedTerms, postConstructedTerm } from '../controllers/constructedTerms';
 
 const editorRouter = express.Router();
 editorRouter.use(authentication, authorization([UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN]));
@@ -58,16 +59,17 @@ editorRouter.get('/constructedTerms', getConstructedTerms);
 editorRouter.get('/constructedTerms/:id', validId, getWordSuggestion);
 editorRouter.post(
   '/constructedTerms',
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
-  validateWordBody,
+  authorization([]),
+  validateConstructedTermBody,
   interactWithSuggestion,
   postConstructedTerm,
 );
 editorRouter.put(
   '/constructedTerms/:id',
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  authorization([]),
+  validateConstructedTermBody,
   validId,
-  putConstructedTerm,
+  putWordSuggestion,
 );
 
 editorRouter.get('/wordSuggestions', getWordSuggestions);

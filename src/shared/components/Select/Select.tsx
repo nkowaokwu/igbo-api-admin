@@ -122,7 +122,7 @@ const Select = ({
       ))(),
       onSelect: () => setAction(actionsMap.Approve),
     },
-    resource === Collection.CONSTRUCTED_TERMS ? null : {
+    {
       value: 'deny',
       label: (() => (
         <span className="text-yellow-800">

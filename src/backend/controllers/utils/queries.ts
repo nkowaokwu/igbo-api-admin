@@ -16,6 +16,7 @@ type Filters = {
   $and?: any[],
   attributes?: {
     isStandardIgbo?: { $eq: boolean },
+    isConstructedTerm?: { $eq: boolean },
   },
   source?: any,
   authorId?: any,
@@ -32,6 +33,9 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
     switch (key) {
       case 'isStandardIgbo':
         allFilters['attributes.isStandardIgbo'] = { $eq: !!value };
+        break;
+      case 'isConstructedTerm':
+        allFilters['attributes.isConstructedTerm'] = { $eq: !!value };
         break;
       case 'pronunciation':
         if (value) {

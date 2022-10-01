@@ -97,18 +97,6 @@ const IgboAPIAdmin = (): ReactElement => {
               icon={ExampleIcon}
             />,
             <Resource
-              name="constructedTerms"
-              options={{ label: 'Constructed Terms' }}
-              list={(props) => <ConstructedTermList {...props} permissions={permissions} />}
-              show={WordShow}
-              edit={ConstructedTermEdit}
-              icon={ConstructedTermIcon}
-              {...hasAdminPermissions(permissions, true)
-                ? { create: ConstructedTermCreate }
-                : { create: null }
-              }
-            />,
-            <Resource
               name="wordSuggestions"
               options={{ label: 'Word Suggestions' }}
               list={(props) => <WordSuggestionList {...props} permissions={permissions} />}
@@ -125,6 +113,15 @@ const IgboAPIAdmin = (): ReactElement => {
               create={ExampleSuggestionCreate}
               show={(props) => <ExampleSuggestionShow {...props} permissions={permissions} />}
               icon={ExampleSuggestionIcon}
+            />,
+            <Resource
+              name="constructedTerms"
+              options={{ label: 'Constructed Terms' }}
+              list={(props) => <ConstructedTermList {...props} permissions={permissions} />}
+              show={(props) => <WordSuggestionShow {...props} permissions={permissions} />}
+              edit={ConstructedTermEdit}
+              icon={ConstructedTermIcon}
+              create={ConstructedTermCreate}
             />,
             <Resource
               name="notifications"

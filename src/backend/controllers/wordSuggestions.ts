@@ -23,7 +23,7 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/AWS-API';
 
-const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
+export const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
 
 export const assignDefaultDialectValues = (data) => (
   Object.entries(data.dialects).reduce((finalDialects, [key, value]) => ({
@@ -35,16 +35,8 @@ export const assignDefaultDialectValues = (data) => (
   }), {})
 );
 
-/* Creates a new WordSuggestion document in the database */
-export const postWordSuggestion = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
+export const createWordSuggestionDocument = async (data, user) => {
   try {
-    const { body: data } = req;
-    const { user } = req;
-
     if (data.id) {
       throw new Error('Cannot pass along an id for a new word suggestion');
     }
@@ -58,6 +50,21 @@ export const postWordSuggestion = async (
         await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id, clientExamples });
         return placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
       });
+    return savedWordSuggestion;
+  } catch (err) {
+    return err.message;
+  }
+};
+
+/* Creates a new WordSuggestion document in the database */
+export const postWordSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const { body: data, user } = req;
+    const savedWordSuggestion = await createWordSuggestionDocument(data, user);
     return res.send(savedWordSuggestion);
   } catch (err) {
     return next(err);
@@ -75,7 +82,7 @@ export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectI
 );
 
 /* Grabs WordSuggestions */
-const findWordSuggestions = async (
+export const findWordSuggestions = async (
   { regexMatch, skip, limit }:
   { regexMatch: RegExp, skip: number, limit: number },
 ): Promise<Interfaces.WordSuggestion[] | any> => (

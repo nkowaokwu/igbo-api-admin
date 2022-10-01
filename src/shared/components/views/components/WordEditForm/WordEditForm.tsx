@@ -172,7 +172,6 @@ const WordEditForm = ({
       denials: map(record.denials, (denial) => denial.uid),
     }), [view === View.CREATE ? 'id' : '']);
     localStorage.removeItem('igbo-api-admin-form');
-    console.log({ isConstructedTermResource });
     save(cleanedData, View.SHOW, {
       onSuccess: ({ data }) => {
         setIsSubmitting(false);
