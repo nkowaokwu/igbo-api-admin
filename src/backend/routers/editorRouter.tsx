@@ -20,7 +20,7 @@ import {
   putExampleSuggestion,
   postExampleSuggestion,
 } from '../controllers/exampleSuggestions';
-import { getStats, getUserStats } from '../controllers/stats';
+import { getStats, getUserStats, getUserMergeStats } from '../controllers/stats';
 import {
   deleteGenericWord,
   getGenericWords,
@@ -83,6 +83,8 @@ editorRouter.delete(
 
 editorRouter.get('/stats/full', getStats);
 editorRouter.get('/stats/user', cacheControl, getUserStats);
+editorRouter.get('/stats/users/:uid/merge', getUserMergeStats);
+editorRouter.get('/stats/users/:uid', cacheControl, getUserStats);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);
 editorRouter.get('/genericWords', getGenericWords);
