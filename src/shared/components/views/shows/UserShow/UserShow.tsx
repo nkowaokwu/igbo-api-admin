@@ -11,6 +11,7 @@ import UserStat from 'src/Core/Dashboard/UserStat/UserStat';
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
   const showProps = useShowController(props);
+  const { permissions } = props;
   let { record } = showProps;
 
   record = record || {};
@@ -38,7 +39,7 @@ const UserShow = (props: ShowProps): ReactElement => {
           </Box>
         </Box>
         <Heading size="lg" className="mt-3">Total User Stats</Heading>
-        {record.uid ? <UserStat uid={record.uid} /> : null}
+        {record.uid ? <UserStat uid={record.uid} permissions={permissions} /> : null}
       </Box>
     </Skeleton>
   );
