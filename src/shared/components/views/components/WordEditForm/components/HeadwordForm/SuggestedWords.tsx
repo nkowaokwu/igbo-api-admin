@@ -37,7 +37,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
               <InfoOutlineIcon color="gray.600" boxSize={3} className="ml-2" />
             </Box>
           </Tooltip>
-          <Box className="flex flex-row flex-wrap">
+          <Box className="flex flex-row flex-wrap relative">
             {filteredWordSuggestions.length ? filteredWordSuggestions.map(({
               word,
               nsibidi,
@@ -45,7 +45,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
               definitions,
               id,
             }) => (
-              <Box key={`suggested-word-${id}`}>
+              <Box key={`suggested-word-${id} relative`}>
                 <Box
                   onMouseEnter={() => setOpenWordPopover(id)}
                   className="flex flex-row items-center"
@@ -64,9 +64,9 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                 </Box>
                 <Popover
                   isOpen={id === openWordPopover}
-                  placement="bottom"
+                  placement="bottom-start"
                 >
-                  <PopoverContent p={5}>
+                  <PopoverContent top={7} p={5}>
                     <Box className="flex flex-row items-center">
                       <Text fontWeight="bold" mr={2}>{word}</Text>
                       {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}

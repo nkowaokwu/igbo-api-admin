@@ -252,15 +252,15 @@ const WordEditForm = ({
               options={options}
               record={record}
             />
-            <NsibidiForm
-              control={control}
-              record={record}
-              getValues={getValues}
-            />
             <TagsForm
               errors={errors}
               control={control}
               record={record}
+            />
+            <NsibidiForm
+              control={control}
+              record={record}
+              getValues={getValues}
             />
             <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 lg:mt-3">
               <Box className="w-full">
