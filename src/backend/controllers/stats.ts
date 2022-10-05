@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { compact } from 'lodash';
+import moment from 'moment';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import WordSuggestion from '../models/WordSuggestion';
@@ -181,6 +182,53 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
       currentEditingWordSuggestionsCount,
       currentEditingExampleSuggestionsCount,
     });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getUserMergeStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+  try {
+    const { params: { uid } } = req;
+    const userId = uid;
+    const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    const wordSuggestions = await WordSuggestion.find(
+      {
+        mergedBy: userId,
+        updatedAt: { $gte: threeMonthsAgo },
+      },
+      null,
+      { sort: { updatedAt: 1 } },
+    );
+    const exampleSuggestions = await ExampleSuggestion.find(
+      {
+        mergedBy: userId,
+        updatedAt: { $gte: threeMonthsAgo },
+      },
+      null,
+      { sort: { updatedAt: 1 } },
+    );
+    const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
+      const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
+      if (!finalData[isoWeek]) {
+        finalData[isoWeek] = [];
+      }
+      return {
+        ...finalData,
+        [isoWeek]: finalData[isoWeek].concat(wordSuggestion),
+      };
+    }, {});
+    const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
+      const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
+      if (!finalData[isoWeek]) {
+        finalData[isoWeek] = [];
+      }
+      return {
+        ...finalData,
+        [isoWeek]: finalData[isoWeek].concat(exampleSuggestion),
+      };
+    }, {});
+    return res.send({ wordSuggestionMerges, exampleSuggestionMerges });
   } catch (err) {
     return next(err);
   }

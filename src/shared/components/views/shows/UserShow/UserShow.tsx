@@ -6,7 +6,7 @@ import {
   Heading,
   Skeleton,
 } from '@chakra-ui/react';
-import UserStat from 'src/Core/Dashboard/UserStat';
+import UserStat from 'src/Core/Dashboard/UserStat/UserStat';
 
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,17 +15,17 @@ const UserShow = (props: ShowProps): ReactElement => {
 
   record = record || {};
 
-  useEffect(() => {
-    if (record?.uid) {
-      setIsLoading(false);
-    }
-  }, [record]);
-
   const {
     displayName,
     photoURL,
     email,
   } = record;
+
+  useEffect(() => {
+    if (record?.uid) {
+      setIsLoading(false);
+    }
+  }, [record]);
 
   return (
     <Skeleton isLoaded={!isLoading}>
