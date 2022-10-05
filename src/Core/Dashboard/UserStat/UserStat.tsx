@@ -11,6 +11,7 @@ import {
   Skeleton,
   chakra,
 } from '@chakra-ui/react';
+import { ShowProps } from 'react-admin';
 import moment from 'moment';
 import {
   Chart as ChartJS,
@@ -22,6 +23,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import { WordSuggestion, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import network from '../network';
 import userStatBodies from './userStatBodies';
@@ -62,10 +64,11 @@ const wordSuggestionsChartOptions = createChartOptions('Merged Word Suggestions'
 const exampleSuggestionsChartOptions = createChartOptions('Merged Example Suggestions');
 const THREE_MONTH_WEEKS_COUNT = 12;
 
-const UserStat = ({ uid } : { uid?: string }): ReactElement => {
+const UserStat = ({ uid, permissions } : { uid?: string, permissions: ShowProps['permissions'] }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [wordSuggestionMergeStats, setWordSuggestionMergeStats] = useState(null);
   const [exampleSuggestionMergeStats, setExampleSuggestionMergeStats] = useState(null);
+  const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
 
   useEffect(() => {
     (async () => {
@@ -143,30 +146,32 @@ const UserStat = ({ uid } : { uid?: string }): ReactElement => {
           </Box>
         ))}
       </Box>
-      <Accordion defaultIndex={[0]} allowMultiple className="w-full my-6">
-        <AccordionItem>
-          <ChakraTooltip
-            label="These charts represent the total number of suggesitons
-            merged by you on a weekly basis for the past three months."
-            placement="bottom-start"
-          >
-            <AccordionButton>
-              <Box className="w-full flex flex-row items-center">
-                <Text fontWeight="bold">Three month Time-based Suggestion Merges</Text>
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </ChakraTooltip>
-          <AccordionPanel>
-            {wordSuggestionMergeStats ? (
-              <Bar options={wordSuggestionsChartOptions} data={wordSuggestionMergeStats} />
-            ) : null}
-            {exampleSuggestionMergeStats ? (
-              <Bar options={exampleSuggestionsChartOptions} data={exampleSuggestionMergeStats} />
-            ) : null}
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
+      {showMergeCharts ? (
+        <Accordion defaultIndex={[0]} allowMultiple className="w-full my-6">
+          <AccordionItem>
+            <ChakraTooltip
+              label="These charts represent the total number of suggesitons
+              merged by you on a weekly basis for the past three months."
+              placement="bottom-start"
+            >
+              <AccordionButton>
+                <Box className="w-full flex flex-row items-center">
+                  <Text fontWeight="bold">Three month Time-based Suggestion Merges</Text>
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </ChakraTooltip>
+            <AccordionPanel>
+              {wordSuggestionMergeStats ? (
+                <Bar options={wordSuggestionsChartOptions} data={wordSuggestionMergeStats} />
+              ) : null}
+              {exampleSuggestionMergeStats ? (
+                <Bar options={exampleSuggestionsChartOptions} data={exampleSuggestionMergeStats} />
+              ) : null}
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      ) : null}
     </Skeleton>
   );
 };

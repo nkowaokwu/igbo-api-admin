@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
-import { Title } from 'react-admin';
+import { Title, ShowProps } from 'react-admin';
 import { getAuth } from 'firebase/auth';
 import Card from './components/Card';
 import {
@@ -11,11 +11,11 @@ import {
   SOFTWARE_ENGINEERS_SLACK_CHANNEL,
 } from '../constants';
 import MilestoneProgress from './components/MilestoneProgress';
-import UserStat from './UserStat/UserStat';
+import UserStat from './UserStat';
 
 const auth = getAuth();
 
-const Dashboard = (): ReactElement => {
+const Dashboard = ({ permissions } : ShowProps): ReactElement => {
   const { currentUser: user } = auth;
 
   const determineDashboardTitle = () => {
@@ -51,7 +51,7 @@ const Dashboard = (): ReactElement => {
               + 'You can click on each stat to see the associated documents'}
             </Text>
           </Box>
-          <UserStat uid={user.uid} />
+          <UserStat uid={user.uid} permissions={permissions} />
         </Box>
         <Box className="w-full grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3 lg:-mt-12">
           <Card
