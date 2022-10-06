@@ -75,14 +75,25 @@ export const copyAudioPronunciation = async (oldDocId: string, newDocId: string,
 
   const extension = isMp3 ? 'mp3' : 'webm';
 
-  const copyParams = {
+  const copyParamsEncoded = {
     ...baseParams,
     Key: encodeURI(`${pronunciationPath}/${newDocId}.${extension}`),
     ACL: 'public-read',
     CopySource: encodeURI(`${bucket}/${pronunciationPath}/${oldDocId}.${extension}`),
   };
+  const copyParamsPlain = {
+    ...baseParams,
+    Key: encodeURI(`${pronunciationPath}/${newDocId}.${extension}`),
+    ACL: 'public-read',
+    CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.${extension}`,
+  };
 
-  await s3.copyObject(copyParams).promise();
+  await s3.copyObject(copyParamsEncoded)
+    .promise()
+    .catch((err) => {
+      console.log(err);
+      s3.copyObject(copyParamsPlain);
+    });
   const copiedAudioPronunciationUri = `${uriPath}/${newDocId}.${extension}`;
   return copiedAudioPronunciationUri;
 };
