@@ -3,6 +3,7 @@ import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
+import { normalizeIgbo } from './plugins/normalizationHooks';
 
 const { Schema, Types } = mongoose;
 // @ts-ignore
@@ -33,5 +34,6 @@ const exampleSuggestionSchema = new Schema({
 
 toJSONPlugin(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
+normalizeIgbo(exampleSuggestionSchema);
 
 export default mongoose.model('ExampleSuggestion', exampleSuggestionSchema);

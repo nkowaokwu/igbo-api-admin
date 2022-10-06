@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Box, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useListFilterContext } from 'react-admin';
@@ -19,6 +19,10 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
     : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
       ? 'word'
       : 'name or email';
+  const [searchValue, setSearchValue] = useState(
+    typeof filterValues?.[filterKey] === 'string' ? filterValues[filterKey].normalize('NFD') : '',
+  );
+
   return (
     <Box className="flex items-end lg:ml-4">
       <InputGroup>
@@ -30,9 +34,13 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
         <Input
           data-test="search-bar"
           className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border border-solid border-gray-400"
-          onChange={(e) => setFilters({ ...filterValues, [filterKey]: e.target.value }, null)}
+          onChange={(e) => {
+            const value = e.target.value.normalize('NFD');
+            setFilters({ ...filterValues, [filterKey]: value }, null);
+            setSearchValue(value);
+          }}
           placeholder={`Search by ${placeholderText}`}
-          defaultValue={typeof filterValues?.[filterKey] === 'string' ? filterValues[filterKey] : ''}
+          value={searchValue}
           style={{ paddingLeft: 34 }}
         />
       </InputGroup>

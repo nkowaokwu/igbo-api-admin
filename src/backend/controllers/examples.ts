@@ -116,8 +116,8 @@ const createExampleFromSuggestion = (exampleSuggestion, mergedBy): Promise<Inter
       await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
       return example;
     })
-    .catch(() => {
-      throw new Error('An error occurred while saving the new example.');
+    .catch((error) => {
+      throw new Error(`An error occurred while saving the new example: ${error.message}`);
     })
 );
 

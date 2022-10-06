@@ -4,6 +4,7 @@ import { every, has, partial } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadWordPronunciation } from './plugins/pronunciationHooks';
+import { normalizeHeadword } from './plugins/normalizationHooks';
 import * as Interfaces from '../controllers/utils/interfaces';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
@@ -88,6 +89,7 @@ const wordSuggestionSchema = new Schema(
 
 toJSONPlugin(wordSuggestionSchema);
 uploadWordPronunciation(wordSuggestionSchema);
+normalizeHeadword(wordSuggestionSchema);
 
 wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
   const wordSuggestionId = this.getQuery()._id;
