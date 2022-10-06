@@ -88,6 +88,7 @@
     "framer-motion": "^4",
     "functions": "^1.0.9",
     "kill-port": "^1.6.1",
+    "joi": "^17.6.2",
     "lodash": "^4.17.20",
     "mic-recorder-to-mp3": "^2.2.2",
     "moment": "^2.29.1",

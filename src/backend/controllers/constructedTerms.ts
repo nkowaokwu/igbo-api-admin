@@ -49,10 +49,6 @@ export const postConstructedTerm = async (
 ): Promise<Response | void> => {
   try {
     const { body: data, user } = req;
-
-    if (!data.attributes.isConstructedTerm) {
-      throw new Error('Word must be a constructed term');
-    }
     const savedConstructedTerm = await createWordSuggestionDocument(data, user);
     return res.send(savedConstructedTerm);
   } catch (err) {
