@@ -47,6 +47,14 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
          * the spaces need to be replaced with dashes (-) to avoid any unexpected escaped character edge cases.
          */
         const dialectalWord = kebabCase(rawDialectalWord);
+        // If the dialect doesn't exist in the document, the create a fallback object
+        if (!this.dialects[rawDialectalWord]) {
+          this.dialects[rawDialectalWord] = {
+            dialects: [],
+            variations: [],
+            pronunciation: '',
+          };
+        }
         if (isCypress && pronunciation) {
           // Going to mock creating and saving audio pronunciation while testing in Cypress (ref. !isCypress check)
           this.dialects[rawDialectalWord].pronunciation = (

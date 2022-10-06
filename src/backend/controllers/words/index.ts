@@ -17,7 +17,7 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import WordSuggestion from 'src/backend/models/WordSuggestion';
-import { DICTIONARY_APP_URL } from 'src/config';
+import { DICTIONARY_APP_URL } from 'src/backend/config';
 import {
   sortDocsBy,
   packageResponse,
@@ -235,8 +235,8 @@ const updateSuggestionAfterMerge = async (
 
 /* Takes the suggestion word pronunciation and overwrites the existing Word document's pronunciation file */
 const overwriteWordPronunciation = async (
-  suggestion: Document<Interfaces.WordSuggestion> | Interfaces.WordSuggestion,
-  word: Document<Interfaces.Word> | Interfaces.Word,
+  suggestion: Interfaces.WordSuggestion,
+  word: Interfaces.Word,
 ): Promise<Document<Interfaces.Word>> => {
   try {
     /**
@@ -245,7 +245,7 @@ const overwriteWordPronunciation = async (
      * will be passed in to tell AWS to delete the audio record for the associated
      * Word document
      */
-    const suggestionDocId = suggestion.pronunciation ? suggestion.id : '';
+    const suggestionDocId = suggestion.pronunciation ? suggestion.id.toString() : '';
     const isMp3 = suggestion.pronunciation.includes('mp3');
     const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id, isMp3);
 
@@ -269,6 +269,13 @@ const overwriteWordPronunciation = async (
       );
 
       suggestion.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
+      if (!word.dialects[dialectalWord]) {
+        word.dialects[dialectalWord] = {
+          dialects: [],
+          variations: [],
+          pronunciation: '',
+        };
+      }
       word.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
     }));
 
@@ -280,14 +287,13 @@ const overwriteWordPronunciation = async (
     return await word.save();
   } catch (err) {
     console.log('An error while merging audio pronunciations failed:', err.message);
-    console.log(err.stack);
-    return err.stack;
+    throw err;
   }
 };
 
 /* Merges new data into an existing Word document */
 const mergeIntoWord = (
-  suggestionDoc: Document<Interfaces.WordSuggestion>,
+  suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
 ): Promise<Interfaces.Word | void> => {
   const suggestionDocObject: Interfaces.WordSuggestion | any = suggestionDoc.toObject();
@@ -296,13 +302,13 @@ const mergeIntoWord = (
     { $set: omit(suggestionDocObject, ['pronunciation']) },
     { new: true },
   )
-    .then(async (updatedWord: Document<Interfaces.Word>) => {
+    .then(async (updatedWord: Interfaces.Word) => {
       if (!updatedWord) {
         throw new Error('Word doesn\'t exist');
       }
 
       await overwriteWordPronunciation(suggestionDoc, updatedWord);
-      await updateSuggestionAfterMerge(suggestionDoc, updatedWord.id, mergedBy);
+      await updateSuggestionAfterMerge(suggestionDoc, updatedWord.id.toString(), mergedBy);
       return (await findWordsWithMatch({ match: { _id: suggestionDocObject.originalWordId }, limit: 1 }))[0];
     })
     .catch((error) => {
@@ -321,8 +327,8 @@ const createWordFromSuggestion = (
       await updateSuggestionAfterMerge(suggestionDoc, word.id, mergedBy);
       return updatedPronunciationsWord;
     })
-    .catch(() => {
-      throw new Error('An error occurred while saving the new word.');
+    .catch((err) => {
+      throw new Error(`An error occurred while saving the new word: ${err.message}`);
     })
 );
 
