@@ -7,6 +7,10 @@ import {
   AWS_REGION,
 } from 'src/backend/config';
 
+const accents = {
+  // Remove all diacritic marks except for the underdot
+  remove: (string = '') => string.normalize('NFD').replace(/(?!\u0323)[\u0300-\u036f]/g, ''),
+};
 const bucket = AWS_BUCKET;
 const region = AWS_REGION;
 const pronunciationPath = 'audio-pronunciations';
@@ -34,13 +38,14 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
   if (!id || !pronunciationData) {
     throw new Error('id and pronunciation must be provided');
   }
+  const audioId = accents.remove(id);
   if (isCypress || !isProduction) {
-    return encodeURI(`${dummyUriPath}${id}`);
+    return `${dummyUriPath}${audioId}`;
   }
   const base64Data = Buffer.from(pronunciationData.replace(/^data:.+;base64,/, ''), 'base64');
   const params = {
     ...baseParams,
-    Key: encodeURI(`${pronunciationPath}/${id}.mp3`),
+    Key: `${pronunciationPath}/${audioId}.mp3`,
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
@@ -56,13 +61,14 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
   if (!id) {
     throw new Error('No pronunciation id provided');
   }
+  const audioId = accents.remove(id);
   if (isCypress || !isProduction) {
-    return encodeURI(`${dummyUriPath}${id}`);
+    return `${dummyUriPath}${audioId}`;
   }
   const extension = isMp3 ? 'mp3' : 'webm';
   const params = {
     ...baseParams,
-    Key: encodeURI(`${pronunciationPath}/${id}.${extension}`),
+    Key: `${pronunciationPath}/${audioId}.${extension}`,
   };
 
   return s3.deleteObject(params).promise();
@@ -72,28 +78,19 @@ export const copyAudioPronunciation = async (oldDocId: string, newDocId: string,
   if (isCypress || !isProduction) {
     return encodeURI(`${dummyUriPath}${newDocId}`);
   }
+  const oldAudioId = accents.remove(oldDocId);
+  const newAudioId = accents.remove(newDocId);
 
   const extension = isMp3 ? 'mp3' : 'webm';
 
-  const copyParamsEncoded = {
+  const copyParams = {
     ...baseParams,
-    Key: encodeURI(`${pronunciationPath}/${newDocId}.${extension}`),
+    Key: `${pronunciationPath}/${newAudioId}.${extension}`,
     ACL: 'public-read',
-    CopySource: encodeURI(`${bucket}/${pronunciationPath}/${oldDocId}.${extension}`),
-  };
-  const copyParamsPlain = {
-    ...baseParams,
-    Key: encodeURI(`${pronunciationPath}/${newDocId}.${extension}`),
-    ACL: 'public-read',
-    CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.${extension}`,
+    CopySource: `${bucket}/${pronunciationPath}/${oldAudioId}.${extension}`,
   };
 
-  await s3.copyObject(copyParamsEncoded)
-    .promise()
-    .catch((err) => {
-      console.log(err);
-      s3.copyObject(copyParamsPlain);
-    });
+  await s3.copyObject(copyParams).promise();
   const copiedAudioPronunciationUri = `${uriPath}/${newDocId}.${extension}`;
   return copiedAudioPronunciationUri;
 };
@@ -104,7 +101,8 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     if (!oldDocId) {
       return '';
     }
-    return encodeURI(`${dummyUriPath}${newDocId}`);
+    const newAudioId = accents.remove(newDocId);
+    return `${dummyUriPath}${newAudioId}`;
   }
   /**
    * If the Word Suggestion doesn't have an audio pronunciation
