@@ -35,12 +35,12 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
     throw new Error('id and pronunciation must be provided');
   }
   if (isCypress || !isProduction) {
-    return `${dummyUriPath}${id}`;
+    return encodeURI(`${dummyUriPath}${id}`);
   }
   const base64Data = Buffer.from(pronunciationData.replace(/^data:.+;base64,/, ''), 'base64');
   const params = {
     ...baseParams,
-    Key: `${pronunciationPath}/${id}.mp3`,
+    Key: encodeURI(`${pronunciationPath}/${id}.mp3`),
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
@@ -57,12 +57,12 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
     throw new Error('No pronunciation id provided');
   }
   if (isCypress || !isProduction) {
-    return `${dummyUriPath}${id}`;
+    return encodeURI(`${dummyUriPath}${id}`);
   }
   const extension = isMp3 ? 'mp3' : 'webm';
   const params = {
     ...baseParams,
-    Key: `${pronunciationPath}/${id}.${extension}`,
+    Key: encodeURI(`${pronunciationPath}/${id}.${extension}`),
   };
 
   return s3.deleteObject(params).promise();
@@ -70,16 +70,16 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
 /* Takes an old and new pronunciation id and copies it (copies) */
 export const copyAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
   if (isCypress || !isProduction) {
-    return `${dummyUriPath}${newDocId}`;
+    return encodeURI(`${dummyUriPath}${newDocId}`);
   }
 
   const extension = isMp3 ? 'mp3' : 'webm';
 
   const copyParams = {
     ...baseParams,
-    Key: `${pronunciationPath}/${newDocId}.${extension}`,
+    Key: encodeURI(`${pronunciationPath}/${newDocId}.${extension}`),
     ACL: 'public-read',
-    CopySource: `${bucket}/${pronunciationPath}/${oldDocId}.${extension}`,
+    CopySource: encodeURI(`${bucket}/${pronunciationPath}/${oldDocId}.${extension}`),
   };
 
   await s3.copyObject(copyParams).promise();
@@ -93,7 +93,7 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     if (!oldDocId) {
       return '';
     }
-    return `${dummyUriPath}${newDocId}`;
+    return encodeURI(`${dummyUriPath}${newDocId}`);
   }
   /**
    * If the Word Suggestion doesn't have an audio pronunciation
