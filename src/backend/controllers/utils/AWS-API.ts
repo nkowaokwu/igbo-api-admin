@@ -75,11 +75,11 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
 };
 /* Takes an old and new pronunciation id and copies it (copies) */
 export const copyAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
-  if (isCypress || !isProduction) {
-    return encodeURI(`${dummyUriPath}${newDocId}`);
-  }
   const oldAudioId = accents.remove(oldDocId);
   const newAudioId = accents.remove(newDocId);
+  if (isCypress || !isProduction) {
+    return `${dummyUriPath}${newAudioId}`;
+  }
 
   const extension = isMp3 ? 'mp3' : 'webm';
 
@@ -91,7 +91,7 @@ export const copyAudioPronunciation = async (oldDocId: string, newDocId: string,
   };
 
   await s3.copyObject(copyParams).promise();
-  const copiedAudioPronunciationUri = `${uriPath}/${newDocId}.${extension}`;
+  const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
   return copiedAudioPronunciationUri;
 };
 
