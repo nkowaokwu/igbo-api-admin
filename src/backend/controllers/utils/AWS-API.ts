@@ -8,8 +8,8 @@ import {
 } from 'src/backend/config';
 
 const accents = {
-  // Remove all diacritic marks except for the underdot
-  remove: (string = '') => string.normalize('NFD').replace(/(?!\u0323)[\u0300-\u036f]/g, ''),
+  // Remove all diacritic marks including underdots
+  remove: (string = '') => string.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
 };
 const bucket = AWS_BUCKET;
 const region = AWS_REGION;
