@@ -13,7 +13,7 @@ export const ExampleEditFormSchema = yup.object().shape({
   associatedWords: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
   originalExampleId: yup.string().nullable().optional(),
-  pronunciation: yup.string().optional(),
+  pronunciation: yup.array().min(0).of(yup.string()).optional(),
 });
 
 const resolver = {

@@ -14,7 +14,7 @@ const exampleSchema = new Schema({
     default: ExampleStyle.NO_STYLE.value,
   },
   associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
-  pronunciation: { type: String, default: '' },
+  pronunciation: [{ type: String }],
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSchema);

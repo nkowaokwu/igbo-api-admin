@@ -1,11 +1,17 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import {
   assign,
+  compact,
   map,
   omit,
   pick,
 } from 'lodash';
-import { Box, Button, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Tooltip,
+  useToast,
+} from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
@@ -38,10 +44,12 @@ const ExampleEditForm = ({
     setValue,
     control,
     errors,
+    watch,
   } = useForm({
     defaultValues: {
       ...record,
       style,
+      pronunciation: Array.isArray(record.pronunciation) ? record.pronunciation : compact([record.pronunciation]),
     },
     ...ExampleEditFormResolver,
   });
@@ -54,6 +62,7 @@ const ExampleEditForm = ({
   const redirect = useRedirect();
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
+  const watchPronunciations = watch('pronunciation');
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -176,23 +185,38 @@ const ExampleEditForm = ({
               <p className="error">{errors.style.message}</p>
             ) : null}
           </Box>
+          <Tooltip label="Add another recording for this example sentence">
+            <Button>Add recording</Button>
+          </Tooltip>
           <Controller
-            render={() => (
-              <AudioRecorder
-                path="headword"
-                getFormValues={getValues}
-                setPronunciation={setValue}
-                record={record}
-                originalRecord={originalRecord}
-                formTitle="Igbo Sentence Recording"
-                formTooltip="Record the audio for the Igbo example sentence only one time.
-                You are able to record over pre-existing recordings."
-              />
-            )}
-            defaultValue={record.pronunciation}
+            render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
             name="pronunciation"
             control={control}
+            defaultValue={watchPronunciations}
           />
+          {watchPronunciations.map((pronunciation, index) => (
+            <Box className="flex flex-row justify-between items-center">
+              <Controller
+                render={() => (
+                  <AudioRecorder
+                    path="headword"
+                    index={index}
+                    getFormValues={getValues}
+                    setPronunciation={setValue}
+                    record={record}
+                    originalRecord={originalRecord}
+                    formTitle="Igbo Sentence Recording"
+                    formTooltip="Record the audio for the Igbo example sentence only one time.
+                    You are able to record over pre-existing recordings."
+                  />
+                )}
+                defaultValue={pronunciation}
+                name={`pronunciation[${index}]`}
+                control={control}
+              />
+              <Button>Delete recording</Button>
+            </Box>
+          ))}
         </Box>
         <FormHeader
           title="Igbo"

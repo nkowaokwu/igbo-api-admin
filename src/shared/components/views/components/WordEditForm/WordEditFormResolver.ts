@@ -31,7 +31,7 @@ const schema = yup.object().shape({
   dialects: yup.object().shape({
     dialect: yup.string().optional(),
     variations: yup.array().min(0).of(yup.string()).optional(),
-    pronunciation: yup.string().optional(),
+    pronunciation: yup.array().min(0).of(yup.string()).optional(),
   }),
   tenses: yup.object().shape(Object.values(Tense).reduce((finalSchema, tenseValue) => ({
     ...finalSchema,
@@ -39,7 +39,7 @@ const schema = yup.object().shape({
   }), {})).optional(),
   stems: yup.array().min(0).of(yup.string()),
   relatedTerms: yup.array().min(0).of(yup.string()),
-  pronunciation: yup.string().optional(),
+  pronunciation: yup.array().min(0).of(yup.string()).optional(),
   examples: yup.array().min(0).of(ExampleEditFormSchema),
   nsibidi: yup.string(),
   twitterPollId: yup.string().optional(),

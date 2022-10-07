@@ -288,7 +288,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
               <MenuList minWidth="240px" zIndex={10}>
                 <MenuOptionGroup
                   defaultValue={currentPartOfSpeechFilter}
-                  // @ts-expect-error onChange
                   onChange={setCurrentPartOfSpeechFilter}
                   title="Part of speech"
                   type="checkbox"

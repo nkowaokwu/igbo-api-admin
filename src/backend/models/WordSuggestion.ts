@@ -36,7 +36,7 @@ const wordSuggestionSchema = new Schema(
           ))
           && Array.isArray(dialectValue.dialects)
           && every(dialectValue.dialects, (dialect) => Dialects[dialect].value)
-          && typeof dialectValue.pronunciation === 'string'
+          && Array.isArray(dialectValue.pronunciation)
           && Array.isArray(dialectValue.variations)
         ));
       },
@@ -61,7 +61,7 @@ const wordSuggestionSchema = new Schema(
       required: false,
       default: {},
     },
-    pronunciation: { type: String, default: '' },
+    pronunciation: [{ type: String }],
     attributes: Object.entries(WordAttributes)
       .reduce((finalAttributes, [, { value }]) => ({
         ...finalAttributes,

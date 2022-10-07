@@ -11,6 +11,7 @@ import FormHeader from '../FormHeader';
 
 const AudioRecorder = ({
   path,
+  index = 0,
   getFormValues,
   setPronunciation,
   record,
@@ -19,6 +20,7 @@ const AudioRecorder = ({
   formTooltip,
 }: {
   path: string,
+  index: number,
   getFormValues: (key: string) => any,
   setPronunciation: (path: string, value: any) => any,
   record: Record | Example | Word,
@@ -37,15 +39,15 @@ const AudioRecorder = ({
       ? 'Example'
       : path;
   const valuePath = path === 'headword'
-    ? 'pronunciation'
+    ? `pronunciation[${index}]`
     : path.startsWith('examples')
-      ? 'pronunciation'
-      : `dialects.${path}.pronunciation`;
+      ? `pronunciation[${index}]`
+      : `dialects.${path}.pronunciation[${index}]`;
   const formValuePath = path === 'headword'
-    ? 'pronunciation'
+    ? `pronunciation[${index}]`
     : path.startsWith('examples') // Handles path for nested examples
-      ? `${path}.pronunciation`
-      : `dialects.${path}.pronunciation`;
+      ? `${path}.pronunciation[${index}]`
+      : `dialects.${path}.pronunciation[${index}]`;
   const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording] = useRecorder();
   const toast = useToast();
@@ -54,8 +56,8 @@ const AudioRecorder = ({
   const resetRecording = () => {
     const pronunciationPath = valuePath;
     const originalPronunciationValue = path === 'headword'
-      ? originalRecord.pronunciation
-      : originalRecord[`${pronunciationPath}`];
+      ? originalRecord.pronunciation[index]
+      : originalRecord[`${pronunciationPath}`][index];
     setPronunciation(formValuePath, originalPronunciationValue);
     setPronunciationValue(getFormValues(formValuePath));
     toast({
@@ -74,7 +76,7 @@ const AudioRecorder = ({
 
   /* Grabbing the default pronunciation value for the word or example document */
   useEffect(() => {
-    if (has(record, 'pronunciation') && !pronunciationValue) {
+    if (has(record, `pronunciation[${index}]`) && !pronunciationValue) {
       setPronunciationValue(get(record, valuePath));
     }
   }, [record]);

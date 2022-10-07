@@ -1,6 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import {
   assign,
+  compact,
   map,
   omit,
   values,
@@ -8,6 +9,7 @@ import {
 import {
   Box,
   Button,
+  Tooltip,
   useToast,
 } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -71,6 +73,7 @@ const WordEditForm = ({
       stems: record.stems || [],
       nsibidi: record.nsibidi,
       tenses: record.tenses || {},
+      pronunciation: Array.isArray(record.pronunciation) ? record.pronunciation : compact([record.pronunciation]),
     },
     ...WordEditFormResolver(),
   });
@@ -89,6 +92,7 @@ const WordEditForm = ({
   const toast = useToast();
   const options = values(WordClass);
   const watchWordClass = watch('wordClass');
+  const watchPronunciations = watch('pronunciation');
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -281,20 +285,49 @@ const WordEditForm = ({
             </Box>
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
+            <Tooltip label="Add another recording for this headword">
+              <Button
+                onClick={() => {
+                  setValue('pronunciation', [...watchPronunciations, '']);
+                }}
+              >
+                Add recording
+              </Button>
+            </Tooltip>
             <Controller
-              render={() => (
-                <AudioRecorder
-                  path="headword"
-                  getFormValues={getValues}
-                  setPronunciation={setValue}
-                  record={record}
-                  originalRecord={originalRecord}
-                />
-              )}
-              defaultValue={record.pronunciation}
+              render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
               name="pronunciation"
               control={control}
+              defaultValue={watchPronunciations}
             />
+            {watchPronunciations.map((pronunciation, index) => (
+              <Box className="flex flex-row justify-between items-center">
+                <Controller
+                  render={() => (
+                    <AudioRecorder
+                      path="headword"
+                      index={index}
+                      getFormValues={getValues}
+                      setPronunciation={setValue}
+                      record={record}
+                      originalRecord={originalRecord}
+                    />
+                  )}
+                  defaultValue={pronunciation}
+                  name={`pronunciation[${index}]`}
+                  control={control}
+                />
+                <Button
+                  onClick={() => {
+                    const updatedPronunciations = [...watchPronunciations];
+                    updatedPronunciations.splice(index, 1);
+                    setValue('pronunciation', [...updatedPronunciations]);
+                  }}
+                >
+                  Delete recording
+                </Button>
+              </Box>
+            ))}
             <Box className="flex flex-row justify-between items-center">
               <FormHeader
                 title="Dialectal Variations"
