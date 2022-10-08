@@ -11,7 +11,6 @@ import { ExampleSuggestionCreate, WordSuggestionCreate, PollsCreate } from './vi
 import { ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
-import TweetField from './TweetField';
 import IdField from './IdField';
 import ArrayPreview from './ArrayPreview';
 import ReviewPreview from './ReviewPreview';
@@ -35,7 +34,6 @@ export {
   StyleField,
   Confirmation,
   HeadwordField,
-  TweetField,
   IdField,
   StandardIgboPreview,
   ExampleSuggestionCreate,

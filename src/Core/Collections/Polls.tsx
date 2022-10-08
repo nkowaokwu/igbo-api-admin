@@ -8,7 +8,7 @@ import {
   TextField,
 } from 'react-admin';
 import {
-  TweetField,
+  Select,
   Pagination,
   PollsCreate as Create,
   ListActions,
@@ -24,13 +24,15 @@ export const PollsList = (props: ListProps): ReactElement => {
       title="Constructed Term Polls"
       actions={<ListActions />}
       hasCreate
+      bulkActionButtons={false}
       pagination={<Pagination />}
       empty={<Empty showCreate={permissions.role === Role.ADMIN} />}
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Datagrid>
+        <TextField label="Igbo Word" source="igboWord" />
         <TextField label="Tweet body" source="text" />
-        <TweetField label="Tweet Link" source="id" />
+        <Select collection="polls" label="Editor's Actions" permissions={permissions} />
       </Datagrid>
     </List>
   );

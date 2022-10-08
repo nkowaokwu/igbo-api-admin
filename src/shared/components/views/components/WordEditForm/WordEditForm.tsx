@@ -369,6 +369,14 @@ const WordEditForm = ({
           defaultValue={record.userComments || getValues().userComments}
           control={control}
         />
+        <Controller
+          render={(props) => (
+            <input {...props} style={{ pointerEvents: 'none', visibility: 'hidden' }} />
+          )}
+          name="twitterPollId"
+          defaultValue={record.twitterPollId}
+          control={control}
+        />
       </Box>
       <Box className="form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
         <Button

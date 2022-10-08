@@ -10,6 +10,7 @@ import {
   MenuOptionGroup,
   IconButton,
   Tooltip,
+  MenuDivider,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
@@ -25,6 +26,7 @@ import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import WordClass from 'src/shared/constants/WordClass';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import Filter from '../Filter';
 
 /**
@@ -229,7 +231,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                     : null}
                   {isWordResource
                     ? [
-                      <MenuItemOption value="isStandardIgbo">
+                      <MenuItemOption value={WordAttributes.IS_STANDARD_IGBO.value}>
                         Is Standard Igbo
                       </MenuItemOption>,
                       <MenuItemOption value="pronunciation">
@@ -238,10 +240,14 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                       <MenuItemOption value="nsibidi">
                         Has Nsịbịdị
                       </MenuItemOption>,
+                      <MenuItemOption value={WordAttributes.IS_CONSTRUCTED_TERM.value}>
+                        Is Constructed Term
+                      </MenuItemOption>,
                     ]
                     : null}
                   {isSuggestionResource
                     ? [
+                      <MenuDivider />,
                       <MenuItemOption value={SuggestionSource.COMMUNITY}>
                         From Nkọwa okwu
                       </MenuItemOption>,
@@ -251,10 +257,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                       <MenuItemOption value="userInteractions">
                         Is Currently Editing
                       </MenuItemOption>,
-                    ]
-                    : null}
-                  {isSuggestionResource
-                    ? [
                       <MenuItemOption value="authorId">
                         Is Author
                       </MenuItemOption>,

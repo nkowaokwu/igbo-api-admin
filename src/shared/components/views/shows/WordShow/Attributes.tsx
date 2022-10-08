@@ -31,7 +31,7 @@ const Attributes = (
   } = record;
 
   return (
-    <Box className="space-y-3 bg-gray-200 rounded-md p-3" style={{ height: 'fit-content' }}>
+    <Box className="space-y-3 bg-gray-200 rounded-md p-3 mt-6 lg:mt-0" style={{ height: 'fit-content' }}>
       <FormHeader title="Word Attributes" />
       <Box className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <Box>

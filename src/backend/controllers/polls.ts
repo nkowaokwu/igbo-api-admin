@@ -23,7 +23,7 @@ const twitterClient = new TwitterApi({
 });
 
 /* Initiates the auto process to post tweets on behalf of @nkowaokwu */
-export const onTwitterAuth = async (req: Request, res: Response): Promise<void> => {
+export const onTwitterAuth = async (_: Request, res: Response): Promise<void> => {
   const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
     callbackUrl,
     { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] },
@@ -83,6 +83,7 @@ export const onSubmitConstructedTermPoll = async (req: Request, res: Response): 
       created_at: moment().unix(),
       id: firstTweetId,
       text: body.text,
+      igboWord: body.igboWord,
       thread: tweets.map(({ data }) => data.id).slice(1, 4),
     });
 

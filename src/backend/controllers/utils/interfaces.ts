@@ -99,6 +99,7 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
     [key: string]: WordDialect,
   },
   userInteractions?: string[],
+  twitterPollUrl?: string,
 };
 
 export interface Example extends Document<any>, LeanDocument<any> {

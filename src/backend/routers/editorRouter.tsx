@@ -11,6 +11,7 @@ import {
   putWord,
   mergeWord,
   getAssociatedWordSuggestions,
+  getAssociatedWordSuggestionsByTwitterId,
 } from '../controllers/words';
 import { putExample, mergeExample, getAssociatedExampleSuggestions } from '../controllers/examples';
 import {
@@ -48,6 +49,7 @@ editorRouter.post('/words', authorization([UserRoles.MERGER, UserRoles.ADMIN]), 
 editorRouter.put('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putWord);
 editorRouter.delete('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, deleteWord);
 editorRouter.get('/words/:id/wordSuggestions', validId, getAssociatedWordSuggestions);
+editorRouter.get('/words/:id/twitterPolls', getAssociatedWordSuggestionsByTwitterId);
 
 editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateExampleMerge, mergeExample);
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);

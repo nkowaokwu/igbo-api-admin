@@ -42,6 +42,7 @@ const schema = yup.object().shape({
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(ExampleEditFormSchema),
   nsibidi: yup.string(),
+  twitterPollId: yup.string().optional(),
 });
 
 const resolver = (): any => ({

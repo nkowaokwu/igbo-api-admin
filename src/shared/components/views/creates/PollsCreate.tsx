@@ -23,6 +23,7 @@ const MAXIMUM_POLL_OPTIONS = 4;
 const PollsCreate = (): ReactElement => {
   const [tweetBody, setTweetBody] = useState('');
   const [pollOptions, setPollOptions] = useState(['Ee', 'Mba']);
+  const [word, setWord] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
@@ -49,9 +50,13 @@ const PollsCreate = (): ReactElement => {
       if (pollOptions.some((pollOption) => !pollOption)) {
         throw new Error('Unable to send poll with empty options');
       }
+      if (!word) {
+        throw new Error('Please enter the newly constructed Igbo word');
+      }
       const initialTweet = `${ConstructedPollThread[0].text} ${tweetBody}`;
       const poll = {
         text: initialTweet,
+        igboWord: word,
         poll: {
           options: pollOptions,
           duration_minutes: 4320,
@@ -144,6 +149,11 @@ const PollsCreate = (): ReactElement => {
         >
           <Box flex={2} className="w-full space-y-4">
             <Box>
+              <Heading as="h3" fontSize="md" mb={4}>Igbo Words</Heading>
+              <Input
+                value={word}
+                onChange={(e) => setWord(e.target.value)}
+              />
               <Heading as="h3" fontSize="md" mb={4}>Tweet Body</Heading>
               <Textarea
                 required

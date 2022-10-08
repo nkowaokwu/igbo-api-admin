@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { has, uniq } from 'lodash';
+import { get, has, uniq } from 'lodash';
 import { Record } from 'react-admin';
 import {
   Badge,
@@ -25,7 +25,7 @@ const CompleteWordPreview = (
 ): ReactElement => {
   const [availableAudioStatuses, setAvailableAudioStatuses] = useState(null);
   const [documentCompleteness, setDocumentCompleteness] = useState(null);
-  const { isComplete } = record;
+  const isComplete = get(record, 'isComplete');
 
   useEffect(() => {
     (async () => {

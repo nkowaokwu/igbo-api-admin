@@ -27,6 +27,7 @@ const HeadwordForm = ({
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
   const watchedWord = watch('word');
+  const isConstructedPollTerm = !!get(record, 'twitterPollId');
 
   useEffect(() => {
     const { flags: generatedFlags } = generateFlags({ word: { ...(record || {}), word: watchedWord }, flags: {} });
@@ -114,14 +115,22 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
-          <Tooltip label="Check this checkbox if this is a newly coined, aka constructed, Igbo word">
+          <Tooltip
+            label={isConstructedPollTerm
+              ? 'This checkbox is automatically checked since it\'s a constructed term that comes from a Twitter poll'
+              : 'Check this checkbox if this is a newly coined, aka constructed, Igbo word'}
+          >
             <Box display="flex">
               <Controller
                 render={({ onChange, value, ref }) => (
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
-                    defaultIsChecked={record.attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]}
+                    isChecked={isConstructedPollTerm || value}
+                    defaultIsChecked={
+                      isConstructedPollTerm
+                      || record.attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
+                    }
+                    isDisabled={isConstructedPollTerm}
                     ref={ref}
                     data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.label}-checkbox`}
                     size="lg"
@@ -129,7 +138,7 @@ const HeadwordForm = ({
                     <span className="font-bold">{WordAttributes.IS_CONSTRUCTED_TERM.label}</span>
                   </Checkbox>
                 )}
-                defaultValue={record.attribute?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
+                defaultValue={isConstructedPollTerm || record.attribute?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
                   || getValues().attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]}
                 name={`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`}
                 control={control}

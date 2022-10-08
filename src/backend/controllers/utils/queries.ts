@@ -3,6 +3,7 @@ import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import Tense from 'src/backend/shared/constants/Tense';
 
 type ExampleSearchQuery = [
@@ -30,8 +31,8 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
   let searchFilters: Filters = filters ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
     allFilters.$or = allFilters.$or || [];
     switch (key) {
-      case 'isStandardIgbo':
-        allFilters['attributes.isStandardIgbo'] = { $eq: !!value };
+      case WordAttributes.IS_STANDARD_IGBO.value:
+        allFilters[`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`] = { $eq: !!value };
         break;
       case 'pronunciation':
         if (value) {
@@ -46,6 +47,9 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         } else {
           allFilters.$or = [...allFilters.$or, { nsibidi: { $eq: null } }, { nsibidi: { $eq: '' } }];
         }
+        break;
+      case WordAttributes.IS_CONSTRUCTED_TERM.value:
+        allFilters[`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`] = { $eq: !!value };
         break;
       case SuggestionSource.COMMUNITY:
         allFilters.source = { $eq: SuggestionSource.COMMUNITY };
@@ -217,5 +221,12 @@ export const searchForAssociatedSuggestions = (wordId: string): {
   merged: { [key: string]: null }
 } => ({
   originalWordId: wordId,
+  merged: { $eq: null },
+});
+export const searchForAssociatedSuggestionsByTwitterId = (twitterPollId: string): {
+  twitterPollId: string,
+  merged: { [key: string]: null }
+} => ({
+  twitterPollId,
   merged: { $eq: null },
 });

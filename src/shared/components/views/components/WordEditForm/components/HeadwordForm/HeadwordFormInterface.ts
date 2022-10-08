@@ -6,7 +6,7 @@ interface HeadwordForm {
   control: Control,
   record: Record,
   watch: any,
-  getValues: (key: string) => any,
+  getValues: (key?: string) => any,
 };
 
 export default HeadwordForm;
