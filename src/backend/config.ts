@@ -78,3 +78,4 @@ export const GET_MAIN_KEY = (): string => {
 // Twitter API
 export const TWITTER_CLIENT_ID = config?.twitter?.client_id;
 export const TWITTER_CLIENT_SECRET = config?.twitter?.client_secret;
+export const TWITTER_APP_URL = 'https://twitter.com/nkowaokwu/status';

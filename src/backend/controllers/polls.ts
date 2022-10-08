@@ -2,8 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import admin from 'firebase-admin';
 import TwitterApi from 'twitter-api-v2';
 import moment from 'moment';
+import axios from 'axios';
 import Collections from 'src/shared/constants/Collections';
-import { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET, IGBO_API_EDITOR_PLATFORM_ROOT } from '../config';
+import {
+  TWITTER_CLIENT_ID,
+  TWITTER_CLIENT_SECRET,
+  TWITTER_APP_URL,
+  IGBO_API_EDITOR_PLATFORM_ROOT,
+  DICTIONARY_APP_URL,
+} from '../config';
 import ConstructedPollThread from '../shared/constants/ConstructedPollThread';
 import { handleQueries } from './utils';
 
@@ -70,12 +77,18 @@ export const onSubmitConstructedTermPoll = async (req: Request, res: Response): 
     const tweetBody = { text: body.text, poll: body.poll };
     const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...ConstructedPollThread.slice(1, 4)]);
 
+    const firstTweetId = tweets[0].data.id;
     // Saves the first Poll Tweet id in Firestore to list later
-    await dbPollsRef.doc(tweets[0].data.id).set({
+    await dbPollsRef.doc(firstTweetId).set({
       created_at: moment().unix(),
-      id: tweets[0].data.id,
+      id: firstTweetId,
       text: body.text,
       thread: tweets.map(({ data }) => data.id).slice(1, 4),
+    });
+
+    await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+      type: 'igbo_api_editor_platform',
+      url: `${TWITTER_APP_URL}/${firstTweetId}`,
     });
 
     return res.send(tweets);
