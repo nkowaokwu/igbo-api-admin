@@ -17,7 +17,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
   const [suggestedWords, setSuggestedWords] = useState([]);
   useEffect(() => {
     (async () => {
-      const words = await getWords(word);
+      const words = await getWords((word || '').normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
       setSuggestedWords(words);
     })();
   }, [word]);
