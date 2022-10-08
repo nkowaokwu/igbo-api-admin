@@ -24,14 +24,10 @@ export default async (record: Word | Record, callback: (value: any) => void): Pr
               ...finalDialectsPronunciationPromises,
               axios.get(dialectValue?.pronunciation)
                 .then(() => ({
-                  dialect: {
-                    [dialectKey]: true,
-                  },
+                  [dialectKey]: true,
                 }))
                 .catch(() => ({
-                  dialect: {
-                    [dialectKey]: false,
-                  },
+                  [dialectKey]: false,
                 })),
             ];
           }

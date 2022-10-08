@@ -35,7 +35,7 @@
     "stop:docker": "docker-compose down",
     "use:staging": "firebase use staging",
     "use:prod": "firebase use default",
-    "kill:project": "fkill :3000 :5000 :5001 :5002 :9199 :5500 :8081 :8085 :4400 :4000 -fs",
+    "kill:project": "fkill :3000 :3030 :5000 :5001 :5002 :9199 :5500 :8081 :8085 :4400 :4000 -fs",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run --browser chrome --headless",
     "pretest": "node_modules/.bin/firebase functions:config:set runtime.env=\"cypress\" && yarn functions:env",
