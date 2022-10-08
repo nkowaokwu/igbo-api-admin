@@ -24,6 +24,7 @@ export const PollsList = (props: ListProps): ReactElement => {
       title="Constructed Term Polls"
       actions={<ListActions />}
       hasCreate
+      bulkActionButtons={false}
       pagination={<Pagination />}
       empty={<Empty showCreate={permissions.role === Role.ADMIN} />}
       sort={{ field: 'approvals', order: 'DESC' }}
