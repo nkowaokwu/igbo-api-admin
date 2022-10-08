@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { compact, flatten } from 'lodash';
+import { compact, flatten, get } from 'lodash';
 import {
   Button,
   Menu,
@@ -29,6 +29,7 @@ import { determineCreateSuggestionRedirection } from 'src/shared/utils';
 import actionsMap from 'src/shared/constants/actionsMap';
 import Collection from 'src/shared/constants/Collections';
 import View from 'src/shared/constants/Views';
+import { TWITTER_APP_URL } from 'src/Core/constants';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -196,11 +197,52 @@ const Select = ({
     },
   ]));
 
+  const pollCollectionOptions = [
+    {
+      value: 'createConstructedTerm',
+      label: (() => (
+        <span>
+          <AddIcon className="mr-2" />
+          Create Constructed Term
+        </span>
+      ))(),
+      onSelect: ({ push }) => (
+        determineCreateSuggestionRedirection({
+          record: {
+            id: 'default',
+            word: get(record, 'igboWord'),
+            attributes: {
+              isConstructedTerm: true,
+            },
+            twitterPollId: (get(record, 'id') as string) || '',
+            examples: [],
+          },
+          resource: Collection.POLLS,
+          push,
+        })
+      ),
+    },
+    {
+      value: 'viewPoll',
+      label: (() => (
+        <span>
+          <ViewIcon className="mr-2" />
+          Go to Tweet
+        </span>
+      ))(),
+      onSelect: () => {
+        window.location.href = `${TWITTER_APP_URL}/${get(record, 'id')}`;
+      },
+    },
+  ];
+
   const options = resource === Collection.USERS
     ? userCollectionOptions
-    : resource !== Collection.WORDS && resource !== Collection.EXAMPLES
+    : resource === Collection.WORD_SUGGESTIONS || resource === Collection.EXAMPLE_SUGGESTIONS
       ? suggestionCollectionOptions
-      : mergedCollectionOptions;
+      : resource === Collection.POLLS
+        ? pollCollectionOptions
+        : mergedCollectionOptions;
 
   return (
     <>

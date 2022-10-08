@@ -71,6 +71,11 @@ export const getAssociatedWordSuggestions = async (id: string): Promise<any> => 
   url: `${API_ROUTE}/words/${id}/wordSuggestions`,
 })).data;
 
+export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `${API_ROUTE}/words/${id}/twitterPolls`,
+})).data;
+
 export const approveDocument = ({ resource, record }: { resource: string, record: Record }): Promise<any> => request({
   method: 'PUT',
   url: `${API_ROUTE}/${resource}/${record.id}`,

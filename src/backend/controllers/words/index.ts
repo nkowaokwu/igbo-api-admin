@@ -31,6 +31,7 @@ import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
   searchForAssociatedSuggestions,
+  searchForAssociatedSuggestionsByTwitterId,
 } from '../utils/queries';
 import { findWordsWithMatch } from '../utils/buildDocs';
 import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
@@ -476,6 +477,21 @@ export const getAssociatedWordSuggestions = async (
   try {
     const { id } = req.params;
     const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestions(id));
+    return res.send(wordSuggestions);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Grabs all Word Suggestions that are associated with a Word document by looking at the Twitter Id */
+export const getAssociatedWordSuggestionsByTwitterId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const { id } = req.params;
+    const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestionsByTwitterId(id));
     return res.send(wordSuggestions);
   } catch (err) {
     return next(err);

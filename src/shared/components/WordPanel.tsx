@@ -14,6 +14,7 @@ import Dialects from 'src/backend/shared/constants/Dialects';
 import WordTags from 'src/backend/shared/constants/WordTags';
 import AudioRecordingPreview from './AudioRecordingPreview';
 import StandardIgboPreview from './StandardIgboPreview';
+import ConstructedTermPreview from './ConstructedTermPreview';
 
 const WordPanel = ({ record }: { record?: Record }): ReactElement => (
   <Box className="space-y-3 py-3">
@@ -40,9 +41,10 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
         </Text>
       </Box>
     </Box>
-    <Box style={{ width: 200 }} className="flex flex-row justify-start items-start">
+    <Box style={{ width: 200 }} className="flex flex-row justify-start items-start space-x-3">
       <AudioRecordingPreview record={record} />
       <StandardIgboPreview record={record} />
+      <ConstructedTermPreview record={record} />
     </Box>
     <Box className="flex flex-row space-x-3">
       <Box>
