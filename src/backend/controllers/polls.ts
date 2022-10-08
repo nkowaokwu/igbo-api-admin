@@ -88,6 +88,9 @@ export const onSubmitConstructedTermPoll = async (req: Request, res: Response): 
 
     await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
       type: 'igbo_api_editor_platform',
+      event: {
+        type: 'new_poll',
+      },
       url: `${TWITTER_APP_URL}/${firstTweetId}`,
     });
 
