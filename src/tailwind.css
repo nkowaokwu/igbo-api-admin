@@ -7,6 +7,11 @@
   src:  url("./assets/fonts/Akagu2020.ttf");
 }
 
+/* Disables all mouse events for the suggested words popup container */
+.suggested-words-container .chakra-popover__popper {
+  pointer-events: none;
+}
+
 html {
   width: fit-content;
 }

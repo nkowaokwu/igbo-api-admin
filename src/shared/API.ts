@@ -41,6 +41,10 @@ export const getWords = async (word: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/words?keyword=${word}`,
 })).data;
+export const getWordSuggestions = async (word: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `${API_ROUTE}/wordSuggestions?keyword=${word}`,
+})).data;
 
 export const getExample = async (id: string): Promise<any> => (await request({
   method: 'GET',
