@@ -7,17 +7,14 @@ import {
   ListProps,
   BooleanField,
 } from 'react-admin';
-import Icon from '@material-ui/icons/MailOutline';
 import {
   ListActions,
   Pagination,
   ShowNotificationButtonField,
 } from 'src/shared/components';
-import Empty from '../Empty';
+import Empty from '../../Empty';
 
-export const NotificationIcon = Icon;
-
-export const NotificationList = (props: ListProps): React.ReactElement => (
+const NotificationList = (props: ListProps): React.ReactElement => (
   <List
     {...props}
     title="Platform Notifications"
@@ -46,3 +43,5 @@ export const NotificationList = (props: ListProps): React.ReactElement => (
     />
   </List>
 );
+
+export default NotificationList;

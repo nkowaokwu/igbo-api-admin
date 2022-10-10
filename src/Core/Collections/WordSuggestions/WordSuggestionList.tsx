@@ -2,16 +2,10 @@ import React, { ReactElement } from 'react';
 import {
   List,
   Datagrid,
-  SimpleForm,
   FunctionField,
-  SimpleShowLayout,
   Responsive,
   ListProps,
-  ShowProps,
-  EditProps,
-  CreateProps,
 } from 'react-admin';
-import Icon from '@material-ui/icons/Spellcheck';
 import {
   ArrayPreview,
   BulkSuggestionActions,
@@ -25,16 +19,11 @@ import {
   Select,
   WordClassTextField,
   WordPanel,
-  WordShow as Show,
-  WordSuggestionCreate as Create,
-  WordSuggestionEdit as Edit,
 } from 'src/shared/components';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
-import Empty from '../Empty';
+import Empty from '../../Empty';
 
-export const WordSuggestionIcon = Icon;
-
-export const WordSuggestionList = (props: ListProps): ReactElement => {
+const WordSuggestionList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
     <List
@@ -87,30 +76,4 @@ export const WordSuggestionList = (props: ListProps): ReactElement => {
   );
 };
 
-const WordSuggestionTitle = ({ record }: Record<any, any>): ReactElement => (
-  <span>
-    {'Word Suggestion '}
-    {record ? `"${record.word}"` : ''}
-  </span>
-);
-
-export const WordSuggestionShow = (props: ShowProps): ReactElement => (
-  <Show title={<WordSuggestionTitle />} {...props}>
-    <SimpleShowLayout>
-    </SimpleShowLayout>
-  </Show>
-);
-
-export const WordSuggestionEdit = (props: EditProps): ReactElement => (
-  <Edit title={<WordSuggestionTitle />} undoable={false} {...props}>
-    <SimpleForm toolbar={null}>
-    </SimpleForm>
-  </Edit>
-);
-
-export const WordSuggestionCreate = (props: CreateProps): ReactElement => (
-  <Create title="Create a Word Suggestion" undoable={false} {...props}>
-    <SimpleForm toolbar={null}>
-    </SimpleForm>
-  </Create>
-);
+export default WordSuggestionList;

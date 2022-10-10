@@ -1,30 +1,15 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import {
   List,
   Datagrid,
-  SimpleForm,
   TextField,
   FunctionField,
-  TextInput,
-  NumberInput,
-  SimpleShowLayout,
   Responsive,
   ListProps,
-  ShowProps,
-  EditProps,
-  CreateProps,
 } from 'react-admin';
-import RichTextInput from 'ra-input-rich-text';
-import Icon from '@material-ui/icons/Spellcheck';
-import { approvalAndDenialsFormatter } from 'src/shared/utils';
 import {
   CompleteExamplePreview,
   BulkSuggestionActions,
-  EditToolbar,
-  ArrayInput,
-  ExampleShow as Show,
-  ExampleSuggestionCreate as Create,
-  ExampleSuggestionEdit as Edit,
   IdField,
   Select,
   ArrayPreview,
@@ -34,11 +19,9 @@ import {
   SourceField,
 } from 'src/shared/components';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
-import Empty from '../Empty';
+import Empty from '../../Empty';
 
-export const ExampleSuggestionIcon = Icon;
-
-export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
+const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
   const { permissions } = props;
   return (
     <List
@@ -89,38 +72,4 @@ export const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
   );
 };
 
-const ExampleSuggestionTitle = ({ record }: Record<any, any>): ReactElement => (
-  <span>
-    {'Example Suggestion '}
-    {record ? `"${record.igbo || record.english}"` : ''}
-  </span>
-);
-
-export const ExampleSuggestionShow = (props: ShowProps): ReactElement => (
-  <Show title={<ExampleSuggestionTitle />} {...props}>
-    <SimpleShowLayout>
-    </SimpleShowLayout>
-  </Show>
-);
-
-export const ExampleSuggestionEdit = (props: EditProps): ReactElement => (
-  <Edit title={<ExampleSuggestionTitle />} undoable={false} {...props}>
-    <SimpleForm toolbar={<EditToolbar />}>
-      <TextInput disabled label="Id" source="id" />
-      <TextInput disabled label="Original Example Id" source="originalExampleId" />
-      <TextInput label="Igbo" source="igbo" />
-      <TextInput label="English" source="english" />
-      <ArrayInput label="All Associated Word Ids" individualLabel="Associated Word Id" source="associatedWords" />
-      <NumberInput disabled label="Approvals" format={approvalAndDenialsFormatter} source="approvals" />
-      <NumberInput disabled label="Denials" format={approvalAndDenialsFormatter} source="denials" />
-      <RichTextInput label="Editors' Notes" source="details" />
-    </SimpleForm>
-  </Edit>
-);
-
-export const ExampleSuggestionCreate = (props: CreateProps): ReactElement => (
-  <Create title="Create a Example Suggestion" undoable={false} {...props}>
-    <SimpleForm toolbar={null}>
-    </SimpleForm>
-  </Create>
-);
+export default ExampleSuggestionList;
