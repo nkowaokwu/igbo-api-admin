@@ -2,10 +2,11 @@ import mongoose, { Document, LeanDocument } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import {
   assign,
-  map,
   filter,
-  uniqBy,
+  kebabCase,
+  map,
   omit,
+  uniqBy,
 } from 'lodash';
 import removePrefix from 'src/backend/shared/utils/removePrefix';
 import Word from 'src/backend/models/Word';
@@ -34,6 +35,7 @@ import {
   searchForAssociatedSuggestionsByTwitterId,
 } from '../utils/queries';
 import { findWordsWithMatch } from '../utils/buildDocs';
+import removeAccents from '../../utils/removeAccents';
 import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
@@ -254,9 +256,10 @@ const overwriteWordPronunciation = async (
     word.pronunciation = finalPronunciationUri;
 
     await Promise.all(Object.entries(suggestion.dialects).map(async ([
-      dialectalWord,
+      rawDialectalWord,
       { pronunciation: suggestionPronunciation },
     ]) => {
+      const dialectalWord = removeAccents.remove(kebabCase(rawDialectalWord));
       const wordDialectPronunciationKey = `${word.id}-${dialectalWord}`;
       const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWord}`;
       /**
@@ -269,15 +272,15 @@ const overwriteWordPronunciation = async (
         await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey, isMp3)
       );
 
-      suggestion.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
-      if (!word.dialects[dialectalWord]) {
-        word.dialects[dialectalWord] = {
+      suggestion.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
+      if (!word.dialects[rawDialectalWord]) {
+        word.dialects[rawDialectalWord] = {
           dialects: [],
           variations: [],
           pronunciation: '',
         };
       }
-      word.dialects[dialectalWord].pronunciation = finalDialectPronunciationUri;
+      word.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
     }));
 
     // Since the word suggestion is no longer needed, we don't need to trigger any AWS-API.ts functions
@@ -288,6 +291,8 @@ const overwriteWordPronunciation = async (
     return await word.save();
   } catch (err) {
     console.log('An error while merging audio pronunciations failed:', err.message);
+    console.log('Deleting the associated word document to avoid producing duplicates');
+    await word.delete();
     throw err;
   }
 };
