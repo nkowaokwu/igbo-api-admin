@@ -1,7 +1,5 @@
 import React, { ReactElement } from 'react';
 import {
-  SimpleForm,
-  CreateProps,
   ListProps,
   List,
   Datagrid,
@@ -10,13 +8,12 @@ import {
 import {
   Select,
   Pagination,
-  PollsCreate as Create,
   ListActions,
 } from 'src/shared/components';
 import { Role } from 'src/shared/constants/auth-types';
-import Empty from '../Empty';
+import Empty from '../../Empty';
 
-export const PollsList = (props: ListProps): ReactElement => {
+const PollList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
     <List
@@ -38,9 +35,4 @@ export const PollsList = (props: ListProps): ReactElement => {
   );
 };
 
-export const PollsCreate = (props: CreateProps): ReactElement => (
-  <Create title="Create a Constructed Term Poll" undoable={false} {...props}>
-    <SimpleForm toolbar={null}>
-    </SimpleForm>
-  </Create>
-);
+export default PollList;

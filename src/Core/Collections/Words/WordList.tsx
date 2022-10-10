@@ -2,12 +2,9 @@ import React, { ReactElement } from 'react';
 import {
   List,
   Datagrid,
-  SimpleShowLayout,
   Responsive,
   ListProps,
-  ShowProps,
 } from 'react-admin';
-import Icon from '@material-ui/icons/Book';
 import {
   ArrayPreview,
   CompleteWordPreview,
@@ -18,16 +15,11 @@ import {
   Select,
   WordClassTextField,
   WordPanel,
-  WordShow as Show,
 } from 'src/shared/components';
-import { WordShowActions } from 'src/actions/wordActions';
-import Empty from '../Empty';
-
-export const WordIcon = Icon;
+import Empty from '../../Empty';
 
 export const WordList = (props: ListProps): ReactElement => {
   const { permissions } = props;
-
   return (
     <List
       {...props}
@@ -61,17 +53,4 @@ export const WordList = (props: ListProps): ReactElement => {
   );
 };
 
-const WordTitle = ({ record }: Record<any, any>): ReactElement => (
-  <span>{`Word ${record ? `"${record.word}"` : ''}`}</span>
-);
-
-export const WordShow = (props: ShowProps): ReactElement => (
-  <Show
-    actions={<WordShowActions />}
-    title={<WordTitle />}
-    {...props}
-  >
-    <SimpleShowLayout>
-    </SimpleShowLayout>
-  </Show>
-);
+export default WordList;

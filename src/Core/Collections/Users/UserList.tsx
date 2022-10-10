@@ -2,25 +2,19 @@ import React, { ReactElement } from 'react';
 import {
   List,
   Datagrid,
-  SimpleShowLayout,
   DateField,
   EmailField,
   TextField,
   Responsive,
   ListProps,
-  ShowProps,
 } from 'react-admin';
-import Icon from '@material-ui/icons/Person';
 import {
   ListActions,
   Pagination,
   Select,
-  UserShow as Show,
 } from 'src/shared/components';
 
-export const UserIcon = Icon;
-
-export const UserList = (props: ListProps): ReactElement => {
+const UserList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
     <List
@@ -64,16 +58,4 @@ export const UserList = (props: ListProps): ReactElement => {
   );
 };
 
-const UserTitle = ({ record }: Record<any, any>): ReactElement => (
-  <span>{`User ${record ? `"${record.firebaseId}"` : ''}`}</span>
-);
-
-export const UserShow = (props: ShowProps): ReactElement => (
-  <Show
-    title={<UserTitle />}
-    {...props}
-  >
-    <SimpleShowLayout>
-    </SimpleShowLayout>
-  </Show>
-);
+export default UserList;
