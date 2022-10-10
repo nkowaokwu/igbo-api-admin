@@ -1,3 +1,4 @@
+import { compact, flatten } from 'lodash';
 import Loadable from 'react-loadable';
 import { WordIcon } from 'src/Core/Collections/Words';
 import { ExampleIcon } from 'src/Core/Collections/Examples';
@@ -6,6 +7,7 @@ import { ExampleSuggestionIcon } from 'src/Core/Collections/ExampleSuggestions';
 import { GenericWordIcon } from 'src/Core/Collections/GenericWords';
 import { NotificationIcon } from 'src/Core/Collections/Notifications';
 import { UserIcon } from 'src/Core/Collections/Users';
+import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import PlatformLoader from './PlatformLoader';
 
 const AsyncWordList = Loadable({
@@ -89,7 +91,7 @@ const AsyncUserShow = Loadable({
   loading: PlatformLoader,
 });
 
-export const resourceObjects = [
+export const getResourceObjects = (permissions) => compact(flatten([
   {
     name: 'words',
     key: 'words',
@@ -106,6 +108,7 @@ export const resourceObjects = [
   },
   {
     name: 'wordSuggestions',
+    key: 'wordSuggestions',
     options: { label: 'Word Suggestions' },
     list: AsyncWordSuggestionList,
     edit: AsyncWordSuggestionEdit,
@@ -115,6 +118,7 @@ export const resourceObjects = [
   },
   {
     name: 'exampleSuggestions',
+    key: 'exampleSuggestions',
     options: { label: 'Example Suggestions' },
     list: AsyncExampleSuggestionList,
     edit: AsyncExampleSuggestionEdit,
@@ -124,18 +128,21 @@ export const resourceObjects = [
   },
   {
     name: 'notifications',
+    key: 'notifications',
     options: { label: 'Platform Notifications' },
     list: AsyncNotificationList,
     icon: NotificationIcon,
   },
   {
     name: 'polls',
+    key: 'polls',
     options: { label: 'Constructed Term Polls' },
     list: AsyncPollList,
     create: AsyncPollCreate,
   },
-  {
+  hasAdminPermissions(permissions, [{
     name: 'genericWords',
+    key: 'genericWords',
     options: { label: 'Generic Words' },
     list: AsyncGenericWordList,
     edit: AsyncGenericWordEdit,
@@ -144,8 +151,9 @@ export const resourceObjects = [
   },
   {
     name: 'users',
+    key: 'users',
     list: AsyncUserList,
     show: AsyncUserShow,
     icon: UserIcon,
-  },
-];
+  }]),
+]));

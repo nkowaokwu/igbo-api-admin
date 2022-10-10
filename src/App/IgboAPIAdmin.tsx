@@ -1,8 +1,13 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { memo, ReactElement, useMemo } from 'react';
 import { Box } from '@chakra-ui/react';
-import { AdminContext, AdminUI, Resource } from 'react-admin';
-import { useLocation } from 'react-router-dom';
-import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
+import {
+  AdminContext,
+  AdminUI,
+  Resource,
+  usePermissions,
+} from 'react-admin';
+// import { useLocation } from 'react-router-dom';
+// import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import {
   Dashboard,
   Layout,
@@ -12,24 +17,33 @@ import {
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
-import { resourceObjects } from './Resources';
+import { getResourceObjects } from './Resources';
 
-const Resources = () => {
-  const [resources, setResources] = useState([]);
-  const location = useLocation();
+const Resources = memo(() => {
+  const { permissions } = usePermissions();
+  // const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname) {
-      // Saves the last visited route
-      if (window.location.hash !== '#/login') {
-        localStorage.setItem(LocalStorageKeys.REDIRECT_URL, window.location.hash);
-      }
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   if (location.pathname) {
+  //     // Saves the last visited route
+  //     if (window.location.hash !== '#/login') {
+  //       localStorage.setItem(LocalStorageKeys.REDIRECT_URL, window.location.hash);
+  //     }
+  //   }
+  // }, [location.pathname]);
 
-  useEffect(() => {
-    setResources(resourceObjects);
-  }, []);
+  const memoizedResources = useMemo(() => getResourceObjects(permissions).map((resource) => (
+    <Resource
+      name={resource.name}
+      options={resource.options}
+      key={resource.key}
+      list={resource.list}
+      show={resource.show}
+      edit={resource.edit}
+      create={resource.create}
+      icon={resource.icon}
+    />
+  )), [permissions]);
 
   return (
     <AdminUI
@@ -37,21 +51,10 @@ const Resources = () => {
       dashboard={Dashboard}
       loginPage={Login}
     >
-      {resources.map((resource) => (
-        <Resource
-          name={resource.name}
-          options={resource.options}
-          key={resource.key}
-          list={resource.list}
-          show={resource.show}
-          edit={resource.edit}
-          create={resource.create}
-          icon={resource.icon}
-        />
-      ))}
+      {memoizedResources}
     </AdminUI>
   );
-};
+}, () => true);
 
 const IgboAPIAdmin = (): ReactElement => (
   // @ts-expect-error Cypress
