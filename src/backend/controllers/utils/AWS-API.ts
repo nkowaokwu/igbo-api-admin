@@ -6,11 +6,8 @@ import {
   AWS_BUCKET,
   AWS_REGION,
 } from 'src/backend/config';
+import removeAccents from 'src/backend/utils/removeAccents';
 
-const accents = {
-  // Remove all diacritic marks including underdots
-  remove: (string = '') => string.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-};
 const bucket = AWS_BUCKET;
 const region = AWS_REGION;
 const pronunciationPath = 'audio-pronunciations';
@@ -38,7 +35,7 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
   if (!id || !pronunciationData) {
     throw new Error('id and pronunciation must be provided');
   }
-  const audioId = accents.remove(id);
+  const audioId = removeAccents.remove(id);
   if (isCypress || !isProduction) {
     return `${dummyUriPath}${audioId}`;
   }
@@ -61,38 +58,57 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
   if (!id) {
     throw new Error('No pronunciation id provided');
   }
-  const audioId = accents.remove(id);
-  if (isCypress || !isProduction) {
-    return `${dummyUriPath}${audioId}`;
-  }
-  const extension = isMp3 ? 'mp3' : 'webm';
-  const params = {
-    ...baseParams,
-    Key: `${pronunciationPath}/${audioId}.${extension}`,
-  };
+  try {
+    const audioId = removeAccents.remove(id);
+    if (isCypress || !isProduction) {
+      return `${dummyUriPath}${audioId}`;
+    }
+    const extension = isMp3 ? 'mp3' : 'webm';
+    const params = {
+      ...baseParams,
+      Key: `${pronunciationPath}/${audioId}.${extension}`,
+    };
 
-  return s3.deleteObject(params).promise();
+    return await s3.deleteObject(params).promise();
+  } catch (err) {
+    throw new Error(`Error occurred while deleting audio: ${err.message} with id ${id}`);
+  }
 };
 /* Takes an old and new pronunciation id and copies it (copies) */
-export const copyAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
-  const oldAudioId = accents.remove(oldDocId);
-  const newAudioId = accents.remove(newDocId);
-  if (isCypress || !isProduction) {
-    return `${dummyUriPath}${newAudioId}`;
+export const copyAudioPronunciation = async (
+  oldDocId: string,
+  newDocId: string,
+  isMp3 = false,
+): Promise<any> => {
+  const oldAudioId = removeAccents.remove(oldDocId);
+  const newAudioId = removeAccents.remove(newDocId);
+  try {
+    if (isCypress || !isProduction) {
+      return `${dummyUriPath}${newAudioId}`;
+    }
+
+    const extension = isMp3 ? 'mp3' : 'webm';
+
+    const copyParams = {
+      ...baseParams,
+      Key: `${pronunciationPath}/${newAudioId}.${extension}`,
+      ACL: 'public-read',
+      CopySource: `${bucket}/${pronunciationPath}/${oldAudioId}.${extension}`,
+    };
+
+    await s3.copyObject(copyParams).promise();
+    const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
+    return copiedAudioPronunciationUri;
+  } catch (err) {
+    console.log(
+      `Error occurred while copying audio: ${err.message} with `
+      + `ids of oldDocId: ${oldAudioId} and newDocId: ${newAudioId}`,
+    );
+    if (oldAudioId.includes('-') || newAudioId.includes('-')) {
+      throw new Error('Unable to save dialectal audio recording, please re-recording dialect audio.');
+    }
+    return null;
   }
-
-  const extension = isMp3 ? 'mp3' : 'webm';
-
-  const copyParams = {
-    ...baseParams,
-    Key: `${pronunciationPath}/${newAudioId}.${extension}`,
-    ACL: 'public-read',
-    CopySource: `${bucket}/${pronunciationPath}/${oldAudioId}.${extension}`,
-  };
-
-  await s3.copyObject(copyParams).promise();
-  const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
-  return copiedAudioPronunciationUri;
 };
 
 /* Takes an old and new pronunciation id and renames it (copies and deletes) */
@@ -101,7 +117,7 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     if (!oldDocId) {
       return '';
     }
-    const newAudioId = accents.remove(newDocId);
+    const newAudioId = removeAccents.remove(newDocId);
     return `${dummyUriPath}${newAudioId}`;
   }
   /**
@@ -114,8 +130,13 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     return '';
   }
 
-  const renamedAudioPronunciationUri = await copyAudioPronunciation(oldDocId, newDocId, isMp3);
-  await deleteAudioPronunciation(oldDocId);
+  try {
+    const renamedAudioPronunciationUri = await copyAudioPronunciation(oldDocId, newDocId, isMp3);
+    await deleteAudioPronunciation(oldDocId);
 
-  return renamedAudioPronunciationUri;
+    return renamedAudioPronunciationUri;
+  } catch (err) {
+    console.log('Error caught in renameAudioPronunciation', err.message);
+    throw err;
+  }
 };

@@ -7,6 +7,7 @@ import {
   createAudioPronunciation,
 } from 'src/backend/controllers/utils/AWS-API';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import removeAccents from 'src/backend/utils/removeAccents';
 
 const config = functions.config();
 const isCypress = config?.runtime?.env === 'cypress';
@@ -15,107 +16,118 @@ const isDevelopment = config?.runtime?.env === 'development';
 /* If the client sent over blob data for pronunciations, it will be uploaded to AWS S3 */
 export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordSuggestion>): void => {
   schema.pre('save', async function (next) {
-    if (!this.skipPronunciationHook) {
-      // @ts-ignore
-      const id = (this._id || this.id).toString();
+    try {
+      if (!this.skipPronunciationHook) {
+        // @ts-ignore
+        const id = (this._id || this.id).toString();
 
-      if (isCypress && this.pronunciation) {
-      // Going to mock creating and saving audio pronunciation while testing in Cypress
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('data:audio/mp3')) {
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (!isCypress && isDevelopment && this.pronunciation) {
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
-        // If the pronunciation data for the headword is a uri, we will duplicate the uri
-        // so that the new uri will only be associated with the suggestion
-        const isMp3 = this.pronunciation.includes('mp3');
-        const oldId: string = last(compact(this.pronunciation.split(/.mp3|.webm/).join('').split('/')));
-        const newId: string = id;
-
-        /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-        this.pronunciation = await (this.isNew
-          ? copyAudioPronunciation(oldId, newId, isMp3)
-          : renameAudioPronunciation(oldId, newId, isMp3));
-      }
-      /**
-       * Steps through each dialect and checks to see if it has audio data to be saved in AWS
-       */
-      await Promise.all(Object.entries(this.dialects).map(async ([rawDialectalWord, { pronunciation }]) => {
-        /**
-         * Since dialectal words, which include spaces are used as the unique keys for these audio files,
-         * the spaces need to be replaced with dashes (-) to avoid any unexpected escaped character edge cases.
-         */
-        const dialectalWord = kebabCase(rawDialectalWord);
-        // If the dialect doesn't exist in the document, the create a fallback object
-        if (!this.dialects[rawDialectalWord]) {
-          this.dialects[rawDialectalWord] = {
-            dialects: [],
-            variations: [],
-            pronunciation: '',
-          };
-        }
-        if (isCypress && pronunciation) {
-          // Going to mock creating and saving audio pronunciation while testing in Cypress (ref. !isCypress check)
-          this.dialects[rawDialectalWord].pronunciation = (
-            await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
-          );
-        } else if (pronunciation.startsWith('data:audio/mp3')) {
-          this.dialects[rawDialectalWord].pronunciation = (
-            await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
-          );
-        } else if (!isCypress && isDevelopment && this.dialects[rawDialectalWord].pronunciation) {
-          this.dialects[rawDialectalWord].pronunciation = (
-            await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
-          );
-        } else if (pronunciation.startsWith('https://') && !pronunciation.includes(`${id}-${dialectalWord}`)) {
-          // If the pronunciation data in the current dialect is a uri, we will duplicate the uri
+        if (isCypress && this.pronunciation) {
+        // Going to mock creating and saving audio pronunciation while testing in Cypress
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (this.pronunciation.startsWith('data:audio/mp3')) {
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (!isCypress && isDevelopment && this.pronunciation) {
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
+          // If the pronunciation data for the headword is a uri, we will duplicate the uri
           // so that the new uri will only be associated with the suggestion
-          const isMp3 = pronunciation.includes('mp3');
-          const oldId: string = last(compact(pronunciation.split(/.mp3|.webm/).join('').split('/')));
-          const newId = `${id}-${dialectalWord}`;
+          const isMp3 = this.pronunciation.includes('mp3');
+          const oldId: string = last(compact(this.pronunciation.split(/.mp3|.webm/).join('').split('/')));
+          const newId: string = id;
 
           /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-          this.dialects[rawDialectalWord].pronunciation = await (this.isNew
+          this.pronunciation = await (this.isNew
             ? copyAudioPronunciation(oldId, newId, isMp3)
             : renameAudioPronunciation(oldId, newId, isMp3));
         }
-      }));
-    }
+        /**
+         * Steps through each dialect and checks to see if it has audio data to be saved in AWS
+         */
+        await Promise.all(Object.entries(this.dialects).map(async ([rawDialectalWord, { pronunciation }]) => {
+          /**
+           * Since dialectal words, which include spaces are used as the unique keys for these audio files,
+           * the spaces need to be replaced with dashes (-) to avoid any unexpected escaped character edge cases.
+           */
+          const dialectalWord = removeAccents.remove(kebabCase(rawDialectalWord));
+          // If the dialect doesn't exist in the document, the create a fallback object
+          if (!this.dialects[rawDialectalWord]) {
+            this.dialects[rawDialectalWord] = {
+              dialects: [],
+              variations: [],
+              pronunciation: '',
+            };
+          }
+          if (isCypress && pronunciation) {
+            // Going to mock creating and saving audio pronunciation while testing in Cypress (ref. !isCypress check)
+            this.dialects[rawDialectalWord].pronunciation = (
+              await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
+            );
+          } else if (pronunciation.startsWith('data:audio/mp3')) {
+            this.dialects[rawDialectalWord].pronunciation = (
+              await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
+            );
+          } else if (!isCypress && isDevelopment && this.dialects[rawDialectalWord].pronunciation) {
+            this.dialects[rawDialectalWord].pronunciation = (
+              await createAudioPronunciation(`${id}-${dialectalWord}`, pronunciation)
+            );
+          } else if (pronunciation.startsWith('https://') && !pronunciation.includes(`${id}-${dialectalWord}`)) {
+            // If the pronunciation data in the current dialect is a uri, we will duplicate the uri
+            // so that the new uri will only be associated with the suggestion
+            const isMp3 = pronunciation.includes('mp3');
+            const oldId: string = last(compact(pronunciation.split(/.mp3|.webm/).join('').split('/')));
+            const newId = `${id}-${dialectalWord}`;
 
-    next();
-    return this;
+            /* If we are saving a new word suggestion, then we want to copy all the original audio files */
+            this.dialects[rawDialectalWord].pronunciation = await (this.isNew
+              ? copyAudioPronunciation(oldId, newId, isMp3)
+              : renameAudioPronunciation(oldId, newId, isMp3));
+          }
+        }));
+      }
+      next();
+      return this;
+    } catch (err) {
+      console.log('Error caught in pre save Word shcema hook', err.message);
+      this.invalidate('pronunciation', err.message);
+      return null;
+    }
   });
 };
 
 /* If the client sent over blob data for pronunciation, it will b e uploaded to AWS S3 */
 export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): void => {
   schema.pre('save', async function (next) {
-    if (!this.skipPronunciationHook) {
-      const id = (this._id || this.id).toString();
+    try {
+      if (!this.skipPronunciationHook) {
+        const id = (this._id || this.id).toString();
 
-      if (isCypress && this.pronunciation) {
-      // Going to mock creating and saving audio pronunciation while testing in Cypress
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('data:audio/mp3')) {
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (!isCypress && isDevelopment && this.pronunciation) {
-        this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-      } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
-        // If the pronunciation data for the headword is a uri, we will duplicate the uri
-        // so that the new uri will only be associated with the suggestion
-        const isMp3 = this.pronunciation.includes('mp3');
-        const oldId: string = last(compact(this.pronunciation.split(/.mp3|.webm/).join('').split('/')));
-        const newId: string = id;
+        if (isCypress && this.pronunciation) {
+        // Going to mock creating and saving audio pronunciation while testing in Cypress
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (this.pronunciation.startsWith('data:audio/mp3')) {
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (!isCypress && isDevelopment && this.pronunciation) {
+          this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
+        } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
+          // If the pronunciation data for the headword is a uri, we will duplicate the uri
+          // so that the new uri will only be associated with the suggestion
+          const isMp3 = this.pronunciation.includes('mp3');
+          const oldId: string = last(compact(this.pronunciation.split(/.mp3|.webm/).join('').split('/')));
+          const newId: string = id;
 
-        /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-        this.pronunciation = await (this.isNew
-          ? copyAudioPronunciation(oldId, newId, isMp3)
-          : renameAudioPronunciation(oldId, newId, isMp3));
+          /* If we are saving a new word suggestion, then we want to copy all the original audio files */
+          this.pronunciation = await (this.isNew
+            ? copyAudioPronunciation(oldId, newId, isMp3)
+            : renameAudioPronunciation(oldId, newId, isMp3));
+        }
       }
-    }
 
-    next();
-    return this;
+      next();
+      return this;
+    } catch (err) {
+      console.log('Error caught in pre save Example shcema hook', err.message);
+      this.invalidate('pronunciation', err.message);
+      return null;
+    }
   });
 };
