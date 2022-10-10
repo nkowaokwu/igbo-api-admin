@@ -17,7 +17,7 @@ import {
   sanitizeListRestProps,
   TopToolbar,
   useListContext,
-  useGetPermissions,
+  usePermissions,
 } from 'react-admin';
 import { Role } from 'src/shared/constants/auth-types';
 import queryString from 'query-string';
@@ -63,7 +63,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     ...rest
   } = props;
   const { basePath, filterValues, setFilters } = useListContext();
-  const [permissions, setPermissions] = useState<any[]>([]);
   const [jumpToPage, setJumpToPage] = useState('');
   const [currentFilters, setCurrentFilters] = useState(
     getDefaultFilters(filterValues),
@@ -71,7 +70,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
     getDefaultPartOfSpeechFilters(filterValues),
   );
-  const getPermissions = useGetPermissions();
+  const { permissions = {} } = usePermissions();
 
   const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
@@ -83,10 +82,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
-
-  useEffect(() => {
-    getPermissions().then((permissions) => setPermissions(permissions));
-  }, []);
 
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
@@ -308,7 +303,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {/* @ts-expect-error permissions.role */}
         {isSuggestionResource || (isPollResource && permissions?.role === Role.ADMIN) ? (
           <CreateButton basePath={basePath} />
         ) : null}

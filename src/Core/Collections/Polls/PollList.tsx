@@ -4,6 +4,7 @@ import {
   List,
   Datagrid,
   TextField,
+  usePermissions,
 } from 'react-admin';
 import {
   Select,
@@ -14,7 +15,7 @@ import { Role } from 'src/shared/constants/auth-types';
 import Empty from '../../Empty';
 
 const PollList = (props: ListProps): ReactElement => {
-  const { permissions } = props;
+  const { permissions = {} } = usePermissions();
   return (
     <List
       {...props}
