@@ -3,10 +3,6 @@ export default {
     value: 'agriculture',
     label: 'Agriculture',
   },
-  ARTS: {
-    value: 'arts',
-    label: 'Arts',
-  },
   BOTANY: {
     value: 'botany',
     label: 'Botany',
@@ -51,6 +47,10 @@ export default {
     value: 'law',
     label: 'Law',
   },
+  PERFORMING_ARTS: {
+    value: 'performing_arts',
+    label: 'Performing Arts',
+  },
   POLITICS: {
     value: 'politics',
     label: 'Politics',
@@ -59,6 +59,10 @@ export default {
     value: 'religion',
     label: 'Religion',
   },
+  SPORTS: {
+    value: 'sports',
+    label: 'Sports',
+  },
   TECHNOLOGY: {
     value: 'technology',
     label: 'Technology',
@@ -66,6 +70,10 @@ export default {
   TRANSPORTATION: {
     value: 'transportation',
     label: 'Transportation',
+  },
+  VISUAL_ARTS: {
+    value: 'visual_arts',
+    label: 'Visual Arts',
   },
   WEATHER: {
     value: 'weather',
