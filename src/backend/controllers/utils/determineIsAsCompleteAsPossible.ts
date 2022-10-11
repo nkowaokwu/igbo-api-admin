@@ -24,12 +24,11 @@ export default (word: Word | Record): boolean => !!(
   && (
     Array.isArray(word.examples)
     && word.examples.length
-    && word.examples.every(({ pronunciation }) => pronunciation)
+    && word.examples.every(({ pronunciation }) => pronunciation.length)
   )
   && (
     word.dialects && typeof word.dialects === 'object'
-    && Object.entries(word.dialects)
-    && Object.entries(word.dialects).length
+    && Object.entries(word.dialects)?.length
     && Object.values(word.dialects).every(({ dialects, pronunciation }) => (
       dialects.length && pronunciation
     ))

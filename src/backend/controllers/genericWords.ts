@@ -183,7 +183,7 @@ const seedGenericWords = async (dictionary) => (
           word: '',
           dialect: value,
           variations: '',
-          pronunciation: '',
+          pronunciation: [],
         },
       }), {}),
     });

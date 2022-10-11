@@ -277,7 +277,7 @@ const overwriteWordPronunciation = async (
         word.dialects[rawDialectalWord] = {
           dialects: [],
           variations: [],
-          pronunciation: '',
+          pronunciation: [],
         };
       }
       word.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;

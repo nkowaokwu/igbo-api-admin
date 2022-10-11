@@ -36,7 +36,11 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'pronunciation':
         if (value) {
-          allFilters.$expr = { $gt: [{ $strLenCP: '$pronunciation' }, 10] };
+          allFilters.$expr = {
+            $and: {
+              'pronunciation.0': { $exists: true },
+            },
+          };
         } else {
           allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
         }
@@ -205,9 +209,10 @@ export const searchForLastWeekQuery = (): {
   merged: { $ne: null },
 });
 export const searchDeveloperWithHostsQuery = hostsQuery;
-export const searchForAllWordsWithAudioPronunciations = (): { pronunciation: any, $expr: any } => ({
-  pronunciation: { $exists: true },
-  $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
+export const searchForAllWordsWithAudioPronunciations = (): {
+  'pronunciation.0': any,
+} => ({
+  'pronunciation.0': { $exists: true },
 });
 export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandardIgbo: boolean } } => ({
   // @ts-ignore

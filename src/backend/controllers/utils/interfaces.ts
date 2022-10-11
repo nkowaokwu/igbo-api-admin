@@ -27,7 +27,7 @@ export interface WordClientData extends Word {
 export interface WordDialect {
   dialects: string[],
   variations: string[],
-  pronunciation: string,
+  pronunciation: string[],
 }
 
 export interface Word extends Document<any>, LeanDocument<any> {
@@ -38,7 +38,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   dialects: {
     [key: string]: WordDialect,
   },
-  pronunciation: string,
+  pronunciation: string[],
   variations: string[],
   normalized: string,
   frequency: number,
@@ -83,7 +83,7 @@ export interface WordSuggestion extends Document<any>, LeanDocument<any> {
   userComments?: string,
   authorEmail?: string,
   authorId: string,
-  pronunciation: string,
+  pronunciation: string[],
   attributes: {
     isStandardIgbo: boolean,
     isAccented: boolean,
@@ -107,7 +107,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   igbo?: string,
   english?: string,
   associatedWords: string[],
-  pronunciation: string,
+  pronunciation: string[],
   authorId: string,
   updatedAt: Date,
 }
@@ -119,6 +119,7 @@ export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
   english?: string,
   associatedWords: string[],
   exampleForSuggestion: boolean,
+  pronunciation: string[],
   editorsNotes: string,
   userComments: string,
   authorEmail: string,

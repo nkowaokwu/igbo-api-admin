@@ -78,7 +78,7 @@ export const onUpdateDocument = functions.https.onCall(async (
       author = null;
     }
 
-    if (to.length) {
+    if (to?.length) {
       await postNotification({
         // @ts-expect-error
         data: {

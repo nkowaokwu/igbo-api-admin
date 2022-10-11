@@ -22,7 +22,7 @@ const CurrentDialectsForms = ({
             word: 'New dialectal variation',
             dialects: [],
             variations: [],
-            pronunciation: '',
+            pronunciation: [],
           },
         ]);
       }}

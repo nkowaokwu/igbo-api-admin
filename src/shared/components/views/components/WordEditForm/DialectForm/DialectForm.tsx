@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import { compact } from 'lodash';
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
@@ -6,7 +7,7 @@ import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import DialectFormInterface from './DialectFormInterface';
-import AudioRecorder from '../../AudioRecorder';
+import AudioRecorders from '../../AudioRecorders';
 
 const DialectForm = ({
   index,
@@ -20,6 +21,9 @@ const DialectForm = ({
 }: DialectFormInterface) : ReactElement => {
   const dialect = dialects[index];
   const [dialectalWord, setDialectalWord] = useState(dialect.word);
+  const [pronunciations, setPronunciations] = useState(
+    Array.isArray(dialect.pronunciation) ? dialect.pronunciation : compact([dialect.pronunciation]),
+  )
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
   ));
@@ -29,7 +33,7 @@ const DialectForm = ({
       className="my-3 bg-gray-200 rounded p-3"
       key={`dialects.${dialect.word}.word`}
     >
-      <Box className="flex flex-col justify-center items-center space-y-3 lg:space-y-0 space-x-3">
+      <Box className="w-full flex flex-col justify-center items-center space-y-3 lg:space-y-0 space-x-3">
         <Box flex={3} className="w-full">
           <Box className="flex flex-row justify-between items-center">
             <h3 className="form-header">Word:</h3>
@@ -68,33 +72,29 @@ const DialectForm = ({
             defaultValue={dialect.word || ''}
           />
         </Box>
-        <Box flex={2} className="w-full">
-          <Controller
-            render={() => (
-              <AudioRecorder
-                path={dialect.word}
-                getFormValues={getValues}
-                setPronunciation={(path, value) => {
-                  const updatedDialects = [...dialects];
-                  const pathWithoutDialectsPrefix = path.split('dialects.')[1];
-                  updatedDialects[index][pathWithoutDialectsPrefix] = value;
-                  setDialects(updatedDialects);
-                  /**
-                   * We are calling React Hook Form's setValue to update the current dialect's pronunciation.
-                   * This step is necessary so we can have access to the latest updated pronunciation
-                   * when preparing our payload to send to the backend.
-                   */
-                  setValue(path, value);
-                }}
-                record={record}
-                originalRecord={originalRecord}
-              />
-            )}
-            name={`dialects.${dialect.word}.pronunciation`}
-            defaultValue={dialect.pronunciation}
-            control={control}
-          />
-        </Box>
+        <AudioRecorders
+          path={dialect.word}
+          getValues={getValues}
+          setValue={setValue}
+          pronunciations={pronunciations}
+          setPronunciations={setPronunciations}
+          // setPronunciation={(path, value) => {
+          //   const updatedDialects = [...dialects];
+          //   const pathWithoutDialectsPrefix = path.split('dialects.')[1];
+          //   updatedDialects[index][pathWithoutDialectsPrefix] = value;
+          //   setDialects(updatedDialects);
+          //   /**
+          //    * We are calling React Hook Form's setValue to update the current dialect's pronunciation.
+          //    * This step is necessary so we can have access to the latest updated pronunciation
+          //    * when preparing our payload to send to the backend.
+          //    */
+          //   setValue(path, value);
+          // }}
+          record={record}
+          originalRecord={originalRecord}
+          name={`dialects.${dialect.word}.pronunciation[index]`}
+          control={control}
+        />
       </Box>
       <Box className="mt-4">
         <h3 style={{ flex: 1 }} className="form-header">Dialects:</h3>

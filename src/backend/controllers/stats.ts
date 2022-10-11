@@ -79,14 +79,13 @@ const countWords = async (words) => {
   await Promise.all(words.map(async (word) => {
     const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(word);
     const { sufficientWordRequirements, completeWordRequirements } = await determineDocumentCompleteness(word, true);
-    const manualCheck = word.isComplete && isAsCompleteAsPossible;
     // Tracks total sufficient words
     const isSufficientWord = !sufficientWordRequirements.length;
     if (isSufficientWord) {
       sufficientWordsCount += 1;
     }
     // Tracks total complete words
-    const isCompleteWord = manualCheck || !completeWordRequirements.length || (
+    const isCompleteWord = isAsCompleteAsPossible || !completeWordRequirements.length || (
       completeWordRequirements.length === 1
       && completeWordRequirements.includes('The headword is needed')
     );

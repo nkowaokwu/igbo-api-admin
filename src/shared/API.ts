@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Record } from 'react-admin';
+import authProvider from 'src/utils/authProvider';
 import { EmptyResponse } from './server-validation';
 import { useCallable } from '../hooks/useCallable';
 import { API_ROUTE } from './constants/index';
@@ -19,9 +20,16 @@ const createHeaders = () => ({
   Authorization: createAuthorizationHeader(),
 });
 
-const request = (requestObject) => {
+const request = async (requestObject) => {
   const headers = createHeaders();
-  return axios({ ...requestObject, headers });
+  const res = await axios({ ...requestObject, headers })
+    .catch((err) => {
+      if (err.response?.status === 403) {
+        return authProvider.logout();
+      }
+      throw err;
+    });
+  return res;
 };
 
 const handleSubmitConstructedTermPoll = (poll: Poll) => (

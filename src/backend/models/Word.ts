@@ -12,7 +12,6 @@ const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
 const { Schema, Types } = mongoose;
-// @ts-ignore
 const wordSchema = new Schema({
   word: { type: String, required: true },
   wordClass: { type: String, default: '', enum: Object.values(WordClass).map(({ value }) => value) },

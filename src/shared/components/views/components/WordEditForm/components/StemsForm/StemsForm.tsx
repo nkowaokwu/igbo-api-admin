@@ -171,9 +171,9 @@ const StemsForm = ({
         stemIds={stems}
         updateStems={updateStems}
       />
-      {errors.stems && (
+      {errors.stems ? (
         <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>
-      )}
+      ) : null}
     </Box>
   );
 };

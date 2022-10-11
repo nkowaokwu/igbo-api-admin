@@ -6,12 +6,7 @@ import {
   omit,
   values,
 } from 'lodash';
-import {
-  Box,
-  Button,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import { Textarea } from 'src/shared/primitives';
@@ -36,7 +31,7 @@ import TagsForm from './components/TagsForm';
 import NsibidiForm from './components/NsibidiForm';
 import TensesForm from './components/TensesForm';
 import ExamplesForm from './components/ExamplesForm';
-import AudioRecorder from '../AudioRecorder';
+import AudioRecorders from '../AudioRecorders';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
 
@@ -52,6 +47,9 @@ const WordEditForm = ({
   if (!record?.dialects) {
     record.dialects = {};
   };
+  const defaultPronuniciations = Array.isArray(record.pronunciation)
+    ? record.pronunciation
+    : compact([record.pronunciation]);
   const {
     handleSubmit,
     getValues,
@@ -73,12 +71,13 @@ const WordEditForm = ({
       stems: record.stems || [],
       nsibidi: record.nsibidi,
       tenses: record.tenses || {},
-      pronunciation: Array.isArray(record.pronunciation) ? record.pronunciation : compact([record.pronunciation]),
+      pronunciation: defaultPronuniciations,
     },
     ...WordEditFormResolver(),
   });
   const [originalRecord, setOriginalRecord] = useState(null);
   const [definitions, setDefinitions] = useState(record.definitions || ['']);
+  const [pronunciations, setPronunciations] = useState(defaultPronuniciations);
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
@@ -92,7 +91,6 @@ const WordEditForm = ({
   const toast = useToast();
   const options = values(WordClass);
   const watchWordClass = watch('wordClass');
-  const watchPronunciations = watch('pronunciation');
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -285,49 +283,17 @@ const WordEditForm = ({
             </Box>
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
-            <Tooltip label="Add another recording for this headword">
-              <Button
-                onClick={() => {
-                  setValue('pronunciation', [...watchPronunciations, '']);
-                }}
-              >
-                Add recording
-              </Button>
-            </Tooltip>
-            <Controller
-              render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-              name="pronunciation"
+            <AudioRecorders
+              path="headword"
+              record={record}
+              originalRecord={originalRecord}
+              pronunciations={pronunciations}
+              setPronunciations={setPronunciations}
+              getValues={getValues}
+              setValue={setValue}
               control={control}
-              defaultValue={watchPronunciations}
+              name="pronunciation[index]"
             />
-            {watchPronunciations.map((pronunciation, index) => (
-              <Box className="flex flex-row justify-between items-center">
-                <Controller
-                  render={() => (
-                    <AudioRecorder
-                      path="headword"
-                      index={index}
-                      getFormValues={getValues}
-                      setPronunciation={setValue}
-                      record={record}
-                      originalRecord={originalRecord}
-                    />
-                  )}
-                  defaultValue={pronunciation}
-                  name={`pronunciation[${index}]`}
-                  control={control}
-                />
-                <Button
-                  onClick={() => {
-                    const updatedPronunciations = [...watchPronunciations];
-                    updatedPronunciations.splice(index, 1);
-                    setValue('pronunciation', [...updatedPronunciations]);
-                  }}
-                >
-                  Delete recording
-                </Button>
-              </Box>
-            ))}
             <Box className="flex flex-row justify-between items-center">
               <FormHeader
                 title="Dialectal Variations"
@@ -357,6 +323,7 @@ const WordEditForm = ({
         </Box>
       </Box>
       <ExamplesForm
+        errors={errors}
         examples={examples}
         setExamples={setExamples}
         getValues={getValues}

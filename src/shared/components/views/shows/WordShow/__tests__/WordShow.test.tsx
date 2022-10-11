@@ -22,7 +22,7 @@ const record = {
   examples: [{
     igbo: 'igbo',
     english: 'english',
-    pronunciation: '',
+    pronunciation: [],
     associatedWords: [],
   }],
   pronunciation: '1234',

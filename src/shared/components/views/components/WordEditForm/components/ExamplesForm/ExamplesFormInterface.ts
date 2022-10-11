@@ -1,6 +1,7 @@
 import { Control } from 'react-hook-form';
 
 interface ExamplesFormInterface {
+  errors: any,
   examples: any[],
   setExamples: (value: any) => void,
   getValues: () => any,

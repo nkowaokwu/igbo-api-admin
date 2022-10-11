@@ -175,25 +175,27 @@ const WordShow = (props: ShowProps): ReactElement => {
               />
             </Box>
             <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
+              <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciations</Heading>
               {/* TODO: check this part! */}
               <DiffField
                 path="word"
                 diffRecord={diffRecord}
                 fallbackValue={pronunciation ? (
-                  <ReactAudioPlayer
-                    src={pronunciation}
-                    style={{ height: '40', width: 250 }}
-                    controls
-                  />
+                  pronunciation.map((singlePronunciation) => (
+                    <ReactAudioPlayer
+                      src={singlePronunciation}
+                      style={{ height: '40', width: 250 }}
+                      controls
+                    />
+                  ))
                 ) : <span>No audio pronunciation</span>}
-                renderNestedObject={() => (
+                renderNestedObject={() => pronunciation.map((singlePronunciation) => (
                   <ReactAudioPlayer
-                    src={pronunciation}
+                    src={singlePronunciation}
                     style={{ height: '40', width: 250 }}
                     controls
                   />
-                )}
+                ))}
               />
             </Box>
             <Box className="flex flex-col mt-5">

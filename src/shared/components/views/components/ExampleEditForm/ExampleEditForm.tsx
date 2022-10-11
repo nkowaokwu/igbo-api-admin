@@ -27,7 +27,7 @@ import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
-import AudioRecorder from '../AudioRecorder';
+import AudioRecorders from '../AudioRecorders';
 
 const ExampleEditForm = ({
   view,
@@ -54,6 +54,9 @@ const ExampleEditForm = ({
     ...ExampleEditFormResolver,
   });
   const [originalRecord, setOriginalRecord] = useState(null);
+  const [pronunciations, setPronunciations] = useState(
+    Array.isArray(record.pronunciation) ? record.pronunciation : [record.pronunciation]
+  );
   const [associatedWords, setAssociatedWords] = useState(
     record?.associatedWords?.length ? record.associatedWords : [''],
   );
@@ -185,38 +188,20 @@ const ExampleEditForm = ({
               <p className="error">{errors.style.message}</p>
             ) : null}
           </Box>
-          <Tooltip label="Add another recording for this example sentence">
-            <Button>Add recording</Button>
-          </Tooltip>
-          <Controller
-            render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-            name="pronunciation"
+          <AudioRecorders
+            path="headword"
+            getValues={getValues}
+            setValue={setValue}
+            pronunciations={pronunciations}
+            setPronunciations={setPronunciations}
+            record={record}
             control={control}
-            defaultValue={watchPronunciations}
+            originalRecord={originalRecord}
+            name="pronunciation[index]"
+            formTitle="Igbo Sentence Recording"
+            formTooltip="Record the audio for the Igbo example sentence only one time.
+            You are able to record over pre-existing recordings."
           />
-          {watchPronunciations.map((pronunciation, index) => (
-            <Box className="flex flex-row justify-between items-center">
-              <Controller
-                render={() => (
-                  <AudioRecorder
-                    path="headword"
-                    index={index}
-                    getFormValues={getValues}
-                    setPronunciation={setValue}
-                    record={record}
-                    originalRecord={originalRecord}
-                    formTitle="Igbo Sentence Recording"
-                    formTooltip="Record the audio for the Igbo example sentence only one time.
-                    You are able to record over pre-existing recordings."
-                  />
-                )}
-                defaultValue={pronunciation}
-                name={`pronunciation[${index}]`}
-                control={control}
-              />
-              <Button>Delete recording</Button>
-            </Box>
-          ))}
         </Box>
         <FormHeader
           title="Igbo"

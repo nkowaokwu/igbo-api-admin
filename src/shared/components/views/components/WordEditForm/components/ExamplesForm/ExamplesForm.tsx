@@ -14,6 +14,7 @@ import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
 const ExamplesForm = ({
+  errors,
   examples,
   setExamples,
   getValues,
@@ -41,16 +42,23 @@ const ExamplesForm = ({
           </h2>
           <AccordionPanel pb={4}>
             {examples?.length ? examples.map((example, index) => (
-              <Example
-                key={`example-${example.id}`}
-                setExamples={setExamples}
-                examples={examples}
-                example={example}
-                getValues={getValues}
-                setValue={setValue}
-                control={control}
-                index={index}
-              />
+              <Box key={example.id}>
+                <Example
+                  key={`example-${example.id}`}
+                  setExamples={setExamples}
+                  examples={examples}
+                  example={example}
+                  getValues={getValues}
+                  setValue={setValue}
+                  control={control}
+                  index={index}
+                />
+                {errors.examples?.[index] ? (
+                  <p className="error">
+                    {errors.examples[index]?.pronunciation?.message || errors.examples[index]?.message}
+                  </p>
+                ) : null}
+              </Box>
             )) : (
               <Box className="flex w-full justify-center mb-2">
                 <Text className="italic text-gray-700">No examples</Text>

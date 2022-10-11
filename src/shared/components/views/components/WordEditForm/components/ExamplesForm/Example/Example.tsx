@@ -1,10 +1,11 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { compact } from 'lodash';
 import { Box, IconButton, Spinner } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import { getExample } from 'src/shared/API';
-import AudioRecorder from '../../../../AudioRecorder';
+import AudioRecorders from '../../../../AudioRecorders';
 import ExamplesInterface from './ExamplesInterface';
 
 const Example = ({
@@ -26,6 +27,9 @@ const Example = ({
     originalExampleId,
   } = example;
   const formData = getValues();
+  const [pronunciations, setPronunciations] = useState(
+    Array.isArray(pronunciation) ? pronunciation : compact([pronunciation]),
+  );
 
   useEffect(() => {
     (async () => {
@@ -107,24 +111,19 @@ const Example = ({
           defaultValue={english || (formData.examples && formData.examples[index]?.english) || ''}
           control={control}
         />
-        <Controller
-          render={() => (
-            <div>
-              <AudioRecorder
-                path={`examples[${index}]`}
-                getFormValues={getValues}
-                setPronunciation={setValue}
-                record={example}
-                originalRecord={originalRecord}
-                formTitle="Igbo Sentence Recording"
-                formTooltip="Record the audio for the Igbo example sentence only one time.
-                You are able to record over pre-existing recordings."
-              />
-            </div>
-          )}
-          defaultValue={pronunciation}
-          name={`examples[${index}].pronunciation`}
+        <AudioRecorders
+          path={`examples[${index}]`}
+          getValues={getValues}
+          setValue={setValue}
+          record={example}
+          originalRecord={originalRecord}
           control={control}
+          pronunciations={pronunciations}
+          setPronunciations={setPronunciations}
+          formTitle="Igbo Sentence Recording"
+          formTooltip="Record the audio for the Igbo example sentence only one time.
+          You are able to record over pre-existing recordings."
+          name="examples[index].pronunciation"
         />
       </Box>
       <IconButton
@@ -143,3 +142,10 @@ const Example = ({
 };
 
 export default Example;
+
+// TODO: check editing existing word for nested example and dialect audios being arrays
+// TODO: check deleting audio from headword, dialects, and examples from database
+// TODO: check show view for word's list of audio for headword, dialects, and examples
+// TODO: check show view for example's list of pronunciations
+// TODO: migrate database to handle array of of audio for headwords, dialects, and examples
+// TODO: update nkowaokwu to handle array of audio (or not?) the API could just return a single audio
