@@ -87,12 +87,16 @@ const DialectDiff = (
                     <li>{Dialects[dialect].label}</li>
                   ))}
                 </ul>
-                <Heading as="h2" size="sm" className="text-left">
-                  <chakra.span className="mr-2">Variations:</chakra.span>
-                  <chakra.span fontWeight="normal" className="mr-2">
-                    {variations.length ? variations.join(', ') : 'No variations'}
-                  </chakra.span>
-                </Heading>
+                {variations.length ? (
+                  <>
+                    <Heading as="h2" size="sm" className="text-left">
+                      <chakra.span className="mr-2">Variations:</chakra.span>
+                      <chakra.span fontWeight="normal" className="mr-2">
+                        {variations.length ? variations.join(', ') : 'No variations'}
+                      </chakra.span>
+                    </Heading>
+                  </>
+                ) : null}
                 <ReactAudioPlayer
                   src={pronunciation}
                   style={{ height: 40, width: 250 }}
