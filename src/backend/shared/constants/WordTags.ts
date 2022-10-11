@@ -3,6 +3,10 @@ export default {
     value: 'agriculture',
     label: 'Agriculture',
   },
+  ARTS: {
+    value: 'arts',
+    label: 'Arts',
+  },
   BOTANY: {
     value: 'botany',
     label: 'Botany',

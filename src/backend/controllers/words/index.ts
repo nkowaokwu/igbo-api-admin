@@ -170,7 +170,7 @@ export const createWord = async (
     definitions,
     variations,
     stems,
-    dialects,
+    dialects = {},
     isStandardIgbo,
     ...rest
   } = data;
@@ -184,7 +184,7 @@ export const createWord = async (
     attributes: {
       isStandardIgbo,
     },
-    dialects: {},
+    dialects,
     ...rest,
   };
 

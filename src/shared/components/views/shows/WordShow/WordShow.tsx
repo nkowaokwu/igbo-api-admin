@@ -283,12 +283,10 @@ const WordShow = (props: ShowProps): ReactElement => {
             ) : null}
           </Box>
           <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
+            <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
             {resource !== Collection.WORDS && (
               <>
-                <Box className="flex flex-row justify-start items-center space-x-3">
-                  <SourceField record={record} source="source" />
-                  <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
-                </Box>
+                <SourceField record={record} source="source" />
                 <ShowDocumentStats
                   approvals={approvals}
                   denials={denials}
