@@ -50,7 +50,7 @@ const DialectForm = ({
             onChange={(e) => {
               setDialectalWord(e.target.value);
             }}
-            // @ts-ignore
+            // @ts-expect-error
             onBlur={() => {
               const updatedDialects = [...dialects];
               updatedDialects[index].word = dialectalWord;

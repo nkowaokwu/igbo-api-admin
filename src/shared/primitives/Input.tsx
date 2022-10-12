@@ -48,7 +48,6 @@ const Input = React.forwardRef(({
 
   const eventListenerData = {
     anchorRef: inputRef,
-    accentedLetterPopupRef,
     setPositionRect,
     isMobile,
     setIsVisible,
@@ -77,7 +76,7 @@ const Input = React.forwardRef(({
     }
   };
 
-  useEventListener('click', (e) => handleIsEditing({ e, ...eventListenerData }));
+  useEventListener('click', (e) => handleIsEditing({ e, ...eventListenerData, accentedLetterPopupRef }));
   useEventListener('scroll', (e) => handlePosition({ e, ...eventListenerData }));
   useEventListener('resize', (e) => handlePosition({ e, ...eventListenerData }));
   useEventListener('click', handleDismissAutocomplete);
@@ -88,14 +87,16 @@ const Input = React.forwardRef(({
     }
   }, [isSearchingAutoCompleteWords]);
 
+  const handleTextInput = useCallback((e) => {
+    onChange(e);
+    if (searchApi) {
+      debounceInput(e.target.value);
+    }
+  }, []);
+
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.addEventListener('insertDiacritic', (e) => {
-        onChange(e);
-        if (searchApi) {
-          debounceInput(e.target.value);
-        }
-      });
+      inputRef.current.addEventListener('insertDiacritic', handleTextInput);
     }
   }, []);
 
@@ -163,14 +164,12 @@ const Input = React.forwardRef(({
           )}
         </Box>
       ) : null}
-      {type !== 'file' && !isSearchingAutoCompleteWords && isVisible ? (
-        <DiacriticsBankPopup
-          ref={accentedLetterPopupRef}
-          inputRef={inputRef}
-          positionRect={positionRect}
-          isVisible={isVisible}
-        />
-      ) : null}
+      <DiacriticsBankPopup
+        ref={accentedLetterPopupRef}
+        inputRef={inputRef}
+        positionRect={positionRect}
+        isVisible={type !== 'file' && !isSearchingAutoCompleteWords && isVisible}
+      />
     </Box>
   );
 });

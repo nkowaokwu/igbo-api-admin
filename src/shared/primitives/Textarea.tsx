@@ -30,13 +30,12 @@ const Textarea = React.forwardRef(({
 
   const eventListenerData = {
     anchorRef: inputRef,
-    accentedLetterPopupRef,
     setPositionRect,
     isMobile,
     setIsVisible,
   };
 
-  useEventListener('click', (e) => handleIsEditing({ e, ...eventListenerData }));
+  useEventListener('click', (e) => handleIsEditing({ e, ...eventListenerData, accentedLetterPopupRef }));
   useEventListener('scroll', (e) => handlePosition({ e, ...eventListenerData }));
   useEventListener('resize', (e) => handlePosition({ e, ...eventListenerData }));
 
