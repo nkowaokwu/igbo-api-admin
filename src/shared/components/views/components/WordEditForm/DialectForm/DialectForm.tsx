@@ -50,7 +50,7 @@ const DialectForm = ({
             onChange={(e) => {
               setDialectalWord(e.target.value);
             }}
-            // @ts-ignore
+            // @ts-expect-error
             onBlur={() => {
               const updatedDialects = [...dialects];
               updatedDialects[index].word = dialectalWord;
@@ -106,7 +106,8 @@ const DialectForm = ({
                 options={Object.values(Dialects)}
                 placeholder="Select associated dialects"
                 onChange={(e) => {
-                  const updatedNestedDialects = e.map(({ value }) => value);
+                  const values = e || [];
+                  const updatedNestedDialects = values.map(({ value }) => value);
                   const updatedDialects = [...dialects];
                   updatedDialects[index].dialects = updatedNestedDialects;
                   onChange(updatedNestedDialects);

@@ -4,10 +4,11 @@ import { Box, Button, Text } from '@chakra-ui/react';
 const diacritics = [803, 768, 772, 775, 614];
 
 const insertLetter = (inputRef, letter) => {
-  const element = inputRef.current;
+  const element = inputRef.current as HTMLInputElement | HTMLTextAreaElement;
   const [start, end] = [element.selectionStart, element.selectionEnd];
   element.setRangeText(letter, start, end, 'select');
   element.dispatchEvent(new Event('insertDiacritic'));
+  element.focus();
 };
 
 const DiacriticsBank = (
