@@ -167,6 +167,31 @@ const HeadwordForm = ({
               />
             </Box>
           </Tooltip>
+          <Tooltip
+            label="Check this checkbox if this word is a word stem.
+            Checking this box will ignore the Word Stems area on this form."
+          >
+            <Box display="flex">
+              <Controller
+                render={({ onChange, value, ref }) => (
+                  <Checkbox
+                    onChange={(e) => onChange(e.target.checked)}
+                    isChecked={value}
+                    defaultIsChecked={record.attributes?.[WordAttributes.IS_STEM.value]}
+                    ref={ref}
+                    data-test={`${WordAttributes.IS_STEM.label}-checkbox`}
+                    size="lg"
+                  >
+                    <span className="font-bold">{WordAttributes.IS_STEM.label}</span>
+                  </Checkbox>
+                )}
+                defaultValue={record.attribute?.[WordAttributes.IS_STEM.value]
+                  || getValues().attributes?.[WordAttributes.IS_STEM.value]}
+                name={`attributes.${WordAttributes.IS_STEM.value}`}
+                control={control}
+              />
+            </Box>
+          </Tooltip>
         </Box>
       </Box>
       <Controller

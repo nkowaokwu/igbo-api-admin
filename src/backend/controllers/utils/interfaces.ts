@@ -47,13 +47,17 @@ export interface Word extends Document<any>, LeanDocument<any> {
     isStandardIgbo: boolean,
     isAccented: boolean,
     isComplete: boolean,
+    isSlang: boolean,
+    isConstructedTerm: boolean,
+    isBorrowedTerm: boolean,
+    isStem: boolean,
   }
   nsibidi: string,
   relatedTerms: string[],
   hypernyms: string[],
   hyponyms: string[],
   updatedAt: Date,
-  examples?: Example[],
+  examples?: (Example | ExampleSuggestion)[],
 };
 
 export interface Notification {
@@ -73,31 +77,16 @@ export interface Notification {
   created_at?: number | string,
 }
 
-export interface WordSuggestion extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
+export interface WordSuggestion extends Word {
   originalWordId?: Types.ObjectId,
-  word: string,
-  wordClass: string,
-  definitions: [string],
-  variations?: string[],
   userComments?: string,
   authorEmail?: string,
   authorId: string,
-  pronunciation: string,
-  attributes: {
-    isStandardIgbo: boolean,
-    isAccented: boolean,
-    isComplete: boolean,
-  }
   approvals?: string[],
   denials?: string[],
-  updatedAt: Date,
   merged?: Types.ObjectId,
   mergedBy?: string,
   examples?: ExampleSuggestion[],
-  dialects?: {
-    [key: string]: WordDialect,
-  },
   userInteractions?: string[],
   twitterPollUrl?: string,
 };

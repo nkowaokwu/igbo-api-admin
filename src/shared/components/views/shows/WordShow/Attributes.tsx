@@ -21,12 +21,14 @@ const Attributes = (
       isSlang,
       isConstructedTerm,
       isBorrowedTerm,
+      isStem,
     } = {
       isStandardIgbo: false,
       isAccented: false,
       isSlang: false,
       isConstructedTerm: false,
       isBorrowedTerm: false,
+      isStem: false,
     },
   } = record;
 
@@ -86,6 +88,17 @@ const Attributes = (
             path={`attributes.${WordAttributes.IS_BORROWED_TERM.value}`}
             diffRecord={diffRecord}
             fallbackValue={isBorrowedTerm}
+            renderNestedObject={(value) => <span>{String(value || false)}</span>}
+          />
+        </Box>
+        <Box>
+          <Heading fontSize="lg" className="text-xl text-gray-600">
+            {WordAttributes.IS_STEM.label}
+          </Heading>
+          <DiffField
+            path={`attributes.${WordAttributes.IS_STEM.value}`}
+            diffRecord={diffRecord}
+            fallbackValue={isStem}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
           />
         </Box>
