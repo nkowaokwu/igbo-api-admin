@@ -24,4 +24,8 @@ export default {
     value: 'isBorrowedTerm',
     label: 'Is Borrowed Term',
   },
+  IS_STEM: {
+    value: 'isStem',
+    label: 'Is Stem',
+  },
 };

@@ -21,6 +21,7 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       isStandardIgbo,
       isAccented,
       isComplete,
+      isStem,
     } = {},
     stems = [],
     relatedTerms = [],
@@ -52,7 +53,7 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
 
   const completeWordRequirements = compact([
     ...sufficientWordRequirements,
-    !stems?.length && 'A word stem is needed',
+    !isStem && !stems?.length && 'A word stem is needed',
     invalidRelatedTermsWordClasses.includes(wordClass) ? null : !relatedTerms?.length && 'A related term is needed',
     isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
       value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
