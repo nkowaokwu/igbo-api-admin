@@ -105,7 +105,7 @@ export const copyAudioPronunciation = async (
       + `ids of oldDocId: ${oldAudioId} and newDocId: ${newAudioId}`,
     );
     if (oldAudioId.includes('-') || newAudioId.includes('-')) {
-      throw new Error('Unable to save dialectal audio recording, please re-recording dialect audio.');
+      throw new Error('Unable to save dialectal audio recording, please re-record dialect audio.');
     }
     return null;
   }
