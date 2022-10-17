@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
@@ -19,7 +19,7 @@ const DialectForm = ({
   originalRecord,
 }: DialectFormInterface) : ReactElement => {
   const dialect = dialects[index];
-  const [dialectalWord, setDialectalWord] = useState(dialect.word);
+  const dialectalWordRef = useRef(dialect.word);
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
   ));
@@ -48,19 +48,21 @@ const DialectForm = ({
           </Box>
           <Input
             onChange={(e) => {
-              setDialectalWord(e.target.value);
+              dialectalWordRef.current = e.target.value;
             }}
-            // @ts-expect-error
-            onBlur={() => {
+            onBlur={(e) => {
+              if (e.relatedTarget?.closest?.('[data-test="accented-letter-popup"]')) {
+                return;
+              }
               const updatedDialects = [...dialects];
-              updatedDialects[index].word = dialectalWord;
+              updatedDialects[index].word = dialectalWordRef.current;
               setDialects(updatedDialects);
               /**
                * We are calling React Hook Form's setValue to update the current dialect's object.
                * This step is necessary so we can have access to the latest updated dialect in React
                * Hook Form when preparing our payload to send to the backend.
                */
-              setValue(`dialects['${dialectalWord}']`, dialect);
+              setValue(`dialects['${dialectalWordRef.current}']`, dialect);
             }}
             className="form-input"
             placeholder="Dialectal variation"

@@ -35,6 +35,8 @@ const Input = React.forwardRef(({
   className: string,
   placeholder: string,
   type?: string,
+  onBlur?: () => void,
+  defaultValue?: string,
   onSelect?: (e: any) => void,
   searchApi?: boolean,
 }, ref): ReactElement => {
