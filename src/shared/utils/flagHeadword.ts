@@ -132,13 +132,15 @@ const invalidToneMarkPairings = (
     }
     // If the current letter is a consonant, the next letter is a diacritic, and the letter after that is another
     // consonant, then we have a marked double consonant
+    const nextNextLetter = word[firstPointer + 2] || '';
     if (
       !vowels.includes(letter)
       && MorN.includes(letter)
       && !accents.includes(letter.charCodeAt(0))
       && accents.includes(nextLetter.charCodeAt(0))
-      && !vowels.includes(word[firstPointer + 2])
-      && !accents.includes(word[firstPointer + 2].charCodeAt(0))
+      && nextNextLetter
+      && !vowels.includes(nextNextLetter)
+      && !accents.includes(nextNextLetter.charCodeAt(0))
     ) {
       hasMarkedDoubleConsonant = true;
 
