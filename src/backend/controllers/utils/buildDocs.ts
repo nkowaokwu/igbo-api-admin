@@ -25,19 +25,6 @@ const removeKeysInNestedDoc = (docs: Interfaces.Word[], nestedDocsKey: string): 
   return docs;
 };
 
-/* Depending on whether or not a search term is provided,
- * the sort by key will be determined */
-const determineSorting = (match: any) => {
-  if (match.$text) {
-    if (match.$text.$search) {
-      return { word: { $meta: 'textScore' } };
-    }
-  } else if (match.word) {
-    return { word: 1, _id: 1 };
-  }
-  return { 'definitions.0': 1 };
-};
-
 /* Performs a outer left lookup to append associated examples
  * and returns a plain word object, not a Mongoose Query
  */
@@ -56,8 +43,7 @@ export const findWordsWithMatch = async (
   },
 ): Promise<Interfaces.Word[]> => {
   let words = Word.aggregate()
-    .match(match)
-    .sort(determineSorting(match));
+    .match(match);
 
   if (examples) {
     words = words
@@ -69,13 +55,6 @@ export const findWordsWithMatch = async (
       });
   }
   words = words
-    .collation({
-      locale: 'ig',
-      alternate: 'shifted',
-      maxVariable: 'space',
-      strength: 1,
-      normalization: true,
-    })
     .project({
       id: '$_id',
       _id: 0,
@@ -97,7 +76,6 @@ export const findWordsWithMatch = async (
       source: 1,
       ...(examples ? { examples: 1 } : {}),
     })
-    .sort({ definitions: -1 })
     .skip(skip)
     .limit(limit);
 
