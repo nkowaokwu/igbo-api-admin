@@ -51,7 +51,7 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
               + 'You can click on each stat to see the associated documents'}
             </Text>
           </Box>
-          <UserStat uid={user.uid} permissions={permissions} />
+          <UserStat uid={user?.uid} permissions={permissions} />
         </Box>
         <Box className="w-full grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3 lg:-mt-12">
           <Card
