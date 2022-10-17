@@ -16,7 +16,7 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
     (async () => {
       const word = await network(`/words/${wordId}`)
         .then(({ json: word, status, body }) => {
-          if (status === 404) {
+          if (status === 404 || status === 400) {
             throw new Error(body.error);
           }
           return word;
