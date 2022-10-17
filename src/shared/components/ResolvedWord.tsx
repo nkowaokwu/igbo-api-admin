@@ -15,7 +15,12 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
   useEffect(() => {
     (async () => {
       const word = await network(`/words/${wordId}`)
-        .then(({ json: word }) => word)
+        .then(({ json: word, status, body }) => {
+          if (status === 404) {
+            throw new Error(body.error);
+          }
+          return word;
+        })
         .catch(() => {
           setIsLinked(false);
           return { word: wordId };
