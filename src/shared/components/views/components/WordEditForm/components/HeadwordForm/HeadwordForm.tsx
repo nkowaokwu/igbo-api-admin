@@ -72,9 +72,9 @@ const HeadwordForm = ({
                 render={({ onChange, value, ref }) => (
                   <Checkbox
                     onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
-                    defaultIsChecked={isHeadwordAccented?.length
-                      || record.attributes?.[WordAttributes.IS_ACCENTED.value]}
+                    isChecked={!!value}
+                    defaultIsChecked={!!(isHeadwordAccented?.length
+                      || record.attributes?.[WordAttributes.IS_ACCENTED.value])}
                     ref={ref}
                     data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
                     size="lg"
@@ -82,9 +82,9 @@ const HeadwordForm = ({
                     <span className="font-bold">{WordAttributes.IS_ACCENTED.label}</span>
                   </Checkbox>
                 )}
-                defaultValue={isHeadwordAccented?.length
+                defaultValue={!!(isHeadwordAccented?.length
                   || record.attributes?.[WordAttributes.IS_ACCENTED.value]
-                  || getValues().attributes?.[WordAttributes.IS_ACCENTED.value]}
+                  || getValues().attributes?.[WordAttributes.IS_ACCENTED.value])}
                 name={`attributes.${WordAttributes.IS_ACCENTED.value}`}
                 control={control}
               />
