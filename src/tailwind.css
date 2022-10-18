@@ -18,7 +18,7 @@ html {
 
 ::selection {
   @apply bg-green-400;
-  @apply text-gray-300;
+  @apply text-gray-800;
 }
 
 .akagu {
