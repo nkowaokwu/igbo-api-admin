@@ -28,8 +28,9 @@ const prepareRecord = (record) => {
 };
 
 const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
-const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
+const handleDeleteConstructedTermPoll = useCallable<any, EmptyResponse>('deleteConstructedTermPoll');
+const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
 export const handleUpdateDocument = useCallable<any, EmptyResponse>('updateDocument');
 
 export default {
@@ -154,6 +155,19 @@ export default {
       handleRequestDeleteDocument({ note, resource, record })
     ),
     successMessage: 'Your deletion request has been sent to admins 📨',
+  },
+  [ActionTypes.DELETE_POLL]: {
+    type: 'Delete Poll',
+    title: 'Delete Poll',
+    content: 'Deleting a poll is an irreversible action that will delete the poll '
+     + 'in the Igbo API Editor Platform along with associated tweets and Slack bot posts',
+    executeAction: (
+      { pollId }:
+      { pollId: string },
+    ) : Promise<any> => (
+      handleDeleteConstructedTermPoll({ pollId })
+    ),
+    successMessage: 'You have deleted the poll',
   },
   [ActionTypes.DELETE_USER]: {
     type: 'DeleteUser',

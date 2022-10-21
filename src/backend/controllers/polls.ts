@@ -1,5 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
+import * as functions from 'firebase-functions';
 import admin from 'firebase-admin';
+import { NextFunction, Request, Response } from 'express';
 import TwitterApi from 'twitter-api-v2';
 import moment from 'moment';
 import axios from 'axios';
@@ -14,6 +15,15 @@ import {
 import ConstructedPollThread from '../shared/constants/ConstructedPollThread';
 import { handleQueries } from './utils';
 
+type TweetPoll = {
+  created_at: string,
+  slack_message_ts?: string,
+  id: string,
+  igboWord: string,
+  text: string,
+  thread: string[],
+};
+
 const db = admin.firestore();
 const dbRef = db.doc('tokens/twitter');
 const callbackUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}/twitter_callback`;
@@ -21,6 +31,16 @@ const twitterClient = new TwitterApi({
   clientId: TWITTER_CLIENT_ID,
   clientSecret: TWITTER_CLIENT_SECRET,
 });
+
+const getTwitterClient = async () => {
+  const { refreshToken } = (await dbRef.get()).data();
+  const {
+    client: refreshedClient,
+    accessToken,
+    refreshToken: newRefreshToken,
+  } = await twitterClient.refreshOAuth2Token(refreshToken);
+  return { refreshedClient, accessToken, newRefreshToken };
+};
 
 /* Initiates the auto process to post tweets on behalf of @nkowaokwu */
 export const onTwitterAuth = async (_: Request, res: Response): Promise<void> => {
@@ -59,40 +79,70 @@ export const onTwitterCallback = async (req: Request, res: Response): Promise<vo
   return res.sendStatus(200);
 };
 
+/* Deletes the specified poll */
+export const onDeleteConstructedTermPoll = functions.https.onCall(
+  async (
+    { pollId } :
+    { pollId: string },
+  ) => {
+    const { refreshedClient } = await getTwitterClient();
+    const dbPollsRef = db.collection(Collections.POLLS);
+    const doc = (await dbPollsRef.doc(pollId).get()).data() as TweetPoll;
+
+    // Deletes all Tweets
+    refreshedClient.v2.deleteTweet(doc.id);
+    doc.thread.forEach((tweetId) => (
+      refreshedClient.v2.deleteTweet(tweetId)
+    ));
+
+    // Deletes Slack message
+    if (doc.slack_message_ts) {
+      axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+        type: 'igbo_api_editor_platform',
+        event: {
+          type: 'delete_poll',
+          ts: doc.slack_message_ts,
+        },
+        url: TWITTER_APP_URL,
+      });
+    }
+
+    // Delete the Firestore document
+    await dbPollsRef.doc(pollId).delete();
+    return `Deleted poll with id ${pollId}`;
+  },
+);
+
 /* Posts a new constructed term poll to the @nkowaokwu Twitter account */
 export const onSubmitConstructedTermPoll = async (req: Request, res: Response): Promise<any> => {
-  const { refreshToken } = (await dbRef.get()).data();
   const { body } = req;
   const dbPollsRef = db.collection(Collections.POLLS);
 
   try {
-    const {
-      client: refreshedClient,
-      accessToken,
-      refreshToken: newRefreshToken,
-    } = await twitterClient.refreshOAuth2Token(refreshToken);
-
+    const { refreshedClient, accessToken, newRefreshToken } = await getTwitterClient();
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
 
     const tweetBody = { text: body.text, poll: body.poll };
     const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...ConstructedPollThread.slice(1, 4)]);
 
     const firstTweetId = tweets[0].data.id;
-    // Saves the first Poll Tweet id in Firestore to list later
-    await dbPollsRef.doc(firstTweetId).set({
-      created_at: moment().unix(),
-      id: firstTweetId,
-      text: body.text,
-      igboWord: body.igboWord,
-      thread: tweets.map(({ data }) => data.id).slice(1, 4),
-    });
 
-    await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+    const slackRes = await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
       type: 'igbo_api_editor_platform',
       event: {
         type: 'new_poll',
       },
       url: `${TWITTER_APP_URL}/${firstTweetId}`,
+    });
+
+    // Saves the first Poll Tweet id in Firestore to list later
+    await dbPollsRef.doc(firstTweetId).set({
+      created_at: moment().unix(),
+      slack_message_ts: slackRes.data.ts,
+      id: firstTweetId,
+      text: body.text,
+      igboWord: body.igboWord,
+      thread: tweets.map(({ data }) => data.id).slice(1, 4),
     });
 
     return res.send(tweets);
