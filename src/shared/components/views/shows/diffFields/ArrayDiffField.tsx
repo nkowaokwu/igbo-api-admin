@@ -29,7 +29,7 @@ const ArrayDiffField = (
     <Box
       // eslint-disable-next-line react/no-array-index-key
       key={`array-diff-field-${recordFieldSingular}-${index}`}
-      className="flex flex-row items-center space-x-2"
+      className="flex flex-row items-start space-x-2 mt-4"
       data-test={`${recordFieldSingular}-${index}`}
     >
       <h2 className="text-2xl text-gray-600">{`${index + 1}. `}</h2>

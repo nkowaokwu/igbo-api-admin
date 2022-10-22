@@ -113,7 +113,14 @@ const Example = ({
               <AudioRecorder
                 path={`examples[${index}]`}
                 getFormValues={getValues}
-                setPronunciation={setValue}
+                setPronunciation={(path, value) => {
+                  // Setting the react-hook-form value
+                  setValue(path, value);
+                  const updatedExamples = [...examples];
+                  updatedExamples[index].pronunciation = value;
+                  // Setting the local WordEditForm value
+                  setExamples(updatedExamples);
+                }}
                 record={example}
                 originalRecord={originalRecord}
                 formTitle="Igbo Sentence Recording"

@@ -15,7 +15,7 @@ const ExampleDiff = ({
   diffRecord: Record,
   resource: string,
 }): ReactElement => (
-  <Box className="flex flex-row items-end space-x-4">
+  <Box className="flex flex-col space-y-2">
     <Box className="flex flex-col">
       <DiffField
         path={`examples.${index}.igbo`}

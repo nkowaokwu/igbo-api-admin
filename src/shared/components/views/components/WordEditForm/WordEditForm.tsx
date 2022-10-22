@@ -329,6 +329,7 @@ const WordEditForm = ({
         getValues={getValues}
         setValue={setValue}
         control={control}
+        errors={errors}
       />
       <VariationsForm
         variations={variations}
