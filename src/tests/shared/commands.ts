@@ -256,9 +256,9 @@ export const sendEmailJob = () => (
 );
 
 /* Uses data in __mocks__ folder */
-export const searchMockedTerm = (term) => {
-  const regexTerm = createRegExp(term);
-  return resultsFromDictionarySearch(regexTerm, term, mockedData);
+export const searchMockedTerm = (term: string) => {
+  const { wordReg: searchRegex } = createRegExp(term);
+  return resultsFromDictionarySearch(searchRegex, mockedData);
 };
 
 export const sendSendGridEmail = (message) => sendEmail(message);

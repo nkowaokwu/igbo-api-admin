@@ -19,9 +19,17 @@ export default {
     value: 'education',
     label: 'Education',
   },
+  FASHION: {
+    value: 'fashion',
+    label: 'Fashion',
+  },
   FOOD: {
     value: 'food',
     label: 'Food',
+  },
+  GEOGRAPHY: {
+    value: 'geography',
+    label: 'Geography',
   },
   KINSHIP: {
     value: 'kinship',

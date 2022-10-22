@@ -22,7 +22,7 @@ import {
   onUpdatePermissions,
 } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
-import { onTwitterAuth, onTwitterCallback } from './src/backend/controllers/polls';
+import { onTwitterAuth, onTwitterCallback, onDeleteConstructedTermPoll } from './src/backend/controllers/polls';
 import {
   CORS_CONFIG,
   EXPRESS_PORT,
@@ -60,10 +60,11 @@ server.use(errorHandler);
 
 // Firebase Functions
 export const createUserAccount = onCreateUserAccount;
-export const deleteUser = onDeleteUser;
 export const assignUserToEditingGroup = onAssignUserToEditingGroup;
 export const updatePermissions = onUpdatePermissions;
 export const requestDeleteDocument = onRequestDeleteDocument;
+export const deleteConstructedTermPoll = onDeleteConstructedTermPoll;
+export const deleteUser = onDeleteUser;
 export const updateDocument = onUpdateDocument;
 
 /* Runs every Monday at 6AM PST */

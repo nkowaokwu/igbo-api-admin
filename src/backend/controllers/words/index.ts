@@ -28,7 +28,6 @@ import {
 import {
   searchIgboTextSearch,
   strictSearchIgboQuery,
-  searchEnglishRegexQuery,
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
   searchForAssociatedSuggestions,
@@ -102,7 +101,7 @@ export const getWords = async (
       dialects,
       examples: true,
     };
-    let query: {
+    const query: {
       word?: any,
       text?: any
       definitions?: any
@@ -110,17 +109,6 @@ export const getWords = async (
       ? searchIgboTextSearch(searchWord, regexKeyword, filters)
       : strictSearchIgboQuery(searchWord);
     const words = await searchWordUsingIgbo({ query, ...searchQueries });
-    if (!words.length) {
-      query = searchEnglishRegexQuery(regexKeyword, filters);
-      const englishWords = await searchWordUsingEnglish({ query, ...searchQueries });
-      return await packageResponse({
-        res,
-        docs: englishWords,
-        model: Word,
-        query,
-        ...rest,
-      });
-    }
     return await packageResponse({
       res,
       docs: words,

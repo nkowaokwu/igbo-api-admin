@@ -5,6 +5,7 @@ import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import Tense from 'src/backend/shared/constants/Tense';
+import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 
 type ExampleSearchQuery = [
   { igbo: RegExp },
@@ -92,17 +93,18 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
   return searchFilters;
 };
 
-const wordQuery = (regex: RegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex } });
+const wordQuery = (regex: SearchRegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex.wordReg } });
 const fullTextSearchQuery = (
   keyword: string,
-  regex: RegExp,
+  regex: SearchRegExp,
 ): { word?: { $regex: RegExp }, $or?: any } => (
   !keyword
     ? { word: { $regex: /./ } }
     : ({
       $or: [
         { word: keyword },
-        { word: { $regex: regex } },
+        { word: { $regex: regex.wordReg } },
+        { definitions: { $in: [regex.definitionsReg] } },
         { variations: keyword },
         { nsibidi: keyword },
         { [`dialects.${keyword}`]: { $exists: true } },
@@ -113,29 +115,33 @@ const fullTextSearchQuery = (
       ],
     })
 );
-const variationsQuery = (regex: RegExp): { variations: { $in: [RegExp] } } => ({ variations: { $in: [regex] } });
-const definitionsQuery = (regex: RegExp): { definitions: { $in: [RegExp] } } => ({ definitions: { $in: [regex] } });
+const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => (
+  { variations: { $in: [regex.wordReg] } }
+);
+const definitionsQuery = (regex: SearchRegExp): { definitions: { $in: [RegExp] } } => (
+  { definitions: { $in: [regex.definitionsReg] } }
+);
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
 
 /* Regex match query used to later to defined the Content-Range response header */
 export const searchExamplesRegexQuery = (
-  regex: RegExp,
+  regex: SearchRegExp,
   filters: { [key: string]: string },
 ): { $or: ExampleSearchQuery } => (
   {
-    $or: [{ igbo: regex }, { english: regex }],
+    $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
     ...(filters ? generateSearchFilters(filters) : {}),
   }
 );
 export const searchExampleSuggestionsRegexQuery = (
-  regex: RegExp,
+  regex: SearchRegExp,
   filters: { [key: string]: string },
 ): {
   $or: ExampleSearchQuery,
   exampleForSuggestion: boolean,
   merged: null,
 } => ({
-  $or: [{ igbo: regex }, { english: regex }],
+  $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
   exampleForSuggestion: false,
   merged: null,
   ...(filters ? generateSearchFilters(filters) : {}),
@@ -150,7 +156,7 @@ export const searchPreExistingExampleSuggestionsRegexQuery = (
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (
-  regex: RegExp,
+  regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): {
     $or: (
@@ -164,7 +170,7 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
 });
 export const searchPreExistingGenericWordsRegexQueryAsEditor = (
   segmentRegex: RegExp,
-  regex: RegExp,
+  regex: SearchRegExp,
 ): { $or: { $and: any[] }[], merged: null } => ({
   $or: [
     { $and: [wordQuery(regex), { word: { $regex: segmentRegex } }] },
@@ -173,13 +179,13 @@ export const searchPreExistingGenericWordsRegexQueryAsEditor = (
   ],
   merged: null,
 });
-export const searchPreExistingGenericWordsRegexQuery = (regex: RegExp): { $or: any[], merged: null } => ({
+export const searchPreExistingGenericWordsRegexQuery = (regex: SearchRegExp): { $or: any[], merged: null } => ({
   $or: [wordQuery(regex), variationsQuery(regex), definitionsQuery(regex)],
   merged: null,
 });
 export const searchIgboTextSearch = (
   keyword: string,
-  regex: RegExp,
+  regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): { [key: string]: any } => ({
   ...fullTextSearchQuery(keyword, regex),
@@ -188,7 +194,7 @@ export const searchIgboTextSearch = (
 /* Since the word field is not non-accented yet,
  * a strict regex search for words has to be used as a workaround */
 export const strictSearchIgboQuery = (word: string): { word: RegExp } => ({
-  word: createRegExp(word, true),
+  word: createRegExp(word, true).wordReg,
 });
 export const searchEnglishRegexQuery = (
   keyword: RegExp,

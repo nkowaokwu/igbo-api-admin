@@ -1,6 +1,8 @@
+import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
+
 type HandledQueries = {
   searchWords: '',
-  regexKeyword: RegExp,
+  regexKeyword: SearchRegExp,
   page: number,
   sort: { key: string, direction: string } | null,
   skip: number,

@@ -1,3 +1,4 @@
+import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import diacriticCodes from '../constants/diacriticCodes';
 
 const getIsLastLetterDuplicated = ({ stringArray, index, letter }) => {
@@ -6,7 +7,7 @@ const getIsLastLetterDuplicated = ({ stringArray, index, letter }) => {
   return isLastLetterDuplicated;
 };
 
-export default (searchWord: string, hardMatch = false): RegExp => {
+export default (searchWord: string, hardMatch = false): SearchRegExp => {
   /* Front and back ensure the regexp will match with whole words */
   const front = '(?:^|[^a-zA-Z\u00c0-\u1ee5])';
   const back = '(?![a-zA-Z\u00c0-\u1ee5]+|,|s[a-zA-Z\u00c0-\u1ee5]+)';
@@ -41,10 +42,19 @@ export default (searchWord: string, hardMatch = false): RegExp => {
   const startWordBoundary = '(\\W|^)';
   const endWordBoundary = '(\\W|$)';
   /* Hard match checks to see if the searchWord is the beginning and end of the line, triggered by strict query */
-  return new RegExp(!hardMatch
+  const wordReg = new RegExp(!hardMatch
     ? `${startWordBoundary}(${front}${regexWordStringNormalizedNFD})${endWordBoundary}`
     + `|${startWordBoundary}(${front}${regexWordStringNormalizedNFC})${endWordBoundary}`
     : `${startWordBoundary}(^${front}${regexWordStringNormalizedNFD}${back}$)${endWordBoundary}`
     + `|${startWordBoundary}(^${front}$${regexWordStringNormalizedNFC}${back}$)${endWordBoundary}`,
   'i');
+
+  const definitionsReg = new RegExp(!hardMatch
+    ? `${startWordBoundary}(${regexWordStringNormalizedNFD})${endWordBoundary}`
+    + `|${startWordBoundary}(${regexWordStringNormalizedNFC})${endWordBoundary}`
+    : `${startWordBoundary}(^${regexWordStringNormalizedNFD}$)${endWordBoundary}`
+    + `|${startWordBoundary}(^$${regexWordStringNormalizedNFC}$)${endWordBoundary}`,
+  'i');
+
+  return { wordReg, definitionsReg };
 };

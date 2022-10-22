@@ -234,6 +234,16 @@ const Select = ({
         window.location.href = `${TWITTER_APP_URL}/${get(record, 'id')}`;
       },
     },
+    {
+      value: 'deletePoll',
+      label: (() => (
+        <span className="text-red-500">
+          <DeleteIcon className="mr-2" />
+          Delete Poll
+        </span>
+      ))(),
+      onSelect: () => setAction(actionsMap[ActionTypes.DELETE_POLL]),
+    },
   ];
 
   const options = resource === Collection.USERS

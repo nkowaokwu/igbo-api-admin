@@ -11,7 +11,7 @@ import {
   Pagination,
   ListActions,
 } from 'src/shared/components';
-import { Role } from 'src/shared/constants/auth-types';
+import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 
 const PollList = (props: ListProps): ReactElement => {
@@ -24,7 +24,7 @@ const PollList = (props: ListProps): ReactElement => {
       hasCreate
       bulkActionButtons={false}
       pagination={<Pagination />}
-      empty={<Empty showCreate={permissions.role === Role.ADMIN} />}
+      empty={<Empty showCreate={hasAdminPermissions(permissions, true)} />}
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Datagrid>

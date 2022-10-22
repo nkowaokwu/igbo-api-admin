@@ -15,13 +15,16 @@ const doesVariationMatch = (termInformation, regexWord) => (
 );
 
 /* Provided a dictionary, find the corresponding terms */
-export const resultsFromDictionarySearch = (regexWord, word, dictionary) => (
+export const resultsFromDictionarySearch = (
+  searchRegex: RegExp,
+  dictionary: { [key: string]: any },
+) => (
   keys(dictionary).reduce((matchedResults, key) => {
     const currentMatchedResults = { ...matchedResults };
     const termInformation = dictionary[key];
     const trimmedKey = removePrefix(key);
-    const isTrimmedKeyAndWordSameLength = trimmedKey.match(regexWord);
-    if (isTrimmedKeyAndWordSameLength || doesVariationMatch(termInformation, regexWord)) {
+    const isTrimmedKeyAndWordSameLength = trimmedKey.match(searchRegex);
+    if (isTrimmedKeyAndWordSameLength || doesVariationMatch(termInformation, searchRegex)) {
       currentMatchedResults[key] = termInformation;
     }
     return currentMatchedResults;
