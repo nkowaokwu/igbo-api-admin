@@ -37,7 +37,7 @@ const constructRegexQuery = (
       ? createQueryRegex(queryValue)
       : queryValue
         ? createQueryRegex(queryValue)
-        : /^[.{0,}\n{0,}]/
+        : { wordReg: /^[.{0,}\n{0,}]/, definitionsReg: /^[.{0,}\n{0,}]/ }
   );
 };
 

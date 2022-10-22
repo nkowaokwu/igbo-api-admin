@@ -204,3 +204,8 @@ export interface FormattedUser {
   lastSignInTime: string,
   creationTime: string,
 };
+
+export interface SearchRegExp {
+  wordReg: RegExp,
+  definitionsReg: RegExp,
+};
