@@ -60,6 +60,16 @@ const BulkSuggestionActions = ({
                       })
                     )),
                   );
+                } else if (resource === Collection.CORPUS_SUGGESTIONS) {
+                  await Promise.all(
+                    selectedIds.map((selectedId) => (
+                      actionsMap.Merge.executeAction({
+                        collection: Collection.CORPORA,
+                        resource,
+                        record: { id: selectedId },
+                      })
+                    )),
+                  );
                 }
 
                 toast({

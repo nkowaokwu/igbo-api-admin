@@ -9,6 +9,7 @@ const corpusSuggestionSchema = new Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   media: { type: String, default: '' },
+  duration: { type: Number, default: 0 },
   tags: {
     type: [{
       type: String,
@@ -21,7 +22,7 @@ const corpusSuggestionSchema = new Schema({
   authorId: { type: String, default: '' },
   approvals: { type: [{ type: String }], default: [] },
   denials: { type: [{ type: String }], default: [] },
-  merge: { type: Types.ObjectId, ref: 'Corpus', default: null },
+  merged: { type: Types.ObjectId, ref: 'Corpus', default: null },
   mergedBy: { type: String, default: null },
   userInteractions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin, timestamps: true });

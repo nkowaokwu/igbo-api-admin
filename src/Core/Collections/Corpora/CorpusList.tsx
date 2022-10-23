@@ -11,7 +11,6 @@ import {
   BulkSuggestionActions,
   IdField,
   Select,
-  ReviewPreview,
   ListActions,
   Pagination,
 } from 'src/shared/components';
@@ -34,7 +33,6 @@ const CorpusSuggestionList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={(
           <Datagrid>
-            <ReviewPreview label="You Reviewed" />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
             <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
@@ -42,7 +40,6 @@ const CorpusSuggestionList = (props: ListProps): React.ReactElement => {
         )}
         medium={(
           <Datagrid>
-            <ReviewPreview label="You Reviewed" />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
             <IdField label="Id" source="id" />

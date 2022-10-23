@@ -7,6 +7,7 @@ const corpusSchema = new Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   media: { type: String, required: true },
+  duration: { type: Number, required: true },
   tags: {
     type: [{
       type: String,

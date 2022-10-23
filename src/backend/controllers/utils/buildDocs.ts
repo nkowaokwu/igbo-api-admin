@@ -109,6 +109,7 @@ export const findCorporaWithMatch = async (
       body: 1,
       media: 1,
       tags: 1,
+      duration: 1,
     })
     .skip(skip)
     .limit(limit);
