@@ -25,7 +25,7 @@ import {
   getCorpus,
   putCorpus,
   mergeCorpus,
-} from '../controllers/corpus';
+} from '../controllers/corpora';
 import { putExample, mergeExample, getAssociatedExampleSuggestions } from '../controllers/examples';
 import {
   deleteExampleSuggestion,

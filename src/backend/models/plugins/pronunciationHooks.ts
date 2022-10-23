@@ -152,26 +152,20 @@ export const uploadCorpusPronunciation = (schema: mongoose.Schema<Interfaces.Cor
         } else if (this.media.startsWith('https://') && !this.media.includes(`${id}.`)) {
           // If the pronunciation data for the headword is a uri, we will duplicate the uri
           // so that the new uri will only be associated with the suggestion
-          const mediaType = Object.values(MediaTypes).reduce((matchedMedia, currentMediaType) => {
-            if (matchedMedia || this.media.includes(currentMediaType)) {
-              return matchedMedia || currentMediaType;
-            }
-            return '';
-          }, '');
           const extensions = Object.values(MediaTypes).map((extension) => `.${extension}`);
           const oldId: string = last(compact(this.media.split(new RegExp(extensions.join('|'))).join('').split('/')));
           const newId: string = id;
 
           /* If we are saving a new corpus suggestion, then we want to copy all the original media files */
           this.media = await (this.isNew
-            ? copyMedia(oldId, newId, mediaType)
-            : renameMedia(oldId, newId, mediaType));
+            ? copyMedia(oldId, newId)
+            : renameMedia(oldId, newId));
         }
       }
       next();
       return this;
     } catch (err) {
-      console.log('Error caught in pre save Corpus shcema hook', err.message);
+      console.log('Error caught in pre save Corpus schema hook', err.message);
       this.invalidate('media', err.message);
       return null;
     }

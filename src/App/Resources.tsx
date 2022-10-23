@@ -83,7 +83,7 @@ const AsyncCorpusSuggestionShow = Loadable({
   loading: PlatformLoader,
 });
 const AsyncNotificationList = Loadable({
-  loader: () => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionList'),
+  loader: () => import('src/Core/Collections/Notifications/NotificationList'),
   loading: PlatformLoader,
 });
 const AsyncPollList = Loadable({

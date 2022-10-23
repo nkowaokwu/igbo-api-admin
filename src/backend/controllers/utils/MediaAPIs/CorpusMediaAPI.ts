@@ -26,7 +26,7 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
   const mediaPrefix = mediaType === MediaTypes.MP3 ? 'audio' : 'video';
   const params = {
     ...baseParams,
-    Key: `${mediaPath}/${mediaId}.${extension}`,
+    Key: `${mediaPath}/${mediaId}`,
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
@@ -41,7 +41,6 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
 export const copyMedia = async (
   oldDocId: string,
   newDocId: string,
-  mediaType: MediaTypes | string,
 ): Promise<any> => {
   const oldMediaId = removeAccents.remove(oldDocId);
   const newMediaId = removeAccents.remove(newDocId);
@@ -50,17 +49,15 @@ export const copyMedia = async (
       return `${dummyUriPath}${newMediaId}`;
     }
 
-    const extension = mediaType;
-
     const copyParams = {
       ...baseParams,
-      Key: `${mediaPath}/${newMediaId}.${extension}`,
+      Key: `${mediaPath}/${newMediaId}`,
       ACL: 'public-read',
-      CopySource: `${bucket}/${mediaPath}/${oldMediaId}.${extension}`,
+      CopySource: `${bucket}/${mediaPath}/${oldMediaId}`,
     };
 
     await s3.copyObject(copyParams).promise();
-    const copiedMediaUri = `${uriPath}/${newMediaId}.${extension}`;
+    const copiedMediaUri = `${uriPath}/${newMediaId}`;
     return copiedMediaUri;
   } catch (err) {
     console.log(
@@ -72,7 +69,7 @@ export const copyMedia = async (
 };
 
 /* Deletes a media object in the AWS S3 Bucket */
-export const deleteMedia = async (id: string, mediaType: MediaTypes | string): Promise<any> => {
+export const deleteMedia = async (id: string): Promise<any> => {
   if (!id) {
     throw new Error('No media id provided');
   }
@@ -81,10 +78,9 @@ export const deleteMedia = async (id: string, mediaType: MediaTypes | string): P
     if (isCypress || !isProduction) {
       return `${dummyUriPath}${mediaId}`;
     }
-    const extension = mediaType;
     const params = {
       ...baseParams,
-      Key: `${mediaPath}/${mediaId}.${extension}`,
+      Key: `${mediaPath}/${mediaId}`,
     };
 
     return await s3.deleteObject(params).promise();
@@ -94,10 +90,7 @@ export const deleteMedia = async (id: string, mediaType: MediaTypes | string): P
 };
 
 /* Takes an old and new media id and renames it (copies and deletes) */
-export const renameMedia = async (oldDocId: string, newDocId: string, mediaType: MediaTypes | string): Promise<any> => {
-  if (!MediaTypes[mediaType]) {
-    throw new Error('Invalid media type');
-  }
+export const renameMedia = async (oldDocId: string, newDocId: string): Promise<any> => {
   if (isCypress || !isProduction) {
     if (!oldDocId) {
       return '';
@@ -111,13 +104,13 @@ export const renameMedia = async (oldDocId: string, newDocId: string, mediaType:
    * will be deleted
    * */
   if (!oldDocId) {
-    await deleteMedia(newDocId, mediaType);
+    await deleteMedia(newDocId);
     return '';
   }
 
   try {
-    const renamedMediaUri = await copyMedia(oldDocId, newDocId, mediaType);
-    await deleteMedia(oldDocId, mediaType);
+    const renamedMediaUri = await copyMedia(oldDocId, newDocId);
+    await deleteMedia(oldDocId);
 
     return renamedMediaUri;
   } catch (err) {

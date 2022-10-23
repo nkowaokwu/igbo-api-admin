@@ -58,6 +58,7 @@ const FilePicker = ({
       file,
       filePath,
       base64,
+      duration: mediaRef.current.getDuration(),
     });
   };
 
@@ -98,6 +99,7 @@ const FilePicker = ({
               ref={mediaRef}
               height="auto"
               width="auto"
+              onReady={() => onFileSelect({ duration: Math.floor(mediaRef.current.getDuration()) })}
               style={{
                 borderRadius: 10,
                 overflow: 'hidden',
@@ -120,6 +122,11 @@ const FilePicker = ({
         onChange={handleOnChange}
         disabled={localFile}
         {...register(name)}
+        className="pointer-events-none invisible absolute"
+      />
+      <input
+        disabled
+        {...register('duration')}
         className="pointer-events-none invisible absolute"
       />
     </>

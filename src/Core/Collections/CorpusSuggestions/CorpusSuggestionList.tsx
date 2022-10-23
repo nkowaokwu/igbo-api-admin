@@ -38,7 +38,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
             <ReviewPreview label="You Reviewed" />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
-            <Select collection={Collection.CORPUS_SUGGESTIONS} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -59,7 +59,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
               )}
             />
             <IdField label="Id" source="id" />
-            <Select collection={Collection.CORPUS_SUGGESTIONS} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />

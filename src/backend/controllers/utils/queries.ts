@@ -170,7 +170,7 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
   ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchPreExistingCorpusSuggestionsRegexQuery = (
-  regex: RegExp,
+  regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): {
     $or: (
@@ -200,13 +200,13 @@ export const searchPreExistingGenericWordsRegexQuery = (regex: SearchRegExp): { 
 });
 export const searchCorpusTextSearch = (
   keyword: string,
-  regex: RegExp,
+  regex: SearchRegExp,
 ): { [key: string]: any } => ({
   $or: [
     { title: keyword },
-    { title: { $regex: regex } },
+    { title: { $regex: regex.wordReg } },
     { body: keyword },
-    { body: { $regex: regex } },
+    { body: { $regex: regex.definitionsReg } },
   ],
 });
 export const searchIgboTextSearch = (
@@ -223,7 +223,7 @@ export const strictSearchIgboQuery = (word: string): { word: RegExp } => ({
   word: createRegExp(word, true).wordReg,
 });
 export const searchEnglishRegexQuery = (
-  keyword: RegExp,
+  keyword: SearchRegExp,
   filters?: { [key: string]: string },
 ): { [key: string]: any } => ({
   ...definitionsQuery(keyword),

@@ -24,6 +24,10 @@ export interface WordClientData extends Word {
   examples?: ExampleSuggestion[],
 }
 
+export interface CorpusClientData extends Corpus {
+  authorId?: string,
+};
+
 export interface WordDialect {
   dialects: string[],
   variations: string[],
@@ -90,7 +94,7 @@ interface Suggestion extends Document<any>, LeanDocument<any> {
   userInteractions?: string[],
 };
 
-export interface Corpus {
+export interface Corpus extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   title: string,
   body: string,

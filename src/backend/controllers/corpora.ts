@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, LeanDocument } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { assign, omit } from 'lodash';
 import Corpus from 'src/backend/models/Corpus';
@@ -13,7 +13,6 @@ import {
 import * as Interfaces from './utils/interfaces';
 import { findCorporaWithMatch } from './utils/buildDocs';
 import { searchCorpusTextSearch } from './utils/queries';
-import MediaTypes from '../shared/constants/MediaTypes';
 
 /* Searches for a corpus within MongoDB */
 export const searchCorpus = async (
@@ -127,13 +126,7 @@ const overwriteCorpusPronunciation = async (
      * Corpus document
      */
     const suggestionDocId = suggestion.media ? suggestion.id.toString() : '';
-    const mediaType = Object.values(MediaTypes).reduce((matchedMedia, currentMediaType) => {
-      if (matchedMedia || suggestion.media.includes(currentMediaType)) {
-        return matchedMedia || currentMediaType;
-      }
-      return '';
-    }, '');
-    const finalMediaUri = await renameMedia(suggestionDocId, corpus.id, mediaType);
+    const finalMediaUri = await renameMedia(suggestionDocId, corpus.id.toString());
 
     suggestion.media = finalMediaUri;
     corpus.media = finalMediaUri;
@@ -143,7 +136,7 @@ const overwriteCorpusPronunciation = async (
     await suggestion.save();
     await CorpusSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
     await Corpus.findOneAndUpdate({ _id: corpus.id }, corpus.toObject());
-    const savedCorpus = await Corpus.save();
+    const savedCorpus = await corpus.save();
     return savedCorpus;
   } catch (err) {
     console.log('An error while merging media failed:', err.message);
@@ -170,13 +163,39 @@ const mergeIntoCorpus = (
       }
 
       await overwriteCorpusPronunciation(suggestionDoc, updatedCorpus);
-      updateDocumentMerge(suggestionDoc, updatedCorpus.id.toString(), mergedBy);
+      await updateDocumentMerge(suggestionDoc, suggestionDocObject.originalCorpusId, mergedBy);
       return updatedCorpus;
     })
     .catch((error) => {
       throw new Error(error.message);
     });
 };
+
+/* Creates Corpus documents in MongoDB database */
+export const createCorpus = async (
+  data: (
+    Interfaces.CorpusClientData
+    | Interfaces.CorpusSuggestion
+    | LeanDocument<Document<Interfaces.CorpusClientData | Interfaces.CorpusSuggestion>>
+  ),
+): Promise<Document<Interfaces.Corpus>> => {
+  const newCorpus: Document<Interfaces.Corpus> | any = new Corpus(data);
+  return newCorpus.save();
+};
+
+/* Creates a new Corpus document from an existing CorpusSuggestion document */
+const createCorpusFromSuggestion = (
+  suggestionDoc: Document<Interfaces.CorpusSuggestion>,
+): Promise<Document<Interfaces.Corpus> | void> => (
+  createCorpus(suggestionDoc.toObject())
+    .then(async (corpus: Document<Interfaces.Corpus>) => {
+      const updatedPronunciationsWord = await overwriteCorpusPronunciation(suggestionDoc, corpus);
+      return updatedPronunciationsWord;
+    })
+    .catch((err) => {
+      throw new Error(`An error occurred while saving the new corpus: ${err.message}`);
+    })
+);
 
 /* Merges the existing CorpusSuggestion into either a brand
  * new Corpus document or merges into an existing Corpus document */
@@ -189,7 +208,7 @@ export const mergeCorpus = async (
     const { user, suggestionDoc } = req;
 
     const mergedCorpus: Document<Interfaces.Corpus> | any = (
-      suggestionDoc.originalWordId
+      suggestionDoc.originalCorpusId
         ? await mergeIntoCorpus(suggestionDoc, user.uid)
         : await createCorpusFromSuggestion(suggestionDoc, user.uid)
     ) || {};
