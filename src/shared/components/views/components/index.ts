@@ -1,4 +1,5 @@
 import Comments from './Comments';
+import CorpusEditForm from './CorpusEditForm';
 import EditDocumentIds from './EditDocumentIds';
 import EditDocumentStats from './EditDocumentStats';
 import EditDocumentTopBar from './EditDocumentTopBar';
@@ -8,6 +9,7 @@ import WordEditForm from './WordEditForm';
 
 export {
   Comments,
+  CorpusEditForm,
   EditDocumentIds,
   EditDocumentStats,
   EditDocumentTopBar,

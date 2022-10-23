@@ -3,7 +3,6 @@ import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
-// @ts-ignore
 const exampleSchema = new Schema({
   igbo: { type: String, default: '' },
   english: { type: String, default: '' },

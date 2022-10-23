@@ -2,8 +2,10 @@
 enum Collection {
   WORDS = 'words',
   EXAMPLES = 'examples',
+  CORPORA = 'corpuses',
   WORD_SUGGESTIONS = 'wordSuggestions',
   EXAMPLE_SUGGESTIONS = 'exampleSuggestions',
+  CORPUS_SUGGESTIONS = 'corpusSuggestions',
   GENERIC_WORDS = 'genericWords',
   USERS = 'users',
   POLLS = 'polls',

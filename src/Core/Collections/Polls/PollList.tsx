@@ -12,6 +12,7 @@ import {
   ListActions,
 } from 'src/shared/components';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
+import Collection from 'src/shared/constants/Collections';
 import Empty from '../../Empty';
 
 const PollList = (props: ListProps): ReactElement => {
@@ -30,7 +31,7 @@ const PollList = (props: ListProps): ReactElement => {
       <Datagrid>
         <TextField label="Igbo Word" source="igboWord" />
         <TextField label="Tweet body" source="text" />
-        <Select collection="polls" label="Editor's Actions" permissions={permissions} />
+        <Select collection={Collection.POLLS} label="Editor's Actions" permissions={permissions} />
       </Datagrid>
     </List>
   );

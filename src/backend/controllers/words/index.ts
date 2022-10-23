@@ -38,7 +38,7 @@ import removeAccents from '../../utils/removeAccents';
 import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
-import { renameAudioPronunciation } from '../utils/AWS-API';
+import { renameAudioPronunciation } from '../utils/MediaAPIs/AudioAPI';
 import * as Interfaces from '../utils/interfaces';
 import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
 
@@ -271,7 +271,7 @@ const overwriteWordPronunciation = async (
       word.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
     }));
 
-    // Since the word suggestion is no longer needed, we don't need to trigger any AWS-API.ts functions
+    // Since the word suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
     suggestion.skipPronunciationHook = true;
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());

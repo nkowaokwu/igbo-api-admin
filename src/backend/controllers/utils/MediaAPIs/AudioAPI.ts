@@ -1,35 +1,16 @@
-import * as functions from 'firebase-functions';
-import AWS from 'aws-sdk';
-import {
-  AWS_ACCESS_KEY,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_BUCKET,
-  AWS_REGION,
-} from 'src/backend/config';
 import removeAccents from 'src/backend/utils/removeAccents';
+import { isProduction, isCypress } from 'src/backend/config';
+import initializeAPI from './initializeAPI';
 
-const bucket = AWS_BUCKET;
-const region = AWS_REGION;
-const pronunciationPath = 'audio-pronunciations';
-const uriPath = `https://${bucket}.s3.${region}.amazonaws.com/${pronunciationPath}`;
-const dummyUriPath = 'https://igbo-api-test-local/audio-pronunciations/';
-const baseParams = {
-  Bucket: bucket,
-};
+const {
+  bucket,
+  uriPath,
+  dummyUriPath,
+  mediaPath,
+  s3,
+  baseParams,
+} = initializeAPI('audio-pronunciations');
 
-const s3 = (() => {
-  AWS.config.update({
-    accessKeyId: AWS_ACCESS_KEY,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    region,
-  });
-
-  return new AWS.S3();
-})();
-
-const config = functions.config();
-const isProduction = config?.runtime?.env === 'production';
-const isCypress = config?.runtime?.env === 'cypress';
 /* Puts a new .mp3 object in the AWS S3 Bucket */
 export const createAudioPronunciation = async (id: string, pronunciationData: string): Promise<string> => {
   if (!id || !pronunciationData) {
@@ -42,7 +23,7 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
   const base64Data = Buffer.from(pronunciationData.replace(/^data:.+;base64,/, ''), 'base64');
   const params = {
     ...baseParams,
-    Key: `${pronunciationPath}/${audioId}.mp3`,
+    Key: `${mediaPath}/${audioId}.mp3`,
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
@@ -53,7 +34,7 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
   return Location;
 };
 
-/* Deletes a .webm object in the AWS S3 Bucket */
+/* Deletes an audio object in the AWS S3 Bucket */
 export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promise<any> => {
   if (!id) {
     throw new Error('No pronunciation id provided');
@@ -66,14 +47,16 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
     const extension = isMp3 ? 'mp3' : 'webm';
     const params = {
       ...baseParams,
-      Key: `${pronunciationPath}/${audioId}.${extension}`,
+      Key: `${mediaPath}/${audioId}.${extension}`,
     };
 
-    return await s3.deleteObject(params).promise();
+    const deletedObject = await s3.deleteObject(params).promise();
+    return deletedObject;
   } catch (err) {
     throw new Error(`Error occurred while deleting audio: ${err.message} with id ${id}`);
   }
 };
+
 /* Takes an old and new pronunciation id and copies it (copies) */
 export const copyAudioPronunciation = async (
   oldDocId: string,
@@ -91,9 +74,9 @@ export const copyAudioPronunciation = async (
 
     const copyParams = {
       ...baseParams,
-      Key: `${pronunciationPath}/${newAudioId}.${extension}`,
+      Key: `${mediaPath}/${newAudioId}.${extension}`,
       ACL: 'public-read',
-      CopySource: `${bucket}/${pronunciationPath}/${oldAudioId}.${extension}`,
+      CopySource: `${bucket}/${mediaPath}/${oldAudioId}.${extension}`,
     };
 
     await s3.copyObject(copyParams).promise();

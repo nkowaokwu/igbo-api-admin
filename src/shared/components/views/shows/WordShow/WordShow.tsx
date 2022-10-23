@@ -123,7 +123,12 @@ const WordShow = (props: ShowProps): ReactElement => {
                   {'Last Updated: '}
                   {determineDate(updatedAt)}
                 </Heading>
-                <EditDocumentIds collection="words" originalId={originalWordId} id={id} title="Origin Word Id:" />
+                <EditDocumentIds
+                  collection={Collection.WORDS}
+                  originalId={originalWordId}
+                  id={id}
+                  title="Origin Word Id:"
+                />
               </Box>
             </Box>
             <Box className="flex flex-row items-center space-x-6 mt-5">
@@ -292,7 +297,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   denials={denials}
                   merged={merged}
                   author={author}
-                  collection="words"
+                  collection={Collection.WORDS}
                 />
               </>
             )}

@@ -15,6 +15,7 @@ import {
   Select,
   StyleField,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 import Empty from '../../Empty';
 
 const ExampleList = (props: ListProps): ReactElement => {
@@ -33,7 +34,7 @@ const ExampleList = (props: ListProps): ReactElement => {
             <CompleteExamplePreview label="Example Status" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
-            <Select collection="examples" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -44,7 +45,7 @@ const ExampleList = (props: ListProps): ReactElement => {
             <TextField label="English" source="english" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
             <IdField label="Id" source="id" />
-            <Select collection="examples" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />

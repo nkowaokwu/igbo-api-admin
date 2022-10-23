@@ -6,8 +6,6 @@ import {
   Resource,
   usePermissions,
 } from 'react-admin';
-// import { useLocation } from 'react-router-dom';
-// import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import {
   Dashboard,
   Layout,
@@ -21,17 +19,6 @@ import { getResourceObjects } from './Resources';
 
 const Resources = memo(() => {
   const { permissions } = usePermissions();
-  // const location = useLocation();
-
-  // useEffect(() => {
-  //   if (location.pathname) {
-  //     // Saves the last visited route
-  //     if (window.location.hash !== '#/login') {
-  //       localStorage.setItem(LocalStorageKeys.REDIRECT_URL, window.location.hash);
-  //     }
-  //   }
-  // }, [location.pathname]);
-
   const memoizedResources = useMemo(() => getResourceObjects(permissions).map((resource) => (
     <Resource
       name={resource.name}

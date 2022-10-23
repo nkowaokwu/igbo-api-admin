@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;
 export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
+export const isCypress = config?.runtime?.env === 'cypress';
 
 // Igbo API
 export const IGBO_API_ROOT = config?.runtime?.env !== 'cypress' && NODE_ENV === 'production'

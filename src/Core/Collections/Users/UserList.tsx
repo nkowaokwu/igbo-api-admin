@@ -13,6 +13,7 @@ import {
   Pagination,
   Select,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 
 const UserList = (props: ListProps): ReactElement => {
   const { permissions } = props;
@@ -30,7 +31,7 @@ const UserList = (props: ListProps): ReactElement => {
             <EmailField label="email" source="Email" />
             <TextField label="Role" source="role" />
             <TextField label="Editing Group" source="editingGroup" />
-            <Select collection="users" label="Admin's Actions" permissions={permissions} />
+            <Select collection={Collection.USERS} label="Admin's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(

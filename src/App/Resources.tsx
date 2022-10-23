@@ -26,6 +26,14 @@ const AsyncExampleShow = Loadable({
   loader: () => import('src/Core/Collections/Examples/ExampleShow'),
   loading: PlatformLoader,
 });
+const AsyncCorpusList = Loadable({
+  loader: () => import('src/Core/Collections/Corpora/CorpusList'),
+  loading: PlatformLoader,
+});
+const AsyncCorpusShow = Loadable({
+  loader: () => import('src/Core/Collections/Corpora/CorpusShow'),
+  loading: PlatformLoader,
+});
 const AsyncWordSuggestionList = Loadable({
   loader: () => import('src/Core/Collections/WordSuggestions/WordSuggestionList'),
   loading: PlatformLoader,
@@ -56,6 +64,22 @@ const AsyncExampleSuggestionCreate = Loadable({
 });
 const AsyncExampleSuggestionShow = Loadable({
   loader: () => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionShow'),
+  loading: PlatformLoader,
+});
+const AsyncCorpusSuggestionList = Loadable({
+  loader: () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionList'),
+  loading: PlatformLoader,
+});
+const AsyncCorpusSuggestionEdit = Loadable({
+  loader: () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionEdit'),
+  loading: PlatformLoader,
+});
+const AsyncCorpusSuggestionCreate = Loadable({
+  loader: () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate'),
+  loading: PlatformLoader,
+});
+const AsyncCorpusSuggestionShow = Loadable({
+  loader: () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionShow'),
   loading: PlatformLoader,
 });
 const AsyncNotificationList = Loadable({
@@ -106,6 +130,14 @@ export const getResourceObjects = (permissions) => compact(flatten([
     show: AsyncExampleShow,
     icon: ExampleIcon,
   },
+  hasAdminPermissions(permissions, [{
+    name: 'corpora',
+    key: 'corpora',
+    options: { label: 'Corpora' },
+    list: AsyncCorpusList,
+    show: AsyncCorpusShow,
+    create: null,
+  }]),
   {
     name: 'wordSuggestions',
     key: 'wordSuggestions',
@@ -126,6 +158,15 @@ export const getResourceObjects = (permissions) => compact(flatten([
     show: AsyncExampleSuggestionShow,
     icon: ExampleSuggestionIcon,
   },
+  hasAdminPermissions(permissions, [{
+    name: 'corpusSuggestions',
+    key: 'corpusSuggestions',
+    options: { label: 'Corpus Suggestions' },
+    list: AsyncCorpusSuggestionList,
+    edit: AsyncCorpusSuggestionEdit,
+    create: AsyncCorpusSuggestionCreate,
+    show: AsyncCorpusSuggestionShow,
+  }]),
   {
     name: 'notifications',
     key: 'notifications',

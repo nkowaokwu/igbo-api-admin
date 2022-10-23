@@ -190,7 +190,11 @@ const Select = ({
       label: (() => (
         <span className="text-red-500">
           <DeleteIcon className="mr-2" />
-          {`Request to Delete ${resource === Collection.WORDS ? 'Word' : 'Example'}`}
+          {`Request to Delete ${resource === Collection.WORDS
+            ? 'Word'
+            : resource === Collection.EXAMPLES
+              ? 'Example'
+              : 'Corpus'}`}
         </span>
       ))(),
       onSelect: () => setAction(actionsMap[ActionTypes.REQUEST_DELETE]),
@@ -248,7 +252,11 @@ const Select = ({
 
   const options = resource === Collection.USERS
     ? userCollectionOptions
-    : resource === Collection.WORD_SUGGESTIONS || resource === Collection.EXAMPLE_SUGGESTIONS
+    : (
+      resource === Collection.WORD_SUGGESTIONS
+      || resource === Collection.EXAMPLE_SUGGESTIONS
+      || resource === Collection.CORPUS_SUGGESTIONS
+    )
       ? suggestionCollectionOptions
       : resource === Collection.POLLS
         ? pollCollectionOptions

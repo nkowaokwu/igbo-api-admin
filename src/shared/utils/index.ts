@@ -24,12 +24,16 @@ export const determineCreateSuggestionRedirection = async (
     ? Collection.WORD_SUGGESTIONS
     : resource === Collection.POLLS
       ? Collection.POLLS
-      : Collection.EXAMPLE_SUGGESTIONS;
+      : resource === Collection.CORPORA
+        ? Collection.CORPUS_SUGGESTIONS
+        : Collection.EXAMPLE_SUGGESTIONS;
   const prePopulateRecord = {
     ...record,
     ...(resource === Collection.WORDS
       ? { originalWordId: record.id }
-      : { originalExampleId: record.id }),
+      : resource === Collection.EXAMPLES
+        ? { originalExampleId: record.id }
+        : { originalCorpusId: record.id }),
   };
 
   /**
@@ -52,7 +56,9 @@ export const determineCreateSuggestionRedirection = async (
   );
   const finalResource = suggestionType === Collection.WORD_SUGGESTIONS || suggestionType === Collection.POLLS
     ? Collection.WORD_SUGGESTIONS
-    : Collection.EXAMPLE_SUGGESTIONS;
+    : suggestionType === Collection.CORPUS_SUGGESTIONS
+      ? Collection.CORPUS_SUGGESTIONS
+      : Collection.EXAMPLE_SUGGESTIONS;
   const suggestionId = associatedSuggestions[0]?.id;
   const isPreExistingSuggestion = !!suggestionId;
 

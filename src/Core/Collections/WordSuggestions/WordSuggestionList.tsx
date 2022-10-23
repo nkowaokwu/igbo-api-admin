@@ -20,6 +20,7 @@ import {
   WordClassTextField,
   WordPanel,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 
@@ -41,7 +42,7 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -68,7 +69,7 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
             />
             <IdField label="Id" source="id" />
             <IdField label="Origin Word Id" source="originalWordId" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />

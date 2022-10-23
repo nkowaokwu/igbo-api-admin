@@ -35,7 +35,16 @@ const EditDocumentTopBar = ({
   permissions,
 }: DocumentTopBarInterface): ReactElement => {
   const determineMergeCollection = () => (
-    resource === Collection.EXAMPLE_SUGGESTIONS ? Collection.EXAMPLES : Collection.WORDS
+    resource === Collection.EXAMPLE_SUGGESTIONS
+      ? Collection.EXAMPLES
+      : Collection.CORPUS_SUGGESTIONS
+        ? Collection.CORPORA
+        : Collection.WORDS
+  );
+  const shouldShowEditorActions = (
+    resource !== Collection.EXAMPLES
+    && resource !== Collection.WORDS
+    && resource !== Collection.CORPORA
   );
 
   return (
@@ -46,7 +55,7 @@ const EditDocumentTopBar = ({
     ) : (
       <Box className="flex flex-col lg:flex-row justify-between">
         <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0">{title}</Heading>
-        {resource !== Collection.EXAMPLES && resource !== Collection.WORDS ? (
+        {shouldShowEditorActions ? (
           <Box className="flex flex-col mb-5">
             <Heading as="h1" className="text-2xl text-gray-800">Editor Actions:</Heading>
             <Select
