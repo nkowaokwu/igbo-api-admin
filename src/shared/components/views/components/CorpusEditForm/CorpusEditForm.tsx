@@ -14,7 +14,7 @@ import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import useCacheForm from 'src/hooks/useCacheForm';
 import { Textarea, Input } from 'src/shared/primitives';
-import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
+import actionsMap, { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import Collection from 'src/shared/constants/Collections';
 import FilePicker from 'src/shared/primitives/FilePicker';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
@@ -85,11 +85,11 @@ const CorpusEditForm = ({
   const handleFileSelect = ({ file, duration } : { file?: File, duration: number }) => {
     if (file?.name) {
       setValue('title', file.name);
+      setMediaFile(file);
     }
     if (duration) {
       setValue('duration', duration);
     }
-    setMediaFile(file);
   };
 
   const handleTextSelection = (e) => {
@@ -128,7 +128,12 @@ const CorpusEditForm = ({
         onSuccess: async ({ data }) => {
           handleUpdateDocument({ resource, record: data });
           if (mediaFile) {
-            await uploadToS3({ id: data.id, file: mediaFile });
+            await uploadToS3({ id: data.id, file: mediaFile })
+              .catch((err) => {
+                console.log(err);
+                // Deleting the corpus suggestion if unable to upload media
+                actionsMap.Delete.executeAction({ record, resource: Collection.CORPUS_SUGGESTIONS });
+              });
           }
           setIsSubmitting(false);
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');

@@ -41,7 +41,7 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
         record={record}
         resource={resource}
         view={View.EDIT}
-        title="Edit Example Suggestion"
+        title="Edit Corpus Suggestion"
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
