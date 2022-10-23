@@ -1,5 +1,6 @@
 import { assign, map, forEach } from 'lodash';
 import accents from 'remove-accents';
+import Corpus from 'src/backend/models/Corpus';
 import Word from 'src/backend/models/Word';
 import * as Interfaces from './interfaces';
 
@@ -80,4 +81,37 @@ export const findWordsWithMatch = async (
     .limit(limit);
 
   return examples ? removeKeysInNestedDoc(await words, 'examples') : words;
+};
+
+/* Performs a outer left lookup to append associated examples
+ * and returns a plain corpus object, not a Mongoose Query
+ */
+export const findCorporaWithMatch = async (
+  {
+    match,
+    skip = 0,
+    limit = 10,
+  }:
+  {
+    match: any,
+    skip?: number,
+    limit?: number,
+  },
+): Promise<Interfaces.Corpus[]> => {
+  let corpora = Corpus.aggregate()
+    .match(match);
+
+  corpora = corpora
+    .project({
+      id: '$_id',
+      _id: 0,
+      title: 1,
+      body: 1,
+      media: 1,
+      tags: 1,
+    })
+    .skip(skip)
+    .limit(limit);
+
+  return corpora;
 };

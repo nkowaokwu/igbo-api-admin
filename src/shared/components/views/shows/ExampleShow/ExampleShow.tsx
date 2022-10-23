@@ -99,7 +99,12 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               {'Last Updated: '}
               {determineDate(updatedAt)}
             </h3>
-            <EditDocumentIds collection="examples" originalId={originalExampleId} id={id} title="Origin Example Id:" />
+            <EditDocumentIds
+              collection={Collection.EXAMPLES}
+              originalId={originalExampleId}
+              id={id}
+              title="Origin Example Id:"
+            />
             <Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">
                 Sentence Style
@@ -181,7 +186,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 denials={denials}
                 merged={merged}
                 author={author}
-                collection="examples"
+                collection={Collection.EXAMPLES}
               />
             </Box>
           )}

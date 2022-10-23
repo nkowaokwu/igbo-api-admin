@@ -77,17 +77,32 @@ export interface Notification {
   created_at?: number | string,
 }
 
-export interface WordSuggestion extends Word {
+interface Suggestion extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
   originalWordId?: Types.ObjectId,
   userComments?: string,
   authorEmail?: string,
-  authorId: string,
+  authorId?: string,
   approvals?: string[],
   denials?: string[],
   merged?: Types.ObjectId,
   mergedBy?: string,
-  examples?: ExampleSuggestion[],
   userInteractions?: string[],
+};
+
+export interface Corpus {
+  id: Types.ObjectId,
+  title: string,
+  body: string,
+  media: string,
+  tags: string[],
+};
+
+export interface CorpusSuggestion extends Corpus, Suggestion {}
+
+export interface WordSuggestion extends Word, Suggestion {
+  originalWordId?: Types.ObjectId,
+  examples?: ExampleSuggestion[],
   twitterPollUrl?: string,
 };
 
@@ -97,27 +112,13 @@ export interface Example extends Document<any>, LeanDocument<any> {
   english?: string,
   associatedWords: string[],
   pronunciation: string,
-  authorId: string,
   updatedAt: Date,
 }
 
-export interface ExampleSuggestion extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  originalExampleId?: Types.ObjectId,
+export interface ExampleSuggestion extends Example, Suggestion {
   igbo?: string,
   english?: string,
-  associatedWords: string[],
   exampleForSuggestion: boolean,
-  editorsNotes: string,
-  userComments: string,
-  authorEmail: string,
-  authorId: string,
-  approvals: string[],
-  denial: string[],
-  updatedAt: Date,
-  merged: Types.ObjectId,
-  mergedBy: string,
-  userInteractions?: string[],
 };
 
 export interface ExampleClientData {

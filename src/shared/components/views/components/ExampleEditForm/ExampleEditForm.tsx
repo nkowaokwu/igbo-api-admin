@@ -87,39 +87,44 @@ const ExampleEditForm = ({
    * send to the backend
    */
   const onSubmit = (data) => {
-    setIsSubmitting(true);
-    const cleanedData = omit(assign(
-      {
-        ...record,
-        ...data,
-        style: data.style.value,
-      },
-      createCacheExampleData(data, record),
-      {
-        approvals: map(record.approvals, (approval) => approval.uid),
-        denials: map(record.denials, (denial) => denial.uid),
-      },
-    ), [view === View.CREATE ? 'id' : '']);
-    localStorage.removeItem('igbo-api-admin-form');
-    save(cleanedData, View.SHOW, {
-      onSuccess: ({ data }) => {
-        setIsSubmitting(false);
-        handleUpdateDocument({ resource, record: data });
-        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-        redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
-      },
-      onFailure: (error: any) => {
-        const { body } = error;
-        toast({
-          title: 'Error',
-          description: body?.error || error,
-          status: 'error',
-          duration: 4000,
-          isClosable: true,
-        });
-        setIsSubmitting(false);
-      },
-    });
+    try {
+      setIsSubmitting(true);
+      const cleanedData = omit(assign(
+        {
+          ...record,
+          ...data,
+          style: data.style.value,
+        },
+        createCacheExampleData(data, record),
+        {
+          approvals: map(record.approvals, (approval) => approval.uid),
+          denials: map(record.denials, (denial) => denial.uid),
+        },
+      ), [view === View.CREATE ? 'id' : '']);
+      localStorage.removeItem('igbo-api-admin-form');
+      save(cleanedData, View.SHOW, {
+        onSuccess: ({ data }) => {
+          setIsSubmitting(false);
+          handleUpdateDocument({ resource, record: data });
+          notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
+          redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
+        },
+        onFailure: (error: any) => {
+          const { body } = error;
+          toast({
+            title: 'Error',
+            description: body?.error || error,
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
+          setIsSubmitting(false);
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      setIsSubmitting(false);
+    }
   };
 
   /* Caches the form data with browser cookies */
@@ -283,11 +288,11 @@ const ExampleEditForm = ({
               className="form-textarea"
               placeholder="Comments"
               rows={8}
-              defaultValue={record.userComments}
+              defaultValue={record.editorsNotes}
             />
           )}
-          name="userComments"
-          defaultValue={record.userComments}
+          name="editorsNotes"
+          defaultValue={record.editorsNotes}
           control={control}
         />
       </Box>

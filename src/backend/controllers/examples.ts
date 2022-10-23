@@ -8,7 +8,7 @@ import {
   uniq,
 } from 'lodash';
 import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
-import { deleteAudioPronunciation } from 'src/backend/controllers/utils/AWS-API';
+import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import Example from '../models/Example';
 import Word from '../models/Word';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';

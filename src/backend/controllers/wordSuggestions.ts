@@ -21,7 +21,7 @@ import {
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
-import { deleteAudioPronunciation } from './utils/AWS-API';
+import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 
 const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
 

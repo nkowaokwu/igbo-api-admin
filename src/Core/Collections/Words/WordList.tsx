@@ -16,6 +16,7 @@ import {
   WordClassTextField,
   WordPanel,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 import Empty from '../../Empty';
 
 export const WordList = (props: ListProps): ReactElement => {
@@ -33,7 +34,7 @@ export const WordList = (props: ListProps): ReactElement => {
           <Datagrid expand={<WordPanel />}>
             <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -45,7 +46,7 @@ export const WordList = (props: ListProps): ReactElement => {
             <ArrayPreview label="Variations" source="variations" />
             <ArrayPreview label="Stems" source="stems" />
             <IdField label="Id" source="id" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />

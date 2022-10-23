@@ -7,12 +7,25 @@ import {
   postWordSuggestion,
 } from '../controllers/wordSuggestions';
 import {
+  deleteCorpusSuggestion,
+  getCorpusSuggestion,
+  getCorpusSuggestions,
+  putCorpusSuggestion,
+  postCorpusSuggestion,
+} from '../controllers/corpusSuggestions';
+import {
   deleteWord,
   putWord,
   mergeWord,
   getAssociatedWordSuggestions,
   getAssociatedWordSuggestionsByTwitterId,
 } from '../controllers/words';
+import {
+  getCorpora,
+  getCorpus,
+  putCorpus,
+  mergeCorpus,
+} from '../controllers/corpus';
 import { putExample, mergeExample, getAssociatedExampleSuggestions } from '../controllers/examples';
 import {
   deleteExampleSuggestion,
@@ -37,8 +50,10 @@ import validateExampleBody from '../middleware/validateExampleBody';
 import validateExampleMerge from '../middleware/validateExampleMerge';
 import validateWordBody from '../middleware/validateWordBody';
 import validateWordMerge from '../middleware/validateWordMerge';
+import validateCorpusBody from '../middleware/validateCorpusBody';
+import validateCorpusMerge from '../middleware/validateCorpusMerge';
 import cacheControl from '../middleware/cacheControl';
-import interactWithSuggsetion from '../middleware/interactWithSuggsetion';
+import interactWithSuggestion from '../middleware/interactWithSuggestion';
 import UserRoles from '../shared/constants/UserRoles';
 
 const editorRouter = express.Router();
@@ -55,9 +70,20 @@ editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
 
+editorRouter.get('/corpora', getCorpora);
+editorRouter.get('/corpora/:id', validId, getCorpus);
+editorRouter.post('/corpora', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
+editorRouter.put(
+  '/corpora/:id',
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
+  validateCorpusBody,
+  putCorpus,
+);
+
 editorRouter.get('/wordSuggestions', getWordSuggestions);
-editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggsetion, postWordSuggestion);
-editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggsetion, putWordSuggestion);
+editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggestion, postWordSuggestion);
+editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggestion, putWordSuggestion);
 editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
 editorRouter.delete(
   '/wordSuggestions/:id',
@@ -71,16 +97,27 @@ editorRouter.post(
   '/exampleSuggestions',
   authorization([]),
   validateExampleBody,
-  interactWithSuggsetion,
+  interactWithSuggestion,
   postExampleSuggestion,
 );
-editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggsetion, putExampleSuggestion);
+editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggestion, putExampleSuggestion);
 editorRouter.get('/exampleSuggestions/:id', validId, getExampleSuggestion);
 editorRouter.delete(
   '/exampleSuggestions/:id',
   validId,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   deleteExampleSuggestion,
+);
+
+editorRouter.get('/corpusSuggestions', getCorpusSuggestions);
+editorRouter.post('/corpusSuggestions', validateCorpusBody, interactWithSuggestion, postCorpusSuggestion);
+editorRouter.put('/corpusSuggestions/:id', validId, validateCorpusBody, interactWithSuggestion, putCorpusSuggestion);
+editorRouter.get('/corpusSuggestions/:id', validId, getCorpusSuggestion);
+editorRouter.delete(
+  '/corpusSuggestions/:id',
+  validId,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  deleteCorpusSuggestion,
 );
 
 editorRouter.get('/stats/full', getStats);

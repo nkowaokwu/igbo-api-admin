@@ -92,7 +92,7 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
   }
   return searchFilters;
 };
-
+const titleQuery = (regex: SearchRegExp): { title: { $regex: RegExp } } => ({ title: { $regex: regex.wordReg } });
 const wordQuery = (regex: SearchRegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex.wordReg } });
 const fullTextSearchQuery = (
   keyword: string,
@@ -115,6 +115,7 @@ const fullTextSearchQuery = (
       ],
     })
 );
+const bodyQuery = (regex: SearchRegExp): { body: { $regex: RegExp } } => ({ body: { $regex: regex.wordReg } });
 const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => (
   { variations: { $in: [regex.wordReg] } }
 );
@@ -168,6 +169,20 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
   merged: null,
   ...(filters ? generateSearchFilters(filters) : {}),
 });
+export const searchPreExistingCorpusSuggestionsRegexQuery = (
+  regex: RegExp,
+  filters?: { [key: string]: string },
+): {
+    $or: (
+    { title: { $regex: RegExp } } |
+    { body: { $regex: RegExp } }
+    )[],
+    merged: null,
+  } => ({
+  $or: [titleQuery(regex), bodyQuery(regex)],
+  merged: null,
+  ...(filters ? generateSearchFilters(filters) : {}),
+});
 export const searchPreExistingGenericWordsRegexQueryAsEditor = (
   segmentRegex: RegExp,
   regex: SearchRegExp,
@@ -182,6 +197,17 @@ export const searchPreExistingGenericWordsRegexQueryAsEditor = (
 export const searchPreExistingGenericWordsRegexQuery = (regex: SearchRegExp): { $or: any[], merged: null } => ({
   $or: [wordQuery(regex), variationsQuery(regex), definitionsQuery(regex)],
   merged: null,
+});
+export const searchCorpusTextSearch = (
+  keyword: string,
+  regex: RegExp,
+): { [key: string]: any } => ({
+  $or: [
+    { title: keyword },
+    { title: { $regex: regex } },
+    { body: keyword },
+    { body: { $regex: regex } },
+  ],
 });
 export const searchIgboTextSearch = (
   keyword: string,

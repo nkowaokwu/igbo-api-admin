@@ -163,31 +163,36 @@ const WordEditForm = ({
    * send to the backend
    */
   const onSubmit = (data) => {
-    setIsSubmitting(true);
-    const cleanedData = omit(assign(createCacheWordData(data, record), {
-      approvals: map(record.approvals, (approval) => approval.uid),
-      denials: map(record.denials, (denial) => denial.uid),
-    }), [view === View.CREATE ? 'id' : '']);
-    localStorage.removeItem('igbo-api-admin-form');
-    save(cleanedData, View.SHOW, {
-      onSuccess: ({ data }) => {
-        setIsSubmitting(false);
-        handleUpdateDocument({ resource, record: data });
-        notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-        redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
-      },
-      onFailure: (error: any) => {
-        const { body } = error;
-        toast({
-          title: 'Error',
-          description: body?.error || error,
-          status: 'error',
-          duration: 4000,
-          isClosable: true,
-        });
-        setIsSubmitting(false);
-      },
-    });
+    try {
+      setIsSubmitting(true);
+      const cleanedData = omit(assign(createCacheWordData(data, record), {
+        approvals: map(record.approvals, (approval) => approval.uid),
+        denials: map(record.denials, (denial) => denial.uid),
+      }), [view === View.CREATE ? 'id' : '']);
+      localStorage.removeItem('igbo-api-admin-form');
+      save(cleanedData, View.SHOW, {
+        onSuccess: ({ data }) => {
+          setIsSubmitting(false);
+          handleUpdateDocument({ resource, record: data });
+          notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
+          redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
+        },
+        onFailure: (error: any) => {
+          const { body } = error;
+          toast({
+            title: 'Error',
+            description: body?.error || error,
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
+          setIsSubmitting(false);
+        },
+      });
+    } catch (err) {
+      console.log(err);
+      setIsSubmitting(false);
+    }
   };
 
   /* Caches the form data with browser cookies */
@@ -367,7 +372,7 @@ const WordEditForm = ({
             />
           )}
           name="editorsNotes"
-          defaultValue={record.userComments || getValues().userComments}
+          defaultValue={record.editorsNotes || getValues().editorsNotes}
           control={control}
         />
         <Controller

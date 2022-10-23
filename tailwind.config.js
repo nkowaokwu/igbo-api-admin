@@ -1,12 +1,10 @@
 module.exports = {
-  future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
-  },
   experimental: {
     applyComplexClasses: true,
   },
-  purge: [],
+  purge: [
+    './node_modules/@apideck/file-picker/dist/*.js',
+  ],
   theme: {
     extend: {},
   },

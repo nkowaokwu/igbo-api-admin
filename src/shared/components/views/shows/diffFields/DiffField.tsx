@@ -62,7 +62,7 @@ const DiffField = ({
     typeof fallbackValue === 'boolean' ? (
       <code className={`text-lg text-gray-800 ${className}`}>{children}</code>
     ) : (
-      <h2 className={`text-xl text-gray-800 ${className}`}>{children}</h2>
+      <h2 className={`text-xl text-gray-800 ${className}`} style={{ whiteSpace: 'pre-wrap' }}>{children}</h2>
     ));
 
   return diffFromPath ? (

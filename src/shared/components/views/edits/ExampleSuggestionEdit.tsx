@@ -3,6 +3,7 @@ import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
+import Collection from 'src/shared/constants/Collections';
 import {
   ExampleEditForm,
   EditDocumentStats,
@@ -44,7 +45,12 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <EditDocumentIds collection="examples" originalId={originalExampleId} id={id} title="Origin Example Id:" />
+        <EditDocumentIds
+          collection={Collection.EXAMPLES}
+          originalId={originalExampleId}
+          id={id}
+          title="Origin Example Id:"
+        />
         <EditDocumentStats approvals={approvals} denials={denials} />
       </Box>
       {record ? (

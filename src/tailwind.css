@@ -34,7 +34,7 @@ body {
 }
 
 input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"] {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .MuiAppBar-root {

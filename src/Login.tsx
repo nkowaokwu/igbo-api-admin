@@ -102,7 +102,7 @@ const Login = (): ReactElement => {
     >
       <Heading size="xl" className="mb-6">{'Igbo API Editor\'s Platform'}</Heading>
       <Box
-        className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-md rounded"
+        className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-lg rounded-lg overflow-hidden"
         maxWidth="750px"
       >
         <Box
@@ -110,7 +110,7 @@ const Login = (): ReactElement => {
         >
           <Box
             className={`flex flex-col justify-center w-full lg:w-1/2 h-full flex-grow
-            bg-indigo-600 text-white py-5 lg:py-3 px-5 rounded-l`}
+            bg-indigo-600 text-white py-5 lg:py-3 px-5`}
           >
             <Heading size="lg" className="text-white mb-3 text-center lg:text-left">Welcome</Heading>
             <Text size="lg" className="text-white text-center lg:text-left">

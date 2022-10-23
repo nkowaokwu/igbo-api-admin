@@ -23,6 +23,7 @@ import {
 } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
 import { onTwitterAuth, onTwitterCallback, onDeleteConstructedTermPoll } from './src/backend/controllers/polls';
+import { onMediaSignedRequest } from './src/backend/controllers/media';
 import {
   CORS_CONFIG,
   EXPRESS_PORT,
@@ -66,6 +67,7 @@ export const requestDeleteDocument = onRequestDeleteDocument;
 export const deleteConstructedTermPoll = onDeleteConstructedTermPoll;
 export const deleteUser = onDeleteUser;
 export const updateDocument = onUpdateDocument;
+export const generateMediaSignedRequest = onMediaSignedRequest;
 
 /* Runs every Monday at 6AM PST */
 export const sendEditorStatsEmail = functions.pubsub.schedule('0 6 * * 1')

@@ -7,8 +7,13 @@ import SourceField from './SourceField';
 import StyleField from './StyleField';
 import Confirmation from './Confirmation';
 import StandardIgboPreview from './StandardIgboPreview';
-import { ExampleSuggestionCreate, WordSuggestionCreate, PollsCreate } from './views/creates';
-import { ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
+import {
+  CorpusSuggestionCreate,
+  ExampleSuggestionCreate,
+  WordSuggestionCreate,
+  PollsCreate,
+} from './views/creates';
+import { CorpusSuggestionEdit, ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
 import IdField from './IdField';
@@ -18,7 +23,12 @@ import EditToolbar from './toolbars/EditToolbar';
 import ListActions from './actions/ListActions';
 import Pagination from './toolbars/Pagination';
 import Select from './Select';
-import { ExampleShow, UserShow, WordShow } from './views/shows';
+import {
+  CorpusShow,
+  ExampleShow,
+  UserShow,
+  WordShow,
+} from './views/shows';
 import NewLineText from './NewLineText';
 import WordClassTextField from './WordClassTextField';
 import WordPanel from './WordPanel';
@@ -36,9 +46,11 @@ export {
   HeadwordField,
   IdField,
   StandardIgboPreview,
+  CorpusSuggestionCreate,
   ExampleSuggestionCreate,
   WordSuggestionCreate,
   PollsCreate,
+  CorpusSuggestionEdit,
   ExampleSuggestionEdit,
   WordSuggestionEdit,
   Filter,
@@ -48,6 +60,7 @@ export {
   ListActions,
   Pagination,
   Select,
+  CorpusShow,
   ExampleShow,
   UserShow,
   WordShow,

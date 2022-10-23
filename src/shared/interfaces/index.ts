@@ -32,6 +32,7 @@ export interface DocumentIdsProps {
 export interface CommentsProps {
   editorsNotes: string,
   userComments: string,
+  showUserComments?: boolean,
 };
 
 export interface ArrayPreviewProps {

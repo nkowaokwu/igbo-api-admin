@@ -18,6 +18,7 @@ import {
   Pagination,
   SourceField,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 
@@ -40,7 +41,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
             <ReviewPreview label="You Reviewed" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
-            <Select collection="examples" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -64,7 +65,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
               )}
             />
             <IdField label="Id" source="id" />
-            <Select collection="examples" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />

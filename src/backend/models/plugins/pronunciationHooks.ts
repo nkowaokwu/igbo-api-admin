@@ -5,9 +5,11 @@ import {
   copyAudioPronunciation,
   renameAudioPronunciation,
   createAudioPronunciation,
-} from 'src/backend/controllers/utils/AWS-API';
+} from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
+import { createMedia, copyMedia, renameMedia } from 'src/backend/controllers/utils/MediaAPIs/CorpusMediaAPI';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removeAccents from 'src/backend/utils/removeAccents';
+import MediaTypes from 'src/backend/shared/constants/MediaTypes';
 
 const config = functions.config();
 const isCypress = config?.runtime?.env === 'cypress';
@@ -94,7 +96,7 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
   });
 };
 
-/* If the client sent over blob data for pronunciation, it will b e uploaded to AWS S3 */
+/* If the client sent over blob data for pronunciation, it will be uploaded to AWS S3 */
 export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): void => {
   schema.pre('save', async function (next) {
     try {
@@ -127,6 +129,50 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
     } catch (err) {
       console.log('Error caught in pre save Example shcema hook', err.message);
       this.invalidate('pronunciation', err.message);
+      return null;
+    }
+  });
+};
+
+/* If the client sent over blob data for media, it will be uploaded to AWS S3 */
+export const uploadCorpusPronunciation = (schema: mongoose.Schema<Interfaces.Corpus>): void => {
+  schema.pre('save', async function (next) {
+    try {
+      if (!this.skipPronunciationHook) {
+        // @ts-ignore
+        const id = (this._id || this.id).toString();
+
+        if (isCypress && this.media) {
+        // Going to mock creating and saving audio pronunciation while testing in Cypress
+          this.media = await createMedia(id, this.media);
+        } else if (this.media.startsWith('data:')) {
+          this.media = await createMedia(id, this.media);
+        } else if (!isCypress && isDevelopment && this.media) {
+          this.media = await createMedia(id, this.media);
+        } else if (this.media.startsWith('https://') && !this.media.includes(`${id}.`)) {
+          // If the pronunciation data for the headword is a uri, we will duplicate the uri
+          // so that the new uri will only be associated with the suggestion
+          const mediaType = Object.values(MediaTypes).reduce((matchedMedia, currentMediaType) => {
+            if (matchedMedia || this.media.includes(currentMediaType)) {
+              return matchedMedia || currentMediaType;
+            }
+            return '';
+          }, '');
+          const extensions = Object.values(MediaTypes).map((extension) => `.${extension}`);
+          const oldId: string = last(compact(this.media.split(new RegExp(extensions.join('|'))).join('').split('/')));
+          const newId: string = id;
+
+          /* If we are saving a new corpus suggestion, then we want to copy all the original media files */
+          this.media = await (this.isNew
+            ? copyMedia(oldId, newId, mediaType)
+            : renameMedia(oldId, newId, mediaType));
+        }
+      }
+      next();
+      return this;
+    } catch (err) {
+      console.log('Error caught in pre save Corpus shcema hook', err.message);
+      this.invalidate('media', err.message);
       return null;
     }
   });

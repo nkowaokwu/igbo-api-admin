@@ -10,6 +10,11 @@ export default (req: Request, res: Response, next: NextFunction): Response | voi
     return res.send({ error: 'Invalid word id provided' });
   }
 
+  if (!data.word) {
+    res.status(400);
+    return res.send({ error: 'Word is required' });
+  }
+
   if (!data.wordClass) {
     res.status(400);
     return res.send({ error: 'Word class is required' });

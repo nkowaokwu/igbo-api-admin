@@ -16,6 +16,7 @@ import {
   Pagination,
   Select,
 } from 'src/shared/components';
+import Collection from 'src/shared/constants/Collections';
 import Empty from '../../Empty';
 
 const GenericWordsBulkActions = (props): ReactElement => (
@@ -40,7 +41,7 @@ const GenericWordList = (props: ListProps): ReactElement => {
             <ReviewPreview label="You Reviewed" />
             <TextField label="Word" source="word" />
             <ArrayPreview label="Definitions" source="definitions" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
         medium={(
@@ -64,7 +65,7 @@ const GenericWordList = (props: ListProps): ReactElement => {
               )}
             />
             <TextField label="Id" source="id" />
-            <Select collection="words" label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}
       />
