@@ -33,8 +33,11 @@ const NsibidiForm = ({
             data-test="nsibidi-input"
           />
           {props.value ? (
-            <Tooltip label="The rendered script is the final Nsịbịdị that will be shown to users">
-              <Text className="mt-2">
+            <Tooltip
+              label="The rendered script is the final Nsịbịdị that will be shown to users"
+              placement="bottom-start"
+            >
+              <Text className=" mt-2">
                 {'Rendered Nsịbịdị: '}
                 <chakra.span className="akagu">{props.value}</chakra.span>
               </Text>

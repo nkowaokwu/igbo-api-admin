@@ -188,14 +188,14 @@ const WordShow = (props: ShowProps): ReactElement => {
                 fallbackValue={pronunciation ? (
                   <ReactAudioPlayer
                     src={pronunciation}
-                    style={{ marginTop: 15, height: '40', width: 250 }}
+                    style={{ marginTop: '15px', height: '40px', width: '250px' }}
                     controls
                   />
                 ) : <span>No audio pronunciation</span>}
                 renderNestedObject={() => (
                   <ReactAudioPlayer
                     src={pronunciation}
-                    style={{ marginTop: 15, height: '40', width: 250 }}
+                    style={{ marginTop: '15px', height: '40px', width: '250px' }}
                     controls
                   />
                 )}

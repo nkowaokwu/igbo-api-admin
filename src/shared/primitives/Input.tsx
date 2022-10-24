@@ -5,6 +5,7 @@ import React, {
   useRef,
   ReactElement,
 } from 'react';
+import { act } from 'react-dom/test-utils';
 import { debounce } from 'lodash';
 import {
   Box,
@@ -63,7 +64,9 @@ const Input = React.forwardRef(({
     setIsSearchingAutoCompleteWords(true);
     try {
       const words = await getWord(search);
-      setAutoCompleteWords(words);
+      act(() => {
+        setAutoCompleteWords(words);
+      });
       setIsAutoCompleteVisible(!!words.length);
     } finally {
       setIsSearchingAutoCompleteWords(false);
@@ -74,7 +77,9 @@ const Input = React.forwardRef(({
     if (
       !e.target.closest('[data-test="search-bar-form"]')
       && !e.target.closest('[data-test="accented-letter-popup"]')) {
-      setAutoCompleteWords([]);
+      act(() => {
+        setAutoCompleteWords([]);
+      });
     }
   };
 

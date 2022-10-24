@@ -6,7 +6,6 @@ export const useListContext = jest.fn(() => ({
   filterValues: {},
   setFilters: jest.fn(() => ({})),
 }));
-export const useShowController = jest.fn((props) => props);
 export const fetchUtils = {
   fetchJson: jest.fn(async () => ({})),
 };
@@ -23,6 +22,7 @@ export const {
   useListFilterContext,
   useRedirect,
   useRefresh,
+  useShowController,
   useGetOne,
   usePermissions,
 } = ReactAdmin;

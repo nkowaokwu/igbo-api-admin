@@ -23,6 +23,7 @@ html {
 
 .akagu {
   font-family: 'Akagu', 'sans-serif' !important;
+  @apply text-green-800;
 }
 
 .react-audio-player {

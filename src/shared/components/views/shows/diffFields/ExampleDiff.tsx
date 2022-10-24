@@ -29,7 +29,7 @@ const ExampleDiff = ({
       />
       <ReactAudioPlayer
         src={value.pronunciation}
-        style={{ height: 40, width: 250 }}
+        style={{ height: '40px', width: '250px' }}
         controls
       />
     </Box>

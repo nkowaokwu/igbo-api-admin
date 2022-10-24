@@ -1,3 +1,5 @@
+import { act } from 'react-dom/test-utils';
+
 /* Determines the position of the DiacriticsBankPopup */
 export const handlePosition = (
   { anchorRef, setPositionRect }
@@ -8,7 +10,9 @@ export const handlePosition = (
   },
 ) : void => {
   const anchorRect = anchorRef.current.getBoundingClientRect();
-  setPositionRect({ width: anchorRect.width, top: anchorRect.height + 20, left: 0 });
+  act(() => {
+    setPositionRect({ width: anchorRect.width, top: anchorRect.height + 20, left: 0 });
+  });
 };
 
 /* Handles opening the DiacriticsBankPopup */
@@ -27,11 +31,13 @@ export const handleIsEditing = ({
   isMobile: boolean,
   setIsVisible: (value: boolean) => void,
 }) : void => {
-  setIsVisible(
-    e.target.isEqualNode(anchorRef.current)
-    || accentedLetterPopupRef.current?.contains(e.target)
-    || accentedLetterPopupRef.current?.isEqualNode(e.target),
-  );
+  act(() => {
+    setIsVisible(
+      e.target.isEqualNode(anchorRef.current)
+      || accentedLetterPopupRef.current?.contains(e.target)
+      || accentedLetterPopupRef.current?.isEqualNode(e.target),
+    );
+  });
 
   if (!accentedLetterPopupRef.current?.contains(e.target)
     && !accentedLetterPopupRef.current?.isEqualNode(e.target)) {

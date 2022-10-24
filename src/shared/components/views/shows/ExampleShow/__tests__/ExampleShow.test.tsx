@@ -4,7 +4,6 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/tests/components/TestContext';
 
-import { DataProviderContext } from 'react-admin';
 import Collections from 'src/shared/constants/Collections';
 import ExampleShow from '../ExampleShow';
 
@@ -29,11 +28,9 @@ describe('Example Show', () => {
       <TestContext
         enableReducers
         initialState={{ admin: { resources: { examples: { data: {} } } } }}
+        dataProvider={dataProvider}
       >
-        {/* @ts-ignore */}
-        <DataProviderContext.Provider value={dataProvider}>
-          <ExampleShow basePath="/" resource={Collections.EXAMPLES} id={record.id} />
-        </DataProviderContext.Provider>
+        <ExampleShow basePath="/" resource={Collections.EXAMPLES} id={record.id} />
       </TestContext>,
     );
 
@@ -58,11 +55,9 @@ describe('Example Show', () => {
       <TestContext
         enableReducers
         initialState={{ admin: { resources: { exampleSuggestions: { data: record } } } }}
+        dataProvider={dataProvider}
       >
-        {/* @ts-ignore */}
-        <DataProviderContext.Provider value={dataProvider}>
-          <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} />
-        </DataProviderContext.Provider>
+        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} />
       </TestContext>,
     );
 

@@ -35,7 +35,7 @@ describe('Corpus Show', () => {
     const { queryByText, findByText } = render(
       <TestContext
         enableReducers
-        initialState={{ admin: { resources: { wordSuggestions: { data: {} } } } }}
+        initialState={{ admin: { resources: { corpora: { data: {} } } } }}
         dataProvider={dataProvider}
       >
         <CorpusShow basePath="/" resource={Collections.CORPORA} id={record.id} />
@@ -53,7 +53,7 @@ describe('Corpus Show', () => {
     const { findByText } = render(
       <TestContext
         enableReducers
-        initialState={{ admin: { resources: { words: { data: {} } } } }}
+        initialState={{ admin: { resources: { corpusSuggestions: { data: {} } } } }}
         dataProvider={dataProvider}
       >
         <CorpusShow basePath="/" resource={Collections.CORPUS_SUGGESTIONS} id={record.id} />

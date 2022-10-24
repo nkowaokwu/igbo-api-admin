@@ -124,14 +124,14 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   fallbackValue={pronunciation ? (
                     <ReactAudioPlayer
                       src={pronunciation}
-                      style={{ height: 40, width: 250 }}
+                      style={{ height: '40px', width: '250px' }}
                       controls
                     />
                   ) : <span>No audio pronunciation</span>}
                   renderNestedObject={() => (
                     <ReactAudioPlayer
                       src={pronunciation}
-                      style={{ height: 40, width: 250 }}
+                      style={{ height: '40px', width: '250px' }}
                       controls
                     />
                   )}
