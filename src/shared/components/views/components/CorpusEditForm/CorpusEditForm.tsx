@@ -131,8 +131,10 @@ const CorpusEditForm = ({
             await uploadToS3({ id: data.id, file: mediaFile })
               .catch((err) => {
                 console.log(err);
-                // Deleting the corpus suggestion if unable to upload media
-                actionsMap.Delete.executeAction({ record, resource: Collection.CORPUS_SUGGESTIONS });
+                if (view === View.CREATE) {
+                  // Deleting the corpus suggestion if unable to upload media
+                  actionsMap.Delete.executeAction({ record, resource: Collection.CORPUS_SUGGESTIONS });
+                }
               });
           }
           setIsSubmitting(false);

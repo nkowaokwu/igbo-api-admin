@@ -77,8 +77,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isSuggestionResource = (
     resource === Collections.WORD_SUGGESTIONS
     || resource === Collections.EXAMPLE_SUGGESTIONS
+    || resource === Collections.CORPUS_SUGGESTIONS
   );
-  const isWordResource = resource !== Collections.EXAMPLES && resource !== Collections.EXAMPLE_SUGGESTIONS;
+  const isWordResource = resource === Collections.WORD_SUGGESTIONS || resource === Collections.WORDS;
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
