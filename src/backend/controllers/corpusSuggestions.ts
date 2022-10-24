@@ -13,7 +13,7 @@ import * as Interfaces from './utils/interfaces';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
-import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
+import { deleteMedia } from './utils/MediaAPIs/CorpusMediaAPI';
 
 const REQUIRE_KEYS = ['title', 'body', 'media'];
 
@@ -162,9 +162,7 @@ export const deleteCorpusSuggestion = (
         if (!corpusSuggestion) {
           throw new Error('No corpus suggestion exists with the provided id.');
         }
-        /* Deletes all word media for the headword and dialects */
-        const isMediaMp3 = corpusSuggestion.media && corpusSuggestion.media.includes('mp3');
-        await deleteAudioPronunciation(id, isMediaMp3);
+        await deleteMedia(id);
 
         const { email: userEmail } = await findUser(corpusSuggestion.authorId) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the corpusSuggestion isn't merged */
