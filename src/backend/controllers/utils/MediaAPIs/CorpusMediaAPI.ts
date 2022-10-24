@@ -133,7 +133,7 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
 
   const params = {
     Bucket: bucket,
-    Key: `${mediaPath}/${id}.${fileType}`,
+    Key: `${mediaPath}/${id}`,
     Expires: 60,
     ContentType: fileType,
     ACL: 'public-read',
