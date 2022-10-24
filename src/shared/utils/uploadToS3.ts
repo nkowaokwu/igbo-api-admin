@@ -18,7 +18,9 @@ const uploadMediaToS3 = async (
 }));
 
 export default async ({ id, file } : { id: string, file: File }): Promise<any> => {
-  const { data: signedRequestResponse } = await handleGenerateMediaSignedRequest({ id, fileType: file.type });
+  const { data: { response: signedRequestResponse } } = (
+    await handleGenerateMediaSignedRequest({ id, fileType: file.type })
+  );
   if (signedRequestResponse?.mediaUrl?.startsWith?.('mock-')) {
     return signedRequestResponse.mediaUrl;
   }
