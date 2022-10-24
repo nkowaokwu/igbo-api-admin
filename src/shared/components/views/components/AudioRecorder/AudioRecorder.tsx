@@ -154,7 +154,7 @@ const AudioRecorder = ({
             <Box className="flex flex-col">
               <ReactAudioPlayer
                 data-test={`${path}-audio-playback`}
-                style={{ height: 40, width: 250 }}
+                style={{ height: '40px', width: '250px' }}
                 id="audio"
                 src={pronunciationValue}
                 controls

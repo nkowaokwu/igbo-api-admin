@@ -296,7 +296,7 @@ const Select = ({
           Actions
         </MenuButton>
         <MenuList>
-          {options.map(({ value, label, onSelect }) => (
+          {options.map(({ value = '', label, onSelect }) => (
             <MenuItem
               key={value}
               value={value}

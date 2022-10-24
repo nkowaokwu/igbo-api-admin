@@ -32,10 +32,8 @@ describe('Word Edit', () => {
     await findByText('Word Pronunciation');
     await findByText('Spelling Variations');
     await findByText('Word Stems');
-    await findByText('Synonyms');
-    await findByText('Antonyms');
     await findByText('Examples');
-    await findByText('Current Dialects');
+    await findByText('Dialectal Variations');
     await findByText('Editor\'s Comments');
   });
 
@@ -72,25 +70,6 @@ describe('Word Edit', () => {
     );
 
     userEvent.type(await findByPlaceholderText('Search for a related term or use word id'), 'cat');
-    userEvent.click(await findByText('retrieved word'));
-    await findByText('ADJ');
-    await findByText('resolved word definition');
-  });
-
-  it('add a word antonym to word suggestion', async () => {
-    const { findByText, findByPlaceholderText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
-          save={() => {}}
-          history={{}}
-        />
-      </TestContext>,
-    );
-
-    userEvent.type(await findByPlaceholderText('Search for antonym or use word id'), 'cat');
     userEvent.click(await findByText('retrieved word'));
     await findByText('ADJ');
     await findByText('resolved word definition');

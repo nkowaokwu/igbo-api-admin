@@ -54,7 +54,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
       <Box>
         <Text fontSize="xl" className="font-bold">Nsịbịdị</Text>
         <Text
-          className={record.nsibidi ? 'akagu text-green-800' : 'italic text-gray-600'}
+          className={record.nsibidi ? 'akagu' : 'italic text-gray-600'}
         >
           {get(record, 'nsibidi') || 'No Nsịbịdị'}
         </Text>

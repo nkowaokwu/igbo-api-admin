@@ -10,7 +10,7 @@ const HeadwordField = ({ record, source }: { record?: Record, source: string }):
   const hasFlags = !!Object.values(generateFlags({ word: record, flags: {} }).flags).length;
   return (
     <>
-      {nsibidi ? <Text fontSize="md" className="akagu text-green-800">{nsibidi}</Text> : null}
+      {nsibidi ? <Text fontSize="md" className="akagu">{nsibidi}</Text> : null}
       <Tooltip
         backgroundColor="orange.300"
         color="gray.800"

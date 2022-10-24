@@ -26,7 +26,6 @@ const useRecorder = (): [string, boolean, () => void, () => void] => {
       setRecorder(new MicRecorder({ bitRate: 30000 }));
 
       (async () => {
-        // @ts-expect-error navigator
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         try {
           wave.fromStream(stream, 'canvas', {

@@ -5,6 +5,7 @@ import { DataProviderContext } from 'react-admin';
 
 configure({ testIdAttribute: 'data-test' });
 
+global.navigator.getUserMedia = jest.fn(() => ({}));
 jest.mock('firebase');
 jest.mock('@chakra-ui/react');
 jest.mock('react-admin');

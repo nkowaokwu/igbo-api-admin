@@ -46,14 +46,14 @@ const DialectDiff = (
               fallbackValue={record.dialects[value].pronunciation ? (
                 <ReactAudioPlayer
                   src={record.dialects[value].pronunciation}
-                  style={{ height: 40, width: 250 }}
+                  style={{ height: '40px', width: '250px' }}
                   controls
                 />
               ) : <chakra.span>No audio pronunciation</chakra.span>}
               renderNestedObject={() => (
                 <ReactAudioPlayer
                   src={record.dialects[value].pronunciation}
-                  style={{ height: 40, width: 250 }}
+                  style={{ height: '40px', width: '250px' }}
                   controls
                 />
               )}
@@ -99,7 +99,7 @@ const DialectDiff = (
                 ) : null}
                 <ReactAudioPlayer
                   src={pronunciation}
-                  style={{ height: 40, width: 250 }}
+                  style={{ height: '40px', width: '250px' }}
                   controls
                 />
               </AccordionPanel>
