@@ -64,10 +64,8 @@ const CorpusShow = (props: ShowProps): ReactElement => {
   } = record;
 
   const resourceTitle = {
-    [Collection.WORD_SUGGESTIONS]: 'Word Suggestion',
-    [Collection.GENERIC_WORDS]: 'Generic Word',
-    [Collection.WORDS]: 'Word',
     [Collection.CORPUS_SUGGESTIONS]: 'Corpus Suggestion',
+    [Collection.CORPORA]: 'Corpus',
   };
 
   /* Grabs the original word if it exists */

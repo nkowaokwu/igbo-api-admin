@@ -2,7 +2,7 @@
 enum Collection {
   WORDS = 'words',
   EXAMPLES = 'examples',
-  CORPORA = 'corpuses',
+  CORPORA = 'corpora',
   WORD_SUGGESTIONS = 'wordSuggestions',
   EXAMPLE_SUGGESTIONS = 'exampleSuggestions',
   CORPUS_SUGGESTIONS = 'corpusSuggestions',
