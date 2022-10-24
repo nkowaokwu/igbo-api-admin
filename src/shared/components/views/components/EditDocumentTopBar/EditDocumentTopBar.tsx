@@ -37,7 +37,7 @@ const EditDocumentTopBar = ({
   const determineMergeCollection = () => (
     resource === Collection.EXAMPLE_SUGGESTIONS
       ? Collection.EXAMPLES
-      : Collection.CORPUS_SUGGESTIONS
+      : resource === Collection.CORPUS_SUGGESTIONS
         ? Collection.CORPORA
         : Collection.WORDS
   );
