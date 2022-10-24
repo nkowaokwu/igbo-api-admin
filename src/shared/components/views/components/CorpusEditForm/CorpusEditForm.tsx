@@ -129,11 +129,21 @@ const CorpusEditForm = ({
           handleUpdateDocument({ resource, record: data });
           if (mediaFile) {
             await uploadToS3({ id: data.id, file: mediaFile })
-              .catch((err) => {
-                console.log(err);
+              .catch(async (err) => {
+                toast({
+                  title: 'Error',
+                  description: err.message,
+                  status: 'error',
+                  duration: 4000,
+                  isClosable: true,
+                });
                 if (view === View.CREATE) {
                   // Deleting the corpus suggestion if unable to upload media
-                  actionsMap.Delete.executeAction({ record, resource: Collection.CORPUS_SUGGESTIONS });
+                  await actionsMap.Delete.executeAction({ record: data, resource: Collection.CORPUS_SUGGESTIONS });
+                  redirect(
+                    View.LIST,
+                    `/${Collection.CORPUS_SUGGESTIONS}`,
+                  );
                 }
               });
           }
