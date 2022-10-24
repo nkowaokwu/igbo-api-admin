@@ -6,12 +6,25 @@ export const useListContext = jest.fn(() => ({
   filterValues: {},
   setFilters: jest.fn(() => ({})),
 }));
+export const useShowController = jest.fn((props) => props);
+export const fetchUtils = {
+  fetchJson: jest.fn(async () => ({})),
+};
 
 // Real, non-mocked features
 export const {
-  useListFilterContext,
+  AdminUI,
+  Resource,
   sanitizeListRestProps,
   TopToolbar,
+  DataProviderContext,
+  Title,
+  useNotify,
+  useListFilterContext,
+  useRedirect,
+  useRefresh,
+  useGetOne,
+  usePermissions,
 } = ReactAdmin;
 
 export default ReactAdmin;

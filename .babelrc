@@ -6,6 +6,7 @@
   "plugins": [
     "@babel/plugin-transform-modules-commonjs",
     "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-proposal-export-default-from",
     ["module-resolver", {
       "root": ["./src"],
       "alias": {

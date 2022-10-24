@@ -10,6 +10,7 @@
 
 import '@testing-library/cypress/add-commands';
 import { v4 as uuidv4 } from 'uuid';
+import { initializeApp } from 'firebase/app';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
@@ -20,7 +21,7 @@ import { attachCustomCommands } from 'cypress-firebase';
 import { STAGING_FIREBASE_CONFIG } from '../../src/config';
 import { API_ROUTE, wordSuggestionData, exampleSuggestionData } from '../constants';
 
-firebase.initializeApp(STAGING_FIREBASE_CONFIG);
+initializeApp(STAGING_FIREBASE_CONFIG);
 
 attachCustomCommands({ Cypress, cy, firebase });
 

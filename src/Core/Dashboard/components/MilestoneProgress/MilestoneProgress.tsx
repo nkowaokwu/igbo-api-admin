@@ -93,7 +93,7 @@ const MilestoneProgress = (): ReactElement => {
             <ProgressCard
               totalCount={totalDialectalVariations}
               goal={DIALECTAL_VARIATIONS_GOAL}
-              heading="Dialectal variations"
+              heading="Dialectal Variations"
               description={`There are currently ${totalDialectalVariations} dialectal word variations on the platform.
               Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`}
               isLoaded={totalDialectalVariations !== null}

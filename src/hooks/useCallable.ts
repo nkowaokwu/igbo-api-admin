@@ -1,6 +1,7 @@
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getApp } from 'firebase/app';
 import { CallableFunctionInputs, CallableFunctionResponse, CallableFunction } from '../shared/server-validation';
+import 'src/services/firebase';
 
 /**
  * Custom hook for using Firebase callable functions
