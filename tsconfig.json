@@ -9,12 +9,17 @@
 			"src": ["./src"]
     },
     "lib": ["esnext", "DOM"],
-    "types": ["cypress", "@testing-library/cypress"],
+    "types": [
+      "cypress",
+      "@testing-library/cypress",
+      "jest"
+    ],
     "allowJs": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "downlevelIteration": true
   },
   "include": ["./src"],

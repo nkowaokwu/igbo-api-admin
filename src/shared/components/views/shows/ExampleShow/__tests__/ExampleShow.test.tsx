@@ -2,8 +2,7 @@
 // https://github.com/marmelab/react-admin/pull/6753/files
 import React from 'react';
 import { render } from '@testing-library/react';
-import TestContext from 'src/tests/components/TestContext';
-
+import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
 import ExampleShow from '../ExampleShow';
 

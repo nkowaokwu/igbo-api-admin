@@ -1,4 +1,3 @@
-import * as functions from 'firebase-functions';
 import { compact, flatten } from 'lodash';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import { findPermittedUserEmails } from '../controllers/users';
@@ -12,14 +11,16 @@ import {
   TEST_MONGO_URI,
   LOCAL_MONGO_URI,
   PROD_MONGO_URI,
+  isTesting,
+  isDevelopment,
+  isProduction,
 } from '../config';
 
-const config = functions.config();
-const MONGO_URI = config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test'
+const MONGO_URI = isTesting
   ? TEST_MONGO_URI
-  : config?.runtime?.env === 'development'
+  : isDevelopment
     ? LOCAL_MONGO_URI
-    : config?.runtime?.env === 'production'
+    : isProduction
       ? PROD_MONGO_URI
       : LOCAL_MONGO_URI;
 connectDatabase(MONGO_URI);
@@ -62,7 +63,7 @@ export const sendWeeklyStats = async (): Promise<void> => {
 };
 
 /* Reminds editors, mergers, and admins that there are suggestion docs remaining for review */
-export const onSendEditorReminderEmail = async () => {
+export const onSendEditorReminderEmail = async (): Promise<void> => {
   const permittedUserEmails = await findPermittedUserEmails();
   /* Get all non merged word and example suggestion documents */
   const nonMergedWordSuggestions = await getNonMergedWordSuggestions();

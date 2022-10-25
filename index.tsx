@@ -1,10 +1,10 @@
-import { MONGO_URI } from './src/backend/services/initializeAdmin';
 import * as functions from 'firebase-functions';
 import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import { MONGO_URI } from './src/backend/services/initializeAdmin';
 import './src/backend/shared/utils/wrapConsole';
 import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/services/emailJobs';
 import { onUpdateDashboardStats } from './src/backend/controllers/stats';
@@ -81,7 +81,7 @@ export const sendEditorReminderEmail = functions.pubsub.schedule('0 6 */4 * *')
 /* Runs at minute 0, 10, 20, 30, 40, and 50 past every hour from 8AM through 10PM WAT */
 export const calculateDashboardStats = functions.pubsub.schedule('0,10,20,30,40,50 8-22 * * *')
   .timeZone('Africa/Lagos')
-  .onRun(onUpdateDashboardStats)
+  .onRun(onUpdateDashboardStats);
 
 /**
  * Determines whether or not in a backend testing environment or in a
@@ -95,11 +95,18 @@ export const calculateDashboardStats = functions.pubsub.schedule('0,10,20,30,40,
  */
 export const app = process.env.NODE_ENV === 'test' ? (() => {
   /* Export just the Express app while testing the backend */
-  const expressServer: any = server.listen(EXPRESS_PORT, () => {
+  const expressServer = server.listen(EXPRESS_PORT, () => {
     // @ts-ignore
     console.blue(`\nExpress app listening on port ${EXPRESS_PORT}`);
   });
 
-  expressServer.clearDatabase = () => mongoose.connection.dropDatabase();
+  expressServer.on('error', (err) => {
+    if (err.message.startsWith('listen EADDRINUSE: address already in use')) {
+      // Tests will attempt to open new servers, this conditional handles that case
+    }
+  });
+
+  // @ts-expect-error
+  expressServer.clearDatabase = mongoose.connection.dropDatabase;
   return expressServer;
 })() : functions.https.onRequest(server);

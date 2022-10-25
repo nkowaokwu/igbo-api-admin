@@ -3,15 +3,19 @@ import * as functions from 'firebase-functions';
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;
 export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
+export const isDevelopment = config?.runtime?.env === 'development';
 export const isCypress = config?.runtime?.env === 'cypress';
+export const isJest = config?.runtime?.env === 'jest';
+export const isTest = config?.runtime?.env === 'test';
+export const isTesting = isCypress || isJest || isTest;
 
 // Igbo API
-export const IGBO_API_ROOT = config?.runtime?.env !== 'cypress' && NODE_ENV === 'production'
+export const IGBO_API_ROOT = !isTesting && isProduction
   ? 'https://www.igboapi.com/api/v1'
   : 'http://localhost:8080/api/v1';
 
 // Igbo API Editor Platform
-export const IGBO_API_EDITOR_PLATFORM_ROOT = config?.runtime?.env !== 'cypress' && isProduction
+export const IGBO_API_EDITOR_PLATFORM_ROOT = !isTesting && isProduction
   ? 'https://editor.igboapi.com'
   : 'http://127.0.0.1:3030';
 

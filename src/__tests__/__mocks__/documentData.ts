@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import WordClass from 'src/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
 
@@ -6,7 +7,7 @@ const wordId = new ObjectId('5f864d7401203866b6546dd3');
 const wordSuggestionId = new ObjectId();
 const wordSuggestionData = {
   word: 'word',
-  wordClass: 'wordClass',
+  wordClass: WordClass.NNC.value,
   definitions: ['first'],
   dialects: {},
 };
@@ -14,7 +15,7 @@ const wordSuggestionData = {
 const wordSuggestionApprovedData = {
   originalWordId: wordId,
   word: 'word',
-  wordClass: 'wordClass',
+  wordClass: WordClass.NNC.value,
   definitions: ['first'],
   approvals: ['first user', 'second user'],
 };
@@ -27,7 +28,7 @@ const malformedWordSuggestionData = {
 
 const updatedWordSuggestionData = {
   word: 'newWord',
-  wordClass: 'newWordClass',
+  wordClass: WordClass.ADJ.value,
   definitions: ['first', 'second'],
 };
 
@@ -39,7 +40,7 @@ const malformedWordData = {
 
 const updatedWordData = {
   word: 'newWord',
-  wordClass: 'verb',
+  wordClass: WordClass.AV.value,
   definitions: [],
 };
 
@@ -76,12 +77,6 @@ const updatedExampleData = {
   associatedWords: ['5f864d7401203866b6546dd3'],
 };
 
-const genericWordData = {
-  word: 'genericWord',
-  wordClass: 'noun',
-  definitions: ['definition'],
-};
-
 const malformedGenericWordData = {
   word: 'newGenericWord',
   wordClass: '',
@@ -99,11 +94,6 @@ const updatedGenericWordData = {
 
 const wordSuggestionWithNestedExampleSuggestionData = {
   ...wordSuggestionData,
-  examples: [exampleSuggestionData],
-};
-
-const genericWordWithNestedExampleSuggestionData = {
-  ...genericWordData,
   examples: [exampleSuggestionData],
 };
 
@@ -128,7 +118,6 @@ export {
   malformedWordSuggestionData,
   updatedWordSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
-  genericWordWithNestedExampleSuggestionData,
   malformedWordData,
   updatedWordData,
   exampleId,
@@ -138,7 +127,6 @@ export {
   updatedExampleSuggestionData,
   exampleData,
   updatedExampleData,
-  genericWordData,
   malformedGenericWordData,
   updatedGenericWordData,
   developerData,
