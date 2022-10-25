@@ -27,6 +27,7 @@ import { CreateButton } from 'src/shared/primitives';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import WordClass from 'src/shared/constants/WordClass';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Filter from '../Filter';
 
 /**
@@ -304,7 +305,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Menu>
           </Box>
         ) : null}
-        {isSuggestionResource || (isPollResource && permissions?.role === Role.ADMIN) ? (
+        {isSuggestionResource || (isPollResource && hasAdminOrMergerPermissions(permissions, true)) ? (
           <CreateButton basePath={basePath} />
         ) : null}
       </Box>
