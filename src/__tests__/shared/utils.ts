@@ -7,6 +7,7 @@ import {
   isEqual,
 } from 'lodash';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import {
   suggestNewWord,
   suggestNewExample,
@@ -41,7 +42,7 @@ const expectArrayIsInOrder = (array: [], key: string, direction = SortingDirecti
   expect(isOrdered).toEqual(true);
 };
 
-const createWordFromSuggestion = async (wordSuggestionData: any): Promise<any> => {
+const createWordFromSuggestion = async (wordSuggestionData: any): Promise<Interfaces.Word> => {
   const res = await suggestNewWord(wordSuggestionData);
   expect(res.status).toEqual(200);
   const mergingWordSuggestion = { ...res.body, ...wordSuggestionData };
@@ -54,7 +55,7 @@ const createWordFromSuggestion = async (wordSuggestionData: any): Promise<any> =
   return wordRes.body;
 };
 
-const createExampleFromSuggestion = async (exampleSuggestionData: any): Promise<any> => {
+const createExampleFromSuggestion = async (exampleSuggestionData: any): Promise<Interfaces.Example> => {
   const exampleSuggestionRes = await suggestNewExample(exampleSuggestionData);
   expect(exampleSuggestionRes.status).toEqual(200);
   const finalRes = await createExample(exampleSuggestionRes.body.id);

@@ -208,7 +208,7 @@ describe('MongoDB Words', () => {
       expect(wordsRes.status).toEqual(200);
       const wordWithNullStems = wordsRes.body[0];
       const firstWord = await createWordFromSuggestion({ ...updatedWordSuggestionData, stems: null });
-      const combinedWordRes = await deleteWord(firstWord.id, wordWithNullStems.id);
+      const combinedWordRes = await deleteWord(firstWord.id.toString(), wordWithNullStems.id);
       const { definitions, variations, stems } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
