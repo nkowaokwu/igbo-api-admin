@@ -25,13 +25,10 @@ import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 
 const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
 
-const assignDefaultDialectValues = (data) => (
-  Object.entries(data.dialects).reduce((finalDialects, [key, value]) => ({
+const assignDefaultDialectValues = (data: Interfaces.WordSuggestion) => (
+  Object.entries(data.dialects || {}).reduce((finalDialects, [key, value]) => ({
     ...finalDialects,
-    [key]: {
-      ...value,
-      word: value.word || data.word,
-    },
+    [key]: { ...value },
   }), {})
 );
 
@@ -42,8 +39,7 @@ export const postWordSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data } = req;
-    const { user } = req;
+    const { body: data, user } = req;
 
     if (data.id) {
       throw new Error('Cannot pass along an id for a new word suggestion');
@@ -56,7 +52,8 @@ export const postWordSuggestion = async (
     const savedWordSuggestion: Document<Interfaces.WordSuggestion> = await newWordSuggestion.save()
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id, clientExamples });
-        return placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
+        const res = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
+        return res;
       });
     return res.send(savedWordSuggestion);
   } catch (err) {

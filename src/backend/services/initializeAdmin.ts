@@ -16,7 +16,7 @@ export const MONGO_URI = config?.runtime?.env === 'cypress' || process.env.NODE_
 const serviceAccount = config?.runtime?.env === 'production' ? (() => {
   let localProductionServiceAccount;
   if (!productionServiceAccount?.project_id) {
-    localProductionServiceAccount = require('../../../prod-firebase-service-account.json');
+    localProductionServiceAccount = require('../../../prod-firebase-service-account.json'); // eslint-disable-line
   }
   return {
     projectId: productionServiceAccount?.project_id || localProductionServiceAccount.project_id,
@@ -28,7 +28,7 @@ const serviceAccount = config?.runtime?.env === 'production' ? (() => {
 })() : (() => {
   let localStagingServiceAccount;
   if (!stagingServiceAccount?.project_id) {
-    localStagingServiceAccount = require('../../../staging-firebase-service-account.json');
+    localStagingServiceAccount = require('../../../staging-firebase-service-account.json'); // eslint-disable-line
   }
   return {
     projectId: stagingServiceAccount?.project_id || localStagingServiceAccount.project_id,
@@ -39,6 +39,6 @@ const serviceAccount = config?.runtime?.env === 'production' ? (() => {
   };
 })();
 
-admin.initializeApp({
+export const initializedAdminApp = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });

@@ -32,8 +32,15 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'userComments',
   'authorEmail',
   'authorId',
+  'author',
   'approvals',
   'denials',
+  'meaning',
+  'style',
+  'source',
+  'userInteractions',
+  'pronunciation',
+  'createdAt',
   'updatedAt',
   'merged',
   'mergedBy',
@@ -54,14 +61,13 @@ export const GENERIC_WORD_KEYS = [
   'merged',
   'mergedBy',
   'id',
-  'isStandardIgbo',
+  'attributes',
 ];
 export const WORD_SUGGESTION_KEYS = [
   'originalWordId',
   'word',
   'wordClass',
   'definitions',
-  'dialects',
   'variations',
   'editorsNotes',
   'examples',
@@ -75,7 +81,7 @@ export const WORD_SUGGESTION_KEYS = [
   'merged',
   'mergedBy',
   'id',
-  'isStandardIgbo',
+  'attributes',
 ];
 export const EXCLUDE_KEYS = ['__v', '_id'];
 export const SITE_TITLE = 'The First African Language API';

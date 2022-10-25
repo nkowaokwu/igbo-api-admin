@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TestContext from 'src/tests/components/TestContext';
+import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
 import ListActions from '../ListActions';
 
