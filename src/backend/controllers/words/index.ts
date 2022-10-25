@@ -15,6 +15,7 @@ import { findSearchWord } from 'src/backend/services/words';
 import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
 import { NO_PROVIDED_TERM } from 'src/backend/shared/constants/errorMessages';
 import WordClass from 'src/backend/shared/constants/WordClass';
+import Requirements from 'src/backend/shared/constants/Requirements';
 import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import WordSuggestion from 'src/backend/models/WordSuggestion';
@@ -351,6 +352,10 @@ export const mergeWord = async (
 ): Promise<Response | void> => {
   try {
     const { user, suggestionDoc } = req;
+
+    if (suggestionDoc.approvals.length < Requirements.MINIMUM_REQUIRED_APPROVALS) {
+      throw new Error('Suggestion document doesn\'t have enough approvals to be merged.');
+    }
 
     const mergedWord: Document<Interfaces.Word> | any = (
       suggestionDoc.originalWordId

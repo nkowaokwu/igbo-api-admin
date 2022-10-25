@@ -1,11 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import { compact, flatten, get } from 'lodash';
+import pluralize from 'pluralize';
 import {
+  Box,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  Tooltip,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -29,6 +32,7 @@ import { determineCreateSuggestionRedirection } from 'src/shared/utils';
 import actionsMap from 'src/shared/constants/actionsMap';
 import Collection from 'src/shared/constants/Collections';
 import View from 'src/shared/constants/Views';
+import Requirements from 'src/backend/shared/constants/Requirements';
 import { TWITTER_APP_URL } from 'src/Core/constants';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
@@ -46,6 +50,7 @@ const Select = ({
   const [uid, setUid] = useState('');
   const redirect = useRedirect();
   useFirebaseUid(setUid);
+  const hasEnoughApprovals = (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
 
   const clearConfirmOpen = () => {
     setAction(null);
@@ -89,6 +94,13 @@ const Select = ({
           </span>
         ))(),
         onSelect: () => setAction(actionsMap.Merge),
+        props: {
+          isDisabled: !hasEnoughApprovals,
+          tooltipMessage: !hasEnoughApprovals
+            ? `You are unable to merge this document until there 
+            are at least ${pluralize('approval', Requirements.MINIMUM_REQUIRED_APPROVALS, true)} `
+            : '',
+        },
       },
     ])),
     {
@@ -296,22 +308,32 @@ const Select = ({
           Actions
         </MenuButton>
         <MenuList>
-          {options.map(({ value = '', label, onSelect }) => (
-            <MenuItem
-              key={value}
-              value={value}
-              onClick={() => {
-                setValue(value);
-                onSelect({
-                  push,
-                  resource,
-                  record,
-                  id: record.id,
-                });
-              }}
-            >
-              {label}
-            </MenuItem>
+          {options.map(({
+            value = '',
+            label,
+            onSelect,
+            props = {},
+          }) => (
+            <Tooltip label={props.tooltipMessage}>
+              <Box>
+                <MenuItem
+                  key={value}
+                  value={value}
+                  onClick={() => {
+                    setValue(value);
+                    onSelect({
+                      push,
+                      resource,
+                      record,
+                      id: record.id,
+                    });
+                  }}
+                  {...props}
+                >
+                  {label}
+                </MenuItem>
+              </Box>
+            </Tooltip>
           ))}
         </MenuList>
       </Menu>
