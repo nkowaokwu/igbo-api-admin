@@ -9,6 +9,7 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -20,7 +21,7 @@ import {
   NotAllowedIcon,
   ViewIcon,
 } from '@chakra-ui/icons';
-import { MergeType, Person } from '@material-ui/icons';
+import { MergeType, Person, Link as LinkIcon } from '@mui/icons-material';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { useRedirect } from 'react-admin';
@@ -34,6 +35,7 @@ import Collection from 'src/shared/constants/Collections';
 import View from 'src/shared/constants/Views';
 import Requirements from 'src/backend/shared/constants/Requirements';
 import { TWITTER_APP_URL } from 'src/Core/constants';
+import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -49,6 +51,7 @@ const Select = ({
   const [action, setAction] = useState(null);
   const [uid, setUid] = useState('');
   const redirect = useRedirect();
+  const toast = useToast();
   useFirebaseUid(setUid);
   const hasEnoughApprovals = (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
 
@@ -262,7 +265,7 @@ const Select = ({
     },
   ];
 
-  const options = resource === Collection.USERS
+  const initialOptions = resource === Collection.USERS
     ? userCollectionOptions
     : (
       resource === Collection.WORD_SUGGESTIONS
@@ -273,6 +276,23 @@ const Select = ({
       : resource === Collection.POLLS
         ? pollCollectionOptions
         : mergedCollectionOptions;
+
+  const options = [
+    ...initialOptions,
+    {
+      value: 'copyURL',
+      label: (() => (
+        <span>
+          <LinkIcon className="mr-2" />
+          Copy Document URL
+        </span>
+      ))(),
+      onSelect: () => copyToClipboard({
+        copyText: `${window.location.origin}/#/${resource}/${record.id}/show`,
+        successMessage: 'Document URL has been copied to your clipboard',
+      }, toast),
+    },
+  ];
 
   return (
     <>

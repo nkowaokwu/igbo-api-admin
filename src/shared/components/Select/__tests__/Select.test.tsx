@@ -33,6 +33,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Suggest New Edit');
       await findByText('Request to Delete Word');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for words as admin', async () => {
@@ -51,6 +52,7 @@ describe('Editor\'s Actions', () => {
       await findByText('Suggest New Edit');
       await findByText('Combine Word Into...');
       await findByText('Request to Delete Word');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for word suggestions as editor', async () => {
@@ -69,6 +71,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for word suggestions as merger', async () => {
@@ -91,6 +94,7 @@ describe('Editor\'s Actions', () => {
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for corpora as editor', async () => {
@@ -105,6 +109,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Suggest New Edit');
       await findByText('Request to Delete Corpus');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for corpora as admin', async () => {
@@ -122,6 +127,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Suggest New Edit');
       await findByText('Request to Delete Corpus');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for corpus suggestions as editor', async () => {
@@ -140,6 +146,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for corpus suggestions as merger', async () => {
@@ -162,6 +169,7 @@ describe('Editor\'s Actions', () => {
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for examples as editor', async () => {
@@ -176,6 +184,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Suggest New Edit');
       await findByText('Request to Delete Example');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for example suggestions as editor', async () => {
@@ -194,6 +203,7 @@ describe('Editor\'s Actions', () => {
       await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
+      await findByText('Copy Document URL');
     });
 
     it('show all select options for example suggestions as merger', async () => {
@@ -216,6 +226,7 @@ describe('Editor\'s Actions', () => {
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
+      await findByText('Copy Document URL');
     });
   });
 
@@ -241,6 +252,7 @@ describe('Editor\'s Actions', () => {
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
+      await findByText('Copy Document URL');
     });
   });
 });

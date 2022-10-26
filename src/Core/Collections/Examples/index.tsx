@@ -1,3 +1,3 @@
-import Icon from '@material-ui/icons/ChatBubble';
+import Icon from '@mui/icons-material/ChatBubble';
 
 export const ExampleIcon = Icon;

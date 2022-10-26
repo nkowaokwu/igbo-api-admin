@@ -1,3 +1,3 @@
-import Icon from '@material-ui/icons/MailOutline';
+import Icon from '@mui/icons-material/MailOutline';
 
 export const NotificationIcon = Icon;
