@@ -125,10 +125,13 @@ export const createPoll = (id: string, query = {}, options = { token: '' }): Req
     .send({ id })
 );
 
-export const suggestNewWord = (data: any, options = { token: '' }): Request => (
+export const suggestNewWord = (data: any, options = { noApprovals: false, token: '' }): Request => (
   chaiServer
     .post('/wordSuggestions')
-    .send(data)
+    .send({
+      ...data,
+      approvals: options.noApprovals ? [] : ['first approval', 'second approval'],
+    })
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 

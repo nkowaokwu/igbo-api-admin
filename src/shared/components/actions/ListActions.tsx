@@ -19,7 +19,6 @@ import {
   useListContext,
   usePermissions,
 } from 'react-admin';
-import { Role } from 'src/shared/constants/auth-types';
 import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
