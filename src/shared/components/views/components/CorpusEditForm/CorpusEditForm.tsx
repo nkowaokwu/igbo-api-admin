@@ -9,7 +9,7 @@ import {
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import { EditFormProps } from 'src/shared/interfaces';
-import { getExample } from 'src/shared/API';
+import { getCorpus, removePayloadFields } from 'src/shared/API';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import useCacheForm from 'src/hooks/useCacheForm';
@@ -76,8 +76,8 @@ const CorpusEditForm = ({
       });
     }
     (async () => {
-      if (record.originalExampleId) {
-        setOriginalRecord(await getExample(record.originalExampleId));
+      if (record.originalCorpusId) {
+        setOriginalRecord(await getCorpus(record.originalCorpusId));
       }
     })();
   }, []);
@@ -115,7 +115,7 @@ const CorpusEditForm = ({
   const onSubmit = (data) => {
     setIsSubmitting(true);
     try {
-      const cleanedData = omit(assign(
+      const preparedData = omit(assign(
         { ...record, ...data },
         createCacheCorpusData(data, record),
         {
@@ -123,6 +123,7 @@ const CorpusEditForm = ({
           denials: map(record.denials, (denial) => denial.uid),
         },
       ), [view === View.CREATE ? 'id' : '']);
+      const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: async ({ data }) => {
@@ -157,10 +158,10 @@ const CorpusEditForm = ({
           );
         },
         onFailure: (error: any) => {
-          const { body } = error;
+          const { body, message } = error;
           toast({
             title: 'Error',
-            description: body?.error || error,
+            description: body?.error || message || 'An error occurred while corpus example suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,

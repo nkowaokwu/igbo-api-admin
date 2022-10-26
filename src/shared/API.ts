@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { omit } from 'lodash';
 import { Record } from 'react-admin';
 import { EmptyResponse } from './server-validation';
 import { useCallable } from '../hooks/useCallable';
@@ -41,6 +42,7 @@ export const getWords = async (word: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/words?keyword=${word}`,
 })).data;
+
 export const getWordSuggestions = async (word: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/wordSuggestions?keyword=${word}`,
@@ -49,6 +51,11 @@ export const getWordSuggestions = async (word: string): Promise<any> => (await r
 export const getExample = async (id: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/examples/${id}`,
+})).data;
+
+export const getCorpus = async (id: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `${API_ROUTE}/corpora/${id}`,
 })).data;
 
 export const resolveWord = (wordId: string): Promise<any> => network(`/words/${wordId}`)
@@ -127,3 +134,17 @@ export const assignUserToEditingGroup = ({
 };
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
+
+export const removePayloadFields = (payload: any): any => (
+  omit(payload, [
+    'id',
+    'updatedAt',
+    'createdAt',
+    'author',
+    'authorEmail',
+    'authorId',
+    'merged',
+    'mergedBy',
+    'userInteractions',
+  ])
+);

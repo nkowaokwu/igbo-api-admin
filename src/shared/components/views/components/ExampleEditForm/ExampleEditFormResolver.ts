@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
 export const ExampleEditFormSchema = yup.object().shape({
-  igbo: yup.string(),
+  igbo: yup.string().required(),
   english: yup.string(),
   meaning: yup.string().optional(),
   style: yup.object().shape({

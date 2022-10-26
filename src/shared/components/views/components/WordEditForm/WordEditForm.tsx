@@ -16,7 +16,7 @@ import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
 import WordClass from 'src/shared/constants/WordClass';
-import { getWord } from 'src/shared/API';
+import { getWord, removePayloadFields } from 'src/shared/API';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
@@ -165,10 +165,11 @@ const WordEditForm = ({
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const cleanedData = omit(assign(createCacheWordData(data, record), {
+      const preparedData = omit(assign(createCacheWordData(data, record), {
         approvals: map(record.approvals, (approval) => approval.uid),
         denials: map(record.denials, (denial) => denial.uid),
       }), [view === View.CREATE ? 'id' : '']);
+      const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
@@ -178,10 +179,10 @@ const WordEditForm = ({
           redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },
         onFailure: (error: any) => {
-          const { body } = error;
+          const { body, message } = error;
           toast({
             title: 'Error',
-            description: body?.error || error,
+            description: body?.error || message || 'An error occurred while saving example suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,

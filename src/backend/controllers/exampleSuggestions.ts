@@ -1,6 +1,6 @@
-import { Document, Query, Types } from 'mongoose';
+import { Document, Query } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { assign, some, map } from 'lodash';
+import { assign, map } from 'lodash';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import Word from '../models/Word';
 import ExampleSuggestion from '../models/ExampleSuggestion';
@@ -15,14 +15,6 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 
 export const createExampleSuggestion = async (data: Interfaces.ExampleClientData): Promise<Document<any>> => {
-  if (!data.igbo && !data.english) {
-    throw new Error('Required information is missing, double check your provided data');
-  }
-
-  if (some(data.associatedWords, (associatedWord) => !Types.ObjectId.isValid(associatedWord))) {
-    throw new Error('Invalid id found in associatedWords');
-  }
-
   try {
     await Promise.all(map(data.associatedWords, async (associatedWordId) => {
       const query = searchPreExistingExampleSuggestionsRegexQuery({ ...data, associatedWordId });

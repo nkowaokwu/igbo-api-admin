@@ -51,6 +51,15 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });
+
+    it('should throw an error because of invalid word class', async () => {
+      const res = await suggestNewWord({
+        ...wordSuggestionData,
+        wordClass: 'invalid',
+      });
+      expect(res.status).toEqual(400);
+      expect(res.body.error).not.toEqual(undefined);
+    });
   });
 
   describe('/PUT mongodb wordSuggestions', () => {
