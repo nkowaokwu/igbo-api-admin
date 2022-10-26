@@ -1,3 +1,3 @@
-import Icon from '@material-ui/icons/Person';
+import Icon from '@mui/icons-material/Person';
 
 export const UserIcon = Icon;

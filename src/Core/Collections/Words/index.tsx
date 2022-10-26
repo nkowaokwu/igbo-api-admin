@@ -1,3 +1,3 @@
-import Icon from '@material-ui/icons/Book';
+import Icon from '@mui/icons-material/Book';
 
 export const WordIcon = Icon;

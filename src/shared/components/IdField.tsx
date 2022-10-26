@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Box, Tooltip, useToast } from '@chakra-ui/react';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import copyToClipboard from '../utils/copyToClipboard';
 import { IdFieldProps } from '../interfaces';
 
 /* Enables editors to copy document ids */
@@ -9,16 +10,10 @@ const IdField = ({ source, record = { id: null } }: IdFieldProps): ReactElement 
   const toast = useToast();
 
   const handleCopyId = () => {
-    if (navigator) {
-      navigator.clipboard.writeText(get(record, source));
-      toast({
-        title: 'Copied to clipboard 📋',
-        description: 'Document id has been copied to your clipboard',
-        status: 'info',
-        duration: 4000,
-        isClosable: true,
-      });
-    }
+    copyToClipboard({
+      copyText: get(record, source),
+      successMessage: 'Document id has been copied to your clipboard',
+    }, toast);
   };
 
   return (

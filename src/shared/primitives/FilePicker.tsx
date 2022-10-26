@@ -5,7 +5,7 @@ import React, {
   useRef,
 } from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ReactPlayer from 'react-player';
 
 const iconStyle = { height: 100, width: 100 };

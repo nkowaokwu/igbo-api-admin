@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import Icon from '@material-ui/icons/Spellcheck';
+import Icon from '@mui/icons-material/Spellcheck';
 
 export const WordSuggestionIcon = Icon;
 
