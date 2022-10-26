@@ -11,6 +11,7 @@ import {
   MESSAGE,
   INVALID_MESSAGE,
   AUTH_TOKEN,
+  SAVE_DOC_DELAY,
 } from './shared/constants';
 import {
   exampleSuggestionData,
@@ -207,6 +208,7 @@ describe('MongoDB Words', () => {
       const wordsRes = await getWords({ range: '[0, 24]' });
       expect(wordsRes.status).toEqual(200);
       const wordWithNullStems = wordsRes.body[0];
+      await new Promise((resolve) => setTimeout(resolve, SAVE_DOC_DELAY));
       const firstWord = await createWordFromSuggestion({ ...updatedWordSuggestionData, stems: null });
       const combinedWordRes = await deleteWord(firstWord.id.toString(), wordWithNullStems.id);
       const { definitions, variations, stems } = combinedWordRes.body;

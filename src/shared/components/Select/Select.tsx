@@ -314,10 +314,9 @@ const Select = ({
             onSelect,
             props = {},
           }) => (
-            <Tooltip label={props.tooltipMessage}>
+            <Tooltip key={value} label={props.tooltipMessage}>
               <Box>
                 <MenuItem
-                  key={value}
                   value={value}
                   onClick={() => {
                     setValue(value);
