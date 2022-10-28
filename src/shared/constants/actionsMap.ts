@@ -41,8 +41,8 @@ export default {
     type: 'Approve',
     title: 'Approve Document',
     content: 'Are you sure you want to approve this document?',
-    executeAction: ({ record, resource } : { record: Record, resource: string }) : Promise<any> => {
-      approveDocument({ resource, record: prepareRecord(record) });
+    executeAction: async ({ record, resource } : { record: Record, resource: string }) : Promise<any> => {
+      await approveDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
     },
     successMessage: 'Document has been approved 🙌🏾',
@@ -51,8 +51,8 @@ export default {
     type: 'Deny',
     title: 'Deny Document',
     content: 'Are you sure you want to deny this document?',
-    executeAction: ({ record, resource }: { record: Record, resource: string }) : Promise<any> => {
-      denyDocument({ resource, record: prepareRecord(record) });
+    executeAction: async ({ record, resource }: { record: Record, resource: string }) : Promise<any> => {
+      await denyDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
     },
     successMessage: 'Document has been denied 🙅🏾‍♀️',

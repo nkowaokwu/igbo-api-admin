@@ -25,6 +25,6 @@ export default async (req: Request, res: Response, next: NextFunction): Promise<
     return next();
   } catch (err) {
     res.status(400);
-    return res.send(err);
+    return res.send({ message: err.message });
   }
 };

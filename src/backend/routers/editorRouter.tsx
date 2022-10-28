@@ -5,6 +5,8 @@ import {
   getWordSuggestions,
   putWordSuggestion,
   postWordSuggestion,
+  approveWordSuggestion,
+  denyWordSuggestion,
 } from '../controllers/wordSuggestions';
 import {
   deleteCorpusSuggestion,
@@ -12,6 +14,8 @@ import {
   getCorpusSuggestions,
   putCorpusSuggestion,
   postCorpusSuggestion,
+  approveCorpusSuggestion,
+  denyCorpusSuggestion,
 } from '../controllers/corpusSuggestions';
 import {
   deleteWord,
@@ -33,6 +37,8 @@ import {
   getExampleSuggestions,
   putExampleSuggestion,
   postExampleSuggestion,
+  approveExampleSuggestion,
+  denyExampleSuggestion,
 } from '../controllers/exampleSuggestions';
 import { getStats, getUserStats, getUserMergeStats } from '../controllers/stats';
 import {
@@ -85,6 +91,8 @@ editorRouter.get('/wordSuggestions', getWordSuggestions);
 editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggestion, postWordSuggestion);
 editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggestion, putWordSuggestion);
 editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
+editorRouter.put('/wordSuggestions/:id/approve', validId, approveWordSuggestion);
+editorRouter.put('/wordSuggestions/:id/deny', validId, denyWordSuggestion);
 editorRouter.delete(
   '/wordSuggestions/:id',
   validId,
@@ -102,6 +110,8 @@ editorRouter.post(
 );
 editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggestion, putExampleSuggestion);
 editorRouter.get('/exampleSuggestions/:id', validId, getExampleSuggestion);
+editorRouter.put('/exampleSuggestions/:id/approve', validId, approveExampleSuggestion);
+editorRouter.put('/exampleSuggestions/:id/deny', validId, denyExampleSuggestion);
 editorRouter.delete(
   '/exampleSuggestions/:id',
   validId,
@@ -113,6 +123,8 @@ editorRouter.get('/corpusSuggestions', getCorpusSuggestions);
 editorRouter.post('/corpusSuggestions', validateCorpusBody, interactWithSuggestion, postCorpusSuggestion);
 editorRouter.put('/corpusSuggestions/:id', validId, validateCorpusBody, interactWithSuggestion, putCorpusSuggestion);
 editorRouter.get('/corpusSuggestions/:id', validId, getCorpusSuggestion);
+editorRouter.put('/corpusSuggestions/:id/approve', validId, approveCorpusSuggestion);
+editorRouter.put('/corpusSuggestions/:id/deny', validId, denyCorpusSuggestion);
 editorRouter.delete(
   '/corpusSuggestions/:id',
   validId,

@@ -43,4 +43,15 @@ export default {
       };
     })
   ),
+  update: (resource: Collection, params: any): Promise<{ data: any } | void> => (
+    httpClient(`${API_ROUTE}/${resource}/${params.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(params.data),
+    }).then(({ json, body }) => {
+      if (!json) {
+        throw body;
+      }
+      return { data: json };
+    })
+  ),
 };

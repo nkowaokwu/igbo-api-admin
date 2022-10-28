@@ -5,7 +5,7 @@ import SuggestionSource from '../shared/constants/SuggestionSource';
 import ExampleStyle from '../shared/constants/ExampleStyle';
 
 const { Types } = mongoose;
-const exampleDataSchema = Joi.object().keys({
+export const exampleDataSchema = Joi.object().keys({
   originalExampleId: Joi.string().external(async (value) => {
     if (value && !Types.ObjectId.isValid(value)) {
       throw new Error('Invalid original example id provided');
@@ -17,6 +17,9 @@ const exampleDataSchema = Joi.object().keys({
   meaning: Joi.string().allow('').optional(),
   style: Joi.string().valid(...Object.values(ExampleStyle).map(({ value }) => value)).optional(),
   associatedWords: Joi.array().external(async (associatedWords) => {
+    if (!associatedWords) {
+      return true;
+    }
     const isEveryAssociatedWordIdValid = associatedWords.every((wordId) => Types.ObjectId.isValid(wordId));
     if (!isEveryAssociatedWordIdValid) {
       throw new Error('Invalid associated word id');
@@ -28,9 +31,7 @@ const exampleDataSchema = Joi.object().keys({
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),
   authorId: Joi.string().allow('').optional(),
-  approvals: Joi.array().min(0).items(Joi.string()).optional(),
-  denials: Joi.array().min(0).items(Joi.string()).optional(),
-  source: Joi.string().valid(...Object.values(SuggestionSource)),
+  source: Joi.string().valid(...Object.values(SuggestionSource)).optional(),
 });
 
 export default async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
@@ -41,6 +42,10 @@ export default async (req: Request, res: Response, next: NextFunction): Promise<
     return next();
   } catch (err) {
     res.status(400);
-    return res.send({ error: err.message });
+    if (err.details) {
+      const errorMessage = err.details.map(({ message }) => message).join('. ');
+      return res.send({ message: errorMessage });
+    }
+    return res.send({ message: err.message });
   }
 };

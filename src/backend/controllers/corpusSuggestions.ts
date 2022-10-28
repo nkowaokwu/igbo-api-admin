@@ -1,11 +1,6 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import {
-  assign,
-  every,
-  has,
-  partial,
-} from 'lodash';
+import { assign } from 'lodash';
 import CorpusSuggestion from '../models/CorpusSuggestion';
 import { packageResponse, handleQueries } from './utils';
 import { searchPreExistingCorpusSuggestionsRegexQuery } from './utils/queries';
@@ -14,8 +9,6 @@ import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteMedia } from './utils/MediaAPIs/CorpusMediaAPI';
-
-const REQUIRE_KEYS = ['title', 'body', 'media'];
 
 /* Creates a new CorpusSuggestion document in the database */
 export const postCorpusSuggestion = async (
@@ -26,10 +19,6 @@ export const postCorpusSuggestion = async (
   try {
     const { body: data } = req;
     const { user } = req;
-
-    if (data.id) {
-      throw new Error('Cannot pass along an id for a new corpus suggestion');
-    }
 
     data.authorId = user.uid;
     const newCorpusSuggestion = new CorpusSuggestion(data);
@@ -72,10 +61,6 @@ export const putCorpusSuggestion = (
       body: data,
       params: { id },
     } = req;
-    if (!every(REQUIRE_KEYS, partial(has, data))) {
-      throw new Error('Required information is missing, double check your provided data');
-    }
-
     return findCorpusSuggestionById(id)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
@@ -178,6 +163,52 @@ export const deleteCorpusSuggestion = (
       .catch(() => {
         throw new Error('An error has occurred while deleting and return a single corpus suggestion');
       });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const approveCorpusSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const corpusSuggestion = await CorpusSuggestion.findById(id);
+    if (!corpusSuggestion) {
+      throw new Error('Corpus suggestion doesn\'t exist');
+    }
+    const updatedApprovals = new Set(corpusSuggestion.approvals);
+    const updatedDenials = corpusSuggestion.denials.filter((uid) => uid !== user.uid);
+    updatedApprovals.add(user.uid);
+    corpusSuggestion.approvals = Array.from(updatedApprovals);
+    corpusSuggestion.denials = updatedDenials;
+    const savedCorpusSuggestion = await corpusSuggestion.save();
+    return res.send(savedCorpusSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const denyCorpusSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const corpusSuggestion = await CorpusSuggestion.findById(id);
+    if (!corpusSuggestion) {
+      throw new Error('Corpus suggestion doesn\'t exist');
+    }
+    const updatedDenials = new Set(corpusSuggestion.denials);
+    const updatedApprovals = corpusSuggestion.approvals.filter((uid) => uid !== user.uid);
+    updatedDenials.add(user.uid);
+    corpusSuggestion.denials = Array.from(updatedDenials);
+    corpusSuggestion.approvals = updatedApprovals;
+    const savedCorpusSuggestion = await corpusSuggestion.save();
+    return res.send(savedCorpusSuggestion);
   } catch (err) {
     return next(err);
   }

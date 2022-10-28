@@ -28,7 +28,8 @@ export const createExampleSuggestion = async (data: Interfaces.ExampleClientData
       }
     }));
   } catch (err) {
-    return err.message;
+    console.log(err.message);
+    throw err;
   }
 
   const newExampleSuggestion = new ExampleSuggestion(data);
@@ -44,10 +45,6 @@ export const postExampleSuggestion = async (req: Request, res: Response, next: N
     const { body: data } = req;
     const { user } = req;
 
-    if (data.id) {
-      throw new Error('Cannot pass along an id for a new example suggestion');
-    }
-
     data.authorId = user.uid;
     await Promise.all(
       map(data.associatedWords, async (associatedWordId) => {
@@ -57,8 +54,8 @@ export const postExampleSuggestion = async (req: Request, res: Response, next: N
       }),
     );
 
-    const createdExampleSuggestion = createExampleSuggestion(data);
-    return res.send(await createdExampleSuggestion);
+    const createdExampleSuggestion = await createExampleSuggestion(data);
+    return res.send(createdExampleSuggestion);
   } catch (err) {
     return next(err);
   }
@@ -219,3 +216,49 @@ export const getNonMergedExampleSuggestions = (): Promise<any> => (
     .lean()
     .exec()
 );
+
+export const approveExampleSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.ExampleSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const exampleSuggestion = await ExampleSuggestion.findById(id);
+    if (!exampleSuggestion) {
+      throw new Error('Example suggestion doesn\'t exist');
+    }
+    const updatedApprovals = new Set(exampleSuggestion.approvals);
+    const updatedDenials = exampleSuggestion.denials.filter((uid) => uid !== user.uid);
+    updatedApprovals.add(user.uid);
+    exampleSuggestion.approvals = Array.from(updatedApprovals);
+    exampleSuggestion.denials = updatedDenials;
+    const savedExampleSuggestion = await exampleSuggestion.save();
+    return res.send(savedExampleSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const denyExampleSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.ExampleSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const exampleSuggestion = await ExampleSuggestion.findById(id);
+    if (!exampleSuggestion) {
+      throw new Error('Example suggestion doesn\'t exist');
+    }
+    const updatedDenials = new Set(exampleSuggestion.denials);
+    const updatedApprovals = exampleSuggestion.approvals.filter((uid) => uid !== user.uid);
+    updatedDenials.add(user.uid);
+    exampleSuggestion.denials = Array.from(updatedDenials);
+    exampleSuggestion.approvals = updatedApprovals;
+    const savedExampleSuggestion = await exampleSuggestion.save();
+    return res.send(savedExampleSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};

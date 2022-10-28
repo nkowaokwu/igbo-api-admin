@@ -50,7 +50,10 @@ const Select = ({
   const [uid, setUid] = useState('');
   const redirect = useRedirect();
   useFirebaseUid(setUid);
-  const hasEnoughApprovals = (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
+  const hasEnoughApprovals = (
+    resource !== Collection.WORD_SUGGESTIONS
+    || (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS
+  );
 
   const clearConfirmOpen = () => {
     setAction(null);

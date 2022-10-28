@@ -89,14 +89,12 @@ export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promis
 
 export const approveDocument = ({ resource, record }: { resource: string, record: Record }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
-  data: record,
+  url: `${API_ROUTE}/${resource}/${record.id}/approve`,
 });
 
 export const denyDocument = ({ resource, record }: { resource: string, record: Record }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
-  data: record,
+  url: `${API_ROUTE}/${resource}/${record.id}/deny`,
 });
 
 export const mergeDocument = ({ collection, record }: { collection: string, record: Record }): Promise<any> => request({
@@ -146,5 +144,12 @@ export const removePayloadFields = (payload: any): any => (
     'merged',
     'mergedBy',
     'userInteractions',
+    'media',
+    'approvals',
+    'denials',
+    'hypernyms',
+    'hyponyms',
+    'duration',
+    'twitterPollId',
   ])
 );
