@@ -4,6 +4,7 @@ import {
   uniqBy,
   some,
 } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import moment from 'moment';
 import WordClass from 'src/shared/constants/WordClass';
 import {
@@ -111,12 +112,13 @@ describe('MongoDB Words', () => {
     });
 
     it('should return newly created word by searching with keyword', async () => {
-      const res = await suggestNewWord(wordSuggestionData);
-      const mergingWordSuggestion = { ...res.body, ...wordSuggestionData };
+      const customWord = uuid();
+      const res = await suggestNewWord({ ...wordSuggestionData, word: customWord });
+      const mergingWordSuggestion = { ...wordSuggestionData, ...res.body };
       const result = await createWord(mergingWordSuggestion.id);
       expect(result.status).toEqual(200);
       expect(result.body.id).not.toEqual(undefined);
-      const wordRes = await getWords({ keyword: wordSuggestionData.word });
+      const wordRes = await getWords({ keyword: result.body.word });
       expect(wordRes.status).toEqual(200);
       expect(some(wordRes.body, (word) => word.word === mergingWordSuggestion.word)).toEqual(true);
     });
@@ -216,10 +218,18 @@ describe('MongoDB Words', () => {
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
       expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
       expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
-      expect(isEqual(definitions, firstWord.definitions)).toBeTruthy();
-      expect(isEqual(definitions, wordWithNullStems.definitions)).toBeTruthy();
-      expect(isEqual(variations, firstWord.variations)).toBeTruthy();
-      expect(isEqual(variations, wordWithNullStems.variations)).toBeTruthy();
+      firstWord.definitions.forEach((definition) => {
+        expect(definitions.includes(definition)).toBeTruthy();
+      });
+      wordWithNullStems.definitions.forEach((definition) => {
+        expect(definitions.includes(definition)).toBeTruthy();
+      });
+      firstWord.variations.forEach((variation) => {
+        expect(variations.includes(variation)).toBeTruthy();
+      });
+      wordWithNullStems.variations.forEach((variation) => {
+        expect(variations.includes(variation)).toBeTruthy();
+      });
       expect(stems).toHaveLength(0);
       expect(firstWord.stems).toBe(null);
       expect(wordWithNullStems.stems).toHaveLength(0);

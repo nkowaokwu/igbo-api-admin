@@ -3,16 +3,16 @@ import WordClass from 'src/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
 
-const wordId = new ObjectId('5f864d7401203866b6546dd3');
-const wordSuggestionId = new ObjectId();
-const wordSuggestionData = {
+export const wordId = new ObjectId('5f864d7401203866b6546dd3');
+export const wordSuggestionId = new ObjectId();
+export const wordSuggestionData = {
   word: 'word',
   wordClass: WordClass.NNC.value,
   definitions: ['first'],
   dialects: {},
 };
 
-const wordSuggestionApprovedData = {
+export const wordSuggestionApprovedData = {
   originalWordId: wordId,
   word: 'word',
   wordClass: WordClass.NNC.value,
@@ -20,71 +20,88 @@ const wordSuggestionApprovedData = {
   approvals: ['first user', 'second user'],
 };
 
-const malformedWordSuggestionData = {
+export const malformedWordSuggestionData = {
   word: 'word',
   wordCllass: 'wordClass',
   definitions: ['first'],
 };
 
-const updatedWordSuggestionData = {
+export const updatedWordSuggestionData = {
   word: 'newWord',
   wordClass: WordClass.ADJ.value,
   definitions: ['first', 'second'],
 };
 
-const malformedWordData = {
+export const malformedWordData = {
   worrd: 'newWord',
   wordClass: '',
   definitions: [],
 };
 
-const updatedWordData = {
+export const updatedWordData = {
   word: 'newWord',
   wordClass: WordClass.AV.value,
   definitions: [],
 };
 
-const exampleSuggestionData = {
+export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
+  pronunciation: '',
 };
 
-const exampleSuggestionApprovedData = {
+export const exampleSuggestionApprovedData = {
   igbo: 'igbo text',
   english: 'english text',
   approvals: ['first user', 'second user'],
 };
 
-const malformedExampleSuggestionData = {
+export const malformedExampleSuggestionData = {
   associatedWords: ['wrong'],
 };
 
-const exampleId = new ObjectId('5f864d7401203866b6546dd3');
-const updatedExampleSuggestionData = {
+export const exampleId = new ObjectId('5f864d7401203866b6546dd3');
+export const updatedExampleSuggestionData = {
   igbo: 'updated igbo',
   english: 'updated english',
   associatedWords: [exampleId],
 };
 
-const exampleData = {
+export const exampleData = {
   igbo: 'igbo text',
   english: 'english text',
 };
 
-const updatedExampleData = {
+export const updatedExampleData = {
   igbo: 'updated igbo text',
   english: 'updated english text',
   associatedWords: ['5f864d7401203866b6546dd3'],
 };
+export const corpusId = new ObjectId('5f864d7401203866b6546dd5');
+export const corpusSuggestionId = new ObjectId();
+export const corpusSuggestionData = {
+  title: 'corpus title',
+  body: 'corpus body',
+};
 
-const malformedGenericWordData = {
+export const updatedCorpusSuggestionData = {
+  title: 'updated corpus title',
+  body: 'updated corpus body',
+};
+
+export const malformedCorpusSuggestionData = {
+  title: 'corpus title',
+  bodyy: 'malformed body',
+};
+
+export const malformedGenericWordData = {
   word: 'newGenericWord',
   wordClass: '',
   definitions: [],
   approvals: 'car',
 };
 
-const updatedGenericWordData = {
+export const updatedGenericWordData = {
   word: 'newWord',
   wordClass: 'verb',
   definitions: ['required'],
@@ -92,43 +109,20 @@ const updatedGenericWordData = {
   denials: 1,
 };
 
-const wordSuggestionWithNestedExampleSuggestionData = {
+export const wordSuggestionWithNestedExampleSuggestionData = {
   ...wordSuggestionData,
   examples: [exampleSuggestionData],
 };
 
-const developerData = {
+export const developerData = {
   name: 'Developer',
   email: 'developer@example.com',
   password: 'password',
   host: 'test.com',
 };
 
-const malformedDeveloperData = {
+export const malformedDeveloperData = {
   name: 'Developer',
   email: 'developer@example.com',
   password: 'password',
-};
-
-export {
-  wordId,
-  wordSuggestionId,
-  wordSuggestionData,
-  wordSuggestionApprovedData,
-  malformedWordSuggestionData,
-  updatedWordSuggestionData,
-  wordSuggestionWithNestedExampleSuggestionData,
-  malformedWordData,
-  updatedWordData,
-  exampleId,
-  exampleSuggestionData,
-  exampleSuggestionApprovedData,
-  malformedExampleSuggestionData,
-  updatedExampleSuggestionData,
-  exampleData,
-  updatedExampleData,
-  malformedGenericWordData,
-  updatedGenericWordData,
-  developerData,
-  malformedDeveloperData,
 };

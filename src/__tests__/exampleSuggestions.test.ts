@@ -1,4 +1,5 @@
 import { forEach, every, isEqual } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -42,7 +43,7 @@ describe('MongoDB Example Suggestions', () => {
     it('should return an example error because of malformed data', async () => {
       const res = await suggestNewExample(malformedExampleSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.error).not.toEqual(undefined);
+      expect(res.body.message).not.toEqual(undefined);
     });
 
     it('should return an example error because of invalid associateWords ids', async () => {
@@ -52,7 +53,7 @@ describe('MongoDB Example Suggestions', () => {
       };
       const res = await suggestNewExample(malformedData);
       expect(res.status).toEqual(400);
-      expect(res.body.error).not.toEqual(undefined);
+      expect(res.body.message).not.toEqual(undefined);
     });
   });
 
@@ -62,7 +63,7 @@ describe('MongoDB Example Suggestions', () => {
       const wordsRes = await getWords();
       expect(wordsRes.status).toEqual(200);
       const word = wordsRes.body[0];
-      const res = await suggestNewExample({ ...exampleSuggestionData, associatedWords: [word.id] });
+      const res = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid(), associatedWords: [word.id] });
       expect(res.status).toEqual(200);
       expect([undefined, null, '']).not.toContain(res.body.authorId);
       const result = await updateExampleSuggestion({ ...res.body, igbo: updatedIgboText });
@@ -131,7 +132,7 @@ describe('MongoDB Example Suggestions', () => {
         suggestNewExample(exampleSuggestionData),
         suggestNewExample(exampleSuggestionApprovedData),
       ]);
-      await approveExampleSuggestion(exampleSuggestionsRes[0].body);
+      await approveExampleSuggestion(exampleSuggestionsRes[0]);
       const res = await getExampleSuggestions();
       expect(res.status).toEqual(200);
       expectArrayIsInOrder(res.body, 'approvals', SortingDirections.DESCENDING);
