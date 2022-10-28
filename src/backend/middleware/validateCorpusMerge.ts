@@ -1,42 +1,37 @@
-import { Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
 import { findCorpusSuggestionById } from '../controllers/corpusSuggestions';
-import * as Interfaces from '../controllers/utils/interfaces';
 
-export default async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  const { body: data } = req;
-  const { user } = req;
-  const suggestionDoc: any = (await findCorpusSuggestionById(data.id));
+const { Types } = mongoose;
+const corpusMergeDataSchema = Joi.object().keys({
+  id: Joi.string().external(async (value) => {
+    if (value && !Types.ObjectId.isValid(value)) {
+      throw new Error('Invalid original corpus id provided');
+    }
+    return true;
+  }),
+});
+
+export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
+  const { body: finalData, user } = req;
+  const suggestionDoc: any = (await findCorpusSuggestionById(finalData.id));
+  req.suggestionDoc = suggestionDoc;
 
   if (!user || (user && !user.uid)) {
     res.status(400);
-    return res.send({ error: 'User uid is required' });
+    return res.send(new Error('User uid is required'));
   }
 
-  if (!suggestionDoc) {
+  try {
+    await corpusMergeDataSchema.validateAsync(finalData, { abortEarly: false });
+    return next();
+  } catch (err) {
     res.status(400);
-    return res.send({
-      error: 'There is no associated corpus suggestion, double check your provided data',
-    });
+    if (err.details) {
+      const errorMessage = err.details.map(({ message }) => message).join('. ');
+      return res.send({ message: errorMessage });
+    }
+    return res.send({ message: err.message });
   }
-
-  if (!suggestionDoc.title) {
-    res.status(400);
-    return res.send({ error: 'The title property is missing, double check your provided data' });
-  }
-
-  if (!suggestionDoc.body) {
-    res.status(400);
-    return res.send({ error: 'The body class property is missing, double check your provided data' });
-  }
-
-  if (!suggestionDoc.id) {
-    res.status(400);
-    return res.send({ error: 'The id property is missing, double check your provided data' });
-  }
-  req.suggestionDoc = suggestionDoc;
-  return next();
 };

@@ -1,48 +1,39 @@
-import { Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
 import { findGenericWordById } from '../controllers/genericWords';
 import { findWordSuggestionById } from '../controllers/wordSuggestions';
-import * as Interfaces from '../controllers/utils/interfaces';
 
-export default async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  const { body: data } = req;
-  const { user } = req;
-  const suggestionDoc: any = (await findWordSuggestionById(data.id)) || (await findGenericWordById(data.id));
+const { Types } = mongoose;
+const wordMergeDataSchema = Joi.object().keys({
+  id: Joi.string().external(async (value) => {
+    if (value && !Types.ObjectId.isValid(value)) {
+      throw new Error('Invalid original word id provided');
+    }
+    return true;
+  }),
+});
+
+export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
+  const { body: finalData, user } = req;
+  const suggestionDoc: any = ((await findWordSuggestionById(finalData.id))
+  || (await findGenericWordById(finalData.id)));
+  req.suggestionDoc = suggestionDoc;
 
   if (!user || (user && !user.uid)) {
     res.status(400);
-    return res.send({ error: 'User uid is required' });
+    return res.send(new Error('User uid is required'));
   }
 
-  if (!suggestionDoc) {
+  try {
+    await wordMergeDataSchema.validateAsync(finalData, { abortEarly: false });
+    return next();
+  } catch (err) {
     res.status(400);
-    return res.send({
-      error: 'There is no associated generic word or word suggestion, double check your provided data',
-    });
+    if (err.details) {
+      const errorMessage = err.details.map(({ message }) => message).join('. ');
+      return res.send({ message: errorMessage });
+    }
+    return res.send({ message: err.message });
   }
-
-  if (!suggestionDoc.word) {
-    res.status(400);
-    return res.send({ error: 'The word property is missing, double check your provided data' });
-  }
-
-  if (!suggestionDoc.wordClass) {
-    res.status(400);
-    return res.send({ error: 'The word class property is missing, double check your provided data' });
-  }
-
-  if (!suggestionDoc.definitions) {
-    res.status(400);
-    return res.send({ error: 'The definition property is missing, double check your provided data' });
-  }
-
-  if (!suggestionDoc.id) {
-    res.status(400);
-    return res.send({ error: 'The id property is missing, double check your provided data' });
-  }
-  req.suggestionDoc = suggestionDoc;
-  return next();
 };

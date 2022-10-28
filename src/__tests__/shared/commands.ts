@@ -8,6 +8,7 @@ import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { resultsFromDictionarySearch } from 'src/backend/services/words';
 import { sendEmail } from 'src/backend/controllers/email';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { removePayloadFields } from 'src/shared/API';
 import './script';
 import { app as expressServer } from '../../../index';
 import {
@@ -67,6 +68,12 @@ export const deleteExampleSuggestion = (id: string, options = { token: '' }): Re
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const getCorpusSuggestion = (id: string, options = { token: '' }): Request => (
+  chaiServer
+    .get(`/corpusSuggestions/${id}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 export const getCorpusSuggestions = (query = {}, options = { token: '' }): Request => (
   chaiServer
     .get('/corpusSuggestions')
@@ -87,13 +94,19 @@ export const deleteCorpusSuggestion = (id: string, options = { token: '' }): Req
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const createWord = (id: string, query = {}, options = { token: '' }): Request => (
-  chaiServer
+export const createWord = async (id: string, query = {}, options = { token: '' }): Promise<Request> => {
+  await chaiServer
+    .put(`/wordSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+  await chaiServer
+    .put(`/wordSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.MERGER_AUTH_TOKEN}`);
+  return chaiServer
     .post('/words')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
-    .send({ id })
-);
+    .send({ id });
+};
 
 export const deleteWord = (id: string, primaryWordId: string, options = { token: '' }): Request => (
   chaiServer
@@ -102,21 +115,34 @@ export const deleteWord = (id: string, primaryWordId: string, options = { token:
     .send({ primaryWordId })
 );
 
-export const createExample = (id: string, query = {}, options = { token: '' }): Request => (
-  chaiServer
+export const createExample = async (id: string, query = {}, options = { token: '' }): Promise<Request> => {
+  await chaiServer
+    .put(`/exampleSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+  await chaiServer
+    .put(`/exampleSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.MERGER_AUTH_TOKEN}`);
+  return chaiServer
     .post('/examples')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
-    .send({ id })
-);
+    .send({ id });
+};
 
-export const createCorpus = (id: string, query = {}, options = { token: '' }): Request => (
-  chaiServer
+export const createCorpus = async (id: string, query = {}, options = { token: '' }): Promise<Request> => {
+  await chaiServer
+    .put(`/corpusSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+  await chaiServer
+    .put(`/corpusSuggestions/${id}/approve`)
+    .set('Authorization', `Bearer ${AUTH_TOKEN.MERGER_AUTH_TOKEN}`);
+  return chaiServer
     .post('/corpus')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
-    .send({ id })
-);
+    .send({ id });
+};
+
 export const createPoll = (id: string, query = {}, options = { token: '' }): Request => (
   chaiServer
     .post('/corpus')
@@ -128,59 +154,94 @@ export const createPoll = (id: string, query = {}, options = { token: '' }): Req
 export const suggestNewWord = (data: any, options = { noApprovals: false, token: '' }): Request => (
   chaiServer
     .post('/wordSuggestions')
-    .send({
-      ...data,
-      approvals: options.noApprovals ? [] : ['first approval', 'second approval'],
-    })
+    .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
 export const suggestNewExample = (data: any, options = { token: '' }): Request => (
   chaiServer
     .post('/exampleSuggestions')
-    .send(data)
+    .send(removePayloadFields(data))
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const suggestNewCorpus = (data: any, options = { token: '', cleanData: true }): Request => (
+  chaiServer
+    .post('/corpusSuggestions')
+    .send(options?.cleanData ? removePayloadFields(data) : data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
 export const updateWordSuggestion = (data: any, options = { token: '' }): Request => (
   chaiServer
     .put(`/wordSuggestions/${data.id}`)
-    .send(data)
+    .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
 export const updateExampleSuggestion = (data: any, options = { token: '' }): Request => (
   chaiServer
     .put(`/exampleSuggestions/${data.id}`)
-    .send(data)
+    .send(removePayloadFields(data))
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const updateCorpusSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/corpusSuggestions/${data.id}`)
+    .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
 export const updateWord = (data: any, options = { token: '' }): Request => (
   chaiServer
     .put(`/words/${data.id}`)
-    .send(data)
+    .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
 export const updateExample = (data: any, options = { token: '' }): Request => (
   chaiServer
     .put(`/examples/${data.id}`)
-    .send(data)
+    .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const approveWordSuggestion = (data: any): Request => {
-  const approvedData = data;
-  approvedData.approvals.push('approval');
-  return updateWordSuggestion({ id: data.id, ...data });
-};
+export const approveWordSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/wordSuggestions/${data.id}/approve`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
 
-export const approveExampleSuggestion = (data: any): Request => {
-  const approvedData = data;
-  approvedData.approvals.push('approval');
-  return updateExampleSuggestion({ id: data.id, ...data });
-};
+export const approveExampleSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/exampleSuggestions/${data.id}/approve`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const approveCorpusSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/corpusSuggestions/${data.id}/approve`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const denyWordSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/wordSuggestions/${data.id}/deny`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const denyExampleSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/exampleSuggestions/${data.id}/deny`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const denyCorpusSuggestion = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/corpusSuggestions/${data.id}/deny`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
 
 /* Searches for words using the data in MongoDB */
 export const getWords = (query = {}, options = { token: '', apiKey: '', origin: '' }): Request => (

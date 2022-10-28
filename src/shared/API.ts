@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { omit } from 'lodash';
 import { Record } from 'react-admin';
 import { EmptyResponse } from './server-validation';
 import { useCallable } from '../hooks/useCallable';
@@ -41,6 +42,7 @@ export const getWords = async (word: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/words?keyword=${word}`,
 })).data;
+
 export const getWordSuggestions = async (word: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/wordSuggestions?keyword=${word}`,
@@ -49,6 +51,11 @@ export const getWordSuggestions = async (word: string): Promise<any> => (await r
 export const getExample = async (id: string): Promise<any> => (await request({
   method: 'GET',
   url: `${API_ROUTE}/examples/${id}`,
+})).data;
+
+export const getCorpus = async (id: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `${API_ROUTE}/corpora/${id}`,
 })).data;
 
 export const resolveWord = (wordId: string): Promise<any> => network(`/words/${wordId}`)
@@ -82,14 +89,12 @@ export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promis
 
 export const approveDocument = ({ resource, record }: { resource: string, record: Record }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
-  data: record,
+  url: `${API_ROUTE}/${resource}/${record.id}/approve`,
 });
 
 export const denyDocument = ({ resource, record }: { resource: string, record: Record }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
-  data: record,
+  url: `${API_ROUTE}/${resource}/${record.id}/deny`,
 });
 
 export const mergeDocument = ({ collection, record }: { collection: string, record: Record }): Promise<any> => request({
@@ -127,3 +132,24 @@ export const assignUserToEditingGroup = ({
 };
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
+
+export const removePayloadFields = (payload: any): any => (
+  omit(payload, [
+    'id',
+    'updatedAt',
+    'createdAt',
+    'author',
+    'authorEmail',
+    'authorId',
+    'merged',
+    'mergedBy',
+    'userInteractions',
+    'media',
+    'approvals',
+    'denials',
+    'hypernyms',
+    'hyponyms',
+    'duration',
+    'twitterPollId',
+  ])
+);

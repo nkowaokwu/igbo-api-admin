@@ -1,10 +1,14 @@
 import { fetchUtils } from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
+import Collection from 'src/shared/constants/Collections';
 import { API_ROUTE } from '../shared/constants';
 import authProvider from './authProvider';
 
-export const httpClient = async (url: string, options?: { headers: any }): Promise<any | void> => {
+export const httpClient = async (
+  url: string,
+  options?: { headers?: any, method: string, body: string },
+): Promise<any | void> => {
   const updatedOptions = assign(options);
   try {
     if (!updatedOptions.headers) {
@@ -24,4 +28,30 @@ export const httpClient = async (url: string, options?: { headers: any }): Promi
   }
 };
 
-export default restProvider(API_ROUTE, httpClient);
+export default {
+  ...restProvider(API_ROUTE, httpClient),
+  create: (resource: Collection, params: any): Promise<{ data: any } | void> => (
+    httpClient(`${API_ROUTE}/${resource}`, {
+      method: 'POST',
+      body: JSON.stringify(params.data),
+    }).then(({ json, body }) => {
+      if (!json) {
+        throw body;
+      }
+      return {
+        data: { ...params.data, id: json.id },
+      };
+    })
+  ),
+  update: (resource: Collection, params: any): Promise<{ data: any } | void> => (
+    httpClient(`${API_ROUTE}/${resource}/${params.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(params.data),
+    }).then(({ json, body }) => {
+      if (!json) {
+        throw body;
+      }
+      return { data: json };
+    })
+  ),
+};

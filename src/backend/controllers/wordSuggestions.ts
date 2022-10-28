@@ -1,13 +1,6 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import {
-  assign,
-  every,
-  has,
-  partial,
-  map,
-  trim,
-} from 'lodash';
+import { assign, map, trim } from 'lodash';
 import WordSuggestion from '../models/WordSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
@@ -22,8 +15,6 @@ import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
-
-const REQUIRE_KEYS = ['word', 'wordClass', 'definitions'];
 
 const assignDefaultDialectValues = (data: Interfaces.WordSuggestion) => (
   Object.entries(data.dialects || {}).reduce((finalDialects, [key, value]) => ({
@@ -40,10 +31,6 @@ export const postWordSuggestion = async (
 ): Promise<Response | void> => {
   try {
     const { body: data, user } = req;
-
-    if (data.id) {
-      throw new Error('Cannot pass along an id for a new word suggestion');
-    }
 
     data.authorId = user.uid;
     data.dialects = assignDefaultDialectValues(data); // Assigns default word values
@@ -90,10 +77,6 @@ export const putWordSuggestion = (req: Request, res: Response, next: NextFunctio
       params: { id },
     } = req;
     const clientExamples = getExamplesFromClientData(data);
-
-    if (!every(REQUIRE_KEYS, partial(has, data))) {
-      throw new Error('Required information is missing, double check your provided data');
-    }
 
     if (!Array.isArray(data.definitions)) {
       data.definitions = map(data.definitions.split(','), (definition) => trim(definition));
@@ -234,3 +217,49 @@ export const getNonMergedWordSuggestions = ():Promise<any> => (
     .lean()
     .exec()
 );
+
+export const approveWordSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.WordSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const wordSuggestion = await WordSuggestion.findById(id);
+    if (!wordSuggestion) {
+      throw new Error('Word suggestion doesn\'t exist');
+    }
+    const updatedApprovals = new Set(wordSuggestion.approvals);
+    const updatedDenials = wordSuggestion.denials.filter((uid) => uid !== user.uid);
+    updatedApprovals.add(user.uid);
+    wordSuggestion.approvals = Array.from(updatedApprovals);
+    wordSuggestion.denials = updatedDenials;
+    const savedWordSuggestion = await wordSuggestion.save();
+    return res.send(savedWordSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const denyWordSuggestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.WordSuggestion> | void> => {
+  const { params: { id }, user } = req;
+  try {
+    const wordSuggestion = await WordSuggestion.findById(id);
+    if (!wordSuggestion) {
+      throw new Error('Word suggestion doesn\'t exist');
+    }
+    const updatedDenials = new Set(wordSuggestion.denials);
+    const updatedApprovals = wordSuggestion.approvals.filter((uid) => uid !== user.uid);
+    updatedDenials.add(user.uid);
+    wordSuggestion.denials = Array.from(updatedDenials);
+    wordSuggestion.approvals = updatedApprovals;
+    const savedWordSuggestion = await wordSuggestion.save();
+    return res.send(savedWordSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};

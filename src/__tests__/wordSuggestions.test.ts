@@ -42,14 +42,23 @@ describe('MongoDB Word Suggestions', () => {
     it('should return a word error because of malformed data', async () => {
       const res = await suggestNewWord(malformedWordSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.error).not.toEqual(undefined);
+      expect(res.body.message).not.toEqual(undefined);
     });
 
     it('should return a word error because invalid id', async () => {
       const malformedData = { ...wordSuggestionData, originalWordId: 'ok123' };
       const res = await suggestNewWord(malformedData);
       expect(res.status).toEqual(400);
-      expect(res.body.error).not.toEqual(undefined);
+      expect(res.body.message).not.toEqual(undefined);
+    });
+
+    it('should throw an error because of invalid word class', async () => {
+      const res = await suggestNewWord({
+        ...wordSuggestionData,
+        wordClass: 'invalid',
+      });
+      expect(res.status).toEqual(400);
+      expect(res.body.message).not.toEqual(undefined);
     });
   });
 
@@ -81,7 +90,7 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.body.examples[0].english).toEqual(updatedEnglish);
     });
 
-    it('should update nested exampleSuggestion inside wordSuggestion despite invalid associatedWords', async () => {
+    it('should fail to update nested exampleSuggestion inside wordSuggestion for invalid associatedWords', async () => {
       const updatedIgbo = 'updated example igbo text';
       const updatedEnglish = 'updated example english text';
       const res = await suggestNewWord(wordSuggestionWithNestedExampleSuggestionData);
@@ -97,9 +106,7 @@ describe('MongoDB Word Suggestions', () => {
         examples: [updatedExampleSuggestion],
       };
       const result = await updateWordSuggestion({ id: res.body.id, ...updatedWordSuggestion });
-      expect(result.status).toEqual(200);
-      expect(result.body.examples[0].igbo).toEqual(updatedIgbo);
-      expect(result.body.examples[0].english).toEqual(updatedEnglish);
+      expect(result.status).toEqual(400);
     });
 
     it('should delete nested exampleSuggestion inside wordSuggestion', async () => {
@@ -140,7 +147,6 @@ describe('MongoDB Word Suggestions', () => {
       const { igbo, english } = res.body.examples[0];
       duplicateExampleSuggestionsInWordSuggestion.examples.push({ igbo, english });
       const result = await updateWordSuggestion(duplicateExampleSuggestionsInWordSuggestion);
-      console.log(result);
       expect(result.status).toEqual(400);
       expect(result.body.error).not.toEqual(undefined);
     });
@@ -210,7 +216,7 @@ describe('MongoDB Word Suggestions', () => {
         suggestNewWord(wordSuggestionData),
         suggestNewWord(wordSuggestionApprovedData),
       ]);
-      await approveWordSuggestion(wordSuggestionsRes[0].body);
+      await approveWordSuggestion(wordSuggestionsRes[0]);
       const res = await getWordSuggestions();
       expect(res.status).toEqual(200);
       expectArrayIsInOrder(res.body, 'approvals', SortingDirections.DESCENDING);

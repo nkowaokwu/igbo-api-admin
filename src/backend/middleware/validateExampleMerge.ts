@@ -1,15 +1,30 @@
-export default (req, res, next) => {
-  const { body: data } = req;
-  const { user } = req;
+import mongoose from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
+import Joi from 'joi';
+
+const { Types } = mongoose;
+const exampleMergeDataSchema = Joi.object().keys({
+  id: Joi.string().external(async (value) => {
+    if (value && !Types.ObjectId.isValid(value)) {
+      throw new Error('Invalid original example id provided');
+    }
+    return true;
+  }),
+});
+
+export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
+  const { body: finalData, user } = req;
 
   if (!user || (user && !user.uid)) {
     res.status(400);
-    return res.send({ error: 'User uid is required' });
+    return res.send(new Error('User uid is required'));
   }
 
-  if (!data.id) {
+  try {
+    await exampleMergeDataSchema.validateAsync(finalData, { abortEarly: false });
+    return next();
+  } catch (err) {
     res.status(400);
-    return res.send({ error: 'The id property is missing, double check your provided data' });
+    return res.send({ message: err.message });
   }
-  return next();
 };

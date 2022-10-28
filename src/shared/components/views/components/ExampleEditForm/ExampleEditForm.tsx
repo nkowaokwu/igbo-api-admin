@@ -11,7 +11,7 @@ import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { EditFormProps } from 'src/shared/interfaces';
-import { getExample } from 'src/shared/API';
+import { getExample, removePayloadFields } from 'src/shared/API';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import useCacheForm from 'src/hooks/useCacheForm';
@@ -89,7 +89,7 @@ const ExampleEditForm = ({
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const cleanedData = omit(assign(
+      const preparedData = omit(assign(
         {
           ...record,
           ...data,
@@ -101,6 +101,7 @@ const ExampleEditForm = ({
           denials: map(record.denials, (denial) => denial.uid),
         },
       ), [view === View.CREATE ? 'id' : '']);
+      const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
@@ -109,11 +110,11 @@ const ExampleEditForm = ({
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
           redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },
-        onFailure: (error: any) => {
-          const { body } = error;
+        onFailure: (err: any) => {
+          const { body, message } = err;
           toast({
             title: 'Error',
-            description: body?.error || error,
+            description: body?.error || message || 'An error occurred while saving example suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,

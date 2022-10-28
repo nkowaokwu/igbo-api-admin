@@ -244,7 +244,7 @@ const overwriteWordPronunciation = async (
     suggestion.pronunciation = finalPronunciationUri;
     word.pronunciation = finalPronunciationUri;
 
-    await Promise.all(Object.entries(suggestion.dialects).map(async ([
+    await Promise.all(Object.entries(suggestion.dialects || {}).map(async ([
       rawDialectalWord,
       { pronunciation: suggestionPronunciation },
     ]) => {
