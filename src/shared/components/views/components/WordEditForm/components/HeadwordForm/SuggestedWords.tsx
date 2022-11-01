@@ -1,4 +1,10 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { debounce } from 'lodash';
 import {
   Box,
   Link,
@@ -6,6 +12,7 @@ import {
   Tooltip,
   Popover,
   PopoverContent,
+  chakra,
 } from '@chakra-ui/react';
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import WordClass from 'src/shared/constants/WordClass';
@@ -16,22 +23,32 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
   const [openWordPopover, setOpenWordPopover] = useState(null);
   const [suggestedWords, setSuggestedWords] = useState([]);
   const [suggestedWordSuggestions, setSuggestedWordSuggestions] = useState([]);
+
+  const searchWordsAndWordSuggestions = useCallback(debounce(async (inputtedWord: string) => {
+    if (inputtedWord) {
+      const words = await getWords((inputtedWord).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      const suggestedWords = await getWordSuggestions((inputtedWord).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      setSuggestedWords(words);
+      setSuggestedWordSuggestions(suggestedWords);
+    }
+  }, 400), []);
+
   useEffect(() => {
-    (async () => {
-      if (word) {
-        const words = await getWords((word).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-        const suggestedWords = await getWordSuggestions((word).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-        setSuggestedWords(words);
-        setSuggestedWordSuggestions(suggestedWords);
-      }
-    })();
+    searchWordsAndWordSuggestions(word);
   }, [word]);
 
-  const filteredWords = suggestedWords.filter(({ id }) => wordId !== id);
-  const filteredWordSuggestions = suggestedWordSuggestions.filter(({ id }) => wordId !== id);
+  const filteredWords = word ? suggestedWords.filter(({ id }) => wordId !== id) : [];
+  const filteredWordSuggestions = word ? suggestedWordSuggestions.filter(({ id }) => wordId !== id) : [];
 
   return (
     <Box className="suggested-words-container" onMouseLeave={() => setOpenWordPopover(null)}>
+      {filteredWords.length || filteredWordSuggestions.length ? (
+        <Text color="orange.500" fontSize="sm" className="italic mt-4">
+          {'⚠️ If you are seeing similar existing below, '}
+          <chakra.span fontWeight="bold">please consider delete this document if necessary</chakra.span>
+          {' and edit those existing documents to avoid duplicates.'}
+        </Text>
+      ) : null}
       {filteredWords.length ? (
         <>
           <Tooltip
@@ -45,7 +62,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
             </Box>
           </Tooltip>
           <Box className="flex flex-row flex-wrap relative">
-            {filteredWords.length ? filteredWords.map(({
+            {filteredWords.map(({
               word,
               nsibidi,
               wordClass,
@@ -79,15 +96,19 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                     </Box>
                     <Text fontStyle="italic">{WordClass[wordClass]?.label || wordClass}</Text>
                     <Box>
-                      {definitions.map((definition, index) => (
-                        <Text key={definition}>{`${index + 1}. ${definition}`}</Text>
+                      {definitions.map(({ definitions, wordClass, _id }, index) => (
+                        <Text key={_id}>{`${index + 1}. (${wordClass}) ${definitions[0]}`}</Text>
                       ))}
                     </Box>
                   </PopoverContent>
                 </Popover>
               </Box>
-            )) : <Text color="gray.400" fontStyle="italic" fontSize="sm">No similar words</Text>}
+            ))}
           </Box>
+        </>
+      ) : null}
+      {filteredWordSuggestions.length ? (
+        <>
           <Tooltip
             label={`These are existing word suggestion documents. Please check to 
             see if these existing word suggestions need to be updated before 
@@ -99,7 +120,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
             </Box>
           </Tooltip>
           <Box className="flex flex-row flex-wrap relative">
-            {filteredWordSuggestions.length ? filteredWordSuggestions.map(({
+            {filteredWordSuggestions.map(({
               word,
               nsibidi,
               wordClass,
@@ -140,7 +161,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                   </PopoverContent>
                 </Popover>
               </Box>
-            )) : <Text color="gray.400" fontStyle="italic" fontSize="sm">No similar words</Text>}
+            ))}
           </Box>
         </>
       ) : null}
