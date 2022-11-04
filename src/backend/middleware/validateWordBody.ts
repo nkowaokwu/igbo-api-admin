@@ -18,9 +18,12 @@ export const wordDataSchema = Joi.object().keys({
     return true;
   }).allow(null).optional(),
   word: Joi.string().required(),
-  wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
   nsibidi: Joi.string().allow(''),
-  definitions: Joi.array().min(1).items(Joi.string()).required(),
+  definitions: Joi.array().min(1).items(Joi.object().keys({
+    wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
+    definitions: Joi.array().min(1).items(Joi.string()).required(),
+    label: Joi.string().allow('').optional(),
+  })).required(),
   attributes: Joi.object().keys(Object.values(WordAttributes).reduce((finalSchema, { value }) => ({
     ...finalSchema,
     [value]: Joi.boolean().optional(),
@@ -39,7 +42,7 @@ export const wordDataSchema = Joi.object().keys({
   tags: Joi.array().items(Joi.string().valid(...Object.values(WordTags).map(({ value }) => value))),
   tenses: Joi.object().keys(Object.values(Tense).reduce((finalSchema, { value }) => ({
     ...finalSchema,
-    [value]: Joi.string().optional,
+    [value]: Joi.string().allow('').optional(),
   }), {})).optional(),
   frequency: Joi.number().optional(),
   variations: Joi.array().min(0).items(Joi.string()),

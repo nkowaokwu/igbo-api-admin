@@ -163,7 +163,7 @@ export const getGenericWord = async (req, res, next) => {
     }
     const genericWordWithExamples = await placeExampleSuggestionsOnSuggestionDoc(genericWord);
     const populatedUsersGenericWordWithExamples = await populateFirebaseUsers(
-      genericWordWithExamples,
+      genericWordWithExamples.toObject(),
       ['approvals', 'denials'],
     );
     return res.send(populatedUsersGenericWordWithExamples);

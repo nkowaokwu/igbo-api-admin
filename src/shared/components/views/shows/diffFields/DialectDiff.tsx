@@ -29,7 +29,7 @@ const DialectDiff = (
   return record?.word ? (
     <Box className="w-full">
       {updatedDialects.length ? updatedDialects.map(({ value, label }) => (
-        <>
+        <Box key={label}>
           <Heading as="h1" className="text-xl mt-3">{label}</Heading>
           <Box className="flex flex-row items-center">
             <Heading as="h2" className="text-lg">Word:</Heading>
@@ -59,7 +59,7 @@ const DialectDiff = (
               )}
             />
           </Box>
-        </>
+        </Box>
       )) : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS ? (
         <Accordion
           defaultIndex={[0]}
@@ -72,8 +72,8 @@ const DialectDiff = (
               dialects,
               pronunciation,
             },
-          ], index) => (
-            <AccordionItem key={index}>
+          ]) => (
+            <AccordionItem key={dialectalWord}>
               <AccordionButton>
                 <Heading as="h2" size="sm" className="text-left">
                   {dialectalWord}
@@ -84,7 +84,7 @@ const DialectDiff = (
                 <Heading as="h2" size="sm" className="text-left mr-2">Dialects:</Heading>
                 <ul style={{ listStyle: 'inside' }}>
                   {dialects.map((dialect) => (
-                    <li>{Dialects[dialect].label}</li>
+                    <li key={dialect}>{Dialects[dialect].label}</li>
                   ))}
                 </ul>
                 {variations.length ? (

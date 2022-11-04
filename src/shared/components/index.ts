@@ -30,7 +30,6 @@ import {
   WordShow,
 } from './views/shows';
 import NewLineText from './NewLineText';
-import WordClassTextField from './WordClassTextField';
 import WordPanel from './WordPanel';
 import ShowNotificationButtonField from './ShowNotificationButtonField';
 
@@ -65,7 +64,6 @@ export {
   UserShow,
   WordShow,
   NewLineText,
-  WordClassTextField,
   WordPanel,
   ShowNotificationButtonField,
 };

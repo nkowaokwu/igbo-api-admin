@@ -12,11 +12,26 @@ const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
 const { Schema, Types } = mongoose;
-// @ts-ignore
+
+const definitionSchema = new Schema({
+  wordClass: {
+    type: String,
+    default: WordClass.NNC.value,
+    enum: Object.values(WordClass).map(({ value }) => value),
+  },
+  label: { type: String, default: '', trim: true },
+  definitions: { type: [{ type: String }], default: [] },
+}, { toObject: toObjectPlugin });
+
 const wordSchema = new Schema({
   word: { type: String, required: true },
-  wordClass: { type: String, default: '', enum: Object.values(WordClass).map(({ value }) => value) },
-  definitions: { type: [{ type: String }], default: [] },
+  definitions: [{
+    type: definitionSchema,
+    validate: (definitions) => (
+      Array.isArray(definitions)
+      && definitions.length > 0
+    ),
+  }],
   dialects: {
     type: Object,
     validate: (v) => {
@@ -69,6 +84,7 @@ const wordSchema = new Schema({
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(wordSchema);
+toJSONPlugin(definitionSchema);
 
 const WordModel = mongoose.model('Word', wordSchema);
 WordModel.syncIndexes();

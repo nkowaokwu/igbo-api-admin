@@ -104,7 +104,7 @@ const fullTextSearchQuery = (
       $or: [
         { word: keyword },
         { word: { $regex: regex.wordReg } },
-        { definitions: { $in: [regex.definitionsReg] } },
+        { 'definitions.definitions': { $in: [regex.definitionsReg] } },
         { variations: keyword },
         { nsibidi: keyword },
         { [`dialects.${keyword}`]: { $exists: true } },
@@ -119,8 +119,8 @@ const bodyQuery = (regex: SearchRegExp): { body: { $regex: RegExp } } => ({ body
 const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => (
   { variations: { $in: [regex.wordReg] } }
 );
-const definitionsQuery = (regex: SearchRegExp): { definitions: { $in: [RegExp] } } => (
-  { definitions: { $in: [regex.definitionsReg] } }
+const definitionsQuery = (regex: SearchRegExp): { 'definitions.definitions': { $in: [RegExp] } } => (
+  { 'definitions.definitions': { $in: [regex.definitionsReg] } }
 );
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
 

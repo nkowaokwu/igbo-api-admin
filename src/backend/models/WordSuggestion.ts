@@ -16,15 +16,28 @@ const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
 const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
 const { Schema, Types } = mongoose;
+
+const definitionSchema = new Schema({
+  wordClass: {
+    type: String,
+    default: WordClass.NNC.value,
+    enum: Object.values(WordClass).map(({ value }) => value),
+  },
+  label: { type: String, default: '', trim: true },
+  definitions: { type: [{ type: String }], default: [] },
+}, { toObject: toObjectPlugin });
+
 const wordSuggestionSchema = new Schema(
   {
     originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
     word: { type: String, required: true },
-    wordClass: { type: String, required: true, enum: Object.values(WordClass).map(({ value }) => value) },
-    definitions: {
-      type: [{ type: String }],
-      validate: (v) => Array.isArray(v) && v.length > 0,
-    },
+    definitions: [{
+      type: definitionSchema,
+      validate: (definitions) => (
+        Array.isArray(definitions)
+        && definitions.length > 0
+      ),
+    }],
     dialects: {
       type: Object,
       validate: (v) => {
@@ -91,6 +104,7 @@ const wordSuggestionSchema = new Schema(
 toJSONPlugin(wordSuggestionSchema);
 uploadWordPronunciation(wordSuggestionSchema);
 normalizeHeadword(wordSuggestionSchema);
+toJSONPlugin(definitionSchema);
 
 wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
   const wordSuggestionId = this.getQuery()._id;

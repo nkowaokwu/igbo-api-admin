@@ -7,16 +7,20 @@ export const wordId = new ObjectId('5f864d7401203866b6546dd3');
 export const wordSuggestionId = new ObjectId();
 export const wordSuggestionData = {
   word: 'word',
-  wordClass: WordClass.NNC.value,
-  definitions: ['first'],
+  definitions: [{
+    wordClass: WordClass.NNC.value,
+    definitions: ['first'],
+  }],
   dialects: {},
 };
 
 export const wordSuggestionApprovedData = {
   originalWordId: wordId,
   word: 'word',
-  wordClass: WordClass.NNC.value,
-  definitions: ['first'],
+  definitions: [{
+    wordClass: WordClass.NNC.value,
+    definitions: ['first'],
+  }],
   approvals: ['first user', 'second user'],
 };
 
@@ -28,32 +32,37 @@ export const malformedWordSuggestionData = {
 
 export const updatedWordSuggestionData = {
   word: 'newWord',
-  wordClass: WordClass.ADJ.value,
-  definitions: ['first', 'second'],
+  definitions: [{
+    wordClass: WordClass.ADJ.value,
+    definitions: ['first', 'second'],
+  }],
 };
 
 export const malformedWordData = {
   worrd: 'newWord',
-  wordClass: '',
   definitions: [],
 };
 
 export const updatedWordData = {
   word: 'newWord',
-  wordClass: WordClass.AV.value,
-  definitions: [],
+  definitions: [{
+    wordClass: WordClass.AV.value,
+    definitions: [],
+  }],
 };
 
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
   pronunciation: '',
+  associatedWords: [],
 };
 
 export const exampleSuggestionApprovedData = {
   igbo: 'igbo text',
   english: 'english text',
   approvals: ['first user', 'second user'],
+  associatedWords: [],
 };
 
 export const malformedExampleSuggestionData = {
@@ -96,15 +105,16 @@ export const malformedCorpusSuggestionData = {
 
 export const malformedGenericWordData = {
   word: 'newGenericWord',
-  wordClass: '',
   definitions: [],
   approvals: 'car',
 };
 
 export const updatedGenericWordData = {
   word: 'newWord',
-  wordClass: 'verb',
-  definitions: ['required'],
+  definitions: [{
+    wordClass: 'verb',
+    definitions: ['required'],
+  }],
   approvals: 2,
   denials: 1,
 };

@@ -22,10 +22,32 @@ const Example = ({
     english,
     id = '',
     associatedWords,
+    associatedDefinitionsSchemas,
     pronunciation,
     originalExampleId,
   } = example;
   const formData = getValues();
+
+  const handleInputIgbo = (onChange) => (e) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index].igbo = e.target.value;
+    onChange(e);
+  };
+
+  const handleInputEnglish = (onChange) => (e) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index].english = e.target.value;
+    onChange(e);
+  };
+
+  const handleSetPronunciation = (path, value) => {
+    // Setting the react-hook-form value
+    setValue(path, value);
+    const updatedExamples = [...examples];
+    updatedExamples[index].pronunciation = value;
+    // Setting the local WordEditForm value
+    setExamples(updatedExamples);
+  };
 
   useEffect(() => {
     (async () => {
@@ -68,17 +90,26 @@ const Example = ({
             defaultValue={id}
             control={control}
           />
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input invisible"
+                placeholder="Associated Definitions Schema"
+                data-test={`examples-${index}-associatedDefinitionsSchemas`}
+              />
+            )}
+            name={`examples[${index}].associatedDefinitionsSchemas`}
+            defaultValue={associatedDefinitionsSchemas}
+            control={control}
+          />
         </Box>
         <h3 className="text-gray-700">Igbo:</h3>
         <Controller
           render={({ onChange, ...props }) => (
             <Input
               {...props}
-              onChange={(e) => {
-                const updatedExamples = [...examples];
-                updatedExamples[index].igbo = e.target.value;
-                onChange(e);
-              }}
+              onChange={handleInputIgbo(onChange)}
               className="form-input"
               placeholder="Example in Igbo"
               data-test={`examples-${index}-igbo-input`}
@@ -93,11 +124,7 @@ const Example = ({
           render={({ onChange, ...props }) => (
             <Input
               {...props}
-              onChange={(e) => {
-                const updatedExamples = [...examples];
-                updatedExamples[index].english = e.target.value;
-                onChange(e);
-              }}
+              onChange={handleInputEnglish(onChange)}
               className="form-input"
               placeholder="Example in English"
               data-test={`examples-${index}-english-input`}
@@ -113,14 +140,7 @@ const Example = ({
               <AudioRecorder
                 path={`examples[${index}]`}
                 getFormValues={getValues}
-                setPronunciation={(path, value) => {
-                  // Setting the react-hook-form value
-                  setValue(path, value);
-                  const updatedExamples = [...examples];
-                  updatedExamples[index].pronunciation = value;
-                  // Setting the local WordEditForm value
-                  setExamples(updatedExamples);
-                }}
+                setPronunciation={handleSetPronunciation}
                 record={example}
                 originalRecord={originalRecord}
                 formTitle="Igbo Sentence Recording"

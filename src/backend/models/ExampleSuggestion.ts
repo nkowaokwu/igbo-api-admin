@@ -18,6 +18,7 @@ const exampleSuggestionSchema = new Schema({
     default: ExampleStyle.NO_STYLE.value,
   },
   associatedWords: { type: [{ type: Types.ObjectId }], default: [] },
+  associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
   pronunciation: { type: String, default: '' },
   exampleForSuggestion: { type: Boolean, default: false },
   editorsNotes: { type: String, default: '' },

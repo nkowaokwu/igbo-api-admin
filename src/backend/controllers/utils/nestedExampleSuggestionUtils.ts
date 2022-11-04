@@ -1,11 +1,15 @@
-import { Document } from 'mongoose';
+import { Document, LeanDocument } from 'mongoose';
 import {
   pick,
   differenceBy,
+  get,
   reduce,
   map,
+  compact,
+  flatten,
 } from 'lodash';
 import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
+import WordSuggestion from 'src/backend/models/WordSuggestion';
 import {
   createExampleSuggestion,
   updateExampleSuggestion,
@@ -16,7 +20,7 @@ import * as Interfaces from './interfaces';
 /* Adds the example key on each wordSuggestion returned back to the client */
 export const placeExampleSuggestionsOnSuggestionDoc = async (
   wordSuggestion: Interfaces.WordSuggestion,
-): Promise<Interfaces.WordSuggestion> => {
+): Promise<LeanDocument<Interfaces.WordSuggestion>> => {
   const LEAN_EXAMPLE_KEYS = [
     'igbo',
     'english',
@@ -29,11 +33,14 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
   const examples: Interfaces.ExampleSuggestion[] = await ExampleSuggestion
     .find({ associatedWords: wordSuggestion.id })
     .select(LEAN_EXAMPLE_KEYS);
-  return { ...wordSuggestion.toObject(), examples };
+  return {
+    ...wordSuggestion.toObject(),
+    examples,
+  };
 };
 
 /* Picks out the examples key in the data payload */
-export const getExamplesFromClientData = (data: Interfaces.WordClientData): Interfaces.Example[] => {
+export const getExamplesFromClientData = (data: Interfaces.WordClientData): Interfaces.ExampleClientData[] => {
   const examples = (pick(data, ['examples']) || {}).examples || [];
   /* Removes originalExampleId if it's an empty string */
   return reduce(examples, (cleanedExamples, example) => {
@@ -64,45 +71,81 @@ export const handleDeletingExampleSuggestions = async (
       const LAST_ASSOCIATED_WORD = 1;
       /* Deletes example if there's only one last associated word */
       if (exampleToDelete.associatedWords.length <= LAST_ASSOCIATED_WORD
-        && exampleToDelete.associatedWords.includes(suggestionDoc.id)) {
-        removeExampleSuggestion(exampleToDelete.id);
+        && exampleToDelete.associatedWords.includes(suggestionDoc.id.toString())) {
+        removeExampleSuggestion(exampleToDelete.id.toString());
       }
     });
   }
 };
 
-/* Handles either creating or updating nested example suggestions */
+/**
+ * If the nested example sentence does have an id
+ * then the platform will update the existing word suggestion
+ */
+const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClientData) => (
+  ExampleSuggestion.findById(example.id)
+    .then((exampleSuggestion) => {
+      if (!exampleSuggestion) {
+        throw new Error('No example suggestion exists with the provided id.');
+      }
+      return updateExampleSuggestion({ id: example.id, data: example });
+    })
+    .catch((error) => {
+      throw new Error(error.message || 'An error occurred while finding nested example suggestion.');
+    })
+);
+
+const generateAssociatedWords = async (example: Interfaces.ExampleClientData, suggestionDocId: string): string[] => (
+  Array.from(
+    new Set(
+      // Filters out duplicates
+      [...(Array.isArray(example.associatedWords) ? example.associatedWords : []), suggestionDocId],
+    ),
+  )
+);
+
+// eslint-disable-next-line
+const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData): Promise<string[]> => {
+  let associatedDefinitionsSchemas: string[] = [];
+  if (
+    (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
+    && example.associatedWords[0]
+  ) {
+    // If we have no associated definitions schemas but an associated word, let's set the default value
+    const associatedWordSuggestion = await WordSuggestion.findById(example.associatedWords[0]);
+    const definitionSchemaId = (get(associatedWordSuggestion, 'definitions[0]._id') || '').toString();
+    associatedDefinitionsSchemas = [definitionSchemaId];
+  } else {
+    associatedDefinitionsSchemas = example.associatedDefinitionsSchemas;
+  }
+  return compact(flatten(associatedDefinitionsSchemas));
+};
+
+/**
+ * Handles either creating or updating nested Example Suggestions within
+ * a Word Suggestion
+ * @returns Example Suggestion documents
+ */
 export const updateNestedExampleSuggestions = (
   { suggestionDocId, clientExamples }:
-  { suggestionDocId: string, clientExamples: Interfaces.ExampleSuggestion[] },
+  { suggestionDocId: string, clientExamples: Interfaces.ExampleClientData[] },
 ): Promise<Interfaces.ExampleSuggestion[]> => (
-  /* Updates all the word's children exampleSuggestions */
-  Promise.all(map(clientExamples, (example) => (
-    !example.id
-    // If the nested example sentence doesn't have an id
-    // then a brand new example suggestion needs to be created
-    // for the current word suggestion
-      ? createExampleSuggestion({
+  Promise.all(map(clientExamples, async (example) => {
+    /**
+     * If the nested example client data doesn\'t have an
+     * id then a brand new Example Suggestion will be created
+     * for the Word Suggestion
+     */
+    if (!example.id) {
+      const exampleData = {
         ...example,
         exampleForSuggestion: true,
-        associatedWords: Array.from(
-          new Set( // Filters out duplicates
-            [...(Array.isArray(example.associatedWords) ? example.associatedWords : []), suggestionDocId],
-          ),
-        ),
-      }) : (async () => (
-        // If the nested example sentence does have an id
-        // then the platform will update the existing word suggestion
-        ExampleSuggestion.findById(example.id)
-          .then((exampleSuggestion) => {
-            if (!exampleSuggestion) {
-              throw new Error('No example suggestion exists with the provided id.');
-            }
-            return updateExampleSuggestion({ id: example.id, data: example });
-          })
-          .catch((error) => {
-            throw new Error(error.message || 'An error occurred while finding nested example suggestion.');
-          })
-      ))()
-  )))
+        associatedWords: await generateAssociatedWords(example, suggestionDocId),
+        // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
+      };
+      const exampleSuggestion = await createExampleSuggestion(exampleData);
+      return exampleSuggestion;
+    }
+    return updateExistingExampleSuggestion(example);
+  }))
 );
