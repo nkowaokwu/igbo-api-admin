@@ -2,7 +2,11 @@ import {
   forEach,
   forIn,
   isEqual,
+  omit,
+  pick,
 } from 'lodash';
+import WordClass from 'src/shared/constants/WordClass';
+import Tense from 'src/backend/shared/constants/Tense';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -69,7 +73,13 @@ describe('MongoDB Word Suggestions', () => {
       const result = await updateWordSuggestion({ id: res.body.id, ...updatedWordSuggestionData });
       expect(result.status).toEqual(200);
       forIn(updatedWordSuggestionData, (value, key) => {
-        expect(isEqual(result.body[key], value)).toEqual(true);
+        if (key === 'definitions') {
+          const cleanedDefinitions = result.body[key]
+            .map((definitionGroup) => pick(definitionGroup, ['wordClass', 'definitions']));
+          expect(isEqual(cleanedDefinitions, value)).toEqual(true);
+        } else {
+          expect(isEqual(result.body[key], value)).toEqual(true);
+        }
       });
       expect(result.body.authorId).toEqual(res.body.authorId);
     });
@@ -174,9 +184,59 @@ describe('MongoDB Word Suggestions', () => {
       const wordSuggestionsRes = await getWordSuggestions();
       expect(wordSuggestionsRes.status).toEqual(200);
       const wordSuggestion = wordSuggestionsRes.body[0];
+      delete wordSuggestion.definitions[0].id;
       const res = await updateWordSuggestion({ ...wordSuggestion, word: 'updated' });
       expect(res.status).toEqual(200);
       expect(Date.parse(wordSuggestion.updatedAt)).toBeLessThan(Date.parse(res.body.updatedAt));
+    });
+
+    it('should include first definition group, create a new definition group, and delete the first', async () => {
+      const wordSuggestionRes = await suggestNewWord(wordSuggestionData);
+      const updatedWordSuggestionRes = await updateWordSuggestion({
+        ...wordSuggestionRes.body,
+        definitions: wordSuggestionRes.body.definitions
+          .map((definitionGroup) => pick(definitionGroup, ['wordClass', 'definitions']))
+          .concat({ wordClass: WordClass.AV.value, definitions: ['first verb'] }),
+      });
+      expect(updatedWordSuggestionRes.body.definitions[0].wordClass)
+        .toEqual(wordSuggestionData.definitions[0].wordClass);
+      expect(isEqual(
+        updatedWordSuggestionRes.body.definitions[0].definitions,
+        wordSuggestionData.definitions[0].definitions,
+      )).toEqual(true);
+      expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClass.AV.value);
+      expect(isEqual(updatedWordSuggestionRes.body.definitions[1].definitions, ['first verb'])).toEqual(true);
+      const updatedDefinitions = [...updatedWordSuggestionRes.body.definitions];
+      updatedDefinitions.splice(0, 1);
+      const finalWordSuggestionRes = await updateWordSuggestion({
+        ...updatedWordSuggestionRes.body,
+        definitions: updatedDefinitions.map((definitionGroup) => omit(definitionGroup, ['id'])),
+      });
+      expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClass.AV.value);
+      expect(isEqual(finalWordSuggestionRes.body.definitions[0].definitions, ['first verb'])).toEqual(true);
+    });
+
+    it('should create a word suggestion with tenses', async () => {
+      const wordSuggestionRes = await suggestNewWord({
+        ...wordSuggestionData,
+        tenses: Object.values(Tense).reduce((finalTenses, { value }) => ({
+          ...finalTenses,
+          [value]: '',
+        }), {}),
+      });
+      expect(wordSuggestionRes.status).toEqual(200);
+      expect(wordSuggestionRes.body.tenses[Tense.INFINITIVE.value]).toEqual('');
+      const updatedWordSuggestionRes = await updateWordSuggestion({
+        ...wordSuggestionRes.body,
+        definitions: wordSuggestionRes.body.definitions
+          .map((definitionGroup) => pick(definitionGroup, ['wordClass', 'definitions'])),
+        tenses: {
+          ...wordSuggestionRes.body.tenses,
+          [Tense.IMPERATIVE.value]: 'testing',
+        },
+      });
+      expect(updatedWordSuggestionRes.status).toEqual(200);
+      expect(updatedWordSuggestionRes.body.tenses[Tense.IMPERATIVE.value]).toEqual('testing');
     });
   });
 

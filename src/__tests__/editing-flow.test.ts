@@ -102,6 +102,7 @@ describe('Editing Flow', () => {
     expect(wordSuggestionRes.status).toEqual(200);
     const updatedWordSuggestion = {
       ...wordSuggestionRes.body,
+      definitions: wordSuggestionRes.body.definitions.map((definitionGroup) => omit(definitionGroup, ['id'])),
       word: 'newWord',
     };
     const res = await updateWordSuggestion(updatedWordSuggestion);
