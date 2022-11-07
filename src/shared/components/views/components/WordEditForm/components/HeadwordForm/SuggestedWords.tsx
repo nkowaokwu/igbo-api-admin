@@ -65,7 +65,6 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
             {filteredWords.map(({
               word,
               nsibidi,
-              wordClass,
               definitions,
               id,
             }) => (
@@ -94,10 +93,11 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                       <Text fontWeight="bold" mr={2}>{word}</Text>
                       {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}
                     </Box>
-                    <Text fontStyle="italic">{WordClass[wordClass]?.label || wordClass}</Text>
                     <Box>
                       {definitions.map(({ definitions, wordClass, _id }, index) => (
-                        <Text key={_id}>{`${index + 1}. (${wordClass}) ${definitions[0]}`}</Text>
+                        <Text key={_id}>
+                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${definitions[0]}`}
+                        </Text>
                       ))}
                     </Box>
                   </PopoverContent>

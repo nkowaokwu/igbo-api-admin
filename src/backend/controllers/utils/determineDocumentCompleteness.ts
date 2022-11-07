@@ -13,7 +13,6 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
 }> => {
   const {
     word,
-    wordClass,
     definitions = [],
     pronunciation,
     examples = [],
@@ -44,7 +43,10 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
     !word && 'The headword is needed',
     (!word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) && !isAccented)
     && 'The headword needs to have accent marks',
-    !wordClass && 'The word class is needed',
+    Array.isArray(definitions) && definitions.some(({ wordClass }) => !wordClass) && 'The word class is needed',
+    Array.isArray(definitions)
+      && definitions.some(({ definitions }) => !definitions.length)
+      && 'At least one definition is needed',
     Array.isArray(definitions) && !definitions.length && 'At least one definition is needed',
     Array.isArray(examples) && !examples?.length && 'At least one example sentence is needed',
     (!pronunciation || (!skipAudioCheck && !isAudioAvailable)) && 'An audio pronunciation is needed',
@@ -54,10 +56,15 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
   const completeWordRequirements = compact([
     ...sufficientWordRequirements,
     !isStem && !stems?.length && 'A word stem is needed',
-    invalidRelatedTermsWordClasses.includes(wordClass) ? null : !relatedTerms?.length && 'A related term is needed',
-    isVerb(wordClass) && !Object.entries(tenses).every(([key, value]) => (
-      value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
-    ))
+    Array.isArray(definitions)
+      && definitions.some(({ wordClass }) => invalidRelatedTermsWordClasses.includes(wordClass))
+      ? null
+      : !relatedTerms?.length && 'A related term is needed',
+    Array.isArray(definitions)
+      && definitions.some(({ wordClass }) => isVerb(wordClass))
+      && !Object.entries(tenses).every(([key, value]) => (
+        value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
+      ))
       ? 'All verb tenses are needed'
       : null,
     (Array.isArray(examples)
