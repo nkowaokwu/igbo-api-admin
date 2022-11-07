@@ -87,6 +87,7 @@
     "firebase-tools": "11.1.0",
     "framer-motion": "^4",
     "functions": "^1.0.9",
+    "joi": "^17.7.0",
     "kill-port": "^1.6.1",
     "lodash": "^4.17.20",
     "mic-recorder-to-mp3": "^2.2.2",
