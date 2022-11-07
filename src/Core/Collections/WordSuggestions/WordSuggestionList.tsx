@@ -17,7 +17,6 @@ import {
   Pagination,
   ReviewPreview,
   Select,
-  WordClassTextField,
   WordPanel,
 } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collections';
@@ -51,7 +50,6 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
-            <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
             {/* TODO: move these out to reusable component */}

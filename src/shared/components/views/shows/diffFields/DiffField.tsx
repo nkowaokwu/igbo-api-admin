@@ -37,16 +37,16 @@ const DiffField = ({
       const parsedKey = parseInt(splitKey, 10);
       return isNaN(parsedKey) ? splitKey : parsedKey;
     });
-    const diff = find(diffRecord, ({ path, index }) => {
-      if (!path) {
+    const diff = find(diffRecord, ({ path: diffRecordPath, index }) => {
+      if (!diffRecordPath) {
         return null;
       };
       return (
-        isEqual(path, keys)
+        isEqual(diffRecordPath, keys)
         // quick match for definitions, variations, or examples indexes
-        || (isEqual(path, keys.slice(0, keys.length - 1))
+        || (isEqual(diffRecordPath, keys.slice(0, keys.length - 1))
           && keys[keys.length - 1] === index
-          && QUICK_MATCH_KEYS.includes(path[0]))
+          && QUICK_MATCH_KEYS.includes(diffRecordPath[0]))
       );
     });
     return diff;

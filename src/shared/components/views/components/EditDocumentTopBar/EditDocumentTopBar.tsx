@@ -57,7 +57,7 @@ const EditDocumentTopBar = ({
         <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0">{title}</Heading>
         {shouldShowEditorActions ? (
           <Box className="flex flex-col mb-5">
-            <Heading as="h2" className="text-2xl text-gray-800">Editor&apos;s Actions</Heading>
+            <Heading as="h2" fontSize="xl" className="text-gray-800 mb-2">{'Editor\'s Actions'}</Heading>
             <Select
               view={View.SHOW}
               resource={resource}

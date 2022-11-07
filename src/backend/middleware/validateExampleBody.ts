@@ -16,7 +16,7 @@ export const exampleDataSchema = Joi.object().keys({
   english: Joi.string().allow(''),
   meaning: Joi.string().allow('').optional(),
   style: Joi.string().valid(...Object.values(ExampleStyle).map(({ value }) => value)).optional(),
-  associatedWords: Joi.array().external(async (associatedWords) => {
+  associatedWords: Joi.array().external((associatedWords) => {
     if (!associatedWords) {
       return true;
     }
@@ -26,6 +26,18 @@ export const exampleDataSchema = Joi.object().keys({
     }
     return true;
   }),
+  associatedDefinitionsSchemas: Joi.array().external((associatedDefinitionsSchemas) => {
+    if (!associatedDefinitionsSchemas) {
+      return true;
+    }
+    const isEveryAssociatedDefinitionsSchemaIdValid = (
+      associatedDefinitionsSchemas.every((definitionsSchemaId) => Types.ObjectId.isValid(definitionsSchemaId))
+    );
+    if (!isEveryAssociatedDefinitionsSchemaIdValid) {
+      throw new Error('Invalid associated definition schema id');
+    }
+    return true;
+  }).allow(null).optional(),
   pronunciation: Joi.string().allow(''),
   exampleForSuggestion: Joi.boolean().optional(),
   editorsNotes: Joi.string().allow('').optional(),

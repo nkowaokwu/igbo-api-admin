@@ -3,6 +3,7 @@ import {
   isEqual,
   uniqBy,
   some,
+  pick,
 } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
@@ -55,7 +56,7 @@ describe('MongoDB Words', () => {
       expect(wordRes.status).toEqual(200);
       expect(wordRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(updatedWordRes.body.word).toEqual(wordRes.body.word);
-      expect(updatedWordRes.body.wordClass).toEqual(wordRes.body.wordClass);
+      expect(updatedWordRes.body.definitions[0].wordClass).toEqual(wordRes.body.definitions[0].wordClass);
       expect(updatedWordRes.body.id).toEqual(wordRes.body.merged);
     });
 
@@ -75,7 +76,8 @@ describe('MongoDB Words', () => {
       expect(updatedWordRes.status).toEqual(200);
       expect(updatedWordSuggestionRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(updatedWordRes.body.word).toEqual(updatedWordSuggestionRes.body.word);
-      expect(updatedWordRes.body.wordClass).toEqual(updatedWordSuggestionRes.body.wordClass);
+      expect(updatedWordRes.body.definitions[0].wordClass)
+        .toEqual(updatedWordSuggestionRes.body.definitions[0].wordClass);
       expect(updatedWordRes.body.id).toEqual(updatedWordSuggestionRes.body.merged);
     });
 
@@ -83,13 +85,14 @@ describe('MongoDB Words', () => {
       const res = await getWordSuggestions();
       expect(res.status).toEqual(200);
       const firstWordSuggestion = res.body[0];
-      firstWordSuggestion.wordClass = WordClass.ADJ.value;
+      firstWordSuggestion.definitions[0].wordClass = WordClass.ADJ.value;
+      delete firstWordSuggestion.definitions[0].id;
       const updatedWordSuggestionRes = await updateWordSuggestion(firstWordSuggestion);
       expect(updatedWordSuggestionRes.status).toEqual(200);
       const wordRes = await createWord(updatedWordSuggestionRes.body.id);
       expect(wordRes.status).toEqual(200);
       expect(wordRes.body.word).toEqual(updatedWordSuggestionRes.body.word);
-      expect(wordRes.body.wordClass).toEqual(updatedWordSuggestionRes.body.wordClass);
+      expect(wordRes.body.definitions[0].wordClass).toEqual(updatedWordSuggestionRes.body.definitions[0].wordClass);
       const wordSuggestionRes = await getWordSuggestion(updatedWordSuggestionRes.body.id);
       expect(wordSuggestionRes.status).toEqual(200);
       expect(wordSuggestionRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
@@ -135,7 +138,14 @@ describe('MongoDB Words', () => {
       const updateWordRes = await updateWord({ id: result.body.id, ...updatedWordData });
       expect(updateWordRes.status).toEqual(200);
       forIn(updatedWordData, (value, key) => {
-        expect(isEqual(updateWordRes.body[key], value)).toEqual(true);
+        if (key === 'definitions') {
+          const cleanedDefinitions = updateWordRes.body[key].map((definitionGroup) => (
+            pick(definitionGroup, ['wordClass', 'definitions'])
+          ));
+          expect(isEqual(cleanedDefinitions, value)).toEqual(true);
+        } else {
+          expect(isEqual(updateWordRes.body[key], value)).toEqual(true);
+        }
         expect(moment(result.body.updatedAt).unix())
           .toBeLessThan(moment(updateWordRes.body.updatedAt).unix());
       });
@@ -157,13 +167,13 @@ describe('MongoDB Words', () => {
       expect([null, undefined, '']).not.toContain(firstWord.id);
       expect([null, undefined, '']).not.toContain(secondWord.id);
       const combinedWordRes = await deleteWord(firstWord.id, secondWord.id);
-      const { definitions, variations, stems } = combinedWordRes.body;
+      const { definitions: [{ definitions }], variations, stems } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
       expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
       expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
-      expect(isEqual(definitions, firstWord.definitions)).toBeTruthy();
-      expect(isEqual(definitions, secondWord.definitions)).toBeTruthy();
+      expect(isEqual(definitions, firstWord.definitions[0].definitions)).toBeTruthy();
+      expect(isEqual(definitions, secondWord.definitions[0].definitions)).toBeTruthy();
       expect(isEqual(variations, firstWord.variations)).toBeTruthy();
       expect(isEqual(variations, secondWord.variations)).toBeTruthy();
       expect(isEqual(stems, firstWord.stems)).toBeTruthy();
@@ -213,15 +223,15 @@ describe('MongoDB Words', () => {
       await new Promise((resolve) => setTimeout(resolve, SAVE_DOC_DELAY));
       const firstWord = await createWordFromSuggestion({ ...updatedWordSuggestionData, stems: null });
       const combinedWordRes = await deleteWord(firstWord.id.toString(), wordWithNullStems.id);
-      const { definitions, variations, stems } = combinedWordRes.body;
+      const { definitions: [{ definitions }], variations, stems } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
       expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
       expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
-      firstWord.definitions.forEach((definition) => {
+      firstWord.definitions[0].definitions.forEach((definition) => {
         expect(definitions.includes(definition)).toBeTruthy();
       });
-      wordWithNullStems.definitions.forEach((definition) => {
+      wordWithNullStems.definitions[0].definitions.forEach((definition) => {
         expect(definitions.includes(definition)).toBeTruthy();
       });
       firstWord.variations.forEach((variation) => {

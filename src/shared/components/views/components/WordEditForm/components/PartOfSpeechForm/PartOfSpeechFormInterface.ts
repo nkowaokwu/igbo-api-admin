@@ -8,6 +8,7 @@ interface PartOfSpeechForm {
   getValues: () => any,
   cacheForm: () => void,
   options: any,
+  index: number,
 };
 
 export default PartOfSpeechForm;

@@ -1,5 +1,7 @@
 import React, { ReactElement } from 'react';
-import { truncate } from 'lodash';
+import { get, truncate } from 'lodash';
+import { Text } from '@chakra-ui/react';
+import WordClass from '../constants/WordClass';
 import { ArrayPreviewProps } from '../interfaces';
 import ResolvedWord from './ResolvedWord';
 
@@ -9,10 +11,20 @@ const populateList = (items = [], source) => {
     return [];
   }
   const isResolvable = source === 'stems' || source === 'associatedWords';
+  const isDefinitions = source === 'definitions';
   const itemsPreview = items.slice(0, 10).map((item) => (
     <li className="list-disc" key={item}>
       {isResolvable ? (
         <ResolvedWord wordId={item} />
+      ) : isDefinitions ? (
+        <>
+          <Text className="italic text-gray-700">
+            {get(WordClass[item.wordClass], 'label') || '[UPDATE PART OF SPEECH]'}
+          </Text>
+          {(item.definitions || []).map((definition) => (
+            <Text>{truncate(definition, { length: 120 }) || 'no definition'}</Text>
+          ))}
+        </>
       ) : (
         truncate(item, { length: 120 })
       )}

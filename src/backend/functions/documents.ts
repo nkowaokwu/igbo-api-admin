@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions';
+import { get } from 'lodash';
 import Collections from 'src/shared/constants/Collections';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { findUser } from 'src/backend/controllers/users';
@@ -24,7 +25,7 @@ export const onRequestDeleteDocument = functions.https.onCall(async (
       resource,
       id: record.id,
       word: record.word || record.igbo,
-      definition: (record.definitions && record.definitions[0]) || record.english,
+      definition: get(record, 'definitions[0].definitions[0]') || record.english,
     });
     return { redirect: false };
   } catch (err) {

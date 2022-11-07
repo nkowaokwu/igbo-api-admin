@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { truncate } from 'lodash';
+import { get, truncate } from 'lodash';
 import {
   Box,
   IconButton,
@@ -11,7 +11,6 @@ import { CloseIcon } from '@chakra-ui/icons';
 
 const WordPill = ({
   word,
-  wordClass,
   definitions,
   onDelete,
   index,
@@ -38,10 +37,10 @@ const WordPill = ({
           </chakra.span>
           {word}
         </Text>
-        <Text fontSize="sm" fontStyle="italic" color="blue.400">{wordClass}</Text>
+        <Text fontSize="sm" fontStyle="italic" color="blue.400">{get(definitions, '[0].wordClass')}</Text>
       </Box>
       <Text fontSize="sm" color="blue.400">
-        {truncate(definitions[0])}
+        {truncate(get(definitions, '[0].definitions[0]'))}
       </Text>
     </Box>
     <Tooltip label="Remove item">

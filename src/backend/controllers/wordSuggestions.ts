@@ -1,6 +1,6 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { assign, map, trim } from 'lodash';
+import { assign, map } from 'lodash';
 import WordSuggestion from '../models/WordSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
@@ -36,13 +36,17 @@ export const postWordSuggestion = async (
     data.dialects = assignDefaultDialectValues(data); // Assigns default word values
     const clientExamples = getExamplesFromClientData(data);
     const newWordSuggestion = new WordSuggestion(data);
-    const savedWordSuggestion: Document<Interfaces.WordSuggestion> = await newWordSuggestion.save()
-      .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
-        await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id, clientExamples });
-        const res = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
-        return res;
-      });
-    return res.send(savedWordSuggestion);
+    const wordSuggestion = (await newWordSuggestion.save()) as Interfaces.WordSuggestion;
+    try {
+      await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id.toString(), clientExamples });
+      const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
+      return res.send(savedWordSuggestion);
+    } catch (error) {
+      console.log('An error occurred while posting new word suggestion:', error.message);
+      console.log('Deleting the associated word document to avoid producing duplicates');
+      await wordSuggestion.delete();
+      throw error;
+    }
   } catch (err) {
     return next(err);
   }
@@ -78,10 +82,6 @@ export const putWordSuggestion = (req: Request, res: Response, next: NextFunctio
     } = req;
     const clientExamples = getExamplesFromClientData(data);
 
-    if (!Array.isArray(data.definitions)) {
-      data.definitions = map(data.definitions.split(','), (definition) => trim(definition));
-    }
-
     return findWordSuggestionById(id)
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
@@ -93,7 +93,7 @@ export const putWordSuggestion = (req: Request, res: Response, next: NextFunctio
         await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples });
 
         /* Updates all the word's children exampleSuggestions */
-        await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id, clientExamples });
+        await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id.toString(), clientExamples });
         /* We call updatedWordSuggestion.save() before handling audio pronunciations to work with only URIs */
         await updatedWordSuggestion.save();
 

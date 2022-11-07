@@ -14,7 +14,9 @@ import * as Interfaces from './utils/interfaces';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 
-export const createExampleSuggestion = async (data: Interfaces.ExampleClientData): Promise<Document<any>> => {
+export const createExampleSuggestion = async (
+  data: Interfaces.ExampleClientData,
+): Promise<Interfaces.ExampleSuggestion> => {
   try {
     await Promise.all(map(data.associatedWords, async (associatedWordId) => {
       const query = searchPreExistingExampleSuggestionsRegexQuery({ ...data, associatedWordId });
@@ -32,7 +34,7 @@ export const createExampleSuggestion = async (data: Interfaces.ExampleClientData
     throw err;
   }
 
-  const newExampleSuggestion = new ExampleSuggestion(data);
+  const newExampleSuggestion = new ExampleSuggestion(data) as Interfaces.ExampleSuggestion;
   return newExampleSuggestion.save()
     .catch(() => {
       throw new Error('An error has occurred while saving, double check your provided data');
@@ -42,8 +44,7 @@ export const createExampleSuggestion = async (data: Interfaces.ExampleClientData
 /* Creates a new ExampleSuggestion document in the database */
 export const postExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
-    const { body: data } = req;
-    const { user } = req;
+    const { body: data, user } = req;
 
     data.authorId = user.uid;
     await Promise.all(
@@ -61,10 +62,28 @@ export const postExampleSuggestion = async (req: Request, res: Response, next: N
   }
 };
 
+/* Finds and applies the first definition schema ids for the associated words to the Example Suggestion */
+// const applyAssociatedDefinitionSchemas = (
+//   async (exampleSuggestion: Interfaces.ExampleSuggestion): Promise<Interfaces.ExampleSuggestion> => {
+//     const updatedExampleSuggestion = assign(exampleSuggestion);
+//     const wordSuggestions: Interfaces.WordSuggestion[] = (
+//       await WordSuggestion.find({ _id: exampleSuggestion.associatedWords })
+//     );
+//     if (!updatedExampleSuggestion.associatedDefinitionsSchemas) {
+//       updatedExampleSuggestion.associatedDefinitionsSchemas = [];
+//     }
+//     const definitionSchemas = compact(wordSuggestions.map((wordSuggestion) => (
+//       get(wordSuggestion, 'definitions[0]._id')
+//     )));
+//     updatedExampleSuggestion.associatedDefinitionsSchemas = definitionSchemas;
+//     return updatedExampleSuggestion;
+//   }
+// );
+
 export const updateExampleSuggestion = (
   { id, data: clientData }
   : { id: string, data: Interfaces.ExampleSuggestion },
-): Promise<any> => {
+): Promise<Interfaces.ExampleSuggestion | void> => {
   const data = assign(clientData);
   delete data.authorId;
   return ExampleSuggestion.findById(id)
@@ -73,6 +92,12 @@ export const updateExampleSuggestion = (
         throw new Error('Example suggestion doesn\'t exist');
       }
       const updatedExampleSuggestion = assign(exampleSuggestion, data);
+      if (
+        !updatedExampleSuggestion.associatedDefinitionsSchemas
+        || !updatedExampleSuggestion.associatedDefinitionsSchemas.length
+      ) {
+        // updatedExampleSuggestion = await applyAssociatedDefinitionSchemas(updatedExampleSuggestion);
+      }
       return updatedExampleSuggestion.save();
     })
     .catch((err) => {

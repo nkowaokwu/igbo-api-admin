@@ -67,7 +67,6 @@ const WordShow = (props: ShowProps): ReactElement => {
     id,
     author,
     word,
-    wordClass,
     nsibidi,
     approvals,
     denials,
@@ -171,14 +170,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                 />
               </Box>
             </Box>
-            <Box className="flex flex-col mt<-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Part of Speech</Heading>
-              <DiffField
-                path="wordClass"
-                diffRecord={diffRecord}
-                fallbackValue={WordClass[wordClass]?.label || `${wordClass} [UPDATE PART OF SPEECH]`}
-              />
-            </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
               {/* TODO: check this part! */}
@@ -201,19 +192,41 @@ const WordShow = (props: ShowProps): ReactElement => {
                 )}
               />
             </Box>
-            <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Definitions</Heading>
-              {/* @ts-ignore */}
-              <ArrayDiffField
-                recordField="definitions"
-                recordFieldSingular="definition"
-                record={record}
-                // @ts-ignore
-                originalWordRecord={originalWordRecord}
-              >
-                {/* @ts-ignore */}
-                <ArrayDiff diffRecord={diffRecord} recordField="definitions" />
-              </ArrayDiffField>
+            <Box className="flex flex-col mt-5 w-full lg:w-11/12">
+              <Heading fontSize="lg" className="text-xl text-gray-600">Definition Groups</Heading>
+              {record.definitions.map((definition, index) => (
+                <Box
+                  className="pl-4 pb-4"
+                  borderBottomColor="gray.200"
+                  borderBottomWidth="1px"
+                >
+                  <Box className="flex flex-col mt-5">
+                    <Heading fontSize="md" className="text-gray-600">Part of Speech</Heading>
+                    <DiffField
+                      path={`definitions.${index}.wordClass`}
+                      diffRecord={diffRecord}
+                      fallbackValue={
+                        WordClass[definition.wordClass]?.label
+                        || `${definition.wordClass} [UPDATE PART OF SPEECH]`
+                      }
+                    />
+                  </Box>
+                  <Box className="flex flex-col mt-5">
+                    <Heading fontSize="md" className="text-xl text-gray-600">Definitions</Heading>
+                    {/* ts-expect-error */}
+                    <ArrayDiffField
+                      recordField={`definitions.${index}.definitions`}
+                      recordFieldSingular="definition"
+                      record={record}
+                      // ts-expect-error
+                      originalWordRecord={originalWordRecord}
+                    >
+                      {/* ts-expect-error */}
+                      <ArrayDiff diffRecord={diffRecord} recordField={`definitions.${index}.definitions`} />
+                    </ArrayDiffField>
+                  </Box>
+                </Box>
+              ))}
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Variations</Heading>

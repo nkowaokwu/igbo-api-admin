@@ -13,7 +13,6 @@ import {
   ListActions,
   Pagination,
   Select,
-  WordClassTextField,
   WordPanel,
 } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collections';
@@ -41,7 +40,6 @@ export const WordList = (props: ListProps): ReactElement => {
           <Datagrid expand={<WordPanel />}>
             <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
-            <WordClassTextField label="Part of Speech" source="wordClass" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
             <ArrayPreview label="Stems" source="stems" />

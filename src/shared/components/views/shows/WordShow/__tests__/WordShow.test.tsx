@@ -12,10 +12,12 @@ configure({ testIdAttribute: 'data-test' });
 const record = {
   id: 123,
   word: 'tésting word',
-  definitions: [
-    'first definition',
-  ],
-  wordClass: WordClass.ADJ.value,
+  definitions: [{
+    wordClass: WordClass.ADJ.value,
+    definitions: [
+      'first definition',
+    ],
+  }],
   variations: [],
   examples: [{
     igbo: 'igbo',
@@ -116,9 +118,11 @@ describe('Word Show', () => {
     await findByText(record.word);
     await findByText('Nsịbịdị');
     await findByText('Part of Speech');
-    await findByText(WordClass[record.wordClass].label);
+    await findByText('Definition Groups');
+    await findByText('Part of Speech');
+    await findByText(WordClass[record.definitions[0].wordClass].label);
     await findByText('Definitions');
-    await findByText(record.definitions[0]);
+    await findByText(record.definitions[0].definitions[0]);
     await findByText('Variations');
     await findByText('Word Stems');
     await findByText('Examples');

@@ -28,6 +28,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'english',
   'exampleForSuggestion',
   'associatedWords',
+  'associatedDefinitionsSchemas',
   'editorsNotes',
   'userComments',
   'authorEmail',
@@ -66,7 +67,6 @@ export const GENERIC_WORD_KEYS = [
 export const WORD_SUGGESTION_KEYS = [
   'originalWordId',
   'word',
-  'wordClass',
   'definitions',
   'variations',
   'editorsNotes',

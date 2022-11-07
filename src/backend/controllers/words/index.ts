@@ -197,14 +197,14 @@ export const createWord = async (
 };
 
 const updateSuggestionAfterMerge = async (
-  suggestionDoc: Document<Interfaces.WordSuggestion>,
-  originalWordDocId: string,
+  suggestionDoc: Interfaces.WordSuggestion,
+  originalWordDoc: Interfaces.Word,
   mergedBy: string,
-): Promise<Document<Interfaces.WordSuggestion>> => {
-  const updatedSuggestionDoc: Document<Interfaces.WordSuggestion> | any = (
-    await updateDocumentMerge(suggestionDoc, originalWordDocId, mergedBy)
+): Promise<Interfaces.WordSuggestion> => {
+  const updatedSuggestionDoc: Interfaces.WordSuggestion | any = (
+    await updateDocumentMerge(suggestionDoc, originalWordDoc.id.toString(), mergedBy)
   );
-  const exampleSuggestions: Document<Interfaces.ExampleSuggestion>[] = (
+  const exampleSuggestions: Interfaces.ExampleSuggestion[] = (
     await ExampleSuggestion.find({ associatedWords: suggestionDoc.id })
   );
   await Promise.all(map(exampleSuggestions, async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
@@ -216,11 +216,32 @@ const updateSuggestionAfterMerge = async (
       exampleSuggestion.associatedWords,
       (associatedWord) => associatedWord.toString() !== suggestionDoc.id.toString(),
     );
-    if (!removeSuggestionAssociatedIds.associatedWords.includes(originalWordDocId)) {
-      removeSuggestionAssociatedIds.associatedWords.push(originalWordDocId);
+    if (!removeSuggestionAssociatedIds.associatedWords.includes(originalWordDoc.id.toString())) {
+      removeSuggestionAssociatedIds.associatedWords.push(originalWordDoc.id.toString());
     }
+    /* Before creating new Example from ExampleSuggestion,
+     * all associated definitions schema ids must be removed
+     */
+    // removeSuggestionAssociatedIds.associatedDefinitionsSchemas = filter(
+    //   exampleSuggestion.associatedDefinitionsSchemas,
+    //   (associatedDefinitionSchema) => (
+    // !find(suggestionDoc.definitions, (({ _id: wordSuggestionDefinitionSchemaId }) => (
+    //     wordSuggestionDefinitionSchemaId.toString() === associatedDefinitionSchema.toString())
+    //   )),
+    // );
+    // const lookForDefinitionSchemaInOriginalDoc = (definitionSchemaId: string) => (
+    //   // Look for a original document definitions schema that has the current associated definitions Schema
+    //   find(originalWordDoc.definitions, (({ _id }) => _id.toString() === definitionSchemaId))
+    // );
+    // removeSuggestionAssociatedIds.associatedDefinitionsSchemas.forEach((associatedDefinitionsSchema) => {
+    //   const originalDocDefinitionSchemaId = lookForDefinitionSchemaInOriginalDoc(associatedDefinitionsSchema);
+    //   if (originalDocDefinitionSchemaId?._id) {
+    //     removeSuggestionAssociatedIds.associatedDefinitionsSchemas
+    //       .push(originalDocDefinitionSchemaId._id.toString());
+    //   }
+    // });
     const updatedExampleSuggestion = await removeSuggestionAssociatedIds.save();
-    return executeMergeExample(updatedExampleSuggestion.id, mergedBy);
+    return executeMergeExample(updatedExampleSuggestion.id.toString(), mergedBy);
   }));
   return updatedSuggestionDoc.save();
 };
@@ -279,7 +300,7 @@ const overwriteWordPronunciation = async (
     await Word.findOneAndUpdate({ _id: word.id }, word.toObject());
     return await word.save();
   } catch (err) {
-    console.log('An error while merging audio pronunciations failed:', err.message);
+    console.log('An error occurred while merging audio pronunciations failed:', err.message);
     console.log('Deleting the associated word document to avoid producing duplicates');
     await word.delete();
     throw err;
@@ -303,7 +324,7 @@ const mergeIntoWord = (
       }
 
       await overwriteWordPronunciation(suggestionDoc, updatedWord);
-      await updateSuggestionAfterMerge(suggestionDoc, updatedWord.id.toString(), mergedBy);
+      await updateSuggestionAfterMerge(suggestionDoc, updatedWord, mergedBy);
       return (await findWordsWithMatch({ match: { _id: suggestionDocObject.originalWordId }, limit: 1 }))[0];
     })
     .catch((error) => {
@@ -319,7 +340,7 @@ const createWordFromSuggestion = (
   createWord(suggestionDoc.toObject())
     .then(async (word: Document<Interfaces.Word>) => {
       const updatedPronunciationsWord = await overwriteWordPronunciation(suggestionDoc, word);
-      await updateSuggestionAfterMerge(suggestionDoc, word.id, mergedBy);
+      await updateSuggestionAfterMerge(suggestionDoc, word, mergedBy);
       return updatedPronunciationsWord;
     })
     .catch((err) => {
@@ -445,9 +466,25 @@ export const deleteWord = async (req: Request, res: Response, next: NextFunction
     const savedCombinedWord = await findAndUpdateWord(primaryWordId, async (combineWord: Interfaces.Word) => {
       const updatedWord = assign(combineWord);
       updatedWord.pronunciation = updatedWord.pronunciation || pronunciation;
-      updatedWord.definitions = Array.from(new Set([...updatedWord.definitions, ...definitions]));
+      const updatedDefinitions = [...updatedWord.definitions].map((definitionGroup) => definitionGroup.toObject());
+      definitions.forEach((definitionGroup: Interfaces.DefinitionSchema) => {
+        const existingDefinitionGroupIndex = updatedDefinitions
+          .findIndex(({ wordClass }) => definitionGroup.wordClass === wordClass);
+        if (existingDefinitionGroupIndex !== -1) {
+          updatedDefinitions[existingDefinitionGroupIndex] = {
+            ...updatedDefinitions[existingDefinitionGroupIndex],
+            definitions: Array.from(
+              new Set([...updatedDefinitions[existingDefinitionGroupIndex].definitions,
+                ...definitionGroup.definitions]),
+            ),
+          };
+        } else {
+          updatedDefinitions.push(definitionGroup);
+        }
+      });
+      updatedWord.definitions = updatedDefinitions;
       updatedWord.variations = Array.from(new Set([...updatedWord.variations, ...variations]));
-      updatedWord.stems = Array.from(new Set([...updatedWord.stems, ...(stems || [])]));
+      updatedWord.stems = Array.from(new Set([...(updatedWord.stems || []), ...(stems || [])]));
       updatedWord.relatedTerms = Array.from(new Set([...updatedWord.relatedTerms, ...relatedTerms]));
       updatedWord.hypernyms = Array.from(new Set([...updatedWord.hypernyms, ...hypernyms]));
       updatedWord.hyponyms = Array.from(new Set([...updatedWord.hyponyms, ...hyponyms]));

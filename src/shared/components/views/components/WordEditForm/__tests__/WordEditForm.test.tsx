@@ -29,13 +29,32 @@ describe('Word Edit', () => {
     await findByText('Is Accented');
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
-    await findByText('Definitions');
+    await findByText('Definition Groups (0)');
     await findByText('Word Pronunciation');
     await findByText('Spelling Variations');
     await findByText('Word Stems');
     await findByText('Examples');
     await findByText('Dialectal Variations');
     await findByText('Editor\'s Comments');
+  });
+
+  it('add a definition group to word suggestion', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{ id: '123' }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+
+    userEvent.click(await findByText('Add Definition Group'));
+    await findByText('Definition Groups (1)');
+    await findByText('Part of Speech');
+    await findByText('Definitions');
   });
 
   it('add a word stem to word suggestion', async () => {
@@ -63,7 +82,7 @@ describe('Word Edit', () => {
         <WordEditForm
           view={Views.EDIT}
           resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
+          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
           save={() => {}}
           history={{}}
         />

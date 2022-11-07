@@ -18,22 +18,23 @@ import View from 'src/shared/constants/Views';
 import WordClass from 'src/shared/constants/WordClass';
 import { getWord, removePayloadFields } from 'src/shared/API';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
-import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
+import { Word } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
+import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
 import StemsForm from './components/StemsForm';
 import RelatedTermsForm from './components/RelatedTermsForm';
-import PartOfSpeechForm from './components/PartOfSpeechForm';
 import HeadwordForm from './components/HeadwordForm';
 import TagsForm from './components/TagsForm';
 import NsibidiForm from './components/NsibidiForm';
 import TensesForm from './components/TensesForm';
-import ExamplesForm from './components/ExamplesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
@@ -63,32 +64,37 @@ const WordEditForm = ({
       examples: record?.examples
         ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
         : [],
-      wordClass: {
-        label: WordClass[record.wordClass]?.label || '[UPDATE PART OF SPEECH]',
-        value: WordClass[record.wordClass]?.value || null,
-      },
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
       nsibidi: record.nsibidi,
       tenses: record.tenses || {},
+      attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
+        ...finalAttributes,
+        [attribute.value]: false,
+      }), {}),
     },
     ...WordEditFormResolver(),
   });
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [definitions, setDefinitions] = useState(record.definitions || ['']);
+  const [definitions, setDefinitions] = useState(record.definitions || []);
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
   const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dialects, setDialects] = useState(Object.entries(record.dialects || {}).map(([word, value]) => (
-    { ...value, word }
-  )));
+  const [dialects, setDialects] = useState(
+    Object.entries(record.dialects || {}).map(([word, value] : [string, Interfaces.WordDialect]) => (
+      { ...value, word }
+    )),
+  );
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
   const options = values(WordClass);
-  const watchWordClass = watch('wordClass');
+  const watchedWordClasses = definitions.map(({ wordClass }) => wordClass);
+  const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
+  const areAllWordClassesInvalidForRelatedTerms = watchedWordClasses.every((watchedWordClass) => (
+    invalidRelatedTermsWordClasses.includes(watchedWordClass?.value)));
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -116,7 +122,7 @@ const WordEditForm = ({
   };
 
   /* Prepares dialects to include all required keys (dialectal word) for Mongoose schema validation */
-  const prepareDialects = (): { dialects: { [key: string]: WordDialect } } => {
+  const prepareDialects = (): { [key: string]: Interfaces.WordDialect } => {
     const formDialects = getValues().dialects || {};
     return (
       dialects.reduce((finalDialects, dialect) => (
@@ -148,12 +154,15 @@ const WordEditForm = ({
       ...record,
       ...data,
       dialects,
-      definitions: sanitizeArray(data.definitions),
+      definitions: (data.definitions || []).map((definition) => ({
+        ...definition,
+        wordClass: definition.wordClass.value,
+        definitions: sanitizeArray(definition.definitions),
+      })),
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),
       stems: sanitizeArray(data.stems),
       examples: sanitizeExamples(data.examples),
-      wordClass: data.wordClass.value,
       pronunciation: getValues().pronunciation || '',
     };
     return cleanedData;
@@ -179,10 +188,10 @@ const WordEditForm = ({
           redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },
         onFailure: (error: any) => {
-          const { body, message } = error;
+          const { body, message, error: errorMessage } = error;
           toast({
             title: 'Error',
-            description: body?.error || message || 'An error occurred while saving example suggestion',
+            description: body?.error || message || errorMessage || 'An error occurred while saving word suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,
@@ -250,41 +259,16 @@ const WordEditForm = ({
               getValues={getValues}
               watch={watch}
             />
-            <PartOfSpeechForm
-              errors={errors}
+            <NsibidiForm
               control={control}
-              getValues={getValues}
-              cacheForm={cacheForm}
-              options={options}
               record={record}
+              getValues={getValues}
             />
             <TagsForm
               errors={errors}
               control={control}
               record={record}
             />
-            <NsibidiForm
-              control={control}
-              record={record}
-              getValues={getValues}
-            />
-            <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-6 lg:mt-3">
-              <Box className="w-full">
-                <DefinitionsForm
-                  definitions={definitions}
-                  setDefinitions={setDefinitions}
-                  errors={errors}
-                  control={control}
-                />
-                {isVerb(watchWordClass.value) ? (
-                  <TensesForm
-                    record={record}
-                    errors={errors}
-                    control={control}
-                  />
-                ) : null}
-              </Box>
-            </Box>
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
             <Controller
@@ -329,6 +313,23 @@ const WordEditForm = ({
           </Box>
         </Box>
       </Box>
+      <DefinitionsForm
+        getValues={getValues}
+        cacheForm={cacheForm}
+        options={options}
+        record={record}
+        definitions={definitions}
+        setDefinitions={setDefinitions}
+        errors={errors}
+        control={control}
+      />
+      {isAnyDefinitionGroupAVerb ? (
+        <TensesForm
+          record={record}
+          errors={errors}
+          control={control}
+        />
+      ) : null}
       <ExamplesForm
         examples={examples}
         setExamples={setExamples}
@@ -342,7 +343,7 @@ const WordEditForm = ({
         setVariations={setVariations}
         control={control}
       />
-      {!invalidRelatedTermsWordClasses.includes(watchWordClass.value) ? (
+      {!areAllWordClassesInvalidForRelatedTerms ? (
         <RelatedTermsForm
           errors={errors}
           relatedTerms={relatedTerms}

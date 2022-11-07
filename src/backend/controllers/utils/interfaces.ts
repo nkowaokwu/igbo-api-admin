@@ -34,11 +34,16 @@ export interface WordDialect {
   pronunciation: string,
 }
 
+export interface DefinitionSchema {
+  wordClass: string | WordDialect,
+  definitions: string[],
+  _id: Types.ObjectId,
+}
+
 export interface Word extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   word: string,
-  wordClass: string | { label: string },
-  definitions: [string],
+  definitions: [DefinitionSchema],
   dialects: {
     [key: string]: WordDialect,
   },
@@ -115,6 +120,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   igbo?: string,
   english?: string,
   associatedWords: string[],
+  associatedDefinitionsSchemas: string[],
   pronunciation: string,
   updatedAt: Date,
 }
@@ -126,9 +132,11 @@ export interface ExampleSuggestion extends Example, Suggestion {
 };
 
 export interface ExampleClientData {
+  id?: string,
   igbo?: string,
   english?: string,
   associatedWords: string[],
+  associatedDefinitionsSchemas: string[],
   exampleForSuggestion?: boolean,
   authorId?: string,
 };

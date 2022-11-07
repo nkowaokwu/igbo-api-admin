@@ -6,7 +6,7 @@ import React, {
   ReactElement,
 } from 'react';
 import { act } from 'react-dom/test-utils';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import {
   Box,
   Input as ChakraInput,
@@ -165,7 +165,7 @@ const Input = React.forwardRef(({
                     {word.wordClass}
                   </chakra.span>
                 </Text>
-                <Text color="gray.600">{word.definitions[0]}</Text>
+                <Text color="gray.600">{get(word, 'definitions[0].definitions[0]')}</Text>
               </Box>
             ))
           )}

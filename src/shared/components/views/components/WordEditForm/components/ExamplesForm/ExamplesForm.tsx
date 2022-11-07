@@ -19,14 +19,33 @@ const ExamplesForm = ({
   getValues,
   setValue,
   control,
+  definitionGroupId,
 }: ExamplesFormInterface): ReactElement => (
+  // List of examples associated with the definition schema
+  // const definitionsGroupExamples = examples.filter(({ associatedDefinitionsSchemas }) => (
+  //   associatedDefinitionsSchemas?.includes(definitionGroupId)
+  //   || (definitionGroupIndex === 0 && (!associatedDefinitionsSchemas || !associatedDefinitionsSchemas.length))
+  // ));
+
+  // Determines if the example form should be rendered especially if there's no associated definitions schema
+  // const shouldRenderExampleForm = (example) => (
+  //   example.associatedDefinitionsSchemas?.includes?.(definitionGroupId)
+  //   || (
+  //     definitionGroupIndex === 0
+  //     && (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
+  //   )
+  // );
   <>
     <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
       <FormHeader
         title="Examples"
         tooltip="Example sentences should ideally in Standard Igbo."
       />
-      <AddExampleButton examples={examples} setExamples={setExamples} />
+      <AddExampleButton
+        examples={examples}
+        setExamples={setExamples}
+        definitionGroupId={definitionGroupId}
+      />
     </Box>
     <Box className="flex items-center my-5 w-full justify-between">
       <Accordion defaultIndex={[0]} allowMultiple className="w-full">
@@ -50,6 +69,7 @@ const ExamplesForm = ({
                 setValue={setValue}
                 control={control}
                 index={index}
+                definitionGroupId={definitionGroupId}
               />
             )) : (
               <Box className="flex w-full justify-center mb-2">
