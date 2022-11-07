@@ -94,9 +94,9 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                       {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}
                     </Box>
                     <Box>
-                      {definitions.map(({ definitions, wordClass, _id }, index) => (
+                      {definitions.map(({ definitions: nestedDefinitions, wordClass, _id }, index) => (
                         <Text key={_id}>
-                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${definitions[0]}`}
+                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${nestedDefinitions[0]}`}
                         </Text>
                       ))}
                     </Box>
@@ -123,7 +123,6 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
             {filteredWordSuggestions.map(({
               word,
               nsibidi,
-              wordClass,
               definitions,
               id,
             }) => (
@@ -152,10 +151,11 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): Re
                       <Text fontWeight="bold" mr={2}>{word}</Text>
                       {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}
                     </Box>
-                    <Text fontStyle="italic">{WordClass[wordClass]?.label || wordClass}</Text>
                     <Box>
-                      {definitions.map((definition, index) => (
-                        <Text key={definition}>{`${index + 1}. ${definition}`}</Text>
+                      {definitions.map(({ definitions: nestedDefinitions, wordClass, _id }, index) => (
+                        <Text key={_id}>
+                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${nestedDefinitions[0]}`}
+                        </Text>
                       ))}
                     </Box>
                   </PopoverContent>
