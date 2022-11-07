@@ -116,7 +116,7 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
   const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
   await updateStat({ statType: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
   await updateStat({ statType: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
-  await updateStat({ statType: StatTypes.DIALECTAL_VARIATONS, value: dialectalVariationsCount });
+  await updateStat({ statType: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount });
 
   return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
 };
