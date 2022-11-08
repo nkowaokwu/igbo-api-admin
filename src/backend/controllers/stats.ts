@@ -41,24 +41,24 @@ const updateStat = async ({ statType, authorId = 'SYSTEM', value }) => {
 /* Returns all the WordSuggestions with Headword audio pronunciations */
 const calculateTotalHeadwordsWithAudioPronunciations = async ():
 Promise<{ audioPronunciationWords: number } | void> => {
-  const audioPronunciationWords = await Word.find(searchForAllWordsWithAudioPronunciations())
-    .estimatedDocumentCount();
+  const audioPronunciationWords = await Word
+    .countDocuments(searchForAllWordsWithAudioPronunciations());
   await updateStat({ statType: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
   return { audioPronunciationWords };
 };
 
 /* Returns all the Words that's in Standard Igbo */
 const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWords: number } | void> => {
-  const isStandardIgboWords = await Word.find(searchForAllWordsWithIsStandardIgbo())
-    .estimatedDocumentCount();
+  const isStandardIgboWords = await Word
+    .countDocuments(searchForAllWordsWithIsStandardIgbo());
   await updateStat({ statType: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
   return { isStandardIgboWords };
 };
 
 /* Returns all Words with Nsịbịdị */
 const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: number } | void> => {
-  const wordsWithNsibidi = await Word.find(searchForAllWordsWithNsibidi())
-    .estimatedDocumentCount();
+  const wordsWithNsibidi = await Word
+    .countDocuments(searchForAllWordsWithNsibidi());
   await updateStat({ statType: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
 
   return { wordsWithNsibidi };
@@ -66,8 +66,8 @@ const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: nu
 
 /* Returns all Word Suggestions with Nsịbịdị */
 const calculateTotalWordSuggestionsWithNsibidi = async () : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
-  const wordSuggestionsWithNsibidi = await WordSuggestion.find({ ...searchForAllWordsWithNsibidi(), merged: null })
-    .estimatedDocumentCount();
+  const wordSuggestionsWithNsibidi = await WordSuggestion
+    .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
   await updateStat({ statType: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
   return { wordSuggestionsWithNsibidi };
 };
@@ -116,7 +116,7 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
   const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
   await updateStat({ statType: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
   await updateStat({ statType: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
-  await updateStat({ statType: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount });
+  await updateStat({ statType: StatTypes.DIALECTAL_VARIATONS, value: dialectalVariationsCount });
 
   return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
 };
