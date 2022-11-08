@@ -228,8 +228,12 @@ describe('MongoDB Words', () => {
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
       expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
       expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
-      firstWord.definitions[0].definitions.forEach((definition) => {
-        expect(definitions.includes(definition)).toBeTruthy();
+      combinedWordRes.body.definitions.forEach((definitionGroup) => {
+        if (definitionGroup.wordClass === firstWord.definitions[0].wordClass) {
+          firstWord.definitions[0].definitions.forEach((definition) => {
+            expect(definitionGroup.definitions.includes(definition)).toBeTruthy();
+          });
+        }
       });
       wordWithNullStems.definitions[0].definitions.forEach((definition) => {
         expect(definitions.includes(definition)).toBeTruthy();

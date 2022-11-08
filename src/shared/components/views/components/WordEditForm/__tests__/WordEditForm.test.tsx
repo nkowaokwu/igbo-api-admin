@@ -38,6 +38,25 @@ describe('Word Edit', () => {
     await findByText('Editor\'s Comments');
   });
 
+  it('render dialectal variations', async () => {
+    const { findByText, findByTestId } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{ id: '123' }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    await findByText('Dialectal Variations');
+    userEvent.click(await findByText('Add Dialectal Variation'));
+    await findByTestId('dialects-0-word-input');
+    userEvent.click(await findByText('Add Dialectal Variation'));
+    await findByTestId('dialects-1-word-input');
+  });
+
   it('add a definition group to word suggestion', async () => {
     const { findByText } = render(
       <TestContext>

@@ -41,7 +41,7 @@ const wordSuggestionSchema = new Schema(
         && definitions.length > 0
       ),
     }],
-    dialects: { type: [dialectSchema] },
+    dialects: { type: [dialectSchema], default: [] },
     tags: {
       type: [String],
       default: [],

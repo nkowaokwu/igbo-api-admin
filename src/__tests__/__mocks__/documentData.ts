@@ -11,7 +11,7 @@ export const wordSuggestionData = {
     wordClass: WordClass.NNC.value,
     definitions: ['first'],
   }],
-  dialects: {},
+  dialects: [],
 };
 
 export const wordSuggestionApprovedData = {
