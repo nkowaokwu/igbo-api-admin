@@ -71,9 +71,9 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       && examples.some(({ pronunciation }) => !pronunciation)
       && 'All example sentences need pronunciations'
     ),
-    Object.entries(dialects) && !Object.entries(dialects).length && 'A dialectal variation is needed',
-    (Object.entries(dialects)
-      && Object.values(dialects).some(({ dialects, pronunciation }) => !dialects?.length || !pronunciation)
+    Array.isArray(dialects) && !dialects.length && 'A dialectal variation is needed',
+    (Array.isArray(dialects)
+      && dialects.some(({ dialects, pronunciation }) => !dialects?.length || !pronunciation)
       && 'All dialect variations need all fields filled'
     ),
   ]);

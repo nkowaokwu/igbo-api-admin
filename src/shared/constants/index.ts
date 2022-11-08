@@ -8,7 +8,7 @@ export const DEFAULT_WORD_RECORD = {
   word: '',
   wordClass: '',
   definitions: [],
-  dialects: {},
+  dialects: [],
   variations: [],
   approvals: [],
   denials: [],

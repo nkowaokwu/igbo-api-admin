@@ -30,11 +30,12 @@ const schema = yup.object().shape({
     }),
   })),
   variations: yup.array().min(0).of(yup.string()),
-  dialects: yup.object().shape({
-    dialect: yup.string().optional(),
+  dialects: yup.array().min(0).of(yup.object().shape({
+    dialects: yup.array().min(1).of(yup.string()),
     variations: yup.array().min(0).of(yup.string()).optional(),
     pronunciation: yup.string().optional(),
-  }),
+    word: yup.string(),
+  })),
   tenses: yup.object().shape(Object.values(Tense).reduce((finalSchema, tenseValue) => ({
     ...finalSchema,
     [tenseValue.value]: yup.string().optional(),

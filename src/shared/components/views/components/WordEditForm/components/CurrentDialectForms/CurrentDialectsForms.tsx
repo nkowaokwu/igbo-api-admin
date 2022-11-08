@@ -5,6 +5,7 @@ import DialectForm from '../../DialectForm/DialectForm';
 import CurrentDialectFormsInterface from './CurrentDialectFormsInterface';
 
 const CurrentDialectsForms = ({
+  errors,
   record,
   originalRecord,
   control,
@@ -29,15 +30,17 @@ const CurrentDialectsForms = ({
       colorScheme="green"
       leftIcon={<AddIcon color="white" boxSize={5} />}
     >
-      Add dialectal variation
+      Add Dialectal Variation
     </Button>
     <Box
       className={'grid grid-flow-row grid-cols-1 '
       + `${dialects.length !== 1 ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} gap-4`}
     >
       {dialects.map((dialect, index) => (
-        <Box key={`dialectal-variation-${dialect.word}`}>
+        // eslint-disable-next-line
+        <Box key={`dialectal-variation-${dialect.word}-${dialect.id || ''}-${index}`}>
           <DialectForm
+            errors={errors}
             index={index}
             record={record}
             control={control}
@@ -49,6 +52,9 @@ const CurrentDialectsForms = ({
           />
         </Box>
       ))}
+      {errors.dialects ? (
+        <p className="error">{errors.dialects.message}</p>
+      ) : null}
     </Box>
   </Box>
 );

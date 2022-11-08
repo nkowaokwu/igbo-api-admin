@@ -28,7 +28,7 @@ const record = {
   pronunciation: '1234',
   stems: [],
   relatedTerms: [],
-  dialects: {},
+  dialects: [],
   attributes: {
     isStandardIgbo: true,
   },
@@ -46,13 +46,12 @@ const completeRecord = {
   pronunciation: 'word-pronunciation',
   stems: ['stemId'],
   relatedTerms: ['relatedTermId'],
-  dialects: {
-    word: {
-      variations: [],
-      dialects: ['NSA'],
-      pronunciation: 'dialect-pronunciation',
-    },
-  },
+  dialects: [{
+    variations: [],
+    dialects: ['NSA'],
+    pronunciation: 'dialect-pronunciation',
+    word: 'word',
+  }],
   nsibidi: 'nsibidi',
 };
 
@@ -88,6 +87,7 @@ describe('Word Show', () => {
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
     await findByText('Nsịbịdị');
+    await findByText('Definition Groups');
     await findByText('Part of Speech');
     await findByText('Definitions');
     await findByText('Variations');
@@ -119,7 +119,6 @@ describe('Word Show', () => {
     await findByText('Nsịbịdị');
     await findByText('Part of Speech');
     await findByText('Definition Groups');
-    await findByText('Part of Speech');
     await findByText(WordClass[record.definitions[0].wordClass].label);
     await findByText('Definitions');
     await findByText(record.definitions[0].definitions[0]);

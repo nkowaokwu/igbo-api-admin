@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
-import { every, has, partial } from 'lodash';
+import { every } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import WordAttributes from '../shared/constants/WordAttributes';
 import WordTags from '../shared/constants/WordTags';
-import * as Interfaces from '../controllers/utils/interfaces';
-
-const REQUIRED_DIALECT_KEYS = ['variations', 'dialects', 'pronunciation'];
-const REQUIRED_DIALECT_CONSTANT_KEYS = ['code', 'value', 'label'];
 
 const { Schema, Types } = mongoose;
 
@@ -23,6 +19,13 @@ const definitionSchema = new Schema({
   definitions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin });
 
+const dialectSchema = new Schema({
+  word: { type: String, required: true },
+  variations: { type: [{ type: String }], default: [] },
+  dialects: { type: [{ type: String }], validate: (v) => every(v, (dialect) => Dialects[dialect].value), default: [] },
+  pronunciation: { type: String, default: '' },
+}, { toObject: toObjectPlugin });
+
 const wordSchema = new Schema({
   word: { type: String, required: true },
   definitions: [{
@@ -32,24 +35,7 @@ const wordSchema = new Schema({
       && definitions.length > 0
     ),
   }],
-  dialects: {
-    type: Object,
-    validate: (v) => {
-      const dialectValues = Object.values(v) as Interfaces.WordDialect[];
-      return dialectValues.every((dialectValue) => (
-        every(REQUIRED_DIALECT_KEYS, partial(has, dialectValue))
-        && every(dialectValue.dialects, (dialect) => (
-          every(REQUIRED_DIALECT_CONSTANT_KEYS, partial(has, Dialects[dialect]))
-        ))
-        && Array.isArray(dialectValue.dialects)
-        && every(dialectValue.dialects, (dialect) => Dialects[dialect].value)
-        && typeof dialectValue.pronunciation === 'string'
-        && Array.isArray(dialectValue.variations)
-      ));
-    },
-    required: false,
-    default: {},
-  },
+  dialects: { type: [dialectSchema], default: [] },
   tags: {
     type: [String],
     default: [],

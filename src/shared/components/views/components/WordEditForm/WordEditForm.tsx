@@ -23,7 +23,6 @@ import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
-import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -49,7 +48,7 @@ const WordEditForm = ({
 } : EditFormProps) : ReactElement => {
   /* Injected empty dialects object for new suggestions */
   if (!record?.dialects) {
-    record.dialects = {};
+    record.dialects = [];
   };
   const {
     handleSubmit,
@@ -60,7 +59,7 @@ const WordEditForm = ({
     watch,
   } = useForm({
     defaultValues: {
-      dialects: record.dialects,
+      dialects: record?.dialects || [],
       examples: record?.examples
         ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
         : [],
@@ -82,11 +81,7 @@ const WordEditForm = ({
   const [stems, setStems] = useState(record.stems || []);
   const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dialects, setDialects] = useState(
-    Object.entries(record.dialects || {}).map(([word, value] : [string, Interfaces.WordDialect]) => (
-      { ...value, word }
-    )),
-  );
+  const [dialects, setDialects] = useState(record.dialects);
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
@@ -121,39 +116,11 @@ const WordEditForm = ({
       .filter((example) => example.igbo && example.english);
   };
 
-  /* Prepares dialects to include all required keys (dialectal word) for Mongoose schema validation */
-  const prepareDialects = (): { [key: string]: Interfaces.WordDialect } => {
-    const formDialects = getValues().dialects || {};
-    return (
-      dialects.reduce((finalDialects, dialect) => (
-        /* The pronunciation, variations, and dialect are required for Mongoose schema validation */
-        {
-          ...finalDialects,
-          [dialect.word]: {
-            dialects: Array.from(new Set([
-              ...(finalDialects?.[dialect.word]?.dialects || []),
-              ...dialect.dialects,
-            ])),
-            variations: Array.from(new Set([
-              ...(finalDialects?.[dialect.word]?.variations || []),
-              ...dialect.variations,
-            ])),
-            pronunciation: !finalDialects?.[dialect.word]?.pronunciation
-              ? formDialects[dialect.word]?.pronunciation
-              : '',
-          },
-        }
-      ), {})
-    );
-  };
-
   /* Prepares the data to be cached */
   const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {
-    const dialects = prepareDialects() || {};
     const cleanedData = {
       ...record,
       ...data,
-      dialects,
       definitions: (data.definitions || []).map((definition) => ({
         ...definition,
         wordClass: definition.wordClass.value,
@@ -292,6 +259,7 @@ const WordEditForm = ({
               />
             </Box>
             <CurrentDialectsForms
+              errors={errors}
               record={record}
               originalRecord={originalRecord}
               control={control}

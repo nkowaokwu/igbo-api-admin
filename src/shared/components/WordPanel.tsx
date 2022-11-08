@@ -59,21 +59,28 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
           {get(record, 'nsibidi') || 'No Nsịbịdị'}
         </Text>
       </Box>
-      <Box>
-        <Text fontSize="xl" className="font-bold">Part of Speech</Text>
-        <Text>{get(WordClass[record.wordClass], 'label')}</Text>
-      </Box>
     </Box>
     <Box className="flex flex-row items-start space-x-8">
       <Box className="space-y-2">
         <Box>
-          <Text fontSize="lg" className="font-bold">Definitions</Text>
-          {get(record, 'definitions.length') ? record.definitions.map((definition, index) => (
-            <Box key={definition} className="flex flex-row space-x-1">
-              <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <Text>{definition}</Text>
-            </Box>
-          )) : <Text className="text-gray-500 italic">No definitions</Text>}
+          <Text fontSize="xl" className="font-bold">Definition Groups</Text>
+          <Box>
+            {(get(record, 'definitions') || []).map(({ wordClass, definitions, id }) => (
+              <Box key={id}>
+                <Box>
+                  <Text fontSize="lg" className="font-bold">Part of Speech</Text>
+                  <Text>{get(WordClass[wordClass], 'label')}</Text>
+                </Box>
+                <Text fontSize="lg" className="font-bold">Definitions</Text>
+                {definitions?.length ? definitions.map((definition, index) => (
+                  <Box key={definition} className="flex flex-row space-x-1">
+                    <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                    <Text>{definition}</Text>
+                  </Box>
+                )) : <Text className="text-gray-500 italic">No definitions</Text>}
+              </Box>
+            ))}
+          </Box>
         </Box>
         <Box>
           <Text fontSize="lg" className="font-bold">Spelling Variations</Text>
@@ -106,15 +113,14 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
       <Box>
         <Box>
           <Text fontSize="lg" className="font-bold">Dialectal Variations</Text>
-          {Object.entries(get(record, 'dialects') || {}).length ? (
-            // @ts-expect-error
-            Object.entries(record.dialects).map(([dialect, { dialects }], index) => (
-              <Box className="space-y-1">
-                <Box key={dialect} className="flex flex-row space-x-1">
+          {(get(record, 'dialects') || []).length ? (
+            get(record, 'dialects').map(({ word, dialects, _id }, index) => (
+              <Box key={_id} className="space-y-1">
+                <Box className="flex flex-row space-x-1">
                   <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-                  <Text>{dialect}</Text>
+                  <Text>{word}</Text>
                 </Box>
-                <AudioRecordingPreview record={record} audioPath={`dialects.${dialect}.pronunciation`} />
+                <AudioRecordingPreview record={record} audioPath={`dialects.${index}.pronunciation`} />
                 <Text>
                   {dialects.map((regionalDialect) => (
                     get(Dialects[regionalDialect], 'label')

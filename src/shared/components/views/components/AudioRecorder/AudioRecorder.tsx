@@ -40,12 +40,12 @@ const AudioRecorder = ({
     ? 'pronunciation'
     : path.startsWith('examples')
       ? 'pronunciation'
-      : `dialects.${path}.pronunciation`;
+      : `${path}.pronunciation`;
   const formValuePath = path === 'headword'
     ? 'pronunciation'
     : path.startsWith('examples') // Handles path for nested examples
       ? `${path}.pronunciation`
-      : `dialects.${path}.pronunciation`;
+      : `${path}.pronunciation`;
   const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording] = useRecorder();
   const toast = useToast();

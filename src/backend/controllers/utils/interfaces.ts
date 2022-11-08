@@ -32,6 +32,9 @@ export interface WordDialect {
   dialects: string[],
   variations: string[],
   pronunciation: string,
+  word: string,
+  _id?: Types.ObjectId,
+  id?: string,
 }
 
 export interface DefinitionSchema {
@@ -44,9 +47,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   word: string,
   definitions: [DefinitionSchema],
-  dialects: {
-    [key: string]: WordDialect,
-  },
+  dialects: WordDialect[],
   pronunciation: string,
   variations: string[],
   normalized: string,
