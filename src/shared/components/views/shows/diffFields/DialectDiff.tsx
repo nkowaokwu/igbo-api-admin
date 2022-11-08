@@ -65,14 +65,12 @@ const DialectDiff = (
           defaultIndex={[0]}
           allowMultiple
         >
-          {Object.entries(record.dialects as Interfaces.WordDialect).map(([
-            dialectalWord,
-            {
-              variations = [],
-              dialects,
-              pronunciation,
-            },
-          ]) => (
+          {(record.dialects as Interfaces.WordDialect[]).map(({
+            variations = [],
+            dialects,
+            pronunciation,
+            word: dialectalWord,
+          }) => (
             <AccordionItem key={dialectalWord}>
               <AccordionButton>
                 <Heading as="h2" size="sm" className="text-left">

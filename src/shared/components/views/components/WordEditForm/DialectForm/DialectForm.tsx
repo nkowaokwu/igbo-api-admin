@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import { Box, IconButton, Tooltip } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
@@ -19,7 +19,6 @@ const DialectForm = ({
   originalRecord,
 }: DialectFormInterface) : ReactElement => {
   const dialect = dialects[index];
-  const dialectalWordRef = useRef(dialect.word);
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
   ));
@@ -27,7 +26,7 @@ const DialectForm = ({
   return (
     <Box
       className="my-3 bg-gray-200 rounded p-3"
-      key={`dialects.${dialect.word}.word`}
+      key={`dialects.${dialect.id}.word`}
     >
       <Box className="flex flex-col justify-center items-center space-y-3 lg:space-y-0 space-x-3">
         <Box flex={3} className="w-full">
@@ -46,40 +45,30 @@ const DialectForm = ({
               />
             </Tooltip>
           </Box>
-          <Input
-            onChange={(e) => {
-              dialectalWordRef.current = e.target.value;
-            }}
-            onBlur={(e) => {
-              if (e.relatedTarget?.closest?.('[data-test="accented-letter-popup"]')) {
-                return;
-              }
-              const updatedDialects = [...dialects];
-              updatedDialects[index].word = dialectalWordRef.current;
-              setDialects(updatedDialects);
-              /**
-               * We are calling React Hook Form's setValue to update the current dialect's object.
-               * This step is necessary so we can have access to the latest updated dialect in React
-               * Hook Form when preparing our payload to send to the backend.
-               */
-              setValue(`dialects['${dialectalWordRef.current}']`, dialect);
-            }}
-            className="form-input"
-            placeholder="Dialectal variation"
-            data-test={`dialects-${dialect.word}-word-input`}
-            defaultValue={dialect.word || ''}
+          <Controller
+            render={({ onChange }) => (
+              <Input
+                onChange={onChange}
+                className="form-input"
+                placeholder="Dialectal variation"
+                data-test={`dialects-${index}-word-input`}
+                defaultValue={dialect.word || ''}
+              />
+            )}
+            name={`dialects.${index}.word`}
+            defaultValue={dialect?.word}
+            control={control}
           />
         </Box>
         <Box flex={2} className="w-full">
           <Controller
             render={() => (
               <AudioRecorder
-                path={dialect.word}
+                path={`dialects.${index}`}
                 getFormValues={getValues}
                 setPronunciation={(path, value) => {
                   const updatedDialects = [...dialects];
-                  const pathWithoutDialectsPrefix = path.split('dialects.')[1];
-                  updatedDialects[index][pathWithoutDialectsPrefix] = value;
+                  updatedDialects[index].pronunciation = value;
                   setDialects(updatedDialects);
                   /**
                    * We are calling React Hook Form's setValue to update the current dialect's pronunciation.
@@ -92,7 +81,7 @@ const DialectForm = ({
                 originalRecord={originalRecord}
               />
             )}
-            name={`dialects.${dialect.word}.pronunciation`}
+            name={`dialects.${index}.pronunciation`}
             defaultValue={dialect.pronunciation}
             control={control}
           />
@@ -118,7 +107,7 @@ const DialectForm = ({
                 defaultValue={defaultDialectsValue}
               />
             )}
-            name={`dialects.${dialect.word}.dialects`}
+            name={`dialects.${index}.dialects`}
             defaultValue={defaultDialectsValue}
             control={control}
           />

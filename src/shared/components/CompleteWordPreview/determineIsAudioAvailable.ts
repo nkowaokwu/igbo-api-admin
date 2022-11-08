@@ -14,7 +14,7 @@ export default async (record: Word | Record, callback: (value: any) => void): Pr
       ];
     }
     if (key === 'dialects') {
-      const dialectsPronunciationsPromises = Object.entries(record.dialects)
+      const dialectsPronunciationsPromises = record.dialects
         .reduce((
           finalDialectsPronunciationPromises: any[],
           [dialectKey, dialectValue] : [string, { pronunciation: string }],

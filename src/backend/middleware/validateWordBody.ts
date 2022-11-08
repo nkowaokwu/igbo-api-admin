@@ -32,13 +32,12 @@ export const wordDataSchema = Joi.object().keys({
   stems: Joi.array().min(0).items(Joi.string()).allow(null)
     .optional(),
   relatedTerms: Joi.array().min(0).items(Joi.string()).optional(),
-  dialects: Joi.object().keys({
-    dialectalWord: Joi.object({
-      variations: Joi.array().min(0).items(Joi.string()).required(),
-      dialects: Joi.array().min(0).items(Joi.string().valid(...Object.keys(Dialects))).required(),
-      pronunciation: Joi.string().allow('').required(),
-    }),
-  }).unknown(true),
+  dialects: Joi.array().min(0).items(Joi.object().keys({
+    variations: Joi.array().min(0).items(Joi.string()).optional(),
+    dialects: Joi.array().min(0).items(Joi.string().valid(...Object.keys(Dialects))).required(),
+    pronunciation: Joi.string().allow('').required(),
+    word: Joi.string().allow('').required(),
+  })),
   tags: Joi.array().items(Joi.string().valid(...Object.values(WordTags).map(({ value }) => value))),
   tenses: Joi.object().keys(Object.values(Tense).reduce((finalSchema, { value }) => ({
     ...finalSchema,

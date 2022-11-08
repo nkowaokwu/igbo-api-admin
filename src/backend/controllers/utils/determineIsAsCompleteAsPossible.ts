@@ -28,8 +28,8 @@ export default (word: Word | Record): boolean => !!(
   )
   && (
     word.dialects && typeof word.dialects === 'object'
-    && Object.entries(word.dialects)
-    && Object.entries(word.dialects).length
+    && Array.isArray(word.dialects)
+    && word.dialects.length
     && Object.values(word.dialects).every(({ dialects, pronunciation }) => (
       dialects.length && pronunciation
     ))

@@ -16,13 +16,6 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 
-const assignDefaultDialectValues = (data: Interfaces.WordSuggestion) => (
-  Object.entries(data.dialects || {}).reduce((finalDialects, [key, value]) => ({
-    ...finalDialects,
-    [key]: { ...value },
-  }), {})
-);
-
 /* Creates a new WordSuggestion document in the database */
 export const postWordSuggestion = async (
   req: Interfaces.EditorRequest,
@@ -33,7 +26,6 @@ export const postWordSuggestion = async (
     const { body: data, user } = req;
 
     data.authorId = user.uid;
-    data.dialects = assignDefaultDialectValues(data); // Assigns default word values
     const clientExamples = getExamplesFromClientData(data);
     const newWordSuggestion = new WordSuggestion(data);
     const wordSuggestion = (await newWordSuggestion.save()) as Interfaces.WordSuggestion;
@@ -180,9 +172,14 @@ export const deleteWordSuggestion = (
         /* Deletes all word pronunciations for the headword and dialects */
         const isPronunciationMp3 = wordSuggestion.pronunciation && wordSuggestion.pronunciation.includes('mp3');
         await deleteAudioPronunciation(id, isPronunciationMp3);
-        await Promise.all(Object.entries(wordSuggestion.dialects).map(async ([dialectalWord, { pronunciation }]) => {
+        await Promise.all(wordSuggestion.dialects.map(async ({
+          pronunciation,
+          word: dialectalWord,
+          _id: dialectalWordId,
+        }) => {
           const dialectPronunciationMp3 = pronunciation && pronunciation.includes('mp3');
           deleteAudioPronunciation(`${id}-${dialectalWord}`, dialectPronunciationMp3);
+          deleteAudioPronunciation(`${id}-${dialectalWordId}`, dialectPronunciationMp3);
         }));
         const { email: userEmail } = await findUser(wordSuggestion.authorId) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */

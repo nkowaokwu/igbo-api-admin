@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from 'express';
 import {
   assign,
   filter,
-  kebabCase,
   map,
   omit,
   uniqBy,
@@ -35,7 +34,6 @@ import {
   searchForAssociatedSuggestionsByTwitterId,
 } from '../utils/queries';
 import { findWordsWithMatch } from '../utils/buildDocs';
-import removeAccents from '../../utils/removeAccents';
 import { createExample, executeMergeExample, findExampleByAssociatedWordId } from '../examples';
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
@@ -248,7 +246,7 @@ const updateSuggestionAfterMerge = async (
 
 /* Takes the suggestion word pronunciation and overwrites the existing Word document's pronunciation file */
 const overwriteWordPronunciation = async (
-  suggestion: Interfaces.WordSuggestion,
+  initialSuggestion: Interfaces.WordSuggestion,
   word: Interfaces.Word,
 ): Promise<Document<Interfaces.Word>> => {
   try {
@@ -258,20 +256,23 @@ const overwriteWordPronunciation = async (
      * will be passed in to tell AWS to delete the audio record for the associated
      * Word document
      */
-    const suggestionDocId = suggestion.pronunciation ? suggestion.id.toString() : '';
-    const isMp3 = suggestion.pronunciation.includes('mp3');
+    const suggestionDocId = initialSuggestion.pronunciation ? initialSuggestion.id.toString() : '';
+    const isMp3 = initialSuggestion.pronunciation.includes('mp3');
     const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id, isMp3);
 
-    suggestion.pronunciation = finalPronunciationUri;
+    initialSuggestion.pronunciation = finalPronunciationUri;
     word.pronunciation = finalPronunciationUri;
 
-    await Promise.all(Object.entries(suggestion.dialects || {}).map(async ([
+    // Since the word suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
+    initialSuggestion.skipPronunciationHook = true;
+    const suggestion = await initialSuggestion.save();
+
+    await Promise.all(suggestion.dialects || [].map(async ([
       rawDialectalWord,
-      { pronunciation: suggestionPronunciation },
+      { pronunciation: suggestionPronunciation, _id: dialectalWordId },
     ]) => {
-      const dialectalWord = removeAccents.remove(kebabCase(rawDialectalWord));
-      const wordDialectPronunciationKey = `${word.id}-${dialectalWord}`;
-      const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWord}`;
+      const wordDialectPronunciationKey = `${word.id}-${dialectalWordId}`;
+      const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWordId}`;
       /**
        * If the Word dialect's pronunciation doesn't include the Word's id,
        * the dialect's pronunciation uri key will get updated
@@ -284,6 +285,7 @@ const overwriteWordPronunciation = async (
 
       suggestion.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
       if (!word.dialects[rawDialectalWord]) {
+        // @ts-expect-error _id
         word.dialects[rawDialectalWord] = {
           dialects: [],
           variations: [],
@@ -293,8 +295,6 @@ const overwriteWordPronunciation = async (
       word.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
     }));
 
-    // Since the word suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
-    suggestion.skipPronunciationHook = true;
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
     await Word.findOneAndUpdate({ _id: word.id }, word.toObject());

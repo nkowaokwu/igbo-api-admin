@@ -3,6 +3,7 @@ import { Control } from 'react-hook-form';
 import { WordDialect } from 'src/backend/controllers/utils/interfaces';
 
 interface CurrentDialectForms {
+  errors: any,
   record: Record,
   originalRecord: Record,
   control: Control,
