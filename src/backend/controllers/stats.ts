@@ -42,7 +42,7 @@ const updateStat = async ({ statType, authorId = 'SYSTEM', value }) => {
 const calculateTotalHeadwordsWithAudioPronunciations = async ():
 Promise<{ audioPronunciationWords: number } | void> => {
   const audioPronunciationWords = await Word
-    .countDocuments(searchForAllWordsWithAudioPronunciations());
+    .estimatedDocumentCount(searchForAllWordsWithAudioPronunciations());
   await updateStat({ statType: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
   return { audioPronunciationWords };
 };
@@ -50,7 +50,7 @@ Promise<{ audioPronunciationWords: number } | void> => {
 /* Returns all the Words that's in Standard Igbo */
 const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWords: number } | void> => {
   const isStandardIgboWords = await Word
-    .countDocuments(searchForAllWordsWithIsStandardIgbo());
+    .estimatedDocumentCount(searchForAllWordsWithIsStandardIgbo());
   await updateStat({ statType: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
   return { isStandardIgboWords };
 };
@@ -58,7 +58,7 @@ const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWord
 /* Returns all Words with Nsịbịdị */
 const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: number } | void> => {
   const wordsWithNsibidi = await Word
-    .countDocuments(searchForAllWordsWithNsibidi());
+    .estimatedDocumentCount(searchForAllWordsWithNsibidi());
   await updateStat({ statType: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
 
   return { wordsWithNsibidi };
@@ -67,7 +67,7 @@ const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: nu
 /* Returns all Word Suggestions with Nsịbịdị */
 const calculateTotalWordSuggestionsWithNsibidi = async () : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
   const wordSuggestionsWithNsibidi = await WordSuggestion
-    .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
+    .estimatedDocumentCount({ ...searchForAllWordsWithNsibidi(), merged: null });
   await updateStat({ statType: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
   return { wordSuggestionsWithNsibidi };
 };
