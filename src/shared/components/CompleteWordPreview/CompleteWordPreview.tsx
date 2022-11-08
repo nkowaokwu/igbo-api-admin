@@ -89,6 +89,7 @@ const CompleteWordPreview = (
               ))}
               {
                 dialectStatusIndex !== -1
+                && availableAudioStatuses?.length
                 && Object.entries(availableAudioStatuses[dialectStatusIndex] || {})
                   .map(([dialect, dialectAudioStatus]) => {
                     if (!dialectAudioStatus) {
