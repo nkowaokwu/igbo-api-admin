@@ -17,22 +17,22 @@ import determineExampleCompleteness from './utils/determineExampleCompleteness';
 import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPossible';
 import StatTypes from '../shared/constants/StatTypes';
 
-const findStat = async ({ statType, authorId = 'SYSTEM' }) => {
-  let stat = await Stat.findOne({ type: statType, authorId });
+const findStat = async ({ type, authorId = 'SYSTEM' }) => {
+  let stat = await Stat.findOne({ type, authorId });
   if (!stat) {
     // The stat hasn't been created, let's create a new one
-    const newState = new Stat({ type: statType, authorId });
+    const newState = new Stat({ type, authorId });
     stat = newState.save();
   }
   return stat;
 };
 
-const updateStat = async ({ statType, authorId = 'SYSTEM', value }) => {
+const updateStat = async ({ type, authorId = 'SYSTEM', value }) => {
   if ((!value && typeof value !== 'number')) {
     throw new Error('Valid truthy valid must be provided');
   }
 
-  const stat = await findStat({ statType, authorId });
+  const stat = await findStat({ type, authorId });
   stat.value = value;
   stat.markModified('value');
   return stat.save();
@@ -43,7 +43,7 @@ const calculateTotalHeadwordsWithAudioPronunciations = async ():
 Promise<{ audioPronunciationWords: number } | void> => {
   const audioPronunciationWords = await Word
     .countDocuments(searchForAllWordsWithAudioPronunciations());
-  await updateStat({ statType: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
+  await updateStat({ type: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
   return { audioPronunciationWords };
 };
 
@@ -51,7 +51,7 @@ Promise<{ audioPronunciationWords: number } | void> => {
 const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWords: number } | void> => {
   const isStandardIgboWords = await Word
     .countDocuments(searchForAllWordsWithIsStandardIgbo());
-  await updateStat({ statType: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
+  await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
   return { isStandardIgboWords };
 };
 
@@ -59,7 +59,7 @@ const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWord
 const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: number } | void> => {
   const wordsWithNsibidi = await Word
     .countDocuments(searchForAllWordsWithNsibidi());
-  await updateStat({ statType: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
+  await updateStat({ type: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
 
   return { wordsWithNsibidi };
 };
@@ -68,7 +68,7 @@ const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: nu
 const calculateTotalWordSuggestionsWithNsibidi = async () : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
   const wordSuggestionsWithNsibidi = await WordSuggestion
     .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
-  await updateStat({ statType: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
+  await updateStat({ type: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
   return { wordSuggestionsWithNsibidi };
 };
 
@@ -114,9 +114,9 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
     limit: INCLUDE_ALL_WORDS_LIMIT,
   });
   const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
-  await updateStat({ statType: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
-  await updateStat({ statType: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
-  await updateStat({ statType: StatTypes.DIALECTAL_VARIATONS, value: dialectalVariationsCount });
+  await updateStat({ type: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
+  await updateStat({ type: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
+  await updateStat({ type: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount });
 
   return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
 };
@@ -139,10 +139,10 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
       ],
     });
   const sufficientExamplesCount = examples.length;
-  await updateStat({ statType: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount });
+  await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount });
 
   const completedExamplesCount = await countCompletedExamples(examples);
-  await updateStat({ statType: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount });
+  await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount });
 
   return { sufficientExamplesCount, completedExamplesCount };
 };
