@@ -52,7 +52,7 @@ const Notifications = (props): ReactElement => {
 
   useEffect(() => {
     if (!auth.currentUser) {
-      return;
+      return null;
     }
     const { uid } = auth.currentUser;
     const q = query(collection(
@@ -68,8 +68,9 @@ const Notifications = (props): ReactElement => {
         }
       });
       setNotifications(allNotifications.reverse());
-      return unsubscribe;
     });
+
+    return unsubscribe;
   }, []);
 
   return (

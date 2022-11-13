@@ -15,6 +15,7 @@ export default {
     Object.keys(omit(LocalStorageKeys, ['REDIRECT_URL'])).forEach((key) => {
       localStorage.removeItem(LocalStorageKeys[key]);
     });
+    window.location.hash = '#/login';
     return firebaseAuthProvider.logout(args);
   },
 };
