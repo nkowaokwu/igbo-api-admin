@@ -47,8 +47,9 @@ const Login = (): ReactElement => {
     localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, idTokenResult.token);
     localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
     localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
-    const redirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    redirect((redirectUrl || '#/').replace('#/', '') || '/');
+    const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
+    const redirectUrl = (rawRedirectUrl || '#/').replace('#/', '') || '/';
+    redirect(redirectUrl);
   };
 
   const uiConfig = {
