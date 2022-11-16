@@ -238,7 +238,7 @@ export const searchForLastWeekQuery = (): {
 });
 export const searchDeveloperWithHostsQuery = hostsQuery;
 export const searchForAllWordsWithAudioPronunciations = (): { pronunciation: any, $expr: any } => ({
-  pronunciation: { $exists: true },
+  pronunciation: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
 });
 export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandardIgbo: boolean } } => ({
