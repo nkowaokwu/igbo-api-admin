@@ -151,7 +151,7 @@ describe('Edit', () => {
     beforeEach(() => {
       cy.cleanLogin();
     });
-    it('render the edit view for word suggestions', () => {
+    it.only('render the edit view for word suggestions', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();

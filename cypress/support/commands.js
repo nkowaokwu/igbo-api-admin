@@ -10,7 +10,6 @@
 
 import '@testing-library/cypress/add-commands';
 import { v4 as uuidv4 } from 'uuid';
-import { initializeApp } from 'firebase/app';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
@@ -21,7 +20,7 @@ import { attachCustomCommands } from 'cypress-firebase';
 import { STAGING_FIREBASE_CONFIG } from '../../src/config';
 import { API_ROUTE, wordSuggestionData, exampleSuggestionData } from '../constants';
 
-initializeApp(STAGING_FIREBASE_CONFIG);
+firebase.initializeApp(STAGING_FIREBASE_CONFIG);
 
 attachCustomCommands({ Cypress, cy, firebase });
 
@@ -32,13 +31,13 @@ Cypress.on('window:before:load', (window) => {
 
 Cypress.Commands.add('typeLogin', (email, password) => {
   cy.visit('http://localhost:3030/#/login');
-  cy.intercept('POST', '**/identitytoolkit/v3/relyingparty/verifyPassword**').as('loggingIn');
+  // cy.intercept('POST', '**/identitytoolkit/v3/relyingparty/verifyPassword**').as('loggingIn');
   cy.contains('Sign in with email').click();
   cy.get('input[type="email"]').clear().type(email);
   cy.findByRole('button', { name: 'Next' }).click();
   cy.get('input[type="password"]').clear().type(password);
   cy.findByRole('button', { name: 'Sign In' }).click();
-  cy.wait('@loggingIn');
+  // cy.wait('@loggingIn');
   cy.wait(2000); // Wait for localStorage to get populated
   cy.saveLocalStorage();
 });
@@ -261,15 +260,11 @@ Cypress.Commands.add('getExampleDetails', (position = 1) => {
 /* Grabs the editor's action dropdown for the first document in the list */
 // Alternative query: https://github.com/cypress-io/cypress/issues/549#issuecomment-523399928
 Cypress.Commands.add('getActionsOption', (optionText, position = 0) => {
-  cy.get('.test-select-options').should('be.visible').as('editorActions');
-  cy.get('@editorActions')
-    .findByText('Action')
-    .eq(position)
-    .scrollIntoView()
-    .parent()
-    .find('input')
-    .click({ force: true });
-  return cy.get('.test-select-options [id|=react-select][tabindex]').contains(optionText);
+  cy.get('[data-test="select-menu-wordSuggestions"]')
+  .first()
+  .should('be.visible')
+  .click({ force: true });
+  return cy.get(`[value="${optionText.toLowerCase()}"]`).first();
 });
 
 /* Presses the confirm option in the confirmation modal */

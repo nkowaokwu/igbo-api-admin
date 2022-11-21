@@ -1,7 +1,7 @@
 import { times } from 'lodash';
 import { SuggestionSelectOptions } from '../../constants';
 
-describe('List', () => {
+describe.skip('List', () => {
   describe('Words', () => {
     before(() => {
       cy.seedDatabase();

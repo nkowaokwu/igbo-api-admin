@@ -6,7 +6,7 @@ describe('Delete', () => {
     cy.cleanLogin();
   });
 
-  it('delete a wordSuggestion in list view', () => {
+  it.only('delete a wordSuggestion in list view', () => {
     cy.createWordSuggestion();
     cy.selectCollection('wordSuggestions');
     cy.getWordSuggestionDocumentDetails();

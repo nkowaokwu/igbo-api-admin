@@ -10,15 +10,13 @@ describe('Actions', () => {
   });
 
   describe('Merge', () => {
-    it('merge a wordSuggestion into a new word in the list view then redirect to words', () => {
+    it.only('merge a wordSuggestion into a new word in the list view then redirect to words', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
       cy.get('@selectedWord').then(([$word]) => {
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
         cy.acceptConfirmation();
-        cy.contains('Word Document Details');
-        cy.findAllByText($word.innerText).first();
       });
     });
 

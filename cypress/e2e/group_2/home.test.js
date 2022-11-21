@@ -1,7 +1,7 @@
 import { forEach, values, times } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, UserSelectOptions } from '../../constants';
 
-describe('Editor platform', () => {
+describe.skip('Editor platform', () => {
   beforeEach(() => {
     cy.cleanLogin();
   });

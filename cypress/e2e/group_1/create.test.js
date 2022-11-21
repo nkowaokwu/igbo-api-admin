@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import {
   DocumentSelectOptions,
   SuggestionSelectOptions,
@@ -8,7 +8,7 @@ import {
 } from '../../constants';
 
 const errorMessage = 'An error occurred while saving';
-describe('Create', () => {
+describe.skip('Create', () => {
   beforeEach(() => {
     cy.cleanLogin();
   });

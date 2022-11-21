@@ -119,15 +119,7 @@ export const wordSuggestionData = {
   wordClass: 'NNC',
   definitions: ['first'],
   variations: ['ok', 'k', 'okok'],
-  dialects: {
-    ...dialectObjects,
-    NSA: {
-      word: 'NSA-word',
-      dialect: 'NSA',
-      variations: [],
-      pronunciation: '',
-    },
-  },
+  dialects: {},
   examples: [
     {
       igbo: 'THIS IS THE NESTED EXAMPLES',

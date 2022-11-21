@@ -1,6 +1,6 @@
 import { SuggestionSelectOptions } from '../../constants';
 
-describe('Approve and Deny', () => {
+describe.skip('Approve and Deny', () => {
   describe('Word Suggestions', () => {
     before(() => {
       cy.cleanLogin();
