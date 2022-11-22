@@ -10,6 +10,7 @@ import Tense from 'src/backend/shared/constants/Tense';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
+  createWord,
   suggestNewWord,
   updateWordSuggestion,
   getWordSuggestions,
@@ -24,7 +25,7 @@ import {
   updatedWordSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
 } from './__mocks__/documentData';
-import { WORD_SUGGESTION_KEYS, INVALID_ID } from './shared/constants';
+import { WORD_SUGGESTION_KEYS, INVALID_ID, AUTH_TOKEN } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
 
@@ -63,6 +64,33 @@ describe('MongoDB Word Suggestions', () => {
       });
       expect(res.status).toEqual(400);
       expect(res.body.message).not.toEqual(undefined);
+    });
+
+    it('should persist author id to the dialects object', async () => {
+      const res = await suggestNewWord({
+        ...wordSuggestionData,
+        dialects: [{
+          word: 'dialect',
+          variations: [],
+          dialects: ['AFI'],
+          pronunciation: '',
+        }],
+      });
+      expect(res.status).toEqual(200);
+      expect(res.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+    });
+    it('should throw an error by providing the editor id in payload', async () => {
+      const res = await suggestNewWord({
+        ...wordSuggestionData,
+        dialects: [{
+          word: 'dialect',
+          variations: [],
+          dialects: ['AFI'],
+          pronunciation: '',
+          editor: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+        }],
+      });
+      expect(res.status).toEqual(400);
     });
   });
 
@@ -408,6 +436,15 @@ describe('MongoDB Word Suggestions', () => {
       const res = await deleteWordSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
+    });
+
+    it('should throw an error for deleting a suggestion that has been merged', async () => {
+      const wordRes = await suggestNewWord(wordSuggestionData);
+      expect(wordRes.status).toEqual(200);
+      const res = await createWord(wordRes.body.id);
+      const result = await deleteWordSuggestion(res.body.id);
+      expect(result.status).toEqual(404);
+      expect(result.body.error).not.toEqual(undefined);
     });
   });
 });
