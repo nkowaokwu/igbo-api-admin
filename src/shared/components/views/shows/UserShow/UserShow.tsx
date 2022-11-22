@@ -6,7 +6,7 @@ import {
   Heading,
   Skeleton,
 } from '@chakra-ui/react';
-import UserStat from 'src/Core/Dashboard/UserStat/UserStat';
+import UserStat from 'src/Core/Dashboard/components/UserStat';
 
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);

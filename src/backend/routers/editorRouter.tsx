@@ -60,6 +60,7 @@ import validateCorpusBody from '../middleware/validateCorpusBody';
 import validateCorpusMerge from '../middleware/validateCorpusMerge';
 import cacheControl from '../middleware/cacheControl';
 import interactWithSuggestion from '../middleware/interactWithSuggestion';
+import resolveWordDocument from '../middleware/resolveWordDocument';
 import UserRoles from '../shared/constants/UserRoles';
 
 const editorRouter = express.Router();
@@ -88,8 +89,22 @@ editorRouter.put(
 );
 
 editorRouter.get('/wordSuggestions', getWordSuggestions);
-editorRouter.post('/wordSuggestions', authorization([]), validateWordBody, interactWithSuggestion, postWordSuggestion);
-editorRouter.put('/wordSuggestions/:id', validId, validateWordBody, interactWithSuggestion, putWordSuggestion);
+editorRouter.post(
+  '/wordSuggestions',
+  authorization([]),
+  validateWordBody,
+  interactWithSuggestion,
+  resolveWordDocument,
+  postWordSuggestion,
+);
+editorRouter.put(
+  '/wordSuggestions/:id',
+  validId,
+  validateWordBody,
+  interactWithSuggestion,
+  resolveWordDocument,
+  putWordSuggestion,
+);
 editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
 editorRouter.put('/wordSuggestions/:id/approve', validId, approveWordSuggestion);
 editorRouter.put('/wordSuggestions/:id/deny', validId, denyWordSuggestion);

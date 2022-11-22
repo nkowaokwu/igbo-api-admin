@@ -16,6 +16,41 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 
+const assignEditorsToDialects = ({
+  clientData,
+  compareData,
+  userId,
+} : {
+  clientData: Interfaces.WordSuggestion,
+  compareData: Interfaces.Word | Interfaces.WordSuggestion,
+  userId: string,
+}) => {
+  const updatedData = assign(clientData);
+  // Sets all newly created dialects' editor to the current user
+  // if the word suggestion doesn't come from an existing word document
+  if (!compareData) {
+    updatedData.dialects = (clientData?.dialects || []).map((dialect) => ({
+      ...dialect,
+      editor: userId,
+    }));
+  } else {
+    // Determine the different dialects and assign user as dialect editor
+    const longerDialects = (clientData.dialects?.length || 0) >= (compareData.dialects?.length || 0)
+      ? clientData.dialects || []
+      : compareData.dialects || [];
+
+    longerDialects.forEach((_, index) => {
+      const wordSuggestionDialect = updatedData.dialects[index];
+      const wordDialect = compareData.dialects[index];
+
+      if (wordSuggestionDialect && wordSuggestionDialect.word !== wordDialect?.word) {
+        wordSuggestionDialect.editor = userId;
+      }
+    });
+  }
+  return updatedData;
+};
+
 /* Creates a new WordSuggestion document in the database */
 export const postWordSuggestion = async (
   req: Interfaces.EditorRequest,
@@ -23,9 +58,17 @@ export const postWordSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data, user } = req;
+    const rawData = req.body as Interfaces.WordSuggestion;
+    const word = req.word as Interfaces.Word;
+    const user = req.user as Interfaces.FormattedUser;
+    let data = rawData;
 
     data.authorId = user.uid;
+    data = assignEditorsToDialects({
+      clientData: data,
+      compareData: word,
+      userId: user.uid,
+    });
     const clientExamples = getExamplesFromClientData(data);
     const newWordSuggestion = new WordSuggestion(data);
     const wordSuggestion = (await newWordSuggestion.save()) as Interfaces.WordSuggestion;
@@ -66,12 +109,18 @@ const findWordSuggestions = async (
 );
 
 /* Updates an existing WordSuggestion object */
-export const putWordSuggestion = (req: Request, res: Response, next: NextFunction): Promise<Response | void> | void => {
+export const putWordSuggestion = (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> | void => {
   try {
     const {
-      body: data,
+      body: rawData,
       params: { id },
+      user,
     } = req;
+    let data = rawData;
     const clientExamples = getExamplesFromClientData(data);
 
     return findWordSuggestionById(id)
@@ -81,6 +130,11 @@ export const putWordSuggestion = (req: Request, res: Response, next: NextFunctio
         }
 
         delete data.authorId;
+        data = assignEditorsToDialects({
+          clientData: data,
+          compareData: wordSuggestion,
+          userId: user.uid,
+        });
         const updatedWordSuggestion = assign(wordSuggestion, data);
         await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples });
 
@@ -157,14 +211,14 @@ export const getWordSuggestion = async (req: Request, res: Response, next: NextF
 };
 
 /* Deletes a single WordSuggestion by using an id */
-export const deleteWordSuggestion = (
+export const deleteWordSuggestion = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> | void => {
   try {
     const { id } = req.params;
-    return WordSuggestion.findByIdAndDelete(id)
+    const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
           throw new Error('No word suggestion exists with the provided id.');
@@ -190,11 +244,12 @@ export const deleteWordSuggestion = (
             ...(wordSuggestion.toObject()),
           });
         }
-        return res.send(wordSuggestion);
+        return wordSuggestion;
       })
-      .catch(() => {
-        throw new Error('An error has occurred while deleting and return a single word suggestion');
+      .catch((err) => {
+        throw new Error(err.message || 'An error has occurred while deleting and return a single word suggestion');
       });
+    return res.send(result);
   } catch (err) {
     return next(err);
   }

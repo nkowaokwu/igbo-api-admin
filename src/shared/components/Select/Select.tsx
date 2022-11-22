@@ -109,7 +109,7 @@ const Select = ({
         },
       },
     ])),
-    {
+    (record.merged ? null : [{
       value: 'edit',
       label: (() => (
         <span>
@@ -160,7 +160,7 @@ const Select = ({
         </span>
       ))(),
       onSelect: () => setAction(actionsMap.Notify),
-    },
+    }]),
     hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
       {
         value: 'delete',

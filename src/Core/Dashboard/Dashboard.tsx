@@ -10,8 +10,7 @@ import {
   EDITORS_TRANSLATORS_SLACK_CHANNEL,
   SOFTWARE_ENGINEERS_SLACK_CHANNEL,
 } from '../constants';
-import MilestoneProgress from './components/MilestoneProgress';
-import UserStat from './UserStat';
+import ProgressManager from './components/ProgressManager';
 
 const auth = getAuth();
 
@@ -43,33 +42,7 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
           </Heading>
           <Text fontSize="xl">So much progress has been made!</Text>
         </Box>
-        <Box className="mb-24">
-          <Box mt={4}>
-            <Text fontSize="3xl" fontWeight="bold" className="text-center">Personal Contributions</Text>
-            <Text fontSize="lg" className="text-gray-800 text-center">
-              {'Take a look at how much you\'ve contributed to the community! '
-              + 'You can click on each stat to see the associated documents'}
-            </Text>
-          </Box>
-          <UserStat uid={user?.uid} permissions={permissions} />
-        </Box>
-        <Box className="w-full grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3 lg:-mt-12">
-          <Card
-            icon="🚀"
-            heading="Community Onboarding"
-            description="If you just joined, read through the onboarding guide for your specific role."
-            link={IGBO_API_VOLUNTEER_HOME_BASE}
-            buttonLabel="Onboarding Guides"
-          />
-          <Card
-            icon="📝"
-            heading="Dictionary Editing Standards"
-            description="Read through our editing standards before making edits."
-            link={DICTIONARY_EDITING_STANDARDS_URL}
-            buttonLabel="View Standards Doc"
-          />
-        </Box>
-        <MilestoneProgress />
+        <ProgressManager permissions={permissions} user={user} />
         <Box className="flex flex-col items-center text-center my-5">
           <Text fontSize="3xl" fontWeight="bold">Community</Text>
           <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
@@ -83,7 +56,7 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
             heading="Voice Over Recorders"
             description="Volunteers that record audio pronunciations for the thousands of words in the database."
             link={VOICE_OVER_RECORDERS_SLACK_CHANNEL}
-            buttonLabel="Voice Over Records Slack Channel"
+            buttonLabel="Voice Over Recorders Slack Channel"
           />
           <Card
             icon="🖋"
@@ -91,7 +64,7 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
             description={`If you have a question relating to the content for 
             any given word, reach out to the editors/translators`}
             link={EDITORS_TRANSLATORS_SLACK_CHANNEL}
-            buttonLabel="Editors/Translators Slack Channel"
+            buttonLabel="Translators Slack Channel"
           />
           <Card
             icon="👩🏾‍💻"
@@ -100,6 +73,22 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
             feature to make your workflow easier? Reach out to the software engineers.`}
             link={SOFTWARE_ENGINEERS_SLACK_CHANNEL}
             buttonLabel="Software Engineers Slack Channel"
+          />
+        </Box>
+        <Box className="w-full grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4 px-3 mt-8">
+          <Card
+            icon="🚀"
+            heading="Community Onboarding"
+            description="If you just joined, read through the onboarding guide for your specific role."
+            link={IGBO_API_VOLUNTEER_HOME_BASE}
+            buttonLabel="Onboarding Guides"
+          />
+          <Card
+            icon="📝"
+            heading="Dictionary Editing Standards"
+            description="Read through our editing standards before making edits."
+            link={DICTIONARY_EDITING_STANDARDS_URL}
+            buttonLabel="View Standards Doc"
           />
         </Box>
       </Box>

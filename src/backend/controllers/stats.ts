@@ -16,6 +16,7 @@ import determineDocumentCompleteness from './utils/determineDocumentCompleteness
 import determineExampleCompleteness from './utils/determineExampleCompleteness';
 import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPossible';
 import StatTypes from '../shared/constants/StatTypes';
+import * as Interfaces from './utils/interfaces';
 
 const findStat = async ({ type, authorId = 'SYSTEM' }) => {
   let stat = await Stat.findOne({ type, authorId });
@@ -199,7 +200,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
       },
       null,
       { sort: { updatedAt: 1 } },
-    );
+    ) as Interfaces.WordSuggestion[];
     const exampleSuggestions = await ExampleSuggestion.find(
       {
         mergedBy: userId,
@@ -207,7 +208,15 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
       },
       null,
       { sort: { updatedAt: 1 } },
-    );
+    ) as Interfaces.ExampleSuggestion[];
+    const dialectalVariationWordSuggestions = await WordSuggestion.find(
+      {
+        mergedBy: userId,
+        'dialects.editor': userId,
+      },
+      null,
+      { sort: { updatedAt: 1 } },
+    ) as Interfaces.WordSuggestion[];
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -228,7 +237,17 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
         [isoWeek]: finalData[isoWeek].concat(exampleSuggestion),
       };
     }, {});
-    return res.send({ wordSuggestionMerges, exampleSuggestionMerges });
+    const dialectalVariationMerges = dialectalVariationWordSuggestions.reduce((finalData, wordSuggestion) => {
+      const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
+      if (!finalData[isoWeek]) {
+        finalData[isoWeek] = [];
+      }
+      return {
+        ...finalData,
+        [isoWeek]: finalData[isoWeek].concat(wordSuggestion.dialects.filter(({ editor }) => editor === userId)),
+      };
+    }, {});
+    return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
   } catch (err) {
     return next(err);
   }

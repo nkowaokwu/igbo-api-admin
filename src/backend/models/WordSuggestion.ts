@@ -28,6 +28,7 @@ const dialectSchema = new Schema({
   variations: { type: [{ type: String }], default: [] },
   dialects: { type: [{ type: String }], validate: (v) => every(v, (dialect) => Dialects[dialect].value), default: [] },
   pronunciation: { type: String, default: '' },
+  editor: { type: String, default: null },
 }, { toObject: toObjectPlugin });
 
 const wordSuggestionSchema = new Schema(
