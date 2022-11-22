@@ -17,6 +17,7 @@ export interface EditorRequest extends Request {
   },
   suggestionDoc?: any,
   body: any,
+  word?: Word,
 };
 
 export interface WordClientData extends Word {
@@ -35,6 +36,7 @@ export interface WordDialect {
   word: string,
   _id?: Types.ObjectId,
   id?: string,
+  editor?: string,
 }
 
 export interface DefinitionSchema {

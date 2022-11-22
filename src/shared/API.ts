@@ -133,8 +133,8 @@ export const assignUserToEditingGroup = ({
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
 
-export const removePayloadFields = (payload: any): any => (
-  omit(payload, [
+export const removePayloadFields = (payload: any): any => {
+  const cleanedPayload = omit(payload, [
     'id',
     'updatedAt',
     'createdAt',
@@ -151,5 +151,9 @@ export const removePayloadFields = (payload: any): any => (
     'hyponyms',
     'duration',
     'twitterPollId',
-  ])
-);
+  ]);
+  if (Array.isArray(cleanedPayload.dialects)) {
+    cleanedPayload.dialects.map((dialect) => omit(dialect, ['editor']));
+  }
+  return cleanedPayload;
+};
