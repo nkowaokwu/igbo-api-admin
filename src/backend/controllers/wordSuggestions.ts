@@ -29,16 +29,17 @@ const assignEditorsToDialects = ({
   // Sets all newly created dialects' editor to the current user
   // if the word suggestion doesn't come from an existing word document
   if (!compareData) {
-    updatedData.dialects = clientData.dialects.map((dialect) => ({
+    updatedData.dialects = (clientData?.dialects || []).map((dialect) => ({
       ...dialect,
       editor: userId,
     }));
   } else {
     // Determine the different dialects and assign user as dialect editor
-    const longerDialects = clientData.dialects.length >= compareData.dialects.length
-      ? clientData.dialects
-      : compareData.dialects;
-    longerDialects.forEach((dialect, index) => {
+    const longerDialects = (clientData.dialects?.length || 0) >= (compareData.dialects?.length || 0)
+      ? clientData.dialects || []
+      : compareData.dialects || [];
+
+    longerDialects.forEach((_, index) => {
       const wordSuggestionDialect = updatedData.dialects[index];
       const wordDialect = compareData.dialects[index];
 
