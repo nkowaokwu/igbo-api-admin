@@ -50,6 +50,10 @@ const App = (): React.ReactElement => {
       onAuthStateChanged(auth, (rawUser) => {
         const cleanedUser = pick(rawUser, ['displayName', 'email', 'photoURL', 'uid']);
         setUser(cleanedUser);
+        // Redirects the user to the Login page if they are not signed in
+        if (!rawUser) {
+          authProvider.logout();
+        }
       });
     }
   }, []);
