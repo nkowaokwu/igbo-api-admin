@@ -91,6 +91,9 @@ export const updateExampleSuggestion = (
       if (!exampleSuggestion) {
         throw new Error('Example suggestion doesn\'t exist');
       }
+      if (exampleSuggestion.merged) {
+        throw new Error('Unable to edit a merged example suggestion');
+      }
       const updatedExampleSuggestion = assign(exampleSuggestion, data);
       if (
         !updatedExampleSuggestion.associatedDefinitionsSchemas

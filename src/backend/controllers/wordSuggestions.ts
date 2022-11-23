@@ -129,6 +129,11 @@ export const putWordSuggestion = (
           throw new Error('Word suggestion doesn\'t exist');
         }
 
+        if (wordSuggestion.merged) {
+          res.status(400);
+          throw new Error('Unable to edit a merged word suggestion');
+        }
+
         delete data.authorId;
         data = assignEditorsToDialects({
           clientData: data,

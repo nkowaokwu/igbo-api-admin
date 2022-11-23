@@ -83,11 +83,12 @@ export const copyAudioPronunciation = async (
     const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
     return copiedAudioPronunciationUri;
   } catch (err) {
-    console.log(
+    console.error(
       `Error occurred while copying audio: ${err.message} with `
       + `ids of oldDocId: ${oldAudioId} and newDocId: ${newAudioId}`,
     );
-    if (oldAudioId.includes('-') || newAudioId.includes('-')) {
+    // If the old and new audio ids are the same we don't want to through an error
+    if ((oldAudioId.includes('-') || newAudioId.includes('-')) && oldAudioId !== newAudioId) {
       throw new Error('Unable to save dialectal audio recording, please re-record dialect audio.');
     }
     return null;
