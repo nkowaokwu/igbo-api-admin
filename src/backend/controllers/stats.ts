@@ -152,18 +152,43 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
   try {
     const { user, params: { uid } } = req;
     const userId = uid || user.uid;
-    const wordSuggestions = await WordSuggestion.find({}).lean();
-    const exampleSuggestions = await ExampleSuggestion.find({}).lean();
+    const wordSuggestions = await WordSuggestion.find({
+      $or: [
+        { author: userId },
+        { approvals: { $in: [userId] } },
+        { denials: { $in: [userId] } },
+        { mergedBy: userId },
+        { userInteractions: { $in: [userId] } },
+      ],
+    }).lean();
+    const exampleSuggestions = await ExampleSuggestion.find({
+      $or: [
+        { author: userId },
+        { approvals: { $in: [userId] } },
+        { denials: { $in: [userId] } },
+        { mergedBy: userId },
+        { userInteractions: { $in: [userId] } },
+      ],
+    }).lean();
 
+    // Approved documents
     const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(userId)).length;
     const deniedWordSuggestionsCount = wordSuggestions.filter(({ denials }) => denials.includes(userId)).length;
+
+    // Denied documents
     const approvedExampleSuggestionsCount = exampleSuggestions
       .filter(({ approvals }) => approvals.includes(userId)).length;
     const deniedExampleSuggestionsCount = exampleSuggestions.filter(({ denials }) => denials.includes(userId)).length;
+
+    // Authored documents
     const authoredWordSuggestionsCount = wordSuggestions.filter(({ author }) => author === userId).length;
     const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === userId).length;
+
+    // Merged documents
     const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
     const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
+
+    // Interacted with documents
     const currentEditingWordSuggestionsCount = wordSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
       !mergedBy && userInteractions.includes(userId)
     )).length;
