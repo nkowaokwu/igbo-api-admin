@@ -54,7 +54,7 @@ const LacunaProgress = ({
       <Box className="flex flex-col items-center text-center my-5">
         <Text fontSize="3xl" fontWeight="bold">Personal Lacuna Progress</Text>
         <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
-          These are your personalized stats for the Lacuna Fund Project.
+          These are your personalized stats for the Lacuna Fund Project
         </Text>
       </Box>
       <Box className="flex flex-col">
