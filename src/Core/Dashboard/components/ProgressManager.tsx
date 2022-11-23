@@ -16,13 +16,9 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
   const [totalWordSuggestionsWithNsibidi, setTotalWordSuggestionsWithNsibidi] = useState(null);
 
-  const redirectToLogin = () => {
-    window.location.hash = '#/';
-  };
-
   const handleNoPermissionStatus = ({ status }) => {
     if (status === NO_PERMISSION_STATUS) {
-      redirectToLogin();
+      window.location.hash = '#/';
     }
   };
 
