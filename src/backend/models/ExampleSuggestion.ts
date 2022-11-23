@@ -25,12 +25,12 @@ const exampleSuggestionSchema = new Schema({
   userComments: { type: String, default: '' },
   authorEmail: { type: String, default: '' },
   authorId: { type: String, default: '' },
-  approvals: { type: [{ type: String }], default: [] },
-  denials: { type: [{ type: String }], default: [] },
+  approvals: { type: [{ type: String }], default: [], index: true },
+  denials: { type: [{ type: String }], default: [], index: true },
   source: { type: String, default: SuggestionSource.INTERNAL },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
-  mergedBy: { type: String, default: null },
-  userInteractions: { type: [{ type: String }], default: [] },
+  mergedBy: { type: String, default: null, index: true },
+  userInteractions: { type: [{ type: String }], default: [], index: true },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSuggestionSchema);
