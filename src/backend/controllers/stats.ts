@@ -152,24 +152,26 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
   try {
     const { user, params: { uid } } = req;
     const userId = uid || user.uid;
-    const wordSuggestions = await WordSuggestion.find({
-      $or: [
-        { author: userId },
-        { approvals: { $in: [userId] } },
-        { denials: { $in: [userId] } },
-        { mergedBy: userId },
-        { userInteractions: { $in: [userId] } },
-      ],
-    }).lean();
-    const exampleSuggestions = await ExampleSuggestion.find({
-      $or: [
-        { author: userId },
-        { approvals: { $in: [userId] } },
-        { denials: { $in: [userId] } },
-        { mergedBy: userId },
-        { userInteractions: { $in: [userId] } },
-      ],
-    }).lean();
+    const [wordSuggestions, exampleSuggestions] = await Promise.all([
+      WordSuggestion.find({
+        $or: [
+          { author: userId },
+          { approvals: { $in: [userId] } },
+          { denials: { $in: [userId] } },
+          { mergedBy: userId },
+          { userInteractions: { $in: [userId] } },
+        ],
+      }),
+      ExampleSuggestion.find({
+        $or: [
+          { author: userId },
+          { approvals: { $in: [userId] } },
+          { denials: { $in: [userId] } },
+          { mergedBy: userId },
+          { userInteractions: { $in: [userId] } },
+        ],
+      }),
+    ]);
 
     // Approved documents
     const approvedWordSuggestionsCount = wordSuggestions.filter(({ approvals }) => approvals.includes(userId)).length;

@@ -90,7 +90,7 @@ const UserStat = ({
       network(uid ? `/stats/users/${uid}` : '/stats/user')
         .then((res) => setUserStats(res.json));
       if (uid) {
-        const json = await network(`/stats/users/${uid}/merge`);
+        const { json } = await network(`/stats/users/${uid}/merge`);
         const { wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges } = json as {
           wordSuggestionMerges: WordSuggestion[],
           exampleSuggestionMerges: ExampleSuggestion[],
