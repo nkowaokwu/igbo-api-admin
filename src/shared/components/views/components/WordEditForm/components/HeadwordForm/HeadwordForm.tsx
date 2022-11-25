@@ -1,20 +1,31 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { get } from 'lodash';
-import {
-  Box,
-  Checkbox,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Text, chakra } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import determineIsAsCompleteAsPossible from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import { Input } from 'src/shared/primitives';
 import generateFlags from 'src/shared/utils/flagHeadword';
+import OnwuCharacters from 'src/shared/constants/OnwuCharacters';
+import removeAccents from 'src/backend/utils/removeAccents';
 import FormHeader from '../../../FormHeader';
 import HeadwordInterface from './HeadwordFormInterface';
 import SuggestedWords from './SuggestedWords';
+import HeadwordAttributes from './HeadwordAttributes';
+
+const generateIPALabel = (word) => {
+  const cleanedWord = removeAccents.removeExcluding(word).normalize('NFC');
+  let IPA = cleanedWord;
+  Object.entries(OnwuCharacters).forEach(([latin, ipa]) => {
+    IPA = IPA.replace(new RegExp(latin, 'g'), ipa);
+  });
+  return (
+    <Text>
+      <chakra.span fontWeight="bold">Generated IPA: </chakra.span>
+      {IPA}
+    </Text>
+  );
+};
 
 const HeadwordForm = ({
   errors,
@@ -27,12 +38,14 @@ const HeadwordForm = ({
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
   const watchedWord = watch('word');
+  const watchedWordPronunciation = watch('wordPronunciation');
   const isConstructedPollTerm = !!get(record, 'twitterPollId');
 
   useEffect(() => {
     const { flags: generatedFlags } = generateFlags({ word: { ...(record || {}), word: watchedWord }, flags: {} });
     setFlags(generatedFlags);
   }, [watchedWord]);
+
   return (
     <Box className="flex flex-col w-full">
       <Box className="flex flex-col my-2 space-y-2 justify-between items-between">
@@ -43,163 +56,22 @@ const HeadwordForm = ({
           All necessary accented characters will appear in the letter popup`}
           color={Object.values(flags).length ? 'orange.600' : ''}
         />
-        <Box
-          className="w-full grid grid-flow-row grid-cols-2 gap-4 px-3"
-        >
-          <Controller
-            render={({ onChange, value, ref }) => (
-              <Checkbox
-                onChange={(e) => onChange(e.target.checked)}
-                isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributes.IS_STANDARD_IGBO.value]}
-                ref={ref}
-                data-test={`${WordAttributes.IS_STANDARD_IGBO.value}-checkbox`}
-                size="lg"
-              >
-                <span className="font-bold">{WordAttributes.IS_STANDARD_IGBO.label}</span>
-              </Checkbox>
-            )}
-            defaultValue={record.attributes?.[WordAttributes.IS_STANDARD_IGBO.value]
-              || getValues().attributes?.[WordAttributes.IS_STANDARD_IGBO.value]}
-            name={`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`}
-            control={control}
-          />
-          <Tooltip
-            label={!isAsCompleteAsPossible ? 'Unable to mark as complete until all necessary fields are filled' : ''}
-          >
-            <Box display="flex">
-              <Controller
-                render={({ onChange, value, ref }) => (
-                  <Checkbox
-                    onChange={(e) => onChange(e.target.checked)}
-                    isChecked={!!value}
-                    defaultIsChecked={!!(isHeadwordAccented?.length
-                      || record.attributes?.[WordAttributes.IS_ACCENTED.value])}
-                    ref={ref}
-                    data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
-                    size="lg"
-                  >
-                    <span className="font-bold">{WordAttributes.IS_ACCENTED.label}</span>
-                  </Checkbox>
-                )}
-                defaultValue={!!(isHeadwordAccented?.length
-                  || record.attributes?.[WordAttributes.IS_ACCENTED.value]
-                  || getValues().attributes?.[WordAttributes.IS_ACCENTED.value])}
-                name={`attributes.${WordAttributes.IS_ACCENTED.value}`}
-                control={control}
-              />
-            </Box>
-          </Tooltip>
-          {errors.attributes?.isAccented ? (
-            <p className="error relative">Is Accented must be selected</p>
-          ) : null}
-          <Tooltip label="Check this checkbox if this word is considered casual slang">
-            <Box display="flex">
-              <Controller
-                render={({ onChange, value, ref }) => (
-                  <Checkbox
-                    onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
-                    defaultIsChecked={record.attributes?.[WordAttributes.IS_SLANG.value]}
-                    ref={ref}
-                    data-test={`${WordAttributes.IS_SLANG.label}-checkbox`}
-                    size="lg"
-                  >
-                    <span className="font-bold">{WordAttributes.IS_SLANG.label}</span>
-                  </Checkbox>
-                )}
-                defaultValue={record.attribute?.[WordAttributes.IS_SLANG.value]
-                  || getValues().attributes?.[WordAttributes.IS_SLANG.value]}
-                name={`attributes.${WordAttributes.IS_SLANG.value}`}
-                control={control}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip
-            label={isConstructedPollTerm
-              ? 'This checkbox is automatically checked since it\'s a constructed term that comes from a Twitter poll'
-              : 'Check this checkbox if this is a newly coined, aka constructed, Igbo word'}
-          >
-            <Box display="flex">
-              <Controller
-                render={({ onChange, value, ref }) => (
-                  <Checkbox
-                    onChange={(e) => onChange(e.target.checked)}
-                    isChecked={isConstructedPollTerm || value}
-                    defaultIsChecked={
-                      isConstructedPollTerm
-                      || record.attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
-                    }
-                    isDisabled={isConstructedPollTerm}
-                    ref={ref}
-                    data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.label}-checkbox`}
-                    size="lg"
-                  >
-                    <span className="font-bold">{WordAttributes.IS_CONSTRUCTED_TERM.label}</span>
-                  </Checkbox>
-                )}
-                defaultValue={isConstructedPollTerm || record.attribute?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
-                  || getValues().attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]}
-                name={`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`}
-                control={control}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip label="Check this checkbox if this word is borrowed from another language">
-            <Box display="flex">
-              <Controller
-                render={({ onChange, value, ref }) => (
-                  <Checkbox
-                    onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
-                    defaultIsChecked={record.attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
-                    ref={ref}
-                    data-test={`${WordAttributes.IS_BORROWED_TERM.label}-checkbox`}
-                    size="lg"
-                  >
-                    <span className="font-bold">{WordAttributes.IS_BORROWED_TERM.label}</span>
-                  </Checkbox>
-                )}
-                defaultValue={record.attribute?.[WordAttributes.IS_BORROWED_TERM.value]
-                  || getValues().attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
-                name={`attributes.${WordAttributes.IS_BORROWED_TERM.value}`}
-                control={control}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip
-            label="Check this checkbox if this word is a word stem.
-            Checking this box will ignore the Word Stems area on this form."
-          >
-            <Box display="flex">
-              <Controller
-                render={({ onChange, value, ref }) => (
-                  <Checkbox
-                    onChange={(e) => onChange(e.target.checked)}
-                    isChecked={value}
-                    defaultIsChecked={record.attributes?.[WordAttributes.IS_STEM.value]}
-                    ref={ref}
-                    data-test={`${WordAttributes.IS_STEM.label}-checkbox`}
-                    size="lg"
-                  >
-                    <span className="font-bold">{WordAttributes.IS_STEM.label}</span>
-                  </Checkbox>
-                )}
-                defaultValue={record.attribute?.[WordAttributes.IS_STEM.value]
-                  || getValues().attributes?.[WordAttributes.IS_STEM.value]}
-                name={`attributes.${WordAttributes.IS_STEM.value}`}
-                control={control}
-              />
-            </Box>
-          </Tooltip>
-        </Box>
+        <HeadwordAttributes
+          record={record}
+          getValues={getValues}
+          errors={errors}
+          control={control}
+          isHeadwordAccented={!!(isHeadwordAccented?.length)}
+          isAsCompleteAsPossible={isAsCompleteAsPossible}
+          isConstructedPollTerm={isConstructedPollTerm}
+        />
       </Box>
       <Controller
         render={(props) => (
           <Input
             {...props}
             className="form-input"
-            placeholder="i.e. biko, igwe, mmiri"
+            placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
             data-test="word-input"
           />
         )}
@@ -207,6 +79,40 @@ const HeadwordForm = ({
         control={control}
         defaultValue={record.word || getValues().word}
       />
+      <details className="mt-4 cursor-pointer">
+        <summary>
+          <chakra.span fontWeight="bold">Advanced Headword Options</chakra.span>
+        </summary>
+        <Box className="space-y-3 mt-3">
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input"
+                placeholder="Spelling of headword pronunciation, i.e. ụgbaala"
+                data-test="word-pronunciation-input"
+              />
+            )}
+            name="wordPronunciation"
+            control={control}
+            defaultValue={record.wordPronunciation || getValues().wordPronunciation}
+          />
+          {generateIPALabel(watchedWordPronunciation)}
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input"
+                placeholder="Conceptual spelling of headword using dashes , i.e. isi-agụ"
+                data-test="conceptual-word-input"
+              />
+            )}
+            name="conceptualWord"
+            control={control}
+            defaultValue={record.conceptualWord || getValues().conceptualWord}
+          />
+        </Box>
+      </details>
       {Object.values(flags).map((message: string) => (
         message ? (
           <Box key={message} className="flex flex-row items-start">

@@ -19,7 +19,7 @@ import WordClass from 'src/shared/constants/WordClass';
 import View from 'src/shared/constants/Views';
 import { getWords, getWordSuggestions } from 'src/shared/API';
 
-const SuggestedWords = ({ word, id: wordId } : { word: string, id: string }): ReactElement => {
+const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Record['id'] }): ReactElement => {
   const [openWordPopover, setOpenWordPopover] = useState(null);
   const [suggestedWords, setSuggestedWords] = useState([]);
   const [suggestedWordSuggestions, setSuggestedWordSuggestions] = useState([]);

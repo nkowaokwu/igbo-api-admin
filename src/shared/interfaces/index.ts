@@ -1,4 +1,4 @@
-import { Key } from 'react';
+import { Types } from 'mongoose';
 import {
   CreateProps,
   ListActionsProps,
@@ -25,7 +25,7 @@ export interface EditFormProps {
 export interface DocumentIdsProps {
   collection: string,
   originalId: string,
-  id: Key,
+  id: Types.ObjectId,
   title: string,
 };
 

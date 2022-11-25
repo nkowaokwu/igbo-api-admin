@@ -48,6 +48,8 @@ export interface DefinitionSchema {
 export interface Word extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   word: string,
+  wordPronunciation: string,
+  conceptualWord: string,
   definitions: [DefinitionSchema],
   dialects: WordDialect[],
   pronunciation: string,
