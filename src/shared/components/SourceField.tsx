@@ -1,15 +1,15 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Badge, Tooltip } from '@chakra-ui/react';
-import { Record } from 'react-admin';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 
 const SourceField = ({
-  record = { id: null },
+  record,
   source,
 } : {
   label?: string,
-  record?: Record,
+  record?: Interfaces.Word,
   source: string,
 }): ReactElement => {
   const value = get(record, source);

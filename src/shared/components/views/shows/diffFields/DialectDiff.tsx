@@ -1,6 +1,5 @@
 /* eslint-disable react/no-array-index-key */
 import React, { ReactElement } from 'react';
-import { Record } from 'react-admin';
 import {
   Accordion,
   AccordionItem,
@@ -21,7 +20,7 @@ import DiffField from './DiffField';
 /* Renders the visual red/green diff sections in the Show view */
 const DialectDiff = (
   { record: propRecord, diffRecord, resource }:
-  { record: Record, diffRecord: any, resource: string },
+  { record: Interfaces.Word | Interfaces.Example, diffRecord: any, resource: string },
 ): ReactElement => {
   const record = { ...(propRecord || {}), dialects: propRecord?.dialects || {} };
   const updatedDialects = [];

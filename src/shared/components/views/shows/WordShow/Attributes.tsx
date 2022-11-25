@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
-import { Record } from 'react-admin';
 import { Box, Heading } from '@chakra-ui/react';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import DiffField from '../diffFields/DiffField';
 import FormHeader from '../../components/FormHeader';
 
@@ -10,7 +10,7 @@ const Attributes = (
     record,
     diffRecord,
   } : {
-    record: Record,
+    record: Interfaces.Word,
     diffRecord: any,
   },
 ): ReactElement => {

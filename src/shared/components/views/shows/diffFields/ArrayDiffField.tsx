@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
-import { Record } from 'react-admin';
 import { get, has } from 'lodash';
 import { Box, Text } from '@chakra-ui/react';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 const ArrayDiffField = (
   {
@@ -14,8 +14,8 @@ const ArrayDiffField = (
   : {
     recordField: string,
     recordFieldSingular: string,
-    record: Record,
-    originalWordRecord: Record,
+    record: Interfaces.Word,
+    originalWordRecord: Interfaces.Word,
     children: ReactElement[],
   },
 ): ReactElement => {

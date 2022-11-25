@@ -18,6 +18,7 @@ import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -57,7 +58,8 @@ const WordShow = (props: ShowProps): ReactElement => {
   const [diffRecord, setDiffRecord] = useState(null);
   const showProps = useShowController(props);
   const { resource } = showProps;
-  let { record } = showProps;
+  // @ts-expect-error
+  let { record } : { record: Interfaces.Word } = showProps;
   const { permissions } = props;
   const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} }).flags).length;
 
@@ -119,8 +121,10 @@ const WordShow = (props: ShowProps): ReactElement => {
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
               <Box>
                 <Heading fontSize="lg" className="text-xl text-gray-700">
-                  {'Last Updated: '}
-                  {determineDate(updatedAt)}
+                  <>
+                    {'Last Updated: '}
+                    {determineDate(updatedAt)}
+                  </>
                 </Heading>
                 <EditDocumentIds
                   collection={Collection.WORDS}
@@ -206,7 +210,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                       path={`definitions.${index}.wordClass`}
                       diffRecord={diffRecord}
                       fallbackValue={
-                        WordClass[definition.wordClass]?.label
+                        WordClass[(definition.wordClass as string)]?.label
                         || `${definition.wordClass} [UPDATE PART OF SPEECH]`
                       }
                     />

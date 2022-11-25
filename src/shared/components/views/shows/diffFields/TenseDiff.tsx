@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
-import { Record } from 'react-admin';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import {
   Accordion,
   AccordionItem,
@@ -19,7 +19,7 @@ import Collection from 'src/shared/constants/Collections';
 /* Renders the visual red/green diff sections in the Show view */
 const TenseDiff = (
   { record: propRecord, resource }:
-  { record: Record, resource: string },
+  { record: Interfaces.Word, resource: string },
 ): ReactElement => {
   const record = { ...(propRecord || {}), tenses: propRecord?.tenses || {} };
   // @ts-ignore

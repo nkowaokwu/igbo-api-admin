@@ -6,21 +6,6 @@ export const API_URL = 'https://igboapi.com';
 
 export const SAVE_DOC_DELAY = 2000;
 
-export const WORD_KEYS = [
-  'variations',
-  'definitions',
-  'dialects',
-  'stems',
-  'examples',
-  'id',
-  'attributes',
-  'word',
-  'wordClass',
-  'relatedTerms',
-  'hypernyms',
-  'hyponyms',
-  'updatedAt',
-];
 export const EXAMPLE_KEYS = ['igbo', 'english', 'associatedWords', 'id', 'updatedAt'];
 export const EXAMPLE_SUGGESTION_KEYS = [
   'originalExampleId',
@@ -46,23 +31,6 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'merged',
   'mergedBy',
   'id',
-];
-export const GENERIC_WORD_KEYS = [
-  'word',
-  'wordClass',
-  'definitions',
-  'dialects',
-  'variations',
-  'editorsNotes',
-  'examples',
-  'userComments',
-  'approvals',
-  'denials',
-  'updatedAt',
-  'merged',
-  'mergedBy',
-  'id',
-  'attributes',
 ];
 export const WORD_SUGGESTION_KEYS = [
   'originalWordId',
