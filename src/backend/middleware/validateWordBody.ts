@@ -18,6 +18,8 @@ export const wordDataSchema = Joi.object().keys({
     return true;
   }).allow(null).optional(),
   word: Joi.string().required(),
+  wordPronunciation: Joi.string().allow('', null).optional(),
+  conceptualWord: Joi.string().allow('', null).optional(),
   nsibidi: Joi.string().allow(''),
   definitions: Joi.array().min(1).items(Joi.object().keys({
     wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
