@@ -150,6 +150,7 @@ export const removePayloadFields = (payload: any): any => {
     'hypernyms',
     'hyponyms',
     'duration',
+    'source',
     'twitterPollId',
   ]);
   if (Array.isArray(cleanedPayload.dialects)) {
