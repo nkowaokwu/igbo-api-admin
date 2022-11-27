@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import Dexie from 'dexie';
+import Collection from 'src/shared/constants/Collections';
 
 type IgboAPIEditorPlatformDexie = Dexie & {
   words: any,
@@ -13,19 +14,19 @@ type IgboAPIEditorPlatformDexie = Dexie & {
 const igboAPIEditorPlatformDB = new Dexie('IgboAPIEditorPlatform') as IgboAPIEditorPlatformDexie;
 
 const wordKeys = 'id, word, wordPronunciation, conceptualWord, definitions, dialects, tags, tenses, pronunciation, attributes, variations, stems, relatedTerms, hypernyms, hyponyms, nsibidi';
-const wordSuggestionKeys = wordKeys.concat(', originalWordId, editorsNotes, userComments, authorEmail, authorId, merged, mergedBy, userInteractions, twitterPollId');
+const wordSuggestionKeys = 'id, word, wordPronunciation, conceptualWord, definitions, dialects, tags, tenses, pronunciation, attributes, variations, stems, relatedTerms, hypernyms, hyponyms, nsibidi, originalWordId, editorsNotes, userComments, authorEmail, authorId, merged, mergedBy, userInteractions, twitterPollId';
 const exampleKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciation, exampleForSuggestion';
-const exampleSuggestionKeys = exampleKeys.concat(', originalExampleId, exampleForSuggestion, editorsNotes, userComments, authorEmail, authorId, source, merged, mergedBy, userInteractions');
+const exampleSuggestionKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciation, exampleForSuggestion, originalExampleId, exampleForSuggestion, editorsNotes, userComments, authorEmail, authorId, source, merged, mergedBy, userInteractions';
 const corpusKeys = 'id, title, body, media, duration, tags';
-const corpusSuggestionKeys = corpusKeys.concat(', editorsNotes, authorEmail, authorId, approvals, denials, merged, mergedBy, userInteractions');
+const corpusSuggestionKeys = 'id, title, body, media, duration, tags, editorsNotes, authorEmail, authorId, approvals, denials, merged, mergedBy, userInteractions';
 
 igboAPIEditorPlatformDB.version(1).stores({
-  words: wordKeys,
-  examples: exampleKeys,
-  wordSuggestions: wordSuggestionKeys,
-  exampleSuggestions: exampleSuggestionKeys,
-  corpora: corpusKeys,
-  corpusSuggestions: corpusSuggestionKeys,
+  [Collection.WORDS]: wordKeys,
+  [Collection.EXAMPLES]: exampleKeys,
+  [Collection.WORD_SUGGESTIONS]: wordSuggestionKeys,
+  [Collection.EXAMPLE_SUGGESTIONS]: exampleSuggestionKeys,
+  [Collection.CORPORA]: corpusKeys,
+  [Collection.CORPUS_SUGGESTIONS]: corpusSuggestionKeys,
 });
 
 export default igboAPIEditorPlatformDB;

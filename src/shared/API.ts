@@ -167,11 +167,12 @@ export const mergeDocument = ({
   url: `${API_ROUTE}/${resource}`,
   data: { id: record.id },
 })
-  .then(async ({ data }) => {
+  .then(async (res) => {
     await Promise.all([
-      IndexedDBAPI.putDocument({ resource, data }),
+      IndexedDBAPI.putDocument({ resource, data: res.data }),
       IndexedDBAPI.deleteDocument({ resource: Collection.WORD_SUGGESTIONS, id: record.id }),
     ]);
+    return res;
   });
 
 export const deleteDocument = async (

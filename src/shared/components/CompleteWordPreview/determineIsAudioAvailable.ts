@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { compact, get } from 'lodash';
 import { Record } from 'react-admin';
-import { Word } from 'src/backend/controllers/utils/interfaces';
+import { Word, WordDialect } from 'src/backend/controllers/utils/interfaces';
 
 export default async (record: Word | Record, callback: (value: any) => void): Promise<any> => {
   const pronunciationsPromises = Object.entries(record).reduce((finalPronunciationsPromises, [key, value]) => {
@@ -17,21 +17,21 @@ export default async (record: Word | Record, callback: (value: any) => void): Pr
       const dialectsPronunciationsPromises = record.dialects
         .reduce((
           finalDialectsPronunciationPromises: any[],
-          [dialectKey, dialectValue] : [string, { pronunciation: string }],
+          { word, pronunciation } : WordDialect,
         ) => {
-          if (dialectValue?.pronunciation) {
+          if (pronunciation) {
             return [
               ...finalDialectsPronunciationPromises,
-              axios.get(dialectValue?.pronunciation)
+              axios.get(pronunciation)
                 .then(() => ({
-                  [dialectKey]: true,
+                  [word]: true,
                 }))
                 .catch(() => ({
-                  [dialectKey]: false,
+                  [word]: false,
                 })),
             ];
           }
-          return null;
+          return finalDialectsPronunciationPromises;
         }, []);
       return finalPronunciationsPromises.concat(dialectsPronunciationsPromises);
     }

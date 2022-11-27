@@ -32,7 +32,8 @@ const getDocument = async ({
   id: string | Identifier,
 }): Promise<any | null> => {
   if (window?.indexedDB) {
-    const result = await igboAPIEditorPlatformDB[resource].get(id);
+    const result = await igboAPIEditorPlatformDB[resource].get(id)
+      .catch(() => null);
     if (isInvalid(result?.cachedAt)) {
       await deleteDocument({ resource, id });
       return null;
@@ -53,9 +54,17 @@ const putDocument = async ({
     data.cachedAt = Date.now();
     const existingDocument = await getDocument({ resource, id: data.id });
     if (existingDocument) {
-      return igboAPIEditorPlatformDB[resource].update(data);
+      return igboAPIEditorPlatformDB[resource].update(data)
+        .catch((err) => {
+          console.log('Update error');
+          console.log(err);
+        });
     }
-    return igboAPIEditorPlatformDB[resource].put(data);
+    return igboAPIEditorPlatformDB[resource].put(data)
+      .catch((err) => {
+        console.log('Put error');
+        console.log(err);
+      });
   }
   return null;
 };
