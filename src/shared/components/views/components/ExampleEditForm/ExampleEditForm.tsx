@@ -151,7 +151,7 @@ const ExampleEditForm = ({
               isDisabled
             />
           </>
-        ) : null }
+        ) : null}
         <Box
           className="w-full flex flex-col lg:flex-row justify-between
           items-center space-y-4 lg:space-y-0 lg:space-x-6"

@@ -152,7 +152,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
           >
             <Box className="flex flex-row space-x-2">
               <Input
-                width={32}
+                width={16}
                 value={jumpToPage}
                 type="number"
                 data-test="jump-to-page-input"
@@ -171,139 +171,141 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           </form>
         )}
-        {isPollResource || isUserResource ? null : (
-          <Box
-            data-test={
-              isWordResource
-                ? 'word-attributes-filter'
-                : 'example-attributes-filter'
-            }
-            display="flex"
-            justifyContent="flex-end"
-            className="lg:space-x-3"
-          >
-            <Menu closeOnSelect={false} placement="bottom-end">
-              <MenuButton
-                as={Button}
-                colorScheme={selectedFilters ? 'yellow' : 'blue'}
-                backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
-                variant="outline"
-                rightIcon={<ChevronDownIcon />}
-              >
-                {!selectedFilters ? 'Filters' : 'Filters selected'}
-              </MenuButton>
-              {selectedFilters ? (
-                <Tooltip label="Clear filters">
-                  <IconButton
-                    aria-label="Clear filters"
-                    variant="ghost"
-                    icon={<DeleteIcon color="red" />}
-                    onClick={() => setCurrentFilters([])}
-                  />
-                </Tooltip>
-              ) : null}
-              <MenuList minWidth="240px" zIndex={10}>
-                <MenuOptionGroup
-                  defaultValue={currentFilters}
-                  onChange={(value) => {
-                    const cleanedValue = Array.isArray(value)
-                      ? value.filter((v) => v !== 'wordClass')
-                      : value === 'wordClass'
-                        ? ['']
-                        : [value];
-                    setCurrentFilters(cleanedValue);
-                  }}
-                  title={
-                    isWordResource ? 'Word Attributes' : 'Example Attributes'
+        <Box className="flex flex-row items-center space-x-3">
+          {isPollResource || isUserResource ? null : (
+            <Box
+              data-test={
+                isWordResource
+                  ? 'word-attributes-filter'
+                  : 'example-attributes-filter'
+              }
+              display="flex"
+              justifyContent="flex-end"
+              className="lg:space-x-3"
+            >
+              <Menu closeOnSelect={false} placement="bottom-end">
+                <MenuButton
+                  as={Button}
+                  colorScheme={selectedFilters ? 'yellow' : 'blue'}
+                  backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
+                  variant="outline"
+                  rightIcon={<ChevronDownIcon />}
+                >
+                  {!selectedFilters ? 'Filters' : 'Filters selected'}
+                </MenuButton>
+                {selectedFilters ? (
+                  <Tooltip label="Clear filters">
+                    <IconButton
+                      aria-label="Clear filters"
+                      variant="ghost"
+                      icon={<DeleteIcon color="red" />}
+                      onClick={() => setCurrentFilters([])}
+                    />
+                  </Tooltip>
+                ) : null}
+                <MenuList minWidth="240px" zIndex={10}>
+                  <MenuOptionGroup
+                    defaultValue={currentFilters}
+                    onChange={(value) => {
+                      const cleanedValue = Array.isArray(value)
+                        ? value.filter((v) => v !== 'wordClass')
+                        : value === 'wordClass'
+                          ? ['']
+                          : [value];
+                      setCurrentFilters(cleanedValue);
+                    }}
+                    title={
+                      isWordResource ? 'Word Attributes' : 'Example Attributes'
+                    }
+                    type="checkbox"
+                  >
+                    {!isWordResource
+                      ? [
+                        <MenuItemOption value="isProverb">
+                          Is Proverb
+                        </MenuItemOption>,
+                      ]
+                      : null}
+                    {isWordResource
+                      ? [
+                        <MenuItemOption value={WordAttributes.IS_STANDARD_IGBO.value}>
+                          Is Standard Igbo
+                        </MenuItemOption>,
+                        <MenuItemOption value="pronunciation">
+                          Has Pronunciation
+                        </MenuItemOption>,
+                        <MenuItemOption value="nsibidi">
+                          Has Nsịbịdị
+                        </MenuItemOption>,
+                        <MenuItemOption value={WordAttributes.IS_CONSTRUCTED_TERM.value}>
+                          Is Constructed Term
+                        </MenuItemOption>,
+                      ]
+                      : null}
+                    {isSuggestionResource
+                      ? [
+                        <MenuDivider />,
+                        <MenuItemOption value={SuggestionSource.COMMUNITY}>
+                          From Nkọwa okwu
+                        </MenuItemOption>,
+                        <MenuItemOption value={SuggestionSource.INTERNAL}>
+                          From Igbo API Editor Platform
+                        </MenuItemOption>,
+                        <MenuItemOption value="userInteractions">
+                          Is Currently Editing
+                        </MenuItemOption>,
+                        <MenuItemOption value="authorId">
+                          Is Author
+                        </MenuItemOption>,
+                      ]
+                      : null}
+                  </MenuOptionGroup>
+                </MenuList>
+              </Menu>
+            </Box>
+          )}
+          {isWordResource && !isPollResource && !isUserResource ? (
+            <Box
+              data-test="part-of-speech-filter"
+              display="flex"
+              justifyContent="flex-end"
+              className="lg:space-x-3"
+            >
+              <Menu closeOnSelect={false} placement="bottom-end">
+                <MenuButton
+                  as={Button}
+                  colorScheme={
+                    !currentPartOfSpeechFilter.length ? 'blue' : 'yellow'
                   }
-                  type="checkbox"
+                  backgroundColor={
+                    currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'
+                  }
+                  variant="outline"
+                  rightIcon={<ChevronDownIcon />}
                 >
-                  {!isWordResource
-                    ? [
-                      <MenuItemOption value="isProverb">
-                        Is Proverb
-                      </MenuItemOption>,
-                    ]
-                    : null}
-                  {isWordResource
-                    ? [
-                      <MenuItemOption value={WordAttributes.IS_STANDARD_IGBO.value}>
-                        Is Standard Igbo
-                      </MenuItemOption>,
-                      <MenuItemOption value="pronunciation">
-                        Has Pronunciation
-                      </MenuItemOption>,
-                      <MenuItemOption value="nsibidi">
-                        Has Nsịbịdị
-                      </MenuItemOption>,
-                      <MenuItemOption value={WordAttributes.IS_CONSTRUCTED_TERM.value}>
-                        Is Constructed Term
-                      </MenuItemOption>,
-                    ]
-                    : null}
-                  {isSuggestionResource
-                    ? [
-                      <MenuDivider />,
-                      <MenuItemOption value={SuggestionSource.COMMUNITY}>
-                        From Nkọwa okwu
-                      </MenuItemOption>,
-                      <MenuItemOption value={SuggestionSource.INTERNAL}>
-                        From Igbo API Editor Platform
-                      </MenuItemOption>,
-                      <MenuItemOption value="userInteractions">
-                        Is Currently Editing
-                      </MenuItemOption>,
-                      <MenuItemOption value="authorId">
-                        Is Author
-                      </MenuItemOption>,
-                    ]
-                    : null}
-                </MenuOptionGroup>
-              </MenuList>
-            </Menu>
-          </Box>
-        )}
-        {isWordResource && !isPollResource && !isUserResource ? (
-          <Box
-            data-test="part-of-speech-filter"
-            display="flex"
-            justifyContent="flex-end"
-            className="lg:space-x-3"
-          >
-            <Menu closeOnSelect={false} placement="bottom-end">
-              <MenuButton
-                as={Button}
-                colorScheme={
-                  !currentPartOfSpeechFilter.length ? 'blue' : 'yellow'
-                }
-                backgroundColor={
-                  currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'
-                }
-                variant="outline"
-                rightIcon={<ChevronDownIcon />}
-              >
-                {!currentPartOfSpeechFilter.length
-                  ? 'Part of Speech'
-                  : 'Part of Speech selected'}
-              </MenuButton>
-              <MenuList minWidth="240px" zIndex={10}>
-                <MenuOptionGroup
-                  defaultValue={currentPartOfSpeechFilter}
-                  // @ts-expect-error onChange
-                  onChange={setCurrentPartOfSpeechFilter}
-                  title="Part of speech"
-                  type="checkbox"
-                >
-                  {Object.values(WordClass).map(({ value, label }) => (
-                    <MenuItemOption key={value} value={value}>
-                      {label}
-                    </MenuItemOption>
-                  ))}
-                </MenuOptionGroup>
-              </MenuList>
-            </Menu>
-          </Box>
-        ) : null}
+                  {!currentPartOfSpeechFilter.length
+                    ? 'Part of Speech'
+                    : 'Part of Speech selected'}
+                </MenuButton>
+                <MenuList minWidth="240px" zIndex={10}>
+                  <MenuOptionGroup
+                    defaultValue={currentPartOfSpeechFilter}
+                    // @ts-expect-error onChange
+                    onChange={setCurrentPartOfSpeechFilter}
+                    title="Part of speech"
+                    type="checkbox"
+                  >
+                    {Object.values(WordClass).map(({ value, label }) => (
+                      <MenuItemOption key={value} value={value}>
+                        {label}
+                      </MenuItemOption>
+                    ))}
+                  </MenuOptionGroup>
+                </MenuList>
+              </Menu>
+            </Box>
+          ) : null}
+        </Box>
         {isSuggestionResource || (isPollResource && hasAdminOrMergerPermissions(permissions, true)) ? (
           <CreateButton basePath={basePath} />
         ) : null}

@@ -12,6 +12,8 @@ export const wordSuggestionData = {
     definitions: ['first'],
   }],
   dialects: [],
+  wordPronunciation: '',
+  conceptualWord: '',
 };
 
 export const wordSuggestionApprovedData = {
@@ -21,6 +23,8 @@ export const wordSuggestionApprovedData = {
     wordClass: WordClass.NNC.value,
     definitions: ['first'],
   }],
+  wordPronunciation: '',
+  conceptualWord: '',
   approvals: ['first user', 'second user'],
 };
 

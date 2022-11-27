@@ -146,10 +146,14 @@ export interface ExampleClientData {
   authorId?: string,
 };
 
+export interface CachedDocument extends WordSuggestion, ExampleSuggestion {
+  cachedAt: Date,
+}
+
 export interface MergedOrRejectedEmailData {
   to: [string],
   suggestionType: string,
-  submissionLink: string,
+  submissionLink?: string,
 };
 
 export interface SuggestionsReminderData {

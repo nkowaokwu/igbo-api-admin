@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import {
   CreateProps,
   ListActionsProps,
@@ -20,13 +19,6 @@ export interface EditFormProps {
   resource: string,
   history: any,
   isPreExistingSuggestion?: boolean,
-};
-
-export interface DocumentIdsProps {
-  collection: string,
-  originalId: string,
-  id: Types.ObjectId,
-  title: string,
 };
 
 export interface CommentsProps {

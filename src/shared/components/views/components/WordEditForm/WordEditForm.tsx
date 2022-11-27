@@ -8,6 +8,8 @@ import {
 import {
   Box,
   Button,
+  Heading,
+  Text,
   useToast,
 } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -204,13 +206,15 @@ const WordEditForm = ({
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
-            <h2 className="form-header">Origin Word Id:</h2>
+            <Heading as="h2" className="form-header" fontFamily="monospace">Origin Word Id:</Heading>
             <a
               className="link"
               data-test="original-id"
               href={`#/words/${record.originalWordId || record.id}/show`}
             >
-              {record.originalWordId || record.id}
+              <Text fontFamily="monospace">
+                {record.originalWordId || record.id}
+              </Text>
             </a>
           </Box>
         ) : null }

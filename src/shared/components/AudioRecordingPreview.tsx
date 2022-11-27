@@ -10,10 +10,12 @@ const AudioRecordingPreview = (
   const audio = new Audio(record.pronunciation);
   const [isLoading, setIsLoading] = useState(true);
   const [isAudioAvailable, setIsAudioAvailable] = useState(false);
+
   audio.addEventListener('canplay', () => {
     setIsAudioAvailable(true);
     setIsLoading(false);
   });
+
   audio.addEventListener('error', () => {
     setIsAudioAvailable(false);
     setIsLoading(false);
@@ -22,6 +24,7 @@ const AudioRecordingPreview = (
   const playAudio = () => {
     audio.play();
   };
+
   return (
     <Box data-test="pronunciation-cell">
       {get(record, audioPath) ? (

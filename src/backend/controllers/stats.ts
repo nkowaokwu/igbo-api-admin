@@ -293,10 +293,12 @@ export const getStats = async (_: Request, res: Response, next: NextFunction): P
 };
 
 export const onUpdateDashboardStats = async (): Promise<void> => {
-  await calculateExampleStats();
-  await calculateTotalWordSuggestionsWithNsibidi();
-  await calculateTotalWordsWithNsibidi();
-  await calculateTotalWordsInStandardIgbo();
-  await calculateTotalHeadwordsWithAudioPronunciations();
-  await calculateWordStats();
+  await Promise.all([
+    calculateExampleStats(),
+    calculateTotalWordSuggestionsWithNsibidi(),
+    calculateTotalWordsWithNsibidi(),
+    calculateTotalWordsInStandardIgbo(),
+    calculateTotalHeadwordsWithAudioPronunciations(),
+    calculateWordStats(),
+  ]);
 };

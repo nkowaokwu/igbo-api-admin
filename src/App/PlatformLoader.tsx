@@ -1,7 +1,12 @@
 import React, { ReactElement, useRef } from 'react';
-import { Box, Heading, Spinner } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Spinner,
+  Text,
+} from '@chakra-ui/react';
 
-const PlatformLoader = (): ReactElement => {
+const PlatformLoader = ({ error } : { error: Error }): ReactElement => {
   const loadingLabel = useRef(null);
   const loadingLabelOptions = [
     'Booting up the Igbo API Editor\'s Platform 🚀',
@@ -24,6 +29,7 @@ const PlatformLoader = (): ReactElement => {
         label={loadingLabel.current}
       />
       <Heading fontSize="lg">{loadingLabel.current}</Heading>
+      {error ? <Text>{error.message}</Text> : null}
     </Box>
   ) : null;
 };

@@ -1,3 +1,5 @@
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+
 export const API_ROUTE = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3030'
   : `https://${window.location.host}`;
@@ -6,17 +8,21 @@ export const DEFAULT_WORD_RECORD = {
   id: '',
   author: '',
   word: '',
-  wordClass: '',
-  definitions: [],
+  definitions: [{
+    wordClass: '',
+    definitions: [],
+    label: '',
+  }],
   dialects: [],
   variations: [],
   approvals: [],
   denials: [],
   details: '',
   merged: '',
-  attributes: {
-    isStandardIgbo: '',
-  },
+  attributes: Object.values(WordAttributes).reduce((finalSchema, { value }) => ({
+    ...finalSchema,
+    [value]: false,
+  }), {}),
   accented: '',
   pronunciation: '',
   stems: '',

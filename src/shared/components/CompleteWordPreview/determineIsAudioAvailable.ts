@@ -1,6 +1,6 @@
 import axios from 'axios';
+import { compact, get } from 'lodash';
 import { Record } from 'react-admin';
-import { compact } from 'lodash';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 
 export default async (record: Word | Record, callback: (value: any) => void): Promise<any> => {
@@ -13,7 +13,7 @@ export default async (record: Word | Record, callback: (value: any) => void): Pr
           .catch(() => ({ pronunciation: false })),
       ];
     }
-    if (key === 'dialects') {
+    if (key === 'dialects' && Array.isArray(get(record, 'dialects'))) {
       const dialectsPronunciationsPromises = record.dialects
         .reduce((
           finalDialectsPronunciationPromises: any[],

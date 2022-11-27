@@ -6,7 +6,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
-import network from 'src/Core/Dashboard/network';
+import { getWord } from '../API';
 
 const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
   const [resolvedWord, setResolvedWord] = useState(null);
@@ -14,13 +14,7 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
 
   useEffect(() => {
     (async () => {
-      const word = await network(`/words/${wordId}`)
-        .then(({ json: word, status, body }) => {
-          if (status === 404 || status === 400) {
-            throw new Error(body.error);
-          }
-          return word;
-        })
+      const word = await getWord(wordId, { dialects: true })
         .catch(() => {
           setIsLinked(false);
           return { word: wordId };
@@ -39,7 +33,7 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
         backgroundColor="orange.300"
         color="black"
       >
-        <Box display="flex" alignItems="center" className="space-x-2">
+        <Box display="flex" alignItems="center" fontFamily="monospace" className="space-x-2">
           <Text color="orange.600" fontWeight="bold" cursor="default">{resolvedWord.word}</Text>
           <WarningIcon color="orange.600" boxSize={3} className="ml-2" />
         </Box>
