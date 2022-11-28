@@ -7,14 +7,13 @@ import determineIsAsCompleteAsPossible from 'src/backend/controllers/utils/deter
 import { Input } from 'src/shared/primitives';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import OnwuCharacters from 'src/shared/constants/OnwuCharacters';
-import removeAccents from 'src/backend/utils/removeAccents';
 import FormHeader from '../../../FormHeader';
 import HeadwordInterface from './HeadwordFormInterface';
 import SuggestedWords from './SuggestedWords';
 import HeadwordAttributes from './HeadwordAttributes';
 
-const generateIPALabel = (word) => {
-  const cleanedWord = removeAccents.removeExcluding(word).normalize('NFC');
+const generateIPALabel = (word = '') => {
+  const cleanedWord = word.normalize('NFC');
   let IPA = cleanedWord;
   Object.entries(OnwuCharacters).forEach(([latin, ipa]) => {
     IPA = IPA.replace(new RegExp(latin, 'g'), ipa);

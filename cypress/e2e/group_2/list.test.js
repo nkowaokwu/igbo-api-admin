@@ -1,11 +1,11 @@
-import { times } from 'lodash';
-import { SuggestionSelectOptions } from '../../constants';
-
 describe('List', () => {
+  before(() => {
+    cy.seedDatabase();
+    cy.cleanLogin();
+  });
+
   describe('Words', () => {
     before(() => {
-      cy.seedDatabase();
-      cy.cleanLogin();
       cy.selectCollection('words');
     });
 
@@ -15,6 +15,7 @@ describe('List', () => {
       cy.get('[aria-checked="true"][value="isStandardIgbo"]').should('exist');
       cy.findAllByRole('menuitemcheckbox').contains('Has Pronunciation').click({ force: true });
       cy.get('[aria-checked="true"][value="pronunciation"]').should('exist');
+      cy.findByLabelText('Clear filters').click();
     });
 
     it('select 10 rows from table pagination', () => {
@@ -26,61 +27,29 @@ describe('List', () => {
     });
 
     it('select 25 rows from table pagination', () => {
+      cy.intercept('GET', '**/words?filter=%7B%7D&range=%5B0%2C24%5D&sort=%5B%22id%22%2C%22ASC%22%5D').as('getWords');
       cy.get('#menu-button-per-page-menu').click();
       cy.get('button[data-index="1"]').contains('25').click();
-      cy.wait(2000);
+      cy.wait('@getWords');
       cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
         expect(res.length).to.equal(25);
       });
     });
 
     it('select 50 rows from table pagination', () => {
-      cy.intercept('GET', '**/words/**').as('getWords');
+      cy.intercept('GET', '**/words?filter=%7B%7D&range=%5B0%2C49%5D&sort=%5B%22id%22%2C%22ASC%22%5D').as('getWords');
       cy.get('#menu-button-per-page-menu').click();
       cy.get('button[data-index="2"]').contains('50').click();
-      cy.wait(2000);
+      cy.wait('@getWords');
       cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
         expect(res.length).to.equal(50);
-      });
-    });
-
-    it('renders not standard for is standard igbo column', () => {
-      cy.findAllByText('Not Standard').first();
-    });
-
-    it('renders standard for is standard igbo column', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**').as('updateWordSuggestion');
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions', true);
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.get('[data-test="isStandardIgbo-checkbox"]').find('input').then(([checkbox]) => {
-        if (!checkbox.checked) {
-          cy.findByTestId('isStandardIgbo-checkbox').click();
-        }
-        cy.findByTestId('word-input').then(([word]) => {
-          cy.get('button[type="submit"]').click();
-          /**
-           * Race condition:
-           * The platform navigates to the word doc before the word doc saves,
-           * which causes the test to fail
-           * */
-          cy.wait('@updateWordSuggestion').then(({ response }) => {
-            expect(response.statusCode).to.equal(200);
-            cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-            cy.acceptConfirmation();
-            cy.contains('Word Document Details');
-            cy.selectCollection('words', true);
-            cy.searchForDocument(word.value);
-            cy.findAllByTestId('standard-igbo-cell').first();
-          });
-        });
       });
     });
   });
 
   describe('Examples', () => {
     before(() => {
-      cy.cleanLogin();
+      cy.wait(5000);
       cy.selectCollection('examples');
     });
 
@@ -93,9 +62,10 @@ describe('List', () => {
     });
 
     it('select 25 rows from table pagination', () => {
-      cy.intercept('GET', '**/examples/**').as('getExamples');
+      cy.intercept('GET', '**/examples?filter=%7B%7D&range=%5B0%2C24%5D&sort=%5B%22id%22%2C%22ASC%22%5D').as('getExamples');
       cy.get('#menu-button-per-page-menu').click();
       cy.get('button[data-index="1"]').contains('25').click();
+      cy.wait('@getExamples', { timeout: 20000 });
       cy.wait(2000);
       cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
         expect(res.length).to.equal(25);
@@ -103,36 +73,13 @@ describe('List', () => {
     });
 
     it('select 50 rows from table pagination', () => {
-      cy.intercept('GET', '**/examples/**').as('getExamples');
+      cy.intercept('GET', '**/examples?filter=%7B%7D&range=%5B0%2C49%5D&sort=%5B%22id%22%2C%22ASC%22%5D').as('getExamples');
       cy.get('#menu-button-per-page-menu').click();
       cy.get('button[data-index="2"]').contains('50').click();
+      cy.wait('@getExamples', { timeout: 20000 });
       cy.wait(2000);
       cy.get('.datagrid-body').find('tr[class*="RaDatagrid-row-"]').then((res) => {
         expect(res.length).to.equal(50);
-      });
-    });
-  });
-
-  describe('Word Suggestions', () => {
-    before(() => {
-      cy.cleanLogin();
-    });
-
-    beforeEach(() => {
-      times(15, cy.createWordSuggestion);
-      cy.selectCollection('wordSuggestions');
-    });
-
-    it('bulk merge all word suggestion documents', () => {
-      cy.getWordSuggestionDocumentDetails();
-      cy.get('@selectedWord').then(([$word]) => {
-        cy.get('input[type="checkbox"]').first().click();
-        cy.findByTestId('bulk-merge-button').click();
-        cy.acceptConfirmation();
-        cy.get('@selectedWord').should('not.exist');
-        cy.selectCollection('words');
-        cy.searchForDocument($word.innerText);
-        cy.contains($word.innerText);
       });
     });
   });

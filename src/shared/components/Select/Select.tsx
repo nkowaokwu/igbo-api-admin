@@ -308,7 +308,7 @@ const Select = ({
         onClose={clearConfirmOpen}
         view={view}
       />
-      <Menu className="test-select-options" label="Editor's Action">
+      <Menu data-test="test-select-options" label="Editor's Action">
         <MenuButton
           as={Button}
           rightIcon={<ChevronDownIcon />}

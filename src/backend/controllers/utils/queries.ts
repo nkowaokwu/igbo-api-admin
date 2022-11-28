@@ -26,6 +26,7 @@ type Filters = {
   userInteractions?: any,
   approvals?: any,
   denials?: any,
+  pronunciation?: any,
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
@@ -37,7 +38,12 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'pronunciation':
         if (value) {
-          allFilters.$expr = { $gt: [{ $strLenCP: '$pronunciation' }, 10] };
+          allFilters.pronunciation = {
+            $and: [
+              { $exists: true, $type: 'string' },
+              { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
+            ],
+          };
         } else {
           allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
         }

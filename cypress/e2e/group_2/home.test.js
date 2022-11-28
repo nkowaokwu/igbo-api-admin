@@ -2,10 +2,10 @@ import { forEach, values, times } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, UserSelectOptions } from '../../constants';
 
 describe('Editor platform', () => {
-  beforeEach(() => {
-    cy.cleanLogin();
-  });
   describe('Signup Page', () => {
+    before(() => {
+      cy.cleanLogin();
+    });
     it('signs up with all the required inforamtion', () => {
       cy.logout();
       cy.visit('/');
@@ -22,13 +22,14 @@ describe('Editor platform', () => {
   });
 
   describe('Admin permissions', () => {
-    it('user collection exists', () => {
+    before(() => {
       cy.cleanLogin();
+    });
+    it('user collection exists', () => {
       cy.get('a[href="#/users"]').click();
     });
 
     it('change editingGroup for an editor', () => {
-      cy.cleanLogin();
       cy.get('a[href="#/users"]').click();
       cy.getActionsOption(UserSelectOptions.ASSIGN_EDITING_GROUP).click();
       cy.findByTestId('editing-group-number-input').type('2');
@@ -43,7 +44,6 @@ describe('Editor platform', () => {
 
     it('bulk actions do render', () => {
       cy.visit('/');
-      cy.cleanLogin();
       cy.selectCollection('wordSuggestions');
       cy.get('input[type="checkbox"]').should('exist');
     });
@@ -57,12 +57,6 @@ describe('Editor platform', () => {
     it('user collection doesn\'t exist', () => {
       cy.get('a[href="#/words"]');
       cy.get('a[href="#/users"]').should('not.exist');
-    });
-
-    it('render all merger actions in the list view for words', () => {
-      cy.cleanLogin('merger@example.com', { role: 'merger' });
-      cy.selectCollection('words');
-      cy.getActionsOption(DocumentSelectOptions.COMBINE_WORD_INTO);
     });
 
     it('render all merger actions in the show view for words', () => {
@@ -103,15 +97,10 @@ describe('Editor platform', () => {
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
       cy.getActionsOption(SuggestionSelectOptions.DELETE);
     });
-
-    it('bulk actions do render', () => {
-      cy.selectCollection('wordSuggestions');
-      cy.get('input[type="checkbox"]').should('exist');
-    });
   });
 
   describe('Editor Permissions', () => {
-    beforeEach(() => {
+    before(() => {
       cy.cleanLogin('test@example.com', { role: 'editor', editingGroup: 1 });
     });
 
