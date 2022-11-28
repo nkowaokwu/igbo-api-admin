@@ -99,10 +99,17 @@ const WordEditForm = ({
     const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
     const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
     return examples
-      .map(({ igbo, english, pronunciation }, index) => (
+      .map(({
+        igbo,
+        english,
+        meaning,
+        pronunciation,
+      }, index) => (
         {
           igbo,
           english,
+          pronunciation,
+          meaning,
           ...(originalExamplesFromIds[index]?.dataset?.originalExampleId
             ? { originalExampleId: originalExamplesFromIds[index]?.dataset?.originalExampleId }
             : {}
@@ -112,7 +119,6 @@ const WordEditForm = ({
             : {}
           ),
           associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
-          pronunciation,
         }
       ))
       .filter((example) => example.igbo && example.english);

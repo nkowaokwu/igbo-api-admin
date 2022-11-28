@@ -21,6 +21,7 @@ const Example = ({
   const {
     igbo,
     english,
+    meaning,
     id = '',
     associatedWords,
     associatedDefinitionsSchemas,
@@ -131,12 +132,27 @@ const Example = ({
               {...props}
               onChange={handleInputEnglish(onChange)}
               className="form-input"
-              placeholder="Example in English"
+              placeholder="Example in English (literal)"
               data-test={`examples-${index}-english-input`}
             />
           )}
           name={`examples[${index}].english`}
           defaultValue={english || (formData.examples && formData.examples[index]?.english) || ''}
+          control={control}
+        />
+        <h3 className="text-gray-700">Meaning:</h3>
+        <Controller
+          render={({ onChange, ...props }) => (
+            <Input
+              {...props}
+              onChange={handleInputEnglish(onChange)}
+              className="form-input"
+              placeholder="Example in English (meaning)"
+              data-test={`examples-${index}-meaning-input`}
+            />
+          )}
+          name={`examples[${index}].meaning`}
+          defaultValue={meaning || (formData.examples && formData.examples[index]?.meaning) || ''}
           control={control}
         />
         <Controller
