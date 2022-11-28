@@ -112,4 +112,9 @@ export const app = process.env.NODE_ENV === 'test' ? (() => {
   // @ts-expect-error
   expressServer.clearDatabase = mongoose.connection.dropDatabase;
   return expressServer;
-})() : functions.https.onRequest(server);
+})() : (
+  functions
+    .runWith({ timeoutSeconds: 540, memory: '1GB' })
+    .https
+    .onRequest(server)
+);

@@ -220,30 +220,32 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
-    const wordSuggestions = await WordSuggestion.find(
-      {
-        mergedBy: userId,
-        updatedAt: { $gte: threeMonthsAgo },
-      },
-      null,
-      { sort: { updatedAt: 1 } },
-    ) as Interfaces.WordSuggestion[];
-    const exampleSuggestions = await ExampleSuggestion.find(
-      {
-        mergedBy: userId,
-        updatedAt: { $gte: threeMonthsAgo },
-      },
-      null,
-      { sort: { updatedAt: 1 } },
-    ) as Interfaces.ExampleSuggestion[];
-    const dialectalVariationWordSuggestions = await WordSuggestion.find(
-      {
-        mergedBy: userId,
-        'dialects.editor': userId,
-      },
-      null,
-      { sort: { updatedAt: 1 } },
-    ) as Interfaces.WordSuggestion[];
+    const [wordSuggestions, exampleSuggestions, dialectalVariationWordSuggestions] = await Promise.all([
+      WordSuggestion.find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        null,
+        { sort: { updatedAt: 1 } },
+      ) as Interfaces.WordSuggestion[],
+      ExampleSuggestion.find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        null,
+        { sort: { updatedAt: 1 } },
+      ) as Interfaces.ExampleSuggestion[],
+      WordSuggestion.find(
+        {
+          mergedBy: userId,
+          'dialects.editor': userId,
+        },
+        null,
+        { sort: { updatedAt: 1 } },
+      ) as Interfaces.WordSuggestion[],
+    ]);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
