@@ -79,6 +79,7 @@
     "cors": "^2.8.5",
     "d3": "^7.6.1",
     "deep-diff": "^1.0.2",
+    "dexie": "^3.2.2",
     "diacriticless": "^1.0.1",
     "express": "^4.17.1",
     "firebase": "9.8.4",

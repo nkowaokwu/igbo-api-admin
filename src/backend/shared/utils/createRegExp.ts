@@ -23,7 +23,8 @@ export default (searchWord: string, hardMatch = false): SearchRegExp => {
         index,
         letter,
       });
-      return `${regexWord}(${diacriticCodes[letter] || letter})${isLastLetterDuplicated ? '{0,}' : ''}`;
+      // eslint-disable-next-line max-len
+      return `${regexWord}(${(diacriticCodes[letter] || letter).normalize('NFD')})${isLastLetterDuplicated ? '{0,}' : ''}`;
     }, '')}(?:es|[sx]|ing)${requirePluralAndGerundMatch}`;
   let regexWordStringNormalizedNFC: string[] | string = [...(searchWord
     .replace(/(?:es|[s]|ing)$/, ''))];

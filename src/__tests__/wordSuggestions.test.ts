@@ -7,6 +7,7 @@ import {
 } from 'lodash';
 import WordClass from 'src/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
+import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -204,6 +205,13 @@ describe('MongoDB Word Suggestions', () => {
 
     it('should throw an error for providing an invalid id', async () => {
       const res = await updateWordSuggestion({ id: INVALID_ID });
+      expect(res.status).toEqual(400);
+      expect(res.body.error).not.toEqual(undefined);
+    });
+
+    it('should throw an error for providing a source field', async () => {
+      const wordRes = await suggestNewWord(wordSuggestionData);
+      const res = await updateWordSuggestion({ ...wordRes.body, source: SuggestionSource.COMMUNITY });
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });

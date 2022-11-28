@@ -220,7 +220,7 @@ export const deleteWordSuggestion = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> | void => {
+): Promise<Response | void> => {
   try {
     const { id } = req.params;
     const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
@@ -240,7 +240,12 @@ export const deleteWordSuggestion = async (
           deleteAudioPronunciation(`${id}-${dialectalWord}`, dialectPronunciationMp3);
           deleteAudioPronunciation(`${id}-${dialectalWordId}`, dialectPronunciationMp3);
         }));
-        const { email: userEmail } = await findUser(wordSuggestion.authorId) as Interfaces.FormattedUser;
+        const { email: userEmail } = await findUser(wordSuggestion.authorId)
+          .catch((err) => {
+            console.log('THe user doesn\'t exist.');
+            console.log(err);
+            return { email: null };
+          }) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
         if (userEmail && !wordSuggestion.merged) {
           sendRejectedEmail({

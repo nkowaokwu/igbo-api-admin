@@ -76,13 +76,16 @@ export default {
     type: 'Merge',
     title: 'Merge Document',
     content: 'Are you sure you want to merge this document?',
-    executeAction: ({
+    executeAction: async ({
       record,
       resource,
       collection,
     }: { record: Record | { id: string }, resource: Collections, collection: Collections }): Promise<any> => {
-      handleUpdateDocument({ type: ActionTypes.MERGE, resource, record });
-      return mergeDocument({ collection, record });
+      const [, res] = await Promise.all([
+        handleUpdateDocument({ type: ActionTypes.MERGE, resource, record }),
+        mergeDocument({ resource: collection, record }),
+      ]);
+      return res;
     },
     successMessage: 'Document has been merged 🎉',
     hasLink: true,

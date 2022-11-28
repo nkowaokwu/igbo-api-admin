@@ -3,7 +3,8 @@ import { Box, IconButton, Spinner } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
-import { getExample } from 'src/shared/API';
+import network from 'src/utils/dataProvider';
+import Collection from 'src/shared/constants/Collections';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 
@@ -51,7 +52,11 @@ const Example = ({
 
   useEffect(() => {
     (async () => {
-      setOriginalRecord(originalExampleId ? await getExample(originalExampleId) : example);
+      setOriginalRecord(
+        originalExampleId
+          ? await network.getOne(Collection.EXAMPLES, { id: originalExampleId })
+          : example,
+      );
     })();
   }, []);
 

@@ -1,4 +1,5 @@
 import Dialects from '../../src/backend/shared/constants/Dialects';
+import WordClass from '../../src/backend/shared/constants/WordClass';
 
 export const DialectOptions = Dialects;
 
@@ -6,76 +7,7 @@ export const API_ROUTE = process.env.NODE_ENV !== 'production'
   ? 'http://localhost:3030'
   : 'https://editor.igboapi.com';
 
-export const WordClassOptions = {
-  ADJ: {
-    value: 'ADJ',
-    label: 'Adjective',
-  },
-  ADV: {
-    value: 'ADV',
-    label: 'Adverb',
-  },
-  V: {
-    value: 'V',
-    label: 'Verb',
-  },
-  CJN: {
-    value: 'CJN',
-    label: 'Conjunction',
-  },
-  DEM: {
-    value: 'DEM',
-    label: 'Demonstrative',
-  },
-  NNC: {
-    value: 'NNC',
-    label: 'Noun',
-  },
-  NNP: {
-    value: 'NNP',
-    label: 'Proper noun',
-  },
-  CD: {
-    value: 'CD',
-    label: 'Number',
-  },
-  PREP: {
-    value: 'PREP',
-    label: 'Preposition',
-  },
-  PRN: {
-    value: 'PRN',
-    label: 'Pronoun',
-  },
-  FW: {
-    value: 'FW',
-    label: 'Foreign word',
-  },
-  QTF: {
-    value: 'QTF',
-    label: 'Quantifier',
-  },
-  WH: {
-    value: 'WH',
-    label: 'Interrogative',
-  },
-  INTJ: {
-    value: 'INTJ',
-    label: 'Interjection',
-  },
-  ISUF: {
-    value: 'ISUF',
-    label: 'Inflectional suffix',
-  },
-  ESUF: {
-    value: 'ESUF',
-    label: 'Extensional suffix',
-  },
-  SYM: {
-    value: 'SYM',
-    label: 'Punctuations',
-  },
-};
+export const WordClassOptions = WordClass;
 
 const dialectObjects = Object.values(Dialects).reduce((dialectsObject, { value }) => ({
   ...dialectsObject,

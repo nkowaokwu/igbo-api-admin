@@ -29,7 +29,7 @@ const CompleteWordPreview = (
 
   useEffect(() => {
     (async () => {
-      setDocumentCompleteness(await determineDocumentCompleteness(record));
+      setDocumentCompleteness(await determineDocumentCompleteness(record), true);
     })();
   }, [record]);
 
