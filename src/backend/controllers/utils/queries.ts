@@ -77,7 +77,7 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         allFilters.style = { $eq: ExampleStyle.PROVERB.value };
         break;
       case 'wordClass':
-        allFilters.wordClass = { $in: value };
+        allFilters['definitions.wordClass'] = { $in: value };
         break;
       case 'userInteractions':
         allFilters.userInteractions = { $in: value };

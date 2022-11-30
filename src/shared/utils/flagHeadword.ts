@@ -2,6 +2,7 @@
 /* eslint-disable no-labels */
 import WordClass from 'src/shared/constants/WordClass';
 import { flow } from 'lodash';
+import { Word } from 'src/backend/controllers/utils/interfaces';
 
 /** Tone Rules
  * 1. Mid-tone/Down step ( ̄) tone marks can come after unmarked (high tones) and
@@ -48,9 +49,10 @@ const MACRON_ACCENT = 772;
 const accents = [GRAVE_ACCENT, ACUTE_ACCENT, MACRON_ACCENT];
 
 const invalidPrefixedDash = (
-  { word: wordDocument, flags } : { word: { word: string, wordClass: string }, flags: FlagsType },
-): { word: { word: string, wordClass: string }, flags: FlagsType } => {
-  const { word, wordClass } = wordDocument;
+  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
+): { word: Word, flags: FlagsType } => {
+  const { word, definitions } = wordDocument;
+  const { wordClass } = definitions[0];
   if (word && word.startsWith('-') && wordClass !== WordClass.ESUF.value) {
     flags.dashPrefix = 'There is an invalid prefixed dash that shouldn\'t be present for this word. '
     + 'Only Extensional suffixes can have prefixed dashes';
@@ -61,8 +63,8 @@ const invalidPrefixedDash = (
 };
 
 const invalidHighTonePresent = (
-  { word: wordDocument, flags } : { word: { word: string, wordClass: string }, flags: FlagsType },
-): { word: { word: string, wordClass: string }, flags: FlagsType } => {
+  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
+): { word: Word, flags: FlagsType } => {
   const { word } = wordDocument;
   if (word) {
     for (let i = 0; i < word.length; i += 1) {
@@ -81,8 +83,8 @@ const invalidHighTonePresent = (
 };
 
 const invalidToneMarkPairings = (
-  { word: wordDocument, flags } : { word: { word: string, wordClass: string }, flags: FlagsType },
-): { word: { word: string, wordClass: string }, flags: FlagsType } => {
+  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
+): { word: Word, flags: FlagsType } => {
   // Get the word and remove all underdots
   const word = (wordDocument.word || '').normalize('NFD').replace(/[\u0323\s]/g, '');
 
@@ -171,6 +173,6 @@ const generateFlags = flow([
   invalidPrefixedDash,
   invalidHighTonePresent,
   invalidToneMarkPairings,
-]) as (...any) => { word: { word: string, wordClass: string }, flags: FlagsType };
+]) as (...any) => { word: Word, flags: FlagsType };
 
 export default generateFlags;
