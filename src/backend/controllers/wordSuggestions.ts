@@ -38,9 +38,10 @@ const assignEditorsToDialects = ({
       const wordDialect = compareData.dialects[index];
 
       if (
-        wordSuggestionDialect.word !== wordDialect?.word
-        || wordSuggestionDialect.pronunciation !== wordDialect?.pronunciation
-        || !isEqual(wordSuggestionDialect.dialects, wordDialect?.dialects)
+        // wordSuggestionDialect.word !== wordDialect?.word
+        // || wordSuggestionDialect.pronunciation !== wordDialect?.pronunciation
+        // || !isEqual(wordSuggestionDialect.dialects, wordDialect?.dialects)
+        !wordDialect
       ) {
         updatedData.dialects[index].editor = userId;
       } else {
