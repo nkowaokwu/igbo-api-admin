@@ -211,9 +211,12 @@ describe('MongoDB Word Suggestions', () => {
 
     it('should throw an error for providing a source field', async () => {
       const wordRes = await suggestNewWord(wordSuggestionData);
-      const res = await updateWordSuggestion({ ...wordRes.body, source: SuggestionSource.COMMUNITY });
+      const res = await updateWordSuggestion(
+        { ...wordRes.body, source: SuggestionSource.COMMUNITY },
+        { cleanData: false },
+      );
       expect(res.status).toEqual(400);
-      expect(res.body.error).not.toEqual(undefined);
+      expect(res.body.message).not.toEqual(undefined);
     });
 
     it('should update the updatedAt field', async () => {

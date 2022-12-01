@@ -172,10 +172,13 @@ export const suggestNewCorpus = (data: any, options = { token: '', cleanData: tr
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const updateWordSuggestion = (data: any, options = { token: '' }): Request => (
+export const updateWordSuggestion = (
+  data: any,
+  options: { token?: string, cleanData: boolean } = { token: '', cleanData: true },
+): Request => (
   chaiServer
     .put(`/wordSuggestions/${data.id}`)
-    .send(removePayloadFields(data))
+    .send(options?.cleanData ? removePayloadFields(data) : data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
