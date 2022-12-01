@@ -220,7 +220,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
-    const [wordSuggestions, exampleSuggestions, dialectalVariationWordSuggestions] = await Promise.all([
+    const [wordSuggestions = [], exampleSuggestions = [], dialectalVariationWordSuggestions = []] = await Promise.all([
       WordSuggestion.find(
         {
           mergedBy: userId,
@@ -249,33 +249,35 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
-        finalData[isoWeek] = [];
+        finalData[isoWeek] = 0;
       }
       return {
         ...finalData,
-        [isoWeek]: finalData[isoWeek].concat(wordSuggestion),
+        [isoWeek]: finalData[isoWeek] + 1,
       };
-    }, {});
+    }, {} as { [key: string]: number });
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
-        finalData[isoWeek] = [];
+        finalData[isoWeek] = 0;
       }
       return {
         ...finalData,
-        [isoWeek]: finalData[isoWeek].concat(exampleSuggestion),
+        [isoWeek]: finalData[isoWeek] + 1,
       };
-    }, {});
+    }, {} as { [key: string]: number });
     const dialectalVariationMerges = dialectalVariationWordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
-        finalData[isoWeek] = [];
+        finalData[isoWeek] = 0;
       }
       return {
         ...finalData,
-        [isoWeek]: finalData[isoWeek].concat(wordSuggestion.dialects.filter(({ editor }) => editor === userId)),
+        [isoWeek]: finalData[isoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
+          editor === userId
+        )).length,
       };
-    }, {});
+    }, {} as { [key: string]: number });
     return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
   } catch (err) {
     return next(err);
