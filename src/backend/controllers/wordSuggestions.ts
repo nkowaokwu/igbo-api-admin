@@ -44,7 +44,7 @@ const assignEditorsToDialects = ({
       const wordDialect = compareData.dialects[index];
 
       if (wordSuggestionDialect && wordSuggestionDialect.word !== wordDialect?.word) {
-        wordSuggestionDialect.editor = userId;
+        updatedData.dialects[index].editor = userId;
       }
     });
   }
