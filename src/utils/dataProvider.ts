@@ -2,6 +2,7 @@ import { fetchUtils } from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
 import Collection from 'src/shared/constants/Collections';
+import { createAuthorizationHeader } from 'src/shared/API';
 import { API_ROUTE } from '../shared/constants';
 import authProvider from './authProvider';
 import IndexedDBAPI from './IndexedDBAPI';
@@ -15,8 +16,8 @@ export const httpClient = async (
     if (!updatedOptions.headers) {
       updatedOptions.headers = new Headers({ Accept: 'application/json' });
     }
-    const token = localStorage.getItem('igbo-api-admin-access') || '';
-    updatedOptions.headers.set('Authorization', `Bearer ${token}`);
+    const authToken = await createAuthorizationHeader();
+    updatedOptions.headers.set('Authorization', authToken);
     const res = await fetchUtils.fetchJson(url, updatedOptions).catch((err) => err);
 
     if (res.status === 403) {
