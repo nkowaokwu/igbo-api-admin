@@ -154,6 +154,7 @@ export interface MergedOrRejectedEmailData {
   to: [string],
   suggestionType: string,
   submissionLink?: string,
+  [key: string]: any,
 };
 
 export interface SuggestionsReminderData {

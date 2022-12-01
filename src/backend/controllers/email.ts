@@ -66,7 +66,11 @@ export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Pro
   const message = constructMessage({
     to: data.to,
     templateId: MERGED_SUGGESTION_TEMPLATE,
-    dynamic_template_data: omit(data, ['to']),
+    dynamic_template_data: omit({
+      ...data,
+      wordClass: data?.definitions?.[0]?.wordClass,
+      definitions: data?.definitions?.[0]?.definitions?.join(', '),
+    }, ['to']),
   });
   return sendEmail(message);
 };
@@ -76,7 +80,11 @@ export const sendRejectedEmail = (data: Interfaces.MergedOrRejectedEmailData): P
   const message = constructMessage({
     to: data.to,
     templateId: REJECTED_SUGGESTION_TEMPLATE,
-    dynamic_template_data: omit(data, ['to']),
+    dynamic_template_data: omit({
+      ...data,
+      wordClass: data?.definitions?.[0]?.wordClass,
+      definitions: data?.definitions?.[0]?.definitions?.join(', '),
+    }, ['to']),
   });
   return sendEmail(message);
 };
