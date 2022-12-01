@@ -1,6 +1,6 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { assign, map } from 'lodash';
+import { assign, map, isEqual } from 'lodash';
 import WordSuggestion from '../models/WordSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
@@ -34,17 +34,17 @@ const assignEditorsToDialects = ({
       editor: userId,
     }));
   } else {
-    // Determine the different dialects and assign user as dialect editor
-    const longerDialects = (clientData.dialects?.length || 0) >= (compareData.dialects?.length || 0)
-      ? clientData.dialects || []
-      : compareData.dialects || [];
-
-    longerDialects.forEach((_, index) => {
-      const wordSuggestionDialect = updatedData.dialects[index];
+    updatedData.dialects.forEach((wordSuggestionDialect, index) => {
       const wordDialect = compareData.dialects[index];
 
-      if (wordSuggestionDialect && wordSuggestionDialect.word !== wordDialect?.word) {
+      if (
+        wordSuggestionDialect.word !== wordDialect?.word
+        || wordSuggestionDialect.pronunciation !== wordDialect?.pronunciation
+        || !isEqual(wordSuggestionDialect.dialects, wordDialect?.dialects)
+      ) {
         updatedData.dialects[index].editor = userId;
+      } else {
+        updatedData.dialects[index].editor = wordDialect?.editor;
       }
     });
   }
