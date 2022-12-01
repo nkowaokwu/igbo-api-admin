@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { omit } from 'lodash';
 import { Record } from 'react-admin';
+import { getAuth } from 'firebase/auth';
 import IndexedDBAPI from 'src/utils/IndexedDBAPI';
 import { EmptyResponse } from './server-validation';
 import { useCallable } from '../hooks/useCallable';
@@ -9,21 +10,25 @@ import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collections';
 
+const auth = getAuth();
 const handleAssignUserToEditingGroup = (
   useCallable<{ groupNumber: string, uid: string }, EmptyResponse>('assignUserToEditingGroup')
 );
 
-const createAuthorizationHeader = () => {
-  const accessToken = localStorage.getItem('igbo-api-admin-access') || '';
+export const createAuthorizationHeader = async (): Promise<string> => {
+  const { currentUser } = auth;
+  const accessToken = currentUser
+    ? await currentUser.getIdToken()
+    : localStorage.getItem('igbo-api-admin-access') || '';
   return `Bearer ${accessToken}`;
 };
 
-const createHeaders = () => ({
-  Authorization: createAuthorizationHeader(),
+const createHeaders = async () => ({
+  Authorization: await createAuthorizationHeader(),
 });
 
-const request = (requestObject) => {
-  const headers = createHeaders();
+const request = async (requestObject) => {
+  const headers = await createHeaders();
   return axios({ ...requestObject, headers });
 };
 

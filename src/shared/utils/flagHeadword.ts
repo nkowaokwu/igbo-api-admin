@@ -51,7 +51,7 @@ const accents = [GRAVE_ACCENT, ACUTE_ACCENT, MACRON_ACCENT];
 const invalidPrefixedDash = (
   { word: wordDocument, flags } : { word: Word, flags: FlagsType },
 ): { word: Word, flags: FlagsType } => {
-  const { word, definitions } = wordDocument;
+  const { word, definitions = [{ wordClass: '', definitions: [] }] } = wordDocument;
   const { wordClass } = definitions[0];
   if (word && word.startsWith('-') && wordClass !== WordClass.ESUF.value) {
     flags.dashPrefix = 'There is an invalid prefixed dash that shouldn\'t be present for this word. '
