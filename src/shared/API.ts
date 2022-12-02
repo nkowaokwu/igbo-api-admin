@@ -239,8 +239,11 @@ export const removePayloadFields = (payload: any): any => {
     'source',
     'twitterPollId',
   ]);
+  if (Array.isArray(cleanedPayload.definitions)) {
+    cleanedPayload.definitions = cleanedPayload.definitions.map((definition) => omit(definition, ['id']));
+  }
   if (Array.isArray(cleanedPayload.dialects)) {
-    cleanedPayload.dialects.map((dialect) => omit(dialect, ['editor']));
+    cleanedPayload.dialects = cleanedPayload.dialects.map((dialect) => omit(dialect, ['editor', 'id']));
   }
   return cleanedPayload;
 };

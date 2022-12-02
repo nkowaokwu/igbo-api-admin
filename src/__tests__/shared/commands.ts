@@ -151,10 +151,17 @@ export const createPoll = (id: string, query = {}, options = { token: '' }): Req
     .send({ id })
 );
 
-export const suggestNewWord = (data: any, options = { noApprovals: false, token: '' }): Request => (
+export const suggestNewWord = (
+  data: any,
+  options: {
+    noApprovals?: boolean,
+    token?: string,
+    cleanData?: boolean,
+  } = { noApprovals: false, token: '', cleanData: true },
+): Request => (
   chaiServer
     .post('/wordSuggestions')
-    .send(removePayloadFields(data))
+    .send(options.cleanData ? removePayloadFields(data) : data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
@@ -172,10 +179,13 @@ export const suggestNewCorpus = (data: any, options = { token: '', cleanData: tr
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const updateWordSuggestion = (data: any, options = { token: '' }): Request => (
+export const updateWordSuggestion = (
+  data: any,
+  options: { token?: string, cleanData?: boolean } = { token: '', cleanData: true },
+): Request => (
   chaiServer
     .put(`/wordSuggestions/${data.id}`)
-    .send(removePayloadFields(data))
+    .send(options?.cleanData ? removePayloadFields(data) : data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
