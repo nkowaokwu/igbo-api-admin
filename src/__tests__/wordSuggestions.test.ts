@@ -8,6 +8,7 @@ import {
 import WordClass from 'src/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import Dialects from 'src/backend/shared/constants/Dialects';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -80,6 +81,62 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.status).toEqual(200);
       expect(res.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
     });
+
+    it('should persist author id to the dialects object after adding and deleting dialect objects', async () => {
+      const wordRes = await suggestNewWord({
+        ...wordSuggestionData,
+        dialects: [{
+          word: 'dialect',
+          variations: [],
+          dialects: [Dialects.AFI.value],
+          pronunciation: '',
+        }],
+      });
+      const secondWordRes = await updateWordSuggestion({
+        ...wordRes.body,
+        dialects: [
+          ...wordRes.body.dialects,
+          {
+            word: 'dialect 2',
+            variations: [],
+            dialects: [Dialects.ABI.value],
+            pronunciation: '',
+          },
+        ],
+      });
+      const thirdWordRes = await updateWordSuggestion({
+        ...secondWordRes.body,
+        dialects: [
+          ...secondWordRes.body.dialects,
+          {
+            word: 'dialect 3',
+            variations: [],
+            dialects: [Dialects.BON.value],
+            pronunciation: '',
+          },
+        ],
+      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      expect(thirdWordRes.status).toEqual(200);
+      expect(thirdWordRes.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      expect(thirdWordRes.body.dialects[1].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      expect(thirdWordRes.body.dialects[2].editor).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+      const res = await updateWordSuggestion({
+        ...thirdWordRes.body,
+        dialects: [
+          ...thirdWordRes.body.dialects.map((dialect, index) => {
+            if (!index) {
+              dialect.word = 'updated first dialect';
+            }
+            return dialect;
+          }),
+        ],
+      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      expect(res.status).toEqual(200);
+      expect(res.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      expect(res.body.dialects[1].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      expect(res.body.dialects[2].editor).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+    });
+
     it('should throw an error by providing the editor id in payload', async () => {
       const res = await suggestNewWord({
         ...wordSuggestionData,
@@ -90,7 +147,7 @@ describe('MongoDB Word Suggestions', () => {
           pronunciation: '',
           editor: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
         }],
-      });
+      }, { cleanData: false });
       expect(res.status).toEqual(400);
     });
   });

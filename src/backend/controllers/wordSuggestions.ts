@@ -1,6 +1,6 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { assign, map, isEqual } from 'lodash';
+import { assign, map } from 'lodash';
 import WordSuggestion from '../models/WordSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
@@ -26,6 +26,9 @@ const assignEditorsToDialects = ({
   userId: string,
 }) => {
   const updatedData = assign(clientData);
+  if (!updatedData.dialects) {
+    updatedData.dialects = [];
+  }
   // Sets all newly created dialects' editor to the current user
   // if the word suggestion doesn't come from an existing word document
   if (!compareData) {
@@ -34,14 +37,10 @@ const assignEditorsToDialects = ({
       editor: userId,
     }));
   } else {
-    updatedData.dialects.forEach((wordSuggestionDialect, index) => {
+    updatedData.dialects.forEach((_, index) => {
       const wordDialect = compareData.dialects[index];
 
-      if (
-        wordSuggestionDialect.word !== wordDialect?.word
-        || wordSuggestionDialect.pronunciation !== wordDialect?.pronunciation
-        || !isEqual(wordSuggestionDialect.dialects, wordDialect?.dialects)
-      ) {
+      if (!wordDialect) {
         updatedData.dialects[index].editor = userId;
       } else {
         updatedData.dialects[index].editor = wordDialect?.editor;
