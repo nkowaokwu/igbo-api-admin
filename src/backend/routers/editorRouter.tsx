@@ -40,7 +40,13 @@ import {
   approveExampleSuggestion,
   denyExampleSuggestion,
 } from '../controllers/exampleSuggestions';
-import { getStats, getUserStats, getUserMergeStats } from '../controllers/stats';
+import {
+  getStats,
+  getUserStats,
+  getUserMergeWordStats,
+  getUserMergeExampleStats,
+  getUserMergeDialectalVariationStats,
+} from '../controllers/stats';
 import {
   deleteGenericWord,
   getGenericWords,
@@ -149,7 +155,9 @@ editorRouter.delete(
 
 editorRouter.get('/stats/full', getStats);
 editorRouter.get('/stats/user', cacheControl, getUserStats);
-editorRouter.get('/stats/users/:uid/merge', getUserMergeStats);
+editorRouter.get('/stats/users/:uid/merge/words', getUserMergeWordStats);
+editorRouter.get('/stats/users/:uid/merge/examples', getUserMergeExampleStats);
+editorRouter.get('/stats/users/:uid/merge/dialectal-variations', getUserMergeDialectalVariationStats);
 editorRouter.get('/stats/users/:uid', cacheControl, getUserStats);
 
 editorRouter.put('/genericWords/:id', validId, putGenericWord);
