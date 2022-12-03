@@ -38,11 +38,10 @@ uploadExamplePronunciation(exampleSuggestionSchema);
 normalizeIgbo(exampleSuggestionSchema);
 
 exampleSuggestionSchema.index({
-  associatedWords: 1,
-  merged: 1,
   mergedBy: 1,
   updatedAt: 1,
-  userInteractions: 1,
+}, {
+  name: 'Merged example suggestion index',
 });
 
 export default mongoose.model('ExampleSuggestion', exampleSuggestionSchema);
