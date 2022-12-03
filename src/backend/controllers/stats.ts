@@ -228,7 +228,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
         },
         null,
         { sort: { updatedAt: 1 } },
-      ).select('updatedAt') as Interfaces.WordSuggestion[],
+      ) as Interfaces.WordSuggestion[],
       ExampleSuggestion.find(
         {
           mergedBy: userId,
@@ -236,7 +236,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
         },
         null,
         { sort: { updatedAt: 1 } },
-      ).select('updatedAt') as Interfaces.ExampleSuggestion[],
+      ) as Interfaces.ExampleSuggestion[],
       WordSuggestion.find(
         {
           mergedBy: userId,
@@ -244,7 +244,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
         },
         null,
         { sort: { updatedAt: 1 } },
-      ).select('updatedAt') as Interfaces.WordSuggestion[],
+      ) as Interfaces.WordSuggestion[],
     ]);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
