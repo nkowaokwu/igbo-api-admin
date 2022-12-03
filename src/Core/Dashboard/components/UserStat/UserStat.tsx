@@ -90,12 +90,15 @@ const UserStat = ({
       network(uid ? `/stats/users/${uid}` : '/stats/user')
         .then((res) => setUserStats(res.json));
       if (uid) {
-        const { json } = await network(`/stats/users/${uid}/merge`);
-        const { wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges } = json as {
-          wordSuggestionMerges: WordSuggestion[],
-          exampleSuggestionMerges: ExampleSuggestion[],
-          dialectalVariationMerges: WordSuggestion[],
-        };
+        const [
+          { json: wordSuggestionMerges },
+          { json: exampleSuggestionMerges },
+          { json: dialectalVariationMerges },
+        ] = await Promise.all([
+          network(`/stats/users/${uid}/merge/words`),
+          await network(`/stats/users/${uid}/merge/examples`),
+          network(`/stats/users/${uid}/merge/dialectal-variations`),
+        ]) as [{ json: WordSuggestion[] }, { json: ExampleSuggestion[] }, { json: WordSuggestion[] }];
         const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek() + 1;
         const labels = [];
         for (let i = threeMonthsAgoWeek; i <= threeMonthsAgoWeek + THREE_MONTH_WEEKS_COUNT; i += 1) {
