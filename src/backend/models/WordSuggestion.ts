@@ -33,8 +33,13 @@ const dialectSchema = new Schema({
 
 const wordSuggestionSchema = new Schema(
   {
-    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
-    word: { type: String, required: true },
+    originalWordId: {
+      type: Types.ObjectId,
+      ref: 'Word',
+      default: null,
+      index: true,
+    },
+    word: { type: String, required: true, index: true },
     definitions: [{
       type: definitionSchema,
       validate: (definitions) => (
@@ -71,18 +76,18 @@ const wordSuggestionSchema = new Schema(
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
     authorEmail: { type: String, default: '' },
-    authorId: { type: String, default: '' },
+    authorId: { type: String, default: '', index: true },
     stems: { type: [{ type: String }], default: [] },
     relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
-    nsibidi: { type: String, default: '' },
-    approvals: { type: [{ type: String }], default: [] },
-    denials: { type: [{ type: String }], default: [] },
+    nsibidi: { type: String, default: '', index: true },
+    approvals: { type: [{ type: String }], default: [], index: true },
+    denials: { type: [{ type: String }], default: [], index: true },
     source: { type: String, defualt: SuggestionSource.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
-    mergedBy: { type: String, default: null },
-    userInteractions: { type: [{ type: String }], default: [] },
+    mergedBy: { type: String, default: null, index: true },
+    userInteractions: { type: [{ type: String }], default: [], index: true },
     twitterPollId: { type: String, default: '' },
   },
   { toObject: toObjectPlugin, timestamps: true },
