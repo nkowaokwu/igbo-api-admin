@@ -77,12 +77,12 @@ const wordSuggestionSchema = new Schema(
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     nsibidi: { type: String, default: '' },
-    approvals: { type: [{ type: String }], default: [], index: true },
-    denials: { type: [{ type: String }], default: [], index: true },
+    approvals: { type: [{ type: String }], default: [] },
+    denials: { type: [{ type: String }], default: [] },
     source: { type: String, defualt: SuggestionSource.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
-    mergedBy: { type: String, default: null, index: true },
-    userInteractions: { type: [{ type: String }], default: [], index: true },
+    mergedBy: { type: String, default: null },
+    userInteractions: { type: [{ type: String }], default: [] },
     twitterPollId: { type: String, default: '' },
   },
   { toObject: toObjectPlugin, timestamps: true },
@@ -100,6 +100,14 @@ wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
     .deleteMany({ associatedWords: wordSuggestionId });
   // @ts-ignore
   next();
+});
+
+wordSuggestionSchema.index({
+  word: 1,
+  merged: 1,
+  mergedBy: 1,
+  updatedAt: 1,
+  userInteractions: 1,
 });
 
 export default mongoose.model('WordSuggestion', wordSuggestionSchema);
