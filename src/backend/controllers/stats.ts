@@ -226,7 +226,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
           mergedBy: userId,
           updatedAt: { $gte: threeMonthsAgo },
         },
-        null,
+        'updatedAt',
         { sort: { updatedAt: 1 } },
       ) as Interfaces.WordSuggestion[],
       ExampleSuggestion.find(
@@ -234,7 +234,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
           mergedBy: userId,
           updatedAt: { $gte: threeMonthsAgo },
         },
-        null,
+        'updatedAt',
         { sort: { updatedAt: 1 } },
       ) as Interfaces.ExampleSuggestion[],
       WordSuggestion.find(
@@ -242,7 +242,7 @@ export const getUserMergeStats = async (req: Request, res: Response, next: NextF
           mergedBy: userId,
           'dialects.editor': userId,
         },
-        null,
+        'updatedAt',
         { sort: { updatedAt: 1 } },
       ) as Interfaces.WordSuggestion[],
     ]);
