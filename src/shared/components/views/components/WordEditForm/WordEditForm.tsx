@@ -262,12 +262,6 @@ const WordEditForm = ({
               name="pronunciation"
               control={control}
             />
-            <Box className="flex flex-row justify-between items-center">
-              <FormHeader
-                title="Dialectal Variations"
-                tooltip="These are the dialectal (sound) variations with the current word."
-              />
-            </Box>
             <CurrentDialectsForms
               errors={errors}
               record={record}

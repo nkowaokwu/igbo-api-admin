@@ -26,34 +26,36 @@ const TensesForm = ({
         window.open(TENSES_DOC, '_blank');
       }}
     />
-    {Object.entries(record.tenses || DEFAULT_TENSES).map(([key, value]) => (
-      <>
-        <Controller
-          render={({ onChange, ref }) => {
-            const label = capitalize(key.replace(/([A-Z])/g, ' $1'));
-            return (
-              <>
-                <h3 className="text-gray-700 mb-2">{`${label}:`}</h3>
-                <Input
-                  onChange={(e) => onChange(e.target.value)}
-                  defaultValue={record?.tenses?.[key]}
-                  placeholder={label}
-                  ref={ref}
-                  data-test={`tenses-${key}-input`}
-                  mb={4}
-                />
-              </>
-            );
-          }}
-          defaultValue={value}
-          name={`tenses.${key}`}
-          control={control}
-        />
-        {errors.tenses?.[key] ? (
-          <p className="error relative">Fill in associated tense</p>
-        ) : null}
-      </>
-    ))}
+    <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {Object.entries(record.tenses || DEFAULT_TENSES).map(([key, value]) => (
+        <Box>
+          <Controller
+            render={({ onChange, ref }) => {
+              const label = capitalize(key.replace(/([A-Z])/g, ' $1'));
+              return (
+                <Box>
+                  <h3 className="text-gray-700 mb-2">{`${label}:`}</h3>
+                  <Input
+                    onChange={(e) => onChange(e.target.value)}
+                    defaultValue={record?.tenses?.[key]}
+                    placeholder={label}
+                    ref={ref}
+                    data-test={`tenses-${key}-input`}
+                    mb={4}
+                  />
+                </Box>
+              );
+            }}
+            defaultValue={value}
+            name={`tenses.${key}`}
+            control={control}
+          />
+          {errors.tenses?.[key] ? (
+            <p className="error relative">Fill in associated tense</p>
+          ) : null}
+        </Box>
+      ))}
+    </Box>
   </Box>
 );
 

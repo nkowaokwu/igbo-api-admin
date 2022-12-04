@@ -137,7 +137,7 @@ const AudioRecorder = ({
       />
       <Box
         data-test="word-pronunciation-input-container"
-        width="fit-content"
+        width="full"
         backgroundColor="gray.200"
         borderRadius="md"
         p={3}

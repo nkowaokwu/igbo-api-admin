@@ -18,6 +18,8 @@ import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPoss
 import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
 
+const WORD_SUGGESTION_QUERY_LIMIT = 3000;
+const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
 const findStat = async ({ type, authorId = 'SYSTEM' }) => {
   let stat = await Stat.findOne({ type, authorId });
   if (!stat) {
@@ -228,7 +230,7 @@ export const getUserMergeWordStats = async (
         updatedAt: { $gte: threeMonthsAgo },
       },
       'dialects updatedAt',
-    ) as Interfaces.WordSuggestion[];
+    ).limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -258,7 +260,7 @@ export const getUserMergeExampleStats = async (
         updatedAt: { $gte: threeMonthsAgo },
       },
       'updatedAt',
-    ) as Interfaces.ExampleSuggestion[];
+    ).limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -289,7 +291,7 @@ export const getUserMergeDialectalVariationStats = async (
         'dialects.editor': userId,
       },
       'dialects updatedAt',
-    ) as Interfaces.WordSuggestion[];
+    ).limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
     const dialectalVariationMerges = dialectalVariationWordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
