@@ -44,7 +44,7 @@ const DefinitionsForm = ({
 
   return (
     <Box className="w-full">
-      <Box className="flex items-start my-12 w-full justify-between">
+      <Box className="flex items-start mt-12 w-full justify-between">
         <Box className="flex flex-col">
           <FormHeader
             title={`Definition Groups (${definitions.length})`}

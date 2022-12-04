@@ -16,7 +16,6 @@ const UserShow = (props: ShowProps): ReactElement => {
   const [totalCompletedExamples, setTotalCompletedExamples] = useState(null);
   const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const showProps = useShowController(props);
-  const { permissions } = props;
   let { record } = showProps;
 
   record = record || {};
@@ -65,10 +64,9 @@ const UserShow = (props: ShowProps): ReactElement => {
           </Box>
         </Box>
         <Heading size="lg" className="mt-3">Total User Stats</Heading>
-        {record.uid ? (
+        {record.uid && !isLoading ? (
           <UserStat
             uid={record.uid}
-            permissions={permissions}
             totalCompletedWords={totalCompletedWords}
             totalCompletedExamples={totalCompletedExamples}
             totalDialectalVariations={totalDialectalVariations}

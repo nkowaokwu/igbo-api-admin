@@ -11,7 +11,7 @@ import {
   Skeleton,
   chakra,
 } from '@chakra-ui/react';
-import { ShowProps } from 'react-admin';
+import { usePermissions } from 'react-admin';
 import moment from 'moment';
 import {
   Chart as ChartJS,
@@ -68,13 +68,11 @@ const THREE_MONTH_WEEKS_COUNT = 12;
 
 const UserStat = ({
   uid,
-  permissions,
   totalCompletedWords,
   totalCompletedExamples,
   totalDialectalVariations,
 } : {
   uid?: string,
-  permissions: ShowProps['permissions'],
   totalCompletedWords: number,
   totalCompletedExamples: number,
   totalDialectalVariations: number,
@@ -83,6 +81,7 @@ const UserStat = ({
   const [wordSuggestionMergeStats, setWordSuggestionMergeStats] = useState(null);
   const [exampleSuggestionMergeStats, setExampleSuggestionMergeStats] = useState(null);
   const [dialectalVariationMergeStats, setDialectalVariationMergeStats] = useState(null);
+  const { permissions } = usePermissions();
   const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
 
   useEffect(() => {
@@ -96,7 +95,7 @@ const UserStat = ({
           { json: dialectalVariationMerges },
         ] = await Promise.all([
           network(`/stats/users/${uid}/merge/words`),
-          await network(`/stats/users/${uid}/merge/examples`),
+          network(`/stats/users/${uid}/merge/examples`),
           network(`/stats/users/${uid}/merge/dialectal-variations`),
         ]) as [{ json: WordSuggestion[] }, { json: ExampleSuggestion[] }, { json: WordSuggestion[] }];
         const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek() + 1;

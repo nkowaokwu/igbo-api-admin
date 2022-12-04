@@ -1,5 +1,10 @@
 import React, { ReactElement } from 'react';
-import { Box, IconButton, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  IconButton,
+  Tooltip,
+} from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
@@ -25,13 +30,13 @@ const DialectForm = ({
 
   return (
     <Box
-      className="my-3 bg-gray-200 rounded p-3"
+      className="mb-4 bg-gray-200 rounded p-3"
       key={`dialects.${dialect.id}.word`}
     >
       <Box className="flex flex-col justify-center items-center space-y-3 lg:space-y-0 space-x-3">
         <Box flex={3} className="w-full">
-          <Box className="flex flex-row justify-between items-center">
-            <h3 className="form-header">Word:</h3>
+          <Box className="flex flex-row justify-between items-center" mb={3}>
+            <Heading as="h3" m={0} fontSize="xl" fontWeight="normal">Word</Heading>
             <Tooltip label="Delete dialectal variation">
               <IconButton
                 colorScheme="red"
@@ -88,7 +93,7 @@ const DialectForm = ({
         </Box>
       </Box>
       <Box className="mt-4">
-        <h3 style={{ flex: 1 }} className="form-header">Dialects:</h3>
+        <Heading as="h3" style={{ flex: 1 }} fontSize="xl" fontWeight="normal" mb={3}>Dialects</Heading>
         <Box flex={1}>
           <Controller
             render={({ onChange }) => (

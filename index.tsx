@@ -32,6 +32,7 @@ import {
   isProduction,
 } from './src/backend/config';
 
+const config = functions.config();
 const server = express();
 const index = fs.readFileSync(`${__dirname}/index.html`, 'utf-8');
 
@@ -115,7 +116,7 @@ export const app = process.env.NODE_ENV === 'test' ? (() => {
   return expressServer;
 })() : (
   functions
-    .region('europe-west1')
+    .region(config?.runtime?.env !== 'development' ? 'europe-west1' : 'us-central1')
     .runWith({ timeoutSeconds: 540, memory: '1GB' })
     .https
     .onRequest(server)

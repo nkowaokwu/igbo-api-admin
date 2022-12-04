@@ -17,8 +17,7 @@ import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
 import { getResourceObjects } from './Resources';
 
-const Resources = memo(() => {
-  const { permissions } = usePermissions();
+const Resources = memo(({ permissions } : { permissions: any }) => {
   const memoizedResources = useMemo(() => getResourceObjects(permissions).map((resource) => (
     <Resource
       name={resource.name}
@@ -41,9 +40,16 @@ const Resources = memo(() => {
       {memoizedResources}
     </AdminUI>
   );
+});
+
+const PermissionsManager = memo(({ children } : { children: any }) => {
+  const { permissions } = usePermissions();
+  return permissions ? React.Children.map(children, (child) => (
+    React.cloneElement(child, { permissions })
+  )) : null;
 }, () => true);
 
-const IgboAPIAdmin = (): ReactElement => (
+const IgboAPIAdmin = memo((): ReactElement => (
   // @ts-expect-error Cypress
   <Box className={!!window.Cypress ? 'testing-app' : ''}>
     <AdminContext
@@ -51,9 +57,12 @@ const IgboAPIAdmin = (): ReactElement => (
       authProvider={authProvider}
       catchAll={NotFound}
     >
-      <Resources />
+      <PermissionsManager>
+        {/* @ts-expect-error permissions */}
+        <Resources />
+      </PermissionsManager>
     </AdminContext>
   </Box>
-);
+), () => true);
 
 export default IgboAPIAdmin;

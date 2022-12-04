@@ -117,7 +117,7 @@ wordSuggestionSchema.index({
 
 wordSuggestionSchema.index({
   mergedBy: 1,
-  updatedAt: 1,
+  updatedAt: -1,
 }, {
   name: 'Merged word suggestion index',
 });

@@ -39,7 +39,7 @@ normalizeIgbo(exampleSuggestionSchema);
 
 exampleSuggestionSchema.index({
   mergedBy: 1,
-  updatedAt: 1,
+  updatedAt: -1,
 }, {
   name: 'Merged example suggestion index',
 });
