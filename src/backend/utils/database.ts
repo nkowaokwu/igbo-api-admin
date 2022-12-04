@@ -3,10 +3,11 @@ import * as functions from 'firebase-functions';
 
 const config = functions.config();
 const DISCONNECTED = 0;
+const CONNECTED = 1;
 const db = mongoose.connection;
 
 /* Opens a connection to MongoDB */
-export const connectDatabase = async (MONGO_URI: string): Promise<void> => {
+export const connectDatabase = async (MONGO_URI: string): Promise<void> => new Promise(async (resolve) => {
   if (db.readyState === DISCONNECTED) {
     /* Connects to the MongoDB Database */
     await mongoose.connect(MONGO_URI, {
@@ -22,10 +23,14 @@ export const connectDatabase = async (MONGO_URI: string): Promise<void> => {
     db.once('open', () => {
       if (config?.runtime?.env === 'production') {
         console.log('🗄 Database is connected', process.env.CI, MONGO_URI);
+        resolve();
       }
     });
+  } else if (db.readyState === CONNECTED) {
+    console.log('✅ The database is already connected');
+    resolve();
   }
-};
+});
 
 /* Closes current connection to MongoDB */
 export const disconnectDatabase = (MONGO_URI: string): void => {
