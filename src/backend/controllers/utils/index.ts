@@ -78,7 +78,11 @@ export const populateFirebaseUsers = async (
 };
 
 /* Sorts all the docs based on the provided searchWord */
-export const sortDocsBy = (searchWord: string, docs: Interfaces.Word[], key: string): Interfaces.Word[] => (
+export const sortDocsBy = (
+  searchWord: string,
+  docs: Interfaces.Word[],
+  key: string,
+): Interfaces.Word[] => (
   docs.sort((prevDoc, nextDoc) => {
     const normalizedSearchWord = searchWord.normalize('NFD');
     const prevDocValue = get(prevDoc, key);

@@ -1,6 +1,5 @@
 import { assign, map, forEach } from 'lodash';
 import accents from 'remove-accents';
-import Corpus from 'src/backend/models/Corpus';
 import * as Interfaces from './interfaces';
 
 /**
@@ -93,11 +92,13 @@ export const findCorporaWithMatch = async (
     match,
     skip = 0,
     limit = 10,
+    Corpus,
   }:
   {
     match: any,
     skip?: number,
     limit?: number,
+    Corpus: any,
   },
 ): Promise<Interfaces.Corpus[]> => {
   let corpora = Corpus.aggregate()
