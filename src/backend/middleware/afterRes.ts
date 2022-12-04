@@ -16,8 +16,8 @@ export default (MONGO_URI: string) => async (req: Request, res: Response, next: 
     const afterResponse = () => {
       disconnectDatabase(MONGO_URI);
     };
-    res.on('finish', afterResponse);
-    res.on('close', afterResponse);
+  // res.on('finish', afterResponse);
+  // res.on('close', afterResponse);
   }
   next();
 };
