@@ -15,13 +15,19 @@ import { findCorporaWithMatch } from './utils/buildDocs';
 import { searchCorpusTextSearch } from './utils/queries';
 
 /* Searches for a corpus within MongoDB */
-export const searchCorpus = async (
-  { query, searchWord, ...rest }:
-  { query: any, searchWord: string },
+const searchCorpus = async (
+  {
+    query,
+    searchWord,
+    mongooseConnection,
+    ...rest
+  }:
+  { query: any, searchWord: string, mongooseConnection: any },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findCorporaWithMatch({ match: query, ...rest });
+  const Corpus = mongooseConnection.model('Corpus', corpusSchema);
+  const corpora: Interfaces.Word[] = await findCorporaWithMatch({ match: query, Corpus, ...rest });
   ({ match: query, ...rest });
-  return sortDocsBy(searchWord, words, 'title');
+  return sortDocsBy(searchWord, corpora, 'title');
 };
 
 /* Gets corpora from MongoDB */
@@ -54,7 +60,7 @@ export const getCorpora = async (
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
     const query = searchCorpusTextSearch(searchWord, regexKeyword);
-    const corpora = await searchCorpus({ query, ...searchQueries });
+    const corpora = await searchCorpus({ query, mongooseConnection, ...searchQueries });
     return await packageResponse({
       res,
       docs: corpora,

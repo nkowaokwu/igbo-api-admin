@@ -77,8 +77,12 @@ export const postWordSuggestion = async (
     const newWordSuggestion = new WordSuggestion(data);
     const wordSuggestion = (await newWordSuggestion.save()) as Interfaces.WordSuggestion;
     try {
-      await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id.toString(), clientExamples });
-      const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
+      await updateNestedExampleSuggestions({
+        suggestionDocId: wordSuggestion.id.toString(),
+        clientExamples,
+        mongooseConnection,
+      });
+      const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection);
       return res.send(savedWordSuggestion);
     } catch (error) {
       console.log('An error occurred while posting new word suggestion:', error.message);
@@ -158,14 +162,20 @@ export const putWordSuggestion = (
           userId: user.uid,
         });
         const updatedWordSuggestion = assign(wordSuggestion, data);
-        await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples });
+        await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples, mongooseConnection });
 
         /* Updates all the word's children exampleSuggestions */
-        await updateNestedExampleSuggestions({ suggestionDocId: wordSuggestion.id.toString(), clientExamples });
+        await updateNestedExampleSuggestions({
+          suggestionDocId: wordSuggestion.id.toString(),
+          clientExamples,
+          mongooseConnection,
+        });
         /* We call updatedWordSuggestion.save() before handling audio pronunciations to work with only URIs */
         await updatedWordSuggestion.save();
 
-        const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(updatedWordSuggestion);
+        const savedWordSuggestion = (
+          await placeExampleSuggestionsOnSuggestionDoc(updatedWordSuggestion, mongooseConnection)
+        );
         return res.send(savedWordSuggestion);
       })
       .catch(next);
@@ -201,7 +211,9 @@ export const getWordSuggestions = (
       .then(async (wordSuggestions: [Interfaces.WordSuggestion]) => {
         /* Places the exampleSuggestions on the corresponding wordSuggestions */
         const wordSuggestionsWithExamples = await Promise.all(
-          map(wordSuggestions, placeExampleSuggestionsOnSuggestionDoc),
+          map(wordSuggestions, (wordSuggestion) => (
+            placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection)
+          )),
         );
         return packageResponse({
           res,
@@ -220,7 +232,8 @@ export const getWordSuggestions = (
 /* Returns a single WordSuggestion by using an id */
 export const getWordSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const populatedWordSuggestion: Document<Interfaces.WordSuggestion> = await WordSuggestion
       .findById(id)
@@ -228,7 +241,9 @@ export const getWordSuggestion = async (req: Request, res: Response, next: NextF
         if (!wordSuggestion) {
           throw new Error('No word suggestion exists with the provided id.');
         }
-        const wordSuggestionWithExamples = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion);
+        const wordSuggestionWithExamples = (
+          await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection)
+        );
         const populatedUsersWordSuggestionWithExamples = await populateFirebaseUsers(
           wordSuggestionWithExamples,
           ['approvals', 'denials'],

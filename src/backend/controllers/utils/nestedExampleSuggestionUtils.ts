@@ -8,8 +8,8 @@ import {
   compact,
   flatten,
 } from 'lodash';
-import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
-import WordSuggestion from 'src/backend/models/WordSuggestion';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import {
   createExampleSuggestion,
   updateExampleSuggestion,
@@ -20,6 +20,7 @@ import * as Interfaces from './interfaces';
 /* Adds the example key on each wordSuggestion returned back to the client */
 export const placeExampleSuggestionsOnSuggestionDoc = async (
   wordSuggestion: Interfaces.WordSuggestion,
+  mongooseConnection: any,
 ): Promise<LeanDocument<Interfaces.WordSuggestion>> => {
   const LEAN_EXAMPLE_KEYS = [
     'igbo',
@@ -30,6 +31,7 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
     'pronunciation',
     'originalExampleId',
   ].join(' ');
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   const examples: Interfaces.ExampleSuggestion[] = await ExampleSuggestion
     .find({ associatedWords: wordSuggestion.id })
     .select(LEAN_EXAMPLE_KEYS);
@@ -55,9 +57,10 @@ export const getExamplesFromClientData = (data: Interfaces.WordClientData): Inte
 
 /* Either deletes exampleSuggestion or updates exampleSuggestion associatedWords */
 export const handleDeletingExampleSuggestions = async (
-  { suggestionDoc, clientExamples }:
-  { suggestionDoc: Interfaces.WordSuggestion, clientExamples: Interfaces.ExampleClientData[] },
+  { suggestionDoc, clientExamples, mongooseConnection }:
+  { suggestionDoc: Interfaces.WordSuggestion, clientExamples: Interfaces.ExampleClientData[], mongooseConnection: any },
 ): Promise<void> => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   const examples: Document<Interfaces.ExampleSuggestion>[] = (
     await ExampleSuggestion.find({ associatedWords: suggestionDoc.id })
   );
@@ -72,7 +75,7 @@ export const handleDeletingExampleSuggestions = async (
       /* Deletes example if there's only one last associated word */
       if (exampleToDelete.associatedWords.length <= LAST_ASSOCIATED_WORD
         && exampleToDelete.associatedWords.includes(suggestionDoc.id.toString())) {
-        removeExampleSuggestion(exampleToDelete.id.toString());
+        removeExampleSuggestion(exampleToDelete.id.toString(), mongooseConnection);
       }
     });
   }
@@ -82,8 +85,9 @@ export const handleDeletingExampleSuggestions = async (
  * If the nested example sentence does have an id
  * then the platform will update the existing word suggestion
  */
-const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClientData) => (
-  ExampleSuggestion.findById(example.id)
+const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClientData, mongooseConnection: any) => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+  return ExampleSuggestion.findById(example.id)
     .then((exampleSuggestion) => {
       if (!exampleSuggestion) {
         throw new Error('No example suggestion exists with the provided id.');
@@ -92,8 +96,8 @@ const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClient
     })
     .catch((error) => {
       throw new Error(error.message || 'An error occurred while finding nested example suggestion.');
-    })
-);
+    });
+};
 
 const generateAssociatedWords = async (example: Interfaces.ExampleClientData, suggestionDocId: string): string[] => (
   Array.from(
@@ -105,7 +109,8 @@ const generateAssociatedWords = async (example: Interfaces.ExampleClientData, su
 );
 
 // eslint-disable-next-line
-const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData): Promise<string[]> => {
+const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData, mongooseConnection: any): Promise<string[]> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   let associatedDefinitionsSchemas: string[] = [];
   if (
     (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
@@ -127,8 +132,8 @@ const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleC
  * @returns Example Suggestion documents
  */
 export const updateNestedExampleSuggestions = (
-  { suggestionDocId, clientExamples }:
-  { suggestionDocId: string, clientExamples: Interfaces.ExampleClientData[] },
+  { suggestionDocId, clientExamples, mongooseConnection }:
+  { suggestionDocId: string, clientExamples: Interfaces.ExampleClientData[], mongooseConnection: any },
 ): Promise<Interfaces.ExampleSuggestion[]> => (
   Promise.all(map(clientExamples, async (example) => {
     /**
@@ -143,9 +148,9 @@ export const updateNestedExampleSuggestions = (
         associatedWords: await generateAssociatedWords(example, suggestionDocId),
         // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
       };
-      const exampleSuggestion = await createExampleSuggestion(exampleData);
+      const exampleSuggestion = await createExampleSuggestion(exampleData, mongooseConnection);
       return exampleSuggestion;
     }
-    return updateExistingExampleSuggestion(example);
+    return updateExistingExampleSuggestion(example, mongooseConnection);
   }))
 );

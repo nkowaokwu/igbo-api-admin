@@ -35,7 +35,7 @@ const config = functions.config();
 /* Updates an existing WordSuggestion object */
 export const putGenericWord = async (req, res, next) => {
   try {
-    const { body: data, params: { id } } = req;
+    const { body: data, params: { id }, mongooseConnection } = req;
     const clientExamples = getExamplesFromClientData(data);
 
     if (!every(REQUIRE_KEYS, partial(has, data))) {
@@ -52,13 +52,13 @@ export const putGenericWord = async (req, res, next) => {
           throw new Error('Generic word doesn\'t exist');
         }
         const updatedGenericWord = assign(genericWord, data);
-        await handleDeletingExampleSuggestions({ suggestionDoc: genericWord, clientExamples });
+        await handleDeletingExampleSuggestions({ suggestionDoc: genericWord, clientExamples, mongooseConnection });
 
         /* Updates all the word's children exampleSuggestions */
-        await updateNestedExampleSuggestions({ suggestionDocId: genericWord.id, clientExamples });
+        await updateNestedExampleSuggestions({ suggestionDocId: genericWord.id, clientExamples, mongooseConnection });
 
         await updatedGenericWord.save();
-        const savedGenericWord = await placeExampleSuggestionsOnSuggestionDoc(updatedGenericWord);
+        const savedGenericWord = await placeExampleSuggestionsOnSuggestionDoc(updatedGenericWord, mongooseConnection);
         return savedGenericWord;
       });
     return res.send(updatedAndSavedGenericWord);
