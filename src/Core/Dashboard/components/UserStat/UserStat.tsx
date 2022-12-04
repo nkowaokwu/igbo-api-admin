@@ -24,7 +24,6 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
-import { WordSuggestion, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import network from '../../network';
 import userStatBodies from './userStatBodies';
 import LacunaProgress from '../LacunaProgress';
@@ -89,15 +88,12 @@ const UserStat = ({
       network(uid ? `/stats/users/${uid}` : '/stats/user')
         .then((res) => setUserStats(res.json));
       if (uid) {
-        const [
-          { json: wordSuggestionMerges },
-          { json: exampleSuggestionMerges },
-          { json: dialectalVariationMerges },
-        ] = await Promise.all([
-          network(`/stats/users/${uid}/merge/words`),
-          network(`/stats/users/${uid}/merge/examples`),
-          network(`/stats/users/${uid}/merge/dialectal-variations`),
-        ]) as [{ json: WordSuggestion[] }, { json: ExampleSuggestion[] }, { json: WordSuggestion[] }];
+        const { json: merges } = await network(`/stats/users/${uid}/merge`);
+        const {
+          wordSuggestionMerges,
+          exampleSuggestionMerges,
+          dialectalVariationMerges,
+        } = merges;
         const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek() + 1;
         const labels = [];
         for (let i = threeMonthsAgoWeek; i <= threeMonthsAgoWeek + THREE_MONTH_WEEKS_COUNT; i += 1) {

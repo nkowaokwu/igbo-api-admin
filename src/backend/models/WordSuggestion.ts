@@ -121,12 +121,5 @@ wordSuggestionSchema.index({
 }, {
   name: 'Merged word suggestion index',
 });
-wordSuggestionSchema.index({
-  mergedBy: 1,
-  updatedAt: -1,
-  'dialects.editor': 1,
-}, {
-  name: 'Merged dialectal variation suggestion index',
-});
 
 export default mongoose.model('WordSuggestion', wordSuggestionSchema);
