@@ -302,11 +302,10 @@ export const getUserMergeDialectalVariationStats = async (
         {
           mergedBy: userId,
           updatedAt: { $gte: threeMonthsAgo },
-          'dialects.editor': userId,
         },
         'dialects updatedAt',
       )
-      .hint({ mergedBy: 1, updatedAt: -1, 'dialects.editor': 1 })
+      .hint({ mergedBy: 1, updatedAt: -1 })
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
     console.timeEnd('Dialectal variation merged stats query');
     console.log(
