@@ -31,7 +31,7 @@ const dialectSchema = new Schema({
   editor: { type: String, default: null },
 }, { toObject: toObjectPlugin });
 
-const wordSuggestionSchema = new Schema(
+export const wordSuggestionSchema = new Schema(
   {
     originalWordId: {
       type: Types.ObjectId,
@@ -122,4 +122,4 @@ wordSuggestionSchema.index({
   name: 'Merged word suggestion index',
 });
 
-export default mongoose.model('WordSuggestion', wordSuggestionSchema);
+mongoose.model('WordSuggestion', wordSuggestionSchema);

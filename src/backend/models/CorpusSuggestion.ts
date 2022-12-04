@@ -4,7 +4,7 @@ import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadCorpusPronunciation } from './plugins/pronunciationHooks';
 
 const { Schema, Types } = mongoose;
-const corpusSuggestionSchema = new Schema({
+export const corpusSuggestionSchema = new Schema({
   originalCorpusId: { type: Types.ObjectId, ref: 'Corpus', default: null },
   title: { type: String, required: true },
   body: { type: String, required: true },
@@ -30,4 +30,4 @@ const corpusSuggestionSchema = new Schema({
 toJSONPlugin(corpusSuggestionSchema);
 uploadCorpusPronunciation(corpusSuggestionSchema);
 
-export default mongoose.model('CorpusSuggestion', corpusSuggestionSchema);
+mongoose.model('CorpusSuggestion', corpusSuggestionSchema);

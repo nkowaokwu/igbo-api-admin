@@ -8,8 +8,9 @@ import {
   uniqBy,
 } from 'lodash';
 import removePrefix from 'src/backend/shared/utils/removePrefix';
-import Word from 'src/backend/models/Word';
-import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
+import { wordSchema } from 'src/backend/models/Word';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { findSearchWord } from 'src/backend/services/words';
 import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
 import { NO_PROVIDED_TERM } from 'src/backend/shared/constants/errorMessages';
@@ -17,7 +18,6 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 import Requirements from 'src/backend/shared/constants/Requirements';
 import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
-import WordSuggestion from 'src/backend/models/WordSuggestion';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import {
   sortDocsBy,
@@ -58,20 +58,17 @@ export const getWordData = (req: Request, res: Response, next: NextFunction): Re
 
 /* Searches for a word with Igbo stored in MongoDB */
 export const searchWordUsingIgbo = async (
-  { query, searchWord, ...rest }:
-  { query: any, searchWord: string },
+  {
+    query,
+    searchWord,
+    mongooseConnection,
+    ...rest
+  }:
+  { query: any, searchWord: string, mongooseConnection: any },
 ): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
+  const Word = mongooseConnection.model('Word', wordSchema);
+  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, Word, ...rest });
   return sortDocsBy(searchWord, words, 'word');
-};
-
-/* Searches for word with English stored in MongoDB */
-export const searchWordUsingEnglish = async (
-  { query, searchWord, ...rest }:
-  { query: any, searchWord: string },
-): Promise<Interfaces.Word[]> => {
-  const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, ...rest });
-  return sortDocsBy(searchWord, words, 'definitions[0]');
 };
 
 /* Gets words from MongoDB */
@@ -91,6 +88,7 @@ export const getWords = async (
       dialects,
       filters,
       user,
+      mongooseConnection,
       ...rest
     } = handleQueries(req);
     const searchQueries = {
@@ -107,7 +105,8 @@ export const getWords = async (
     } = !strict
       ? searchIgboTextSearch(searchWord, regexKeyword, filters)
       : strictSearchIgboQuery(searchWord);
-    const words = await searchWordUsingIgbo({ query, ...searchQueries });
+    const words = await searchWordUsingIgbo({ query, mongooseConnection, ...searchQueries });
+    const Word = mongooseConnection.model('Word', wordSchema);
     return await packageResponse({
       res,
       docs: words,
@@ -123,13 +122,14 @@ export const getWords = async (
 /* Returns a word from MongoDB using an id */
 export const getWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id } = req.params;
 
     const updatedWord = await findWordsWithMatch({
       match: { _id: mongoose.Types.ObjectId(id) },
       examples: true,
       limit: 1,
-    })
+    }, mongooseConnection)
       .then(async ([word]: Interfaces.Word[]) => {
         if (!word) {
           throw new Error('No word exists with the provided id.');
@@ -149,6 +149,7 @@ export const createWord = async (
     | Interfaces.WordSuggestion
     | LeanDocument<Document<Interfaces.WordClientData | Interfaces.WordSuggestion>>
   ),
+  mongooseConnection: any,
 ): Promise<Document<Interfaces.Word>> => {
   const {
     examples,
@@ -175,6 +176,7 @@ export const createWord = async (
     ...rest,
   };
 
+  const Word = mongooseConnection.model('Word', wordSchema);
   const newWord: Document<Interfaces.Word> | any = new Word(wordData);
   await newWord.save();
 
@@ -184,7 +186,7 @@ export const createWord = async (
       ...example,
       associatedWords: [newWord.id],
     };
-    return createExample(exampleData);
+    return createExample(exampleData, mongooseConnection);
   });
 
   /* Wait for all the Examples to be created and then add them to the Word document */
@@ -198,7 +200,9 @@ const updateSuggestionAfterMerge = async (
   suggestionDoc: Interfaces.WordSuggestion,
   originalWordDoc: Interfaces.Word,
   mergedBy: string,
+  mongooseConnection: any,
 ): Promise<Interfaces.WordSuggestion> => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   const updatedSuggestionDoc: Interfaces.WordSuggestion | any = (
     await updateDocumentMerge(suggestionDoc, originalWordDoc.id.toString(), mergedBy)
   );
@@ -239,7 +243,7 @@ const updateSuggestionAfterMerge = async (
     //   }
     // });
     const updatedExampleSuggestion = await removeSuggestionAssociatedIds.save();
-    return executeMergeExample(updatedExampleSuggestion.id.toString(), mergedBy);
+    return executeMergeExample(updatedExampleSuggestion.id.toString(), mergedBy, mongooseConnection);
   }));
   return updatedSuggestionDoc.save();
 };
@@ -248,7 +252,9 @@ const updateSuggestionAfterMerge = async (
 const overwriteWordPronunciation = async (
   initialSuggestion: Interfaces.WordSuggestion,
   word: Interfaces.Word,
+  mongooseConnection: any,
 ): Promise<Document<Interfaces.Word>> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   try {
     /**
      * Creating AWS URI for word pronunciation
@@ -311,8 +317,10 @@ const overwriteWordPronunciation = async (
 const mergeIntoWord = (
   suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
+  mongooseConnection: any,
 ): Promise<Interfaces.Word | void> => {
   const suggestionDocObject: Interfaces.WordSuggestion | any = suggestionDoc.toObject();
+  const Word = mongooseConnection.model('Word', wordSchema);
   return Word.findOneAndUpdate(
     { _id: suggestionDocObject.originalWordId },
     { $set: omit(suggestionDocObject, ['pronunciation']) },
@@ -323,9 +331,9 @@ const mergeIntoWord = (
         throw new Error('Word doesn\'t exist');
       }
 
-      await overwriteWordPronunciation(suggestionDoc, updatedWord);
-      await updateSuggestionAfterMerge(suggestionDoc, updatedWord, mergedBy);
-      return (await findWordsWithMatch({ match: { _id: suggestionDocObject.originalWordId }, limit: 1 }))[0];
+      await overwriteWordPronunciation(suggestionDoc, updatedWord, mongooseConnection);
+      await updateSuggestionAfterMerge(suggestionDoc, updatedWord, mergedBy, mongooseConnection);
+      return (await findWordsWithMatch({ match: { _id: suggestionDocObject.originalWordId }, limit: 1, Word }))[0];
     })
     .catch((error) => {
       throw new Error(error.message);
@@ -336,11 +344,12 @@ const mergeIntoWord = (
 const createWordFromSuggestion = (
   suggestionDoc: Document<Interfaces.WordSuggestion>,
   mergedBy: string,
+  mongooseConnection: any,
 ): Promise<Document<Interfaces.Word> | void> => (
-  createWord(suggestionDoc.toObject())
+  createWord(suggestionDoc.toObject(), mongooseConnection)
     .then(async (word: Document<Interfaces.Word>) => {
-      const updatedPronunciationsWord = await overwriteWordPronunciation(suggestionDoc, word);
-      await updateSuggestionAfterMerge(suggestionDoc, word, mergedBy);
+      const updatedPronunciationsWord = await overwriteWordPronunciation(suggestionDoc, word, mongooseConnection);
+      await updateSuggestionAfterMerge(suggestionDoc, word, mergedBy, mongooseConnection);
       return updatedPronunciationsWord;
     })
     .catch((err) => {
@@ -372,7 +381,7 @@ export const mergeWord = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { user, suggestionDoc } = req;
+    const { user, suggestionDoc, mongooseConnection } = req;
 
     if (suggestionDoc.approvals.length < Requirements.MINIMUM_REQUIRED_APPROVALS) {
       throw new Error('Suggestion document doesn\'t have enough approvals to be merged.');
@@ -380,8 +389,8 @@ export const mergeWord = async (
 
     const mergedWord: Document<Interfaces.Word> | any = (
       suggestionDoc.originalWordId
-        ? await mergeIntoWord(suggestionDoc, user.uid)
-        : await createWordFromSuggestion(suggestionDoc, user.uid)
+        ? await mergeIntoWord(suggestionDoc, user.uid, mongooseConnection)
+        : await createWordFromSuggestion(suggestionDoc, user.uid, mongooseConnection)
     ) || {};
     await handleSyncingSynonyms(mergedWord);
     await handleSyncingAntonyms(mergedWord);
@@ -398,10 +407,15 @@ export const mergeWord = async (
   }
 };
 
-const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<Interfaces.Word> => {
+const findAndUpdateWord = (
+  id: string,
+  mongooseConnection: any,
+  cb: (any) => Interfaces.Word,
+): Promise<Interfaces.Word> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(!id ? 'No word id provided' : 'Invalid word id provided');
   }
+  const Word = mongooseConnection.model('Word', wordSchema);
 
   return Word.findById(id)
     .then(async (word: Interfaces.Word) => {
@@ -415,12 +429,12 @@ const findAndUpdateWord = (id: string, cb: (any) => Interfaces.Word): Promise<In
 /* Updates a Word document in the database */
 export const putWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { body: data, params: { id } } = req;
+    const { body: data, params: { id }, mongooseConnection } = req;
     if (!data.word) {
       throw new Error('Required information is missing, double your provided data.');
     }
 
-    const savedWord: Interfaces.Word = await findAndUpdateWord(id, (word) => {
+    const savedWord: Interfaces.Word = await findAndUpdateWord(id, mongooseConnection, (word) => {
       const updatedWord = assign(word, data);
       return updatedWord.save();
     });
@@ -449,8 +463,9 @@ const replaceWordIdsFromExampleAssociatedWords = (examples: Interfaces.Example[]
  * document's data */
 export const deleteWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { body: data, params: { id: toBeDeletedWordId } } = req;
+    const { body: data, params: { id: toBeDeletedWordId }, mongooseConnection } = req;
     const { primaryWordId }: { primaryWordId: string } = data;
+    const Word = mongooseConnection.model('Word', wordSchema);
 
     const {
       pronunciation,
@@ -462,41 +477,47 @@ export const deleteWord = async (req: Request, res: Response, next: NextFunction
       hyponyms = [],
       nsibidi,
     }: Document<Interfaces.Word> | any = await Word.findById(toBeDeletedWordId);
-    const toBeDeletedWordExamples: Interfaces.Example[] | any = await findExampleByAssociatedWordId(toBeDeletedWordId);
-    const savedCombinedWord = await findAndUpdateWord(primaryWordId, async (combineWord: Interfaces.Word) => {
-      const updatedWord = assign(combineWord);
-      updatedWord.pronunciation = updatedWord.pronunciation || pronunciation;
-      const updatedDefinitions = [...updatedWord.definitions].map((definitionGroup) => definitionGroup.toObject());
-      definitions.forEach((definitionGroup: Interfaces.DefinitionSchema) => {
-        const existingDefinitionGroupIndex = updatedDefinitions
-          .findIndex(({ wordClass }) => definitionGroup.wordClass === wordClass);
-        if (existingDefinitionGroupIndex !== -1) {
-          updatedDefinitions[existingDefinitionGroupIndex] = {
-            ...updatedDefinitions[existingDefinitionGroupIndex],
-            definitions: Array.from(
-              new Set([...updatedDefinitions[existingDefinitionGroupIndex].definitions,
-                ...definitionGroup.definitions]),
-            ),
-          };
-        } else {
-          updatedDefinitions.push(definitionGroup);
-        }
-      });
-      updatedWord.definitions = updatedDefinitions;
-      updatedWord.variations = Array.from(new Set([...updatedWord.variations, ...variations]));
-      updatedWord.stems = Array.from(new Set([...(updatedWord.stems || []), ...(stems || [])]));
-      updatedWord.relatedTerms = Array.from(new Set([...updatedWord.relatedTerms, ...relatedTerms]));
-      updatedWord.hypernyms = Array.from(new Set([...updatedWord.hypernyms, ...hypernyms]));
-      updatedWord.hyponyms = Array.from(new Set([...updatedWord.hyponyms, ...hyponyms]));
-      updatedWord.nsibidi = updatedWord.nsibidi || nsibidi;
+    const toBeDeletedWordExamples: Interfaces.Example[] | any = (
+      await findExampleByAssociatedWordId(toBeDeletedWordId, mongooseConnection)
+    );
+    const savedCombinedWord = await findAndUpdateWord(
+      primaryWordId,
+      mongooseConnection,
+      async (combineWord: Interfaces.Word) => {
+        const updatedWord = assign(combineWord);
+        updatedWord.pronunciation = updatedWord.pronunciation || pronunciation;
+        const updatedDefinitions = [...updatedWord.definitions].map((definitionGroup) => definitionGroup.toObject());
+        definitions.forEach((definitionGroup: Interfaces.DefinitionSchema) => {
+          const existingDefinitionGroupIndex = updatedDefinitions
+            .findIndex(({ wordClass }) => definitionGroup.wordClass === wordClass);
+          if (existingDefinitionGroupIndex !== -1) {
+            updatedDefinitions[existingDefinitionGroupIndex] = {
+              ...updatedDefinitions[existingDefinitionGroupIndex],
+              definitions: Array.from(
+                new Set([...updatedDefinitions[existingDefinitionGroupIndex].definitions,
+                  ...definitionGroup.definitions]),
+              ),
+            };
+          } else {
+            updatedDefinitions.push(definitionGroup);
+          }
+        });
+        updatedWord.definitions = updatedDefinitions;
+        updatedWord.variations = Array.from(new Set([...updatedWord.variations, ...variations]));
+        updatedWord.stems = Array.from(new Set([...(updatedWord.stems || []), ...(stems || [])]));
+        updatedWord.relatedTerms = Array.from(new Set([...updatedWord.relatedTerms, ...relatedTerms]));
+        updatedWord.hypernyms = Array.from(new Set([...updatedWord.hypernyms, ...hypernyms]));
+        updatedWord.hyponyms = Array.from(new Set([...updatedWord.hyponyms, ...hyponyms]));
+        updatedWord.nsibidi = updatedWord.nsibidi || nsibidi;
 
-      /* Deletes the specified word and connected wordSuggestions regardless of their merged status */
-      await Word.deleteOne({ _id: toBeDeletedWordId });
-      await deleteWordSuggestionsByOriginalWordId(toBeDeletedWordId);
-      await replaceWordIdsFromExampleAssociatedWords(toBeDeletedWordExamples, toBeDeletedWordId, primaryWordId);
-      // Returns the result
-      return updatedWord.save();
-    });
+        /* Deletes the specified word and connected wordSuggestions regardless of their merged status */
+        await Word.deleteOne({ _id: toBeDeletedWordId });
+        await deleteWordSuggestionsByOriginalWordId(toBeDeletedWordId);
+        await replaceWordIdsFromExampleAssociatedWords(toBeDeletedWordExamples, toBeDeletedWordId, primaryWordId);
+        // Returns the result
+        return updatedWord.save();
+      },
+    );
     return res.send(savedCombinedWord);
   } catch (err) {
     return next(err);
@@ -510,7 +531,9 @@ export const getAssociatedWordSuggestions = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id } = req.params;
+    const { id, mongooseConnection } = req.params;
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+
     const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestions(id));
     return res.send(wordSuggestions);
   } catch (err) {
@@ -525,7 +548,9 @@ export const getAssociatedWordSuggestionsByTwitterId = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id } = req.params;
+    const { id, mongooseConnection } = req.params;
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+
     const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestionsByTwitterId(id));
     return res.send(wordSuggestions);
   } catch (err) {
@@ -534,17 +559,20 @@ export const getAssociatedWordSuggestionsByTwitterId = async (
 };
 
 /* Returns all the WordSuggestions with audio pronunciations */
-export const getTotalWordsWithAudioPronunciations = (): Promise<any> => (
-  Word
+export const getTotalWordsWithAudioPronunciations = (mongooseConnection): Promise<any> => {
+  const Word = mongooseConnection.model('Word', wordSchema);
+  return Word
     .find(searchForAllWordsWithAudioPronunciations())
     .lean()
-    .exec()
-);
+    .exec();
+};
 
 /* Returns all the WordSuggestions that's in Standard Igbo */
-export const getTotalWordsInStandardIgbo = (): Promise<any> => (
-  Word
+export const getTotalWordsInStandardIgbo = (mongooseConnection): Promise<any> => {
+  const Word = mongooseConnection.model('Word', wordSchema);
+
+  return Word
     .find(searchForAllWordsWithIsStandardIgbo())
     .lean()
-    .exec()
-);
+    .exec();
+};

@@ -39,7 +39,7 @@ const index = fs.readFileSync(`${__dirname}/index.html`, 'utf-8');
 server.use(bodyParser.json());
 server.options('*', cors(CORS_CONFIG));
 server.use(cors(CORS_CONFIG));
-server.use(afterRes(MONGO_URI)); // Handles closing MongoDB connections after each request
+server.use(afterRes()); // Handles closing MongoDB connections after each request
 server.use('/favicon.ico', (_, res) => res.send('favicon'));
 if (isProduction) {
   server.use('/test', testRouter);

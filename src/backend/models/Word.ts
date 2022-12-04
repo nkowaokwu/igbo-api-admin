@@ -26,7 +26,7 @@ const dialectSchema = new Schema({
   pronunciation: { type: String, default: '' },
 }, { toObject: toObjectPlugin });
 
-const wordSchema = new Schema({
+export const wordSchema = new Schema({
   word: { type: String, required: true },
   wordPronunciation: { type: String, default: '' },
   conceptualWord: { type: String, default: '' },
@@ -74,7 +74,4 @@ const wordSchema = new Schema({
 toJSONPlugin(wordSchema);
 toJSONPlugin(definitionSchema);
 
-const WordModel = mongoose.model('Word', wordSchema);
-WordModel.syncIndexes();
-
-export default WordModel;
+mongoose.model('Word', wordSchema);

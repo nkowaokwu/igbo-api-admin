@@ -1,3 +1,4 @@
+import { Connection } from 'mongoose';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 
 type HandledQueries = {
@@ -11,6 +12,7 @@ type HandledQueries = {
   filters: string,
   user: string,
   strict: boolean,
+  mongooseConnection: Connection,
 };
 
 export default HandledQueries;

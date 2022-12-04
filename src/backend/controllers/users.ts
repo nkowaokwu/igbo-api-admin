@@ -71,8 +71,9 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
   try {
     const { skip, limit, filters } = handleQueries(req);
     const users = (await findUsers()).filter((user) => (
-      Object.values(filters).every((value: string) => {
-        const displayName = user.displayName.toLowerCase();
+      // eslint-disable-next-line
+      Object.values(filters).every((value: string = '') => {
+        const displayName = (user.displayName || '').toLowerCase();
         const { email } = user;
         return displayName.includes(value.toLowerCase()) || email.includes(value.toLowerCase());
       })

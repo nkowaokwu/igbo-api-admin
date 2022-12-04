@@ -1,7 +1,7 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
-import WordSuggestion from '../models/WordSuggestion';
+import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
@@ -57,10 +57,15 @@ export const postWordSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const rawData = req.body as Interfaces.WordSuggestion;
-    const word = req.word as Interfaces.Word;
-    const user = req.user as Interfaces.FormattedUser;
+    const {
+      body: rawData,
+      word,
+      user,
+      mongooseConnection,
+    } = req;
     let data = rawData;
+
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
 
     data.authorId = user.uid;
     data = assignEditorsToDialects({
@@ -86,26 +91,38 @@ export const postWordSuggestion = async (
   }
 };
 
-export const findWordSuggestionById = (id: string | Types.ObjectId)
-: Query<any, Document<Interfaces.WordSuggestion>> => (
-  WordSuggestion.findById(id)
-);
+export const findWordSuggestionById = (id: string | Types.ObjectId, mongooseConnection)
+: Query<any, Document<Interfaces.WordSuggestion>> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+  return (
+    WordSuggestion.findById(id)
+  );
+};
 
-export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectId)
-: Query<any, Document<Interfaces.WordSuggestion>> => (
-  WordSuggestion.deleteMany({ originalWordId: id })
-);
+export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectId, mongooseConnection)
+: Query<any, Document<Interfaces.WordSuggestion>> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+  return (
+    WordSuggestion.deleteMany({ originalWordId: id })
+  );
+};
 
 /* Grabs WordSuggestions */
 const findWordSuggestions = async (
-  { regexMatch, skip, limit }:
-  { regexMatch: RegExp, skip: number, limit: number },
-): Promise<Interfaces.WordSuggestion[] | any> => (
-  WordSuggestion
+  {
+    regexMatch,
+    skip,
+    limit,
+    mongooseConnection,
+  }:
+  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: any },
+): Promise<Interfaces.WordSuggestion[] | any> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+  return WordSuggestion
     .find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
-    .limit(limit)
-);
+    .limit(limit);
+};
 
 /* Updates an existing WordSuggestion object */
 export const putWordSuggestion = (
@@ -118,11 +135,12 @@ export const putWordSuggestion = (
       body: rawData,
       params: { id },
       user,
+      mongooseConnection,
     } = req;
     let data = rawData;
     const clientExamples = getExamplesFromClientData(data);
 
-    return findWordSuggestionById(id)
+    return findWordSuggestionById(id, mongooseConnection)
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
           throw new Error('Word suggestion doesn\'t exist');
@@ -168,10 +186,18 @@ export const getWordSuggestions = (
       skip,
       limit,
       filters,
+      mongooseConnection,
       ...rest
     } = handleQueries(req);
     const regexMatch = searchPreExistingWordSuggestionsRegexQuery(regexKeyword, filters);
-    return findWordSuggestions({ regexMatch, skip, limit })
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+
+    return findWordSuggestions({
+      regexMatch,
+      skip,
+      limit,
+      mongooseConnection,
+    })
       .then(async (wordSuggestions: [Interfaces.WordSuggestion]) => {
         /* Places the exampleSuggestions on the corresponding wordSuggestions */
         const wordSuggestionsWithExamples = await Promise.all(
@@ -194,7 +220,8 @@ export const getWordSuggestions = (
 /* Returns a single WordSuggestion by using an id */
 export const getWordSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { id } = req.params;
+    const { id, mongooseConnection } = req.params;
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const populatedWordSuggestion: Document<Interfaces.WordSuggestion> = await WordSuggestion
       .findById(id)
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
@@ -221,7 +248,8 @@ export const deleteWordSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id } = req.params;
+    const { id, mongooseConnection } = req.params;
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
@@ -265,26 +293,30 @@ export const deleteWordSuggestion = async (
 };
 
 /* Returns all the WordSuggestions from last week */
-export const getWordSuggestionsFromLastWeek = (): Promise<any> => (
-  WordSuggestion
+export const getWordSuggestionsFromLastWeek = (mongooseConnection): Promise<any> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+  return WordSuggestion
     .find(searchForLastWeekQuery())
     .lean()
-    .exec()
-);
+    .exec();
+};
 
-export const getNonMergedWordSuggestions = ():Promise<any> => (
-  WordSuggestion
+export const getNonMergedWordSuggestions = (mongooseConnection):Promise<any> => {
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+  return WordSuggestion
     .find({ merged: null })
     .lean()
-    .exec()
-);
+    .exec();
+};
 
 export const approveWordSuggestion = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {
-  const { params: { id }, user } = req;
+  const { params: { id }, user, mongooseConnection } = req;
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+
   try {
     const wordSuggestion = await WordSuggestion.findById(id);
     if (!wordSuggestion) {
@@ -307,7 +339,9 @@ export const denyWordSuggestion = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {
-  const { params: { id }, user } = req;
+  const { params: { id }, user, mongooseConnection } = req;
+  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+
   try {
     const wordSuggestion = await WordSuggestion.findById(id);
     if (!wordSuggestion) {
