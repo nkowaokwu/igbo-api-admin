@@ -224,6 +224,7 @@ export const getUserMergeWordStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    console.time('Word suggestions merged stats query');
     const wordSuggestions = await WordSuggestion
       .find(
         {
@@ -234,6 +235,8 @@ export const getUserMergeWordStats = async (
       )
       .hint({ mergedBy: 1, updatedAt: -1 })
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    console.timeEnd('Word suggestions merged stats query');
+    console.log('found word suggestions', { wordSuggestions: wordSuggestions.length });
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -257,6 +260,7 @@ export const getUserMergeExampleStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    console.time('Example suggestions merged stats query');
     const exampleSuggestions = await ExampleSuggestion
       .find(
         {
@@ -267,7 +271,7 @@ export const getUserMergeExampleStats = async (
       )
       .hint({ mergedBy: 1, updatedAt: -1 })
       .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
-
+    console.timeEnd('Example suggestions merged stats query');
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -291,14 +295,23 @@ export const getUserMergeDialectalVariationStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
-    const dialectalVariationWordSuggestions = await WordSuggestion.find(
-      {
-        mergedBy: userId,
-        updatedAt: { $gte: threeMonthsAgo },
-        'dialects.editor': userId,
-      },
-      'dialects updatedAt',
-    ).limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    console.time('Dialectal variation merged stats query');
+    const dialectalVariationWordSuggestions = await WordSuggestion
+      .find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+          'dialects.editor': userId,
+        },
+        'dialects updatedAt',
+      )
+      .hint({ mergedBy: 1, updatedAt: -1, 'dialects.editor': 1 })
+      .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    console.timeEnd('Dialectal variation merged stats query');
+    console.log(
+      'found dialectal variations',
+      { dialectalVariationWordSuggestions: dialectalVariationWordSuggestions.length },
+    );
     const dialectalVariationMerges = dialectalVariationWordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
