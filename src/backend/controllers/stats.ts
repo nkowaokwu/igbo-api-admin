@@ -295,6 +295,7 @@ export const getUserMergeDialectalVariationStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    console.log('getUserMergeDialectalVariationStats');
     console.time('Dialectal variation merged stats query');
     const dialectalVariationWordSuggestions = await WordSuggestion
       .find(
