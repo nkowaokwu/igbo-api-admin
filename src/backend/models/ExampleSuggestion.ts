@@ -7,7 +7,7 @@ import { normalizeIgbo } from './plugins/normalizationHooks';
 
 const { Schema, Types } = mongoose;
 // @ts-ignore
-const exampleSuggestionSchema = new Schema({
+export const exampleSuggestionSchema = new Schema({
   originalExampleId: { type: Types.ObjectId, ref: 'Example', default: null },
   igbo: { type: String, default: '' },
   english: { type: String, default: '' },
@@ -44,4 +44,4 @@ exampleSuggestionSchema.index({
   name: 'Merged example suggestion index',
 });
 
-export default mongoose.model('ExampleSuggestion', exampleSuggestionSchema);
+mongoose.model('ExampleSuggestion', exampleSuggestionSchema);

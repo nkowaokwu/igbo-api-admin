@@ -1,7 +1,6 @@
 import { assign, map, forEach } from 'lodash';
 import accents from 'remove-accents';
 import Corpus from 'src/backend/models/Corpus';
-import Word from 'src/backend/models/Word';
 import * as Interfaces from './interfaces';
 
 /**
@@ -35,12 +34,14 @@ export const findWordsWithMatch = async (
     examples,
     skip = 0,
     limit = 10,
+    Word,
   }:
   {
     match: any,
     examples?: boolean,
     skip?: number,
     limit?: number,
+    Word: any,
   },
 ): Promise<Interfaces.Word[]> => {
   let words = Word.aggregate()

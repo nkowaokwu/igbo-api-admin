@@ -7,10 +7,10 @@ import {
   trim,
   uniq,
 } from 'lodash';
-import ExampleSuggestion from 'src/backend/models/ExampleSuggestion';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { exampleSchema } from 'src/backend/models/Example';
+import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
-import Example from '../models/Example';
-import Word from '../models/Word';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { DICTIONARY_APP_URL } from '../config';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
@@ -20,18 +20,32 @@ import { sendMergedEmail } from './email';
 import * as Interfaces from './utils/interfaces';
 
 /* Create a new Example object in MongoDB */
-export const createExample = (data: Interfaces.ExampleClientData): Promise<Document<any>> => {
+export const createExample = (data: Interfaces.ExampleClientData, mongooseConnection): Promise<Document<any>> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
   const example = new Example(data);
   return example.save();
 };
 
 /* Uses regex to search for examples with both Igbo and English */
-const searchExamples = ({ query, skip, limit }: { query: RegExp | any, skip: number, limit: number }) => (
-  Example
-    .find(query)
-    .skip(skip)
-    .limit(limit)
-);
+const searchExamples = ({
+  query,
+  skip,
+  limit,
+  mongooseConnection,
+}: {
+  query: RegExp | any,
+  skip: number,
+  limit: number,
+  mongooseConnection: any,
+}) => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+  return (
+    Example
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+  );
+};
 
 /* Returns examples from MongoDB */
 export const getExamples = async (
@@ -46,10 +60,17 @@ export const getExamples = async (
       limit,
       filters,
       user,
+      mongooseConnection,
       ...rest
     } = handleQueries(req);
+    const Example = mongooseConnection.model('Example', exampleSchema);
     const regexMatch = searchExamplesRegexQuery(regexKeyword, filters);
-    const examples = await searchExamples({ query: regexMatch, skip, limit });
+    const examples = await searchExamples({
+      query: regexMatch,
+      skip,
+      limit,
+      mongooseConnection,
+    });
 
     return await packageResponse({
       res,
@@ -63,15 +84,21 @@ export const getExamples = async (
   }
 };
 
-export const findExampleById = (id: string)
-: Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => (
-  Example.findById(id)
-);
+export const findExampleById = (id: string, mongooseConnection)
+: Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+  return (
+    Example.findById(id)
+  );
+};
 
-export const findExampleByAssociatedWordId = (id: string)
-: Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => (
-  Example.find({ associatedWords: { $in: [id] } })
-);
+export const findExampleByAssociatedWordId = (id: string, mongooseConnection)
+: Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+  return (
+    Example.find({ associatedWords: { $in: [id] } })
+  );
+};
 
 /* Returns an example from MongoDB using an id */
 export const getExample = async (
@@ -80,8 +107,9 @@ export const getExample = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id } = req.params;
-    const foundExample = await findExampleById(id)
+    const foundExample = await findExampleById(id, mongooseConnection)
       .then((example) => {
         if (!example) {
           throw new Error('No example exists with the provided id.');
@@ -98,20 +126,24 @@ export const getExample = async (
 const mergeIntoExample = (
   exampleSuggestion: Interfaces.ExampleSuggestion,
   mergedBy: string,
-): Promise<Interfaces.Example> => (
-  Example.findOneAndUpdate({ _id: exampleSuggestion.originalExampleId }, exampleSuggestion.toObject())
-    .then(async (example: Interfaces.Example) => {
-      if (!example) {
-        throw new Error('Example doesn\'t exist');
-      }
-      await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
-      return example;
-    })
-);
+  mongooseConnection: any,
+): Promise<Interfaces.Example> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+  return (
+    Example.findOneAndUpdate({ _id: exampleSuggestion.originalExampleId }, exampleSuggestion.toObject())
+      .then(async (example: Interfaces.Example) => {
+        if (!example) {
+          throw new Error('Example doesn\'t exist');
+        }
+        await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
+        return example;
+      })
+  );
+};
 
 /* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = (exampleSuggestion, mergedBy): Promise<Interfaces.Example> => (
-  createExample(exampleSuggestion.toObject())
+const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> => (
+  createExample(exampleSuggestion.toObject(), mongooseConnection)
     .then(async (example: Interfaces.Example) => {
       await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
       return example;
@@ -125,8 +157,12 @@ const createExampleFromSuggestion = (exampleSuggestion, mergedBy): Promise<Inter
 export const executeMergeExample = async (
   exampleSuggestionId: string,
   mergedBy: string,
+  mongooseConnection: any,
 ): Promise<Interfaces.Example> => {
-  const exampleSuggestion: Interfaces.ExampleSuggestion = await findExampleSuggestionById(exampleSuggestionId);
+  const exampleSuggestion: Interfaces.ExampleSuggestion = (
+    await findExampleSuggestionById(exampleSuggestionId, mongooseConnection)
+  );
+  const Word = mongooseConnection.model('Word', wordSchema);
 
   if (!exampleSuggestion) {
     throw new Error('There is no associated example suggestion, double check your provided data');
@@ -153,13 +189,14 @@ export const executeMergeExample = async (
   }
 
   return exampleSuggestion.originalExampleId
-    ? mergeIntoExample(exampleSuggestion, mergedBy)
-    : createExampleFromSuggestion(exampleSuggestion, mergedBy);
+    ? mergeIntoExample(exampleSuggestion, mergedBy, mongooseConnection)
+    : createExampleFromSuggestion(exampleSuggestion, mergedBy, mongooseConnection);
 };
 
 /* Sends confirmation merged email to user if they provided an email */
-const handleSendingMergedEmail = async (result): Promise<void> => {
+const handleSendingMergedEmail = async (result, mongooseConnection): Promise<void> => {
   try {
+    const Word = mongooseConnection.model('Word', wordSchema);
     if (result.authorEmail) {
       const word: Document<Interfaces.Word> | Record<string, unknown> = result.associatedWords[0]
         ? await Word.findById(result.associatedWords[0])
@@ -186,17 +223,16 @@ export const mergeExample = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data } = req;
-    const { user } = req;
+    const { body: data, user, mongooseConnection } = req;
 
-    const exampleSuggestion = await findExampleSuggestionById(data.id);
-    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion.id, user.uid);
+    const exampleSuggestion = await findExampleSuggestionById(data.id, mongooseConnection);
+    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion.id, user.uid, mongooseConnection);
     await handleSendingMergedEmail({
       ...(result.toObject ? result.toObject() : result),
       authorEmail: exampleSuggestion.authorEmail,
       authorId: exampleSuggestion.authorId,
       editorsNotes: exampleSuggestion.editorsNotes,
-    });
+    }, mongooseConnection);
     return res.send(result);
   } catch (err) {
     return next(err);
@@ -210,7 +246,7 @@ export const putExample = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data, params: { id } } = req;
+    const { body: data, params: { id }, mongooseConnection } = req;
 
     if (!data.igbo && !data.english) {
       return next(new Error('Required information is missing, double check your provided data'));
@@ -228,7 +264,7 @@ export const putExample = async (
       return next(new Error('Duplicates are not allows in associated words'));
     }
 
-    const savedExample = await findExampleById(id)
+    const savedExample = await findExampleById(id, mongooseConnection)
       .then(async (example: Interfaces.Example) => {
         if (!example) {
           throw new Error('Example doesn\'t exist');
@@ -249,7 +285,9 @@ export const getAssociatedExampleSuggestions = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id } = req.params;
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     const wordSuggestions = await ExampleSuggestion.find(searchForAssociatedSuggestions(id));
     return res.send(wordSuggestions);
   } catch (err) {
@@ -260,8 +298,9 @@ export const getAssociatedExampleSuggestions = async (
 /* Deletes the specified Example document */
 export const deleteExample = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id: exampleId } = req.params;
-
+    const Example = mongooseConnection.model('Example', exampleSchema);
     const example = await Example.findById(exampleId) as Interfaces.Example;
     const isPronunciationMp3 = example.pronunciation && example.pronunciation.includes('.mp3');
     await deleteAudioPronunciation(exampleId, isPronunciationMp3);

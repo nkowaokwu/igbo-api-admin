@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { compact } from 'lodash';
 import moment from 'moment';
-import Example from '../models/Example';
-import Word from '../models/Word';
-import WordSuggestion from '../models/WordSuggestion';
-import ExampleSuggestion from '../models/ExampleSuggestion';
-import Stat from '../models/Stat';
+import { exampleSchema } from '../models/Example';
+import { wordSchema } from '../models/Word';
+import { wordSuggestionSchema } from '../models/WordSuggestion';
+import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
+import { statSchema } from '../models/Stat';
 import {
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
@@ -17,6 +17,7 @@ import determineExampleCompleteness from './utils/determineExampleCompleteness';
 import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPossible';
 import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
+import { connectDatabase, disconnectDatabase } from '../utils/database';
 
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
@@ -42,7 +43,7 @@ const updateStat = async ({ type, authorId = 'SYSTEM', value }) => {
 };
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
-const calculateTotalHeadwordsWithAudioPronunciations = async ():
+const calculateTotalHeadwordsWithAudioPronunciations = async (Word):
 Promise<{ audioPronunciationWords: number } | void> => {
   const audioPronunciationWords = await Word
     .countDocuments(searchForAllWordsWithAudioPronunciations());
@@ -51,7 +52,7 @@ Promise<{ audioPronunciationWords: number } | void> => {
 };
 
 /* Returns all the Words that's in Standard Igbo */
-const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWords: number } | void> => {
+const calculateTotalWordsInStandardIgbo = async (Word): Promise<{ isStandardIgboWords: number } | void> => {
   const isStandardIgboWords = await Word
     .countDocuments(searchForAllWordsWithIsStandardIgbo());
   await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
@@ -59,7 +60,7 @@ const calculateTotalWordsInStandardIgbo = async (): Promise<{ isStandardIgboWord
 };
 
 /* Returns all Words with Nsịbịdị */
-const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: number } | void> => {
+const calculateTotalWordsWithNsibidi = async (Word) : Promise<{ wordsWithNsibidi: number } | void> => {
   const wordsWithNsibidi = await Word
     .countDocuments(searchForAllWordsWithNsibidi());
   await updateStat({ type: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
@@ -68,7 +69,8 @@ const calculateTotalWordsWithNsibidi = async () : Promise<{ wordsWithNsibidi: nu
 };
 
 /* Returns all Word Suggestions with Nsịbịdị */
-const calculateTotalWordSuggestionsWithNsibidi = async () : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
+const calculateTotalWordSuggestionsWithNsibidi = async (WordSuggestion)
+: Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
   const wordSuggestionsWithNsibidi = await WordSuggestion
     .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
   await updateStat({ type: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
@@ -104,7 +106,7 @@ const countWords = async (words) => {
 };
 
 /* Returns all the Words that are "sufficient" */
-const calculateWordStats = async ():
+const calculateWordStats = async (Word):
 Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
   const INCLUDE_ALL_WORDS_LIMIT = 100000;
   const words = await findWordsWithMatch({
@@ -115,6 +117,7 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
     },
     examples: true,
     limit: INCLUDE_ALL_WORDS_LIMIT,
+    Word,
   });
   const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
   await updateStat({ type: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
@@ -131,7 +134,7 @@ const countCompletedExamples = async (examples) => {
 };
 
 /* Returns all the Examples that are on the platform */
-const calculateExampleStats = async ():
+const calculateExampleStats = async (Example):
 Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | void> => {
   const examples = await Example
     .find({
@@ -152,8 +155,10 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
 
 export const getUserStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const { user, params: { uid } } = req;
+    const { user, params: { uid }, mongooseConnection } = req;
     const userId = uid || user.uid;
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     const [wordSuggestions, exampleSuggestions] = await Promise.all([
       WordSuggestion.find({
         $or: [
@@ -221,9 +226,13 @@ export const getUserMergeStats = async (
   req: Request, res: Response, next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { params: { uid } } = req;
+    const { params: { uid }, mongooseConnection } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+    console.log(`Looking for user ${uid} merge stats...`);
+    console.time(`User ${uid} merge stats`);
     const [wordSuggestions, exampleSuggestions] = await Promise.all([
       WordSuggestion
         .find(
@@ -233,7 +242,7 @@ export const getUserMergeStats = async (
           },
           'dialects updatedAt',
         )
-        .hint({ mergedBy: 1, updatedAt: -1 })
+        .hint({ mergedBy: 1 })
         .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[],
       ExampleSuggestion
         .find(
@@ -243,9 +252,10 @@ export const getUserMergeStats = async (
           },
           'updatedAt',
         )
-        .hint({ mergedBy: 1, updatedAt: -1 })
+        .hint({ mergedBy: 1 })
         .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
     ]);
+    console.timeEnd(`User ${uid} merge stats`);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -284,9 +294,12 @@ export const getUserMergeStats = async (
   }
 };
 
-export const getStats = async (_: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } });
+    const { mongooseConnection } = req;
+    const Stat = mongooseConnection.model('Stat', statSchema);
+
+    const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } }).hint({ type: 1 });
     return res.send(stats.reduce((finalObject, stat) => ({
       ...finalObject,
       [stat.type]: stat,
@@ -297,12 +310,23 @@ export const getStats = async (_: Request, res: Response, next: NextFunction): P
 };
 
 export const onUpdateDashboardStats = async (): Promise<void> => {
-  await Promise.all([
-    calculateExampleStats(),
-    calculateTotalWordSuggestionsWithNsibidi(),
-    calculateTotalWordsWithNsibidi(),
-    calculateTotalWordsInStandardIgbo(),
-    calculateTotalHeadwordsWithAudioPronunciations(),
-    calculateWordStats(),
-  ]);
+  const connection = await connectDatabase();
+  try {
+    const Word = connection.model('Word', wordSchema);
+    const Example = connection.model('Example', exampleSchema);
+    const WordSuggestion = connection.model('WordSuggestion', wordSuggestionSchema);
+
+    await Promise.all([
+      calculateExampleStats(Example),
+      calculateTotalWordSuggestionsWithNsibidi(WordSuggestion),
+      calculateTotalWordsWithNsibidi(Word),
+      calculateTotalWordsInStandardIgbo(Word),
+      calculateTotalHeadwordsWithAudioPronunciations(Word),
+      calculateWordStats(Word),
+    ]);
+    await disconnectDatabase(connection);
+  } catch (err) {
+    await disconnectDatabase(connection);
+    console.log(err);
+  };
 };

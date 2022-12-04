@@ -3,7 +3,7 @@ import WordTags from '../shared/constants/WordTags';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema } = mongoose;
-const corpusSchema = new Schema({
+export const corpusSchema = new Schema({
   title: { type: String, required: true },
   body: { type: String, required: true },
   media: { type: String, required: true },
@@ -19,4 +19,4 @@ const corpusSchema = new Schema({
 
 toJSONPlugin(corpusSchema);
 
-export default mongoose.model('Corpus', corpusSchema);
+mongoose.model('Corpus', corpusSchema);

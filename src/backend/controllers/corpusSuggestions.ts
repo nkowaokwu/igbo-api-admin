@@ -1,7 +1,7 @@
 import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { assign } from 'lodash';
-import CorpusSuggestion from '../models/CorpusSuggestion';
+import { corpusSuggestionSchema } from '../models/CorpusSuggestion';
 import { packageResponse, handleQueries } from './utils';
 import { searchPreExistingCorpusSuggestionsRegexQuery } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
@@ -17,8 +17,8 @@ export const postCorpusSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data } = req;
-    const { user } = req;
+    const { body: data, user, mongooseConnection } = req;
+    const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
     data.authorId = user.uid;
     const newCorpusSuggestion = new CorpusSuggestion(data);
@@ -29,26 +29,35 @@ export const postCorpusSuggestion = async (
   }
 };
 
-export const findCorpusSuggestionById = (id: string | Types.ObjectId)
-: Query<any, Document<Interfaces.CorpusSuggestion>> => (
-  CorpusSuggestion.findById(id)
-);
+export const findCorpusSuggestionById = (id: string | Types.ObjectId, mongooseConnection)
+: Query<any, Document<Interfaces.CorpusSuggestion>> => {
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+  return CorpusSuggestion.findById(id);
+};
 
-export const deleteCorpusSuggestionByOriginalCorpusId = (id: string | Types.ObjectId)
-: Query<any, Document<Interfaces.CorpusSuggestion>> => (
-  CorpusSuggestion.deleteMany({ originalWordId: id })
-);
+export const deleteCorpusSuggestionByOriginalCorpusId = (id: string | Types.ObjectId, mongooseConnection)
+: Query<any, Document<Interfaces.CorpusSuggestion>> => {
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+  return CorpusSuggestion.deleteMany({ originalWordId: id });
+};
 
 /* Grabs CorpusSuggestions */
 const findCorpusSuggestions = async (
-  { regexMatch, skip, limit }:
-  { regexMatch: RegExp, skip: number, limit: number },
-): Promise<Interfaces.CorpusSuggestion[] | any> => (
-  CorpusSuggestion
+  {
+    regexMatch,
+    skip,
+    limit,
+    mongooseConnection,
+  }:
+  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: any },
+): Promise<Interfaces.CorpusSuggestion[] | any> => {
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+
+  return CorpusSuggestion
     .find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
-    .limit(limit)
-);
+    .limit(limit);
+};
 
 /* Updates an existing CorpusSuggestion object */
 export const putCorpusSuggestion = (
@@ -60,8 +69,9 @@ export const putCorpusSuggestion = (
     const {
       body: data,
       params: { id },
+      mongooseConnection,
     } = req;
-    return findCorpusSuggestionById(id)
+    return findCorpusSuggestionById(id, mongooseConnection)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
           throw new Error('Corpus suggestion doesn\'t exist');
@@ -93,10 +103,17 @@ export const getCorpusSuggestions = (
       skip,
       limit,
       filters,
+      mongooseConnection,
       ...rest
     } = handleQueries(req);
+    const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
     const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(regexKeyword, filters);
-    return findCorpusSuggestions({ regexMatch, skip, limit })
+    return findCorpusSuggestions({
+      regexMatch,
+      skip,
+      limit,
+      mongooseConnection,
+    })
       .then(async (corpusSuggestions: [Interfaces.CorpusSuggestion]) => (
         packageResponse({
           res,
@@ -141,7 +158,9 @@ export const deleteCorpusSuggestion = (
   next: NextFunction,
 ): Promise<Response | void> | void => {
   try {
-    const { id } = req.params;
+    const { id, mongooseConnection } = req.params;
+    const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+
     return CorpusSuggestion.findByIdAndDelete(id)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
@@ -173,7 +192,9 @@ export const approveCorpusSuggestion = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
-  const { params: { id }, user } = req;
+  const { params: { id }, user, mongooseConnection } = req;
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+
   try {
     const corpusSuggestion = await CorpusSuggestion.findById(id);
     if (!corpusSuggestion) {
@@ -196,7 +217,9 @@ export const denyCorpusSuggestion = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
-  const { params: { id }, user } = req;
+  const { params: { id }, user, mongooseConnection } = req;
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
+
   try {
     const corpusSuggestion = await CorpusSuggestion.findById(id);
     if (!corpusSuggestion) {

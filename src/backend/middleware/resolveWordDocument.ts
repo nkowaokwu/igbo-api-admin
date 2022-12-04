@@ -1,9 +1,11 @@
 import type { Response, NextFunction } from 'express';
-import { EditorRequest, WordSuggestion } from '../controllers/utils/interfaces';
-import Word from '../models/Word';
+import { EditorRequest } from '../controllers/utils/interfaces';
+import { wordSchema } from '../models/Word';
 
 export default async (req: EditorRequest, res: Response, next: NextFunction): Promise<any> => {
-  const data = req.body as WordSuggestion;
+  const { body: data, mongooseConnection } = req;
+  const Word = mongooseConnection.model('Word', wordSchema);
+
   if (data.originalWordId) {
     const word = await Word.findById(data.originalWordId);
     if (word) {
