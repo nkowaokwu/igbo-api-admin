@@ -233,28 +233,31 @@ export const getUserMergeStats = async (
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     console.log(`Looking for user ${uid} merge stats...`);
     console.time(`User ${uid} merge stats`);
-    const [wordSuggestions, exampleSuggestions] = await Promise.all([
-      WordSuggestion
-        .find(
-          {
-            mergedBy: userId,
-            updatedAt: { $gte: threeMonthsAgo },
-          },
-          'dialects updatedAt',
-        )
-        .hint({ mergedBy: 1 })
-        .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[],
-      ExampleSuggestion
-        .find(
-          {
-            mergedBy: userId,
-            updatedAt: { $gte: threeMonthsAgo },
-          },
-          'updatedAt',
-        )
-        .hint({ mergedBy: 1 })
-        .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
-    ]);
+    console.time(`User ${uid} word suggestion merge stats`);
+    const wordSuggestions = await WordSuggestion
+      .find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        'dialects updatedAt',
+      )
+      .hint({ mergedBy: 1 })
+      .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    console.timeEnd(`User ${uid} word suggestion merge stats`);
+
+    console.time(`User ${uid} example suggestion merge stats`);
+    const exampleSuggestions = await ExampleSuggestion
+      .find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        'updatedAt',
+      )
+      .hint({ mergedBy: 1 })
+      .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
+    console.timeEnd(`User ${uid} example suggestion merge stats`);
     console.timeEnd(`User ${uid} merge stats`);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
