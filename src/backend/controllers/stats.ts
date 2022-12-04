@@ -224,13 +224,16 @@ export const getUserMergeWordStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
-    const wordSuggestions = await WordSuggestion.find(
-      {
-        mergedBy: userId,
-        updatedAt: { $gte: threeMonthsAgo },
-      },
-      'dialects updatedAt',
-    ).limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    const wordSuggestions = await WordSuggestion
+      .find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        'updatedAt',
+      )
+      .hint({ mergedBy: 1, updatedAt: -1 })
+      .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
@@ -254,13 +257,17 @@ export const getUserMergeExampleStats = async (
     const { params: { uid } } = req;
     const userId = uid;
     const threeMonthsAgo = moment().subtract(3, 'months').toDate();
-    const exampleSuggestions = await ExampleSuggestion.find(
-      {
-        mergedBy: userId,
-        updatedAt: { $gte: threeMonthsAgo },
-      },
-      'updatedAt',
-    ).limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
+    const exampleSuggestions = await ExampleSuggestion
+      .find(
+        {
+          mergedBy: userId,
+          updatedAt: { $gte: threeMonthsAgo },
+        },
+        'updatedAt',
+      )
+      .hint({ mergedBy: 1, updatedAt: -1 })
+      .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
+
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
