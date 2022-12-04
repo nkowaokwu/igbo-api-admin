@@ -13,11 +13,11 @@ export default (MONGO_URI: string) => async (req: Request, res: Response, next: 
 
   // Disconnect from database if not in a testing environment
   if (process.env.NODE_ENV !== 'test') {
-    const afterResponse = () => {
-      disconnectDatabase(MONGO_URI);
+    const afterResponse = async () => {
+      await disconnectDatabase(MONGO_URI);
     };
-  // res.on('finish', afterResponse);
-  // res.on('close', afterResponse);
+    res.on('finish', afterResponse);
+    res.on('close', afterResponse);
   }
   next();
 };

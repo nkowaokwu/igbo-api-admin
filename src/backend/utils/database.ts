@@ -7,10 +7,10 @@ const CONNECTED = 1;
 const db = mongoose.connection;
 
 /* Opens a connection to MongoDB */
-export const connectDatabase = async (MONGO_URI: string): Promise<void> => new Promise(async (resolve) => {
+export const connectDatabase = async (MONGO_URI: string): Promise<void> => new Promise((resolve) => {
   if (db.readyState === DISCONNECTED) {
     /* Connects to the MongoDB Database */
-    await mongoose.connect(MONGO_URI, {
+    mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useFindAndModify: false,
       useCreateIndex: true,
@@ -33,15 +33,16 @@ export const connectDatabase = async (MONGO_URI: string): Promise<void> => new P
 });
 
 /* Closes current connection to MongoDB */
-export const disconnectDatabase = (MONGO_URI: string): void => {
+export const disconnectDatabase = (MONGO_URI: string): Promise<void> => new Promise((resolve) => {
   if (db.readyState !== DISCONNECTED) {
     db.close();
     db.once('close', () => {
       if (config?.runtime?.env === 'production') {
         console.log('🗃 Database is connection closed', process.env.CI, MONGO_URI);
+        resolve();
       }
     });
   }
-};
+});
 
 export const isConnected = (): boolean => mongoose.connection.readyState !== 0;

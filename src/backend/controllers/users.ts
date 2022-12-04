@@ -82,7 +82,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
     res.status(200);
     return res.send(paginatedUsers);
   } catch (err) {
-    return next(new Error('An error occurred while grabbing all users'));
+    return next(new Error(`An error occurred while grabbing all users: ${err.message}`));
   }
 };
 
