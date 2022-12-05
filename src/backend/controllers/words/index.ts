@@ -124,12 +124,13 @@ export const getWord = async (req: Request, res: Response, next: NextFunction): 
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const Word = mongooseConnection.model('Word', wordSchema);
 
     const updatedWord = await findWordsWithMatch({
       match: { _id: mongoose.Types.ObjectId(id) },
       examples: true,
       limit: 1,
-      mongooseConnection,
+      Word,
     })
       .then(async ([word]: Interfaces.Word[]) => {
         if (!word) {
