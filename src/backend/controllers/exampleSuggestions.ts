@@ -172,7 +172,12 @@ export const getExampleSuggestions = (req: Request, res: Response, next: NextFun
     const regexMatch = searchExampleSuggestionsRegexQuery(regexKeyword, filters);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
-    return findExampleSuggestions({ regexMatch, skip, limit })
+    return findExampleSuggestions({
+      regexMatch,
+      skip,
+      limit,
+      mongooseConnection,
+    })
       .then((exampleSuggestions: [Interfaces.ExampleSuggestion]) => (
         packageResponse({
           res,
@@ -193,7 +198,8 @@ export const getExampleSuggestions = (req: Request, res: Response, next: NextFun
 /* Returns a single ExampleSuggestion by using an id */
 export const getExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> | void => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const populatedUser = await findExampleSuggestionById(id, mongooseConnection)
       .then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
         if (!exampleSuggestion) {
@@ -243,7 +249,8 @@ export const removeExampleSuggestion = (id: string, mongooseConnection): Promise
 /* Deletes a single ExampleSuggestion by using an id */
 export const deleteExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> | void => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     return res.send(await removeExampleSuggestion(id, mongooseConnection));
   } catch (err) {
     return next(err);

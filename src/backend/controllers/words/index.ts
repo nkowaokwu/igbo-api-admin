@@ -533,7 +533,8 @@ export const getAssociatedWordSuggestions = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
 
     const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestions(id));
@@ -550,7 +551,8 @@ export const getAssociatedWordSuggestionsByTwitterId = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
 
     const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestionsByTwitterId(id));
