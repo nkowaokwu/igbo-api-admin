@@ -228,41 +228,29 @@ export const getUserMergeStats = async (
   try {
     const { params: { uid }, mongooseConnection } = req;
     const userId = uid;
-    const threeMonthsAgo = moment().subtract(3, 'months').toDate();
+    const threeMonthsAgo = moment().subtract(3, 'months').toISOString();
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
-    console.log(`Looking for user ${uid} merge stats...`);
-    console.time(`User ${uid} merge stats`);
-    console.time(`User ${uid} word suggestion merge stats`);
-    const wordSuggestions = await WordSuggestion
-      .aggregate()
-      .match(
-        {
-          mergedBy: { $eq: userId },
-          // updatedAt: { $gte: threeMonthsAgo },
-        },
-      )
-      .project({
-        updatedAt: 1,
-        dialects: 1,
-      })
-      // .hint({ mergedBy: 1 })
-      .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
-    console.timeEnd(`User ${uid} word suggestion merge stats`);
-
-    console.time(`User ${uid} example suggestion merge stats`);
-    const exampleSuggestions = await ExampleSuggestion
-      .find(
-        {
-          mergedBy: userId,
+    const [exampleSuggestions, wordSuggestions] = await Promise.all([
+      ExampleSuggestion
+        .find(
+          {
+            mergedBy: userId,
+            updatedAt: { $gte: threeMonthsAgo },
+            originalExampleId: null,
+          },
+          'updatedAt',
+        )
+        .hint('Merged example suggestion index')
+        .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
+      WordSuggestion
+        .find({
+          mergedBy: uid,
           updatedAt: { $gte: threeMonthsAgo },
-        },
-        'updatedAt',
-      )
-      .hint({ mergedBy: 1 })
-      .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
-    console.timeEnd(`User ${uid} example suggestion merge stats`);
-    console.timeEnd(`User ${uid} merge stats`);
+        })
+        .hint('Merged word suggestion index')
+        .limit(WORD_SUGGESTION_QUERY_LIMIT),
+    ]);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {

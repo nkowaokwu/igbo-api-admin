@@ -158,7 +158,8 @@ export const deleteCorpusSuggestion = (
   next: NextFunction,
 ): Promise<Response | void> | void => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
     return CorpusSuggestion.findByIdAndDelete(id)

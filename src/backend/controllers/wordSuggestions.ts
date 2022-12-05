@@ -263,7 +263,8 @@ export const deleteWordSuggestion = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { id, mongooseConnection } = req.params;
+    const { mongooseConnection } = req;
+    const { id } = req.params;
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {

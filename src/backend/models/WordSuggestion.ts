@@ -9,7 +9,6 @@ import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import WordAttributes from '../shared/constants/WordAttributes';
 import WordTags from '../shared/constants/WordTags';
-import SuggestionSource from '../shared/constants/SuggestionSource';
 
 const { Schema, Types } = mongoose;
 
@@ -84,9 +83,9 @@ export const wordSuggestionSchema = new Schema(
     nsibidi: { type: String, default: '', index: true },
     approvals: { type: [{ type: String }], default: [], index: true },
     denials: { type: [{ type: String }], default: [], index: true },
-    source: { type: String, defualt: SuggestionSource.INTERNAL },
+    source: { type: String },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
-    mergedBy: { type: String, default: null, index: true },
+    mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [], index: true },
     twitterPollId: { type: String, default: '' },
   },
@@ -110,7 +109,6 @@ wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
 wordSuggestionSchema.index({
   word: 1,
   merged: 1,
-  mergedBy: 1,
   updatedAt: 1,
   userInteractions: 1,
 });

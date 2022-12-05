@@ -8,7 +8,12 @@ import { normalizeIgbo } from './plugins/normalizationHooks';
 const { Schema, Types } = mongoose;
 // @ts-ignore
 export const exampleSuggestionSchema = new Schema({
-  originalExampleId: { type: Types.ObjectId, ref: 'Example', default: null },
+  originalExampleId: {
+    type: Types.ObjectId,
+    ref: 'Example',
+    default: null,
+    index: true,
+  },
   igbo: { type: String, default: '' },
   english: { type: String, default: '' },
   meaning: { type: String, default: '' },
