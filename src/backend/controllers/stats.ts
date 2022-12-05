@@ -251,10 +251,14 @@ export const getUserMergeStats = async (
         .hint('Merged word suggestion index')
         .limit(WORD_SUGGESTION_QUERY_LIMIT),
     ]);
+    const currentIsoWeek = moment(new Date()).isoWeek();
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
         finalData[isoWeek] = 0;
+      }
+      if (!finalData[currentIsoWeek]) {
+        finalData[currentIsoWeek] = 0;
       }
       return {
         ...finalData,
@@ -265,6 +269,9 @@ export const getUserMergeStats = async (
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
       if (!finalData[isoWeek]) {
         finalData[isoWeek] = 0;
+      }
+      if (!finalData[currentIsoWeek]) {
+        finalData[currentIsoWeek] = 0;
       }
       return {
         ...finalData,
