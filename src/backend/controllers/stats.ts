@@ -238,9 +238,8 @@ export const getUserMergeStats = async (
       .find(
         {
           mergedBy: userId,
-          updatedAt: { $gte: threeMonthsAgo },
+          // updatedAt: { $gte: threeMonthsAgo },
         },
-        'dialects updatedAt',
       )
       .hint({ mergedBy: 1 })
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
