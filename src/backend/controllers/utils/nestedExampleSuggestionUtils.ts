@@ -92,7 +92,7 @@ const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClient
       if (!exampleSuggestion) {
         throw new Error('No example suggestion exists with the provided id.');
       }
-      return updateExampleSuggestion({ id: example.id, data: example });
+      return updateExampleSuggestion({ id: example.id, data: example, mongooseConnection });
     })
     .catch((error) => {
       throw new Error(error.message || 'An error occurred while finding nested example suggestion.');
