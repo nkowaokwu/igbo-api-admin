@@ -235,13 +235,18 @@ export const getUserMergeStats = async (
     console.time(`User ${uid} merge stats`);
     console.time(`User ${uid} word suggestion merge stats`);
     const wordSuggestions = await WordSuggestion
-      .find(
+      .aggregate()
+      .match(
         {
-          mergedBy: userId,
+          mergedBy: { $eq: userId },
           // updatedAt: { $gte: threeMonthsAgo },
         },
       )
-      .hint({ mergedBy: 1 })
+      .project({
+        updatedAt: 1,
+        dialects: 1,
+      })
+      // .hint({ mergedBy: 1 })
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
     console.timeEnd(`User ${uid} word suggestion merge stats`);
 
