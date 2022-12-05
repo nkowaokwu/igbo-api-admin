@@ -129,7 +129,8 @@ export const getWord = async (req: Request, res: Response, next: NextFunction): 
       match: { _id: mongoose.Types.ObjectId(id) },
       examples: true,
       limit: 1,
-    }, mongooseConnection)
+      mongooseConnection,
+    })
       .then(async ([word]: Interfaces.Word[]) => {
         if (!word) {
           throw new Error('No word exists with the provided id.');
