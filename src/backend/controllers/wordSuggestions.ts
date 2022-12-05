@@ -2,6 +2,7 @@ import { Document, Query, Types } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
+import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import { searchForLastWeekQuery, searchPreExistingWordSuggestionsRegexQuery } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
@@ -265,6 +266,7 @@ export const deleteWordSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
@@ -302,6 +304,7 @@ export const deleteWordSuggestion = async (
       .catch((err) => {
         throw new Error(err.message || 'An error has occurred while deleting and return a single word suggestion');
       });
+    await ExampleSuggestion.deleteMany({ associatedWords: id });
     return res.send(result);
   } catch (err) {
     return next(err);
