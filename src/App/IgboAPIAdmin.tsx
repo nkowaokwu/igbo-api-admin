@@ -17,7 +17,7 @@ import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
 import { getResourceObjects } from './Resources';
 
-const Resources = memo(({ permissions } : { permissions: any }) => {
+const Resources = ({ permissions } : { permissions: any }) => {
   const memoizedResources = useMemo(() => getResourceObjects(permissions).map((resource) => (
     <Resource
       name={resource.name}
@@ -40,14 +40,14 @@ const Resources = memo(({ permissions } : { permissions: any }) => {
       {memoizedResources}
     </AdminUI>
   );
-});
+};
 
-const PermissionsManager = memo(({ children } : { children: any }) => {
+const PermissionsManager = ({ children } : { children: any }) => {
   const { permissions } = usePermissions();
   return permissions ? React.Children.map(children, (child) => (
     React.cloneElement(child, { permissions })
   )) : null;
-}, () => true);
+};
 
 const IgboAPIAdmin = memo((): ReactElement => (
   // @ts-expect-error Cypress

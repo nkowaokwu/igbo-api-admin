@@ -31,7 +31,6 @@ import {
   isProduction,
 } from './src/backend/config';
 
-const config = functions.config();
 const server = express();
 const index = fs.readFileSync(`${__dirname}/index.html`, 'utf-8');
 
