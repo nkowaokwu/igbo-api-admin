@@ -97,15 +97,6 @@ uploadWordPronunciation(wordSuggestionSchema);
 normalizeHeadword(wordSuggestionSchema);
 toJSONPlugin(definitionSchema);
 
-wordSuggestionSchema.pre('findOneAndDelete', async function (next) {
-  const wordSuggestionId = this.getQuery()._id;
-  await mongoose
-    .model('ExampleSuggestion')
-    .deleteMany({ associatedWords: wordSuggestionId });
-  // @ts-ignore
-  next();
-});
-
 wordSuggestionSchema.index({
   word: 1,
   merged: 1,

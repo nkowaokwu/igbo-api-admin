@@ -514,7 +514,7 @@ export const deleteWord = async (req: Request, res: Response, next: NextFunction
 
         /* Deletes the specified word and connected wordSuggestions regardless of their merged status */
         await Word.deleteOne({ _id: toBeDeletedWordId });
-        await deleteWordSuggestionsByOriginalWordId(toBeDeletedWordId);
+        await deleteWordSuggestionsByOriginalWordId(toBeDeletedWordId, mongooseConnection);
         await replaceWordIdsFromExampleAssociatedWords(toBeDeletedWordExamples, toBeDeletedWordId, primaryWordId);
         // Returns the result
         return updatedWord.save();
