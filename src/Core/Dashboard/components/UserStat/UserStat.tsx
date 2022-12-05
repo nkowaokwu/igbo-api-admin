@@ -94,7 +94,7 @@ const UserStat = ({
           exampleSuggestionMerges,
           dialectalVariationMerges,
         } = merges;
-        const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek() + 1;
+        const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek();
         const labels = [];
         for (let i = threeMonthsAgoWeek; i <= threeMonthsAgoWeek + THREE_MONTH_WEEKS_COUNT; i += 1) {
           labels.push(`Week of ${moment().isoWeek(i).format('MMMM Do')}`);

@@ -99,17 +99,13 @@ export const postWordSuggestion = async (
 export const findWordSuggestionById = (id: string | Types.ObjectId, mongooseConnection)
 : Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-  return (
-    WordSuggestion.findById(id)
-  );
+  return WordSuggestion.findById(id);
 };
 
 export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectId, mongooseConnection)
 : Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-  return (
-    WordSuggestion.deleteMany({ originalWordId: id })
-  );
+  return WordSuggestion.deleteMany({ originalWordId: id });
 };
 
 /* Grabs WordSuggestions */
