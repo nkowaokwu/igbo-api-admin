@@ -1,4 +1,9 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import {
+  Document,
+  LeanDocument,
+  Connection,
+  Types,
+} from 'mongoose';
 import { Request } from 'express';
 import { Role } from 'src/shared/constants/auth-types';
 import Collections from 'src/shared/constants/Collections';
@@ -18,6 +23,7 @@ export interface EditorRequest extends Request {
   suggestionDoc?: any,
   body: any,
   word?: Word,
+  mongooseConnection: Connection,
 };
 
 export interface WordClientData extends Word {
@@ -42,6 +48,7 @@ export interface WordDialect {
 export interface DefinitionSchema {
   wordClass: string | WordDialect,
   definitions: string[],
+  igboDefinitions: string[],
   _id: Types.ObjectId,
 }
 

@@ -29,7 +29,9 @@ describe('Word Edit', () => {
     await findByText('Is Accented');
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
-    await findByText('Definition Groups (0)');
+    await findByText('Definition Groups (1)');
+    await findByText('Add English Definition');
+    await findByText('Add Igbo Definition');
     await findByText('Word Pronunciation');
     await findByText('Spelling Variations');
     await findByText('Word Stems');
@@ -58,7 +60,7 @@ describe('Word Edit', () => {
   });
 
   it('add a definition group to word suggestion', async () => {
-    const { findByText } = render(
+    const { findByText, findAllByText } = render(
       <TestContext>
         <WordEditForm
           view={Views.EDIT}
@@ -71,9 +73,9 @@ describe('Word Edit', () => {
     );
 
     userEvent.click(await findByText('Add Definition Group'));
-    await findByText('Definition Groups (1)');
-    await findByText('Part of Speech');
-    await findByText('Definitions');
+    await findByText('Definition Groups (2)');
+    await findAllByText('Part of Speech');
+    await findAllByText('Definitions');
   });
 
   it('add a word stem to word suggestion', async () => {

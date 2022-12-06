@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { compact } from 'lodash';
 import moment from 'moment';
 import { exampleSchema } from '../models/Example';
@@ -153,7 +153,11 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
   return { sufficientExamplesCount, completedExamplesCount };
 };
 
-export const getUserStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getUserStats = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { user, params: { uid }, mongooseConnection } = req;
     const userId = uid || user.uid;
@@ -223,7 +227,7 @@ export const getUserStats = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const getUserMergeStats = async (
-  req: Request, res: Response, next: NextFunction,
+  req: Interfaces.EditorRequest, res: Response, next: NextFunction,
 ): Promise<Response | void> => {
   try {
     const { params: { uid }, mongooseConnection } = req;
@@ -296,7 +300,11 @@ export const getUserMergeStats = async (
   }
 };
 
-export const getStats = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getStats = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
     const Stat = mongooseConnection.model('Stat', statSchema);

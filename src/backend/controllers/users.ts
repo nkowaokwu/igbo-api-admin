@@ -67,7 +67,11 @@ export const findPermittedUserEmails = async (): Promise<string[]> => {
 };
 
 /* Grab all users in the Firebase database */
-export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
+export const getUsers = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
   try {
     const { skip, limit, filters } = handleQueries(req);
     const users = (await findUsers()).filter((user) => (
@@ -98,7 +102,11 @@ export const findUser = async (uid: string): Promise<Interfaces.FormattedUser | 
 };
 
 /* Grab a single user from the Firebase database */
-export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getUser = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
   try {
     const { uid } = req.params;
     const user = await findUser(uid);

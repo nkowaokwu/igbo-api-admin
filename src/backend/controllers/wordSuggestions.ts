@@ -1,5 +1,5 @@
 import { Document, Query, Types } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
@@ -227,7 +227,11 @@ export const getWordSuggestions = (
 };
 
 /* Returns a single WordSuggestion by using an id */
-export const getWordSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getWordSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -255,7 +259,7 @@ export const getWordSuggestion = async (req: Request, res: Response, next: NextF
 
 /* Deletes a single WordSuggestion by using an id */
 export const deleteWordSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -325,7 +329,7 @@ export const getNonMergedWordSuggestions = (mongooseConnection):Promise<any> => 
 };
 
 export const approveWordSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {
@@ -350,7 +354,7 @@ export const approveWordSuggestion = async (
 };
 
 export const denyWordSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {

@@ -134,7 +134,7 @@ const StemsForm = ({
     }
   };
   return (
-    <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
+    <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2 " height="fit-content">
       <Controller
         render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
         name="stems"

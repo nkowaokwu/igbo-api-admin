@@ -69,47 +69,6 @@ const Example = ({
         data-associated-words={associatedWords}
         className="flex flex-col w-full space-y-3"
       >
-        <Box position="absolute">
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Original Example Id"
-                data-test={`examples-${index}-originalExampleId`}
-              />
-            )}
-            name={`examples[${index}].originalExampleId`}
-            defaultValue={originalExampleId}
-            control={control}
-          />
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Example Id"
-                data-test={`examples-${index}-id`}
-              />
-            )}
-            name={`examples[${index}].id`}
-            defaultValue={id}
-            control={control}
-          />
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Associated Definitions Schema"
-                data-test={`examples-${index}-associatedDefinitionsSchemas`}
-              />
-            )}
-            name={`examples[${index}].associatedDefinitionsSchemas`}
-            defaultValue={associatedDefinitionsSchemas}
-            control={control}
-          />
-        </Box>
         <h3 className="text-gray-700">Igbo:</h3>
         <Controller
           render={({ onChange, ...props }) => (
@@ -174,6 +133,47 @@ const Example = ({
           name={`examples[${index}].pronunciation`}
           control={control}
         />
+        <Box position="absolute">
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input invisible"
+                placeholder="Original Example Id"
+                data-test={`examples-${index}-originalExampleId`}
+              />
+            )}
+            name={`examples[${index}].originalExampleId`}
+            defaultValue={originalExampleId}
+            control={control}
+          />
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input invisible"
+                placeholder="Example Id"
+                data-test={`examples-${index}-id`}
+              />
+            )}
+            name={`examples[${index}].id`}
+            defaultValue={id}
+            control={control}
+          />
+          <Controller
+            render={(props) => (
+              <Input
+                {...props}
+                className="form-input invisible"
+                placeholder="Associated Definitions Schema"
+                data-test={`examples-${index}-associatedDefinitionsSchemas`}
+              />
+            )}
+            name={`examples[${index}].associatedDefinitionsSchemas`}
+            defaultValue={associatedDefinitionsSchemas}
+            control={control}
+          />
+        </Box>
       </Box>
       <IconButton
         colorScheme="red"

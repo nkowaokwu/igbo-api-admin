@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
-import { Controller } from 'react-hook-form';
 import { Box, Button, Tooltip } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
-import { Textarea } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
 import DefinitionsFormInterface from './DefinitionsFormInterface';
 import PartOfSpeechForm from '../PartOfSpeechForm';
+import EnglishDefinitions from './EnglishDefinitions';
+import IgboDefinitions from './IgboDefinitions';
 
 const DefinitionsForm = ({
   getValues,
@@ -36,9 +36,19 @@ const DefinitionsForm = ({
     updateDefinitions[groupIndex].definitions.push('');
     setDefinitions(updateDefinitions);
   };
+  const handleAddGroupIgboDefinition = (groupIndex) => {
+    const updateDefinitions = [...definitions];
+    updateDefinitions[groupIndex].igboDefinitions.push('');
+    setDefinitions(updateDefinitions);
+  };
   const handleDeleteGroupDefinition = (groupIndex, nestedDefinitionIndex) => {
     const updateDefinitions = [...definitions];
     updateDefinitions[groupIndex].definitions.splice(nestedDefinitionIndex, 1);
+    setDefinitions(updateDefinitions);
+  };
+  const handleDeleteGroupIgboDefinition = (groupIndex, nestedDefinitionIndex) => {
+    const updateDefinitions = [...definitions];
+    updateDefinitions[groupIndex].igboDefinitions.splice(nestedDefinitionIndex, 1);
     setDefinitions(updateDefinitions);
   };
 
@@ -61,10 +71,8 @@ const DefinitionsForm = ({
           Add Definition Group
         </Button>
       </Box>
-      <Box className={`w-full grid grid-flow-row grid-cols-1
-        ${definitions.length > 1 ? 'lg:grid-cols-2' : ''} gap-4 px-3`}
-      >
-        {definitions.map(({ definitions: nestedDefinitions, _id }, index) => (
+      <Box className="w-full grid grid-flow-row grid-cols-1 gap-4 px-3">
+        {definitions.map(({ definitions: nestedDefinitions, igboDefinitions = [], _id }, index) => (
           <Box
             borderBottomWidth="1px"
             borderBottomColor="gray.300"
@@ -77,7 +85,14 @@ const DefinitionsForm = ({
                   variant="ghost"
                   colorScheme="red"
                   leftIcon={<DeleteIcon color="red" />}
+                  padding={0}
                   onClick={() => handleDeleteDefinitionGroup(index)}
+                  _hover={{
+                    background: 'transparent',
+                  }}
+                  _active={{
+                    background: 'transparent',
+                  }}
                 >
                   Delete Definition Group
                 </Button>
@@ -95,54 +110,25 @@ const DefinitionsForm = ({
             <Box className="flex flex-row items-center my-5 w-full justify-between">
               <FormHeader
                 title="Definitions"
-                tooltip="Separate definitions if each are vastly different in contextual meaning"
+                tooltip="Separate definitions if each are vastly different in
+                contextual meaning. Igbo definitions are written in Igbo."
               />
             </Box>
-            {nestedDefinitions.map((nestedDefinition, nestedDefinitionIndex) => (
-              <Box key={nestedDefinition}>
-                <Box className="list-container">
-                  <h3 className="text-xl text-gray-600 mr-2">
-                    {`${nestedDefinitionIndex + 1}.`}
-                  </h3>
-                  <Controller
-                    render={(props) => (
-                      <Textarea
-                        {...props}
-                        rows={3}
-                        className="form-textarea"
-                        placeholder="Definition in English"
-                        data-test={`nested-definitions-${nestedDefinitionIndex}-input`}
-                      />
-                    )}
-                    name={`definitions[${index}].definitions[${nestedDefinitionIndex}]`}
-                    defaultValue={nestedDefinition}
-                    control={control}
-                    rules={{
-                      required: !index,
-                    }}
-                  />
-                  {index ? (
-                    <Button
-                      colorScheme="red"
-                      onClick={() => handleDeleteGroupDefinition(index, nestedDefinitionIndex)}
-                      className="ml-3"
-                      leftIcon={<DeleteIcon />}
-                    >
-                      Delete
-                    </Button>
-                  ) : null }
-                </Box>
-              </Box>
-            ))}
-            <Box className="flex justify-center items-center bg-gray-200 py-6 px-4rounded mb-4">
-              <Button
-                colorScheme="green"
-                aria-label="Add Definition"
-                onClick={() => handleAddGroupDefinition(index)}
-                leftIcon={<AddIcon />}
-              >
-                Add Definition
-              </Button>
+            <Box className="flex flex-col lg:flex-row justify-center items-start w-full space-x-12">
+              <EnglishDefinitions
+                nestedDefinitions={nestedDefinitions}
+                index={index}
+                control={control}
+                handleDeleteGroupDefinition={handleDeleteGroupDefinition}
+                handleAddGroupDefinition={handleAddGroupDefinition}
+              />
+              <IgboDefinitions
+                igboDefinitions={igboDefinitions}
+                index={index}
+                control={control}
+                handleDeleteGroupIgboDefinition={handleDeleteGroupIgboDefinition}
+                handleAddGroupIgboDefinition={handleAddGroupIgboDefinition}
+              />
             </Box>
             {(errors.definitions || [])[index] ? (
               <p className="error relative">Definition is required</p>

@@ -256,7 +256,7 @@ describe('MongoDB Words', () => {
       expect(wordSuggestionRes.status).toEqual(200);
       const secondWord = await createWordFromSuggestion(updatedWordSuggestionData);
       const thirdWordSuggestionRes = await suggestNewWord({ ...wordSuggestionData, originalWordId: secondWord.id });
-      const combinedWordRes = await deleteWord(word.id, secondWord.id);
+      const combinedWordRes = await deleteWord(word.id.toString(), secondWord.id.toString());
       expect(combinedWordRes.status).toEqual(200);
       const firstNonExistentWordSuggestionRes = await getWordSuggestion(wordSuggestionRes.body.id);
       expect(firstNonExistentWordSuggestionRes.status).toEqual(404);

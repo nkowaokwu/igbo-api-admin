@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import Joi from 'joi';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import WordTags from '../shared/constants/WordTags';
 
 const { Types } = mongoose;
@@ -17,7 +18,7 @@ export const corpusDataSchema = Joi.object().keys({
   editorsNotes: Joi.string().allow('').optional(),
 });
 
-export default async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {
   const { body: finalData } = req;
 
   try {

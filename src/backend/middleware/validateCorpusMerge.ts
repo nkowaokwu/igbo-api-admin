@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { findCorpusSuggestionById } from '../controllers/corpusSuggestions';
 
@@ -13,9 +13,13 @@ const corpusMergeDataSchema = Joi.object().keys({
   }),
 });
 
-export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
-  const { body: finalData, user } = req;
-  const suggestionDoc: any = (await findCorpusSuggestionById(finalData.id));
+export default async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
+  const { body: finalData, user, mongooseConnection } = req;
+  const suggestionDoc: any = (await findCorpusSuggestionById(finalData.id, mongooseConnection));
   req.suggestionDoc = suggestionDoc;
 
   if (!user || (user && !user.uid)) {

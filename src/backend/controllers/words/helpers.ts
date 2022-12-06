@@ -1,11 +1,13 @@
-import { Document } from 'mongoose';
-import Word from 'src/backend/models/Word';
+import { Connection, Document } from 'mongoose';
+import { wordSchema } from 'src/backend/models/Word';
 import * as Interfaces from '../utils/interfaces';
 
 /* Syncs up relatedTerms links between word documents */
 export const handleSyncingSynonyms = async (
   wordDoc: Document<Interfaces.Word> | Interfaces.Word,
+  mongooseConnect: Connection,
 ): Promise<Document<Interfaces.Word>> => {
+  const Word = mongooseConnect.model('Word', wordSchema);
   // Remove the current Word document id from other Word document ids
   const wordDocsWithCurrentWord: Document<Interfaces.Word>[] = await Word.find({ relatedTerms: [wordDoc.id] });
   await Promise.all(wordDocsWithCurrentWord.map(async (wordDocWithCurrentWord: Interfaces.Word) => {
@@ -13,7 +15,7 @@ export const handleSyncingSynonyms = async (
       wordDocWithCurrentWord.relatedTerms = wordDocWithCurrentWord.relatedTerms.filter((relatedTerm) => (
         relatedTerm.toString() !== wordDoc.id.toString()
       ));
-      return wordDocWithCurrentWord.save();
+      return await wordDocWithCurrentWord.save();
     } catch (err) {
       return null;
     }
@@ -26,7 +28,7 @@ export const handleSyncingSynonyms = async (
   await Promise.all(wordDocsWithoutCurrentWord.map(async (wordDocWithoutCurrentWord: Interfaces.Word) => {
     try {
       wordDocWithoutCurrentWord.relatedTerms.push(wordDoc.id);
-      return wordDocWithoutCurrentWord.save();
+      return await wordDocWithoutCurrentWord.save();
     } catch (err) {
       return null;
     }
@@ -37,7 +39,9 @@ export const handleSyncingSynonyms = async (
 /* Syncs up antonyms links between word documents */
 export const handleSyncingAntonyms = async (
   wordDoc: Document<Interfaces.Word> | Interfaces.Word,
+  mongooseConnect: Connection,
 ): Promise<Document<Interfaces.Word>> => {
+  const Word = mongooseConnect.model('Word', wordSchema);
   // Remove the current Word document id from other Word document ids
   const wordDocsWithCurrentWord: Document<Interfaces.Word>[] = await Word.find({ antonyms: [wordDoc.id] });
   await Promise.all(wordDocsWithCurrentWord.map(async (wordDocWithCurrentWord: Interfaces.Word) => {
@@ -45,7 +49,7 @@ export const handleSyncingAntonyms = async (
       wordDocWithCurrentWord.antonyms = wordDocWithCurrentWord.antonyms.filter((antonym) => (
         antonym.toString() !== wordDoc.id.toString()
       ));
-      return wordDocWithCurrentWord.save();
+      return await wordDocWithCurrentWord.save();
     } catch (err) {
       return null;
     }
@@ -58,7 +62,7 @@ export const handleSyncingAntonyms = async (
   await Promise.all(wordDocsWithoutCurrentWord.map(async (wordDocWithoutCurrentWord: Interfaces.Word) => {
     try {
       wordDocWithoutCurrentWord.antonyms.push(wordDoc.id);
-      return wordDocWithoutCurrentWord.save();
+      return await wordDocWithoutCurrentWord.save();
     } catch (err) {
       return null;
     }

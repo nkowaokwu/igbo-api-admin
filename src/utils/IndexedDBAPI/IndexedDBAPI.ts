@@ -50,7 +50,7 @@ const putDocument = async ({
   resource: Collection,
   data: CachedDocument,
 }): Promise<any | null> => {
-  if (window?.indexedDB) {
+  if (window?.indexedDB && data) {
     data.cachedAt = Date.now();
     const existingDocument = await getDocument({ resource, id: data.id });
     if (existingDocument) {

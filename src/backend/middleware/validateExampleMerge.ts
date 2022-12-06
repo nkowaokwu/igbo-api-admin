@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import Joi from 'joi';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 const { Types } = mongoose;
 const exampleMergeDataSchema = Joi.object().keys({
@@ -12,7 +13,11 @@ const exampleMergeDataSchema = Joi.object().keys({
   }),
 });
 
-export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
+export default async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
   const { body: finalData, user } = req;
 
   if (!user || (user && !user.uid)) {

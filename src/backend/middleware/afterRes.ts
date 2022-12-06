@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 
-export default () => async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export default () => async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<void> => {
   // Create a MongoDB connection
   const mongooseConnection = await connectDatabase();
 

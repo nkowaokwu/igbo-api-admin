@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import TwitterApi from 'twitter-api-v2';
 import moment from 'moment';
 import axios from 'axios';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import Collections from 'src/shared/constants/Collections';
 import {
   TWITTER_CLIENT_ID,
@@ -55,7 +56,10 @@ export const onTwitterAuth = async (_: Request, res: Response): Promise<void> =>
 };
 
 /* Saves access and refresh token provided by Twitter */
-export const onTwitterCallback = async (req: Request, res: Response): Promise<void | Response<any>> => {
+export const onTwitterCallback = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+): Promise<void | Response<any>> => {
   const { state, code } = req.query;
 
   const dbSnapshot = await dbRef.get();
@@ -114,7 +118,7 @@ export const onDeleteConstructedTermPoll = functions.https.onCall(
 );
 
 /* Posts a new constructed term poll to the @nkowaokwu Twitter account */
-export const onSubmitConstructedTermPoll = async (req: Request, res: Response): Promise<any> => {
+export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest, res: Response): Promise<any> => {
   const { body } = req;
   const dbPollsRef = db.collection(Collections.POLLS);
 
@@ -152,7 +156,7 @@ export const onSubmitConstructedTermPoll = async (req: Request, res: Response): 
 };
 
 /* Enables paginating through all available polls */
-export const getPolls = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export const getPolls = async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<any> => {
   try {
     const { skip, limit } = handleQueries(req);
     const { refreshToken } = (await dbRef.get()).data();

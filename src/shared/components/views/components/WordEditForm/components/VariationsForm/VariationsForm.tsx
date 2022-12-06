@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, IconButton } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
@@ -9,7 +9,7 @@ import VariationsFormInterface from './VariationsFormInterface';
 const VariationsForm = (
   { variations, setVariations, control }: VariationsFormInterface,
 ): ReactElement => (
-  <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
+  <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2 " height="fit-content">
     <Box className="flex items-center my-5 w-full justify-between">
       <FormHeader
         title="Spelling Variations"
@@ -38,19 +38,17 @@ const VariationsForm = (
           control={control}
           defaultValue={variations[index]}
         />
-        <Button
+        <IconButton
           colorScheme="red"
           aria-label="Delete Variation"
+          icon={<DeleteIcon />}
           onClick={() => {
             const filteredVariations = [...variations];
             filteredVariations.splice(index, 1);
             setVariations(filteredVariations);
           }}
           className="ml-3"
-          leftIcon={<DeleteIcon />}
-        >
-          Delete
-        </Button>
+        />
       </Box>
     )) : (
       <Box className="flex w-full justify-center">

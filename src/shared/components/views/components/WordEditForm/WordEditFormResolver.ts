@@ -28,6 +28,7 @@ const schema = yup.object().shape({
       }
       return false;
     }),
+    igboDefinitions: yup.array().min(0).of(yup.string()).optional(),
   })),
   variations: yup.array().min(0).of(yup.string()),
   dialects: yup.array().min(0).of(yup.object().shape({

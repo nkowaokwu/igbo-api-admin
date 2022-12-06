@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import Joi from 'joi';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import SuggestionSource from '../shared/constants/SuggestionSource';
 import ExampleStyle from '../shared/constants/ExampleStyle';
 
@@ -46,7 +47,7 @@ export const exampleDataSchema = Joi.object().keys({
   source: Joi.string().valid(...Object.values(SuggestionSource)).optional(),
 });
 
-export default async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {
   const { body: finalData } = req;
 
   try {

@@ -1,5 +1,5 @@
 import { Document, Query, Model } from 'mongoose';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import stringSimilarity from 'string-similarity';
 import diacriticless from 'diacriticless';
 import {
@@ -9,13 +9,13 @@ import {
   map,
   compact,
 } from 'lodash';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removePrefix from 'src/backend/shared/utils/removePrefix';
 import createQueryRegex from 'src/backend/shared/utils/createQueryRegex';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import HandledQueriesType from 'src/backend/controllers/utils/HandledQueriesType';
 import { findUser } from '../users';
-import * as Interfaces from './interfaces';
 
 const DEFAULT_RESPONSE_LIMIT = 10;
 const MAX_RESPONSE_LIMIT = 100;
@@ -228,7 +228,7 @@ const parseSortKeys = (sort: string): { key: string, direction: string } | null 
 /* Handles all the queries for searching in the database */
 export const handleQueries = (
   { query = {}, user = {}, mongooseConnection }:
-  Request<{ query?: any, user?: any }>,
+  Interfaces.EditorRequest,
 ): HandledQueriesType => {
   const {
     keyword = '',
