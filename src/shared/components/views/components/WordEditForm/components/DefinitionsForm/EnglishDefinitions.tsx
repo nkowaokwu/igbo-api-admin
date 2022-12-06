@@ -43,7 +43,7 @@ const EnglishDefinitions = ({
               required: !index,
             }}
           />
-          {index ? (
+          {nestedDefinitionIndex ? (
             <Button
               colorScheme="red"
               onClick={() => handleDeleteGroupDefinition(index, nestedDefinitionIndex)}

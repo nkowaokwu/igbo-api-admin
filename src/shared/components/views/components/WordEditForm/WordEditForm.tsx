@@ -313,21 +313,26 @@ const WordEditForm = ({
         control={control}
         errors={errors}
       />
-      <VariationsForm
-        variations={variations}
-        setVariations={setVariations}
-        control={control}
-      />
-      {!areAllWordClassesInvalidForRelatedTerms ? (
-        <RelatedTermsForm
-          errors={errors}
-          relatedTerms={relatedTerms}
-          setRelatedTerms={setRelatedTerms}
+      <Box className={`flex 
+        ${!areAllWordClassesInvalidForRelatedTerms ? 'lg:flex-row lg:space-x-3 lg:justify-between' : ''} 
+        flex-col`}
+      >
+        <VariationsForm
+          variations={variations}
+          setVariations={setVariations}
           control={control}
-          setValue={setValue}
-          record={record}
         />
-      ) : null}
+        {!areAllWordClassesInvalidForRelatedTerms ? (
+          <RelatedTermsForm
+            errors={errors}
+            relatedTerms={relatedTerms}
+            setRelatedTerms={setRelatedTerms}
+            control={control}
+            setValue={setValue}
+            record={record}
+          />
+        ) : null}
+      </Box>
       {/*
         * Must use record.dialects in order for all dialects to render on first pain
         * in order for react-hook-form to initialize all their values in the form.

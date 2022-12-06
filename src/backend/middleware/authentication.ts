@@ -1,14 +1,15 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { forIn } from 'lodash';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import AUTH_TOKEN from '../shared/constants/testAuthTokens';
 import UserRoles from '../shared/constants/UserRoles';
 
 const config = functions.config();
 /* Validates the user-provided auth token */
 const authentication = async (
-  req: Request, res: Response, next: NextFunction,
+  req: Interfaces.EditorRequest, res: Response, next: NextFunction,
 ): Promise<Response | void> => {
   try {
     const authHeader = req?.headers?.Authorization || req?.headers?.authorization;

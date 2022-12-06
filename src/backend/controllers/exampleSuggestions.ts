@@ -1,5 +1,5 @@
-import { Document, Query } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Connection, Document, Query } from 'mongoose';
+import { Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { wordSchema } from '../models/Word';
@@ -16,7 +16,7 @@ import { findUser } from './users';
 
 export const createExampleSuggestion = async (
   data: Interfaces.ExampleClientData,
-  mongooseConnection,
+  mongooseConnection: Connection,
 ): Promise<Interfaces.ExampleSuggestion> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   try {
@@ -44,9 +44,14 @@ export const createExampleSuggestion = async (
 };
 
 /* Creates a new ExampleSuggestion document in the database */
-export const postExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export const postExampleSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
   try {
     const { body: data, user, mongooseConnection } = req;
+    const Word = mongooseConnection.model('Word', wordSchema);
 
     data.authorId = user.uid;
     await Promise.all(
@@ -112,7 +117,11 @@ export const updateExampleSuggestion = (
 };
 
 /* Updates an existing ExampleSuggestion object */
-export const putExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export const putExampleSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<any> => {
   try {
     const { body: data, params: { id }, mongooseConnection } = req;
     const Word = mongooseConnection.model('Word', wordSchema);
@@ -158,7 +167,11 @@ const findExampleSuggestions = (
 };
 
 /* Returns all existing ExampleSuggestion objects */
-export const getExampleSuggestions = (req: Request, res: Response, next: NextFunction): Promise<any> | void => {
+export const getExampleSuggestions = (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> | void => {
   try {
     const {
       regexKeyword,
@@ -196,7 +209,11 @@ export const getExampleSuggestions = (req: Request, res: Response, next: NextFun
 };
 
 /* Returns a single ExampleSuggestion by using an id */
-export const getExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> | void => {
+export const getExampleSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<any> | void => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -247,7 +264,11 @@ export const removeExampleSuggestion = (id: string, mongooseConnection): Promise
 };
 
 /* Deletes a single ExampleSuggestion by using an id */
-export const deleteExampleSuggestion = async (req: Request, res: Response, next: NextFunction): Promise<any> | void => {
+export const deleteExampleSuggestion = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<any> | void => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -277,7 +298,7 @@ export const getNonMergedExampleSuggestions = (mongooseConnection): Promise<any>
 };
 
 export const approveExampleSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.ExampleSuggestion> | void> => {
@@ -302,7 +323,7 @@ export const approveExampleSuggestion = async (
 };
 
 export const denyExampleSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.ExampleSuggestion> | void> => {

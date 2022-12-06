@@ -1,5 +1,5 @@
 import mongoose, { Document, LeanDocument } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import {
   assign,
   filter,
@@ -42,7 +42,7 @@ import * as Interfaces from '../utils/interfaces';
 import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
 
 /* Gets words from JSON dictionary */
-export const getWordData = (req: Request, res: Response, next: NextFunction): Response | void => {
+export const getWordData = (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
   try {
     const { keyword } = req.query;
     const searchWord = removePrefix(keyword);
@@ -120,7 +120,11 @@ export const getWords = async (
 };
 
 /* Returns a word from MongoDB using an id */
-export const getWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getWord = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -151,7 +155,7 @@ export const createWord = async (
     | Interfaces.WordSuggestion
     | LeanDocument<Document<Interfaces.WordClientData | Interfaces.WordSuggestion>>
   ),
-  mongooseConnection: any,
+  mongooseConnection: mongoose.Connection,
 ): Promise<Document<Interfaces.Word>> => {
   const {
     examples,
@@ -395,8 +399,8 @@ export const mergeWord = async (
         ? await mergeIntoWord(suggestionDoc, user.uid, mongooseConnection)
         : await createWordFromSuggestion(suggestionDoc, user.uid, mongooseConnection)
     ) || {};
-    await handleSyncingSynonyms(mergedWord);
-    await handleSyncingAntonyms(mergedWord);
+    await handleSyncingSynonyms(mergedWord, mongooseConnection);
+    await handleSyncingAntonyms(mergedWord, mongooseConnection);
     await handleSendingMergedEmail({
       ...(mergedWord.toObject ? mergedWord.toObject() : mergedWord),
       wordClass: WordClass[suggestionDoc.wordClass]?.label || 'No word class',
@@ -430,7 +434,11 @@ const findAndUpdateWord = (
 };
 
 /* Updates a Word document in the database */
-export const putWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const putWord = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { body: data, params: { id }, mongooseConnection } = req;
     if (!data.word) {
@@ -464,7 +472,11 @@ const replaceWordIdsFromExampleAssociatedWords = (examples: Interfaces.Example[]
 /* Deletes the specified Word document while moving its contents
  * to another Word document, which preserves the original Word
  * document's data */
-export const deleteWord = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const deleteWord = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<Response | void> => {
   try {
     const { body: data, params: { id: toBeDeletedWordId }, mongooseConnection } = req;
     const { primaryWordId }: { primaryWordId: string } = data;
@@ -529,7 +541,7 @@ export const deleteWord = async (req: Request, res: Response, next: NextFunction
 
 /* Grabs all Word Suggestions that are associated with a Word document */
 export const getAssociatedWordSuggestions = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -547,7 +559,7 @@ export const getAssociatedWordSuggestions = async (
 
 /* Grabs all Word Suggestions that are associated with a Word document by looking at the Twitter Id */
 export const getAssociatedWordSuggestionsByTwitterId = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -564,7 +576,7 @@ export const getAssociatedWordSuggestionsByTwitterId = async (
 };
 
 /* Returns all the WordSuggestions with audio pronunciations */
-export const getTotalWordsWithAudioPronunciations = (mongooseConnection): Promise<any> => {
+export const getTotalWordsWithAudioPronunciations = (mongooseConnection: mongoose.Connection): Promise<any> => {
   const Word = mongooseConnection.model('Word', wordSchema);
   return Word
     .find(searchForAllWordsWithAudioPronunciations())
@@ -573,7 +585,7 @@ export const getTotalWordsWithAudioPronunciations = (mongooseConnection): Promis
 };
 
 /* Returns all the WordSuggestions that's in Standard Igbo */
-export const getTotalWordsInStandardIgbo = (mongooseConnection): Promise<any> => {
+export const getTotalWordsInStandardIgbo = (mongooseConnection: mongoose.Connection): Promise<any> => {
   const Word = mongooseConnection.model('Word', wordSchema);
 
   return Word

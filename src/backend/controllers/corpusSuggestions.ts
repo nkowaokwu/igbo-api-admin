@@ -1,5 +1,5 @@
 import { Document, Query, Types } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { assign } from 'lodash';
 import { corpusSuggestionSchema } from '../models/CorpusSuggestion';
 import { packageResponse, handleQueries } from './utils';
@@ -61,7 +61,7 @@ const findCorpusSuggestions = async (
 
 /* Updates an existing CorpusSuggestion object */
 export const putCorpusSuggestion = (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> | void => {
@@ -131,12 +131,14 @@ export const getCorpusSuggestions = (
 
 /* Returns a single CorpusSuggestion by using an id */
 export const getCorpusSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id } = req.params;
+    const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
     const populatedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await CorpusSuggestion
       .findById(id)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
@@ -153,7 +155,7 @@ export const getCorpusSuggestion = async (
 
 /* Deletes a single CorpusSuggestion by using an id */
 export const deleteCorpusSuggestion = (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> | void => {
@@ -189,7 +191,7 @@ export const deleteCorpusSuggestion = (
 };
 
 export const approveCorpusSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
@@ -214,7 +216,7 @@ export const approveCorpusSuggestion = async (
 };
 
 export const denyCorpusSuggestion = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {

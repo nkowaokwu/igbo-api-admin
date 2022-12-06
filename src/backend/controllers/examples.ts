@@ -1,5 +1,5 @@
 import mongoose, { Document, Query } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import {
   assign,
   some,
@@ -102,7 +102,7 @@ export const findExampleByAssociatedWordId = (id: string, mongooseConnection)
 
 /* Returns an example from MongoDB using an id */
 export const getExample = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -218,7 +218,7 @@ const handleSendingMergedEmail = async (result, mongooseConnection): Promise<voi
 /* Merges the existing ExampleSuggestion into either a brand
  * new Example document or merges into an existing Example document */
 export const mergeExample = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -241,7 +241,7 @@ export const mergeExample = async (
 
 /* Updates an Example document in the database */
 export const putExample = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -280,7 +280,7 @@ export const putExample = async (
 
 /* Grabs all Example Suggestions that are associated with a Example document */
 export const getAssociatedExampleSuggestions = async (
-  req: Request,
+  req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
@@ -296,7 +296,11 @@ export const getAssociatedExampleSuggestions = async (
 };
 
 /* Deletes the specified Example document */
-export const deleteExample = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const deleteExample = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
     const { id: exampleId } = req.params;

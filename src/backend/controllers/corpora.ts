@@ -1,5 +1,5 @@
-import mongoose, { Document, LeanDocument } from 'mongoose';
-import { Request, Response, NextFunction } from 'express';
+import mongoose, { Connection, Document, LeanDocument } from 'mongoose';
+import { Response, NextFunction } from 'express';
 import { assign, omit } from 'lodash';
 import { corpusSchema } from 'src/backend/models/Corpus';
 import { corpusSuggestionSchema } from 'src/backend/models/CorpusSuggestion';
@@ -74,13 +74,20 @@ export const getCorpora = async (
 };
 
 /* Returns a corpus from MongoDB using an id */
-export const getCorpus = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const getCorpus = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
+    const { mongooseConnection } = req;
     const { id } = req.params;
+    const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
     const updatedCorpus = await findCorporaWithMatch({
       match: { _id: mongoose.Types.ObjectId(id) },
       limit: 1,
+      Corpus,
     })
       .then(async ([corpus]: Interfaces.Corpus[]) => {
         if (!corpus) {
@@ -94,10 +101,15 @@ export const getCorpus = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-const findAndUpdateCorpus = (id: string, cb: (any) => Interfaces.Corpus): Promise<Interfaces.Corpus> => {
+const findAndUpdateCorpus = (
+  id: string,
+  mongooseConnection: Connection,
+  cb: (any) => Interfaces.Corpus,
+): Promise<Interfaces.Corpus> => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new Error(!id ? 'No corpus id provided' : 'Invalid corpus id provided');
   }
+  const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
   return Corpus.findById(id)
     .then(async (corpus: Interfaces.Corpus) => {
@@ -109,10 +121,14 @@ const findAndUpdateCorpus = (id: string, cb: (any) => Interfaces.Corpus): Promis
 };
 
 /* Updates a Corpus document in the database */
-export const putCorpus = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+export const putCorpus = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   try {
-    const { body: data, params: { id } } = req;
-    const savedCorpus: Interfaces.Corpus = await findAndUpdateCorpus(id, (corpus) => {
+    const { body: data, params: { id }, mongooseConnection } = req;
+    const savedCorpus: Interfaces.Corpus = await findAndUpdateCorpus(id, mongooseConnection, (corpus) => {
       const updatedCorpus = assign(corpus, data);
       return updatedCorpus.save();
     });

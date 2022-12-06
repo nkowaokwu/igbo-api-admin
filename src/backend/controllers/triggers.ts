@@ -1,9 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { sendCreatedSuggestionNotification } from './email';
 
 /* If triggered by clients, a new suggestion email to all editors, mergers, and admins */
 export const onSendNewSuggestionsEmail = async (
-  req: Request, res: Response, next: NextFunction,
+  req: Interfaces.EditorRequest, res: Response, next: NextFunction,
 ): Promise<Response | void> => {
   try {
     const { body: data } = req;

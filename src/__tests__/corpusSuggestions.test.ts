@@ -106,7 +106,7 @@ describe('MongoDB Corpus Suggestions', () => {
     });
 
     it('should return error for non existent corpus suggestion', async () => {
-      const res = await getCorpusSuggestion(corpusSuggestionId);
+      const res = await getCorpusSuggestion(corpusSuggestionId.toString());
       expect(res.status).toEqual(404);
       expect(res.body.error).not.toEqual(undefined);
     });

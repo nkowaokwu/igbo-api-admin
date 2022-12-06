@@ -40,7 +40,7 @@ const IgboDefinitions = ({
             defaultValue={igboDefinition}
             control={control}
           />
-          {index ? (
+          {igboDefinitionIndex ? (
             <Button
               colorScheme="red"
               onClick={() => handleDeleteGroupIgboDefinition(index, igboDefinitionIndex)}

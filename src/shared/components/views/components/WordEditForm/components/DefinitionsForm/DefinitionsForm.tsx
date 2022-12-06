@@ -114,7 +114,7 @@ const DefinitionsForm = ({
                 contextual meaning. Igbo definitions are written in Igbo."
               />
             </Box>
-            <Box className="flex flex-col lg:flex-row justify-center items-center w-full space-x-12">
+            <Box className="flex flex-col lg:flex-row justify-center items-start w-full space-x-12">
               <EnglishDefinitions
                 nestedDefinitions={nestedDefinitions}
                 index={index}

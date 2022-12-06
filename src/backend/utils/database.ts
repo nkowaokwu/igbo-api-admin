@@ -33,8 +33,8 @@ export const disconnectDatabase = (connection: mongoose.Connection): Promise<voi
     connection.once('close', () => {
       if (config?.runtime?.env === 'production') {
         console.log('🗃 Database is connection closed', process.env.CI, MONGO_URI);
-        resolve();
       }
+      resolve();
     });
   }
 });

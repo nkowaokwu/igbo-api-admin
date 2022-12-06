@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import admin from 'firebase-admin';
 import { omit, pick } from 'lodash';
 import moment from 'moment';
@@ -9,7 +9,11 @@ import { handleQueries } from './utils';
 
 const db = admin.firestore();
 /* Enables paginating through all available notifications for a user */
-export const getNotifications = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export const getNotifications = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
   try {
     const { user } = req;
     const { skip, limit } = handleQueries(req);
@@ -34,7 +38,11 @@ export const getNotifications = async (req: Request, res: Response, next: NextFu
   };
 };
 
-export const getNotification = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+export const getNotification = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
   try {
     const { user, params: { id } } = req;
     const dbUserNotificationRef = db.collection(
@@ -109,7 +117,11 @@ export const postNotification = async ({
   }
 };
 
-export const deleteNotification = async (req: Request, res: Response, next: NextFunction): Promise<any | void> => {
+export const deleteNotification = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
   try {
     const { user, params: { id } } = req;
     const dbNotificationsRef = db.collection(`${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`);
