@@ -15,8 +15,8 @@ const wordMergeDataSchema = Joi.object().keys({
 });
 
 export default async (req: Request, res: Response, next: NextFunction): Promise<Response<any> | void> => {
-  const { body: finalData, user } = req;
-  const suggestionDoc: any = ((await findWordSuggestionById(finalData.id))
+  const { body: finalData, user, mongooseConnection } = req;
+  const suggestionDoc: any = ((await findWordSuggestionById(finalData.id, mongooseConnection))
   || (await findGenericWordById(finalData.id)));
   req.suggestionDoc = suggestionDoc;
 
