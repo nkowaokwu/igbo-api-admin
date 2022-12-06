@@ -256,6 +256,7 @@ const overwriteWordPronunciation = async (
   word: Interfaces.Word,
   mongooseConnection: any,
 ): Promise<Document<Interfaces.Word>> => {
+  const Word = mongooseConnection.model('Word', wordSchema);
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   try {
     /**
