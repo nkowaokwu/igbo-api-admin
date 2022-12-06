@@ -20,6 +20,7 @@ const definitionSchema = new Schema({
   },
   label: { type: String, default: '', trim: true },
   definitions: { type: [{ type: String }], default: [] },
+  igboDefinitions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin });
 
 const dialectSchema = new Schema({

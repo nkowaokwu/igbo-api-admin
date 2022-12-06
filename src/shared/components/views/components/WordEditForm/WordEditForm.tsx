@@ -77,7 +77,10 @@ const WordEditForm = ({
     ...WordEditFormResolver(),
   });
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [definitions, setDefinitions] = useState(record.definitions || []);
+  const [definitions, setDefinitions] = useState(record.definitions || [{
+    wordClass: '',
+    definitions: [''],
+  }]);
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);

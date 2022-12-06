@@ -42,6 +42,7 @@ export interface WordDialect {
 export interface DefinitionSchema {
   wordClass: string | WordDialect,
   definitions: string[],
+  igboDefinitions: string[],
   _id: Types.ObjectId,
 }
 
