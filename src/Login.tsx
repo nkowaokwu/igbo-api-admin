@@ -101,7 +101,7 @@ const Login = (): ReactElement => {
       className={`flex flex-col justify-center items-center h-full
       lg:h-screen w-screen bg-gray-100 py-20 lg:py-0 overflow-hidden`}
     >
-      <Heading size="xl" className="mb-6">{'Igbo API Editor\'s Platform'}</Heading>
+      <Heading size="xl" className="mb-6" fontFamily="Silka">{'Igbo API Editor\'s Platform'}</Heading>
       <Box
         className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-lg rounded-lg overflow-hidden"
         maxWidth="750px"
@@ -113,7 +113,7 @@ const Login = (): ReactElement => {
             className={`flex flex-col justify-center w-full lg:w-1/2 h-full flex-grow
             bg-indigo-600 text-white py-5 lg:py-3 px-5`}
           >
-            <Heading size="lg" className="text-white mb-3 text-center lg:text-left">Welcome</Heading>
+            <Heading size="lg" className="text-white mb-3 text-center lg:text-left" fontFamily="Silka">Welcome</Heading>
             <Text size="lg" className="text-white text-center lg:text-left">
               {`The Igbo API Editor's Platform is the main platform that allows 
             for directly editing, updating, adding, and maintaining the words and examples in 

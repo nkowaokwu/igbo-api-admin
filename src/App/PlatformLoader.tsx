@@ -28,7 +28,7 @@ const PlatformLoader = ({ error } : { error: Error }): ReactElement => {
         size="xl"
         label={loadingLabel.current}
       />
-      <Heading fontSize="lg">{loadingLabel.current}</Heading>
+      <Heading fontSize="lg" fontFamily="Silka">{loadingLabel.current}</Heading>
       {error ? <Text>{error.message}</Text> : null}
     </Box>
   ) : null;

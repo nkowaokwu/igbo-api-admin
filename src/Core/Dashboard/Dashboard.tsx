@@ -37,14 +37,14 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
             background: 'linear-gradient(36deg, rgba(52,17,154,1) 0%, rgba(91,9,121,1) 28%, rgba(255,87,0,1) 100%)',
           }}
         >
-          <Heading fontSize="5xl" fontWeight="bold" className="text-center">
+          <Heading fontSize="5xl" fontWeight="bold" className="text-center" fontFamily="Silka">
             {determineDashboardTitle()}
           </Heading>
           <Text fontSize="xl">So much progress has been made!</Text>
         </Box>
         <ProgressManager permissions={permissions} user={user} />
         <Box className="flex flex-col items-center text-center my-5">
-          <Text fontSize="3xl" fontWeight="bold">Community</Text>
+          <Text fontSize="3xl" fontWeight="bold" fontFamily="Silka">Community</Text>
           <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
             {`You aren't working alone! Reach out to the following Slack 
             channels if you have any questions, comments, or concerns.`}

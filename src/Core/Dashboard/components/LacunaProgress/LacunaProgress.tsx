@@ -50,14 +50,14 @@ const LacunaProgress = ({
   return (
     <Box className="mb-6">
       <Box className="flex flex-col items-center text-center my-5">
-        <Text fontSize="3xl" fontWeight="bold">Personal Lacuna Progress</Text>
+        <Text fontSize="3xl" fontWeight="bold" fontFamily="Silka">Personal Lacuna Progress</Text>
         <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
           These are your personalized stats for the Lacuna Fund Project
         </Text>
       </Box>
       <Box className="flex flex-col">
         <Box className="space-y-3">
-          <Heading as="h2">Word Stats</Heading>
+          <Heading as="h2" fontFamily="Silka">Word Stats</Heading>
           <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <LinearProgressCard
               totalCount={dialectalVariationProgress.month}

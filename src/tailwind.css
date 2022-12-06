@@ -7,6 +7,38 @@
   src:  url("./assets/fonts/Akagu2020.ttf");
 }
 
+@font-face {
+  font-family: 'Silka';
+  src: url('./assets/fonts/silka-regular-webfont.eot');
+  src: url('./assets/fonts/silka-regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('./assets/fonts/silka-regular-webfont.woff2') format('woff2'),
+       url('./assets/fonts/silka-regular-webfont.woff') format('woff'),
+       url('./assets/fonts/silka-regular-webfont.ttf') format('truetype');
+  font-weight: normal;
+
+}
+
+@font-face {
+  font-family: 'Silka';
+  src: url('./assets/fonts/silka-bold-webfont.eot');
+  src: url('./assets/fonts/silka-bold-webfont.eot?#iefix') format('embedded-opentype'),
+       url('./assets/fonts/silka-bold-webfont.woff2') format('woff2'),
+       url('./assets/fonts/silka-bold-webfont.woff') format('woff'),
+       url('./assets/fonts/silka-bold-webfont.ttf') format('truetype');
+  font-weight: 700;
+
+}
+
+@font-face {
+  font-family: 'Silka';
+  src: url('./assets/fonts/silka-black-webfont.eot');
+  src: url('./assets/fonts/silka-black-webfont.eot?#iefix') format('embedded-opentype'),
+       url('./assets/fonts/silka-black-webfont.woff2') format('woff2'),
+       url('./assets/fonts/silka-black-webfont.woff') format('woff'),
+       url('./assets/fonts/silka-black-webfont.ttf') format('truetype');
+  font-weight: 900;
+}
+
 /* Disables all mouse events for the suggested words popup container */
 .suggested-words-container .chakra-popover__popper {
   pointer-events: none;
@@ -24,6 +56,10 @@ html {
 .akagu {
   font-family: 'Akagu', 'sans-serif' !important;
   @apply text-green-800;
+}
+
+.firebaseui-idp-text {
+  font-family: 'Silka';
 }
 
 .react-audio-player {

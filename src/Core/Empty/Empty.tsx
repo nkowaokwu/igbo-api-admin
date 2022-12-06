@@ -13,7 +13,7 @@ const Empty = ({ showCreate } : { showCreate: boolean }): ReactElement => {
       <Box className="flex flex-col justify-center items-center w-11/12 lg:w-8/12 lg:space-y-6 h-72">
         <InfoIcon w={12} h={12} color="gray.500" />
         <Box textAlign="center" m={1} className="lg:space-y-2">
-          <Heading fontSize="xl">{`No ${startCase(resource)} available`}</Heading>
+          <Heading fontSize="xl" fontFamily="Silka">{`No ${startCase(resource)} available`}</Heading>
           {showCreate ? (
             <>
               <Text fontSize="lg">

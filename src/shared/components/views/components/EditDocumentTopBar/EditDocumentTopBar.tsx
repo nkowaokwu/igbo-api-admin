@@ -50,14 +50,16 @@ const EditDocumentTopBar = ({
   return (
     view === View.EDIT ? (
       <Box className="flex flex-col lg:flex-row lg:justify-between">
-        <Heading as="h1" className="text-3xl text-gray-800 mb-3">{title}</Heading>
+        <Heading as="h1" className="text-3xl text-gray-800 mb-3" fontFamily="Silka">{title}</Heading>
       </Box>
     ) : (
       <Box className="flex flex-col lg:flex-row justify-between">
-        <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0">{title}</Heading>
+        <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0" fontFamily="Silka">{title}</Heading>
         {shouldShowEditorActions ? (
           <Box className="flex flex-col mb-5">
-            <Heading as="h2" fontSize="xl" className="text-gray-800 mb-2">{'Editor\'s Actions'}</Heading>
+            <Heading as="h2" fontSize="xl" className="text-gray-800 mb-2" fontFamily="Silka">
+              {'Editor\'s Actions'}
+            </Heading>
             <Select
               view={View.SHOW}
               resource={resource}

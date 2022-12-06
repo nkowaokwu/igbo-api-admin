@@ -169,7 +169,9 @@ const UserStat = ({
       />
       <Skeleton isLoaded={userStats} minHeight={32}>
         <Box mt={4}>
-          <Text fontSize="3xl" fontWeight="bold" className="text-center">Personal Contributions</Text>
+          <Text fontSize="3xl" fontWeight="bold" className="text-center" fontFamily="Silka">
+            Personal Contributions
+          </Text>
           <Text fontSize="lg" className="text-gray-800 text-center">
             {'You\'ve made contributions!\n'
             + 'You can click on each stat to see the associated documents'}
@@ -188,7 +190,7 @@ const UserStat = ({
               }}
             >
               <Text key={key}>
-                <chakra.span fontWeight="bold">{`${userStatBodies[key].label}: `}</chakra.span>
+                <chakra.span fontWeight="bold" fontFamily="Silka">{`${userStatBodies[key].label}: `}</chakra.span>
                 {`${value}`}
               </Text>
             </Box>
