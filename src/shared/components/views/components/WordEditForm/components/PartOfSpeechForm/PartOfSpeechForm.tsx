@@ -66,9 +66,9 @@ const PartOfSpeechForm = ({
           defaultValue={determineDefaultWordClassValue()}
         />
       </Box>
-      {errors.wordClass && (
+      {errors.wordClass ? (
         <p className="error">Part of speech is required</p>
-      )}
+      ) : null}
     </Box>
   );
 };
