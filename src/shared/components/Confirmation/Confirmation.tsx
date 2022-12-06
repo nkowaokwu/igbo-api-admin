@@ -31,6 +31,7 @@ const Confirmation = ({
   isOpen,
   onClose,
   view,
+  setIsLoading,
 }: ConfirmationButtonInterface): ReactElement => {
   const [idValue, setIdValue] = useState('');
   const [isConfirmOpen, setIsConfirmOpen] = useState(isOpen || false);
@@ -110,6 +111,7 @@ const Confirmation = ({
 
   const handleClick = (): void => {
     const updatedRecord = buildUpdatedRecord();
+    setIsLoading(true);
     action.executeAction({
       record: updatedRecord,
       resource,
@@ -126,10 +128,12 @@ const Confirmation = ({
           duration: 4000,
           isClosable: true,
         });
+        setIsLoading(false);
         handleRedirect(data?.id);
         refresh();
       })
       .catch((error) => {
+        setIsLoading(true);
         toast({
           title: 'Error',
           description: `Error: ${error?.response?.data?.error || error.message}`,
@@ -141,6 +145,7 @@ const Confirmation = ({
   };
 
   const provideInputValueUponSubmit = (): void => {
+    setIsLoading(true);
     action.executeAction({
       ...(action?.type === ActionTypes.COMBINE
         ? { primaryWordId: idValue }
@@ -174,12 +179,14 @@ const Confirmation = ({
           });
         }
 
+        setIsLoading(false);
         if (!(has(data, 'redirect') && !data.redirect)) {
           push(`/${resource}`);
           refresh();
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         toast({
           title: 'Error',
           description: `Error: ${error?.response?.data?.error || error.message}`,

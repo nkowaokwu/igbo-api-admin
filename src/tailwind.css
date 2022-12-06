@@ -39,7 +39,6 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
 }
 
 .MuiAppBar-root {
-  height: 60px !important;
   @apply bg-gray-300 !important;
   @apply shadow-sm !important;
 }
@@ -131,13 +130,6 @@ span.MuiTableSortLabel-root {
   @apply py-0 !important;
   @apply py-2 !important;
   @apply mx-0 !important;
-}
-
-.MuiButtonBase-root {
-  @apply font-normal !important;
-  @apply py-2 !important;
-  @apply mx-1 !important;
-  @apply rounded-none !important;
 }
 
 .MuiButtonBase-text, .MuiButton-text {

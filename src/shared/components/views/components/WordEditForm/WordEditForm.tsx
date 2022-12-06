@@ -80,6 +80,7 @@ const WordEditForm = ({
   const [definitions, setDefinitions] = useState(record.definitions || [{
     wordClass: '',
     definitions: [''],
+    igboDefinitions: [],
   }]);
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);

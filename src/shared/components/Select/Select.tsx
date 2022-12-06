@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Spinner,
   Tooltip,
   useToast,
 } from '@chakra-ui/react';
@@ -50,6 +51,7 @@ const Select = ({
   const [value, setValue] = useState(null);
   const [action, setAction] = useState(null);
   const [uid, setUid] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const redirect = useRedirect();
   const toast = useToast();
   useFirebaseUid(setUid);
@@ -307,6 +309,7 @@ const Select = ({
         selectionValue={value}
         onClose={clearConfirmOpen}
         view={view}
+        setIsLoading={setIsLoading}
       />
       <Menu data-test="test-select-options" label="Editor's Action">
         <MenuButton
@@ -314,23 +317,26 @@ const Select = ({
           rightIcon={<ChevronDownIcon />}
           data-test={`select-menu-${resource}`}
           role="button"
+          fontFamily="system-ui"
           fontWeight="normal"
           backgroundColor="white"
           borderWidth="1px"
-          borderColor="green.600"
+          borderColor="gray.300"
           borderRadius="md"
+          disabled={isLoading}
+          width="full"
           _hover={{
-            backgroundColor: 'gray.100',
+            backgroundColor: 'white',
             color: 'gray.800',
           }}
           _active={{
-            backgroundColor: 'gray.100',
+            backgroundColor: 'white',
             color: 'gray.800',
           }}
         >
-          Actions
+          {isLoading ? <Spinner size="xs" /> : 'Actions'}
         </MenuButton>
-        <MenuList>
+        <MenuList boxShadow="xl">
           {options.map(({
             value = '',
             label,
@@ -338,9 +344,15 @@ const Select = ({
             props = {},
           }) => (
             <Tooltip key={value} label={props.tooltipMessage}>
-              <Box>
+              <Box px={2}>
                 <MenuItem
                   value={value}
+                  outline="none"
+                  boxShadow="none"
+                  border="none"
+                  px={1}
+                  fontFamily="system-ui"
+                  borderRadius="md"
                   onClick={() => {
                     setValue(value);
                     onSelect({

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ButtonProps } from 'react-admin';
 import Views from 'src/shared/constants/Views';
 
@@ -12,6 +13,7 @@ export interface ConfirmationButtonInterface extends UpdateButtonProps {
   onClose: () => any,
   isOpen: boolean,
   view: Views
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 export interface ConfirmationInputInterface {
