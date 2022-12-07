@@ -26,7 +26,7 @@ const IdField = ({ source, record = { id: null } }: IdFieldProps): ReactElement 
       display="flex"
       flexDirection="row"
       alignItems="center"
-      justifyContent="space-between"
+      justifyContent="start"
       width="full"
       className="space-x-4"
     >

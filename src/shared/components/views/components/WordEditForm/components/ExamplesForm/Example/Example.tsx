@@ -133,7 +133,7 @@ const Example = ({
           name={`examples[${index}].pronunciation`}
           control={control}
         />
-        <Box position="absolute">
+        <Box position="absolute" pointerEvents="none">
           <Controller
             render={(props) => (
               <Input
