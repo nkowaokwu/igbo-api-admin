@@ -29,7 +29,7 @@ const Dashboard = ({ permissions } : ShowProps): ReactElement => {
   return (
     <Box>
       <Title title="Igbo API Editor Platform" />
-      <Box style={{ minHeight: '120vh' }} className="w-full bg-gray-100">
+      <Box style={{ minHeight: '120vh' }} className="w-full bg-white">
         <Box
           className="w-full text-white flex flex-col justify-center items-center"
           style={{
