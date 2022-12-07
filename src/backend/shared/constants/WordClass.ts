@@ -1,7 +1,7 @@
 /**
  * This file defines the valid wordClass options for words and wordSuggestions
  */
-const WordClass = {
+export default {
   ADJ: {
     value: 'ADJ',
     label: 'Adjective',
@@ -37,6 +37,10 @@ const WordClass = {
   NNC: {
     value: 'NNC',
     label: 'Noun',
+  },
+  ND: {
+    value: 'ND',
+    label: 'Nominal Modifier',
   },
   NNP: {
     value: 'NNP',
@@ -83,5 +87,3 @@ const WordClass = {
     label: 'Punctuations',
   },
 };
-
-export default WordClass;
