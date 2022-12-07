@@ -24,7 +24,7 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
   );
 
   return (
-    <Box className="flex items-end lg:ml-4">
+    <Box className="flex items-end">
       <InputGroup>
         <InputLeftElement
           pointerEvents="none"
@@ -33,7 +33,10 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
         </InputLeftElement>
         <Input
           data-test="search-bar"
-          className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border border-solid border-gray-400"
+          className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border-solid border-gray-400"
+          borderWidth="2px"
+          backgroundColor="gray.100"
+          outline="none"
           onChange={(e) => {
             const value = e.target.value.normalize('NFD');
             setFilters({ ...filterValues, [filterKey]: value }, null);

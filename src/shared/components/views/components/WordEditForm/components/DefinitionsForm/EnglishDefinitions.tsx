@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, IconButton } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Textarea } from 'src/shared/primitives';
 import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
@@ -44,14 +44,13 @@ const EnglishDefinitions = ({
             }}
           />
           {nestedDefinitionIndex ? (
-            <Button
+            <IconButton
               colorScheme="red"
               onClick={() => handleDeleteGroupDefinition(index, nestedDefinitionIndex)}
               className="ml-3"
-              leftIcon={<DeleteIcon />}
-            >
-              Delete
-            </Button>
+              aria-label="Delete"
+              icon={<DeleteIcon />}
+            />
           ) : null }
         </Box>
       </Box>

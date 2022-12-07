@@ -16,7 +16,9 @@ const ExampleSuggestionCreate = (props: HistoryProps): ReactElement => {
 
   return (
     <Box className="bg-white shadow-sm p-10 mt-10">
-      <Heading as="h1" className="text-3xl text-gray-800 mb-3">Create New Example Suggestion</Heading>
+      <Heading as="h1" className="text-3xl text-gray-800 mb-3" fontFamily="Silka">
+        Create New Example Suggestion
+      </Heading>
       {record ? (
         <ExampleEditForm
           view={View.CREATE}

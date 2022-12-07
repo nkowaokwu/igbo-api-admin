@@ -15,7 +15,7 @@ const CorpusSuggestionCreate = (props: HistoryProps): ReactElement => {
   const isPreExistingSuggestion = history.location?.state?.isPreExistingSuggestion || false;
   return (
     <Box className="bg-white shadow-sm p-10 mt-10">
-      <Heading as="h1" className="text-3xl text-gray-800 mb-3">Create New Corpus Suggestion</Heading>
+      <Heading as="h1" className="text-3xl text-gray-800 mb-3" fontFamily="Silka">Create New Corpus Suggestion</Heading>
       {record ? (
         <CorpusEditForm
           view={View.CREATE}

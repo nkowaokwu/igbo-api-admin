@@ -16,6 +16,8 @@ import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
 import { getResourceObjects } from './Resources';
+import Menu from './Menu';
+import Theme from './Theme';
 
 const Resources = memo(() => {
   const { permissions } = usePermissions();
@@ -37,6 +39,7 @@ const Resources = memo(() => {
       layout={(props) => <Layout {...props} error={Error} />}
       dashboard={Dashboard}
       loginPage={Login}
+      theme={Theme}
     >
       {memoizedResources}
     </AdminUI>
@@ -50,6 +53,7 @@ const IgboAPIAdmin = (): ReactElement => (
       dataProvider={dataProvider}
       authProvider={authProvider}
       catchAll={NotFound}
+      menu={Menu}
     >
       <Resources />
     </AdminContext>

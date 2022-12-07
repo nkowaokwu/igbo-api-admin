@@ -28,7 +28,7 @@ const LinearProgressCard = ({
       px={3}
     >
       <Box>
-        <Heading fontSize="3xl" className="text-gray-800">{heading}</Heading>
+        <Heading fontSize="3xl" className="text-gray-800" fontFamily="Silka">{heading}</Heading>
         <Text fontSize="md" className="text-gray-700 italic">
           {description}
         </Text>

@@ -35,7 +35,7 @@ const MilestoneProgress = ({
 }): ReactElement => (
   <>
     <Box className="flex flex-col items-center text-center my-5">
-      <Text fontSize="3xl" fontWeight="bold">Community Milestone Progress</Text>
+      <Text fontSize="3xl" fontWeight="bold" fontFamily="Silka">Community Milestone Progress</Text>
       <Text fontSize="lg" className="w-11/12 lg:w-8/12 text-gray-800">
         {`We are building the most robust Igbo-English dictionary. 
         Here is the progress that we've all made so far!`}
@@ -43,7 +43,7 @@ const MilestoneProgress = ({
     </Box>
     <Box className="flex flex-col">
       <Box className="space-y-3">
-        <Heading as="h2">Word Stats</Heading>
+        <Heading as="h2" fontFamily="Silka">Word Stats</Heading>
         <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ProgressCard
             totalCount={totalSufficientWords}

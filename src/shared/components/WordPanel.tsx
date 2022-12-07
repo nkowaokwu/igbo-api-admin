@@ -12,6 +12,7 @@ import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import WordTags from 'src/backend/shared/constants/WordTags';
+import ResolvedWord from 'src/shared/components/ResolvedWord';
 import AudioRecordingPreview from './AudioRecordingPreview';
 import StandardIgboPreview from './StandardIgboPreview';
 import ConstructedTermPreview from './ConstructedTermPreview';
@@ -96,7 +97,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
           {get(record, 'relatedTerms.length') ? record.relatedTerms.map((relatedTerm, index) => (
             <Box key={relatedTerm} className="flex flex-row space-x-1">
               <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <Text>{relatedTerm}</Text>
+              <ResolvedWord wordId={relatedTerm} />
             </Box>
           )) : <Text className="text-gray-500 italic">No related terms</Text>}
         </Box>

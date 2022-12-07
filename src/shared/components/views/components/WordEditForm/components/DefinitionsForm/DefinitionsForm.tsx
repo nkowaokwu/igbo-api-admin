@@ -38,6 +38,9 @@ const DefinitionsForm = ({
   };
   const handleAddGroupIgboDefinition = (groupIndex) => {
     const updateDefinitions = [...definitions];
+    if (!updateDefinitions[groupIndex].igboDefinitions) {
+      updateDefinitions[groupIndex].igboDefinitions = [];
+    }
     updateDefinitions[groupIndex].igboDefinitions.push('');
     setDefinitions(updateDefinitions);
   };
@@ -48,6 +51,9 @@ const DefinitionsForm = ({
   };
   const handleDeleteGroupIgboDefinition = (groupIndex, nestedDefinitionIndex) => {
     const updateDefinitions = [...definitions];
+    if (!updateDefinitions[groupIndex].igboDefinitions) {
+      updateDefinitions[groupIndex].igboDefinitions = [];
+    }
     updateDefinitions[groupIndex].igboDefinitions.splice(nestedDefinitionIndex, 1);
     setDefinitions(updateDefinitions);
   };

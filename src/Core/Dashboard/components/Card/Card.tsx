@@ -37,7 +37,7 @@ const Card = ({
       {render || (
         <>
           <Text fontSize="4xl" textAlign="center">{icon}</Text>
-          <Heading fontSize="2xl" textAlign="center">{heading}</Heading>
+          <Heading fontSize="2xl" textAlign="center" fontFamily="Silka">{heading}</Heading>
           <Text fontSize="lg" textAlign="center">{description}</Text>
           {onClick ? <Button colorScheme="green" onClick={onClick}>{buttonLabel}</Button> : null}
           {link ? (
