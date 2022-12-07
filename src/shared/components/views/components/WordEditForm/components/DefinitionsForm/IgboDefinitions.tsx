@@ -40,15 +40,13 @@ const IgboDefinitions = ({
             defaultValue={igboDefinition}
             control={control}
           />
-          {igboDefinitionIndex ? (
-            <IconButton
-              colorScheme="red"
-              onClick={() => handleDeleteGroupIgboDefinition(index, igboDefinitionIndex)}
-              className="ml-3"
-              aria-label="Delete"
-              icon={<DeleteIcon />}
-            />
-          ) : null }
+          <IconButton
+            colorScheme="red"
+            onClick={() => handleDeleteGroupIgboDefinition(index, igboDefinitionIndex)}
+            className="ml-3"
+            aria-label="Delete"
+            icon={<DeleteIcon />}
+          />
         </Box>
       </Box>
     ))}
