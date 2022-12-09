@@ -28,15 +28,18 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
     tenses = {},
   } = record;
 
-  const isAudioAvailable = !skipAudioCheck && await new Promise((resolve) => {
-    axios.get(pronunciation)
-      .then(() => resolve(true))
-      .catch(() => {
-        if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
-          return resolve(true);
-        }
-        return resolve(false);
-      });
+  const isAudioAvailable = await new Promise((resolve) => {
+    if (!skipAudioCheck) {
+      axios.get(pronunciation)
+        .then(() => resolve(true))
+        .catch(() => {
+          if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
+            return resolve(true);
+          }
+          return resolve(false);
+        });
+    }
+    return resolve(pronunciation?.startsWith('https://'));
   });
 
   const sufficientWordRequirements = compact([
