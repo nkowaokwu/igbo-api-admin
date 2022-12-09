@@ -65,6 +65,7 @@ export const exampleSuggestionData = {
 export const exampleSuggestionApprovedData = {
   igbo: 'igbo text',
   english: 'english text',
+  nsibidi: '人',
   approvals: ['first user', 'second user'],
   associatedWords: [],
 };
@@ -126,6 +127,11 @@ export const updatedGenericWordData = {
 export const wordSuggestionWithNestedExampleSuggestionData = {
   ...wordSuggestionData,
   examples: [exampleSuggestionData],
+};
+
+export const wordSuggestionWithNestedMalformedExampleSuggestionData = {
+  ...wordSuggestionData,
+  examples: [malformedExampleSuggestionData],
 };
 
 export const developerData = {

@@ -6,6 +6,7 @@ export const ExampleEditFormSchema = yup.object().shape({
   igbo: yup.string().required(),
   english: yup.string(),
   meaning: yup.string().optional(),
+  nsibidi: yup.string().optional(),
   style: yup.object().shape({
     value: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ value }) => value)),
     label: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ label }) => label)),

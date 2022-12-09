@@ -1,19 +1,15 @@
 import mongoose from 'mongoose';
 import { compact, last, kebabCase } from 'lodash';
-import * as functions from 'firebase-functions';
 import {
   copyAudioPronunciation,
   renameAudioPronunciation,
   createAudioPronunciation,
 } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
+import { isCypress, isProduction } from 'src/backend/config';
 import { createMedia, copyMedia, renameMedia } from 'src/backend/controllers/utils/MediaAPIs/CorpusMediaAPI';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removeAccents from 'src/backend/utils/removeAccents';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
-
-const config = functions.config();
-const isCypress = config?.runtime?.env === 'cypress';
-const isDevelopment = config?.runtime?.env === 'development';
 
 /* If the client sent over blob data for pronunciations, it will be uploaded to AWS S3 */
 export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordSuggestion>): void => {
@@ -28,7 +24,7 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
         } else if (this.pronunciation.startsWith('data:audio/mp3')) {
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-        } else if (!isCypress && isDevelopment && this.pronunciation) {
+        } else if (!isCypress && !isProduction && this.pronunciation) {
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
         } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
           // If the pronunciation data for the headword is a uri, we will duplicate the uri
@@ -67,7 +63,7 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
             this.dialects[rawDialectalWord].pronunciation = (
               await createAudioPronunciation(`${id}-${dialectalWordId}`, pronunciation)
             );
-          } else if (!isCypress && isDevelopment && this.dialects[rawDialectalWord].pronunciation) {
+          } else if (!isCypress && !isProduction && this.dialects[rawDialectalWord].pronunciation) {
             this.dialects[rawDialectalWord].pronunciation = (
               await createAudioPronunciation(`${id}-${dialectalWordId}`, pronunciation)
             );
@@ -114,7 +110,7 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
         } else if (this.pronunciation.startsWith('data:audio/mp3')) {
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
-        } else if (!isCypress && isDevelopment && this.pronunciation) {
+        } else if (!isCypress && !isProduction && this.pronunciation) {
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
         } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
           // If the pronunciation data for the headword is a uri, we will duplicate the uri
@@ -153,7 +149,7 @@ export const uploadCorpusPronunciation = (schema: mongoose.Schema<Interfaces.Cor
           this.media = await createMedia(id, this.media);
         } else if (this.media.startsWith('data:')) {
           this.media = await createMedia(id, this.media);
-        } else if (!isCypress && isDevelopment && this.media) {
+        } else if (!isCypress && !isProduction && this.media) {
           this.media = await createMedia(id, this.media);
         } else if (this.media.startsWith('https://') && !this.media.includes(`${id}.`)) {
           // If the pronunciation data for the headword is a uri, we will duplicate the uri

@@ -22,6 +22,7 @@ const Example = ({
     igbo,
     english,
     meaning,
+    nsibidi,
     id = '',
     associatedWords,
     associatedDefinitionsSchemas,
@@ -39,6 +40,18 @@ const Example = ({
   const handleInputEnglish = (onChange) => (e) => {
     const updatedExamples = [...examples];
     updatedExamples[index].english = e.target.value;
+    onChange(e);
+  };
+
+  const handleInputMeaning = (onChange) => (e) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index].meaning = e.target.value;
+    onChange(e);
+  };
+
+  const handleInputNsibidi = (onChange) => (e) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index].nsibidi = e.target.value;
     onChange(e);
   };
 
@@ -104,7 +117,7 @@ const Example = ({
           render={({ onChange, ...props }) => (
             <Input
               {...props}
-              onChange={handleInputEnglish(onChange)}
+              onChange={handleInputMeaning(onChange)}
               className="form-input"
               placeholder="Example in English (meaning)"
               data-test={`examples-${index}-meaning-input`}
@@ -112,6 +125,21 @@ const Example = ({
           )}
           name={`examples[${index}].meaning`}
           defaultValue={meaning || (formData.examples && formData.examples[index]?.meaning) || ''}
+          control={control}
+        />
+        <h3 className="text-gray-700">Nsịbịdị:</h3>
+        <Controller
+          render={({ onChange, ...props }) => (
+            <Input
+              {...props}
+              onChange={handleInputNsibidi(onChange)}
+              className="form-input"
+              placeholder="Example in Nsịbịdị"
+              data-test={`examples-${index}-nsibidi-input`}
+            />
+          )}
+          name={`examples[${index}].nsibidi`}
+          defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
           control={control}
         />
         <Controller

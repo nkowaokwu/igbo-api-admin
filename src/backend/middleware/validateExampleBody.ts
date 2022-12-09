@@ -16,6 +16,7 @@ export const exampleDataSchema = Joi.object().keys({
   igbo: Joi.string(),
   english: Joi.string().allow(''),
   meaning: Joi.string().allow('').optional(),
+  nsibidi: Joi.string().allow('').optional(),
   style: Joi.string().valid(...Object.values(ExampleStyle).map(({ value }) => value)).optional(),
   associatedWords: Joi.array().external((associatedWords) => {
     if (!associatedWords) {
