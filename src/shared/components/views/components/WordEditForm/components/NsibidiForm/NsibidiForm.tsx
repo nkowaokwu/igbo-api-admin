@@ -1,14 +1,9 @@
 import React, { ReactElement } from 'react';
-import {
-  Box,
-  Text,
-  Tooltip,
-  chakra,
-} from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
-import { Input } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
 import NsidibiFormInterface from './NsidibiFormInterface';
+import NsibidiInput from './NsibidiInput';
 
 const NsibidiForm = ({
   control,
@@ -25,25 +20,7 @@ const NsibidiForm = ({
     />
     <Controller
       render={(props) => (
-        <>
-          <Input
-            {...props}
-            className="form-input"
-            placeholder="i.e. 貝名, 貝è捧捧, 和硝"
-            data-test="nsibidi-input"
-          />
-          {props.value ? (
-            <Tooltip
-              label="The rendered script is the final Nsịbịdị that will be shown to users"
-              placement="bottom-start"
-            >
-              <Text className=" mt-2">
-                {'Rendered Nsịbịdị: '}
-                <chakra.span className="akagu">{props.value}</chakra.span>
-              </Text>
-            </Tooltip>
-          ) : null}
-        </>
+        <NsibidiInput {...props} />
       )}
       name="nsibidi"
       control={control}

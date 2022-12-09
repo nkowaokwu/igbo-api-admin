@@ -107,11 +107,13 @@ const WordEditForm = ({
         igbo,
         english,
         meaning,
+        nsibidi,
         pronunciation,
       }, index) => (
         {
           igbo,
           english,
+          nsibidi,
           pronunciation,
           meaning,
           ...(originalExamplesFromIds[index]?.dataset?.originalExampleId

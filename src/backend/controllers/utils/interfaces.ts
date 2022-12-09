@@ -131,6 +131,8 @@ export interface Example extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
   igbo?: string,
   english?: string,
+  meaning?: string,
+  nsibidi?: string,
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
   pronunciation: string,
@@ -138,8 +140,6 @@ export interface Example extends Document<any>, LeanDocument<any> {
 }
 
 export interface ExampleSuggestion extends Example, Suggestion {
-  igbo?: string,
-  english?: string,
   exampleForSuggestion: boolean,
 };
 
@@ -147,6 +147,9 @@ export interface ExampleClientData {
   id?: string,
   igbo?: string,
   english?: string,
+  meaning?: string,
+  nsibidi?: string,
+  pronunciation?: string,
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
   exampleForSuggestion?: boolean,

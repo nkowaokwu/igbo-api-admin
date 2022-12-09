@@ -28,6 +28,8 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
     'associatedWords',
     'id',
     'exampleForSuggestion',
+    'meaning',
+    'nsibidi',
     'pronunciation',
     'originalExampleId',
   ].join(' ');

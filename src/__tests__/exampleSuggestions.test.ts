@@ -46,6 +46,12 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.body.message).not.toEqual(undefined);
     });
 
+    it('should return an example error because of malformed nsibidi data', async () => {
+      const res = await suggestNewExample({ ...exampleSuggestionData, nsibdi: '人' });
+      expect(res.status).toEqual(400);
+      expect(res.body.message).not.toEqual(undefined);
+    });
+
     it('should return an example error because of invalid associateWords ids', async () => {
       const malformedData = {
         ...updatedExampleSuggestionData,

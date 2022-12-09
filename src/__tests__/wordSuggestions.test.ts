@@ -25,6 +25,7 @@ import {
   malformedWordSuggestionData,
   updatedWordSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
+  wordSuggestionWithNestedMalformedExampleSuggestionData,
 } from './__mocks__/documentData';
 import { WORD_SUGGESTION_KEYS, INVALID_ID, AUTH_TOKEN } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
@@ -43,6 +44,12 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.status).toEqual(200);
       expect(res.body.id).not.toEqual(undefined);
       expect(res.body.examples).toHaveLength(1);
+    });
+
+    it('should return a word error because of nested malformed example data', async () => {
+      const res = await suggestNewWord(wordSuggestionWithNestedMalformedExampleSuggestionData);
+      expect(res.status).toEqual(400);
+      expect(res.body.message).not.toEqual(undefined);
     });
 
     it('should return a word error because of malformed data', async () => {
@@ -183,6 +190,39 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.status).toEqual(200);
       expect(result.body.examples[0].igbo).toEqual(updatedIgbo);
       expect(result.body.examples[0].english).toEqual(updatedEnglish);
+    });
+
+    it('should update a wordSuggestion without changing the nested exampleSuggestion audio data', async () => {
+      const wordRes = await suggestNewWord({
+        ...wordSuggestionWithNestedExampleSuggestionData,
+        examples: [{
+          ...wordSuggestionWithNestedExampleSuggestionData.examples[0],
+          pronunciation: 'recording audio',
+        }],
+      });
+      expect(wordRes.status).toEqual(200);
+      const nestedExampleId = wordRes.body.examples[0].id;
+      expect(wordRes.body.examples[0].pronunciation)
+        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
+      const secondWordRes = await updateWordSuggestion({
+        ...wordRes.body,
+        word: 'changed',
+      });
+      expect(secondWordRes.status).toEqual(200);
+      expect(secondWordRes.body.examples[0].pronunciation)
+        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
+      const res = await updateWordSuggestion({
+        ...secondWordRes.body,
+        examples: [{
+          ...secondWordRes.body.examples[0],
+          igbo: 'changed igbo',
+        }],
+      });
+      expect(res.status).toEqual(200);
+      expect(res.body.word).toEqual('changed');
+      expect(res.body.examples[0].igbo).toEqual('changed igbo');
+      expect(res.body.examples[0].pronunciation)
+        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
     });
 
     it('should fail to update nested exampleSuggestion inside wordSuggestion for invalid associatedWords', async () => {

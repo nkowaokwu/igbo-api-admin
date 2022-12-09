@@ -5,6 +5,7 @@ import {
   Heading,
   Skeleton,
   Text,
+  chakra,
 } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
@@ -39,6 +40,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     igbo,
     english,
     meaning,
+    nsibidi,
     style,
     editorsNotes,
     userComments,
@@ -162,7 +164,16 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 path="meaning"
                 diffRecord={diffRecord}
                 fallbackValue={meaning}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
+              />
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                Nsịbịdị
+              </Heading>
+              <DiffField
+                path="nsibidi"
+                diffRecord={diffRecord}
+                fallbackValue={nsibidi}
+                renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
               />
               <Box className="flex flex-col mt-5">
                 <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
