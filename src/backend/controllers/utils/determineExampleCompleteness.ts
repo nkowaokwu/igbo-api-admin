@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
-import { Word } from 'src/backend/controllers/utils/interfaces';
+import { Example } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
-export default async (record: Word | Record) : Promise<{
+export default async (record: Example | Record, skipAudioCheck = false) : Promise<{
   sufficientExampleRequirements: string[],
   completeExampleRequirements: string[],
 }> => {
@@ -18,14 +18,17 @@ export default async (record: Word | Record) : Promise<{
   } = record;
 
   const isAudioAvailable = await new Promise((resolve) => {
-    axios.get(pronunciation)
-      .then(() => resolve(true))
-      .catch(() => {
-        if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
-          return resolve(true);
-        }
-        return resolve(false);
-      });
+    if (!skipAudioCheck) {
+      axios.get(pronunciation)
+        .then(() => resolve(true))
+        .catch(() => {
+          if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
+            return resolve(true);
+          }
+          return resolve(false);
+        });
+    }
+    return resolve(pronunciation?.startsWith('https://'));
   });
 
   const sufficientExampleRequirements = compact([

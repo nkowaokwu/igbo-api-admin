@@ -115,10 +115,7 @@ const calculateWordStats = async (Word, Stat):
 Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
   const INCLUDE_ALL_WORDS_LIMIT = 100000;
   const words = await findWordsWithMatch({
-    match: {
-      word: { $regex: /./ },
-      'attributes.isStandardIgbo': { $eq: true },
-    },
+    match: { 'attributes.isStandardIgbo': { $eq: true } },
     examples: true,
     limit: INCLUDE_ALL_WORDS_LIMIT,
     Word,
@@ -133,7 +130,7 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
 
 const countCompletedExamples = async (examples) => {
   const sufficientExamplesCount = compact(await Promise.all(examples.map(async (example) => (
-    !(await determineExampleCompleteness(example)).completeExampleRequirements.length)))).length;
+    !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length)))).length;
   return sufficientExamplesCount;
 };
 
@@ -144,7 +141,6 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
     .find({
       $and: [
         { $expr: { $gt: [{ $strLenCP: '$igbo' }, 3] } },
-        { $expr: { $gte: ['$english', '$igbo'] } },
         { 'associatedWords.0': { $exists: true } },
       ],
     });
