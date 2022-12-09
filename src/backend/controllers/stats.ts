@@ -118,7 +118,6 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
     match: {
       word: { $regex: /./ },
       'attributes.isStandardIgbo': { $eq: true },
-      'attributes.isAccented': { $eq: true },
     },
     examples: true,
     limit: INCLUDE_ALL_WORDS_LIMIT,
