@@ -7,6 +7,7 @@ import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collections';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
+import NsibidiInput from '../../NsibidiForm/NsibidiInput';
 
 const Example = ({
   setExamples,
@@ -130,10 +131,9 @@ const Example = ({
         <h3 className="text-gray-700">Nsịbịdị:</h3>
         <Controller
           render={({ onChange, ...props }) => (
-            <Input
+            <NsibidiInput
               {...props}
               onChange={handleInputNsibidi(onChange)}
-              className="form-input"
               placeholder="Example in Nsịbịdị"
               data-test={`examples-${index}-nsibidi-input`}
             />

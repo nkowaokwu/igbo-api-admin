@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { compact } from 'lodash';
+import { compact, times } from 'lodash';
 import moment from 'moment';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
@@ -21,7 +21,7 @@ import { connectDatabase, disconnectDatabase } from '../utils/database';
 
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
-const findStat = async ({ type, authorId = 'SYSTEM' }) => {
+const findStat = async ({ type, authorId = 'SYSTEM', Stat }) => {
   let stat = await Stat.findOne({ type, authorId });
   if (!stat) {
     // The stat hasn't been created, let's create a new one
@@ -31,49 +31,54 @@ const findStat = async ({ type, authorId = 'SYSTEM' }) => {
   return stat;
 };
 
-const updateStat = async ({ type, authorId = 'SYSTEM', value }) => {
+const updateStat = async ({
+  type,
+  authorId = 'SYSTEM',
+  value,
+  Stat,
+}) => {
   if ((!value && typeof value !== 'number')) {
     throw new Error('Valid truthy valid must be provided');
   }
 
-  const stat = await findStat({ type, authorId });
+  const stat = await findStat({ type, authorId, Stat });
   stat.value = value;
   stat.markModified('value');
   return stat.save();
 };
 
 /* Returns all the WordSuggestions with Headword audio pronunciations */
-const calculateTotalHeadwordsWithAudioPronunciations = async (Word):
+const calculateTotalHeadwordsWithAudioPronunciations = async (Word, Stat):
 Promise<{ audioPronunciationWords: number } | void> => {
   const audioPronunciationWords = await Word
     .countDocuments(searchForAllWordsWithAudioPronunciations());
-  await updateStat({ type: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords });
+  await updateStat({ type: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords, Stat });
   return { audioPronunciationWords };
 };
 
 /* Returns all the Words that's in Standard Igbo */
-const calculateTotalWordsInStandardIgbo = async (Word): Promise<{ isStandardIgboWords: number } | void> => {
+const calculateTotalWordsInStandardIgbo = async (Word, Stat): Promise<{ isStandardIgboWords: number } | void> => {
   const isStandardIgboWords = await Word
     .countDocuments(searchForAllWordsWithIsStandardIgbo());
-  await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords });
+  await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords, Stat });
   return { isStandardIgboWords };
 };
 
 /* Returns all Words with Nsịbịdị */
-const calculateTotalWordsWithNsibidi = async (Word) : Promise<{ wordsWithNsibidi: number } | void> => {
+const calculateTotalWordsWithNsibidi = async (Word, Stat) : Promise<{ wordsWithNsibidi: number } | void> => {
   const wordsWithNsibidi = await Word
     .countDocuments(searchForAllWordsWithNsibidi());
-  await updateStat({ type: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi });
+  await updateStat({ type: StatTypes.NSIBIDI_WORDS, value: wordsWithNsibidi, Stat });
 
   return { wordsWithNsibidi };
 };
 
 /* Returns all Word Suggestions with Nsịbịdị */
-const calculateTotalWordSuggestionsWithNsibidi = async (WordSuggestion)
+const calculateTotalWordSuggestionsWithNsibidi = async (WordSuggestion, Stat)
 : Promise<{ wordSuggestionsWithNsibidi: number } | void> => {
   const wordSuggestionsWithNsibidi = await WordSuggestion
     .countDocuments({ ...searchForAllWordsWithNsibidi(), merged: null });
-  await updateStat({ type: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi });
+  await updateStat({ type: StatTypes.NSIBIDI_WORD_SUGGESTIONS, value: wordSuggestionsWithNsibidi, Stat });
   return { wordSuggestionsWithNsibidi };
 };
 
@@ -106,7 +111,7 @@ const countWords = async (words) => {
 };
 
 /* Returns all the Words that are "sufficient" */
-const calculateWordStats = async (Word):
+const calculateWordStats = async (Word, Stat):
 Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
   const INCLUDE_ALL_WORDS_LIMIT = 100000;
   const words = await findWordsWithMatch({
@@ -120,9 +125,9 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
     Word,
   });
   const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
-  await updateStat({ type: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount });
-  await updateStat({ type: StatTypes.COMPLETE_WORDS, value: completeWordsCount });
-  await updateStat({ type: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount });
+  await updateStat({ type: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount, Stat });
+  await updateStat({ type: StatTypes.COMPLETE_WORDS, value: completeWordsCount, Stat });
+  await updateStat({ type: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount, Stat });
 
   return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
 };
@@ -134,7 +139,7 @@ const countCompletedExamples = async (examples) => {
 };
 
 /* Returns all the Examples that are on the platform */
-const calculateExampleStats = async (Example):
+const calculateExampleStats = async (Example, Stat):
 Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | void> => {
   const examples = await Example
     .find({
@@ -145,10 +150,10 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
       ],
     });
   const sufficientExamplesCount = examples.length;
-  await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount });
+  await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount, Stat });
 
   const completedExamplesCount = await countCompletedExamples(examples);
-  await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount });
+  await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount, Stat });
 
   return { sufficientExamplesCount, completedExamplesCount };
 };
@@ -256,11 +261,13 @@ export const getUserMergeStats = async (
         .limit(WORD_SUGGESTION_QUERY_LIMIT),
     ]);
     const currentIsoWeek = moment(new Date()).isoWeek();
+    const TWELVE_WEEKS = 12;
+    const defaultMerges = {};
+    times(TWELVE_WEEKS, (index) => {
+      defaultMerges[currentIsoWeek - index] = 0;
+    });
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
-      if (!finalData[isoWeek]) {
-        finalData[isoWeek] = 0;
-      }
       if (!finalData[currentIsoWeek]) {
         finalData[currentIsoWeek] = 0;
       }
@@ -268,12 +275,9 @@ export const getUserMergeStats = async (
         ...finalData,
         [isoWeek]: finalData[isoWeek] + 1,
       };
-    }, {} as { [key: string]: number });
+    }, defaultMerges);
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const isoWeek = moment(exampleSuggestion.updatedAt).isoWeek();
-      if (!finalData[isoWeek]) {
-        finalData[isoWeek] = 0;
-      }
       if (!finalData[currentIsoWeek]) {
         finalData[currentIsoWeek] = 0;
       }
@@ -281,19 +285,16 @@ export const getUserMergeStats = async (
         ...finalData,
         [isoWeek]: finalData[isoWeek] + 1,
       };
-    }, {} as { [key: string]: number });
+    }, defaultMerges);
     const dialectalVariationMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
       const isoWeek = moment(wordSuggestion.updatedAt).isoWeek();
-      if (!finalData[isoWeek]) {
-        finalData[isoWeek] = 0;
-      }
       return {
         ...finalData,
         [isoWeek]: finalData[isoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
           editor === userId
         )).length,
       };
-    }, {} as { [key: string]: number });
+    }, defaultMerges);
     return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
   } catch (err) {
     return next(err);
@@ -325,14 +326,15 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
     const Word = connection.model('Word', wordSchema);
     const Example = connection.model('Example', exampleSchema);
     const WordSuggestion = connection.model('WordSuggestion', wordSuggestionSchema);
+    const Stat = connection.model('Stat', statSchema);
 
     await Promise.all([
-      calculateExampleStats(Example),
-      calculateTotalWordSuggestionsWithNsibidi(WordSuggestion),
-      calculateTotalWordsWithNsibidi(Word),
-      calculateTotalWordsInStandardIgbo(Word),
-      calculateTotalHeadwordsWithAudioPronunciations(Word),
-      calculateWordStats(Word),
+      calculateExampleStats(Example, Stat),
+      calculateTotalWordSuggestionsWithNsibidi(WordSuggestion, Stat),
+      calculateTotalWordsWithNsibidi(Word, Stat),
+      calculateTotalWordsInStandardIgbo(Word, Stat),
+      calculateTotalHeadwordsWithAudioPronunciations(Word, Stat),
+      calculateWordStats(Word, Stat),
     ]);
     await disconnectDatabase(connection);
   } catch (err) {

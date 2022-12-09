@@ -22,6 +22,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'approvals',
   'denials',
   'meaning',
+  'nsibidi',
   'style',
   'source',
   'userInteractions',

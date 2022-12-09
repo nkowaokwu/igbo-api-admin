@@ -22,6 +22,7 @@ const DiffField = ({
   fallbackValue: any,
   renderNestedObject?: ((value: any, hasChanged: boolean) => ReactElement | ReactElement[]),
   className?: string,
+  akagu?: boolean
 }): ReactElement => {
   const DIFF_KEYS = {
     Deletion: 'D',

@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, chakra } from '@chakra-ui/react';
 import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
+import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import DiffField from './DiffField';
 
 const ExampleDiff = ({
@@ -10,7 +11,7 @@ const ExampleDiff = ({
   diffRecord,
   resource,
 } : {
-  value: any,
+  value: ExampleClientData,
   index: number,
   diffRecord: Record,
   resource: string,
@@ -26,6 +27,17 @@ const ExampleDiff = ({
         path={`examples.${index}.english`}
         diffRecord={diffRecord}
         fallbackValue={value.english}
+      />
+      <DiffField
+        path={`examples.${index}.meaning`}
+        diffRecord={diffRecord}
+        fallbackValue={value.meaning}
+      />
+      <DiffField
+        path={`examples.${index}.nsibidi`}
+        diffRecord={diffRecord}
+        fallbackValue={value.nsibidi}
+        renderNestedObject={(value) => <chakra.span className="akagu">{value}</chakra.span>}
       />
       <ReactAudioPlayer
         src={value.pronunciation}

@@ -22,6 +22,7 @@ import { onCancel, sanitizeArray } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
 import AudioRecorder from '../AudioRecorder';
+import NsibidiInput from '../WordEditForm/components/NsibidiForm/NsibidiInput';
 
 const ExampleEditForm = ({
   view,
@@ -245,24 +246,19 @@ const ExampleEditForm = ({
       </Box>
       <Box className="flex flex-col">
         <FormHeader
-          title="Meaning"
-          tooltip="This field is for sentences that use figure of speech or where its literal translation isn't clear."
+          title="Nsịbịdị"
+          tooltip="This field is for the Nsịbịdị representation of the sentence"
         />
         <Controller
           render={(props) => (
-            <Input
-              {...props}
-              className="form-input"
-              placeholder="Asking politely"
-              data-test="meaning-input"
-            />
+            <NsibidiInput {...props} />
           )}
-          name="meaning"
+          name="nsibidi"
           control={control}
-          defaultValue={record.meaning || getValues().meaning}
+          defaultValue={record.nsibidi || getValues().nsibidi}
         />
-        {errors.meaning ? (
-          <p className="error">{errors.meaning.message}</p>
+        {errors.nsibidi ? (
+          <p className="error">{errors.nsibidi.message}</p>
         ) : null}
       </Box>
       <Box className="mt-2">
