@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import WordTags from '../shared/constants/WordTags';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
-import { uploadCorpusPronunciation } from './plugins/pronunciationHooks';
 
 const { Schema, Types } = mongoose;
 export const corpusSuggestionSchema = new Schema({
@@ -28,6 +27,5 @@ export const corpusSuggestionSchema = new Schema({
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(corpusSuggestionSchema);
-uploadCorpusPronunciation(corpusSuggestionSchema);
 
 mongoose.model('CorpusSuggestion', corpusSuggestionSchema);

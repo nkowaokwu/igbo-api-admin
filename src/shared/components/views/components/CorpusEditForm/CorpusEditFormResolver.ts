@@ -4,7 +4,7 @@ import * as yup from 'yup';
 const schema = yup.object().shape({
   title: yup.string(),
   body: yup.string(),
-  media: yup.string(),
+  media: yup.string().nullable(),
   tags: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
 });

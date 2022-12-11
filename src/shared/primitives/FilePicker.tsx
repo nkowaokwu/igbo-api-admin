@@ -24,17 +24,23 @@ const getBase64 = (file) => (
 );
 
 const FilePicker = ({
+  url,
+  title,
   accept,
   onFileSelect,
   seekTime,
   register,
   name,
+  errors,
 } : {
+  url?: string,
+  title?: string,
   accept?: string,
   onFileSelect: (value: any) => void,
   seekTime: number,
   register: any,
   name: string,
+  errors: any,
 }): ReactElement => {
   const [localFile, setLocalFile] = useState<File>(null);
   const [localFilePath, setLocalFilePath] = useState<string>(null);
@@ -75,61 +81,66 @@ const FilePicker = ({
   }, [seekTime]);
 
   return (
-    <>
-      <Box
-        width="lg"
-        height="md"
-        backgroundColor="white"
-        borderRadius="lg"
-        cursor={localFile ? 'default' : 'pointer'}
-        onClick={clickInput}
-        textAlign="center"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        my={4}
-        className="space-y-4"
-      >
-        {localFile ? (
-          <>
-            <ReactPlayer
-              url={localFilePath}
-              controls
-              ref={mediaRef}
-              height="auto"
-              width="auto"
-              onReady={() => onFileSelect({ duration: Math.floor(mediaRef.current.getDuration()) })}
-              style={{
-                borderRadius: 10,
-                overflow: 'hidden',
-              }}
-            />
-            <Text>{localFile.name}</Text>
-          </>
-        ) : (
-          <>
-            <NoteAddIcon style={iconStyle} />
-            <Heading as="h2" fontSize="xl">Select an Audio or Video file to upload</Heading>
-            <Text>or drag and drop it here.</Text>
-          </>
-        )}
+    <Box className="flex flex-col space-y-3">
+      <Box>
+        <Box
+          width="lg"
+          height="md"
+          backgroundColor="white"
+          borderRadius="lg"
+          cursor={localFile ? 'default' : 'pointer'}
+          onClick={clickInput}
+          textAlign="center"
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          my={4}
+          className="space-y-4"
+        >
+          {url || localFile ? (
+            <>
+              <ReactPlayer
+                url={url || localFilePath}
+                controls
+                ref={mediaRef}
+                height="auto"
+                width="auto"
+                onReady={() => onFileSelect({ duration: Math.floor(mediaRef.current.getDuration()) })}
+                style={{
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                }}
+              />
+              <Text>{title || localFile.name}</Text>
+            </>
+          ) : (
+            <>
+              <NoteAddIcon style={iconStyle} />
+              <Heading as="h2" fontSize="xl">Select an Audio or Video file to upload</Heading>
+              <Text>or drag and drop it here.</Text>
+            </>
+          )}
+        </Box>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          onChange={handleOnChange}
+          disabled={localFile}
+          {...register(name)}
+          className="pointer-events-none invisible absolute"
+        />
+        <input
+          disabled
+          {...register('duration')}
+          className="pointer-events-none invisible absolute"
+        />
       </Box>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        onChange={handleOnChange}
-        disabled={localFile}
-        {...register(name)}
-        className="pointer-events-none invisible absolute"
-      />
-      <input
-        disabled
-        {...register('duration')}
-        className="pointer-events-none invisible absolute"
-      />
-    </>
+      {errors.media ? (
+        <p className="error">Media is required</p>
+      ) : null}
+    </Box>
   );
 };
 

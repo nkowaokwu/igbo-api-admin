@@ -72,7 +72,7 @@ export const wordSuggestionSchema = new Schema(
         ...finalAttributes,
         [value]: { type: Boolean, default: false },
       }), {}),
-    variations: { type: [{ type: String }], default: [] },
+    variations: { type: [{ type: String }], default: [], index: true },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
     authorEmail: { type: String, default: '' },
@@ -85,7 +85,12 @@ export const wordSuggestionSchema = new Schema(
     approvals: { type: [{ type: String }], default: [], index: true },
     denials: { type: [{ type: String }], default: [], index: true },
     source: { type: String },
-    merged: { type: Types.ObjectId, ref: 'Word', default: null },
+    merged: {
+      type: Types.ObjectId,
+      ref: 'Word',
+      default: null,
+      index: true,
+    },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [], index: true },
     twitterPollId: { type: String, default: '' },
@@ -103,6 +108,20 @@ wordSuggestionSchema.index({
   merged: 1,
   updatedAt: 1,
   userInteractions: 1,
+});
+
+wordSuggestionSchema.index({
+  merged: 1,
+  updatedAt: -1,
+}, {
+  name: 'Descending word suggestion index',
+});
+
+wordSuggestionSchema.index({
+  merged: 1,
+  updatedAt: 1,
+}, {
+  name: 'Ascending word suggestion index',
 });
 
 wordSuggestionSchema.index({

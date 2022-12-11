@@ -124,15 +124,7 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                 fallbackValue={title}
               />
             </Box>
-            <Box className="w-full flex flex-col lg:flex-row justify-between items-start">
-              <Box className="flex flex-col" fontFamily="monospace">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Body</Heading>
-                <DiffField
-                  path="body"
-                  diffRecord={diffRecord}
-                  fallbackValue={body}
-                />
-              </Box>
+            <Box className="w-full flex flex-col space-y-3">
               <Box className="flex flex-col">
                 <Heading fontSize="lg" className="text-xl text-gray-600">Media</Heading>
                 {/* TODO: check this part! */}
@@ -153,6 +145,14 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                       controls
                     />
                   )}
+                />
+              </Box>
+              <Box className="flex flex-col" fontFamily="monospace">
+                <Heading fontSize="lg" className="text-xl text-gray-600">Body</Heading>
+                <DiffField
+                  path="body"
+                  diffRecord={diffRecord}
+                  fallbackValue={body}
                 />
               </Box>
             </Box>
