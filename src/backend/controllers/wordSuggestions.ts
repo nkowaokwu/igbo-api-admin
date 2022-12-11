@@ -120,7 +120,7 @@ const findWordSuggestions = async (
 ): Promise<Interfaces.WordSuggestion[] | any> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion
-    .find(regexMatch)
+    .find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
     .limit(limit);
 };
