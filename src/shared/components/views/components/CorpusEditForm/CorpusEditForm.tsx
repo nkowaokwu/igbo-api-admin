@@ -51,6 +51,7 @@ const CorpusEditForm = ({
     control,
     errors,
     register,
+    watch,
   } = useForm({
     defaultValues: {
       ...record,
@@ -61,6 +62,8 @@ const CorpusEditForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [seekTime, setSeekTime] = useState(0);
   const [mediaFile, setMediaFile] = useState<File>(null);
+  const watchedMedia = watch('media');
+  const watchedTitle = watch('title');
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
@@ -116,7 +119,6 @@ const CorpusEditForm = ({
     setIsSubmitting(true);
     try {
       const preparedData = omit(assign(
-        { ...record, ...data },
         createCacheCorpusData(data, record),
         {
           approvals: map(record.approvals, (approval) => approval.uid),
@@ -127,7 +129,6 @@ const CorpusEditForm = ({
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: async ({ data }) => {
-          handleUpdateDocument({ resource, record: data });
           if (mediaFile) {
             await uploadToS3({ id: data.id, file: mediaFile })
               .catch(async (err) => {
@@ -148,6 +149,7 @@ const CorpusEditForm = ({
                 }
               });
           }
+          handleUpdateDocument({ resource, record: data });
           setIsSubmitting(false);
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
           redirect(
@@ -220,8 +222,8 @@ const CorpusEditForm = ({
           <p className="error">Title is required</p>
         ) : null}
       </Box>
-      <Box className="flex flex-col-reverse lg:flex-row justify-between items-start space-x-6">
-        <Box className="flex flex-col w-full lg:w-1/2">
+      <Box className="flex flex-col-reverse xl:flex-row justify-between items-start space-x-6">
+        <Box className="flex flex-col w-full">
           <FormHeader
             title="Body"
             tooltip="This is the transcription of the associated media."
@@ -256,10 +258,13 @@ const CorpusEditForm = ({
           ) : null}
         </Box>
         <FilePicker
+          url={watchedMedia}
+          title={watchedTitle}
           onFileSelect={handleFileSelect}
           seekTime={seekTime}
           name="media"
           register={register}
+          errors={errors}
         />
       </Box>
       <Box className="flex flex-col">

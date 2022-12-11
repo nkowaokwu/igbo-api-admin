@@ -54,6 +54,7 @@ export const copyMedia = async (
       Key: `${mediaPath}/${newMediaId}`,
       ACL: 'public-read',
       CopySource: `${bucket}/${mediaPath}/${oldMediaId}`,
+      MetadataDirective: 'REPLACE',
     };
 
     await s3.copyObject(copyParams).promise();
@@ -134,7 +135,6 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
   const params = {
     Bucket: bucket,
     Key: `${mediaPath}/${id}`,
-    Expires: 60,
     ContentType: fileType,
     ACL: 'public-read',
   };

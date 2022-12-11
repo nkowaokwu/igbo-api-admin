@@ -1,6 +1,7 @@
 import { Document, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign } from 'lodash';
+import { corpusSchema } from '../models/Corpus';
 import { corpusSuggestionSchema } from '../models/CorpusSuggestion';
 import { packageResponse, handleQueries } from './utils';
 import { searchPreExistingCorpusSuggestionsRegexQuery } from './utils/queries';
@@ -19,9 +20,14 @@ export const postCorpusSuggestion = async (
   try {
     const { body: data, user, mongooseConnection } = req;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-
+    const Corpus = mongooseConnection.model('Corpus', corpusSchema);
+    let corpus = null;
     data.authorId = user.uid;
-    const newCorpusSuggestion = new CorpusSuggestion(data);
+    if (data.originalCorpusId) {
+      corpus = await Corpus.findById(data.originalCorpusId);
+    }
+    // Apply media link on the backend for child corpus suggestions
+    const newCorpusSuggestion = new CorpusSuggestion({ ...data, media: (corpus || {}).media });
     const savedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await newCorpusSuggestion.save();
     return res.send(savedCorpusSuggestion);
   } catch (err) {

@@ -1,16 +1,17 @@
 import * as functions from 'firebase-functions';
 import MediaTypes from '../shared/constants/MediaTypes';
-import CorpusSuggestion from '../models/CorpusSuggestion';
+import { corpusSuggestionSchema } from '../models/CorpusSuggestion';
 import { getUploadSignature } from './utils/MediaAPIs/CorpusMediaAPI';
-import { CorpusSuggestion as CorpusSuggestionType } from './utils/interfaces';
+import { connectDatabase } from '../utils/database';
 
 export const onMediaSignedRequest = functions.https.onCall(async (
   { id, fileType }:
   { id: string, fileType: MediaTypes },
 ): Promise<Error | {
-  corpusSuggestion: CorpusSuggestionType,
   response: { signedRequest: string, mediaUrl: string },
 }> => {
+  const mongooseConnection = await connectDatabase();
+  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
   const corpusSuggestion = await CorpusSuggestion.findById(id);
   if (!corpusSuggestion) {
     throw new functions.https.HttpsError(
@@ -29,9 +30,6 @@ export const onMediaSignedRequest = functions.https.onCall(async (
   }
   corpusSuggestion.media = response.mediaUrl;
   corpusSuggestion.markModified('media');
-  const savedSuggestion = await corpusSuggestion.save();
-  return {
-    corpusSuggestion: savedSuggestion.toJSON(),
-    response,
-  };
+  await corpusSuggestion.save();
+  return { response };
 });

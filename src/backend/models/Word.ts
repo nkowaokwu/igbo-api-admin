@@ -75,4 +75,18 @@ export const wordSchema = new Schema({
 toJSONPlugin(wordSchema);
 toJSONPlugin(definitionSchema);
 
+wordSchema.index({
+  merged: 1,
+  updatedAt: -1,
+}, {
+  name: 'Descending word index',
+});
+
+wordSchema.index({
+  merged: 1,
+  updatedAt: 1,
+}, {
+  name: 'Descending word index',
+});
+
 mongoose.model('Word', wordSchema);

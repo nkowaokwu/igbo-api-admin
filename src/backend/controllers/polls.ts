@@ -127,7 +127,7 @@ export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest,
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
 
     const tweetBody = { text: body.text, poll: body.poll };
-    const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...ConstructedPollThread.slice(1, 4)]);
+    const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...ConstructedPollThread]);
 
     const firstTweetId = tweets[0].data.id;
 
