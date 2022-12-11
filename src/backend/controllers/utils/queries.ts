@@ -174,7 +174,6 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
   } => ({
   $or: [wordQuery(regex), variationsQuery(regex)],
   merged: null,
-  updatedAt: { $lte: new Date() },
   ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchPreExistingCorpusSuggestionsRegexQuery = (
