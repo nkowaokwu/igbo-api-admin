@@ -33,12 +33,7 @@ const dialectSchema = new Schema({
 
 export const wordSuggestionSchema = new Schema(
   {
-    originalWordId: {
-      type: Types.ObjectId,
-      ref: 'Word',
-      default: null,
-      index: true,
-    },
+    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
     word: { type: String, required: true, index: true },
     definitions: [{
       type: definitionSchema,
@@ -72,7 +67,7 @@ export const wordSuggestionSchema = new Schema(
         ...finalAttributes,
         [value]: { type: Boolean, default: false },
       }), {}),
-    variations: { type: [{ type: String }], default: [], index: true },
+    variations: { type: [{ type: String }], default: [] },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
     authorEmail: { type: String, default: '' },
@@ -82,8 +77,8 @@ export const wordSuggestionSchema = new Schema(
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     nsibidi: { type: String, default: '', index: true },
-    approvals: { type: [{ type: String }], default: [], index: true },
-    denials: { type: [{ type: String }], default: [], index: true },
+    approvals: { type: [{ type: String }], default: [] },
+    denials: { type: [{ type: String }], default: [] },
     source: { type: String },
     merged: {
       type: Types.ObjectId,
@@ -92,7 +87,7 @@ export const wordSuggestionSchema = new Schema(
       index: true,
     },
     mergedBy: { type: String, default: null },
-    userInteractions: { type: [{ type: String }], default: [], index: true },
+    userInteractions: { type: [{ type: String }], default: [] },
     twitterPollId: { type: String, default: '' },
   },
   { toObject: toObjectPlugin, timestamps: true },
@@ -104,24 +99,10 @@ normalizeHeadword(wordSuggestionSchema);
 toJSONPlugin(definitionSchema);
 
 wordSuggestionSchema.index({
-  word: 1,
-  merged: 1,
-  updatedAt: 1,
-  userInteractions: 1,
-});
-
-wordSuggestionSchema.index({
   merged: 1,
   updatedAt: -1,
 }, {
   name: 'Descending word suggestion index',
-});
-
-wordSuggestionSchema.index({
-  merged: 1,
-  updatedAt: 1,
-}, {
-  name: 'Ascending word suggestion index',
 });
 
 wordSuggestionSchema.index({
