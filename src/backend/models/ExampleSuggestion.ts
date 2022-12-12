@@ -23,7 +23,7 @@ export const exampleSuggestionSchema = new Schema({
     enum: Object.values(ExampleStyle).map(({ value }) => value),
     default: ExampleStyle.NO_STYLE.value,
   },
-  associatedWords: { type: [{ type: Types.ObjectId }], default: [] },
+  associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
   associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
   pronunciation: { type: String, default: '' },
   exampleForSuggestion: { type: Boolean, default: false },
@@ -31,23 +31,16 @@ export const exampleSuggestionSchema = new Schema({
   userComments: { type: String, default: '' },
   authorEmail: { type: String, default: '' },
   authorId: { type: String, default: '' },
-  approvals: { type: [{ type: String }], default: [], index: true },
-  denials: { type: [{ type: String }], default: [], index: true },
+  approvals: { type: [{ type: String }], default: [] },
+  denials: { type: [{ type: String }], default: [] },
   source: { type: String, default: SuggestionSource.INTERNAL },
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
-  mergedBy: { type: String, default: null, index: true },
-  userInteractions: { type: [{ type: String }], default: [], index: true },
+  mergedBy: { type: String, default: null },
+  userInteractions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
 normalizeIgbo(exampleSuggestionSchema);
-
-exampleSuggestionSchema.index({
-  mergedBy: 1,
-  updatedAt: -1,
-}, {
-  name: 'Merged example suggestion index',
-});
 
 mongoose.model('ExampleSuggestion', exampleSuggestionSchema);
