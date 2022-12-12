@@ -23,7 +23,7 @@ export const exampleSuggestionSchema = new Schema({
     enum: Object.values(ExampleStyle).map(({ value }) => value),
     default: ExampleStyle.NO_STYLE.value,
   },
-  associatedWords: { type: [{ type: Types.ObjectId }], default: [] },
+  associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
   associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
   pronunciation: { type: String, default: '' },
   exampleForSuggestion: { type: Boolean, default: false },
