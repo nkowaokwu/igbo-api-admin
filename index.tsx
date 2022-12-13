@@ -113,6 +113,7 @@ export const app = process.env.NODE_ENV === 'test' ? (() => {
   return expressServer;
 })() : (
   functions
+    .region('us-east4')
     .runWith({ timeoutSeconds: 540, memory: '1GB' })
     .https
     .onRequest(server)
