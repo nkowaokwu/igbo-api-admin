@@ -43,10 +43,10 @@ export const sendWeeklyStats = async (): Promise<void> => {
         endDate: new Date().toDateString(),
       };
       await sendMergedStats(emailData);
-      await disconnectDatabase(mongooseConnection);
+      await disconnectDatabase();
     }
   } catch (err) {
-    await disconnectDatabase(mongooseConnection);
+    await disconnectDatabase();
   }
 };
 
@@ -67,9 +67,9 @@ export const onSendEditorReminderEmail = async (): Promise<void> => {
         exampleSuggestionsCount: nonMergedExampleSuggestions.length,
       };
       await sendSuggestionsReminder(emailData);
-      await disconnectDatabase(mongooseConnection);
+      await disconnectDatabase();
     }
   } catch (err) {
-    await disconnectDatabase(mongooseConnection);
+    await disconnectDatabase();
   }
 };
