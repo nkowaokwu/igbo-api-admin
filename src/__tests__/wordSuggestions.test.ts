@@ -197,7 +197,7 @@ describe('MongoDB Word Suggestions', () => {
         ...wordSuggestionWithNestedExampleSuggestionData,
         examples: [{
           ...wordSuggestionWithNestedExampleSuggestionData.examples[0],
-          pronunciation: 'recording audio',
+          pronunciation: 'data:audio/mp3recording audio',
         }],
       });
       expect(wordRes.status).toEqual(200);
@@ -416,9 +416,9 @@ describe('MongoDB Word Suggestions', () => {
 
     it('should return one word suggestion', async () => {
       const res = await suggestNewWord(wordSuggestionData);
-      const result = await getWordSuggestion(res.body.id);
+      const result = await getWordSuggestion(res.body.id, { examples: true });
       expect(result.status).toEqual(200);
-      WORD_SUGGESTION_KEYS.forEach((wordSuggestionKey) => {
+      WORD_SUGGESTION_KEYS.filter((key) => key !== 'examples').forEach((wordSuggestionKey) => {
         expect(result.body).toHaveProperty(wordSuggestionKey);
       });
     });

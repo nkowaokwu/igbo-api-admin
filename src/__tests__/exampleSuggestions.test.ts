@@ -101,12 +101,13 @@ describe('MongoDB Example Suggestions', () => {
   describe('/GET mongodb exampleSuggestions', () => {
     it('should return an example suggestion by searching', async () => {
       const exampleText = exampleSuggestionData.igbo;
-      await suggestNewExample(exampleSuggestionData);
+      const exampleRes = await suggestNewExample(exampleSuggestionData);
       const res = await getExampleSuggestions({ keyword: exampleText });
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
+      const resExample = res.body.find(({ id }) => id === exampleRes.body.id);
       forEach(Object.keys(exampleSuggestionData), (key) => {
-        expect(res.body[0][key]).toEqual(exampleSuggestionData[key]);
+        expect(resExample[key]).toEqual(exampleSuggestionData[key]);
       });
     });
 

@@ -22,8 +22,7 @@ export const createExampleSuggestion = async (
   try {
     await Promise.all(map(data.associatedWords, async (associatedWordId) => {
       const query = searchPreExistingExampleSuggestionsRegexQuery({ ...data, associatedWordId });
-      const identicalExampleSuggestions = await ExampleSuggestion
-        .find(query);
+      const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
       if (identicalExampleSuggestions.length) {
         const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
@@ -161,9 +160,10 @@ const findExampleSuggestions = (
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
   return ExampleSuggestion
-    .find(regexMatch, null, { sort: { updatedAt: -1 } })
+    .find(regexMatch)
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .sort({ updatedAt: -1 });
 };
 
 /* Returns all existing ExampleSuggestion objects */

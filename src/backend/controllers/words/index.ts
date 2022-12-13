@@ -57,7 +57,7 @@ export const getWordData = (req: Interfaces.EditorRequest, res: Response, next: 
 };
 
 /* Searches for a word with Igbo stored in MongoDB */
-export const searchWordUsingIgbo = async (
+const searchWordUsingIgbo = async (
   {
     query,
     searchWord,

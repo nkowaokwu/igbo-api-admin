@@ -6,6 +6,8 @@ import UserRoles from '../shared/constants/UserRoles';
 import { handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 
+const cachedUsers = {};
+
 const formatUser = (user = { customClaims: {}, metadata: {} }): Interfaces.FormattedUser => {
   const { customClaims, metadata } = user;
   return {
@@ -91,12 +93,17 @@ export const getUsers = async (
   }
 };
 
-/* Looks into Firebase for user */
+/* Looks into Firebase for user first in the cache and then uses Firebase SDK */
 // TODO: expand this function to look inside both Igbo API Editor Platform and Nkowaokwu Firebase projects
 export const findUser = async (uid: string): Promise<Interfaces.FormattedUser | string> => {
   if (process.env.NODE_ENV !== 'test') {
+    if (cachedUsers[uid]) {
+      return cachedUsers[uid];
+    }
     const user = await admin.auth().getUser(uid);
-    return formatUser(user);
+    const formattedUser = formatUser(user);
+    cachedUsers[uid] = formattedUser;
+    return formattedUser;
   }
   return uid;
 };
