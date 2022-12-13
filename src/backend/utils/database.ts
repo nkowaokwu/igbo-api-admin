@@ -10,6 +10,7 @@ const mongooseConnection = mongoose.connection;
 export const connectDatabase = async (): Promise<mongoose.Connection> => new Promise((resolve) => {
   /* Connects to the MongoDB Database */
   if (mongooseConnection?.readyState === DISCONNECTED) {
+    console.time('Create MongoDB connection');
     mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useFindAndModify: false,
@@ -21,6 +22,7 @@ export const connectDatabase = async (): Promise<mongoose.Connection> => new Pro
 
     mongooseConnection.on('error', console.error.bind(console, '❌ MongoDB connection error:'));
     mongooseConnection.once('open', () => {
+      console.timeEnd('Create MongoDB connection');
       if (config?.runtime?.env === 'production') {
         console.log('🆕 Created a new mongooseConnection.');
         console.log('🗄 Database is connected', process.env.CI, MONGO_URI);

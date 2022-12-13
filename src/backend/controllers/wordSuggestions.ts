@@ -199,6 +199,7 @@ export const getWordSuggestions = (
     const regexMatch = searchPreExistingWordSuggestionsRegexQuery(regexKeyword, filters);
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
 
+    console.time('Get word suggestions');
     return findWordSuggestions({
       regexMatch,
       skip,
@@ -212,6 +213,7 @@ export const getWordSuggestions = (
             placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection)
           )),
         );
+        console.timeEnd('Get word suggestions');
         return packageResponse({
           res,
           docs: wordSuggestionsWithExamples,
