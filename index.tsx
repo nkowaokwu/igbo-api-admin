@@ -79,6 +79,7 @@ export const sendEditorReminderEmail = functions.pubsub.schedule('0 6 */4 * *')
 
 /* Runs at minute 0, 10, 20, 30, 40, and 50 past every hour from 8AM through 10PM WAT */
 export const calculateDashboardStats = functions
+  .region('us-central1', 'europe-west3')
   .runWith({ timeoutSeconds: 540, memory: '2GB' })
   .pubsub
   .schedule('0,10,20,30,40,50 8-22 * * *')
@@ -113,7 +114,7 @@ export const app = process.env.NODE_ENV === 'test' ? (() => {
   return expressServer;
 })() : (
   functions
-    .region('us-east4')
+    .region('us-central1', 'europe-west3')
     .runWith({ timeoutSeconds: 540, memory: '1GB' })
     .https
     .onRequest(server)
