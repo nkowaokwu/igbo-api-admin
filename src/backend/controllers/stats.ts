@@ -331,9 +331,9 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
       calculateTotalHeadwordsWithAudioPronunciations(Word, Stat),
       calculateWordStats(Word, Stat),
     ]);
-    await disconnectDatabase(connection);
+    await disconnectDatabase();
   } catch (err) {
-    await disconnectDatabase(connection);
+    await disconnectDatabase();
     console.log(err);
   };
 };
