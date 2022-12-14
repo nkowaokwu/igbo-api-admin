@@ -9,6 +9,6 @@ export default async (err, req, res, next) => {
   }
   console.log(err?.message);
   console.log(err?.stack);
-  await disconnectDatabase();
+  await disconnectDatabase(req.mongooseConnection);
   return res.send({ error: err.message });
 };

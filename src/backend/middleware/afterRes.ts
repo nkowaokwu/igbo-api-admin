@@ -8,7 +8,7 @@ export default () => async (req: Interfaces.EditorRequest, res: Response, next: 
   // Disconnect from database if not in a testing environment
   if (process.env.NODE_ENV !== 'test') {
     const afterResponse = async () => {
-      await disconnectDatabase();
+      await disconnectDatabase(mongooseConnection);
     };
     res.on('finish', afterResponse);
     res.on('close', afterResponse);
