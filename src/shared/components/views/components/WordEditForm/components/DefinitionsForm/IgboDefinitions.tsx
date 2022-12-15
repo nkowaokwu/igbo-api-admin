@@ -30,7 +30,7 @@ const IgboDefinitions = ({
             render={(props) => (
               <Textarea
                 {...props}
-                rows={1}
+                rows={3}
                 className="form-textarea"
                 placeholder="Definition in Igbo"
                 data-test={`nested-definitions-igbo-${igboDefinitionIndex}-input`}
