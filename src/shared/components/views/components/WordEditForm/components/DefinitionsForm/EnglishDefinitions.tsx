@@ -30,7 +30,7 @@ const EnglishDefinitions = ({
             render={(props) => (
               <Textarea
                 {...props}
-                rows={1}
+                rows={3}
                 className="form-textarea"
                 placeholder="Definition in English"
                 data-test={`nested-definitions-${nestedDefinitionIndex}-input`}
