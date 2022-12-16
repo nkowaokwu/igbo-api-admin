@@ -165,10 +165,10 @@ export default {
     content: 'Deleting a poll is an irreversible action that will delete the poll '
      + 'in the Igbo API Editor Platform along with associated tweets and Slack bot posts',
     executeAction: (
-      { pollId }:
-      { pollId: string },
+      { id }:
+      { id: string },
     ) : Promise<any> => (
-      handleDeleteConstructedTermPoll({ pollId })
+      handleDeleteConstructedTermPoll({ pollId: id })
     ),
     successMessage: 'You have deleted the poll',
   },
