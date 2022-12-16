@@ -13,7 +13,7 @@ export const corpusDataSchema = Joi.object().keys({
     return true;
   }).allow(null).optional(),
   title: Joi.string().required(),
-  body: Joi.string().required(),
+  body: Joi.string().allow('').required(),
   tags: Joi.array().items(Joi.string().valid(...Object.values(WordTags).map(({ value }) => value))),
   editorsNotes: Joi.string().allow('').optional(),
 });
