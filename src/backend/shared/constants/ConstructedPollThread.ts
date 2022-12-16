@@ -1,5 +1,8 @@
 export default [
   {
+    text: 'We are creating new Igbo words and we need your feedback!\n',
+  },
+  {
     text: 'Daalụ @okwuid for supporting and sharing the work we\'ve been doing!\n',
   },
   {
