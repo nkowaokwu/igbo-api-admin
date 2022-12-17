@@ -34,7 +34,6 @@ import StemsForm from './components/StemsForm';
 import RelatedTermsForm from './components/RelatedTermsForm';
 import HeadwordForm from './components/HeadwordForm';
 import TagsForm from './components/TagsForm';
-import NsibidiForm from './components/NsibidiForm';
 import TensesForm from './components/TensesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
@@ -81,6 +80,7 @@ const WordEditForm = ({
     wordClass: '',
     definitions: [''],
     igboDefinitions: [],
+    nsibidi: '',
   }]);
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
@@ -241,11 +241,6 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
               watch={watch}
-            />
-            <NsibidiForm
-              control={control}
-              record={record}
-              getValues={getValues}
             />
             <TagsForm
               errors={errors}

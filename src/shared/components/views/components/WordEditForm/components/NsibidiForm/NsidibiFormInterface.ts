@@ -5,6 +5,7 @@ interface NsidibiForm {
   control: Control,
   record: Record,
   getValues: (key: string) => any,
+  name?: string
 };
 
 export default NsidibiForm;

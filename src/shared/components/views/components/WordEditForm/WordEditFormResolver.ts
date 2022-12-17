@@ -19,6 +19,7 @@ const schema = yup.object().shape({
       value: yup.mixed().oneOf(Object.values(WordClass).map(({ value }) => value)),
       label: yup.mixed().oneOf(Object.values(WordClass).map(({ label }) => label)),
     }).required(),
+    nsibidi: yup.string().optional(),
     definitions: yup.mixed().test('definition-types', 'Definition is required', (value) => {
       if (Array.isArray(value)) {
         return value.length >= 1 && value[0].length >= 1;
@@ -45,7 +46,6 @@ const schema = yup.object().shape({
   relatedTerms: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
   examples: yup.array().min(0).of(ExampleEditFormSchema),
-  nsibidi: yup.string(),
   twitterPollId: yup.string().optional(),
 });
 

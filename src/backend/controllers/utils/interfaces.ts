@@ -49,7 +49,9 @@ export interface DefinitionSchema {
   wordClass: string | WordDialect,
   definitions: string[],
   igboDefinitions: string[],
-  _id: Types.ObjectId,
+  nsibidi: string,
+  _id?: Types.ObjectId,
+  id?: string,
 }
 
 export interface Word extends Document<any>, LeanDocument<any> {
@@ -73,7 +75,6 @@ export interface Word extends Document<any>, LeanDocument<any> {
     isBorrowedTerm: boolean,
     isStem: boolean,
   }
-  nsibidi: string,
   relatedTerms: string[],
   hypernyms: string[],
   hyponyms: string[],
