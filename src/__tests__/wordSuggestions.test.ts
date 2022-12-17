@@ -176,6 +176,24 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.body.authorId).toEqual(res.body.authorId);
     });
 
+    it('should update specific wordSuggestion with nested nsibidi', async () => {
+      const res = await suggestNewWord(wordSuggestionData);
+      expect(res.status).toEqual(200);
+      const result = await updateWordSuggestion({
+        id: res.body.id,
+        ...updatedWordSuggestionData,
+        definitions: [
+          {
+            definitions: ['first definition'],
+            wordClass: WordClass.NNC.value,
+            nsibidi: 'testing',
+          },
+          ...updatedWordSuggestionData.definitions,
+        ],
+      });
+      expect(result.body.nsibidi).toBeUndefined();
+      expect(result.body.definitions[0].nsibidi).toBe('testing');
+    });
     it('should update nested exampleSuggestion inside wordSuggestion', async () => {
       const updatedIgbo = 'updated example igbo text';
       const updatedEnglish = 'updated example english text';
