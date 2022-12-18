@@ -26,6 +26,7 @@ export const wordDataSchema = Joi.object().keys({
     wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
     definitions: Joi.array().min(1).items(Joi.string()).required(),
     igboDefinitions: Joi.array().min(0).items(Joi.string()).optional(),
+    nsibidi: Joi.string().allow('').optional(),
     label: Joi.string().allow('').optional(),
   })).required(),
   attributes: Joi.object().keys(Object.values(WordAttributes).reduce((finalSchema, { value }) => ({

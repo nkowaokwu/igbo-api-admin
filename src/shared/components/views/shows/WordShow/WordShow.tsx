@@ -69,7 +69,6 @@ const WordShow = (props: ShowProps): ReactElement => {
     id,
     author,
     word,
-    nsibidi,
     approvals,
     denials,
     editorsNotes,
@@ -162,17 +161,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                   fallbackValue={word}
                 />
               </Box>
-              <Box className="flex flex-col">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị</Heading>
-                <DiffField
-                  path="nsibidi"
-                  diffRecord={diffRecord}
-                  fallbackValue={nsibidi}
-                  renderNestedObject={(value) => (
-                    <span className={value ? 'akagu' : ''}>{value || 'N/A'}</span>
-                  )}
-                />
-              </Box>
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
@@ -200,11 +188,11 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Heading fontSize="lg" className="text-xl text-gray-600">Definition Groups</Heading>
               {record.definitions.map((definition, index) => (
                 <Box
-                  className="pl-4 pb-4"
+                  className="pl-4 pb-4 space-y-4 mt-4"
                   borderBottomColor="gray.200"
                   borderBottomWidth="1px"
                 >
-                  <Box className="flex flex-col mt-5">
+                  <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-gray-600">Part of Speech</Heading>
                     <DiffField
                       path={`definitions.${index}.wordClass`}
@@ -215,7 +203,18 @@ const WordShow = (props: ShowProps): ReactElement => {
                       }
                     />
                   </Box>
-                  <Box className="flex flex-col mt-5">
+                  <Box className="flex flex-col">
+                    <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị</Heading>
+                    <DiffField
+                      path={`definitions.${index}.nsibidi`}
+                      diffRecord={diffRecord}
+                      fallbackValue={definition.nsibidi}
+                      renderNestedObject={(value) => (
+                        <span className={value ? 'akagu' : ''}>{value || 'N/A'}</span>
+                      )}
+                    />
+                  </Box>
+                  <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-xl text-gray-600">Definitions</Heading>
                     {/* ts-expect-error */}
                     <ArrayDiffField

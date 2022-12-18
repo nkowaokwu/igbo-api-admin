@@ -20,6 +20,7 @@ const definitionSchema = new Schema({
   },
   label: { type: String, default: '', trim: true },
   definitions: { type: [{ type: String }], default: [] },
+  nsibidi: { type: String, default: '', index: true },
   igboDefinitions: { type: [{ type: String }], default: [] },
 }, { toObject: toObjectPlugin });
 
@@ -76,7 +77,6 @@ export const wordSuggestionSchema = new Schema(
     relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
-    nsibidi: { type: String, default: '', index: true },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
     source: { type: String },

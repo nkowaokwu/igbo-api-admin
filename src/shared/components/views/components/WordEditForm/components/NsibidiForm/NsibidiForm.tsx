@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
@@ -9,6 +10,7 @@ const NsibidiForm = ({
   control,
   record,
   getValues,
+  name,
 }: NsidibiFormInterface): ReactElement => (
   <Box className="flex flex-col w-full">
     <FormHeader
@@ -22,9 +24,9 @@ const NsibidiForm = ({
       render={(props) => (
         <NsibidiInput {...props} />
       )}
-      name="nsibidi"
+      name={name || 'nsibidi'}
       control={control}
-      defaultValue={record.nsibidi || getValues().nsibidi}
+      defaultValue={name ? get(record, name) : (record.nsibidi || getValues().nsibidi)}
     />
   </Box>
 );
