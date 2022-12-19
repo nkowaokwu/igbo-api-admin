@@ -130,14 +130,14 @@ export const getResourceObjects = (permissions) => compact(flatten([
     show: AsyncExampleShow,
     icon: ExampleIcon,
   },
-  hasAdminPermissions(permissions, [{
+  {
     name: 'corpora',
     key: 'corpora',
     options: { label: 'Corpora' },
     list: AsyncCorpusList,
     show: AsyncCorpusShow,
     create: null,
-  }]),
+  },
   {
     name: 'wordSuggestions',
     key: 'wordSuggestions',
@@ -158,7 +158,7 @@ export const getResourceObjects = (permissions) => compact(flatten([
     show: AsyncExampleSuggestionShow,
     icon: ExampleSuggestionIcon,
   },
-  hasAdminPermissions(permissions, [{
+  {
     name: 'corpusSuggestions',
     key: 'corpusSuggestions',
     options: { label: 'Corpus Suggestions' },
@@ -166,7 +166,7 @@ export const getResourceObjects = (permissions) => compact(flatten([
     edit: AsyncCorpusSuggestionEdit,
     create: AsyncCorpusSuggestionCreate,
     show: AsyncCorpusSuggestionShow,
-  }]),
+  },
   {
     name: 'notifications',
     key: 'notifications',
