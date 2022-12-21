@@ -253,7 +253,7 @@ export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandar
   'attributes.isStandardIgbo': true,
 });
 export const searchForAllWordsWithNsibidi = (): { $and: any } => ({
-  $and: [{ nsibidi: { $ne: null } }, { nsibidi: { $ne: '' } }],
+  $and: [{ 'definitions.nsibidi': { $ne: null } }, { 'definitions.nsibidi': { $ne: '' } }],
 });
 export const searchForAssociatedSuggestions = (wordId: string): {
   originalWordId: string,
