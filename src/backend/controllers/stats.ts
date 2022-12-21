@@ -198,8 +198,8 @@ export const getUserStats = async (
     const authoredExampleSuggestionsCount = exampleSuggestions.filter(({ author }) => author === userId).length;
 
     // Merged documents
-    const mergedWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
-    const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => mergedBy === userId).length;
+    const mergedWordSuggestionsCount = wordSuggestions.filter(({ authorId }) => authorId === userId).length;
+    const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ authorId }) => authorId === userId).length;
 
     // Interacted with documents
     const currentEditingWordSuggestionsCount = wordSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
@@ -239,9 +239,9 @@ export const getUserMergeStats = async (
       ExampleSuggestion
         .find(
           {
-            mergedBy: userId,
+            authorId: userId,
+            mergedBy: { $ne: null },
             updatedAt: { $gte: threeMonthsAgo },
-            originalExampleId: null,
           },
           'updatedAt',
         )
@@ -249,7 +249,8 @@ export const getUserMergeStats = async (
         .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
       WordSuggestion
         .find({
-          mergedBy: uid,
+          authorId: userId,
+          mergedBy: { $ne: null },
           updatedAt: { $gte: threeMonthsAgo },
         })
         .hint('Merged word suggestion index')
