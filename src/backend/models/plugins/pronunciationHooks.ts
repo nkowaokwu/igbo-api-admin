@@ -129,7 +129,7 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
       next();
       return this;
     } catch (err) {
-      console.log('Error caught in pre save Example shcema hook', err.message);
+      console.log('Error caught in pre save Example schema hook', err.message);
       this.invalidate('pronunciation', err.message);
       return null;
     }

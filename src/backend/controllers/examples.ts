@@ -64,7 +64,7 @@ export const getExamples = async (
       ...rest
     } = handleQueries(req);
     const Example = mongooseConnection.model('Example', exampleSchema);
-    const regexMatch = searchExamplesRegexQuery(regexKeyword, filters);
+    const regexMatch = searchExamplesRegexQuery(user.uid, regexKeyword, filters);
     const examples = await searchExamples({
       query: regexMatch,
       skip,

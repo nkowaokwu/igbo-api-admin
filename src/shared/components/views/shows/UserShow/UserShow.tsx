@@ -66,7 +66,8 @@ const UserShow = (props: ShowProps): ReactElement => {
         <Heading size="lg" className="mt-3">Total User Stats</Heading>
         {record.uid && !isLoading ? (
           <UserStat
-            uid={record.uid}
+            // uid={record.uid}
+            uid="IUZDo1zpVUWfwwH8Zz39zIzIUFj1"
             totalCompletedWords={totalCompletedWords}
             totalCompletedExamples={totalCompletedExamples}
             totalDialectalVariations={totalDialectalVariations}

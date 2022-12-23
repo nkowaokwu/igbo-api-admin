@@ -26,7 +26,7 @@ jobs:
         run: |
           firebase use staging --token $FIREBASE_TOKEN
           firebase functions:config:set runtime.env="development" env.main_key=main_key --token $FIREBASE_TOKEN
-          firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
+          # firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
           yarn build:dev
         env:
           FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}

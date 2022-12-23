@@ -182,7 +182,7 @@ export const getExampleSuggestions = (
       mongooseConnection,
       ...rest
     } = handleQueries(req);
-    const regexMatch = searchExampleSuggestionsRegexQuery(regexKeyword, filters);
+    const regexMatch = searchExampleSuggestionsRegexQuery(user.uid, regexKeyword, filters);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
     return findExampleSuggestions({
