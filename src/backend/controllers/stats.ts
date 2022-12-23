@@ -205,6 +205,7 @@ export const getUserStats = async (
       authorId === userId && mergedBy
     )).length;
 
+    // Merged by the user documents
     const mergedByUserWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => (
       mergedBy === userId
     )).length;
