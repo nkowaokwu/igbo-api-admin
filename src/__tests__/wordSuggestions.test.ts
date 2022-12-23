@@ -17,6 +17,7 @@ import {
   getWordSuggestions,
   getWordSuggestion,
   getExampleSuggestion,
+  getExample,
 } from './shared/commands';
 import {
   wordSuggestionId,
@@ -194,6 +195,7 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.body.nsibidi).toBeUndefined();
       expect(result.body.definitions[0].nsibidi).toBe('testing');
     });
+
     it('should update nested exampleSuggestion inside wordSuggestion', async () => {
       const updatedIgbo = 'updated example igbo text';
       const updatedEnglish = 'updated example english text';
@@ -387,6 +389,50 @@ describe('MongoDB Word Suggestions', () => {
       });
       expect(updatedWordSuggestionRes.status).toEqual(200);
       expect(updatedWordSuggestionRes.body.tenses[Tense.IMPERATIVE.value]).toEqual('testing');
+    });
+
+    it('should update a word suggestion with two different authors', async () => {
+      const wordSuggestionRes = await suggestNewWord({
+        ...wordSuggestionData,
+        tenses: Object.values(Tense).reduce((finalTenses, { value }) => ({
+          ...finalTenses,
+          [value]: '',
+        }), {}),
+      });
+      expect(wordSuggestionRes.status).toEqual(200);
+      const updatedWordSuggestionRes = await updateWordSuggestion({
+        ...wordSuggestionRes.body,
+        tenses: {
+          ...wordSuggestionRes.body.tenses,
+          [Tense.IMPERATIVE.value]: 'testing',
+        },
+        examples: [{
+          igbo: 'testing with igbo',
+          english: 'testing with english',
+          pronunciation: 'data://',
+        }],
+      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      expect(updatedWordSuggestionRes.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+      expect(updatedWordSuggestionRes.body.authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      const res = await updateWordSuggestion({
+        ...updatedWordSuggestionRes.body,
+        tenses: {
+          ...wordSuggestionRes.body.tenses,
+          [Tense.IMPERATIVE.value]: 'testing',
+        },
+        examples: [{
+          igbo: 'testing with igbo updated',
+          english: 'testing with english updated',
+        }],
+      }, { token: AUTH_TOKEN.ADMIN_AUTH_TOKEN, cleanData: true });
+      expect(res.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+      expect(res.body.authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      await createWord(res.body.id);
+      const exampleSuggestionRes = await getExampleSuggestion(res.body.examples[0].id);
+      const exampleRes = await getExample(exampleSuggestionRes.body.merged);
+      expect(exampleSuggestionRes.body.merged).toEqual(exampleRes.body.id);
+      expect(exampleSuggestionRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      expect(exampleSuggestionRes.body.authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
     });
   });
 

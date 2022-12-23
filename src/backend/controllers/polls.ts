@@ -95,9 +95,9 @@ export const onDeleteConstructedTermPoll = functions.https.onCall(
 
     // Deletes all Tweets
     refreshedClient.v2.deleteTweet(doc.id);
-    doc.thread.forEach((tweetId) => (
+    await Promise.all(doc.thread.map((tweetId) => (
       refreshedClient.v2.deleteTweet(tweetId)
-    ));
+    )));
 
     // Deletes Slack message
     if (doc.slack_message_ts) {
@@ -127,7 +127,9 @@ export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest,
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
 
     const tweetBody = { text: body.text, poll: body.poll };
-    const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...ConstructedPollThread]);
+    const pollThread = [...ConstructedPollThread];
+    pollThread.shift();
+    const tweets = await refreshedClient.v2.tweetThread([tweetBody, ...pollThread]);
 
     const firstTweetId = tweets[0].data.id;
 
