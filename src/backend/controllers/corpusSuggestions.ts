@@ -109,11 +109,12 @@ export const getCorpusSuggestions = (
       skip,
       limit,
       filters,
+      user,
       mongooseConnection,
       ...rest
     } = handleQueries(req);
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(regexKeyword, filters);
+    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(user.uid, regexKeyword, filters);
     return findCorpusSuggestions({
       regexMatch,
       skip,

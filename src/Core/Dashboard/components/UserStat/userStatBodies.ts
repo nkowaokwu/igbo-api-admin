@@ -30,10 +30,24 @@ const userStatBodies = {
     label: 'Total authored exampled suggestions',
   },
   mergedWordSuggestionsCount: {
-    label: 'Total merged word suggestions',
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"authorId"'
+    + '%3Atrue%2C"mergedBy"%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Merged authored word suggestions',
   },
   mergedExampleSuggestionsCount: {
-    label: 'Total merged exampled suggestions',
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"authorId"'
+    + '%3Atrue%2C"mergedBy"%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Merged authored example suggestions',
+  },
+  mergedByUserWordSuggestionsCount: {
+    hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"merger"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Merged word suggestions',
+  },
+  mergedByUserExampleSuggestionsCount: {
+    hash: '#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B"merger"'
+    + '%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals',
+    label: 'Merged example suggestions',
   },
   currentEditingWordSuggestionsCount: {
     hash: '#/wordSuggestions?displayedFilters=%5B%5D&filter=%7B"userInteractions"'

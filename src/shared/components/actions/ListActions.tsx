@@ -257,6 +257,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         <MenuItemOption value="authorId">
                           Is Author
                         </MenuItemOption>,
+                        <MenuItemOption value="mergedBy">
+                          Merged By You
+                        </MenuItemOption>,
                       ]
                       : null}
                   </MenuOptionGroup>

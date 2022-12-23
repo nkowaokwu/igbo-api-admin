@@ -103,7 +103,7 @@ export const getWords = async (
       text?: any
       definitions?: any
     } = !strict
-      ? searchIgboTextSearch(searchWord, regexKeyword, filters)
+      ? searchIgboTextSearch(user.uid, searchWord, regexKeyword, filters)
       : strictSearchIgboQuery(searchWord);
     const words = await searchWordUsingIgbo({ query, mongooseConnection, ...searchQueries });
     const Word = mongooseConnection.model('Word', wordSchema);

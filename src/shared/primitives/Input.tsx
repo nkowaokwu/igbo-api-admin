@@ -15,8 +15,8 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
-import getWord from 'src/utils/getWord';
 import useEventListener from 'src/hooks/useEventListener';
+import { getWords } from '../API';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
 import { handlePosition, handleIsEditing } from './utils/positions';
 
@@ -63,7 +63,7 @@ const Input = React.forwardRef(({
   const debounceInput = useCallback(debounce(async (search) => {
     setIsSearchingAutoCompleteWords(true);
     try {
-      const words = await getWord(search);
+      const words = await getWords(search);
       act(() => {
         setAutoCompleteWords(words);
       });

@@ -200,10 +200,18 @@ export const getUserStats = async (
     // Merged documents
     const mergedWordSuggestionsCount = wordSuggestions.filter(({ authorId, mergedBy }) => (
       authorId === userId && mergedBy
-      )).length;
+    )).length;
     const mergedExampleSuggestionsCount = exampleSuggestions.filter(({ authorId, mergedBy }) => (
       authorId === userId && mergedBy
-      )).length;
+    )).length;
+
+    // Merged by the user documents
+    const mergedByUserWordSuggestionsCount = wordSuggestions.filter(({ mergedBy }) => (
+      mergedBy === userId
+    )).length;
+    const mergedByUserExampleSuggestionsCount = exampleSuggestions.filter(({ mergedBy }) => (
+      mergedBy === userId
+    )).length;
 
     // Interacted with documents
     const currentEditingWordSuggestionsCount = wordSuggestions.filter(({ mergedBy, userInteractions = [] }) => (
@@ -222,6 +230,8 @@ export const getUserStats = async (
       authoredExampleSuggestionsCount,
       mergedWordSuggestionsCount,
       mergedExampleSuggestionsCount,
+      mergedByUserWordSuggestionsCount,
+      mergedByUserExampleSuggestionsCount,
       currentEditingWordSuggestionsCount,
       currentEditingExampleSuggestionsCount,
     });

@@ -21,6 +21,7 @@ type Filters = {
   },
   source?: any,
   authorId?: any,
+  mergedBy?: any,
   style?: any,
   wordClass?: any,
   userInteractions?: any,
@@ -29,7 +30,7 @@ type Filters = {
   pronunciation?: any,
 };
 
-const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
+const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
   let searchFilters: Filters = filters ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
     allFilters.$or = allFilters.$or || [];
     switch (key) {
@@ -69,6 +70,12 @@ const generateSearchFilters = (filters: { [key: string]: string }): { [key: stri
         break;
       case 'authorId':
         allFilters.authorId = { $eq: value };
+        break;
+      case 'mergedBy':
+        allFilters.mergedBy = { $ne: null };
+        break;
+      case 'merger':
+        allFilters.mergedBy = { $eq: uid };
         break;
       case 'example':
         allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
@@ -132,15 +139,17 @@ const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $
 
 /* Regex match query used to later to defined the Content-Range response header */
 export const searchExamplesRegexQuery = (
+  uid: string,
   regex: SearchRegExp,
   filters: { [key: string]: string },
 ): { $or: ExampleSearchQuery } => (
   {
     $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
-    ...(filters ? generateSearchFilters(filters) : {}),
+    ...(filters ? generateSearchFilters(filters, uid) : {}),
   }
 );
 export const searchExampleSuggestionsRegexQuery = (
+  uid: string,
   regex: SearchRegExp,
   filters: { [key: string]: string },
 ): {
@@ -151,7 +160,7 @@ export const searchExampleSuggestionsRegexQuery = (
   $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
   exampleForSuggestion: false,
   merged: null,
-  ...(filters ? generateSearchFilters(filters) : {}),
+  ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
 export const searchPreExistingExampleSuggestionsRegexQuery = (
   { igbo, english, associatedWordId }: { igbo: string, english: string, associatedWordId: string },
@@ -163,6 +172,7 @@ export const searchPreExistingExampleSuggestionsRegexQuery = (
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (
+  uid: string,
   regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): {
@@ -174,9 +184,10 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
   } => ({
   $or: [wordQuery(regex), variationsQuery(regex)],
   merged: null,
-  ...(filters ? generateSearchFilters(filters) : {}),
+  ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
 export const searchPreExistingCorpusSuggestionsRegexQuery = (
+  uid: string,
   regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): {
@@ -188,7 +199,7 @@ export const searchPreExistingCorpusSuggestionsRegexQuery = (
   } => ({
   $or: [titleQuery(regex), bodyQuery(regex)],
   merged: null,
-  ...(filters ? generateSearchFilters(filters) : {}),
+  ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
 export const searchPreExistingGenericWordsRegexQueryAsEditor = (
   segmentRegex: RegExp,
@@ -217,24 +228,18 @@ export const searchCorpusTextSearch = (
   ],
 });
 export const searchIgboTextSearch = (
+  uid: string,
   keyword: string,
   regex: SearchRegExp,
   filters?: { [key: string]: string },
 ): { [key: string]: any } => ({
   ...fullTextSearchQuery(keyword, regex),
-  ...(filters ? generateSearchFilters(filters) : {}),
+  ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
 /* Since the word field is not non-accented yet,
  * a strict regex search for words has to be used as a workaround */
 export const strictSearchIgboQuery = (word: string): { word: RegExp } => ({
   word: createRegExp(word, true).wordReg,
-});
-export const searchEnglishRegexQuery = (
-  keyword: SearchRegExp,
-  filters?: { [key: string]: string },
-): { [key: string]: any } => ({
-  ...definitionsQuery(keyword),
-  ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchForLastWeekQuery = (): {
   updatedAt: { [key: string]: number },
