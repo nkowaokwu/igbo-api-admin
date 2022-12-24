@@ -289,6 +289,19 @@ export const getExample = (id: string, query = {}, options = { apiKey: '', origi
     .set('Origin', options.origin || ORIGIN_HEADER)
 );
 
+export const getUserStats = (uid: string, options = { apiKey: '', token: '' }): Request => (
+  chaiServer
+    .get(`/stats/users/${uid}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+    .set('X-API-Key', options.apiKey || API_KEY)
+);
+export const getUserMergeStats = (uid: string, options = { apiKey: '', token: '' }): Request => (
+  chaiServer
+    .get(`/stats/users/${uid}/merge`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+    .set('X-API-Key', options.apiKey || API_KEY)
+);
+
 /* Mocks grabbing all users from Firebase */
 export const getUsers = (options = { token: '' }): Request => (
   chaiServer
