@@ -27,6 +27,7 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
     'english',
     'associatedWords',
     'id',
+    'authorId',
     'exampleForSuggestion',
     'meaning',
     'nsibidi',
@@ -134,8 +135,18 @@ const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleC
  * @returns Example Suggestion documents
  */
 export const updateNestedExampleSuggestions = (
-  { suggestionDocId, clientExamples, mongooseConnection }:
-  { suggestionDocId: string, clientExamples: Interfaces.ExampleClientData[], mongooseConnection: any },
+  {
+    suggestionDocId,
+    clientExamples,
+    mongooseConnection,
+    user,
+  }:
+  {
+    suggestionDocId: string,
+    clientExamples: Interfaces.ExampleClientData[],
+    mongooseConnection: any,
+    user: { uid: string },
+  },
 ): Promise<Interfaces.ExampleSuggestion[]> => (
   Promise.all(map(clientExamples, async (example) => {
     /**
@@ -146,6 +157,7 @@ export const updateNestedExampleSuggestions = (
     if (!example.id) {
       const exampleData = {
         ...example,
+        authorId: user.uid,
         exampleForSuggestion: true,
         associatedWords: await generateAssociatedWords(example, suggestionDocId),
         // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),

@@ -82,6 +82,7 @@ export const postWordSuggestion = async (
         suggestionDocId: wordSuggestion.id.toString(),
         clientExamples,
         mongooseConnection,
+        user,
       });
       const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection);
       return res.send(savedWordSuggestion);
@@ -166,6 +167,7 @@ export const putWordSuggestion = (
           suggestionDocId: wordSuggestion.id.toString(),
           clientExamples,
           mongooseConnection,
+          user,
         });
         /* We call updatedWordSuggestion.save() before handling audio pronunciations to work with only URIs */
         await updatedWordSuggestion.save();

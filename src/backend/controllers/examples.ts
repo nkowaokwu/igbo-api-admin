@@ -87,17 +87,13 @@ export const getExamples = async (
 export const findExampleById = (id: string, mongooseConnection)
 : Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
-  return (
-    Example.findById(id)
-  );
+  return Example.findById(id);
 };
 
 export const findExampleByAssociatedWordId = (id: string, mongooseConnection)
 : Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
-  return (
-    Example.find({ associatedWords: { $in: [id] } })
-  );
+  return Example.find({ associatedWords: { $in: [id] } });
 };
 
 /* Returns an example from MongoDB using an id */

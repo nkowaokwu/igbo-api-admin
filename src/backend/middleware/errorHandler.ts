@@ -7,8 +7,11 @@ export default async (err, req, res, next) => {
   if (err.message.match(/No .{1,} exist(s)?/) || err.message.match(/doesn't exist(s)?/)) {
     res.status(404);
   }
-  console.log(err?.message);
-  console.log(err?.stack);
+  if (err.stack) {
+    console.log(err.stack);
+  } else {
+    console.log(err?.message);
+  }
   await disconnectDatabase();
   return res.send({ error: err.message });
 };

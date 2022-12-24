@@ -28,8 +28,8 @@ export default async (req: Interfaces.EditorRequest, res: Response, next: NextFu
     res.status(400);
     if (err.details) {
       const errorMessage = err.details.map(({ message }) => message).join('. ');
-      return res.send({ message: errorMessage });
+      return res.send({ error: errorMessage });
     }
-    return res.send({ message: err.message });
+    return res.send({ error: err.message });
   }
 };

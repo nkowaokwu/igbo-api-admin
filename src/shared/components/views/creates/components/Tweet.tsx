@@ -27,7 +27,7 @@ const Tweet = ({
         <Avatar name="nkowaokwu" src={twitterImage} />
         <chakra.span overflow="overlay">
           <Text overflowWrap="anywhere">{text}</Text>
-          {tweetBody ? <Text color="blue.700" className="whitespace-pre">{tweetBody}</Text> : null}
+          {tweetBody ? <Text color="blue.700" whiteSpace="break-spaces">{tweetBody}</Text> : null}
         </chakra.span>
       </Box>
       {pollOptions?.length ? pollOptions.map((pollOption) => (

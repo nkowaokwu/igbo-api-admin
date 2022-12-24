@@ -43,13 +43,13 @@ describe('MongoDB Example Suggestions', () => {
     it('should return an example error because of malformed data', async () => {
       const res = await suggestNewExample(malformedExampleSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return an example error because of malformed nsibidi data', async () => {
       const res = await suggestNewExample({ ...exampleSuggestionData, nsibdi: '人' });
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return an example error because of invalid associateWords ids', async () => {
@@ -59,7 +59,7 @@ describe('MongoDB Example Suggestions', () => {
       };
       const res = await suggestNewExample(malformedData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
   });
 

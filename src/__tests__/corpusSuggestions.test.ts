@@ -25,32 +25,32 @@ describe('MongoDB Corpus Suggestions', () => {
     it('should return a corpus error because of malformed data', async () => {
       const res = await suggestNewCorpus(malformedCorpusSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a corpus error because of empty title', async () => {
       const res = await suggestNewCorpus({ title: '', body: 'corpus body' });
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a corpus error because of empty body', async () => {
       const res = await suggestNewCorpus({ title: 'corpus title', body: '' });
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a corpus error because of invalid media field', async () => {
       const res = await suggestNewCorpus({ ...corpusSuggestionData, media: 'media' }, { cleanData: false });
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a word error because invalid id', async () => {
       const malformedData = { ...corpusSuggestionData, originalWordId: 'ok123' };
       const res = await suggestNewCorpus(malformedData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
   });
 
