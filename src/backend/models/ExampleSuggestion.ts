@@ -43,4 +43,12 @@ toJSONPlugin(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
 normalizeIgbo(exampleSuggestionSchema);
 
+exampleSuggestionSchema.index({
+  authorId: 1,
+  mergedBy: 1,
+  updatedAt: -1,
+}, {
+  name: 'Merged example suggestion index',
+});
+
 mongoose.model('ExampleSuggestion', exampleSuggestionSchema);
