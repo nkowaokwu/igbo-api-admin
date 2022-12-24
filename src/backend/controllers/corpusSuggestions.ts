@@ -129,8 +129,7 @@ export const getCorpusSuggestions = (
           query: regexMatch,
           ...rest,
         })
-      ))
-      .catch(next);
+      ));
   } catch (err) {
     return next(err);
   }

@@ -10,7 +10,6 @@ jest.mock('firebase');
 jest.mock('@chakra-ui/react');
 jest.mock('react-admin');
 jest.mock('src/shared/API');
-jest.mock('src/utils/getWord');
 
 const TestContext = ({ children, dataProvider, ...rest } : any): ReactElement => {
   const nativeDataProvider = () => Promise.resolve({

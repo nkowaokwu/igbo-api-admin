@@ -82,6 +82,7 @@ export const postWordSuggestion = async (
         suggestionDocId: wordSuggestion.id.toString(),
         clientExamples,
         mongooseConnection,
+        user,
       });
       const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection);
       return res.send(savedWordSuggestion);

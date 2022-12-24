@@ -50,20 +50,20 @@ describe('MongoDB Word Suggestions', () => {
     it('should return a word error because of nested malformed example data', async () => {
       const res = await suggestNewWord(wordSuggestionWithNestedMalformedExampleSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a word error because of malformed data', async () => {
       const res = await suggestNewWord(malformedWordSuggestionData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should return a word error because invalid id', async () => {
       const malformedData = { ...wordSuggestionData, originalWordId: 'ok123' };
       const res = await suggestNewWord(malformedData);
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should throw an error because of invalid word class', async () => {
@@ -72,7 +72,7 @@ describe('MongoDB Word Suggestions', () => {
         wordClass: 'invalid',
       });
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should persist author id to the dialects object', async () => {
@@ -332,7 +332,7 @@ describe('MongoDB Word Suggestions', () => {
         { cleanData: false },
       );
       expect(res.status).toEqual(400);
-      expect(res.body.message).not.toEqual(undefined);
+      expect(res.body.error).not.toEqual(undefined);
     });
 
     it('should update the updatedAt field', async () => {

@@ -30,6 +30,6 @@ export default async (
     return next();
   } catch (err) {
     res.status(400);
-    return res.send({ message: err.message });
+    return res.send({ error: err.message });
   }
 };
