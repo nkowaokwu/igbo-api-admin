@@ -263,7 +263,6 @@ export const getUserMergeStats = async (
         .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
       WordSuggestion
         .find({
-          authorId: userId,
           mergedBy: { $ne: null },
           updatedAt: { $gte: threeMonthsAgo },
         })
@@ -302,7 +301,7 @@ export const getUserMergeStats = async (
         ...finalData,
         [isoWeek]: finalData[isoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
           editor === userId
-        )).length,
+        )).length + (wordSuggestion.authorId === userId ? 1 : 0),
       };
     }, defaultMerges);
     return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
