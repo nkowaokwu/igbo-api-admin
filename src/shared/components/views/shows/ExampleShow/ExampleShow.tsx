@@ -105,7 +105,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               collection={Collection.EXAMPLES}
               originalId={originalExampleId}
               id={id}
-              title="Origin Example Id:"
+              title="Parent Example Id:"
             />
             <Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">

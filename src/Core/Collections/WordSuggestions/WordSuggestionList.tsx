@@ -66,7 +66,7 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
               )}
             />
             <IdField label="Id" source="id" />
-            <IdField label="Origin Word Id" source="originalWordId" />
+            <IdField label="Parent Word Id" source="originalWordId" />
             <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
         )}

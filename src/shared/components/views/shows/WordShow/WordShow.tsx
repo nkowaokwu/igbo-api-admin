@@ -129,7 +129,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   collection={Collection.WORDS}
                   originalId={originalWordId}
                   id={id}
-                  title="Origin Word Id:"
+                  title="Parent Word Id:"
                 />
               </Box>
             </Box>

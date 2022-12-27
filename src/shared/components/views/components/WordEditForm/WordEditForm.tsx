@@ -218,7 +218,7 @@ const WordEditForm = ({
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
-            <Heading as="h2" className="form-header">Origin Word Id:</Heading>
+            <Heading as="h2" className="form-header">Parent Word Id:</Heading>
             <a
               className="link"
               data-test="original-id"

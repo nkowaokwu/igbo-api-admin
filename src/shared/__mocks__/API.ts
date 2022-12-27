@@ -26,3 +26,12 @@ export const resolveWord = jest.fn(async () => ({
     definitions: ['resolved word definition'],
   }],
 }));
+
+export const getExample = jest.fn(async () => ({
+  igbo: 'igbo',
+  english: 'english',
+  meaning: '',
+  nsibidi: '',
+  associatedWords: [],
+  associatedDefinitionsSchemas: [],
+}));

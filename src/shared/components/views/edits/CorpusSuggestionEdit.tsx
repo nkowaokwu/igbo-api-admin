@@ -49,7 +49,7 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
           collection={Collection.CORPORA}
           originalId={originalExampleId}
           id={id}
-          title="Origin Corpus Id:"
+          title="Parent Corpus Id:"
         />
         <EditDocumentStats approvals={approvals} denials={denials} />
       </Box>
