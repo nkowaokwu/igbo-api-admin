@@ -14,13 +14,16 @@ import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPI
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { DICTIONARY_APP_URL } from '../config';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
-import { searchExamplesRegexQuery, searchForAssociatedSuggestions } from './utils/queries';
+import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
 import { findExampleSuggestionById } from './exampleSuggestions';
 import { sendMergedEmail } from './email';
 import * as Interfaces from './utils/interfaces';
 
 /* Create a new Example object in MongoDB */
-export const createExample = (data: Interfaces.ExampleClientData, mongooseConnection): Promise<Document<any>> => {
+export const createExample = (
+  data: Interfaces.ExampleClientData,
+  mongooseConnection: mongoose.Connection,
+): Promise<Document<any>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   const example = new Example(data);
   return example.save();
@@ -284,8 +287,8 @@ export const getAssociatedExampleSuggestions = async (
     const { mongooseConnection } = req;
     const { id } = req.params;
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
-    const wordSuggestions = await ExampleSuggestion.find(searchForAssociatedSuggestions(id));
-    return res.send(wordSuggestions);
+    const exampleSuggestions = await ExampleSuggestion.find(searchForAssociatedExampleSuggestions(id));
+    return res.send(exampleSuggestions);
   } catch (err) {
     return next(err);
   }

@@ -30,7 +30,7 @@ import {
   strictSearchIgboQuery,
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
-  searchForAssociatedSuggestions,
+  searchForAssociatedWordSuggestions,
   searchForAssociatedSuggestionsByTwitterId,
 } from '../utils/queries';
 import { findWordsWithMatch } from '../utils/buildDocs';
@@ -550,7 +550,7 @@ export const getAssociatedWordSuggestions = async (
     const { id } = req.params;
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
 
-    const wordSuggestions = await WordSuggestion.find(searchForAssociatedSuggestions(id));
+    const wordSuggestions = await WordSuggestion.find(searchForAssociatedWordSuggestions(id));
     return res.send(wordSuggestions);
   } catch (err) {
     return next(err);
