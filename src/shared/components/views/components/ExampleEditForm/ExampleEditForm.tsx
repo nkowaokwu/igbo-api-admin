@@ -78,6 +78,7 @@ const ExampleEditForm = ({
     const cleanedData = {
       ...record,
       ...data,
+      associatedDefinitionsSchemas: sanitizeArray(record.associatedDefinitionsSchemas || []),
       style: data.style.value,
       associatedWords: sanitizeArray(data.associatedWords),
     };

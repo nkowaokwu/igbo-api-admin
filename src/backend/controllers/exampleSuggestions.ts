@@ -109,9 +109,6 @@ export const updateExampleSuggestion = (
         // updatedExampleSuggestion = await applyAssociatedDefinitionSchemas(updatedExampleSuggestion);
       }
       return updatedExampleSuggestion.save();
-    })
-    .catch((err) => {
-      throw err;
     });
 };
 
