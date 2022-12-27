@@ -260,11 +260,18 @@ export const searchForAllWordsWithIsStandardIgbo = (): { attributes: { isStandar
 export const searchForAllWordsWithNsibidi = (): { $and: any } => ({
   $and: [{ 'definitions.nsibidi': { $ne: null } }, { 'definitions.nsibidi': { $ne: '' } }],
 });
-export const searchForAssociatedSuggestions = (wordId: string): {
+export const searchForAssociatedWordSuggestions = (wordId: string): {
   originalWordId: string,
   merged: { [key: string]: null }
 } => ({
   originalWordId: wordId,
+  merged: { $eq: null },
+});
+export const searchForAssociatedExampleSuggestions = (wordId: string): {
+  originalExampleId: string,
+  merged: { [key: string]: null }
+} => ({
+  originalExampleId: wordId,
   merged: { $eq: null },
 });
 export const searchForAssociatedSuggestionsByTwitterId = (twitterPollId: string): {
