@@ -45,7 +45,7 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <EditDocumentIds collection={Collections.WORDS} originalId={originalWordId} id={id} title="Origin Word Id:" />
+        <EditDocumentIds collection={Collections.WORDS} originalId={originalWordId} id={id} title="Parent Word Id:" />
         <EditDocumentStats approvals={approvals} denials={denials} />
       </Box>
       {record ? (

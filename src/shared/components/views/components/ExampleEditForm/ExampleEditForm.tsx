@@ -145,7 +145,7 @@ const ExampleEditForm = ({
       <Box className="flex flex-col">
         {record.originalExampleId || (view === View.CREATE && record.id) ? (
           <>
-            <h2 className="form-header">Origin Example Id:</h2>
+            <h2 className="form-header">Parent Example Id:</h2>
             <Input
               className="form-input"
               data-test="original-id"
@@ -305,6 +305,7 @@ const ExampleEditForm = ({
           Cancel
         </Button>
         <Button
+          data-test="example-submit-button"
           type="submit"
           colorScheme="green"
           variant="solid"

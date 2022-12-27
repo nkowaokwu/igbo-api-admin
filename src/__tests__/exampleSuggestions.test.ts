@@ -96,6 +96,16 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });
+
+    it('should throw an error for invalid id within associatedDefinitionsSchemas', async () => {
+      const exampleRes = await suggestNewExample(exampleSuggestionData);
+      expect(exampleRes.status).toEqual(200);
+      const res = await updateExampleSuggestion({
+        ...exampleRes.body,
+        associatedDefinitionsSchemas: [null],
+      });
+      expect(res.status).toEqual(400);
+    });
   });
 
   describe('/GET mongodb exampleSuggestions', () => {

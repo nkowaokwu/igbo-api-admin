@@ -192,7 +192,7 @@ const CorpusEditForm = ({
       <Box className="flex flex-col">
         {record.originalCorpusId || (view === View.CREATE && record.id) ? (
           <>
-            <h2 className="form-header">Origin Corpus Id:</h2>
+            <h2 className="form-header">Parent Corpus Id:</h2>
             <Input
               className="form-input"
               data-test="original-id"

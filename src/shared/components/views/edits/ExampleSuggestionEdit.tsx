@@ -49,7 +49,7 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
           collection={Collection.EXAMPLES}
           originalId={originalExampleId}
           id={id}
-          title="Origin Example Id:"
+          title="Parent Example Id:"
         />
         <EditDocumentStats approvals={approvals} denials={denials} />
       </Box>
