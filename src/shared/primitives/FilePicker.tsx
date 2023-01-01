@@ -4,7 +4,12 @@ import React, {
   useState,
   useRef,
 } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Text,
+  chakra,
+} from '@chakra-ui/react';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import ReactPlayer from 'react-player';
 
@@ -81,39 +86,41 @@ const FilePicker = ({
   }, [seekTime]);
 
   return (
-    <Box className="flex flex-col space-y-3">
-      <Box>
+    <Box className="flex flex-col space-y-3 w-full">
+      <Box width="full">
         <Box
-          width="lg"
-          height="md"
-          backgroundColor="white"
-          borderRadius="lg"
+          width="full"
           cursor={localFile ? 'default' : 'pointer'}
           onClick={clickInput}
-          textAlign="center"
           display="flex"
           flexDirection="column"
-          justifyContent="center"
           alignItems="center"
           my={4}
-          className="space-y-4"
         >
           {url || localFile ? (
-            <>
+            <Box className="space-y-4 w-full">
               <ReactPlayer
                 url={url || localFilePath}
-                controls
                 ref={mediaRef}
-                height="auto"
-                width="auto"
                 onReady={() => onFileSelect({ duration: Math.floor(mediaRef.current.getDuration()) })}
+                controls
+                width="100%"
+                height="50px"
                 style={{
-                  borderRadius: 10,
                   overflow: 'hidden',
+                  height: '50px !important',
+                }}
+                config={{
+                  file: {
+                    forceAudio: true,
+                  },
                 }}
               />
-              <Text>{title || localFile.name}</Text>
-            </>
+              <Text color="gray.600" fontSize="xs">
+                <chakra.span fontSize="md" fontWeight="bold">Filename: </chakra.span>
+                {title || localFile.name}
+              </Text>
+            </Box>
           ) : (
             <>
               <NoteAddIcon style={iconStyle} />
