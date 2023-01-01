@@ -134,21 +134,41 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                   fallbackValue={media ? (
                     <ReactPlayer
                       url={media}
-                      style={{ height: '40', width: 250 }}
                       controls
+                      width="50%"
+                      height="50px"
+                      style={{
+                        overflow: 'hidden',
+                        height: '50px !important',
+                      }}
+                      config={{
+                        file: {
+                          forceAudio: true,
+                        },
+                      }}
                     />
                   ) : <span>No media</span>}
                   renderNestedObject={() => (
                     <ReactPlayer
                       url={media}
-                      style={{ height: '40', width: 250 }}
                       controls
+                      width="50%"
+                      height="50px"
+                      style={{
+                        overflow: 'hidden',
+                        height: '50px !important',
+                      }}
+                      config={{
+                        file: {
+                          forceAudio: true,
+                        },
+                      }}
                     />
                   )}
                 />
               </Box>
               <Box className="flex flex-col" fontFamily="monospace">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Body</Heading>
+                <Heading fontSize="lg" className="text-xl text-gray-600">Transcript</Heading>
                 <DiffField
                   path="body"
                   diffRecord={diffRecord}

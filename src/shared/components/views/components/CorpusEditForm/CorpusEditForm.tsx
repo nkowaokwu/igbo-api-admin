@@ -3,7 +3,10 @@ import { assign, map, omit } from 'lodash';
 import {
   Box,
   Button,
+  ListItem,
   Text,
+  UnorderedList,
+  chakra,
   useToast,
 } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -222,10 +225,19 @@ const CorpusEditForm = ({
           <p className="error">Title is required</p>
         ) : null}
       </Box>
-      <Box className="flex flex-col-reverse xl:flex-row justify-between items-start space-x-6">
+      <Box className="flex flex-col justify-between items-start">
+        <FilePicker
+          url={watchedMedia}
+          title={watchedTitle}
+          onFileSelect={handleFileSelect}
+          seekTime={seekTime}
+          name="media"
+          register={register}
+          errors={errors}
+        />
         <Box className="flex flex-col w-full">
           <FormHeader
-            title="Body"
+            title="Transcript"
             tooltip="This is the transcription of the associated media."
           />
           <Controller
@@ -238,7 +250,11 @@ const CorpusEditForm = ({
                   width: '100%',
                 }}
                 onSelect={handleTextSelection}
-                placeholder="[00:00:00] Provide transcription sentence by sentence"
+                placeholder={`[00:00:00-00:00:10]
+Nke a bụ ahịrịokwu Igbo
+
+[00:00:12-00:00:15]
+Nke a bụ ahịrịokwu Igbo`}
                 data-test="body-input"
               />
             )}
@@ -246,26 +262,55 @@ const CorpusEditForm = ({
             control={control}
             defaultValue={record.body || getValues().body}
           />
-          <Text className="italic" fontSize="sm" color="gray.600" my={2}>
-            The goal of transcription is to transcribe Igbo text sentence by sentence.
-            Each sentence will be prepended with a timestamp in the format of [HH:MM:SS],
-            where &quot;HH&quot; are the hours, &quot;MM&quot; are the minutes, and &quot;SS&quot; are the seconds. For
-            example, [01:22:23] will be the timestamp for the second that was spoke at the
-            first hour, twenty second minute, and twenty third hour.
-          </Text>
+          <Box className="flex flex-col lg:flex-row space-y-2 lg:space-x-4">
+            <Box>
+              <Text className="italic" fontSize="xs" color="gray.600" my={2}>
+                Please transcribe Igbo text sentence by sentence according to the following pattern:
+              </Text>
+              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
+                [01:22:23-01:22:25]
+              </Text>
+              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
+                Nke a bụ ahịrịokwu Igbo
+              </Text>
+              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
+                [01:22:26-01:22:29]
+              </Text>
+              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
+                Nke a bụ ahịrịokwu Igbo
+              </Text>
+            </Box>
+            <Box>
+              <Text fontWeight="bold" color="gray.600" fontSize="sm">
+                Please read:
+              </Text>
+              <UnorderedList fontSize="xs">
+                <ListItem>
+                  Each sentence will be prepended with a timestamp in the format of [HH:MM:SS]
+                  <UnorderedList>
+                    <ListItem>
+                      &quot;HH&quot; are the hours
+                    </ListItem>
+                    <ListItem>
+                      &quot;MM&quot; are the minutes
+                    </ListItem>
+                    <ListItem>
+                      &quot;SS&quot; are the seconds
+                    </ListItem>
+                  </UnorderedList>
+                </ListItem>
+                <ListItem>
+                  You do
+                  <chakra.span fontWeight="bold"> NOT </chakra.span>
+                  need to add a period to the sentence.
+                </ListItem>
+              </UnorderedList>
+            </Box>
+          </Box>
           {errors.body ? (
             <p className="error">Transcription is required</p>
           ) : null}
         </Box>
-        <FilePicker
-          url={watchedMedia}
-          title={watchedTitle}
-          onFileSelect={handleFileSelect}
-          seekTime={seekTime}
-          name="media"
-          register={register}
-          errors={errors}
-        />
       </Box>
       <Box className="flex flex-col">
         <FormHeader
