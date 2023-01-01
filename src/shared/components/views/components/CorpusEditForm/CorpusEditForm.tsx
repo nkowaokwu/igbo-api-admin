@@ -1,5 +1,10 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { assign, map, omit } from 'lodash';
+import {
+  assign,
+  map,
+  omit,
+  compact,
+} from 'lodash';
 import {
   Box,
   Button,
@@ -33,9 +38,14 @@ const convertToSeconds = (hms: string) => {
 };
 
 const getLineNumberAndColumnIndex = (textareaElement): string => {
-  const textLines = textareaElement.value.substr(0, textareaElement.selectionStart).split('\n');
-  // const currentLineNumber = textLines.length;
-  // const currentColumnIndex = textLines[textLines.length - 1].length;
+  let selectionIndex = textareaElement.selectionStart;
+  const secondHalf = textareaElement.value.substr(selectionIndex, textareaElement.value.length);
+  if (textareaElement.value[selectionIndex] !== '\n') {
+    selectionIndex = secondHalf.indexOf('\n') + selectionIndex;
+  }
+
+  const textLines = textareaElement.value.substr(0, selectionIndex).split('\n');
+
   return textLines[textLines.length - 1];
 };
 
@@ -100,9 +110,15 @@ const CorpusEditForm = ({
 
   const handleTextSelection = (e) => {
     const currentLine = getLineNumberAndColumnIndex(e.target);
-    if (currentLine.startsWith('[') && currentLine.endsWith(']')) {
-      const seconds = convertToSeconds(currentLine.substring(1, currentLine.length - 1));
-      setSeekTime(seconds);
+    if (currentLine.startsWith('[') || currentLine.endsWith(']')) {
+      const validTimes = compact(currentLine.split(/[[\]-]/));
+      const time = validTimes[0];
+      if (time && time.length === time.replace(/:/g, '').length + 2) {
+        const seconds = convertToSeconds(time);
+        if (typeof seconds === 'number') {
+          setSeekTime(seconds);
+        }
+      }
     }
   };
 
@@ -235,6 +251,10 @@ const CorpusEditForm = ({
           register={register}
           errors={errors}
         />
+        <Text fontSize="xs" color="gray.600">
+          <chakra.span fontSize="md" fontWeight="bold">Note: </chakra.span>
+          The audio seek will automatically jump to timestamp highlighted in your transcription 😉
+        </Text>
         <Box className="flex flex-col w-full">
           <FormHeader
             title="Transcript"
@@ -303,6 +323,9 @@ Nke a bụ ahịrịokwu Igbo`}
                   You do
                   <chakra.span fontWeight="bold"> NOT </chakra.span>
                   need to add a period to the sentence.
+                </ListItem>
+                <ListItem>
+                  When you hear a different voice, that must be transcribed as its own sentence.
                 </ListItem>
               </UnorderedList>
             </Box>

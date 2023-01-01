@@ -80,7 +80,7 @@ const FilePicker = ({
   }, []);
 
   useEffect(() => {
-    if (mediaRef.current) {
+    if (mediaRef.current && typeof seekTime === 'number') {
       mediaRef.current.seekTo(seekTime);
     }
   }, [seekTime]);
