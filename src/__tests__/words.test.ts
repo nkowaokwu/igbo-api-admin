@@ -251,7 +251,7 @@ describe('MongoDB Words', () => {
     it('should return an error deleting a word with an invalid secondary word id', async () => {
       const firstWord = await createWordFromSuggestion(updatedWordSuggestionData);
       expect([null, undefined, '']).not.toContain(firstWord.id);
-      const combinedWordRes = await deleteWord(INVALID_ID, firstWord.id);
+      const combinedWordRes = await deleteWord(INVALID_ID, firstWord.id.toString());
       expect(combinedWordRes.status).toEqual(400);
       expect([null, undefined, '']).not.toContain(combinedWordRes.body.error);
     });

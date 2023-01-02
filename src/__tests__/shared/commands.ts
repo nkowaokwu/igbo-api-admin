@@ -172,7 +172,7 @@ export const suggestNewExample = (data: any, options = { token: '' }): Request =
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const suggestNewCorpus = async (data: any, options = { token: '', cleanData: true }): Request => (
+export const suggestNewCorpus = (data: any, options = { token: '', cleanData: true }): Request => (
   chaiServer
     .post('/corpusSuggestions')
     .send(options?.cleanData ? removePayloadFields(data) : data)

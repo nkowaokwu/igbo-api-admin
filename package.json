@@ -43,7 +43,7 @@
     "test:firebase": "yarn use:staging && node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
     "test:ci": "node_modules/.bin/firebase emulators:exec 'yarn cypress:run' --only functions,firestore,hosting,pubsub",
     "test:firebase:ci": "node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
-    "test:jest": "cross-env NODE_ENV=test jest --forceExit",
+    "test:jest": "cross-env NODE_ENV=test jest --forceExit --runInBand" ,
     "precommit": "lint-staged"
   },
   "engines": {
