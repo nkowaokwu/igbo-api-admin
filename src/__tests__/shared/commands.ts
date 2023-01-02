@@ -137,7 +137,7 @@ export const createCorpus = async (id: string, query = {}, options = { token: ''
     .put(`/corpusSuggestions/${id}/approve`)
     .set('Authorization', `Bearer ${AUTH_TOKEN.MERGER_AUTH_TOKEN}`);
   return chaiServer
-    .post('/corpus')
+    .post('/corpora')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .send({ id });
@@ -145,7 +145,7 @@ export const createCorpus = async (id: string, query = {}, options = { token: ''
 
 export const createPoll = (id: string, query = {}, options = { token: '' }): Request => (
   chaiServer
-    .post('/corpus')
+    .post('/twitter_poll')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .send({ id })
@@ -172,7 +172,7 @@ export const suggestNewExample = (data: any, options = { token: '' }): Request =
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const suggestNewCorpus = (data: any, options = { token: '', cleanData: true }): Request => (
+export const suggestNewCorpus = async (data: any, options = { token: '', cleanData: true }): Request => (
   chaiServer
     .post('/corpusSuggestions')
     .send(options?.cleanData ? removePayloadFields(data) : data)

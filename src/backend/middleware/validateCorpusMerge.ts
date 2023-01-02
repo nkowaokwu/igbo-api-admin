@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { findCorpusSuggestionById } from '../controllers/corpusSuggestions';
+import * as Interfaces from '../controllers/utils/interfaces';
 
 const { Types } = mongoose;
 const corpusMergeDataSchema = Joi.object().keys({

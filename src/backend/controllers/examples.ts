@@ -22,7 +22,7 @@ import * as Interfaces from './utils/interfaces';
 /* Create a new Example object in MongoDB */
 export const createExample = (
   data: Interfaces.ExampleClientData,
-  mongooseConnection: mongoose.Connection,
+  mongooseConnection: Connection,
 ): Promise<Document<any>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   const example = new Example(data);
