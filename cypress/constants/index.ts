@@ -9,16 +9,6 @@ export const API_ROUTE = process.env.NODE_ENV !== 'production'
 
 export const WordClassOptions = WordClass;
 
-const dialectObjects = Object.values(Dialects).reduce((dialectsObject, { value }) => ({
-  ...dialectsObject,
-  [value]: {
-    word: '',
-    dialect: value,
-    variations: [],
-    pronunciation: '',
-  },
-}), {});
-
 export const DocumentSelectOptions = {
   VIEW: 'View',
   SUGGEST_NEW_EDIT: 'Suggest New Edit',
@@ -47,28 +37,29 @@ export const UserSelectOptions = {
 };
 
 export const wordSuggestionData = {
-  word: 'this is a worUPDATED',
-  wordClass: 'NNC',
-  definitions: ['first'],
-  variations: ['ok', 'k', 'okok'],
-  dialects: {
-    ...dialectObjects,
-    NSA: {
-      word: 'NSA-word',
-      dialect: 'NSA',
+  word: 'main_word',
+  definitions: [{
+    definitions: ['first'],
+    wordClass: 'NNC',
+  }],
+  variations: ['main_word_variation'],
+  dialects: [
+    {
+      word: `${Dialects.NSA.value}-main_word`,
+      dialects: [Dialects.NSA.value],
       variations: [],
       pronunciation: '',
     },
-  },
+  ],
   examples: [
     {
-      igbo: 'THIS IS THE NESTED EXAMPLES',
-      english: 'ijemma english',
+      igbo: 'First Igbo nested sentence',
+      english: 'First English nested sentence',
       associatedWords: [],
     },
     {
-      igbo: 'Tthis NEWWDS TO WORK PLES',
-      english: 'ijemma english',
+      igbo: 'Second Igbo nested sentence',
+      english: 'Second English nested sentence',
       associatedWords: [],
     },
   ],

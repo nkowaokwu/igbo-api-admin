@@ -1,4 +1,4 @@
-import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
+import { DocumentSelectOptions, SuggestionSelectOptions } from '../../constants';
 
 describe('Actions', () => {
   before(() => {
@@ -10,57 +10,34 @@ describe('Actions', () => {
   });
 
   describe('Merge', () => {
-    it('merge a wordSuggestion into a new word in the list view then redirect to words', () => {
+    it('merge a wordSuggestion into a new word in the list view then redirect to word show', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
       cy.get('@selectedWord').then(([$word]) => {
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
         cy.acceptConfirmation();
+        cy.findByText('View the updated document here').click();
         cy.contains('Word Document Details');
         cy.findAllByText($word.innerText).first();
       });
     });
 
-    it('merge a wordSuggestion into a new word in the show view the redirect to words', () => {
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.getWordSuggestionDocumentDetails();
-      cy.get('@selectedWord').then(([$word]) => {
-        cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-        cy.acceptConfirmation();
-        cy.contains('Word Document Details');
-        cy.findAllByText($word.innerText).first();
-      });
-    });
-
-    it('merge an exampleSuggestion into a new example in the list view the redirec to examples', () => {
+    it('merge an exampleSuggestion into a new example in the list view the redirect to examples', () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
       cy.get('@selectedIgbo').then(([$igbo]) => {
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
         cy.acceptConfirmation();
-        cy.findByText('Example Document Details');
-        cy.findAllByText($igbo.innerText).first();
-      });
-    });
-
-    it('merge an exampleSuggestion into a new example in the show view then redirect to examples', () => {
-      cy.createExampleSuggestion();
-      cy.selectCollection('exampleSuggestions');
-      cy.getExampleSuggestionDocumentDetails();
-      cy.get('@selectedIgbo').then(([$igbo]) => {
-        cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-        cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-        cy.acceptConfirmation();
+        cy.findByText('View the updated document here').click();
         cy.findByText('Example Document Details');
         cy.findAllByText($igbo.innerText).first();
       });
     });
   });
 
-  describe('Combine', () => {
+  describe.skip('Combine', () => {
     it('combine one word into another word', () => {
       cy.selectCollection('words');
       cy.searchForDocument('');

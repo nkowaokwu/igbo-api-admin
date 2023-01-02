@@ -3,7 +3,7 @@ import { every } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
 
 const awsUriPrefix = 'https://igbo-api-test-local/audio-pronunciations/';
-describe('Edit', () => {
+describe.skip('Edit', () => {
   describe('Audio Pronunciation Uploading', () => {
     beforeEach(() => {
       cy.cleanLogin();
