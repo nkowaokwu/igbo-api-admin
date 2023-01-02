@@ -1,6 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Box, IconButton, Spinner } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  IconButton,
+  Spinner,
+  Tooltip,
+} from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
@@ -31,6 +35,11 @@ const Example = ({
     originalExampleId,
   } = example;
   const formData = getValues();
+  const [isExistingExample, setIsExistingExample] = useState(!!originalExampleId);
+  const deleteMessage = isExistingExample
+    ? `This is an existing example suggestion that is being updated. Clicking this button will NOT
+    permanently delete the example sentence, rather it will be archived (saved) but hidden.`
+    : 'This is a new example suggestion. Clicking this button will delete it permanently.';
 
   const handleInputIgbo = (onChange) => (e) => {
     const updatedExamples = [...examples];
@@ -64,6 +73,10 @@ const Example = ({
     // Setting the local WordEditForm value
     setExamples(updatedExamples);
   };
+
+  useEffect(() => {
+    setIsExistingExample(!!originalExampleId);
+  }, [example]);
 
   useEffect(() => {
     (async () => {
@@ -203,17 +216,23 @@ const Example = ({
           />
         </Box>
       </Box>
-      <IconButton
-        colorScheme="red"
-        aria-label="Delete Example"
-        onClick={() => {
-          const updateExamples = [...examples];
-          updateExamples.splice(index, 1);
-          setExamples(updateExamples);
-        }}
-        className="ml-3"
-        icon={<DeleteIcon />}
-      />
+      <Tooltip label={deleteMessage}>
+        <IconButton
+          backgroundColor={isExistingExample ? 'orange.100' : 'red.100'}
+          _hover={{
+            backgroundColor: isExistingExample ? 'orange.200' : 'red.200',
+          }}
+          aria-label={isExistingExample ? 'Archive Example' : 'Delete Example'}
+          onClick={() => {
+            const updateExamples = [...examples];
+            updateExamples.splice(index, 1);
+            setExamples(updateExamples);
+            setValue('examples', []);
+          }}
+          className="ml-3"
+          icon={isExistingExample ? (() => <>🗄</>)() : (() => <>🗑</>)()}
+        />
+      </Tooltip>
     </Box>
   ) : <Spinner />;
 };

@@ -14,6 +14,7 @@ export const DEFAULT_WORD_RECORD = {
     label: '',
   }],
   dialects: [],
+  examples: [],
   variations: [],
   approvals: [],
   denials: [],

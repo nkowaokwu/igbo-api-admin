@@ -36,6 +36,8 @@ export const wordSuggestionSchema = new Schema(
   {
     originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
     word: { type: String, required: true, index: true },
+    wordPronunciation: { type: String, default: '' },
+    conceptualWord: { type: String, default: '' },
     definitions: [{
       type: definitionSchema,
       validate: (definitions) => (

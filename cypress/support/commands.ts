@@ -154,8 +154,7 @@ Cypress.Commands.add('getUserDocumentDetails', (position: number = 1) => {
  * @selectedId
  */
 Cypress.Commands.add('getWordDetails', (docPosition: number = 1) => {
-  cy.get('.column-word').eq(docPosition).find('span').as('selectedWord');
-  cy.get('.column-wordClass').eq(docPosition).find('span').as('selectedPartOfSpeech');
+  cy.get('.column-word').eq(docPosition).find('p').as('selectedWord');
   cy.findAllByTestId('definitions-preview').eq(docPosition).as('selectedDefinitions');
   cy.findAllByTestId('variations-preview').eq(docPosition).as('selectedVariations');
   cy.findAllByTestId('stems-preview').eq(docPosition).as('selectedStems');
@@ -261,7 +260,7 @@ Cypress.Commands.add('getExampleDetails', (position: number = 1) => {
 /* Grabs the editor's action dropdown for the first document in the list */
 // Alternative query: https://github.com/cypress-io/cypress/issues/549#issuecomment-523399928
 Cypress.Commands.add('getActionsOption', (optionText: string, position: number = 0) => {
-  cy.findAllByTestId('select-menu-words').should('be.visible').as('editorActions');
+  cy.findAllByTestId('actions-menu').should('be.visible').as('editorActions');
   cy.get('@editorActions')
     .eq(position)
     .scrollIntoView()
@@ -350,7 +349,6 @@ Cypress.Commands.add('selectCollection', (collection: Collection, overrideWait: 
 
 Cypress.Commands.add('seedDatabase', () => {
   const API_ROUTE = 'http://localhost:8080/api/v1';
-  const SITE_ROUTE = '/';
   cy.request({
     method: 'GET',
     url: `${API_ROUTE}/words`,

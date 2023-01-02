@@ -83,6 +83,7 @@ const HeadwordForm = ({
           <chakra.span fontWeight="bold">Advanced Headword Options</chakra.span>
         </summary>
         <Box className="space-y-3 mt-3">
+          <chakra.span fontWeight="bold">Headword pronunciation spelling: </chakra.span>
           <Controller
             render={(props) => (
               <Input

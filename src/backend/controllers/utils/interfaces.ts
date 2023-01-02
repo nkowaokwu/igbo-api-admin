@@ -155,6 +155,7 @@ export interface ExampleClientData {
   associatedDefinitionsSchemas: string[],
   exampleForSuggestion?: boolean,
   authorId?: string,
+  originalExampleId?: string,
 };
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {

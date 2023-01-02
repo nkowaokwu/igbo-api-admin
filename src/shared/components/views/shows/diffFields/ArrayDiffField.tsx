@@ -19,11 +19,15 @@ const ArrayDiffField = (
     children: ReactElement[],
   },
 ): ReactElement => {
-  const longestRecordField = !originalWordRecord || !has(originalWordRecord, recordField)
+  // If we have examples, we want to use the current record examples array instead of
+  // getting the longest one
+  const longestRecordField = recordField === 'examples'
     ? get(record, recordField)
-    : get(originalWordRecord, recordField)?.length > get(record, recordField)?.length
-      ? get(originalWordRecord, recordField)
-      : get(record, recordField);
+    : !originalWordRecord || !has(originalWordRecord, recordField)
+      ? get(record, recordField)
+      : get(originalWordRecord, recordField)?.length > get(record, recordField)?.length
+        ? get(originalWordRecord, recordField)
+        : get(record, recordField);
 
   return longestRecordField?.length ? longestRecordField?.map((value, index) => (
     <Box

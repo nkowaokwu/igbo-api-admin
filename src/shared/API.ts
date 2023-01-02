@@ -200,10 +200,15 @@ export const combineDocument = (
   data: { primaryWordId },
 })
   .then(async ({ data }) => {
-    await Promise.all([
-      IndexedDBAPI.deleteDocument({ resource, id: record.id }),
-      IndexedDBAPI.putDocument({ resource, data }),
-    ]);
+    try {
+      await Promise.all([
+        IndexedDBAPI.deleteDocument({ resource, id: record.id }),
+        IndexedDBAPI.putDocument({ resource, data }),
+      ]);
+    } catch (err) {
+      console.log('IndexedDB error:', err.message);
+    }
+    return { data };
   });
 
 export const assignUserToEditingGroup = ({

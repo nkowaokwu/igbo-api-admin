@@ -1,15 +1,15 @@
-import { Document, LeanDocument } from 'mongoose';
+import { Connection, Document, LeanDocument } from 'mongoose';
 import {
+  assign,
+  filter,
   pick,
   differenceBy,
-  get,
   reduce,
   map,
-  compact,
-  flatten,
 } from 'lodash';
+import { exampleSchema } from 'src/backend/models/Example';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
-import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
+import { executeMergeExample } from 'src/backend/controllers/examples';
 import {
   createExampleSuggestion,
   updateExampleSuggestion,
@@ -20,7 +20,7 @@ import * as Interfaces from './interfaces';
 /* Adds the example key on each wordSuggestion returned back to the client */
 export const placeExampleSuggestionsOnSuggestionDoc = async (
   wordSuggestion: Interfaces.WordSuggestion,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<LeanDocument<Interfaces.WordSuggestion>> => {
   const LEAN_EXAMPLE_KEYS = [
     'igbo',
@@ -112,21 +112,152 @@ const generateAssociatedWords = async (example: Interfaces.ExampleClientData, su
 );
 
 // eslint-disable-next-line
-const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData, mongooseConnection: any): Promise<string[]> => {
-  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-  let associatedDefinitionsSchemas: string[] = [];
-  if (
-    (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
-    && example.associatedWords[0]
-  ) {
-    // If we have no associated definitions schemas but an associated word, let's set the default value
-    const associatedWordSuggestion = await WordSuggestion.findById(example.associatedWords[0]);
-    const definitionSchemaId = (get(associatedWordSuggestion, 'definitions[0]._id') || '').toString();
-    associatedDefinitionsSchemas = [definitionSchemaId];
-  } else {
-    associatedDefinitionsSchemas = example.associatedDefinitionsSchemas;
+// const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData, mongooseConnection: any): Promise<string[]> => {
+//   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+//   let associatedDefinitionsSchemas: string[] = [];
+//   if (
+//     (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
+//     && example.associatedWords[0]
+//   ) {
+//     // If we have no associated definitions schemas but an associated word, let's set the default value
+//     const associatedWordSuggestion = await WordSuggestion.findById(example.associatedWords[0]);
+//     const definitionSchemaId = (get(associatedWordSuggestion, 'definitions[0]._id') || '').toString();
+//     associatedDefinitionsSchemas = [definitionSchemaId];
+//   } else {
+//     associatedDefinitionsSchemas = example.associatedDefinitionsSchemas;
+//   }
+//   return compact(flatten(associatedDefinitionsSchemas));
+// };
+
+/**
+ * Archives example sentences that should be "deleted"
+ * @param param0
+ */
+const archiveExamples = async (
+  {
+    exampleIds,
+    mongooseConnection,
   }
-  return compact(flatten(associatedDefinitionsSchemas));
+  : {
+    exampleIds: string[],
+    mongooseConnection: Connection,
+  },
+): Promise<void> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+  await Promise.all(exampleIds.map(async (exampleId) => {
+    const archivedExample = await Example.findById(exampleId);
+    archivedExample.archived = true;
+    archivedExample.markModified('archived');
+    await archivedExample.save();
+  }));
+};
+
+/**
+ * Generates an object where the keys are the existing example suggestions
+ * for the associated word suggestion
+ * @param { wordSuggestionId, mongooseConnection }
+ * @returns An object of example suggestion ids as keys
+ */
+const generateExistingExampleSuggestionsObject = async ({
+  wordSuggestionId,
+  mongooseConnection,
+} : {
+  wordSuggestionId: string,
+  mongooseConnection: Connection
+}) => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+  const nestedExampleSuggestions: Interfaces.ExampleSuggestion[] = await ExampleSuggestion
+    .find({ associatedWords: wordSuggestionId });
+  const existingExampleSuggestionIds = nestedExampleSuggestions.reduce((nestedExampleSuggestionIdsObject, { id }) => ({
+    ...nestedExampleSuggestionIdsObject,
+    [id.toString()]: true,
+  }), {});
+  return existingExampleSuggestionIds;
+};
+
+export const assignExampleSuggestionToExampleData = async ({
+  wordSuggestion,
+  originalWord,
+  mergedBy,
+  mongooseConnection,
+} : {
+  wordSuggestion: Interfaces.WordSuggestion,
+  originalWord: Interfaces.Word,
+  mergedBy: string,
+  mongooseConnection: Connection,
+}): Promise<void> => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+  const Example = mongooseConnection.model('Example', exampleSchema);
+
+  // Archiving examples
+  // 1. Get all word suggestion' nested example suggestions
+  const exampleSuggestions: Interfaces.ExampleSuggestion[] = (
+    await ExampleSuggestion.find({ associatedWords: wordSuggestion.id.toString() })
+  );
+  // 2. Get all word's nested examples
+  const examples: Interfaces.Example[] = (
+    await Example.find({ associatedWords: originalWord.id.toString() })
+  );
+  // 3. Determine which word examples are not going to be updated
+  const uneditedExamples = examples.filter(({ id }) => (
+    !exampleSuggestions.find(({ originalExampleId }) => originalExampleId?.toString?.() === id.toString())
+  ));
+  const archivingExampleIds = uneditedExamples.map(({ id }) => id?.toString?.());
+  console.log('Archiving the following examples:', archivingExampleIds);
+  // 4. Archive all non-updated examples
+  await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });
+
+  await Promise.all(map(exampleSuggestions, async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
+    const removeSuggestionAssociatedIds: Interfaces.ExampleSuggestion = assign(exampleSuggestion);
+    /* Before creating new Example from ExampleSuggestion,
+     * all associated word suggestion ids must be removed
+     */
+    removeSuggestionAssociatedIds.associatedWords = filter(
+      exampleSuggestion.associatedWords,
+      (associatedWord) => associatedWord.toString() !== wordSuggestion.id.toString(),
+    );
+    if (!removeSuggestionAssociatedIds.associatedWords.includes(originalWord.id.toString())) {
+      removeSuggestionAssociatedIds.associatedWords.push(originalWord.id.toString());
+    }
+    /* Before creating new Example from ExampleSuggestion,
+     * all associated definitions schema ids must be removed
+     */
+    // removeSuggestionAssociatedIds.associatedDefinitionsSchemas = filter(
+    //   exampleSuggestion.associatedDefinitionsSchemas,
+    //   (associatedDefinitionSchema) => (
+    // !find(wordSuggestion.definitions, (({ _id: wordSuggestionDefinitionSchemaId }) => (
+    //     wordSuggestionDefinitionSchemaId.toString() === associatedDefinitionSchema.toString())
+    //   )),
+    // );
+    // const lookForDefinitionSchemaInOriginalDoc = (definitionSchemaId: string) => (
+    //   // Look for a original document definitions schema that has the current associated definitions Schema
+    //   find(originalWord.definitions, (({ _id }) => _id.toString() === definitionSchemaId))
+    // );
+    // removeSuggestionAssociatedIds.associatedDefinitionsSchemas.forEach((associatedDefinitionsSchema) => {
+    //   const originalDocDefinitionSchemaId = lookForDefinitionSchemaInOriginalDoc(associatedDefinitionsSchema);
+    //   if (originalDocDefinitionSchemaId?._id) {
+    //     removeSuggestionAssociatedIds.associatedDefinitionsSchemas
+    //       .push(originalDocDefinitionSchemaId._id.toString());
+    //   }
+    // });
+    const updatedExampleSuggestion = await removeSuggestionAssociatedIds.save();
+    return executeMergeExample(updatedExampleSuggestion.id.toString(), mergedBy, mongooseConnection);
+  }));
+};
+
+/**
+ * For all the example suggestions that weren't updated in the payload,
+ * they will be removed from the associated word suggestion
+ */
+const deleteUneditedExampleSuggestions = async ({
+  existingExampleSuggestionIds,
+  mongooseConnection,
+} : {
+  existingExampleSuggestionIds: { [key: string]: boolean },
+  mongooseConnection: Connection,
+}): Promise<void> => {
+  const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+  await Promise.all(Object.keys(existingExampleSuggestionIds).map(((id) => ExampleSuggestion.findByIdAndRemove(id))));
 };
 
 /**
@@ -134,7 +265,7 @@ const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleC
  * a Word Suggestion
  * @returns Example Suggestion documents
  */
-export const updateNestedExampleSuggestions = (
+export const updateNestedExampleSuggestions = async (
   {
     suggestionDocId,
     clientExamples,
@@ -144,11 +275,15 @@ export const updateNestedExampleSuggestions = (
   {
     suggestionDocId: string,
     clientExamples: Interfaces.ExampleClientData[],
-    mongooseConnection: any,
+    mongooseConnection: Connection,
     user: { uid: string },
   },
-): Promise<Interfaces.ExampleSuggestion[]> => (
-  Promise.all(map(clientExamples, async (example) => {
+): Promise<Interfaces.ExampleSuggestion[]> => {
+  const existingExampleSuggestionIds = await generateExistingExampleSuggestionsObject({
+    wordSuggestionId: suggestionDocId,
+    mongooseConnection,
+  });
+  const updatedExampleSuggestions = Promise.all(map(clientExamples, async (example) => {
     /**
      * If the nested example client data doesn\'t have an
      * id then a brand new Example Suggestion will be created
@@ -157,7 +292,9 @@ export const updateNestedExampleSuggestions = (
     if (!example.id) {
       const exampleData = {
         ...example,
-        authorId: user.uid,
+        // If the example suggestion has an originalExampleId then it's not brand new and should
+        // not be considered as such by attributing the user.uid as the author
+        authorId: !example.originalExampleId ? user.uid : null,
         exampleForSuggestion: true,
         associatedWords: await generateAssociatedWords(example, suggestionDocId),
         // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
@@ -165,6 +302,10 @@ export const updateNestedExampleSuggestions = (
       const exampleSuggestion = await createExampleSuggestion(exampleData, mongooseConnection);
       return exampleSuggestion;
     }
+    delete existingExampleSuggestionIds[example.id];
     return updateExistingExampleSuggestion(example, mongooseConnection);
-  }))
-);
+  }));
+
+  await deleteUneditedExampleSuggestions({ existingExampleSuggestionIds, mongooseConnection });
+  return updatedExampleSuggestions;
+};

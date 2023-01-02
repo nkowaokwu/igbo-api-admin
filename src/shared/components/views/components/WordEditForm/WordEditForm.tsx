@@ -51,6 +51,9 @@ const WordEditForm = ({
   if (!record?.dialects) {
     record.dialects = [];
   };
+  if (record.examples) {
+    record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+  }
   const {
     handleSubmit,
     getValues,

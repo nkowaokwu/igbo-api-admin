@@ -41,11 +41,6 @@ const ExamplesForm = ({
         title="Examples"
         tooltip="Example sentences should ideally in Standard Igbo."
       />
-      <AddExampleButton
-        examples={examples}
-        setExamples={setExamples}
-        definitionGroupId={definitionGroupId}
-      />
     </Box>
     <Box className="flex items-center my-5 w-full justify-between">
       <Accordion defaultIndex={[0]} allowMultiple className="w-full">
@@ -61,7 +56,7 @@ const ExamplesForm = ({
           <AccordionPanel pb={4}>
             {examples?.length ? examples.map((example, index) => (
               <Example
-                key={`example-${example.id}`}
+                key={`example-${example.createdAt}`}
                 setExamples={setExamples}
                 examples={examples}
                 example={example}
@@ -80,6 +75,11 @@ const ExamplesForm = ({
         </AccordionItem>
       </Accordion>
     </Box>
+    <AddExampleButton
+      examples={examples}
+      setExamples={setExamples}
+      definitionGroupId={definitionGroupId}
+    />
   </>
 );
 
