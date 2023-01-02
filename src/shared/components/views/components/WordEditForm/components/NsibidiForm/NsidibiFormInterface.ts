@@ -4,7 +4,7 @@ import { Control } from 'react-hook-form';
 interface NsidibiForm {
   control: Control,
   record: Record,
-  getValues: (key: string) => any,
+  getValues: (key?: string) => any,
   name?: string
 };
 

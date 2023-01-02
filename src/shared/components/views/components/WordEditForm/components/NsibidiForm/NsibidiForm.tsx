@@ -6,13 +6,13 @@ import FormHeader from '../../../FormHeader';
 import NsidibiFormInterface from './NsidibiFormInterface';
 import NsibidiInput from './NsibidiInput';
 
-const NsibidiForm = ({
+const NsibidiForm = React.forwardRef(({
   control,
   record,
   getValues,
   name,
-}: NsidibiFormInterface): ReactElement => (
-  <Box className="flex flex-col w-full">
+}: NsidibiFormInterface, ref): ReactElement => (
+  <Box ref={ref} className="flex flex-col w-full">
     <FormHeader
       title="Nsịbịdị"
       tooltip={`Nsịbịdị is a West African native script that relies on buildable icons.
@@ -29,6 +29,6 @@ const NsibidiForm = ({
       defaultValue={name ? get(record, name) : (record.nsibidi || getValues().nsibidi)}
     />
   </Box>
-);
+));
 
 export default NsibidiForm;

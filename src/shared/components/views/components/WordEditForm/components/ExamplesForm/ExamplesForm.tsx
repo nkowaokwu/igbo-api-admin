@@ -18,7 +18,6 @@ const ExamplesForm = ({
   setExamples,
   getValues,
   setValue,
-  control,
   definitionGroupId,
 }: ExamplesFormInterface): ReactElement => (
   // List of examples associated with the definition schema
@@ -62,7 +61,6 @@ const ExamplesForm = ({
                 example={example}
                 getValues={getValues}
                 setValue={setValue}
-                control={control}
                 index={index}
                 definitionGroupId={definitionGroupId}
               />

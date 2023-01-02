@@ -146,7 +146,7 @@ const WordEditForm = ({
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),
       stems: sanitizeArray(data.stems),
-      examples: sanitizeExamples(data.examples),
+      examples: sanitizeExamples(examples),
       pronunciation: getValues().pronunciation || '',
     };
     return cleanedData;
@@ -311,7 +311,6 @@ const WordEditForm = ({
         setExamples={setExamples}
         getValues={getValues}
         setValue={setValue}
-        control={control}
         errors={errors}
       />
       <Box className={`flex 

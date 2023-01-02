@@ -84,7 +84,7 @@ const DefinitionsForm = ({
             borderBottomWidth="1px"
             borderBottomColor="gray.300"
             mb={4}
-            key={id}
+            key={`definitions-${id}-${nestedDefinitions}`}
           >
             {definitions.length > 1 ? (
               <Tooltip label="Delete Definition Group">

@@ -7,6 +7,7 @@ const NsibidiInput = (props : {
   onChange: (value: any) => void,
   placeholder?: string,
   'data-test'?: string,
+  defaultValue?: string,
 }): ReactElement => {
   const {
     value,

@@ -1,11 +1,11 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { get } from 'lodash';
 import {
   Box,
   IconButton,
   Spinner,
   Tooltip,
 } from '@chakra-ui/react';
-import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collections';
@@ -19,7 +19,6 @@ const Example = ({
   example,
   getValues,
   setValue,
-  control,
   index,
 }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
@@ -30,8 +29,6 @@ const Example = ({
     nsibidi,
     id = '',
     associatedWords,
-    associatedDefinitionsSchemas,
-    pronunciation,
     originalExampleId,
   } = example;
   const formData = getValues();
@@ -41,28 +38,24 @@ const Example = ({
     permanently delete the example sentence, rather it will be archived (saved) but hidden.`
     : 'This is a new example suggestion. Clicking this button will delete it permanently.';
 
-  const handleInputIgbo = (onChange) => (e) => {
+  const handleInputIgbo = (e) => {
     const updatedExamples = [...examples];
     updatedExamples[index].igbo = e.target.value;
-    onChange(e);
   };
 
-  const handleInputEnglish = (onChange) => (e) => {
+  const handleInputEnglish = (e) => {
     const updatedExamples = [...examples];
     updatedExamples[index].english = e.target.value;
-    onChange(e);
   };
 
-  const handleInputMeaning = (onChange) => (e) => {
+  const handleInputMeaning = (e) => {
     const updatedExamples = [...examples];
     updatedExamples[index].meaning = e.target.value;
-    onChange(e);
   };
 
-  const handleInputNsibidi = (onChange) => (e) => {
+  const handleInputNsibidi = (e) => {
     const updatedExamples = [...examples];
     updatedExamples[index].nsibidi = e.target.value;
-    onChange(e);
   };
 
   const handleSetPronunciation = (path, value) => {
@@ -97,124 +90,46 @@ const Example = ({
         className="flex flex-col w-full space-y-3"
       >
         <h3 className="text-gray-700">Igbo:</h3>
-        <Controller
-          render={({ onChange, ...props }) => (
-            <Input
-              {...props}
-              onChange={handleInputIgbo(onChange)}
-              className="form-input"
-              placeholder="Example in Igbo"
-              data-test={`examples-${index}-igbo-input`}
-            />
-          )}
-          name={`examples[${index}].igbo`}
+        <Input
+          onChange={handleInputIgbo}
+          className="form-input"
+          placeholder="Example in Igbo"
+          data-test={`examples-${index}-igbo-input`}
           defaultValue={igbo || (formData.examples && formData.examples[index]?.igbo) || ''}
-          control={control}
         />
         <h3 className="text-gray-700">English:</h3>
-        <Controller
-          render={({ onChange, ...props }) => (
-            <Input
-              {...props}
-              onChange={handleInputEnglish(onChange)}
-              className="form-input"
-              placeholder="Example in English (literal)"
-              data-test={`examples-${index}-english-input`}
-            />
-          )}
-          name={`examples[${index}].english`}
+        <Input
+          onChange={handleInputEnglish}
+          className="form-input"
+          placeholder="Example in English (literal)"
+          data-test={`examples-${index}-english-input`}
           defaultValue={english || (formData.examples && formData.examples[index]?.english) || ''}
-          control={control}
         />
         <h3 className="text-gray-700">Meaning:</h3>
-        <Controller
-          render={({ onChange, ...props }) => (
-            <Input
-              {...props}
-              onChange={handleInputMeaning(onChange)}
-              className="form-input"
-              placeholder="Example in English (meaning)"
-              data-test={`examples-${index}-meaning-input`}
-            />
-          )}
-          name={`examples[${index}].meaning`}
+        <Input
+          onChange={handleInputMeaning}
+          className="form-input"
+          placeholder="Example in English (meaning)"
+          data-test={`examples-${index}-meaning-input`}
           defaultValue={meaning || (formData.examples && formData.examples[index]?.meaning) || ''}
-          control={control}
         />
         <h3 className="text-gray-700">Nsịbịdị:</h3>
-        <Controller
-          render={({ onChange, ...props }) => (
-            <NsibidiInput
-              {...props}
-              onChange={handleInputNsibidi(onChange)}
-              placeholder="Example in Nsịbịdị"
-              data-test={`examples-${index}-nsibidi-input`}
-            />
-          )}
-          name={`examples[${index}].nsibidi`}
+        <NsibidiInput
+          onChange={handleInputNsibidi}
+          placeholder="Example in Nsịbịdị"
+          data-test={`examples-${index}-nsibidi-input`}
           defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
-          control={control}
         />
-        <Controller
-          render={() => (
-            <div>
-              <AudioRecorder
-                path={`examples[${index}]`}
-                getFormValues={getValues}
-                setPronunciation={handleSetPronunciation}
-                record={example}
-                originalRecord={originalRecord}
-                formTitle="Igbo Sentence Recording"
-                formTooltip="Record the audio for the Igbo example sentence only one time.
-                You are able to record over pre-existing recordings."
-              />
-            </div>
-          )}
-          defaultValue={pronunciation}
-          name={`examples[${index}].pronunciation`}
-          control={control}
+        <AudioRecorder
+          path={`examples[${index}]`}
+          getFormValues={(path) => path.startsWith('examples') ? example : get(example, path)}
+          setPronunciation={handleSetPronunciation}
+          record={example}
+          originalRecord={originalRecord}
+          formTitle="Igbo Sentence Recording"
+          formTooltip="Record the audio for the Igbo example sentence only one time.
+          You are able to record over pre-existing recordings."
         />
-        <Box position="absolute" pointerEvents="none">
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Original Example Id"
-                data-test={`examples-${index}-originalExampleId`}
-              />
-            )}
-            name={`examples[${index}].originalExampleId`}
-            defaultValue={originalExampleId}
-            control={control}
-          />
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Example Id"
-                data-test={`examples-${index}-id`}
-              />
-            )}
-            name={`examples[${index}].id`}
-            defaultValue={id}
-            control={control}
-          />
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                className="form-input invisible"
-                placeholder="Associated Definitions Schema"
-                data-test={`examples-${index}-associatedDefinitionsSchemas`}
-              />
-            )}
-            name={`examples[${index}].associatedDefinitionsSchemas`}
-            defaultValue={associatedDefinitionsSchemas}
-            control={control}
-          />
-        </Box>
       </Box>
       <Tooltip label={deleteMessage}>
         <IconButton
