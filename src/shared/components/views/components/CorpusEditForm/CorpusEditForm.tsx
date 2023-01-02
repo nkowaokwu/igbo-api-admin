@@ -20,7 +20,6 @@ import { EditFormProps } from 'src/shared/interfaces';
 import { getCorpus, removePayloadFields } from 'src/shared/API';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
-import useCacheForm from 'src/hooks/useCacheForm';
 import { Textarea, Input } from 'src/shared/primitives';
 import actionsMap, { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import Collection from 'src/shared/constants/Collections';
@@ -196,18 +195,10 @@ const CorpusEditForm = ({
     }
   };
 
-  /* Caches the form data with browser cookies */
-  const cacheForm = () => {
-    const data = getValues();
-    const cleanedData = createCacheCorpusData(data, record);
-    localStorage.setItem('igbo-api-admin-form', JSON.stringify(cleanedData));
-  };
-
   useBeforeWindowUnload();
-  useCacheForm({ record, setValue, cacheForm });
 
   return (
-    <form onChange={cacheForm} onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col">
         {record.originalCorpusId || (view === View.CREATE && record.id) ? (
           <>

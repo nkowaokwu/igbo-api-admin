@@ -4,7 +4,6 @@ import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
 
 interface DefinitionsForm {
   getValues: (value: any) => any,
-  cacheForm: (value: any) => void,
   options: any,
   record: Record,
   definitions: DefinitionSchema[],

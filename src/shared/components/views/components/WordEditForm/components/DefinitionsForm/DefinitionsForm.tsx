@@ -10,7 +10,6 @@ import IgboDefinitions from './IgboDefinitions';
 
 const DefinitionsForm = ({
   getValues,
-  cacheForm,
   options,
   record,
   definitions,
@@ -110,7 +109,6 @@ const DefinitionsForm = ({
                 errors={errors}
                 control={control}
                 getValues={getValues}
-                cacheForm={cacheForm}
                 options={options}
                 record={record}
                 index={index}

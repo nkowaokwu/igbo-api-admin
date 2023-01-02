@@ -6,7 +6,6 @@ interface PartOfSpeechForm {
   control: Control,
   record: Record,
   getValues: () => any,
-  cacheForm: () => void,
   options: any,
   index: number,
 };

@@ -11,7 +11,6 @@ const PartOfSpeechForm = ({
   errors,
   control,
   getValues,
-  cacheForm,
   options,
   record,
   index,
@@ -51,13 +50,9 @@ const PartOfSpeechForm = ({
       />
       <Box data-test="word-class-input-container">
         <Controller
-          render={({ onChange, ...rest }) => (
+          render={(props) => (
             <Select
-              {...rest}
-              onChange={(e) => {
-                onChange(e);
-                cacheForm();
-              }}
+              {...props}
               options={options}
             />
           )}

@@ -189,13 +189,6 @@ const WordEditForm = ({
     }
   };
 
-  /* Caches the form data with browser cookies */
-  const cacheForm = () => {
-    const data = getValues();
-    const cleanedData = createCacheWordData(data, record);
-    localStorage.setItem('igbo-api-admin-form', JSON.stringify(cleanedData));
-  };
-
   useBeforeWindowUnload();
   useEffect(() => {
     (async () => {
@@ -217,7 +210,7 @@ const WordEditForm = ({
   }, []);
 
   return (
-    <form onChange={cacheForm} onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
@@ -291,7 +284,6 @@ const WordEditForm = ({
       </Box>
       <DefinitionsForm
         getValues={getValues}
-        cacheForm={cacheForm}
         options={options}
         record={record}
         definitions={definitions}
