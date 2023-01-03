@@ -33,7 +33,7 @@ describe('Create', () => {
           cy.findByText('Parent Word Id:');
           cy.findByText($selectedId.innerText);
           cy.get(`[value="${$selectedWord.innerText}"]`);
-        })
+        });
       });
     });
 
@@ -120,7 +120,7 @@ describe('Create', () => {
       cy.findByText(updatedEnglish);
     });
 
-    it.only('render an error notification for word form upon submitting', () => {
+    it('render an error notification for word form upon submitting', () => {
       cy.createWordSuggestion();
       const word = 'new word';
       cy.intercept('POST', '**/wordSuggestions', {
@@ -139,13 +139,13 @@ describe('Create', () => {
     });
   });
 
-  describe.skip('Example Suggestions', () => {
+  describe('Example Suggestions', () => {
     it('render the custom create view for exampleSuggestions', () => {
       cy.selectCollection('examples');
       cy.getActionsOption(DocumentSelectOptions.SUGGEST_NEW_EDIT).click();
       cy.findByTestId('igbo-input');
       cy.findByTestId('english-input');
-      cy.get('[data-test*="associated-words-"]');
+      cy.findByTestId('associatedWord-search');
     });
 
     it('show the newly created exampleSuggestions', () => {
@@ -163,10 +163,10 @@ describe('Create', () => {
       cy.getActionsOption(DocumentSelectOptions.SUGGEST_NEW_EDIT).click();
       cy.findByTestId('igbo-input').clear();
       cy.findByTestId('english-input').clear();
-      cy.findByTestId('associated-words-0-input').clear();
+      cy.findByTestId('associatedWord-search');
       cy.intercept('POST', '**/api/v1/exampleSuggestions').as('failedExampleSuggestion');
       cy.get('button[type="submit"]').click();
-      cy.get('button[type="submit"]');
+      cy.findByText('Igbo is required');
     });
 
     it('link to the nested example', () => {
@@ -178,36 +178,34 @@ describe('Create', () => {
       cy.findByTestId('word-input').type(word);
       cy.findAllByTestId('word-class-input-container').eq(0).click();
       cy.findByText(WordClassOptions.CJN.label).click();
-      cy.findByTestId('definitions-0-input').type('first definition');
+      cy.findByTestId('nested-definitions-0-input').type('first definition');
       cy.get('[aria-label="Add Example"]').click({ force: true });
       cy.findByTestId('examples-0-igbo-input').type(igbo);
       cy.findByTestId('examples-0-english-input').type(english);
+      cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.get('button[type="submit"]').click();
-      cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-      cy.acceptConfirmation();
-      cy.contains('Word Document Details');
-      cy.contains('Link to Example').then(([link]) => {
-        link.click();
-        cy.findByText(igbo);
-        cy.findByText(english);
-      });
+      cy.wait('@getWordSuggestion');
+      cy.findByText('Word Suggestion Document Details');
+      cy.findByText('Link to Example').click();
+      cy.findByText('Example Suggestion Document Details');
+      cy.findByText(igbo);
+      cy.findByText(english);
     });
 
     it('render an error notification for example form upon submitting', () => {
-      const associatedWordId = mongoose.Types.ObjectId().toString();
       cy.createExampleSuggestion();
-      cy.intercept('POST', '**/exampleSuggestions', {
+      cy.intercept('PUT', '**/exampleSuggestions/**', {
         statusCode: 400,
         body: { error: errorMessage },
-      }).as('postExampleSuggestionFailure');
+      }).as('putExampleSuggestionFailure');
       cy.selectCollection('examples');
       cy.getActionsOption(DocumentSelectOptions.SUGGEST_NEW_EDIT).click();
-      cy.findByTestId('igbo-input').type('igbo word');
-      cy.findByTestId('english-input').type('english word');
-      cy.findByTestId('associated-words-0-input').clear().type(associatedWordId);
+      cy.findByTestId('igbo-input').clear().type('igbo word');
+      cy.findByTestId('english-input').clear().type('english word');
+      cy.findByTestId('associatedWord-search').clear().type('5f864d7401203866b6546dd3');
       cy.get('button[type="submit"]').click();
-      cy.wait('@postExampleSuggestionFailure');
-      cy.findByText(errorMessage);
+      cy.wait('@putExampleSuggestionFailure');
+      cy.findByText(`${errorMessage} example suggestion`);
     });
   });
 });

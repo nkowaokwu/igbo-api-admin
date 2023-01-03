@@ -109,21 +109,12 @@ Cypress.Commands.add('getWordSuggestionDocumentDetails', (position: number = 1) 
  * @selectedDenials
  * @selectedId
  */
-Cypress.Commands.add('getWordDocumentDetails', (position: number = 1) => {
-  const docPosition = position;
-  const WORD_COLUMN = 1;
-  const ID_COLUMN = 5;
-  cy
-    .get('tr')
+Cypress.Commands.add('getWordDocumentDetails', (docPosition: number = 0) => {
+  cy.findAllByTestId('resource-word')
     .eq(docPosition)
-    .find('td span[class*="Mui"]')
-    .eq(WORD_COLUMN)
     .as('selectedWord');
-  cy
-    .get('tr')
+  cy.findAllByTestId('resource-id')
     .eq(docPosition)
-    .find('td span')
-    .eq(ID_COLUMN)
     .as('selectedId');
 });
 

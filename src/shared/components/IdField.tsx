@@ -30,7 +30,11 @@ const IdField = ({ source, record = { id: null } }: IdFieldProps): ReactElement 
       width="full"
       className="space-x-4"
     >
-      <chakra.span style={{ fontFamily: 'monospace' }} className="MuiTypography-root MuiTypography-body2">
+      <chakra.span
+        style={{ fontFamily: 'monospace' }}
+        className="MuiTypography-root MuiTypography-body2"
+        data-test="resource-id"
+      >
         {get(record, source)}
       </chakra.span>
       {get(record, source) ? (
