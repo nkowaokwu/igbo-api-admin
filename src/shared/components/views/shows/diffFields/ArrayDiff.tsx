@@ -9,9 +9,9 @@ const ArrayDiff = (
     diffRecord,
     renderNestedObject,
   } : {
-    recordField: string,
-    value: any,
-    index: number,
+    recordField?: string,
+    value?: any,
+    index?: number,
     diffRecord: any,
     renderNestedObject?: ((value: any, hasChanged: boolean) => ReactElement | ReactElement[]),
   },

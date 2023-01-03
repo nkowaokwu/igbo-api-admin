@@ -11,8 +11,8 @@ const ExampleDiff = ({
   diffRecord,
   resource,
 } : {
-  value: ExampleClientData,
-  index: number,
+  value?: ExampleClientData,
+  index?: number,
   diffRecord: Record,
   resource: string,
 }): ReactElement => (
