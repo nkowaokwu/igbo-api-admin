@@ -12,7 +12,10 @@ const schema = yup.object().shape({
       : yup.boolean(),
   }), {})),
   word: yup.string().required(),
-  tags: yup.array().min(0).of(yup.string()),
+  tags: yup.array().min(0).of(yup.object().shape({
+    value: yup.string(),
+    label: yup.string(),
+  })),
   definitions: yup.array().min(1).of(yup.object().shape({
     wordClass: yup.object().shape({
       value: yup.mixed().oneOf(Object.values(WordClass).map(({ value }) => value)),

@@ -136,6 +136,11 @@ const WordEditForm = ({
       .filter((example) => example.igbo && example.english);
   };
 
+  /* Gets tag values */
+  const sanitizeTags = (tags: Word['tags']) => (
+    tags.map(({ value }) => value)
+  );
+
   /* Prepares the data to be cached */
   const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {
     const cleanedData = {
@@ -151,6 +156,7 @@ const WordEditForm = ({
       stems: sanitizeArray(data.stems),
       examples: sanitizeExamples(examples),
       pronunciation: getValues().pronunciation || '',
+      tags: sanitizeTags(data.tags),
     };
     return cleanedData;
   };
