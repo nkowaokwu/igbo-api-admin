@@ -240,6 +240,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   className="pl-4 pb-4 space-y-4 mt-4"
                   borderBottomColor="gray.200"
                   borderBottomWidth="1px"
+                  key={`nested-definition-${definition.id}`}
                 >
                   <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-gray-600">Part of Speech</Heading>

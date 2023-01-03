@@ -304,6 +304,7 @@ export const getUserMergeStats = async (
         )).length + (wordSuggestion.authorId === userId ? 1 : 0),
       };
     }, defaultMerges);
+
     return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
   } catch (err) {
     return next(err);

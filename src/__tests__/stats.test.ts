@@ -1,4 +1,4 @@
-import last from 'lodash/last';
+import moment from 'moment';
 import {
   getUserStats,
   getUserMergeStats,
@@ -55,17 +55,16 @@ describe('MongoDB Stats', () => {
           variations: [],
         },
       ];
+      const isoWeek = moment().isoWeek();
       const firstStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
-      const currentWeekMergedDialects: number = last(Object.values(firstStatsRes.body.dialectalVariationMerges));
+      const currentWeekMergedDialects: number = firstStatsRes.body.dialectalVariationMerges[isoWeek];
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
         dialects,
       }, { noApprovals: true, token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
       await createWord(wordSuggestionRes.body.id);
       const secondStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
-      const updatedCurrentWeekMergedDialects: number = (
-        last(Object.values(secondStatsRes.body.dialectalVariationMerges))
-      );
+      const updatedCurrentWeekMergedDialects: number = secondStatsRes.body.dialectalVariationMerges[isoWeek];
       // + 1 to include the headword
       expect(currentWeekMergedDialects + dialects.length + 1).toEqual(updatedCurrentWeekMergedDialects);
     });
@@ -91,14 +90,11 @@ describe('MongoDB Stats', () => {
           variations: [],
         },
       ];
+      const isoWeek = moment().isoWeek();
       const mergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const adminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-      const currentWeekMergedDialectsForMerger: number = (
-        last(Object.values(mergerStatsRes.body.dialectalVariationMerges))
-      );
-      const currentWeekMergedDialectsForAdmin: number = (
-        last(Object.values(adminStatsRes.body.dialectalVariationMerges))
-      );
+      const currentWeekMergedDialectsForMerger: number = mergerStatsRes.body.dialectalVariationMerges[isoWeek];
+      const currentWeekMergedDialectsForAdmin: number = adminStatsRes.body.dialectalVariationMerges[isoWeek];
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
         dialects,
@@ -119,10 +115,10 @@ describe('MongoDB Stats', () => {
       const updatedMergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const updatedAdminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const updatedCurrentWeekMergedDialectsForMerger: number = (
-        last(Object.values(updatedMergerStatsRes.body.dialectalVariationMerges))
+        updatedMergerStatsRes.body.dialectalVariationMerges[isoWeek]
       );
       const updatedCurrentWeekMergedDialectsForAdmin: number = (
-        last(Object.values(updatedAdminStatsRes.body.dialectalVariationMerges))
+        updatedAdminStatsRes.body.dialectalVariationMerges[isoWeek]
       );
       // + 1 to include the headword
       expect(currentWeekMergedDialectsForMerger + dialects.length + 1)
@@ -153,12 +149,9 @@ describe('MongoDB Stats', () => {
       ];
       const mergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const adminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-      const currentWeekMergedExamplesForMerger: number = (
-        last(Object.values(mergerStatsRes.body.exampleSuggestionMerges))
-      );
-      const currentWeekMergedExamplesForAdmin: number = (
-        last(Object.values(adminStatsRes.body.exampleSuggestionMerges))
-      );
+      const isoWeek = moment().isoWeek();
+      const currentWeekMergedExamplesForMerger: number = mergerStatsRes.body.exampleSuggestionMerges[isoWeek];
+      const currentWeekMergedExamplesForAdmin: number = adminStatsRes.body.exampleSuggestionMerges[isoWeek];
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
         examples,
@@ -179,10 +172,10 @@ describe('MongoDB Stats', () => {
       const updatedMergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const updatedAdminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const updatedCurrentWeekMergedExamplesForMerger: number = (
-        last(Object.values(updatedMergerStatsRes.body.exampleSuggestionMerges))
+        updatedMergerStatsRes.body.exampleSuggestionMerges[isoWeek]
       );
       const updatedCurrentWeekMergedExamplesForAdmin: number = (
-        last(Object.values(updatedAdminStatsRes.body.exampleSuggestionMerges))
+        updatedAdminStatsRes.body.exampleSuggestionMerges[isoWeek]
       );
       expect(currentWeekMergedExamplesForMerger + examples.length).toEqual(updatedCurrentWeekMergedExamplesForMerger);
       expect(currentWeekMergedExamplesForAdmin + 1).toEqual(updatedCurrentWeekMergedExamplesForAdmin);

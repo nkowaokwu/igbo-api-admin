@@ -85,6 +85,7 @@ const WordEditForm = ({
     igboDefinitions: [],
     nsibidi: '',
   }]);
+  // Examples are not tracked in react-hook-form due to their data structure complexity
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);

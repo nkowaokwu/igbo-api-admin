@@ -2,13 +2,13 @@ import React, { ReactElement } from 'react';
 import { Text, Tooltip, chakra } from '@chakra-ui/react';
 import { Input } from 'src/shared/primitives';
 
-const NsibidiInput = (props : {
+const NsibidiInput = React.forwardRef((props : {
   value: string
   onChange: (value: any) => void,
   placeholder?: string,
   'data-test'?: string,
   defaultValue?: string,
-}): ReactElement => {
+}, ref): ReactElement => {
   const {
     value,
     placeholder = 'i.e. 貝名, 貝è捧捧, 和硝',
@@ -18,6 +18,7 @@ const NsibidiInput = (props : {
     <>
       <Input
         {...props}
+        ref={ref}
         className="form-input"
         placeholder={placeholder}
         data-test={dataTest}
@@ -35,6 +36,6 @@ const NsibidiInput = (props : {
       ) : null}
     </>
   );
-};
+});
 
 export default NsibidiInput;

@@ -205,7 +205,9 @@ export const assignExampleSuggestionToExampleData = async ({
   const archivingExampleIds = uneditedExamples.map(({ id }) => id?.toString?.());
   console.log('Archiving the following examples:', archivingExampleIds);
   // 4. Archive all non-updated examples
-  await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });
+  if (archivingExampleIds.length) {
+    await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });
+  }
 
   await Promise.all(map(exampleSuggestions, async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
     const removeSuggestionAssociatedIds: Interfaces.ExampleSuggestion = assign(exampleSuggestion);
@@ -241,7 +243,7 @@ export const assignExampleSuggestionToExampleData = async ({
     //   }
     // });
     const updatedExampleSuggestion = await removeSuggestionAssociatedIds.save();
-    return executeMergeExample(updatedExampleSuggestion.id.toString(), mergedBy, mongooseConnection);
+    return executeMergeExample(updatedExampleSuggestion, mergedBy, mongooseConnection);
   }));
 };
 

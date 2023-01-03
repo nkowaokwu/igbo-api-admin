@@ -104,6 +104,7 @@ describe('MongoDB Words', () => {
     });
 
     it('should return an error with invalid message object', async () => {
+      // @ts-expect-error
       await sendSendGridEmail(INVALID_MESSAGE).catch(() => null);
     });
 
@@ -150,6 +151,45 @@ describe('MongoDB Words', () => {
           .toBeLessThan(moment(updateWordRes.body.updatedAt).unix());
       });
     });
+    // eslint-disable-next-line max-len
+    it('should create a new word from existing word and examples, attempt to delete, but sentence should still be there', async () => {
+      const exampleData = {
+        igbo: 'first igbo',
+        english: 'first english',
+        pronunciation: 'data://',
+      };
+      const res = await suggestNewWord({
+        ...wordSuggestionData,
+        examples: [exampleData],
+      });
+      expect(res.body.examples[0].authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      const wordRes = await createWord(res.body.id);
+      const result = await getWord(wordRes.body.id);
+      expect(result.status).toEqual(200);
+      expect(result.body.examples[0].authorId).toBeFalsy();
+      const childRes = await suggestNewWord({
+        ...result.body,
+        originalWordId: result.body.id,
+        examples: [{
+          ...exampleData,
+          originalExampleId: result.body.examples[0].id,
+        }],
+      });
+      expect(childRes.status).toEqual(200);
+      expect(childRes.body.originalWordId).toEqual(result.body.id);
+      expect(childRes.body.examples).toHaveLength(1);
+      expect(childRes.body.examples[0].authorId).toBeFalsy();
+      const updatedChildRes = await updateWordSuggestion({
+        ...childRes.body,
+        examples: [], // Delete the example suggestion,
+      });
+      expect(updatedChildRes.body.examples).toHaveLength(0);
+      const secondWordRes = await createWord(updatedChildRes.body.id);
+      const finalRes = await getWord(secondWordRes.body.id);
+      expect(finalRes.status).toEqual(200);
+      expect(finalRes.body.examples[0]).toBeTruthy();
+      expect(finalRes.body.examples[0].archived).toBeTruthy();
+    });
   });
 
   describe('/DELETE mongodb words', () => {
@@ -166,7 +206,7 @@ describe('MongoDB Words', () => {
       });
       expect([null, undefined, '']).not.toContain(firstWord.id);
       expect([null, undefined, '']).not.toContain(secondWord.id);
-      const combinedWordRes = await deleteWord(firstWord.id, secondWord.id);
+      const combinedWordRes = await deleteWord(firstWord.id.toString(), secondWord.id);
       const { definitions: [{ definitions }], variations, stems } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
       expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
@@ -178,9 +218,9 @@ describe('MongoDB Words', () => {
       expect(isEqual(variations, secondWord.variations)).toBeTruthy();
       expect(isEqual(stems, firstWord.stems)).toBeTruthy();
       expect(isEqual(stems, secondWord.stems)).toBeTruthy();
-      const firstExampleRes = await getExample(firstExample.id);
+      const firstExampleRes = await getExample(firstExample.id.toString());
       expect(firstExampleRes.status).toEqual(200);
-      const secondExampleRes = await getExample(secondExample.id);
+      const secondExampleRes = await getExample(secondExample.id.toString());
       const { associatedWords: firstExampleAssociatedWords } = firstExampleRes.body;
       const { associatedWords: secondExampleAssociatedWords } = secondExampleRes.body;
       expect(secondExampleRes.status).toEqual(200);
@@ -196,14 +236,14 @@ describe('MongoDB Words', () => {
         secondExampleAssociatedWords,
         uniqBy(secondExampleAssociatedWords, (associatedWord) => associatedWord),
       )).toEqual(true);
-      const res = await getWord(firstWord.id);
+      const res = await getWord(firstWord.id.toString());
       expect(res.status).toEqual(404);
     });
 
     it('should return an error deleting a word with an invalid primary word id', async () => {
       const firstWord = await createWordFromSuggestion(updatedWordSuggestionData);
       expect([null, undefined, '']).not.toContain(firstWord.id);
-      const combinedWordRes = await deleteWord(firstWord.id, INVALID_ID);
+      const combinedWordRes = await deleteWord(firstWord.id.toString(), INVALID_ID);
       expect(combinedWordRes.status).toEqual(400);
       expect([null, undefined, '']).not.toContain(combinedWordRes.body.error);
     });
@@ -217,7 +257,7 @@ describe('MongoDB Words', () => {
     });
 
     it('should handle a word with a null stems field', async () => {
-      const wordsRes = await getWords({ range: '[0, 24]' });
+      const wordsRes = await getWords({ keyword: 'bi' });
       expect(wordsRes.status).toEqual(200);
       const wordWithNullStems = wordsRes.body[0];
       await new Promise((resolve) => setTimeout(resolve, SAVE_DOC_DELAY));

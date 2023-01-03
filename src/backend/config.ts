@@ -8,6 +8,7 @@ export const isCypress = config?.runtime?.env === 'cypress';
 export const isJest = config?.runtime?.env === 'jest';
 export const isTest = config?.runtime?.env === 'test';
 export const isTesting = isCypress || isJest || isTest;
+export const isAWSProduction = isProduction;
 
 // Igbo API
 export const IGBO_API_ROOT = !isTesting && isProduction

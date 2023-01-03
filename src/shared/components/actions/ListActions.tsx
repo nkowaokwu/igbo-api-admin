@@ -214,50 +214,60 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                           : [value];
                       setCurrentFilters(cleanedValue);
                     }}
-                    title={
-                      isWordResource ? 'Word Attributes' : 'Example Attributes'
-                    }
+                    title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
                     type="checkbox"
                   >
                     {!isWordResource
                       ? [
-                        <MenuItemOption value="isProverb">
+                        <MenuItemOption value="isProverb" key="isProverb">
                           Is Proverb
                         </MenuItemOption>,
                       ]
                       : null}
                     {isWordResource
                       ? [
-                        <MenuItemOption value={WordAttributes.IS_STANDARD_IGBO.value}>
+                        <MenuItemOption
+                          value={WordAttributes.IS_STANDARD_IGBO.value}
+                          key={WordAttributes.IS_STANDARD_IGBO.value}
+                        >
                           Is Standard Igbo
                         </MenuItemOption>,
-                        <MenuItemOption value="pronunciation">
+                        <MenuItemOption value="pronunciation" key="pronunciation">
                           Has Pronunciation
                         </MenuItemOption>,
-                        <MenuItemOption value="nsibidi">
+                        <MenuItemOption value="nsibidi" key="nsibidi">
                           Has Nsịbịdị
                         </MenuItemOption>,
-                        <MenuItemOption value={WordAttributes.IS_CONSTRUCTED_TERM.value}>
+                        <MenuItemOption
+                          value={WordAttributes.IS_CONSTRUCTED_TERM.value}
+                          key={WordAttributes.IS_CONSTRUCTED_TERM.value}
+                        >
                           Is Constructed Term
                         </MenuItemOption>,
                       ]
                       : null}
                     {isSuggestionResource
                       ? [
-                        <MenuDivider />,
-                        <MenuItemOption value={SuggestionSource.COMMUNITY}>
+                        <MenuDivider key="divider" />,
+                        <MenuItemOption
+                          value={SuggestionSource.COMMUNITY}
+                          key={SuggestionSource.COMMUNITY}
+                        >
                           From Nkọwa okwu
                         </MenuItemOption>,
-                        <MenuItemOption value={SuggestionSource.INTERNAL}>
+                        <MenuItemOption
+                          value={SuggestionSource.INTERNAL}
+                          key={SuggestionSource.INTERNAL}
+                        >
                           From Igbo API Editor Platform
                         </MenuItemOption>,
-                        <MenuItemOption value="userInteractions">
+                        <MenuItemOption value="userInteractions" key="userInteractions">
                           Is Currently Editing
                         </MenuItemOption>,
-                        <MenuItemOption value="authorId">
+                        <MenuItemOption value="authorId" key="authorId">
                           Is Author
                         </MenuItemOption>,
-                        <MenuItemOption value="mergedBy">
+                        <MenuItemOption value="mergedBy" key="mergedBy">
                           Merged By You
                         </MenuItemOption>,
                       ]

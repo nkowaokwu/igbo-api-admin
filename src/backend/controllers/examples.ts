@@ -154,13 +154,10 @@ const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnec
 
 /* Executes the logic describe the mergeExample function description */
 export const executeMergeExample = async (
-  exampleSuggestionId: string,
+  exampleSuggestion: Interfaces.ExampleSuggestion,
   mergedBy: string,
   mongooseConnection: Connection,
 ): Promise<Interfaces.Example> => {
-  const exampleSuggestion: Interfaces.ExampleSuggestion = (
-    await findExampleSuggestionById(exampleSuggestionId, mongooseConnection)
-  );
   const Word = mongooseConnection.model('Word', wordSchema);
 
   if (!exampleSuggestion) {
@@ -225,7 +222,7 @@ export const mergeExample = async (
     const { body: data, user, mongooseConnection } = req;
 
     const exampleSuggestion = await findExampleSuggestionById(data.id, mongooseConnection);
-    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion.id, user.uid, mongooseConnection);
+    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion, user.uid, mongooseConnection);
     await handleSendingMergedEmail({
       ...(result.toObject ? result.toObject() : result),
       authorEmail: exampleSuggestion.authorEmail,

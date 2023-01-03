@@ -1,5 +1,5 @@
 import removeAccents from 'src/backend/utils/removeAccents';
-import { isProduction, isCypress } from 'src/backend/config';
+import { isAWSProduction, isCypress } from 'src/backend/config';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
 import initializeAPI from './initializeAPI';
 
@@ -18,7 +18,7 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
     throw new Error('id and media must be provided');
   }
   const mediaId = removeAccents.remove(id);
-  if (isCypress || !isProduction) {
+  if (isCypress || !isAWSProduction) {
     return `${dummyUriPath}${mediaId}`;
   }
   const base64Data = Buffer.from(mediaData.replace(/^data:.+;base64,/, ''), 'base64');
@@ -45,7 +45,7 @@ export const copyMedia = async (
   const oldMediaId = removeAccents.remove(oldDocId);
   const newMediaId = removeAccents.remove(newDocId);
   try {
-    if (isCypress || !isProduction) {
+    if (isCypress || !isAWSProduction) {
       return `${dummyUriPath}${newMediaId}`;
     }
 
@@ -76,7 +76,7 @@ export const deleteMedia = async (id: string): Promise<any> => {
   }
   try {
     const mediaId = removeAccents.remove(id);
-    if (isCypress || !isProduction) {
+    if (isCypress || !isAWSProduction) {
       return `${dummyUriPath}${mediaId}`;
     }
     const params = {
@@ -92,7 +92,7 @@ export const deleteMedia = async (id: string): Promise<any> => {
 
 /* Takes an old and new media id and renames it (copies and deletes) */
 export const renameMedia = async (oldDocId: string, newDocId: string): Promise<any> => {
-  if (isCypress || !isProduction) {
+  if (isCypress || !isAWSProduction) {
     if (!oldDocId) {
       return '';
     }
@@ -125,7 +125,7 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
   if (!id) {
     throw new Error('id must be provided');
   }
-  if (isCypress || !isProduction) {
+  if (isCypress || !isisAWSProductionProduction) {
     return {
       signedRequest: `mock-signed-request/${id}`,
       mediaUrl: `mock-url/${id}`,

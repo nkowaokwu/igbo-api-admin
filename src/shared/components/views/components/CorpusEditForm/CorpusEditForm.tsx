@@ -266,7 +266,7 @@ Nke a bụ ahịrịokwu Igbo
 
 [00:00:12-00:00:15]
 Nke a bụ ahịrịokwu Igbo`}
-                data-test="body-input"
+                data-test="transcript-input"
               />
             )}
             name="body"
