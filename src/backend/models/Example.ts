@@ -16,6 +16,7 @@ export const exampleSchema = new Schema({
   associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
   pronunciation: { type: String, default: '' },
+  archived: { type: Boolean, default: false },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSchema);

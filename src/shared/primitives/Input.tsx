@@ -30,7 +30,7 @@ const Input = React.forwardRef(({
   searchApi,
   ...rest
 } : {
-  value: string,
+  value?: string,
   onChange: (value: any) => void,
   width?: string,
   className: string,
@@ -40,6 +40,7 @@ const Input = React.forwardRef(({
   defaultValue?: string,
   onSelect?: (e: any) => void,
   searchApi?: boolean,
+  isDisabled?: boolean,
 }, ref): ReactElement => {
   const [isVisible, setIsVisible] = useState(false);
   const [positionRect, setPositionRect] = useState({});

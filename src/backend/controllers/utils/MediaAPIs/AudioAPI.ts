@@ -1,5 +1,5 @@
 import removeAccents from 'src/backend/utils/removeAccents';
-import { isProduction, isCypress } from 'src/backend/config';
+import { isAWSProduction, isCypress } from 'src/backend/config';
 import initializeAPI from './initializeAPI';
 
 const {
@@ -17,7 +17,7 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
     throw new Error('id and pronunciation must be provided');
   }
   const audioId = removeAccents.remove(id);
-  if (isCypress || !isProduction) {
+  if (isCypress || !isAWSProduction) {
     return `${dummyUriPath}${audioId}`;
   }
   const base64Data = Buffer.from(pronunciationData.replace(/^data:.+;base64,/, ''), 'base64');
@@ -41,7 +41,7 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
   }
   try {
     const audioId = removeAccents.remove(id);
-    if (isCypress || !isProduction) {
+    if (isCypress || !isAWSProduction) {
       return `${dummyUriPath}${audioId}`;
     }
     const extension = isMp3 ? 'mp3' : 'webm';
@@ -66,7 +66,7 @@ export const copyAudioPronunciation = async (
   const oldAudioId = removeAccents.remove(oldDocId);
   const newAudioId = removeAccents.remove(newDocId);
   try {
-    if (isCypress || !isProduction) {
+    if (isCypress || !isAWSProduction) {
       return `${dummyUriPath}${newAudioId}`;
     }
 
@@ -97,7 +97,7 @@ export const copyAudioPronunciation = async (
 
 /* Takes an old and new pronunciation id and renames it (copies and deletes) */
 export const renameAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
-  if (isCypress || !isProduction) {
+  if (isCypress || !isAWSProduction) {
     if (!oldDocId) {
       return '';
     }

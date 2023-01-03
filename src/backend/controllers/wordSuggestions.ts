@@ -1,4 +1,9 @@
-import { Document, Query, Types } from 'mongoose';
+import {
+  Connection,
+  Document,
+  Query,
+  Types,
+} from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -97,13 +102,13 @@ export const postWordSuggestion = async (
   }
 };
 
-export const findWordSuggestionById = (id: string | Types.ObjectId, mongooseConnection)
+export const findWordSuggestionById = (id: string | Types.ObjectId, mongooseConnection: Connection)
 : Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion.findById(id);
 };
 
-export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectId, mongooseConnection)
+export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectId, mongooseConnection: Connection)
 : Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion.deleteMany({ originalWordId: id });
@@ -117,7 +122,7 @@ const findWordSuggestions = async (
     limit,
     mongooseConnection,
   }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: any },
+  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
 ): Promise<Interfaces.WordSuggestion[] | any> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion
@@ -317,7 +322,7 @@ export const deleteWordSuggestion = async (
 };
 
 /* Returns all the WordSuggestions from last week */
-export const getWordSuggestionsFromLastWeek = (mongooseConnection): Promise<any> => {
+export const getWordSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion
     .find(searchForLastWeekQuery())
@@ -325,7 +330,7 @@ export const getWordSuggestionsFromLastWeek = (mongooseConnection): Promise<any>
     .exec();
 };
 
-export const getNonMergedWordSuggestions = (mongooseConnection):Promise<any> => {
+export const getNonMergedWordSuggestions = (mongooseConnection: Connection):Promise<any> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion
     .find({ merged: null })

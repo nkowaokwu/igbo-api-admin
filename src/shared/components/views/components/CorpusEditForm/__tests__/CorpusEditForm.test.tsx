@@ -24,12 +24,12 @@ describe('Corpus Edit', () => {
       </TestContext>,
     );
     await findByText('Title');
-    await findByText('Body');
+    await findByText('Transcript');
     await findByText('Editor\'s Comments');
   });
 
   it('enter values in corpus edit form', async () => {
-    const { findByPlaceholderText } = render(
+    const { findByPlaceholderText, findByTestId } = render(
       <TestContext>
         <CorpusEditForm
           view={Views.EDIT}
@@ -42,6 +42,6 @@ describe('Corpus Edit', () => {
     );
 
     userEvent.type(await findByPlaceholderText('Title of corpus'), 'Corpus Title');
-    userEvent.type(await findByPlaceholderText('[00:00:00] Provide transcription sentence by sentence'), 'Corpus Body');
+    userEvent.type(await findByTestId('transcript-input'), 'Corpus transcript');
   });
 });

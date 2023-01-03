@@ -98,7 +98,7 @@ export default {
     executeAction: ({
       record,
       resource,
-    }: { record: Record | { id: string }, resource: string }): Promise<any> => (
+    }: { record: Record | { id: string }, resource: Collections }): Promise<any> => (
       deleteDocument({ resource, record })
     ),
     successMessage: 'Document has been deleted 🗑',
@@ -110,7 +110,7 @@ export default {
     The original document will be deleted.`,
     executeAction: (
       { primaryWordId, resource, record }:
-      { primaryWordId: string, resource: string, record: Record },
+      { primaryWordId: string, resource: Collections, record: Record },
     ): Promise<any> => (
       combineDocument({ primaryWordId, resource, record })
     ),

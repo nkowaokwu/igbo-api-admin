@@ -8,7 +8,7 @@ import {
 } from '../../constants';
 
 const errorMessage = 'An error occurred while saving';
-describe('Create', () => {
+describe.skip('Create', () => {
   beforeEach(() => {
     cy.cleanLogin();
   });

@@ -28,7 +28,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(`select-menu-${Collections.WORDS}`);
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('View');
       await findByText('Suggest New Edit');
@@ -46,7 +46,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(`select-menu-${Collections.WORDS}`);
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('View');
       await findByText('Suggest New Edit');
@@ -62,9 +62,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.WORD_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
       await findByText('Edit');
@@ -84,9 +82,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.WORD_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('Merge');
       await findByText('Edit');
@@ -104,7 +100,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(`select-menu-${Collections.CORPORA}`);
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('View');
       await findByText('Suggest New Edit');
@@ -122,7 +118,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(`select-menu-${Collections.CORPORA}`);
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('View');
       await findByText('Suggest New Edit');
@@ -137,9 +133,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.CORPUS_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
       await findByText('Edit');
@@ -159,9 +153,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.CORPUS_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('Merge');
       await findByText('Edit');
@@ -179,7 +171,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(`select-menu-${Collections.EXAMPLES}`);
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('View');
       await findByText('Suggest New Edit');
@@ -194,9 +186,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.WORD_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
       await findByText('Edit');
@@ -216,9 +206,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.WORD_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       await findByText('Merge');
       await findByText('Edit');
@@ -241,9 +229,7 @@ describe('Editor\'s Actions', () => {
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId(
-        `select-menu-${Collections.WORD_SUGGESTIONS}`,
-      );
+      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
       const mergeButton = await findByText('Merge');
       expect(mergeButton.parentNode).toHaveProperty('disabled', true);

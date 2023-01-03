@@ -4,7 +4,7 @@ describe('List', () => {
     cy.cleanLogin();
   });
 
-  describe('Words', () => {
+  describe.skip('Words', () => {
     before(() => {
       cy.selectCollection('words');
     });

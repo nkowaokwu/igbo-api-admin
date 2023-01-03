@@ -4,6 +4,7 @@ import {
   Box,
   Heading,
   Skeleton,
+  Text,
   Tooltip,
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
@@ -50,11 +51,17 @@ const DIFF_FILTER_KEYS = [
   'stems',
   'normalized',
   'mergedBy',
+  'createdAt',
+  'updatedAt',
+  'cachedAt',
+  'twitterPollId',
+  'userInteractions',
+  'exampleForSuggestion',
 ];
 
 const WordShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [originalWordRecord, setOriginalWordRecord] = useState<any>({});
+  const [originalWordRecord, setOriginalWordRecord] = useState<Interfaces.Word | null>({});
   const [diffRecord, setDiffRecord] = useState(null);
   const showProps = useShowController(props);
   const { resource } = showProps;
@@ -64,6 +71,9 @@ const WordShow = (props: ShowProps): ReactElement => {
   const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} }).flags).length;
 
   record = record || DEFAULT_WORD_RECORD;
+
+  // Order both record and originalWordRecord examples to avoid unnecessary diffs
+  record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
 
   const {
     id,
@@ -77,7 +87,13 @@ const WordShow = (props: ShowProps): ReactElement => {
     pronunciation,
     originalWordId,
     updatedAt,
+    wordPronunciation,
+    conceptualWord,
+    examples: rawExamples,
   } = record;
+
+  const examples = rawExamples.filter(({ archived = false }) => !archived);
+  const archivedExamples = rawExamples.filter(({ archived = false }) => archived);
 
   const resourceTitle = {
     wordSuggestions: 'Word Suggestion',
@@ -89,10 +105,15 @@ const WordShow = (props: ShowProps): ReactElement => {
   useEffect(() => {
     (async () => {
       try {
-        const originalWord = record?.originalWordId ? await getWord(record.originalWordId).catch((err) => {
+        const originalWord: Interfaces.Word | null = (
+          record?.originalWordId ? await getWord(record.originalWordId).catch((err) => {
           // Unable to retrieve word
-          console.log(err);
-        }) : null;
+            console.log(err);
+          }) : null
+        );
+        if (originalWord) {
+          originalWord.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+        }
         const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
         setOriginalWordRecord(originalWord);
         setDiffRecord(differenceRecord);
@@ -151,7 +172,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                       className="text-xl text-gray-600"
                       color={hasFlags ? 'orange.600' : ''}
                     >
-                      Word
+                      Headword
                     </Heading>
                   </Box>
                 </Tooltip>
@@ -161,6 +182,34 @@ const WordShow = (props: ShowProps): ReactElement => {
                   fallbackValue={word}
                 />
               </Box>
+              {wordPronunciation ? (
+                <Box className="flex flex-col">
+                  <Box className="flex flex-row items-center cursor-default">
+                    <Heading fontSize="lg" className="text-xl text-gray-600">
+                      Headword Pronunciation
+                    </Heading>
+                  </Box>
+                  <DiffField
+                    path="wordPronunciation"
+                    diffRecord={diffRecord}
+                    fallbackValue={wordPronunciation}
+                  />
+                </Box>
+              ) : null}
+              {conceptualWord ? (
+                <Box className="flex flex-col">
+                  <Box className="flex flex-row items-center cursor-default">
+                    <Heading fontSize="lg" className="text-xl text-gray-600">
+                      Conceptual Headword
+                    </Heading>
+                  </Box>
+                  <DiffField
+                    path="conceptualWord"
+                    diffRecord={diffRecord}
+                    fallbackValue={conceptualWord}
+                  />
+                </Box>
+              ) : null}
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
@@ -191,6 +240,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   className="pl-4 pb-4 space-y-4 mt-4"
                   borderBottomColor="gray.200"
                   borderBottomWidth="1px"
+                  key={`nested-definition-${definition.id}`}
                 >
                   <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-gray-600">Part of Speech</Heading>
@@ -287,7 +337,7 @@ const WordShow = (props: ShowProps): ReactElement => {
               <ArrayDiffField
                 recordField="examples"
                 recordFieldSingular="example"
-                record={record}
+                record={{ examples }}
                 // @ts-ignore
                 originalWordRecord={originalWordRecord}
               >
@@ -299,6 +349,41 @@ const WordShow = (props: ShowProps): ReactElement => {
                 />
               </ArrayDiffField>
             </Box>
+            {archivedExamples.length ? (
+              <details className="mt-4 cursor-pointer">
+                <summary>
+                  <Heading
+                    display="inline"
+                    fontSize="lg"
+                    className="text-xl text-gray-600"
+                    ml={2}
+                  >
+                    Archived Examples 🗄
+                  </Heading>
+                </summary>
+                <Box className="flex flex-col mt-5">
+                  {archivedExamples.map((archivedExample, archivedExampleIndex) => (
+                    <Box
+                      key={`archived-example-${archivedExample.id}`}
+                      className="flex flex-row justify-start items-start"
+                    >
+                      <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+                      <Box>
+                        <Text>{archivedExample.igbo}</Text>
+                        <Text>{archivedExample.english}</Text>
+                        <Text>{archivedExample.nsibidi}</Text>
+                        <Text>{archivedExample.meaning}</Text>
+                        <ReactAudioPlayer
+                          src={archivedExample.pronunciation}
+                          style={{ height: '40px', width: '250px' }}
+                          controls
+                        />
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </details>
+            ) : null}
             {resource !== Collection.WORDS ? (
               <Comments editorsNotes={editorsNotes} userComments={userComments} />
             ) : null}

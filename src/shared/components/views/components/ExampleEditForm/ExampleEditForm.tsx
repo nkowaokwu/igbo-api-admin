@@ -14,7 +14,6 @@ import { EditFormProps } from 'src/shared/interfaces';
 import { getExample, removePayloadFields } from 'src/shared/API';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
-import useCacheForm from 'src/hooks/useCacheForm';
 import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
@@ -130,18 +129,10 @@ const ExampleEditForm = ({
     }
   };
 
-  /* Caches the form data with browser cookies */
-  const cacheForm = () => {
-    const data = getValues();
-    const cleanedData = createCacheExampleData(data, record);
-    localStorage.setItem('igbo-api-admin-form', JSON.stringify(cleanedData));
-  };
-
   useBeforeWindowUnload();
-  useCacheForm({ record, setValue, cacheForm });
 
   return (
-    <form onChange={cacheForm} onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col">
         {record.originalExampleId || (view === View.CREATE && record.id) ? (
           <>
@@ -165,13 +156,9 @@ const ExampleEditForm = ({
             />
             <Box data-test="sentence-style-input-container">
               <Controller
-                render={({ onChange, ...rest }) => (
+                render={(props) => (
                   <Select
-                    {...rest}
-                    onChange={(e) => {
-                      onChange(e);
-                      cacheForm();
-                    }}
+                    {...props}
                     options={options}
                   />
                 )}

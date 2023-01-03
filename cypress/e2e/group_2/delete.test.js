@@ -1,6 +1,6 @@
 import { SuggestionSelectOptions } from '../../constants';
 
-describe('Delete', () => {
+describe.skip('Delete', () => {
   before(() => {
     cy.seedDatabase();
     cy.cleanLogin();

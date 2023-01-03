@@ -4,14 +4,14 @@ export default defineConfig({
   chromeWebSecurity: false,
   defaultCommandTimeout: 30000,
   requestTimeout: 10000,
-  retries: 1,
+  retries: 0,
   projectId: 'dfw64t',
   screenshotOnRunFailure: false,
   video: false,
   videoUploadOnPasses: false,
   viewportHeight: 960,
   viewportWidth: 1536,
-  numTestsKeptInMemory: 2,
+  numTestsKeptInMemory: 0,
 
   e2e: {
     // We've imported your old cypress plugins here.

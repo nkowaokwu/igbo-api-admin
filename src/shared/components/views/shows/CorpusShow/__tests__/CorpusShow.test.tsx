@@ -43,7 +43,7 @@ describe('Corpus Show', () => {
 
     await findByText('Corpus Document Details');
     await findByText('Title');
-    await findByText('Body');
+    await findByText('Transcript');
     await findByText('Media');
     expect(await queryByText('Editor\'s Note')).toBeNull();
   });
@@ -61,7 +61,7 @@ describe('Corpus Show', () => {
 
     await findByText('Corpus Suggestion Document Details');
     await findByText('Title');
-    await findByText('Body');
+    await findByText('Transcript');
     await findByText('Media');
     await findByText('Editor\'s Note');
   });

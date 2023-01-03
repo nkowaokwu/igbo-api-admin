@@ -57,7 +57,11 @@ export const SITE_TITLE = 'The First African Language API';
 export const INVALID_ID = 'fdsafdsad';
 export const NONEXISTENT_ID = new mongoose.Types.ObjectId();
 export const MESSAGE = {
-  to: 'test@example.com',
+  to: ['test@example.com'],
+  reply_to: { email: '', name: '' },
+  personalizations: [],
+  templateId: '',
+  dynamic_template_data: {},
 };
 export const INVALID_MESSAGE = {};
 export const AUTH_TOKEN = {

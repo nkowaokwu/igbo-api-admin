@@ -423,6 +423,7 @@ describe('MongoDB Word Suggestions', () => {
         examples: [{
           igbo: 'testing with igbo updated',
           english: 'testing with english updated',
+          id: updatedWordSuggestionRes.body.examples[0].id,
         }],
       }, { token: AUTH_TOKEN.ADMIN_AUTH_TOKEN, cleanData: true });
       expect(res.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);

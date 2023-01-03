@@ -1,4 +1,3 @@
-import { Control } from 'react-hook-form';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 
 interface ExamplesFormInterface {
@@ -6,7 +5,6 @@ interface ExamplesFormInterface {
   setExamples: (value: any) => void,
   getValues: () => any,
   setValue: (key: string, value: any) => void,
-  control: Control,
   definitionGroupId: string,
 };
 

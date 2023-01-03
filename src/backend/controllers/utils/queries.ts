@@ -142,9 +142,10 @@ export const searchExamplesRegexQuery = (
   uid: string,
   regex: SearchRegExp,
   filters: { [key: string]: string },
-): { $or: ExampleSearchQuery } => (
+): { $or: ExampleSearchQuery, archived: { [key: string]: boolean } } => (
   {
     $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
+    archived: { $ne: true },
     ...(filters ? generateSearchFilters(filters, uid) : {}),
   }
 );

@@ -159,7 +159,8 @@ const Confirmation = ({
       resource,
       record,
     })
-      .then(({ data }) => {
+      .then((response) => {
+        const { data } = response || {};
         if (data?.httpErrorCode?.status === 400) {
           toast({
             title: 'Error',

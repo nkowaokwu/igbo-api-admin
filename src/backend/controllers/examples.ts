@@ -1,4 +1,4 @@
-import mongoose, { Document, Query } from 'mongoose';
+import mongoose, { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import {
   assign,
@@ -39,7 +39,7 @@ const searchExamples = ({
   query: RegExp | any,
   skip: number,
   limit: number,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 }) => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return (
@@ -87,13 +87,13 @@ export const getExamples = async (
   }
 };
 
-export const findExampleById = (id: string, mongooseConnection)
+export const findExampleById = (id: string, mongooseConnection: Connection)
 : Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return Example.findById(id);
 };
 
-export const findExampleByAssociatedWordId = (id: string, mongooseConnection)
+export const findExampleByAssociatedWordId = (id: string, mongooseConnection: Connection)
 : Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return Example.find({ associatedWords: { $in: [id] } });
@@ -125,7 +125,7 @@ export const getExample = async (
 const mergeIntoExample = (
   exampleSuggestion: Interfaces.ExampleSuggestion,
   mergedBy: string,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<Interfaces.Example> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return (
@@ -134,7 +134,7 @@ const mergeIntoExample = (
         if (!example) {
           throw new Error('Example doesn\'t exist');
         }
-        await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
+        await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
         return example;
       })
   );
@@ -144,7 +144,7 @@ const mergeIntoExample = (
 const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> => (
   createExample(exampleSuggestion.toObject(), mongooseConnection)
     .then(async (example: Interfaces.Example) => {
-      await updateDocumentMerge(exampleSuggestion, example.id, mergedBy);
+      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
       return example;
     })
     .catch((error) => {
@@ -154,13 +154,10 @@ const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnec
 
 /* Executes the logic describe the mergeExample function description */
 export const executeMergeExample = async (
-  exampleSuggestionId: string,
+  exampleSuggestion: Interfaces.ExampleSuggestion,
   mergedBy: string,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<Interfaces.Example> => {
-  const exampleSuggestion: Interfaces.ExampleSuggestion = (
-    await findExampleSuggestionById(exampleSuggestionId, mongooseConnection)
-  );
   const Word = mongooseConnection.model('Word', wordSchema);
 
   if (!exampleSuggestion) {
@@ -225,7 +222,7 @@ export const mergeExample = async (
     const { body: data, user, mongooseConnection } = req;
 
     const exampleSuggestion = await findExampleSuggestionById(data.id, mongooseConnection);
-    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion.id, user.uid, mongooseConnection);
+    const result: Interfaces.Example = await executeMergeExample(exampleSuggestion, user.uid, mongooseConnection);
     await handleSendingMergedEmail({
       ...(result.toObject ? result.toObject() : result),
       authorEmail: exampleSuggestion.authorEmail,

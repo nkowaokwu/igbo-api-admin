@@ -10,7 +10,6 @@ import IgboDefinitions from './IgboDefinitions';
 
 const DefinitionsForm = ({
   getValues,
-  cacheForm,
   options,
   record,
   definitions,
@@ -84,7 +83,7 @@ const DefinitionsForm = ({
             borderBottomWidth="1px"
             borderBottomColor="gray.300"
             mb={4}
-            key={id}
+            key={`definitions-${id}-${nestedDefinitions}`}
           >
             {definitions.length > 1 ? (
               <Tooltip label="Delete Definition Group">
@@ -105,12 +104,11 @@ const DefinitionsForm = ({
                 </Button>
               </Tooltip>
             ) : null}
-            <Box className="flex flex-row space-x-3 items-start">
+            <Box className="flex flex-col lg:flex-row lg:space-x-3 items-start">
               <PartOfSpeechForm
                 errors={errors}
                 control={control}
                 getValues={getValues}
-                cacheForm={cacheForm}
                 options={options}
                 record={record}
                 index={index}
@@ -129,7 +127,7 @@ const DefinitionsForm = ({
                 contextual meaning. Igbo definitions are written in Igbo."
               />
             </Box>
-            <Box className="flex flex-col lg:flex-row justify-center items-start w-full space-x-12">
+            <Box className="flex flex-col lg:flex-row justify-center items-start w-full lg:space-x-12">
               <EnglishDefinitions
                 nestedDefinitions={nestedDefinitions}
                 index={index}

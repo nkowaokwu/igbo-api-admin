@@ -315,7 +315,7 @@ const Select = ({
         <MenuButton
           as={Button}
           rightIcon={<ChevronDownIcon />}
-          data-test={`select-menu-${resource}`}
+          data-test="actions-menu"
           role="button"
           fontFamily="system-ui"
           fontWeight="normal"

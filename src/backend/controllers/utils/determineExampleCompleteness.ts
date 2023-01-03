@@ -15,6 +15,7 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
     igbo,
     english,
     meaning,
+    archived = false,
   } = record;
 
   const isAudioAvailable = await new Promise((resolve) => {
@@ -35,6 +36,7 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
     !igbo && 'Igbo is needed',
     !english && 'English is needed',
     !associatedWords.length && 'At least one associated word is needed',
+    archived && 'Sentence must not be archived',
   ]);
 
   const completeExampleRequirements = compact([

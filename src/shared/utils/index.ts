@@ -1,3 +1,4 @@
+import { compact } from 'lodash';
 import Collection from '../constants/Collections';
 import {
   getAssociatedExampleSuggestions,
@@ -39,13 +40,18 @@ export const determineCreateSuggestionRedirection = async (
   /**
    * Moves the nested example suggestion's id to originalExampleId
    * to avoid nested example duplication
+   *
+   * Filter out archived example suggestions
    */
   if (resource === Collection.WORDS) {
-    prePopulateRecord.examples = prePopulateRecord.examples.map((example) => {
+    prePopulateRecord.examples = compact(prePopulateRecord.examples.map((example) => {
+      if (example.archived) {
+        return null;
+      }
       example.originalExampleId = example.id;
       delete example.id;
       return example;
-    });
+    }));
   }
 
   const associatedSuggestions = await (suggestionType === Collection.WORD_SUGGESTIONS

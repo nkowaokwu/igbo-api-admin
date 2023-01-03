@@ -62,6 +62,7 @@ import validateWordBody from '../middleware/validateWordBody';
 import validateWordMerge from '../middleware/validateWordMerge';
 import validateCorpusBody from '../middleware/validateCorpusBody';
 import validateCorpusMerge from '../middleware/validateCorpusMerge';
+import validateApprovals from '../middleware/validateApprovals';
 import cacheControl from '../middleware/cacheControl';
 import interactWithSuggestion from '../middleware/interactWithSuggestion';
 import resolveWordDocument from '../middleware/resolveWordDocument';
@@ -71,7 +72,13 @@ const editorRouter = express.Router();
 editorRouter.use(authentication, authorization([UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN]));
 
 /* These routes are used to allow users to suggest new words and examples */
-editorRouter.post('/words', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateWordMerge, mergeWord);
+editorRouter.post(
+  '/words',
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validateWordMerge,
+  validateApprovals,
+  mergeWord,
+);
 editorRouter.put('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putWord);
 editorRouter.delete('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, deleteWord);
 editorRouter.get('/words/:id/wordSuggestions', validId, getAssociatedWordSuggestions);

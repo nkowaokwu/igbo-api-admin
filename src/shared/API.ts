@@ -200,10 +200,15 @@ export const combineDocument = (
   data: { primaryWordId },
 })
   .then(async ({ data }) => {
-    await Promise.all([
-      IndexedDBAPI.deleteDocument({ resource, id: record.id }),
-      IndexedDBAPI.putDocument({ resource, data }),
-    ]);
+    try {
+      await Promise.all([
+        IndexedDBAPI.deleteDocument({ resource, id: record.id }),
+        IndexedDBAPI.putDocument({ resource, data }),
+      ]);
+    } catch (err) {
+      console.log('IndexedDB error:', err.message);
+    }
+    return { data };
   });
 
 export const assignUserToEditingGroup = ({
@@ -219,31 +224,39 @@ export const assignUserToEditingGroup = ({
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
 
+const OMIT_KEYS = [
+  '_id',
+  'id',
+  'archived',
+  'updatedAt',
+  'createdAt',
+  'author',
+  'authorEmail',
+  'editor',
+  'authorId',
+  'merged',
+  'mergedBy',
+  'userInteractions',
+  'media',
+  'approvals',
+  'denials',
+  'hypernyms',
+  'hyponyms',
+  'duration',
+  'source',
+  'twitterPollId',
+];
+
 export const removePayloadFields = (payload: any): any => {
-  const cleanedPayload = omit(payload, [
-    'id',
-    'updatedAt',
-    'createdAt',
-    'author',
-    'authorEmail',
-    'authorId',
-    'merged',
-    'mergedBy',
-    'userInteractions',
-    'media',
-    'approvals',
-    'denials',
-    'hypernyms',
-    'hyponyms',
-    'duration',
-    'source',
-    'twitterPollId',
-  ]);
+  const cleanedPayload = omit(payload, OMIT_KEYS);
   if (Array.isArray(cleanedPayload.definitions)) {
-    cleanedPayload.definitions = cleanedPayload.definitions.map((definition) => omit(definition, ['id']));
+    cleanedPayload.definitions = cleanedPayload.definitions.map((definition) => omit(definition, OMIT_KEYS));
   }
   if (Array.isArray(cleanedPayload.dialects)) {
-    cleanedPayload.dialects = cleanedPayload.dialects.map((dialect) => omit(dialect, ['editor', 'id']));
+    cleanedPayload.dialects = cleanedPayload.dialects.map((dialect) => omit(dialect, OMIT_KEYS));
+  }
+  if (Array.isArray(cleanedPayload.examples)) {
+    cleanedPayload.examples = cleanedPayload.examples.map((example) => omit(example, ['authorId', 'archived']));
   }
   return cleanedPayload;
 };

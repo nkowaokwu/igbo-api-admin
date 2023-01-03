@@ -51,6 +51,9 @@ const WordEditForm = ({
   if (!record?.dialects) {
     record.dialects = [];
   };
+  if (record.examples) {
+    record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+  }
   const {
     handleSubmit,
     getValues,
@@ -82,6 +85,7 @@ const WordEditForm = ({
     igboDefinitions: [],
     nsibidi: '',
   }]);
+  // Examples are not tracked in react-hook-form due to their data structure complexity
   const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
@@ -143,7 +147,7 @@ const WordEditForm = ({
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),
       stems: sanitizeArray(data.stems),
-      examples: sanitizeExamples(data.examples),
+      examples: sanitizeExamples(examples),
       pronunciation: getValues().pronunciation || '',
     };
     return cleanedData;
@@ -186,13 +190,6 @@ const WordEditForm = ({
     }
   };
 
-  /* Caches the form data with browser cookies */
-  const cacheForm = () => {
-    const data = getValues();
-    const cleanedData = createCacheWordData(data, record);
-    localStorage.setItem('igbo-api-admin-form', JSON.stringify(cleanedData));
-  };
-
   useBeforeWindowUnload();
   useEffect(() => {
     (async () => {
@@ -214,7 +211,7 @@ const WordEditForm = ({
   }, []);
 
   return (
-    <form onChange={cacheForm} onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
@@ -288,7 +285,6 @@ const WordEditForm = ({
       </Box>
       <DefinitionsForm
         getValues={getValues}
-        cacheForm={cacheForm}
         options={options}
         record={record}
         definitions={definitions}
@@ -308,7 +304,6 @@ const WordEditForm = ({
         setExamples={setExamples}
         getValues={getValues}
         setValue={setValue}
-        control={control}
         errors={errors}
       />
       <Box className={`flex 
