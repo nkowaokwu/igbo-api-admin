@@ -13,7 +13,7 @@ describe('Render List Actions', () => {
   });
   it('render the list actions menu for words', async () => {
     const { findByTestId, findByText } = render(
-      <TestContext>
+      <TestContext isListView>
         <ListActions resource={Collections.WORDS} />
       </TestContext>,
     );

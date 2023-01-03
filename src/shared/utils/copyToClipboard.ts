@@ -5,8 +5,8 @@ const copyToClipboard = ({
   copyText: string,
   successMessage: string,
 }, toast: (value: any) => void): void => {
-  if (navigator) {
-    navigator.clipboard.writeText(copyText);
+  if (window.navigator) {
+    window.navigator.clipboard.writeText(copyText);
     if (toast) {
       toast({
         title: 'Copied to clipboard 📋',

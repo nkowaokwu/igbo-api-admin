@@ -14,7 +14,9 @@ if (!apps.length) {
   app = getApp();
 }
 const shouldUseEmulator = (
-  process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost'
+  process.env.NODE_ENV === 'development'
+  || process.env.NODE_ENV === 'test'
+  || window.location.hostname === 'localhost'
 );
 
 const db = getFirestore(app);

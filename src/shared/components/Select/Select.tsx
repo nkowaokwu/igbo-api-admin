@@ -1,5 +1,10 @@
 import React, { ReactElement, useState } from 'react';
-import { compact, flatten, get } from 'lodash';
+import {
+  compact,
+  flatten,
+  get,
+  omit,
+} from 'lodash';
 import pluralize from 'pluralize';
 import {
   Box,
@@ -362,7 +367,7 @@ const Select = ({
                       id: record.id,
                     });
                   }}
-                  {...props}
+                  {...omit(props, ['tooltipMessage'])}
                 >
                   {label}
                 </MenuItem>

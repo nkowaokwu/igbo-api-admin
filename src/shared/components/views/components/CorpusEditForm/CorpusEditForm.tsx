@@ -17,7 +17,8 @@ import {
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import { EditFormProps } from 'src/shared/interfaces';
-import { getCorpus, removePayloadFields } from 'src/shared/API';
+import { getCorpus } from 'src/shared/API';
+import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
@@ -226,7 +227,7 @@ const CorpusEditForm = ({
           )}
           name="title"
           control={control}
-          defaultValue={record.title || getValues().title}
+          defaultValue={record.title || getValues().title || ''}
         />
         {errors.title ? (
           <p className="error">Title is required</p>
@@ -271,7 +272,7 @@ Nke a bụ ahịrịokwu Igbo`}
             )}
             name="body"
             control={control}
-            defaultValue={record.body || getValues().body}
+            defaultValue={record.body || getValues().body || ''}
           />
           <Box className="flex flex-col lg:flex-row space-y-2 lg:space-x-4">
             <Box>
@@ -340,11 +341,10 @@ Nke a bụ ahịrịokwu Igbo`}
               className="form-textarea"
               placeholder="Comments"
               rows={8}
-              defaultValue={record.editorsNotes}
             />
           )}
           name="editorsNotes"
-          defaultValue={record.editorsNotes}
+          defaultValue={record.editorsNotes || ''}
           control={control}
         />
       </Box>

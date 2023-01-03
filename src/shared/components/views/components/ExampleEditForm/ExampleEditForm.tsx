@@ -11,7 +11,8 @@ import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { EditFormProps } from 'src/shared/interfaces';
-import { getExample, removePayloadFields } from 'src/shared/API';
+import { getExample } from 'src/shared/API';
+import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
@@ -31,7 +32,8 @@ const ExampleEditForm = ({
   history,
   isPreExistingSuggestion,
 }: EditFormProps) : ReactElement => {
-  const style = pick(Object.values(ExampleStyle).find(({ value }) => value === record.style), ['value', 'label']);
+  const style = pick(Object.values(ExampleStyle).find(({ value }) => value === record.style), ['value', 'label'])
+    || { value: '', label: '' };
   const {
     handleSubmit,
     getValues,
@@ -184,7 +186,7 @@ const ExampleEditForm = ({
                 You are able to record over pre-existing recordings."
               />
             )}
-            defaultValue={record.pronunciation}
+            defaultValue={record.pronunciation || ''}
             name="pronunciation"
             control={control}
           />
@@ -204,7 +206,7 @@ const ExampleEditForm = ({
           )}
           name="igbo"
           control={control}
-          defaultValue={record.igbo || getValues().igbo}
+          defaultValue={record.igbo || getValues().igbo || ''}
         />
         {errors.igbo ? (
           <p className="error">Igbo is required</p>
@@ -226,7 +228,7 @@ const ExampleEditForm = ({
           )}
           name="english"
           control={control}
-          defaultValue={record.english || getValues().english}
+          defaultValue={record.english || getValues().english || ''}
         />
         {errors.english ? (
           <p className="error">English is required</p>
@@ -243,7 +245,7 @@ const ExampleEditForm = ({
           )}
           name="nsibidi"
           control={control}
-          defaultValue={record.nsibidi || getValues().nsibidi}
+          defaultValue={record.nsibidi || getValues().nsibidi || ''}
         />
         {errors.nsibidi ? (
           <p className="error">{errors.nsibidi.message}</p>
@@ -273,11 +275,10 @@ const ExampleEditForm = ({
               className="form-textarea"
               placeholder="Comments"
               rows={8}
-              defaultValue={record.editorsNotes}
             />
           )}
           name="editorsNotes"
-          defaultValue={record.editorsNotes}
+          defaultValue={record.editorsNotes || ''}
           control={control}
         />
       </Box>

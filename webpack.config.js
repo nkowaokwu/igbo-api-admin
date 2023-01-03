@@ -25,6 +25,7 @@ module.exports = (_, argv) => ({
     writeToDisk: true,
     publicPath: '/',
     contentBase: './public',
+    stats: 'errors-warnings',
   },
   module: {
     rules: [

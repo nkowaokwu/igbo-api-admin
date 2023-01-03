@@ -76,7 +76,7 @@ const HeadwordForm = ({
         )}
         name="word"
         control={control}
-        defaultValue={record.word || getValues().word}
+        defaultValue={record.word || getValues().word || ''}
       />
       <details className="mt-4 cursor-pointer">
         <summary>
@@ -95,7 +95,7 @@ const HeadwordForm = ({
             )}
             name="wordPronunciation"
             control={control}
-            defaultValue={record.wordPronunciation || getValues().wordPronunciation}
+            defaultValue={record.wordPronunciation || getValues().wordPronunciation || ''}
           />
           {generateIPALabel(watchedWordPronunciation)}
           <Controller
@@ -109,7 +109,7 @@ const HeadwordForm = ({
             )}
             name="conceptualWord"
             control={control}
-            defaultValue={record.conceptualWord || getValues().conceptualWord}
+            defaultValue={record.conceptualWord || getValues().conceptualWord || ''}
           />
         </Box>
       </details>

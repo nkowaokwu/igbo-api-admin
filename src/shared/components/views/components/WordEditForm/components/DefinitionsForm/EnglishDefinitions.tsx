@@ -37,7 +37,7 @@ const EnglishDefinitions = ({
               />
             )}
             name={`definitions[${index}].definitions[${nestedDefinitionIndex}]`}
-            defaultValue={nestedDefinition}
+            defaultValue={nestedDefinition || ''}
             control={control}
             rules={{
               required: !index,

@@ -47,8 +47,12 @@ jobs:
         yarn functions:env
     - name: Wait for Docker
       run: sleep 10
-    - name: Run Jest Tests
-      run: yarn test:jest
+    - name: Run Backend Jest Tests
+      run: yarn jest:backend
+      env:
+        NODE_ENV: test
+    - name: Run Frontend Jest Tests
+      run: yarn jest:frontend
       env:
         NODE_ENV: test
     # - name: Run Cypress Tests

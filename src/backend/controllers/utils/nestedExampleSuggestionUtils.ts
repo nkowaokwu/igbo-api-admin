@@ -210,7 +210,9 @@ export const assignExampleSuggestionToExampleData = async ({
     !exampleSuggestions.find(({ originalExampleId }) => originalExampleId?.toString?.() === id.toString())
   ));
   const archivingExampleIds = uneditedExamples.map(({ id }) => id?.toString?.());
-  console.log('Archiving the following examples:', archivingExampleIds);
+  if (archivingExampleIds.length) {
+    console.log('Archiving the following examples:', archivingExampleIds);
+  }
   // 4. Archive all non-updated examples
   if (archivingExampleIds.length) {
     await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });

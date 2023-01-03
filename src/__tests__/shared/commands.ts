@@ -8,7 +8,7 @@ import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { resultsFromDictionarySearch } from 'src/backend/services/words';
 import { sendEmail } from 'src/backend/controllers/email';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { removePayloadFields } from 'src/shared/API';
+import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import './script';
 import { app as expressServer } from '../../../index';
 import {
