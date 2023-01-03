@@ -16,7 +16,7 @@ const ArrayDiffField = (
     recordFieldSingular: string,
     record: Interfaces.Word,
     originalWordRecord: Interfaces.Word,
-    children: ReactElement[],
+    children: ReactElement[] | ReactElement,
   },
 ): ReactElement => {
   // If we have examples, we want to use the current record examples array instead of

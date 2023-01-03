@@ -269,15 +269,12 @@ const WordShow = (props: ShowProps): ReactElement => {
                   </Box>
                   <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-xl text-gray-600">Definitions</Heading>
-                    {/* ts-expect-error */}
                     <ArrayDiffField
                       recordField={`definitions.${index}.definitions`}
                       recordFieldSingular="definition"
                       record={record}
-                      // ts-expect-error
                       originalWordRecord={originalWordRecord}
                     >
-                      {/* ts-expect-error */}
                       <ArrayDiff diffRecord={diffRecord} recordField={`definitions.${index}.definitions`} />
                     </ArrayDiffField>
                   </Box>
@@ -286,29 +283,23 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Variations</Heading>
-              {/* @ts-ignore */}
               <ArrayDiffField
                 recordField="variations"
                 recordFieldSingular="variation"
                 record={record}
-                // @ts-ignore
                 originalWordRecord={originalWordRecord}
               >
-                {/* @ts-ignore */}
                 <ArrayDiff diffRecord={diffRecord} recordField="variations" />
               </ArrayDiffField>
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Word Stems</Heading>
-              {/* @ts-ignore */}
               <ArrayDiffField
                 recordField="stems"
                 recordFieldSingular="stem"
                 record={record}
-                // @ts-ignore
                 originalWordRecord={originalWordRecord}
               >
-                {/* @ts-ignore */}
                 <ArrayDiff
                   diffRecord={diffRecord}
                   recordField="stems"
@@ -318,15 +309,12 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Related Terms</Heading>
-              {/* @ts-ignore */}
               <ArrayDiffField
                 recordField="relatedTerms"
                 recordFieldSingular="relatedTerm"
                 record={record}
-                // @ts-ignore
                 originalWordRecord={originalWordRecord}
               >
-                {/* @ts-ignore */}
                 <ArrayDiff
                   diffRecord={diffRecord}
                   recordField="relatedTerms"
@@ -336,18 +324,14 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Examples</Heading>
-              {/* @ts-ignore */}
               <ArrayDiffField
                 recordField="examples"
                 recordFieldSingular="example"
-                record={{ examples }}
-                // @ts-ignore
+                record={{ examples } as Interfaces.Word}
                 originalWordRecord={originalWordRecord}
               >
-                {/* @ts-ignore */}
                 <ExampleDiff
                   diffRecord={diffRecord}
-                  // @ts-ignore
                   resource={resource}
                 />
               </ArrayDiffField>
@@ -410,15 +394,12 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Box className="flex flex-col space-y-6 mt-5">
                 <Box className="flex flex-col mt-5">
                   <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
-                  {/* @ts-ignore */}
                   <ArrayDiffField
                     recordField="tags"
                     recordFieldSingular="tag"
                     record={record}
-                    // @ts-ignore
                     originalWordRecord={originalWordRecord}
                   >
-                    {/* @ts-ignore */}
                     <ArrayDiff diffRecord={diffRecord} recordField="tags" />
                   </ArrayDiffField>
                 </Box>
