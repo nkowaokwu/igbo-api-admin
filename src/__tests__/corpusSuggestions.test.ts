@@ -12,7 +12,7 @@ import {
   malformedCorpusSuggestionData,
   updatedCorpusSuggestionData,
 } from './__mocks__/documentData';
-import { INVALID_ID } from './shared/constants';
+import { AUTH_TOKEN, INVALID_ID } from './shared/constants';
 
 describe('MongoDB Corpus Suggestions', () => {
   describe('/POST mongodb corpusSuggestion', () => {
@@ -41,7 +41,10 @@ describe('MongoDB Corpus Suggestions', () => {
     });
 
     it('should return a corpus error because of invalid media field', async () => {
-      const res = await suggestNewCorpus({ ...corpusSuggestionData, media: 'media' }, { cleanData: false });
+      const res = await suggestNewCorpus(
+        { ...corpusSuggestionData, media: 'media' },
+        { cleanData: false, token: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+      );
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });
@@ -73,7 +76,7 @@ describe('MongoDB Corpus Suggestions', () => {
     });
 
     it('should throw an error for providing an invalid id', async () => {
-      const res = await getCorpusSuggestion({ id: INVALID_ID });
+      const res = await getCorpusSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });

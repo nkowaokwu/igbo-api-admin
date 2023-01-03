@@ -88,7 +88,7 @@ export const postExampleSuggestion = async (
 
 export const updateExampleSuggestion = (
   { id, data: clientData, mongooseConnection }
-  : { id: string, data: Interfaces.ExampleSuggestion, mongooseConnection: any },
+  : { id: string, data: Interfaces.ExampleSuggestion, mongooseConnection: Connection },
 ): Promise<Interfaces.ExampleSuggestion | void> => {
   const data = assign(clientData);
   delete data.authorId;
@@ -152,7 +152,7 @@ const findExampleSuggestions = (
     limit,
     mongooseConnection,
   }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: any },
+  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
 ): Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 

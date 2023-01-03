@@ -20,7 +20,7 @@ export interface EditorRequest extends Request {
     filter?: string,
     strict?: string,
   },
-  suggestionDoc?: any,
+  suggestionDoc?: WordSuggestion | ExampleSuggestion | CorpusSuggestion,
   body: any,
   word?: Word,
   mongooseConnection: Connection,

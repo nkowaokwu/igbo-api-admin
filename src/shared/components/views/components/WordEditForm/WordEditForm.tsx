@@ -18,7 +18,8 @@ import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
 import WordClass from 'src/shared/constants/WordClass';
-import { getWord, removePayloadFields } from 'src/shared/API';
+import { getWord } from 'src/shared/API';
+import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
@@ -71,6 +72,7 @@ const WordEditForm = ({
       stems: record.stems || [],
       nsibidi: record.nsibidi,
       tenses: record.tenses || {},
+      pronunciation: record.pronunciation || '',
       attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
         ...finalAttributes,
         [attribute.value]: false,
@@ -256,7 +258,7 @@ const WordEditForm = ({
                   originalRecord={originalRecord}
                 />
               )}
-              defaultValue={record.pronunciation}
+              defaultValue={record.pronunciation || ''}
               name="pronunciation"
               control={control}
             />
@@ -347,7 +349,7 @@ const WordEditForm = ({
             />
           )}
           name="editorsNotes"
-          defaultValue={record.editorsNotes || getValues().editorsNotes}
+          defaultValue={record.editorsNotes || getValues().editorsNotes || ''}
           control={control}
         />
         <Controller
@@ -355,7 +357,7 @@ const WordEditForm = ({
             <input {...props} style={{ pointerEvents: 'none', visibility: 'hidden' }} />
           )}
           name="twitterPollId"
-          defaultValue={record.twitterPollId}
+          defaultValue={record.twitterPollId || ''}
           control={control}
         />
       </Box>

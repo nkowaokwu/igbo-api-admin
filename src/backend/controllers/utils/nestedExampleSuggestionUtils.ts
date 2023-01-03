@@ -61,7 +61,11 @@ export const getExamplesFromClientData = (data: Interfaces.WordClientData): Inte
 /* Either deletes exampleSuggestion or updates exampleSuggestion associatedWords */
 export const handleDeletingExampleSuggestions = async (
   { suggestionDoc, clientExamples, mongooseConnection }:
-  { suggestionDoc: Interfaces.WordSuggestion, clientExamples: Interfaces.ExampleClientData[], mongooseConnection: any },
+  {
+    suggestionDoc: Interfaces.WordSuggestion,
+    clientExamples: Interfaces.ExampleClientData[],
+    mongooseConnection: Connection,
+  },
 ): Promise<void> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   const examples: Document<Interfaces.ExampleSuggestion>[] = (
@@ -88,7 +92,10 @@ export const handleDeletingExampleSuggestions = async (
  * If the nested example sentence does have an id
  * then the platform will update the existing word suggestion
  */
-const updateExistingExampleSuggestion = async (example: Interfaces.ExampleClientData, mongooseConnection: any) => {
+const updateExistingExampleSuggestion = async (
+  example: Interfaces.ExampleClientData,
+  mongooseConnection: Connection,
+) => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   return ExampleSuggestion.findById(example.id)
     .then((exampleSuggestion) => {
@@ -203,7 +210,9 @@ export const assignExampleSuggestionToExampleData = async ({
     !exampleSuggestions.find(({ originalExampleId }) => originalExampleId?.toString?.() === id.toString())
   ));
   const archivingExampleIds = uneditedExamples.map(({ id }) => id?.toString?.());
-  console.log('Archiving the following examples:', archivingExampleIds);
+  if (archivingExampleIds.length) {
+    console.log('Archiving the following examples:', archivingExampleIds);
+  }
   // 4. Archive all non-updated examples
   if (archivingExampleIds.length) {
     await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });

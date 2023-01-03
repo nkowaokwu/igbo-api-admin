@@ -8,7 +8,7 @@ import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { resultsFromDictionarySearch } from 'src/backend/services/words';
 import { sendEmail } from 'src/backend/controllers/email';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { removePayloadFields } from 'src/shared/API';
+import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import './script';
 import { app as expressServer } from '../../../index';
 import {
@@ -137,7 +137,7 @@ export const createCorpus = async (id: string, query = {}, options = { token: ''
     .put(`/corpusSuggestions/${id}/approve`)
     .set('Authorization', `Bearer ${AUTH_TOKEN.MERGER_AUTH_TOKEN}`);
   return chaiServer
-    .post('/corpus')
+    .post('/corpora')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .send({ id });
@@ -145,7 +145,7 @@ export const createCorpus = async (id: string, query = {}, options = { token: ''
 
 export const createPoll = (id: string, query = {}, options = { token: '' }): Request => (
   chaiServer
-    .post('/corpus')
+    .post('/twitter_poll')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .send({ id })

@@ -1,4 +1,9 @@
-import { Document, Query, Types } from 'mongoose';
+import {
+  Connection,
+  Document,
+  Query,
+  Types,
+} from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign } from 'lodash';
 import { corpusSchema } from '../models/Corpus';
@@ -55,7 +60,7 @@ const findCorpusSuggestions = async (
     limit,
     mongooseConnection,
   }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: any },
+  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
 ): Promise<Interfaces.CorpusSuggestion[] | any> => {
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 

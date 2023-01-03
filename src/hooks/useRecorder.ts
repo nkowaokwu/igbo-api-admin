@@ -17,10 +17,9 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
   const toast = useToast();
 
   useEffect(() => {
-    // @ts-expect-error navigator
-    navigator.getUserMedia({ audio: true },
-      () => setIsBlocked(false),
-      () => setIsBlocked(true));
+    window.navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => setIsBlocked(false))
+      .catch(() => setIsBlocked(true));
   }, []);
 
   useEffect(() => {
@@ -28,7 +27,7 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
       setRecorder(new MicRecorder({ bitRate: 30000 }));
 
       (async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
         try {
           wave.fromStream(stream, 'canvas', {
             colors: ['#777777'],

@@ -39,6 +39,7 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
               />
             )}
             name="tags"
+            defaultValue={generateDefaultTags()}
             control={control}
           />
         </Box>

@@ -37,7 +37,7 @@ const IgboDefinitions = ({
               />
             )}
             name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}]`}
-            defaultValue={igboDefinition}
+            defaultValue={igboDefinition || ''}
             control={control}
           />
           <IconButton

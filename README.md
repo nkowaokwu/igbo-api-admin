@@ -118,27 +118,7 @@ Once you save those files in `/functions`, you're own Igbo API Editor Platform i
 
 ### Step 4: Start the Backend API
 
-There are two options when spinning up a local version of the Igbo API:
-
-#### Option 1: Use Docker (Recommended)
-
-[Docker](https://docker.com) is a software that allows developers to run self-contained apps on any machine.
-
-To start up the Igbo API with Docker, run:
-
-```
-yarn start:docker
-```
-
-When you're done running the Igbo API, make sure to run:
-
-```
-yarn stop:docker
-```
-
-to end the processes and free up the used ports.
-
-#### Option 2: Download the Igbo API source code and run locally
+The backend server responsible for data business logic relies on the Igbo API to be running locally.
 
 Follow the instructions in the [Igbo API](https://github.com/ijemmao/igbo_api) and start 
 the local development server. You should be able to interact with the API at 
@@ -185,13 +165,6 @@ http://localhost:8080/api/v1/test/populate // POST
 After about 20 seconds, if you see the `✅ Seeding successful.` message in your terminal,
 then you have successfully populated your database!
 
-**Note:** Restart your Docker after the POST request to make sure that you have all the words in your database.
-
-**Why can't I use Docker for seeding?**
-
-You can use Docker but it will seed the wrong MongoDB. Instead of seeding the `igbo_api` database,
-it will seed the `igbo_api_testing` database which is only used for testing and not development.
-
 **For genericWords**, you can make a `POST` request to `http://localhost:3030/test/genericWords`
 
 ## Build Production
@@ -213,7 +186,8 @@ yarn start
 In another tab, start up a local instance of the Igbo API with:
 
 ```
-yarn start:docker
+cd igbo_api
+yarn dev
 ```
 
 **Note** This will spin up a local, production-style version of your Firebase project 
@@ -222,46 +196,57 @@ is helpful to use for local testing purposes.
 
 You should now be able to access the editor platform at [http://localhost:3030](http://localhost:3030)
 
-## Testing
+## Cypress Testing
 
 This project uses [Cypress](https://cypress.io) for frontend tests.
 
-[Docker](https://docker.com) is also used to spin up local instances of the Igbo API.
-
-Before running any test, make sure to build the project locally:
+Start the frontend and backend server by running:
 
 ```
-yarn build:dev
+yarn dev
 ```
 
-You have two options of running Cypress tests:
+Run the Igbo API locally:
+
+```
+cd igbo_api
+yarn dev
+```
 
 ### Option 1: Cypress Open Mode
-
-To run the server and open the Cypress testing environment, run:
-
-```
-yarn test
-```
-
-### Option 2: Cypress Run Mode
-
-To run the Cypress tests headless, start the CI Docker file in one terminal:
+If you would like to watch your Cypress tests run in browser, run:
 
 ```
-yarn start:docker:ci
+yarn cypress:open
 ```
 
-In another terminal, run:
+### Option 2: Cypress Headless Mode
+If you want your Cypress tests to run in the terminal, run:
 
 ```
-yarn test:ci
+yarn cypress:run
 ```
 
 [`http://localhost:8081`](http://localhost:8081) - The test result **Dashboard** to show all passing and failing tests
 
 
-**Note** If your Docker instance is unable to run, try running `yarn docker:stop` 
-and then try starting it up again.
-
 **All tests run against a built development project, make sure that you've built your project with `yarn build:dev` when testing.**
+
+## Jest Testing
+
+This project uses [Jest](https://jestjs.io) for unit frontend and backend tests.
+
+To run both the frontend and backend tests, run:
+```
+yarn jest
+```
+
+To run just the frontend Jest tests, run:
+```
+yarn jest:frontend
+```
+
+To run jest the backend Jest tests, run:
+```
+yarn jest:backend
+```

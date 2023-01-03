@@ -26,7 +26,7 @@ const NsibidiForm = React.forwardRef(({
       )}
       name={name || 'nsibidi'}
       control={control}
-      defaultValue={name ? get(record, name) : (record.nsibidi || getValues().nsibidi)}
+      defaultValue={(name ? get(record, name) : (record.nsibidi || getValues().nsibidi)) || ''}
     />
   </Box>
 ));

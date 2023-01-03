@@ -5,13 +5,31 @@ import { DataProviderContext } from 'react-admin';
 
 configure({ testIdAttribute: 'data-test' });
 
-global.navigator.getUserMedia = jest.fn(() => ({}));
+const mockGetUserMedia = jest.fn(async () => (
+  new Promise<void>((resolve) => resolve())
+));
+
+Object.defineProperty(global.navigator, 'mediaDevices', {
+  value: {
+    getUserMedia: mockGetUserMedia,
+  },
+});
+
 jest.mock('firebase');
 jest.mock('@chakra-ui/react');
 jest.mock('react-admin');
 jest.mock('src/shared/API');
 
-const TestContext = ({ children, dataProvider, ...rest } : any): ReactElement => {
+const TestContext = ({
+  children,
+  dataProvider,
+  isListView,
+  ...rest
+} : {
+  children: any,
+  dataProvider?: any,
+  isListView?: boolean,
+}): ReactElement => {
   const nativeDataProvider = () => Promise.resolve({
     data: {},
   });

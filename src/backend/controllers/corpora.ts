@@ -22,7 +22,7 @@ const searchCorpus = async (
     mongooseConnection,
     ...rest
   }:
-  { query: any, searchWord: string, mongooseConnection: any },
+  { query: any, searchWord: string, mongooseConnection: Connection },
 ): Promise<Interfaces.Word[]> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
   const corpora: Interfaces.Word[] = await findCorporaWithMatch({ match: query, Corpus, ...rest });
@@ -140,29 +140,29 @@ export const putCorpus = async (
 
 /* Takes the suggestion corpus media and overwrites the existing Corpus document's media file */
 const overwriteCorpusPronunciation = async (
-  suggestion: Interfaces.CorpusSuggestion,
+  corpusSuggestion: Interfaces.CorpusSuggestion,
   corpus: Interfaces.Corpus,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<Document<Interfaces.Corpus>> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
   try {
     /**
      * Creating AWS URI for corpus media
-     * If the suggestion doesn't have a media, then an empty string
+     * If the corpusSuggestion doesn't have a media, then an empty string
      * will be passed in to tell AWS to delete the audio record for the associated
      * Corpus document
      */
-    const suggestionDocId = suggestion.media ? suggestion.id.toString() : '';
+    const suggestionDocId = corpusSuggestion.media ? corpusSuggestion.id.toString() : '';
     const finalMediaUri = await renameMedia(suggestionDocId, corpus.id.toString());
 
-    suggestion.media = finalMediaUri;
+    corpusSuggestion.media = finalMediaUri;
     corpus.media = finalMediaUri;
 
     // Since the corpus suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
-    suggestion.skipPronunciationHook = true;
-    await suggestion.save();
-    await CorpusSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
+    corpusSuggestion.skipPronunciationHook = true;
+    await corpusSuggestion.save();
+    await CorpusSuggestion.findOneAndUpdate({ _id: corpusSuggestion.id }, corpusSuggestion.toObject());
     await Corpus.findOneAndUpdate({ _id: corpus.id }, corpus.toObject());
     const savedCorpus = await corpus.save();
     return savedCorpus;
@@ -178,7 +178,7 @@ const overwriteCorpusPronunciation = async (
 const mergeIntoCorpus = (
   suggestionDoc: Interfaces.CorpusSuggestion,
   mergedBy: string,
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<Interfaces.Corpus | void> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
@@ -209,7 +209,7 @@ export const createCorpus = async (
     | Interfaces.CorpusSuggestion
     | LeanDocument<Document<Interfaces.CorpusClientData | Interfaces.CorpusSuggestion>>
   ),
-  mongooseConnection: any,
+  mongooseConnection: Connection,
 ): Promise<Document<Interfaces.Corpus>> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
@@ -219,12 +219,18 @@ export const createCorpus = async (
 
 /* Creates a new Corpus document from an existing CorpusSuggestion document */
 const createCorpusFromSuggestion = (
-  suggestionDoc: Document<Interfaces.CorpusSuggestion>,
-  mongooseConnection: any,
+  corpusSuggestion: Interfaces.CorpusSuggestion,
+  mergedBy: string,
+  mongooseConnection: Connection,
 ): Promise<Document<Interfaces.Corpus> | void> => (
-  createCorpus(suggestionDoc.toObject(), mongooseConnection)
+  createCorpus(corpusSuggestion.toObject(), mongooseConnection)
     .then(async (corpus: Document<Interfaces.Corpus>) => {
-      const updatedPronunciationsWord = await overwriteCorpusPronunciation(suggestionDoc, corpus, mongooseConnection);
+      const updatedPronunciationsWord = await overwriteCorpusPronunciation(
+        corpusSuggestion,
+        corpus as Interfaces.Corpus,
+        mongooseConnection,
+      );
+      await updateDocumentMerge(corpusSuggestion, corpus.id, mergedBy);
       return updatedPronunciationsWord;
     })
     .catch((err) => {
@@ -240,12 +246,13 @@ export const mergeCorpus = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { user, suggestionDoc, mongooseConnection } = req;
+    const { user, mongooseConnection } = req;
+    const suggestionDoc = req.suggestionDoc as Interfaces.CorpusSuggestion;
 
     const mergedCorpus: Document<Interfaces.Corpus> | any = (
       suggestionDoc.originalCorpusId
         ? await mergeIntoCorpus(suggestionDoc, user.uid, mongooseConnection)
-        : await createCorpusFromSuggestion(suggestionDoc, mongooseConnection)
+        : await createCorpusFromSuggestion(suggestionDoc, user.uid, mongooseConnection)
     ) || {};
     return res.send(mergedCorpus);
   } catch (err) {

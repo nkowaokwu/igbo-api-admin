@@ -7,7 +7,7 @@
   "scripts": {
     "build:css": "postcss src/tailwind.css -o src/styles.css",
     "build:app": "node_modules/.bin/babel src -d functions/src --extensions '.ts,.tsx'",
-    "build:functions": "node_modules/.bin/babel index.tsx -d functions --extensions '.ts,.tsx'",
+    "build:functions": "node_modules/.bin/babel index.tsx -d functions --extensions '.ts,.tsx' && rm -rf ./functions/**/**/__mocks__",
     "build:dictionaries": "shx cp -r ./src/backend/dictionaries functions/src/backend",
     "build:server": "yarn build:app && yarn build:copy:html && yarn build:functions && yarn build:client:dev",
     "build:client:dev": "webpack --mode=development",
@@ -43,7 +43,9 @@
     "test:firebase": "yarn use:staging && node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
     "test:ci": "node_modules/.bin/firebase emulators:exec 'yarn cypress:run' --only functions,firestore,hosting,pubsub",
     "test:firebase:ci": "node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
-    "test:jest": "cross-env NODE_ENV=test jest --forceExit",
+    "jest:backend": "cross-env NODE_ENV=test jest --forceExit --runInBand --config=jest.backend.config.js" ,
+    "jest:frontend": "cross-env NODE_ENV=test jest --forceExit --runInBand --config=jest.frontend.config.js" ,
+    "jest": "yarn jest:backend && yarn jest:frontend",
     "precommit": "lint-staged"
   },
   "engines": {
