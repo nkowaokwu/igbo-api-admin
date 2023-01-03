@@ -1,5 +1,4 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { get } from 'lodash';
 import {
   Box,
   IconButton,
@@ -121,8 +120,8 @@ const Example = ({
           defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
         />
         <AudioRecorder
-          path={`examples[${index}]`}
-          getFormValues={(path) => path.startsWith('examples') ? example : get(example, path)}
+          path="pronunciation"
+          getFormValues={() => example?.pronunciation}
           setPronunciation={handleSetPronunciation}
           record={example}
           originalRecord={originalRecord}
