@@ -114,6 +114,9 @@ const WordShow = (props: ShowProps): ReactElement => {
         if (originalWord) {
           originalWord.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
         }
+        if (record) {
+          record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+        }
         const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
         setOriginalWordRecord(originalWord);
         setDiffRecord(differenceRecord);
