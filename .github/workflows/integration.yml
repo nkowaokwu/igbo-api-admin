@@ -55,7 +55,7 @@ jobs:
       run: yarn jest:frontend
       env:
         NODE_ENV: test
-    # - name: Run Cypress Tests
-    #   run: yarn test:ci --token $FIREBASE_TOKEN
-    #   env:
-    #     NODE_ENV: development
+    - name: Run Cypress Tests
+      run: yarn test:ci --token $FIREBASE_TOKEN
+      env:
+        NODE_ENV: development
