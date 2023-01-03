@@ -101,6 +101,24 @@ Cypress.Commands.add('getWordSuggestionDocumentDetails', (position: number = 1) 
 });
 
 /*
+ * This command exposes the following elements from a word document
+ *
+ * @selectedReviewedIcon
+ * @selectedWord
+ * @selectedApprovals
+ * @selectedDenials
+ * @selectedId
+ */
+Cypress.Commands.add('getWordDocumentDetails', (docPosition: number = 0) => {
+  cy.findAllByTestId('resource-word')
+    .eq(docPosition)
+    .as('selectedWord');
+  cy.findAllByTestId('resource-id')
+    .eq(docPosition)
+    .as('selectedId');
+});
+
+/*
  * This command exposes the following elements from a word suggestion document
  *
  * @selectedName
@@ -264,8 +282,8 @@ Cypress.Commands.add('getActionsOption', (optionText: string, position: number =
   cy.get('@editorActions')
     .eq(position)
     .scrollIntoView()
-    .click({ force: true });
-  return cy.findAllByRole('menuitem', { name: optionText }).eq(0);
+    .click({ force: true  });
+  return cy.findByRole('menuitem', { name: optionText });
 });
 
 /* Presses the confirm option in the confirmation modal */
@@ -345,6 +363,7 @@ Cypress.Commands.add('selectCollection', (collection: Collection, overrideWait: 
     throw new Error('\'collection\' must have a value');
   };
   cy.get(`a[href="#/${collection}"]`).scrollIntoView().click({ force: true });
+  cy.wait(1000);
 });
 
 Cypress.Commands.add('seedDatabase', () => {

@@ -5,7 +5,6 @@ export default defineConfig({
   defaultCommandTimeout: 30000,
   requestTimeout: 10000,
   retries: 0,
-  projectId: 'dfw64t',
   screenshotOnRunFailure: false,
   video: false,
   videoUploadOnPasses: false,

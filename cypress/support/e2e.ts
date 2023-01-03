@@ -12,7 +12,6 @@ Cypress.on('uncaught:exception', (err) => {
 beforeEach(() => {
   cy.wrap(false).as('skipErrorMessageCheck');
   cy.restoreLocalStorage();
-  cy.wait(1000);
 });
 
 afterEach(() => {

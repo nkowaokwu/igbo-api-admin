@@ -3,27 +3,20 @@ import { DocumentSelectOptions, SuggestionSelectOptions } from '../../constants'
 describe('Actions', () => {
   before(() => {
     cy.seedDatabase();
-  });
-
-  beforeEach(() => {
     cy.cleanLogin();
   });
 
   describe('Merge', () => {
-    it('merge a wordSuggestion into a new word in the list view then redirect to word show', () => {
+    it('show disabled merge for word suggestion', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
-      cy.get('@selectedWord').then(([$word]) => {
-        cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-        cy.acceptConfirmation();
-        cy.findByText('View the updated document here').click();
-        cy.contains('Word Document Details');
-        cy.findAllByText($word.innerText).first();
+      cy.get('@selectedWord').then(([]) => {
+        cy.getActionsOption(SuggestionSelectOptions.MERGE).should('be.disabled');
       });
     });
 
-    it('merge an exampleSuggestion into a new example in the list view the redirect to examples', () => {
+    it('show disabled merge for example suggestion', () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
@@ -38,7 +31,7 @@ describe('Actions', () => {
   });
 
   describe.skip('Combine', () => {
-    it('combine one word into another word', () => {
+    it('combine one word into another word', { scrollBehavior: false }, () => {
       cy.selectCollection('words');
       cy.searchForDocument('');
       cy.getWordDetails(2);
@@ -49,7 +42,7 @@ describe('Actions', () => {
       });
     });
 
-    it('throw an error when no primary word id is provided', () => {
+    it('throw an error when no primary word id is provided', { scrollBehavior: false }, () => {
       cy.selectCollection('words');
       cy.searchForDocument('');
       cy.getActionsOption(DocumentSelectOptions.COMBINE_WORD_INTO).click();

@@ -94,7 +94,7 @@ const DialectForm = ({
       </Box>
       <Box className="mt-4">
         <Heading as="h3" style={{ flex: 1 }} fontSize="xl" fontWeight="normal" mb={3}>Dialects</Heading>
-        <Box flex={1}>
+        <Box flex={1} data-test={`dialects-input-container-${index}`}>
           <Controller
             render={({ onChange }) => (
               <Select

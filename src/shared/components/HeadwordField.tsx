@@ -21,7 +21,7 @@ const HeadwordField = ({ record, source }: { record?: Record, source: string }):
       >
         <Box className="flex flex-row items-center cursor-default">
           {hasFlags ? <WarningIcon color="orange.600" boxSize={3} mr={2} /> : null}
-          <Text color={hasFlags ? 'orange.600' : ''}>{headword}</Text>
+          <Text data-test="resource-word" color={hasFlags ? 'orange.600' : ''}>{headword}</Text>
         </Box>
       </Tooltip>
     </>

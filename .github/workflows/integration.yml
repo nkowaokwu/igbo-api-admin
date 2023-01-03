@@ -20,42 +20,44 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-    - name: Checkout Igbo API Admin Code
+    - name: Checkout Igbo API Admin Code 🛎
       uses: actions/checkout@v2
     - name: Use Node.js 16.17.0
       uses: actions/setup-node@v2.1.2
       with:
         node-version: '16.17.0'
-    - name: Install Project Dependencies
+    - name: Install Project Dependencies 🛠
       run: |
         yarn install
         npm install -g firebase-tools
-    - name: Log into Docker Account
+    - name: Log into Docker Account 🐳
       run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-    - name: Run Igbo API Docker Instance
+    - name: Run Igbo API Docker Instance 🇳🇬
       run: |
         docker pull $DOCKER_USERNAME/$DOCKER_IMAGE
         yarn start:docker:ci -d
-    - name: Setup Firebase Environment
+    - name: Check Running Docker Containers ✅
+      run: docker-compose ps -a
+    - name: Setup Firebase Environment 🔥
       run: |
         firebase use staging --token $FIREBASE_TOKEN
         yarn build:dev
-    - name: Set Environment Variables
+    - name: Set Environment Variables 📟
       run: |
         firebase functions:config:set runtime.env="cypress" --token $FIREBASE_TOKEN
         firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
         yarn functions:env
-    - name: Wait for Docker
+    - name: Wait for Docker ⏱
       run: sleep 10
-    - name: Run Backend Jest Tests
+    - name: Run Cypress Tests 🎨
+      run: yarn test:ci
+      env:
+        NODE_ENV: development
+    - name: Run Backend Jest Tests 🔩
       run: yarn jest:backend
       env:
         NODE_ENV: test
-    - name: Run Frontend Jest Tests
+    - name: Run Frontend Jest Tests 🔩
       run: yarn jest:frontend
       env:
         NODE_ENV: test
-    # - name: Run Cypress Tests
-    #   run: yarn test:ci --token $FIREBASE_TOKEN
-    #   env:
-    #     NODE_ENV: development
