@@ -74,6 +74,7 @@ export const copyAudioPronunciation = async (
 
     const copyParams = {
       ...baseParams,
+      MetadataDirective: 'COPY',
       Key: `${mediaPath}/${newAudioId}.${extension}`,
       ACL: 'public-read',
       CopySource: `${bucket}/${mediaPath}/${oldAudioId}.${extension}`,
