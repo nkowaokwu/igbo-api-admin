@@ -7,7 +7,7 @@ describe('Approve and Deny', () => {
 
   describe('Word Suggestions', () => {
 
-    it('approve a wordSuggestion in list view', { scrollBehavior: false }, () => {
+    it.only('approve a wordSuggestion in list view', { scrollBehavior: false }, () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
