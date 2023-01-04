@@ -4,6 +4,7 @@ import { WordDialect } from 'src/backend/controllers/utils/interfaces';
 
 interface DialectForm {
   index: number,
+  errors: { [key: string]: any },
   record: Record,
   control: Control,
   getValues: (key?: string) => any,

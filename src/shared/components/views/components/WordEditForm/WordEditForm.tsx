@@ -218,6 +218,13 @@ const WordEditForm = ({
     }
   }, []);
 
+  /* Scroll back to the top to let the editor know an error occurred */
+  useEffect(() => {
+    if (Object.keys(errors || {}).length) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [errors]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
@@ -313,9 +320,9 @@ const WordEditForm = ({
         getValues={getValues}
         errors={errors}
       />
-      <Box className={`flex 
-        ${!areAllWordClassesInvalidForRelatedTerms ? 'lg:flex-row lg:space-x-3 lg:justify-between' : ''} 
-        flex-col`}
+      <Box className={'flex '
+        + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
+        + 'flex-col'}
       >
         <VariationsForm
           variations={variations}

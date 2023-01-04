@@ -41,6 +41,8 @@
     "pretest": "yarn kill:project && node_modules/.bin/firebase functions:config:set runtime.env=\"cypress\" && yarn functions:env",
     "test": "yarn use:staging && node_modules/.bin/firebase emulators:exec 'npm-run-all -p -r start:docker:ci cypress:open' --only functions,firestore,hosting,pubsub",
     "test:firebase": "yarn use:staging && node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
+    "precypress:run": "node_modules/.bin/firebase functions:config:set runtime.env=\"cypress\"",
+    "precypress:open": "node_modules/.bin/firebase functions:config:set runtime.env=\"cypress\"",
     "test:ci": "npm-run-all -p -r dev cypress:run",
     "test:firebase:ci": "node_modules/.bin/firebase emulators:exec './node_modules/.bin/jest tests'",
     "jest:backend": "cross-env NODE_ENV=test jest --forceExit --runInBand --config=jest.backend.config.js" ,

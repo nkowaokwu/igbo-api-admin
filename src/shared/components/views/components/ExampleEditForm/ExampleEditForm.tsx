@@ -133,6 +133,13 @@ const ExampleEditForm = ({
 
   useBeforeWindowUnload();
 
+  /* Scroll back to the top to let the editor know an error occurred */
+  useEffect(() => {
+    if (Object.keys(errors || {}).length) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [errors]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col">
