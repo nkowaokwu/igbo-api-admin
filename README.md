@@ -29,7 +29,7 @@ This is an open-source project that requires that you create your own Firebase a
 to the Firebase project to start developing. Reach out to [@ijemmao](https://github.com/ijemmao).
 to get access.
 
-### Step 1: Set up the Igbo API Editor Plaform
+### Step 1: Set up the Igbo API Editor Platform
 
 Clone the repo:
 
@@ -203,8 +203,10 @@ This project uses [Cypress](https://cypress.io) for frontend tests.
 Start the frontend and backend server by running:
 
 ```
-yarn dev
+yarn dev:cypress
 ```
+
+Running `yarn dev:cypress` will start th development server with Cypress in mind, which will mock audio URIs and bypass approval minimums.
 
 Run the Igbo API locally:
 

@@ -3,11 +3,11 @@ import * as functions from 'firebase-functions';
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;
 export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
-export const isDevelopment = config?.runtime?.env === 'development';
 export const isCypress = config?.runtime?.env === 'cypress';
 export const isJest = config?.runtime?.env === 'jest';
 export const isTest = config?.runtime?.env === 'test';
 export const isTesting = isCypress || isJest || isTest;
+export const isDevelopment = config?.runtime?.env === 'development' || isTesting;
 export const isAWSProduction = isProduction;
 
 // Igbo API

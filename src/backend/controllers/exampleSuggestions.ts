@@ -241,7 +241,11 @@ export const removeExampleSuggestion = (id: string, mongooseConnection): Promise
           throw new Error('No example suggestion exists with the provided id.');
         }
         const { email: userEmail } = (
-          (await findUser(exampleSuggestion.authorId) as Interfaces.FormattedUser)
+          (await findUser(exampleSuggestion.authorId)
+            .catch((err) => {
+              console.log('Error with finding user while deleting example sentence', err);
+              return { email: '' };
+            }) as Interfaces.FormattedUser)
           || { email: '' }
         );
         /* Sends rejection email to user if they provided an email and the exampleSuggestion isn't merged */
@@ -254,7 +258,8 @@ export const removeExampleSuggestion = (id: string, mongooseConnection): Promise
         }
         return exampleSuggestion;
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log('Unable to delete example suggestion', err);
         throw new Error('An error has occurred while deleting and return a single example suggestion');
       })
   );

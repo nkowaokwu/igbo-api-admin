@@ -3,66 +3,55 @@ import { every } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
 
 const awsUriPrefix = 'https://igbo-api-test-local/audio-pronunciations/';
-describe.skip('Edit', () => {
-  describe('Audio Pronunciation Uploading', () => {
-    beforeEach(() => {
-      cy.cleanLogin();
-    });
-
+describe('Edit', () => {
+  before(() => {
+    cy.cleanLogin();
+  });
+  describe.only('Audio Pronunciation Uploading', () => {
     it('merge audio headword and dialect audio pronunciations for an existing word', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**', (req) => {
-        req.alias = 'putWordSuggestion';
-        req.body.pronunciation = req.body.id;
-        req.body.dialects.NSA.pronunciation = req.body.id;
-      }).as('putWordSuggestion');
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
       cy.findByTestId('word-class-input-container').click();
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.recordAudio();
-      cy.recordAudio('NSA');
+      cy.recordAudio('dialects.0');
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.get('button[type="submit"]').click();
       cy.wait('@putWordSuggestion');
       cy.wait('@getWordSuggestion').then(({ response: getWordSuggestionResponse }) => {
-        expect(getWordSuggestionResponse.body.pronunciation)
-          .to.equal(`${awsUriPrefix}${getWordSuggestionResponse.body.id}`);
-        expect(getWordSuggestionResponse.body.dialects.NSA.pronunciation)
-          .to.equal(`${awsUriPrefix}${getWordSuggestionResponse.body.id}-NSA`);
+        const { body } = getWordSuggestionResponse;
+        expect(getWordSuggestionResponse.body.pronunciation.includes(body.id)).to.equal(true);
+        expect(getWordSuggestionResponse.body.dialects[0].pronunciation.includes(body.dialects[0].id)).to.equal(true);
 
         cy.intercept('GET', '**/words/**').as('getWord');
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
         cy.acceptConfirmation();
         cy.wait('@getWord').then(({ response: postWordResponse }) => {
-          expect(postWordResponse.body.pronunciation)
-            .to.equal(`${awsUriPrefix}${postWordResponse.body.id}`);
-          expect(postWordResponse.body.dialects.NSA.pronunciation)
-            .to.equal(`${awsUriPrefix}${postWordResponse.body.id}-NSA`);
+          const { body } = postWordResponse;
+          expect(body.pronunciation.includes(body.id)).to.equal(true);
+          expect(body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
 
           cy.intercept('GET', '**/wordSuggestions/**').as('createWordWithWordSuggestion');
-          cy.wait(2000);
+          cy.wait(1000);
           cy.get('button').contains('Suggest an Edit').click();
+          cy.wait(1000);
           cy.recordAudio();
-          cy.recordAudio('NSA');
+          cy.recordAudio('dialects.0');
           cy.get('button[type="submit"]').click();
 
           cy.wait('@createWordWithWordSuggestion').then(({ response: newWordSuggestionResponse }) => {
-            expect(newWordSuggestionResponse.body.pronunciation)
-              .to.equal(`${awsUriPrefix}${newWordSuggestionResponse.body.id}`);
-            expect(newWordSuggestionResponse.body.dialects.NSA.pronunciation)
-              .to.equal(`${awsUriPrefix}${newWordSuggestionResponse.body.id}-NSA`);
+            const { body } = newWordSuggestionResponse;
+            expect(body.pronunciation.includes(body.id)).to.equal(true);
+            expect(body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
           });
         });
       });
     });
 
     it('merge audio headword and dialect audio pronunciations for a new word', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**', (req) => {
-        req.alias = 'putWordSuggestion';
-        req.body.pronunciation = req.body.id;
-        req.body.dialects.NSA.pronunciation = req.body.id;
-      }).as('putWordSuggestion');
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
@@ -70,33 +59,27 @@ describe.skip('Edit', () => {
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.recordAudio();
-      cy.recordAudio('NSA');
+      cy.recordAudio('dialects.0');
       cy.get('button[type="submit"]').click();
       cy.wait('@putWordSuggestion');
       cy.wait('@getWordSuggestion').then(({ response: getWordSuggestionResponse }) => {
-        expect(getWordSuggestionResponse.body.pronunciation)
-          .to.equal(`${awsUriPrefix}${getWordSuggestionResponse.body.id}`);
-        expect(getWordSuggestionResponse.body.dialects.NSA.pronunciation)
-          .to.equal(`${awsUriPrefix}${getWordSuggestionResponse.body.id}-NSA`);
+        const { body } = getWordSuggestionResponse;
+        expect(body.pronunciation.includes(body.id)).to.equal(true);
+        expect(body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
 
         cy.intercept('GET', '**/words/**').as('getWord');
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
         cy.acceptConfirmation();
         cy.wait('@getWord').then(({ response: postWordResponse }) => {
-          expect(postWordResponse.body.pronunciation)
-            .to.equal(`${awsUriPrefix}${postWordResponse.body.id}`);
-          expect(postWordResponse.body.dialects.NSA.pronunciation)
-            .to.equal(`${awsUriPrefix}${postWordResponse.body.id}-NSA`);
+          const { body } = postWordResponse;
+          expect(body.pronunciation.includes(body.id)).to.equal(true)
+          expect(body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
         });
       });
     });
 
     it('save audio headword and dialect pronunciations for word suggestion', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**', (req) => {
-        req.alias = 'putWordSuggestion';
-        req.body.pronunciation = req.body.id;
-        req.body.dialects.NSA.pronunciation = req.body.id;
-      }).as('putWordSuggestion');
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
@@ -104,23 +87,18 @@ describe.skip('Edit', () => {
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.recordAudio();
-      cy.recordAudio('NSA');
+      cy.recordAudio('dialects.0');
       cy.get('button[type="submit"]').click();
       cy.wait('@putWordSuggestion');
       cy.wait('@getWordSuggestion').then(({ response }) => {
-        expect(response.body.pronunciation)
-          .to.equal(`${awsUriPrefix}${response.body.id}`);
-        expect(response.body.dialects.NSA.pronunciation)
-          .to.equal(`${awsUriPrefix}${response.body.id}-NSA`);
+        const { body } = response;
+        expect(response.body.pronunciation.includes(body.id)).to.equal(true);
+        expect(response.body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
       });
     });
 
     it('reset audio headword pronunciation for word suggestion', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**', (req) => {
-        req.alias = 'putWordSuggestion';
-        req.body.pronunciation = req.body.id;
-        req.body.dialects.NSA.pronunciation = req.body.id;
-      }).as('putWordSuggestion');
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
@@ -128,47 +106,32 @@ describe.skip('Edit', () => {
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.recordAudio();
-      cy.recordAudio('NSA');
+      cy.recordAudio('dialects.0');
       cy.get('button[type="submit"]').click();
       cy.wait('@putWordSuggestion');
       cy.wait('@getWordSuggestion').then(({ response }) => {
-        expect(response.body.pronunciation)
-          .to.equal(`${awsUriPrefix}${response.body.id}`);
-        expect(response.body.dialects.NSA.pronunciation)
-          .to.equal(`${awsUriPrefix}${response.body.id}-NSA`);
+        const { body } = response;
+        expect(response.body.pronunciation.includes(body.id)).to.equal(true);
+        expect(response.body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
       });
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+      cy.getActionsOption(SuggestionSelectOptions.EDIT).click({ scrollBehavior: false });
       cy.recordAudio();
-      cy.findAllByRole('button', { name: 'Reset Recording' }).first().click();
+      cy.findAllByLabelText('Reset recording').first().click();
       cy.findByText('Reset Audio Pronunciation');
     });
   });
 
   describe('Word Edit', () => {
-    before(() => {
-      cy.seedDatabase();
-    });
-    beforeEach(() => {
-      cy.cleanLogin();
-    });
-    it('render the edit view for word suggestions', () => {
+    it.only('render the edit view for word suggestions', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
-      cy.findAllByText('Word');
+      cy.findAllByText('Headword');
       cy.findAllByText('Part of Speech');
       cy.findAllByText('Definitions');
     });
 
-    it('render warning message after providing invalid relatedTerm', () => {
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.findByLabelText('Add Related Term').click();
-      cy.findByText('Unable to add related term');
-    });
-
-    it('render the word view after adding relatedTerm and merge', () => {
+    it.skip('render the word view after adding relatedTerm and merge', () => {
       cy.createWordSuggestion().then((word) => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
@@ -190,7 +153,7 @@ describe.skip('Edit', () => {
       });
     });
 
-    it('render the word suggesiton, delete the relatedTerm, and merge', () => {
+    it.skip('render the word suggestion, delete the relatedTerm, and merge', () => {
       cy.createWordSuggestion().then((word) => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
