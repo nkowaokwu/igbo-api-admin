@@ -311,7 +311,6 @@ const WordEditForm = ({
         examples={examples}
         setExamples={setExamples}
         getValues={getValues}
-        setValue={setValue}
         errors={errors}
       />
       <Box className={`flex 

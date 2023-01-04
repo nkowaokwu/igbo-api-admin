@@ -4,7 +4,6 @@ interface ExamplesFormInterface {
   examples: ExampleSuggestion[],
   setExamples: (value: any) => void,
   getValues: () => any,
-  setValue: (key: string, value: any) => void,
   definitionGroupId: string,
 };
 
