@@ -108,22 +108,6 @@ export const malformedCorpusSuggestionData = {
   bodyy: 'malformed body',
 };
 
-export const malformedGenericWordData = {
-  word: 'newGenericWord',
-  definitions: [],
-  approvals: 'car',
-};
-
-export const updatedGenericWordData = {
-  word: 'newWord',
-  definitions: [{
-    wordClass: 'verb',
-    definitions: ['required'],
-  }],
-  approvals: 2,
-  denials: 1,
-};
-
 export const wordSuggestionWithNestedExampleSuggestionData = {
   ...wordSuggestionData,
   examples: [exampleSuggestionData],

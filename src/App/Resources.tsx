@@ -1,6 +1,5 @@
 import React from 'react';
 import { compact, flatten } from 'lodash';
-import { GenericWordIcon } from 'src/Core/Collections/GenericWords';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import AsyncWordList from 'src/Core/Collections/Words/WordList';
 import AsyncWordShow from 'src/Core/Collections/Words/WordShow';
@@ -23,9 +22,6 @@ import AsyncCorpusSuggestionShow from 'src/Core/Collections/CorpusSuggestions/Co
 import AsyncNotificationList from 'src/Core/Collections/Notifications/NotificationList';
 import AsyncPollList from 'src/Core/Collections/Polls/PollList';
 import AsyncPollCreate from 'src/Core/Collections/Polls/PollCreate';
-import AsyncGenericWordList from 'src/Core/Collections/GenericWords/GenericWordList';
-import AsyncGenericWordEdit from 'src/Core/Collections/GenericWords/GenericWordEdit';
-import AsyncGenericWordShow from 'src/Core/Collections/GenericWords/GenericWordShow';
 import AsyncUserList from 'src/Core/Collections/Users/UserList';
 import AsyncUserShow from 'src/Core/Collections/Users/UserShow';
 
@@ -98,20 +94,13 @@ export const getResourceObjects = (permissions) => compact(flatten([
     create: AsyncPollCreate,
     icon: () => <>🗳</>,
   },
-  hasAdminPermissions(permissions, [{
-    name: 'genericWords',
-    key: 'genericWords',
-    options: { label: 'Generic Words' },
-    list: AsyncGenericWordList,
-    edit: AsyncGenericWordEdit,
-    show: AsyncGenericWordShow,
-    icon: GenericWordIcon,
-  },
-  {
-    name: 'users',
-    key: 'users',
-    list: AsyncUserList,
-    show: AsyncUserShow,
-    icon: () => <>👩🏾</>,
-  }]),
+  hasAdminPermissions(permissions, [
+    {
+      name: 'users',
+      key: 'users',
+      list: AsyncUserList,
+      show: AsyncUserShow,
+      icon: () => <>👩🏾</>,
+    },
+  ]),
 ]));

@@ -97,7 +97,6 @@ const WordShow = (props: ShowProps): ReactElement => {
 
   const resourceTitle = {
     wordSuggestions: 'Word Suggestion',
-    genericWords: 'Generic Word',
     words: 'Word',
   };
 

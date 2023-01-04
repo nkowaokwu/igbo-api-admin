@@ -132,9 +132,6 @@ const bodyQuery = (regex: SearchRegExp): { body: { $regex: RegExp } } => ({ body
 const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => (
   { variations: { $in: [regex.wordReg] } }
 );
-const definitionsQuery = (regex: SearchRegExp): { 'definitions.definitions': { $in: [RegExp] } } => (
-  { 'definitions.definitions': { $in: [regex.definitionsReg] } }
-);
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
 
 /* Regex match query used to later to defined the Content-Range response header */
@@ -201,21 +198,6 @@ export const searchPreExistingCorpusSuggestionsRegexQuery = (
   $or: [titleQuery(regex), bodyQuery(regex)],
   merged: null,
   ...(filters ? generateSearchFilters(filters, uid) : {}),
-});
-export const searchPreExistingGenericWordsRegexQueryAsEditor = (
-  segmentRegex: RegExp,
-  regex: SearchRegExp,
-): { $or: { $and: any[] }[], merged: null } => ({
-  $or: [
-    { $and: [wordQuery(regex), { word: { $regex: segmentRegex } }] },
-    { $and: [variationsQuery(regex), { variations: { $regex: segmentRegex } }] },
-    { $and: [definitionsQuery(regex), { word: { $regex: segmentRegex } }] },
-  ],
-  merged: null,
-});
-export const searchPreExistingGenericWordsRegexQuery = (regex: SearchRegExp): { $or: any[], merged: null } => ({
-  $or: [wordQuery(regex), variationsQuery(regex), definitionsQuery(regex)],
-  merged: null,
 });
 export const searchCorpusTextSearch = (
   keyword: string,

@@ -327,7 +327,7 @@ const mergeIntoWord = (
     });
 };
 
-/* Creates a new Word document from an existing WordSuggestion or GenericWord document */
+/* Creates a new Word document from an existing WordSuggestion document */
 const createWordFromSuggestion = (
   suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
@@ -360,7 +360,7 @@ const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> 
   };
 };
 
-/* Merges the existing WordSuggestion of GenericWord into either a brand
+/* Merges the existing WordSuggestion into either a brand
  * new Word document or merges into an existing Word document */
 export const mergeWord = async (
   req: Interfaces.EditorRequest,

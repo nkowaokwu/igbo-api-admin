@@ -12,7 +12,7 @@ import {
   TWITTER_APP_URL,
   IGBO_API_EDITOR_PLATFORM_ROOT,
   DICTIONARY_APP_URL,
-} from '../config';
+} from 'src/backend/config';
 import ConstructedPollThread from '../shared/constants/ConstructedPollThread';
 import { handleQueries } from './utils';
 

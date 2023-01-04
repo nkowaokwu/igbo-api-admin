@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { TEST_MONGO_URI, LOCAL_MONGO_URI, PROD_MONGO_URI } from '../config';
+import { TEST_MONGO_URI, LOCAL_MONGO_URI, PROD_MONGO_URI } from 'src/backend/config';
 
 const config = functions.config();
 const productionServiceAccount = config?.runtime?.production;

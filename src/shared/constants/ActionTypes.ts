@@ -15,7 +15,6 @@ enum ActionTypes {
   MERGE = 'Merge',
   DELETE = 'Delete',
   COMBINE = 'Combine',
-  ASSIGN_EDITING_GROUP = 'AssignEditingGroup',
   CONVERT = 'Convert',
   REQUEST_DELETE = 'Send Delete Request',
   DELETE_POLL = 'Delete Poll',
