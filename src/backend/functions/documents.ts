@@ -79,7 +79,7 @@ export const onUpdateDocument = functions.https.onCall(async (
       author = null;
     }
 
-    if (to.length) {
+    if (to?.length) {
       await postNotification({
         data: {
           type,
@@ -101,6 +101,8 @@ export const onUpdateDocument = functions.https.onCall(async (
         word: record.word || record.igbo,
         editorsNotes: record.editorsNotes,
       });
+    } else {
+      console.log('No one to send to:', to);
     }
     return { redirect: false };
   } catch (err) {

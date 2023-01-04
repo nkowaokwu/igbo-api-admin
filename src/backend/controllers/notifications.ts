@@ -100,7 +100,7 @@ export const postNotification = async ({
       to = author.uid !== context.auth.uid ? [author.uid] : [];
     }
 
-    if (!to.length) {
+    if (!to?.length) {
       console.warn('There are no recipients');
       return null;
     }
@@ -122,6 +122,7 @@ export const postNotification = async ({
       await dbNotificationsRef.doc(`${timestamp}`).set(newNotification);
     }));
 
+    console.log('Sent in platform notification to the following', to);
     return `Saved ${to.length} ${to.length === 1 ? 'Notification' : 'Notifications'} `;
   } catch (err) {
     console.warn('Unable to create notification', err);
