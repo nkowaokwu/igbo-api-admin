@@ -62,7 +62,7 @@ export const copyAudioPronunciation = async (
   oldDocId: string,
   newDocId: string,
   isMp3 = false,
-): Promise<any> => {
+): Promise<string> => {
   const oldAudioId = removeAccents.remove(oldDocId);
   const newAudioId = removeAccents.remove(newDocId);
   try {
@@ -97,7 +97,7 @@ export const copyAudioPronunciation = async (
 };
 
 /* Takes an old and new pronunciation id and renames it (copies and deletes) */
-export const renameAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<any> => {
+export const renameAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<string> => {
   if (isCypress || !isAWSProduction) {
     if (!oldDocId) {
       return '';

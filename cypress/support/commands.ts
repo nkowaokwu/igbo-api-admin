@@ -277,13 +277,15 @@ Cypress.Commands.add('getExampleDetails', (position: number = 1) => {
 
 /* Grabs the editor's action dropdown for the first document in the list */
 // Alternative query: https://github.com/cypress-io/cypress/issues/549#issuecomment-523399928
-Cypress.Commands.add('getActionsOption', (optionText: string, position: number = 0) => {
+Cypress.Commands.add('getActionsOption', { scrollBehavior: false }, (optionText: string, position: number = 0) => {
   cy.findAllByTestId('actions-menu').should('be.visible').as('editorActions');
   cy.get('@editorActions')
     .eq(position)
     .scrollIntoView()
     .click({ force: true  });
-  return cy.findByRole('menuitem', { name: optionText });
+  cy.findByRole('menuitem', { name: optionText }).as('menuItem');
+  cy.wait(500);
+  return cy.get('@menuItem');
 });
 
 /* Presses the confirm option in the confirmation modal */
@@ -364,28 +366,4 @@ Cypress.Commands.add('selectCollection', (collection: Collection, overrideWait: 
   };
   cy.get(`a[href="#/${collection}"]`).scrollIntoView().click({ force: true });
   cy.wait(1000);
-});
-
-Cypress.Commands.add('seedDatabase', () => {
-  const API_ROUTE = 'http://localhost:8080/api/v1';
-  cy.request({
-    method: 'GET',
-    url: `${API_ROUTE}/words`,
-    headers: {
-      'X-API-Key': 'main_key',
-    },
-    failOnStatusCode: false,
-  }).then((response) => {
-    if (response.status >= 400 || !response.body.length || response.body.error) {
-      cy.request({
-        method: 'POST',
-        url: `${API_ROUTE}/test/populate`,
-        headers: {
-          'X-API-Key': 'main_key',
-        },
-        failOnStatusCode: false,
-        timeout: 45000,
-      });
-    }
-  });
 });

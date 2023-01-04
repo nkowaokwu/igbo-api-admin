@@ -1,6 +1,5 @@
 describe('List', () => {
   before(() => {
-    cy.seedDatabase();
     cy.cleanLogin();
   });
 

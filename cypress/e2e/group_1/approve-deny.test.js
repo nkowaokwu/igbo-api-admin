@@ -1,12 +1,13 @@
 import { SuggestionSelectOptions } from '../../constants';
 
-describe.skip('Approve and Deny', () => {
-  describe('Word Suggestions', () => {
-    before(() => {
-      cy.cleanLogin();
-    });
+describe('Approve and Deny', () => {
+  before(() => {
+    cy.cleanLogin();
+  });
 
-    it('approve a wordSuggestion in list view', () => {
+  describe('Word Suggestions', () => {
+
+    it('approve a wordSuggestion in list view', { scrollBehavior: false }, () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
@@ -19,7 +20,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('deny a wordSuggestion in list view', () => {
+    it('deny a wordSuggestion in list view', { scrollBehavior: false }, () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
@@ -32,7 +33,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('approve a wordSuggestion in show view', () => {
+    it('approve a wordSuggestion in show view', { scrollBehavior: false }, () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
@@ -46,7 +47,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('deny a wordSuggestion in show view', () => {
+    it('deny a wordSuggestion in show view', { scrollBehavior: false }, () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getWordSuggestionDocumentDetails();
@@ -62,11 +63,7 @@ describe.skip('Approve and Deny', () => {
   });
 
   describe('Example Suggestions', () => {
-    before(() => {
-      cy.cleanLogin();
-    });
-
-    it('approve a exampleSuggestion in list view', () => {
+    it('approve a exampleSuggestion in list view', { scrollBehavior: false }, () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
@@ -79,7 +76,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('deny a exampleSuggestion in list view', () => {
+    it('deny a exampleSuggestion in list view', { scrollBehavior: false }, () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
@@ -92,7 +89,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('approve a exampleSuggestion in show view', () => {
+    it('approve a exampleSuggestion in show view', { scrollBehavior: false }, () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();
@@ -106,7 +103,7 @@ describe.skip('Approve and Deny', () => {
       });
     });
 
-    it('deny a exampleSuggestion in show view', () => {
+    it('deny a exampleSuggestion in show view', { scrollBehavior: false }, () => {
       cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
       cy.getExampleSuggestionDocumentDetails();

@@ -253,12 +253,14 @@ const overwriteWordPronunciation = async (
     // Since the word suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
     initialSuggestion.skipPronunciationHook = true;
     const suggestion = await initialSuggestion.save();
+    const suggestionDialects = suggestion.dialects || [];
 
-    await Promise.all(suggestion.dialects || [].map(async ([
-      rawDialectalWord,
+    await Promise.all(suggestionDialects.map(async (
       { pronunciation: suggestionPronunciation, _id: dialectalWordId },
-    ]) => {
-      const wordDialectPronunciationKey = `${word.id}-${dialectalWordId}`;
+      index,
+    ) => {
+      const wordDocDialectalWordId = word.dialects[index]._id;
+      const wordDialectPronunciationKey = `${word.id}-${wordDocDialectalWordId}`;
       const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWordId}`;
       /**
        * If the Word dialect's pronunciation doesn't include the Word's id,
@@ -270,21 +272,22 @@ const overwriteWordPronunciation = async (
         await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey, isMp3)
       );
 
-      suggestion.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
-      if (!word.dialects[rawDialectalWord]) {
+      suggestion.dialects[index].pronunciation = finalDialectPronunciationUri;
+      if (!word.dialects[index]) {
         // @ts-expect-error _id
-        word.dialects[rawDialectalWord] = {
+        word.dialects[index] = {
           dialects: [],
           variations: [],
           pronunciation: '',
         };
       }
-      word.dialects[rawDialectalWord].pronunciation = finalDialectPronunciationUri;
+      word.dialects[index].pronunciation = finalDialectPronunciationUri;
     }));
 
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
     await Word.findOneAndUpdate({ _id: word.id }, word.toObject());
+    // TODO: audio ids for dialects will use a different schema id since they change on each save
     return await word.save();
   } catch (err) {
     console.log('An error occurred while merging audio pronunciations failed:', err.message);
@@ -294,7 +297,10 @@ const overwriteWordPronunciation = async (
   }
 };
 
-/* Merges new data into an existing Word document */
+/* *
+ * Merges new data into an existing Word document
+ * Serves as a Mongoose post `findOneAndUpdate` hook
+ * */
 const mergeIntoWord = (
   suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
