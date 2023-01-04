@@ -7,10 +7,6 @@ import FormHeader from '../../../FormHeader';
 import TagsInterface from './TagsFormInterface';
 
 const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
-  const handleMultiSelectTags = (callback) => (selectedTags = []) => {
-    callback((selectedTags || []).map(({ value }) => value));
-  };
-
   const generateDefaultTags = () => {
     if (record?.tags) {
       return record.tags.map((tag) => WordTags[tag.toUpperCase()]);
@@ -32,7 +28,7 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
             render={({ onChange, ref }) => (
               <Select
                 ref={ref}
-                onChange={handleMultiSelectTags(onChange)}
+                onChange={onChange}
                 options={Object.values(WordTags)}
                 defaultValue={generateDefaultTags()}
                 isMulti
@@ -45,7 +41,7 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
         </Box>
       </Box>
       {errors.tags ? (
-        <p className="error relative">{errors.tags.message}</p>
+        <p className="error relative">{errors.tags[0]?.message || errors.tags.message}</p>
       ) : null}
     </Box>
   );

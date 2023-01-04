@@ -16,6 +16,7 @@ import AudioRecorder from '../../AudioRecorder';
 const DialectForm = ({
   index,
   record,
+  errors,
   control,
   getValues,
   setValue,
@@ -27,6 +28,11 @@ const DialectForm = ({
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
   ));
+  const errorMessage = (errors.dialects
+    ? errors.dialects[index]?.dialects?.message
+    || errors.dialects[index]?.message
+    || errors.dialects.message
+    : '').replace(`dialects[${index}].dialects`, 'Dialects');
 
   return (
     <Box
@@ -118,6 +124,9 @@ const DialectForm = ({
           />
         </Box>
       </Box>
+      {errors.dialects ? (
+        <p className="error relative">{errorMessage}</p>
+      ) : null}
     </Box>
   );
 };
