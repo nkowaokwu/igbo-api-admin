@@ -32,7 +32,6 @@ export const UserSelectOptions = {
   SET_AS_EDITOR: 'Set as Editor',
   SET_AS_MERGER: 'Set as Merger',
   SET_AS_ADMIN: 'Set as Admin',
-  ASSIGN_EDITING_GROUP: 'Assign Editing Group',
   DELETE_USER: 'Delete User',
 };
 

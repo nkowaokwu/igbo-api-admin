@@ -5,7 +5,6 @@ import { Role } from 'src/shared/constants/auth-types';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collections';
-import { canAssignEditingGroupNumber } from './utils';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 
 const db = admin.firestore();
@@ -85,36 +84,6 @@ export const onDeleteUser = functions.https.onCall(async (user: UpdatePermission
     return errorResponse(err);
   }
 });
-
-/* Assigns an editor to a segment of GenericWords */
-export const onAssignUserToEditingGroup = functions.https
-  .onCall(async (data: { groupNumber: string, uid: string }, context) => {
-    try {
-      if (!context?.auth?.uid) {
-        return new functions.https.HttpsError('unavailable', '', 'User is not logged in');
-      }
-      const { uid } = data;
-      const groupNumber = parseInt(data.groupNumber, 10);
-      const user = await admin.auth().getUser(context.auth.uid);
-      const { role } = user.customClaims;
-      if (role === Role.ADMIN) {
-        const editorUser = await admin.auth().getUser(uid);
-        const { customClaims } = editorUser;
-        if (canAssignEditingGroupNumber(customClaims.role, groupNumber)) {
-          await admin.auth().setCustomUserClaims(uid, { ...customClaims, editingGroup: groupNumber });
-          return `Successfully assigned editor ${uid} into group ${groupNumber}`;
-        }
-        return new functions.https.HttpsError(
-          'invalid-argument',
-          '',
-          'Unable to assign editing group numbers to non-editors',
-        );
-      }
-      return new functions.https.HttpsError('unavailable', '', 'User doesn\'t have the right permission');
-    } catch (err) {
-      return errorResponse(err);
-    }
-  });
 
 /* Updates a users role based permissions */
 export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePermissions): Promise<string | Error> => {

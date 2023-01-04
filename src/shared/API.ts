@@ -2,17 +2,12 @@ import axios from 'axios';
 import { Record } from 'react-admin';
 import { getAuth } from 'firebase/auth';
 import IndexedDBAPI from 'src/utils/IndexedDBAPI';
-import { EmptyResponse } from './server-validation';
-import { useCallable } from '../hooks/useCallable';
 import { API_ROUTE } from './constants/index';
 import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collections';
 
 const auth = getAuth();
-const handleAssignUserToEditingGroup = (
-  useCallable<{ groupNumber: string, uid: string }, EmptyResponse>('assignUserToEditingGroup')
-);
 
 export const createAuthorizationHeader = async (): Promise<string> => {
   const { currentUser } = auth;
@@ -209,16 +204,5 @@ export const combineDocument = (
     }
     return { data };
   });
-
-export const assignUserToEditingGroup = ({
-  groupNumber,
-  record,
-} : {
-  groupNumber: number | string,
-  record: Record,
-}): Promise<any> => {
-  const { id: uid } = record;
-  return handleAssignUserToEditingGroup({ groupNumber, uid });
-};
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);

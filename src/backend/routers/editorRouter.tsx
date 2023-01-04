@@ -45,12 +45,6 @@ import {
   getUserStats,
   getUserMergeStats,
 } from '../controllers/stats';
-import {
-  deleteGenericWord,
-  getGenericWords,
-  putGenericWord,
-  getGenericWord,
-} from '../controllers/genericWords';
 import { getPolls } from '../controllers/polls';
 import { getNotifications, getNotification, deleteNotification } from '../controllers/notifications';
 import validId from '../middleware/validId';
@@ -162,16 +156,6 @@ editorRouter.get('/stats/full', getStats);
 editorRouter.get('/stats/user', cacheControl, getUserStats);
 editorRouter.get('/stats/users/:uid/merge', getUserMergeStats);
 editorRouter.get('/stats/users/:uid', cacheControl, getUserStats);
-
-editorRouter.put('/genericWords/:id', validId, putGenericWord);
-editorRouter.get('/genericWords', getGenericWords);
-editorRouter.get('/genericWords/:id', validId, getGenericWord);
-editorRouter.delete(
-  '/genericWords/:id',
-  validId,
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
-  deleteGenericWord,
-);
 
 editorRouter.get('/polls', getPolls);
 

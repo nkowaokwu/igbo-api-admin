@@ -11,7 +11,7 @@ import {
   UPDATED_ROLE_NOTIFICATION,
   DOCUMENT_DELETION_REQUEST_NOTIFICATION,
   DOCUMENT_UPDATE_NOTIFICATION,
-} from '../config';
+} from 'src/backend/config';
 import { findAdminUserEmails } from './users';
 import * as Interfaces from './utils/interfaces';
 

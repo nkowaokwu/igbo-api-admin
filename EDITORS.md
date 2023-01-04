@@ -10,9 +10,9 @@ You are working with **production data**, which means that other editors can see
 
 ## Vocabulary
 
-**Editor -** A user that has access to the Igbo API Editor Platform and is able to edit any WordSuggestion, ExampleSuggestion, or GenericWord documents in the database
+**Editor -** A user that has access to the Igbo API Editor Platform and is able to edit any WordSuggestion or ExampleSuggestion documents in the database
 
-**Merger** - A user (typically the project owner) that has the ability to not only edit WordSuggestion, ExampleSuggestion, or GenericWord documents but also has the ability to create new Word and Example documents by merging them from suggestion objects.
+**Merger** - A user (typically the project owner) that has the ability to not only edit WordSuggestion or ExampleSuggestion documents but also has the ability to create new Word and Example documents by merging them from suggestion objects.
 
 # The Collections
 
@@ -47,20 +47,9 @@ ExampleSuggestions are **user-created** objects that suggest an editor either a 
 
 - You can directly editor Example Suggestions but it's recommended that you don't. It's best to either just approve or deny it.
 
-## GenericWords
-
-These are words that come from another dictionary source that we want to merge into the database. These are **NOT user generated**, meaning that user cannot create a new GenericWord that will get placed in the database. Instead, a computer script was ran to grab this information from the Internet.
-
-- At the beginning of this project, there's around 55,000 GenericWords that all came from Google Translate
-- These are the documents that you definitely want to directly edit. Once you make all your edits you can approve it.
-
 # Scenarios
 
 The follow is a number of different scenarios that will occur while you edit data. Please read through all of these cases since they will come up while your are editing.
-
-## Generic Words
-
-- **Scenario 1: A Generic Word already exists as a Word**
 
 ## Word Suggestions
 
@@ -174,28 +163,8 @@ It's extremely important to link WordSuggestions and ExampleSuggestions to pre-e
 
 - This will make everything easier to track in the backend
 
-## Editors' Notes
-
-These are notes that only editors can see. This will help guide any offline conversations to make sure that people know why something has been approved, denied, or even edited.
-
-## Approvals and Denials
-
-What does it mean to approve or deny something?
-
-✅The word or example doesn't exist in the Words collection
-
-✅Every new word and example must include definitions
-
-✅Use Standard Igbo as much as possible when adding or approving words
-
-🆚If you're not 100% confident with accent marks, don't add any! It's easier to go back and add accent marks than to change pre-existing ones.
-
-🔴Deny the wordSuggestion or exampleSuggestions with matching or similar definitions already exist in the Words and Examples collections
-
-🔴**DO NOT** deny any GenericWord, those are words that are meant to be directly edited by editors
-
 ## Weekly Merging Meeting
 
 Every Saturday or Sunday mergers will look through all the approved suggestion documents and merge them into the database.
 
-Merging means that a WordSuggestion, ExampleSuggestion, or GenericWord will turn into a Word or Example document, respectively, that the entire world can see.
+Merging means that a WordSuggestion or ExampleSuggestion will turn into a Word or Example document, respectively, that the entire world can see.

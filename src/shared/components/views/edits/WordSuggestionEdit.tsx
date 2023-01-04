@@ -41,7 +41,7 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
         record={record}
         resource={resource}
         view={View.EDIT}
-        title={resource === 'genericWords' ? 'Edit Generic Word' : 'Edit Word Suggestion'}
+        title="Edit Word Suggestion"
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">

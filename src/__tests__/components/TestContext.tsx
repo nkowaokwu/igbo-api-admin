@@ -16,6 +16,7 @@ Object.defineProperty(global.navigator, 'mediaDevices', {
 });
 
 jest.mock('firebase');
+jest.mock('firebase/auth');
 jest.mock('@chakra-ui/react');
 jest.mock('react-admin');
 jest.mock('src/shared/API');

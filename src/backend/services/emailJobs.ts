@@ -6,13 +6,9 @@ import { sendMergedStats, sendSuggestionsReminder } from '../controllers/email';
 import { getTotalWordsWithAudioPronunciations, getTotalWordsInStandardIgbo } from '../controllers/words';
 import { getWordSuggestionsFromLastWeek, getNonMergedWordSuggestions } from '../controllers/wordSuggestions';
 import { getExampleSuggestionsFromLastWeek, getNonMergedExampleSuggestions } from '../controllers/exampleSuggestions';
-import { getGenericWordsFromLastWeek } from '../controllers/genericWords';
 
 const getMergedWords = async (mongooseConnection) => (
-  compact(flatten([
-    await getWordSuggestionsFromLastWeek(mongooseConnection),
-    await getGenericWordsFromLastWeek(),
-  ]))
+  compact(await getWordSuggestionsFromLastWeek(mongooseConnection))
 );
 
 const getMergedExamples = async (mongooseConnection) => (

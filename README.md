@@ -165,8 +165,6 @@ http://localhost:8080/api/v1/test/populate // POST
 After about 20 seconds, if you see the `✅ Seeding successful.` message in your terminal,
 then you have successfully populated your database!
 
-**For genericWords**, you can make a `POST` request to `http://localhost:3030/test/genericWords`
-
 ## Build Production
 
 If you would like to create a production build of the project, follow these steps.

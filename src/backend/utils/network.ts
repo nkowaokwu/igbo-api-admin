@@ -1,13 +1,26 @@
-import axios from 'axios';
+import axios, { Method } from 'axios';
+import { Request } from 'express';
 import querystring from 'querystring';
 import { upperCase } from 'lodash';
-import { CI, IGBO_API_ROOT, GET_MAIN_KEY } from '../config';
+import Collections from 'src/shared/constants/Collections';
+import { CI, IGBO_API_ROOT, GET_MAIN_KEY } from 'src/backend/config';
 
 const logger = (req, method, path, collection) => {
   console.log(`${upperCase(method)} - ${IGBO_API_ROOT}/${collection}${path}?${querystring.stringify(req.query)}`);
 };
 
-export default async (req, { method, collection, path = '' }) => {
+export default async (
+  req: Request,
+  {
+    method,
+    collection,
+    path = '',
+  } : {
+    method: Method,
+    collection: Collections,
+    path: string,
+  },
+): Promise<any> => {
   const {
     accept,
     connection,

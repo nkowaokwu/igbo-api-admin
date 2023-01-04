@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { GET_MAIN_KEY } from '../config';
+import { GET_MAIN_KEY } from 'src/backend/config';
 import UserRoles from '../shared/constants/UserRoles';
 
 /* Determines API permission levels based on user role */

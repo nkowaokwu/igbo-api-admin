@@ -84,11 +84,6 @@ const Select = ({
     { value: 'editor', label: 'Set as Editor', onSelect: () => setAction(actionsMap.Convert) },
     { value: 'merger', label: 'Set as Merger', onSelect: () => setAction(actionsMap.Convert) },
     { value: 'admin', label: 'Set as Admin', onSelect: () => setAction(actionsMap.Convert) },
-    {
-      value: 'assignGroup',
-      label: 'Assign Editing Group',
-      onSelect: () => setAction(actionsMap.AssignEditingGroup),
-    },
     hasAdminPermissions(permissions, {
       value: 'deleteUser',
       label: 'Delete User',

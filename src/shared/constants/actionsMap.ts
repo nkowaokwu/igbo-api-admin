@@ -8,7 +8,6 @@ import {
   mergeDocument,
   deleteDocument,
   combineDocument,
-  assignUserToEditingGroup,
 } from '../API';
 import ActionTypes from './ActionTypes';
 import Collections from './Collections';
@@ -120,19 +119,6 @@ export default {
     ),
     successMessage: 'Document has been combined into another ☄️',
     hasLink: true,
-  },
-  [ActionTypes.ASSIGN_EDITING_GROUP]: {
-    type: 'AssignEditingGroup',
-    title: 'Assign User to an Editing Group',
-    content: `The GenericWords are segmented into "Editing Groups". Assign 
-    a user to a designated group. Range of 1-3 inclusive.`,
-    executeAction: (
-      { groupNumber, record }:
-      { groupNumber: string, record: Record },
-    ): Promise<any> => (
-      assignUserToEditingGroup({ groupNumber, record })
-    ),
-    successMessage: 'Editor has been assigned to a editing group 🛎',
   },
   [ActionTypes.CONVERT]: {
     type: 'Convert',
