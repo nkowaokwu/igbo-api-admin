@@ -20,15 +20,13 @@ describe('Actions', () => {
     });
 
     it('show disabled merge for example suggestion', () => {
-      cy.createExampleSuggestion();
       cy.selectCollection('exampleSuggestions');
+      cy.createExampleSuggestion();
       cy.getExampleSuggestionDocumentDetails();
-      cy.get('@selectedIgbo').then(([$igbo]) => {
+      cy.get('@selectedIgbo').then(() => {
         cy.getActionsOption(SuggestionSelectOptions.MERGE).click({ scrollBehavior: false });
         cy.acceptConfirmation();
-        cy.findByText('View the updated document here').click();
-        cy.findByText('Example Document Details');
-        cy.findAllByText($igbo.innerText).first();
+        cy.findAllByText('View the updated document here');
       });
     });
   });

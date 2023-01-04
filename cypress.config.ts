@@ -2,7 +2,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   chromeWebSecurity: false,
-  defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 10000,
   requestTimeout: 10000,
   retries: 0,
   screenshotOnRunFailure: false,
@@ -10,7 +10,7 @@ export default defineConfig({
   videoUploadOnPasses: false,
   viewportHeight: 960,
   viewportWidth: 1536,
-  numTestsKeptInMemory: 0,
+  numTestsKeptInMemory: 1,
 
   e2e: {
     // We've imported your old cypress plugins here.
@@ -20,6 +20,7 @@ export default defineConfig({
     },
     baseUrl: 'http://localhost:3030',
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
+    testIsolation: false,
   },
 
   component: {
