@@ -17,7 +17,6 @@ const Example = ({
   examples,
   example,
   getValues,
-  setValue,
   index,
 }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
@@ -59,7 +58,6 @@ const Example = ({
 
   const handleSetPronunciation = (path, value) => {
     // Setting the react-hook-form value
-    setValue(path, value);
     const updatedExamples = [...examples];
     updatedExamples[index].pronunciation = value;
     // Setting the local WordEditForm value
@@ -141,7 +139,6 @@ const Example = ({
             const updateExamples = [...examples];
             updateExamples.splice(index, 1);
             setExamples(updateExamples);
-            setValue('examples', []);
           }}
           className="ml-3"
           icon={isExistingExample ? (() => <>🗄</>)() : (() => <>🗑</>)()}
