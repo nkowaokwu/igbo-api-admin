@@ -31,7 +31,11 @@ const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermis
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
 const handleDeleteConstructedTermPoll = useCallable<any, EmptyResponse>('deleteConstructedTermPoll');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
-export const handleUpdateDocument = useCallable<any, EmptyResponse>('updateDocument');
+export const handleUpdateDocument = useCallable<{
+  type: string,
+  resource: Collections,
+  record: Record,
+}, EmptyResponse>('updateDocument');
 
 export default {
   [ActionTypes.EDIT]: (resource: string, id: string): string => `/${resource}/${id}/edit`,
@@ -41,7 +45,7 @@ export default {
     type: 'Approve',
     title: 'Approve Document',
     content: 'Are you sure you want to approve this document?',
-    executeAction: async ({ record, resource } : { record: Record, resource: string }) : Promise<any> => {
+    executeAction: async ({ record, resource } : { record: Record, resource: Collections }) : Promise<any> => {
       await approveDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
     },
@@ -51,7 +55,7 @@ export default {
     type: 'Deny',
     title: 'Deny Document',
     content: 'Are you sure you want to deny this document?',
-    executeAction: async ({ record, resource }: { record: Record, resource: string }) : Promise<any> => {
+    executeAction: async ({ record, resource }: { record: Record, resource: Collections }) : Promise<any> => {
       await denyDocument({ resource, record: prepareRecord(record) });
       return handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
     },

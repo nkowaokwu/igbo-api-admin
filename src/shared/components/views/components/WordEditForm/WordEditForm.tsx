@@ -26,6 +26,7 @@ import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeArray, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -176,7 +177,7 @@ const WordEditForm = ({
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
           setIsSubmitting(false);
-          handleUpdateDocument({ resource, record: data });
+          handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
           redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },

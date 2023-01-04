@@ -26,6 +26,7 @@ import actionsMap, { handleUpdateDocument } from 'src/shared/constants/actionsMa
 import Collection from 'src/shared/constants/Collections';
 import FilePicker from 'src/shared/primitives/FilePicker';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
+import ActionTypes from 'src/shared/constants/ActionTypes';
 import CorpusEditFormResolver from './CorpusEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -168,7 +169,7 @@ const CorpusEditForm = ({
                 }
               });
           }
-          handleUpdateDocument({ resource, record: data });
+          handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           setIsSubmitting(false);
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
           redirect(

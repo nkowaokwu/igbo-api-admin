@@ -1,13 +1,18 @@
 import { NextFunction, Response } from 'express';
 import admin from 'firebase-admin';
+import { CallableContext } from 'firebase-functions/v1/https';
 import { omit, pick } from 'lodash';
 import moment from 'moment';
+import { User } from 'firebase/auth';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import Views from 'src/shared/constants/Views';
 import Collections from 'src/shared/constants/Collections';
 import { handleQueries } from './utils';
 
 const db = admin.firestore();
+db.settings({
+  ignoreUndefinedProperties: true,
+});
 /* Enables paginating through all available notifications for a user */
 export const getNotifications = async (
   req: Interfaces.EditorRequest,
@@ -70,9 +75,14 @@ export const postNotification = async ({
   author,
   context,
 } : {
-  data: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
-  author: any,
-  context: any,
+  data: {
+    type: string,
+    resource: Collections,
+    record: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
+    includeEditors: boolean,
+  },
+  author: User,
+  context: CallableContext,
 }): Promise<any | void> => {
   const { includeEditors, record, resource } = data;
 
@@ -87,19 +97,21 @@ export const postNotification = async ({
         .concat(record.userInteractions || [])))
         .filter((uid) => uid !== context.auth.uid);
     } else {
-      to = [author.email];
+      to = author.uid !== context.auth.uid ? [author.uid] : [];
     }
 
     if (!to.length) {
-      throw new Error('There are no recipients');
+      console.warn('There are no recipients');
+      return null;
     }
+    const link = `#/${resource}/${record.id}/${Views.SHOW}`;
     const notificationData: Omit<Interfaces.Notification, 'recipient'> = {
       type: data.type,
       initiator: pick(author, ['displayName', 'email', 'photoURL', 'uid']),
-      title: `${author.displayName || 'Platform'} has a new ${data.type} update`,
+      title: `${author.displayName || 'Platform'} has a new ${data.type} update for ${link}`,
       message: record.editorsNotes || '',
       data: JSON.stringify(omit(data, ['includeEditors'])),
-      link: `#/${resource}/${record.id}/${Views.SHOW}`,
+      link,
       opened: false,
     };
 
