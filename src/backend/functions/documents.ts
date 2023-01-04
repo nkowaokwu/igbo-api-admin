@@ -81,7 +81,6 @@ export const onUpdateDocument = functions.https.onCall(async (
 
     if (to.length) {
       await postNotification({
-        // @ts-expect-error
         data: {
           type,
           resource,

@@ -17,6 +17,7 @@ import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
+import ActionTypes from 'src/shared/constants/ActionTypes';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray } from '../utils';
 import FormHeader from '../FormHeader';
@@ -109,7 +110,7 @@ const ExampleEditForm = ({
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
           setIsSubmitting(false);
-          handleUpdateDocument({ resource, record: data });
+          handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
           redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },

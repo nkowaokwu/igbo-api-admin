@@ -96,7 +96,7 @@ export interface Notification {
   recipient: string,
   opened: boolean,
   link: string,
-  created_at?: number | string,
+  created_at?: number,
 }
 
 interface Suggestion extends Document<any>, LeanDocument<any> {

@@ -1,5 +1,5 @@
 /* Main list of all collections available in the platform */
-enum Collection {
+enum Collections {
   WORDS = 'words',
   EXAMPLES = 'examples',
   CORPORA = 'corpora',
@@ -12,4 +12,4 @@ enum Collection {
   NOTIFICATIONS = 'notifications',
 };
 
-export default Collection;
+export default Collections;

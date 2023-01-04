@@ -2,8 +2,6 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import pluralize from 'pluralize';
 import { getAuth } from 'firebase/auth';
 import {
-  doc,
-  setDoc,
   getFirestore,
   collection,
   query,
@@ -21,10 +19,10 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { EmailIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import Collections from 'src/shared/constants/Collections';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import openNotification from './utils/openNotification';
 
 const auth = getAuth();
 const db = getFirestore();
@@ -33,22 +31,6 @@ const NOTIFICATIONS_LIMIT = 6;
 const Notifications = (props): ReactElement => {
   const [notifications, setNotifications] = useState<Interfaces.Notification[]>([]);
   const toast = useToast();
-
-  const handleNotificationSelection = async ({ id, recipient, link }) => {
-    try {
-      const dbNotificationRef = doc(db, `${Collections.USERS}/${recipient}/${Collections.NOTIFICATIONS}`, id);
-      await setDoc(dbNotificationRef, { opened: true }, { merge: true });
-      window.location.hash = link;
-    } catch (err) {
-      toast({
-        title: 'An error occurred',
-        description: 'Unable to read the notification.',
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
-    }
-  };
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -79,7 +61,7 @@ const Notifications = (props): ReactElement => {
         as={Button}
         cursor="pointer"
         variant="ghost"
-        leftIcon={<EmailIcon boxSize={5} color="gray" />}
+        leftIcon={(() => <>📫</>)()}
         color="gray.800"
         {...props}
       >
@@ -134,13 +116,26 @@ const Notifications = (props): ReactElement => {
               }}
               p={3}
               my={2}
-              onClick={() => handleNotificationSelection({ id: `${created_at}`, recipient, link })}
+              onClick={() => openNotification({
+                id: `${created_at}`,
+                recipient,
+                link,
+                toast,
+              })}
               transition="all 200ms"
               style={{ outline: 'none' }}
             >
               <Avatar src={initiator.photoURL} name={initiator.displayName} />
               <Box width="90%">
-                <Text color="blue.700" fontWeight="bold">{title || 'Notification'}</Text>
+                <Text
+                  color="blue.700"
+                  fontWeight="bold"
+                  textOverflow="ellipsis"
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                >
+                  {title || 'Notification'}
+                </Text>
                 <Text
                   color="gray"
                   textOverflow="ellipsis"
@@ -150,7 +145,7 @@ const Notifications = (props): ReactElement => {
                 >
                   {message}
                 </Text>
-                <Text fontSize="sm" color="gray.400">{moment(created_at).fromNow()}</Text>
+                <Text fontSize="sm" color="gray.400">{moment.unix(created_at).fromNow()}</Text>
               </Box>
             </MenuItem>
           ))

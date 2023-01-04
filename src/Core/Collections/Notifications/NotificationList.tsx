@@ -34,8 +34,8 @@ const NotificationList = (props: ListProps): React.ReactElement => (
       medium={(
         <Datagrid>
           <TextField label="Title" source="title" />
-          <TextField label="Message" source="message" />
-          <BooleanField label="Opened" source="opened" />
+          <TextField label="Message" source="message" defaultValue="N/A" />
+          <BooleanField label="Opened" source="opened" defaultValue="Platform" />
           <TextField label="Sender" source="initiator.displayName" />
           <ShowNotificationButtonField source="link" />
         </Datagrid>
