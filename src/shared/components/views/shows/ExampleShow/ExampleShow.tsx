@@ -119,9 +119,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               />
               <Box className="flex flex-col mt-5">
                 <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
-                {/* TODO: check this part! */}
                 <DiffField
-                  path="word"
+                  path="pronunciation"
                   diffRecord={diffRecord}
                   fallbackValue={pronunciation ? (
                     <ReactAudioPlayer
