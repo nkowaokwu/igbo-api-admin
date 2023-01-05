@@ -83,8 +83,16 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
                 return copyAudioPronunciation(oldId, newId, isMp3);
               })()
               : (() => {
-                renameAudioPronunciation(oldId, newWordId, isMp3);
-                return renameAudioPronunciation(oldId, newId, isMp3);
+                renameAudioPronunciation(oldId, newWordId, isMp3)
+                  .catch((err) => {
+                    console.log('First renameAudioPronunciation in pre save word suggestion hook', err.message);
+                    throw err;
+                  });
+                return renameAudioPronunciation(oldId, newId, isMp3)
+                  .catch((err) => {
+                    console.log('Second renameAudioPronunciation in pre save word suggestion hook', err.message);
+                    throw err;
+                  });
               })());
           }
         }));

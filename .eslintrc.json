@@ -25,6 +25,7 @@
     "import/no-cycle": "off",
     "max-len": ["error", { "code": 120 }],
     "no-confusing-arrow": "off",
+    "no-console": "off",
     "no-extra-boolean-cast": "off",
     "no-nested-ternary": "off",
     "no-param-reassign": "off",

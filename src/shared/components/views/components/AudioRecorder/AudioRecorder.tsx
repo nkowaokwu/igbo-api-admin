@@ -56,9 +56,9 @@ const AudioRecorder = ({
   /* Resets the audio pronunciation to its original value */
   const resetRecording = () => {
     const pronunciationPath = valuePath;
-    const originalPronunciationValue = path === 'headword'
-      ? originalRecord.pronunciation
-      : originalRecord[`${pronunciationPath}`];
+    const originalPronunciationValue = path.startsWith('dialects')
+      ? get(originalRecord, `${pronunciationPath}`)
+      : originalRecord.pronunciation;
     setPronunciation(formValuePath, originalPronunciationValue);
     setPronunciationValue(getFormValues(formValuePath));
     toast({

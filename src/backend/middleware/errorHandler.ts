@@ -8,7 +8,7 @@ export default async (err, req, res, next) => {
   if (err.message.match(/No .{1,} exist(s)?/) || err.message.match(/doesn't exist(s)?/)) {
     res.status(404);
   }
-  if (isProduction) {
+  if (!isProduction) {
     if (err.stack) {
       console.log(err.stack);
     } else {
