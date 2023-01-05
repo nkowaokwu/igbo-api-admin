@@ -245,7 +245,7 @@ const overwriteWordPronunciation = async (
      */
     const suggestionDocId = initialSuggestion.pronunciation ? initialSuggestion.id.toString() : '';
     const isMp3 = initialSuggestion.pronunciation.includes('mp3');
-    const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id, isMp3);
+    const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id.toString(), isMp3);
 
     initialSuggestion.pronunciation = finalPronunciationUri;
     word.pronunciation = finalPronunciationUri;
@@ -270,6 +270,10 @@ const overwriteWordPronunciation = async (
       const isMp3 = suggestionPronunciation.includes('mp3');
       const finalDialectPronunciationUri = (
         await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey, isMp3)
+          .catch((err) => {
+            console.log('Inside overwriteWordPronunciation dialects', err.message);
+            throw err;
+          })
       );
 
       suggestion.dialects[index].pronunciation = finalDialectPronunciationUri;
