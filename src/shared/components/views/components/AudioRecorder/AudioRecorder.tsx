@@ -57,7 +57,7 @@ const AudioRecorder = ({
   const resetRecording = () => {
     const pronunciationPath = valuePath;
     const originalPronunciationValue = path.startsWith('dialects')
-      ? originalRecord[`${pronunciationPath}`]
+      ? get(originalRecord, `${pronunciationPath}`)
       : originalRecord.pronunciation;
     setPronunciation(formValuePath, originalPronunciationValue);
     setPronunciationValue(getFormValues(formValuePath));
