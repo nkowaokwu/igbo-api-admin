@@ -1,11 +1,6 @@
 import React, { memo, ReactElement, useMemo } from 'react';
 import { Box } from '@chakra-ui/react';
-import {
-  AdminContext,
-  AdminUI,
-  Resource,
-  usePermissions,
-} from 'react-admin';
+import { AdminContext, AdminUI, usePermissions } from 'react-admin';
 import {
   Dashboard,
   Layout,
@@ -16,6 +11,7 @@ import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
 import { getResourceObjects } from './Resources';
+import Resource from './Resource';
 import Menu from './Menu';
 import Theme from './Theme';
 
