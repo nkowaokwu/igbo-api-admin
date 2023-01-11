@@ -97,7 +97,7 @@ const UserStat = ({
         const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek();
         const labels = [];
         for (let i = threeMonthsAgoWeek; i <= threeMonthsAgoWeek + THREE_MONTH_WEEKS_COUNT; i += 1) {
-          labels.push(`Week of ${moment().isoWeek(i).format('MMMM Do')}`);
+          labels.push(`Week of ${moment().isoWeek(i).startOf('week').format('MMMM Do')}`);
         }
         const wordSuggestionData = {
           labels,
