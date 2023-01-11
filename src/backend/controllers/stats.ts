@@ -271,17 +271,19 @@ export const getUserMergeStats = async (
         .limit(WORD_SUGGESTION_QUERY_LIMIT),
     ]);
     const defaultMerges = {};
+    const isoWeekToDateMap = {};
     times(TWELVE_WEEKS, (index) => {
       const weekDate = moment()
         .subtract(index, 'weeks')
-        .startOf('week')
-        .toISOString();
-      defaultMerges[weekDate] = 0;
+        .startOf('week');
+
+      const week = weekDate.toISOString();
+      const isoWeek = weekDate.isoWeek();
+      defaultMerges[week] = 0;
+      isoWeekToDateMap[isoWeek] = week;
     });
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const dateOfIsoWeek = Object.keys(finalData).find((updatedAt) => (
-        moment(updatedAt).isoWeek() === moment(wordSuggestion.updatedAt).isoWeek()
-      ));
+      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
@@ -290,9 +292,7 @@ export const getUserMergeStats = async (
       return finalData;
     }, { ...defaultMerges });
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
-      const dateOfIsoWeek = Object.keys(finalData).find((updatedAt) => (
-        moment(updatedAt).isoWeek() === moment(exampleSuggestion.updatedAt).isoWeek()
-      ));
+      const dateOfIsoWeek = isoWeekToDateMap[moment(exampleSuggestion.updatedAt).isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
@@ -304,9 +304,7 @@ export const getUserMergeStats = async (
       return finalData;
     }, { ...defaultMerges });
     const dialectalVariationMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const dateOfIsoWeek = Object.keys(finalData).find((updatedAt) => (
-        moment(updatedAt).isoWeek() === moment(wordSuggestion.updatedAt).isoWeek()
-      ));
+      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] = finalData[dateOfIsoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
           editor === userId
