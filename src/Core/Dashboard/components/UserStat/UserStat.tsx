@@ -104,11 +104,7 @@ const UserStat = ({
           datasets: [
             {
               label: 'Word Suggestion Merges',
-              data: Object.entries(wordSuggestionMerges).reduce((finalData, [isoWeek, wordSuggestions]) => {
-                const position = parseInt(isoWeek, 10) - threeMonthsAgoWeek;
-                finalData[position] = wordSuggestions;
-                return finalData;
-              }, new Array(THREE_MONTH_WEEKS_COUNT).fill(0)),
+              data: Object.values(wordSuggestionMerges),
               backgroundColor: '#48825D',
               borderWidth: 2,
               borderColor: '#18532D',
@@ -121,11 +117,7 @@ const UserStat = ({
           datasets: [
             {
               label: 'Example Suggestion Merges',
-              data: Object.entries(exampleSuggestionMerges).reduce((finalData, [isoWeek, exampleSuggestions]) => {
-                const position = parseInt(isoWeek, 10) - threeMonthsAgoWeek;
-                finalData[position] = exampleSuggestions;
-                return finalData;
-              }, new Array(THREE_MONTH_WEEKS_COUNT).fill(0)),
+              data: Object.values(exampleSuggestionMerges),
               backgroundColor: '#3C83FF',
               borderWidth: 2,
               borderColor: '#2D62BE',
@@ -138,11 +130,7 @@ const UserStat = ({
           datasets: [
             {
               label: 'Dialectal Variation Merges',
-              data: Object.entries(dialectalVariationMerges).reduce((finalData, [isoWeek, dialectalVariations]) => {
-                const position = parseInt(isoWeek, 10) - threeMonthsAgoWeek;
-                finalData[position] = dialectalVariations;
-                return finalData;
-              }, new Array(THREE_MONTH_WEEKS_COUNT).fill(0)),
+              data: Object.values(dialectalVariationMerges),
               backgroundColor: '#FF5733',
               borderWidth: 2,
               borderColor: '#CA4225',

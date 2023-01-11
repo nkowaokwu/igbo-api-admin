@@ -63,9 +63,7 @@ const LacunaProgress = ({
               totalCount={dialectalVariationProgress.month}
               goal={Math.ceil((totalDialectalVariations - DIALECTAL_VARIATIONS_GOAL) / MONTHS_LEFT / TEAM_MEMBERS)}
               heading={`Dialectal Variations for ${moment().format('MMMM')}`}
-              description={`This progress bar tells you many dialectal variations you have contributed for the month,
-              in addition to how many more dialectal variations you'll need to 
-              contribute for ${moment().format('MMMM')}.`}
+              description={`The number of dialectal variations you have contributed for ${moment().format('MMMM')}.`}
               isLoaded
             />
             <LinearProgressCard
@@ -73,8 +71,7 @@ const LacunaProgress = ({
               goal={Math.ceil((totalDialectalVariations - DIALECTAL_VARIATIONS_GOAL)
                 / MONTHS_LEFT / TEAM_MEMBERS / WEEKLY)}
               heading="Dialectal Variations for the Week"
-              description="This progress bar tells you how many dialectal variations you have contributed for the week,
-              in addition to how many more dialectal variations you'll need to contribute for the week."
+              description="The number of dialectal variations you have contributed for the week"
               isLoaded
             />
           </Box>
@@ -86,8 +83,7 @@ const LacunaProgress = ({
               totalCount={exampleSentenceProgress.month}
               goal={Math.ceil((exampleSentenceProgress.month - EXAMPLE_SENTENCES_GOAL) / MONTHS_LEFT / TEAM_MEMBERS)}
               heading={`Example Sentences for ${moment().format('MMMM')}`}
-              description={`This progress bar tells you many example sentences you have contributed for the month,
-              in addition to how many more example sentences you'll need to contribute for ${moment().format('MMMM')}.`}
+              description={`The number of example sentences you have contributed for ${moment().format('MMMM')}.`}
               isLoaded
             />
             <LinearProgressCard
@@ -95,8 +91,7 @@ const LacunaProgress = ({
               goal={Math.ceil((exampleSentenceProgress.week - EXAMPLE_SENTENCES_GOAL)
                 / MONTHS_LEFT / TEAM_MEMBERS / WEEKLY)}
               heading="Example Sentences for the Week"
-              description="This progress bar tells you how many example sentences you have contributed for the week,
-              in addition to how many more example sentences you'll need to contribute for the week."
+              description="The number of example sentences you have contributed for the week"
               isLoaded
             />
           </Box>
