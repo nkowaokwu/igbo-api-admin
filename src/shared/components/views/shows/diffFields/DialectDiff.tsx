@@ -66,7 +66,7 @@ const DialectDiff = (
         >
           {(record.dialects as Interfaces.WordDialect[]).map(({
             variations = [],
-            dialects,
+            dialects = [],
             pronunciation,
             word: dialectalWord,
           }) => (
