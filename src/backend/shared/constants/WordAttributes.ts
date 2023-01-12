@@ -28,4 +28,8 @@ export default {
     value: 'isStem',
     label: 'Is Stem',
   },
+  IS_COMMON: {
+    value: 'isCommon',
+    label: 'Is Common Term',
+  },
 };

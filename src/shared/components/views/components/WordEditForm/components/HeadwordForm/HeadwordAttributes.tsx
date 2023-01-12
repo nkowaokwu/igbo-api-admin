@@ -170,6 +170,30 @@ const HeadwordAttributes = ({
         />
       </Box>
     </Tooltip>
+    <Tooltip
+      label="Check this checkbox if this word is a commonly or frequently used word."
+    >
+      <Box display="flex">
+        <Controller
+          render={({ onChange, value, ref }) => (
+            <Checkbox
+              onChange={(e) => onChange(e.target.checked)}
+              isChecked={value}
+              defaultIsChecked={record.attributes?.[WordAttributes.IS_COMMON.value]}
+              ref={ref}
+              data-test={`${WordAttributes.IS_COMMON.label}-checkbox`}
+              size="lg"
+            >
+              <span className="font-bold">{WordAttributes.IS_COMMON.label}</span>
+            </Checkbox>
+          )}
+          defaultValue={record.attribute?.[WordAttributes.IS_COMMON.value]
+            || getValues().attributes?.[WordAttributes.IS_COMMON.value]}
+          name={`attributes.${WordAttributes.IS_COMMON.value}`}
+          control={control}
+        />
+      </Box>
+    </Tooltip>
   </Box>
 );
 
