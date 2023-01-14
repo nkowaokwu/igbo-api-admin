@@ -13,7 +13,7 @@ const ReviewPreview = ({
   const [uid, setUid] = useState('');
   useFirebaseUid(setUid);
 
-  const hasReviewed = record.approvals.includes(uid) || record.denials.includes(uid) || record.authorId === uid;
+  const hasReviewed = record.approvals?.includes?.(uid) || record.denials?.includes?.(uid) || record.authorId === uid;
   return (
     <Box data-test="review-cell" className="flex w-full justify-center items-center">
       {record && hasReviewed ? (
