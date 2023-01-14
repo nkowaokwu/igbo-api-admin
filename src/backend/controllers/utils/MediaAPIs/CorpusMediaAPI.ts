@@ -125,7 +125,7 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
   if (!id) {
     throw new Error('id must be provided');
   }
-  if (isCypress || !isisAWSProductionProduction) {
+  if (isCypress || !isAWSProductionProduction) {
     return {
       signedRequest: `mock-signed-request/${id}`,
       mediaUrl: `mock-url/${id}`,
