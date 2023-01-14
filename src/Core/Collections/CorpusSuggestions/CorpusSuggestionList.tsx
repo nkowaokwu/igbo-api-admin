@@ -49,13 +49,13 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
             <FunctionField
               label="Approvals"
               render={(record) => (
-                <span data-test="approval">{record.approvals.length}</span>
+                <span data-test="approval">{record.approvals?.length}</span>
               )}
             />
             <FunctionField
               label="Denials"
               render={(record) => (
-                <span data-test="denial">{record.denials.length}</span>
+                <span data-test="denial">{record.denials?.length}</span>
               )}
             />
             <IdField label="Id" source="id" />
