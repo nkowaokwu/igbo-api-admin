@@ -74,12 +74,7 @@ export const wordSuggestionSchema = new Schema(
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
     authorEmail: { type: String, default: '' },
-    authorId: {
-      type: String,
-      default: '',
-      index: true,
-      immutable: true,
-    },
+    authorId: { type: String, default: '', index: true },
     stems: { type: [{ type: String }], default: [] },
     relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },

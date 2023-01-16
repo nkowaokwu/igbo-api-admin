@@ -69,12 +69,12 @@ export const populateFirebaseUsers = async (
         })
     )));
   }));
-  const authorRes = await findUser(docWithPopulateFirebaseUsers.authorId)
+  const res = await findUser(docWithPopulateFirebaseUsers.authorId)
     .catch(() => {
       console.warn(`The user with the id ${docWithPopulateFirebaseUsers.authorId} doesn't exist in this database`);
       return fallbackUser;
     }) || {};
-  return assign(doc, { author: authorRes });
+  return assign(doc, { author: res });
 };
 
 /* Sorts all the docs based on the provided searchWord */

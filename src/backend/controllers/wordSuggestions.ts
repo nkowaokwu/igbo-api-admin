@@ -5,7 +5,7 @@ import {
   Types,
 } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, map, omit } from 'lodash';
+import { assign, map } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
@@ -158,7 +158,7 @@ export const putWordSuggestion = (
           throw new Error('Unable to edit a merged word suggestion');
         }
 
-        data = omit(data, ['authorId', 'author']);
+        delete data.authorId;
         data = assignEditorsToDialects({
           clientData: data,
           compareData: wordSuggestion,
