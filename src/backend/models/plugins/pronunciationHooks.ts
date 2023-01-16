@@ -12,6 +12,9 @@ import removeAccents from 'src/backend/utils/removeAccents';
 /* If the client sent over blob data for pronunciations, it will be uploaded to AWS S3 */
 export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordSuggestion>): void => {
   schema.pre('save', async function (next) {
+    if (this.isNew) {
+      console.log('Creating a brand new word suggestion document with the author Id of:', this.authorId);
+    }
     try {
       if (!this.skipPronunciationHook) {
         // @ts-ignore

@@ -45,8 +45,8 @@ export default {
     title: 'Approve Document',
     content: 'Are you sure you want to approve this document?',
     executeAction: async ({ record, resource } : { record: Record, resource: Collections }) : Promise<any> => {
-      handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
-      return approveDocument({ resource, record: prepareRecord(record) });
+      await approveDocument({ resource, record: prepareRecord(record) });
+      return handleUpdateDocument({ type: ActionTypes.APPROVE, resource, record });
     },
     successMessage: 'Document has been approved 🙌🏾',
   },
@@ -55,8 +55,8 @@ export default {
     title: 'Deny Document',
     content: 'Are you sure you want to deny this document?',
     executeAction: async ({ record, resource }: { record: Record, resource: Collections }) : Promise<any> => {
-      handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
-      return denyDocument({ resource, record: prepareRecord(record) });
+      await denyDocument({ resource, record: prepareRecord(record) });
+      return handleUpdateDocument({ type: ActionTypes.DENY, resource, record });
     },
     successMessage: 'Document has been denied 🙅🏾‍♀️',
   },
@@ -64,15 +64,15 @@ export default {
     type: 'Notify',
     title: 'Directly Notify Editors About Changes',
     content: 'Are you sure you want to notify editors?',
-    executeAction: async ({ editorsNotes, record, resource }:
-    { editorsNotes: string, record: Record, resource: string }) : Promise<any> => {
+    executeAction: ({ editorsNotes, record, resource }:
+    { editorsNotes: string, record: Record, resource: string }) : Promise<any> => (
       handleUpdateDocument({
         type: ActionTypes.NOTIFY,
         resource,
         record: prepareRecord({ ...record, editorsNotes }),
         includeEditors: true,
-      });
-    },
+      })
+    ),
     successMessage: 'Notification has been sent 📬',
   },
   [ActionTypes.MERGE]: {
@@ -84,8 +84,11 @@ export default {
       resource,
       collection,
     }: { record: Record | { id: string }, resource: Collections, collection: Collections }): Promise<any> => {
-      handleUpdateDocument({ type: ActionTypes.MERGE, resource, record });
-      return mergeDocument({ resource: collection, record });
+      const [, res] = await Promise.all([
+        handleUpdateDocument({ type: ActionTypes.MERGE, resource, record }),
+        mergeDocument({ resource: collection, record }),
+      ]);
+      return res;
     },
     successMessage: 'Document has been merged 🎉',
     hasLink: true,
