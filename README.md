@@ -148,6 +148,9 @@ Then go back to step 5 above.
 
 **Login**: You can login with the email `admin@example.com` and the password `password`
 
+If you would like to log in with your own Google or Facebook account, please reach out to Ijemma
+so she can grant you access.
+
 ### Step 6: (Conditional) Seeding the Database
 
 **For words and examples**, you will need to make a `POST` request to the following route:
