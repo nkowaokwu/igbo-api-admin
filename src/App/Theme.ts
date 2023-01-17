@@ -65,6 +65,7 @@ const theme = createTheme({
       content: {
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-2)',
+        overflowY: 'hidden',
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',
