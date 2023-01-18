@@ -174,8 +174,8 @@ export const putWordSuggestion = (
             ?.filter((stem) => stem.toString().length === OBJECTID_LENGTH)
         );
         updatedWordSuggestion.relatedTerms = (
-          updatedWordSuggestion?.stems
-            ?.filter((stem) => stem.toString().length === OBJECTID_LENGTH)
+          updatedWordSuggestion?.relatedTerms
+            ?.filter((relatedTerm) => relatedTerm.toString().length === OBJECTID_LENGTH)
         );
         await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples, mongooseConnection });
 
