@@ -66,7 +66,7 @@ export const wordSchema = new Schema({
     }), {}),
   variations: { type: [{ type: String }], default: [] },
   frequency: { type: Number },
-  stems: { type: [{ type: String }], default: [] },
+  stems: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
   hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },

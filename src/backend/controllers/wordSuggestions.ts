@@ -22,6 +22,7 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 
+const OBJECTID_LENGTH = 24;
 const assignEditorsToDialects = ({
   clientData,
   compareData,
@@ -115,15 +116,17 @@ export const deleteWordSuggestionsByOriginalWordId = (id: string | Types.ObjectI
 };
 
 /* Grabs WordSuggestions */
-const findWordSuggestions = async (
-  {
-    regexMatch,
-    skip,
-    limit,
-    mongooseConnection,
-  }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
-): Promise<Interfaces.WordSuggestion[] | any> => {
+const findWordSuggestions = async ({
+  regexMatch,
+  skip,
+  limit,
+  mongooseConnection,
+} : {
+  regexMatch: RegExp,
+  skip: number,
+  limit: number,
+  mongooseConnection: Connection,
+}): Promise<Interfaces.WordSuggestion[] | any> => {
   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
   return WordSuggestion
     .find(regexMatch, null, { sort: { updatedAt: -1 } })
@@ -165,6 +168,15 @@ export const putWordSuggestion = (
           userId: user.uid,
         });
         const updatedWordSuggestion = assign(wordSuggestion, data);
+        // Cleans malformed data where a stem or relatedTerm isn't not a valid ObjectId
+        updatedWordSuggestion.stems = (
+          updatedWordSuggestion?.stems
+            ?.filter((stem) => stem.toString().length === OBJECTID_LENGTH)
+        );
+        updatedWordSuggestion.relatedTerms = (
+          updatedWordSuggestion?.stems
+            ?.filter((stem) => stem.toString().length === OBJECTID_LENGTH)
+        );
         await handleDeletingExampleSuggestions({ suggestionDoc: wordSuggestion, clientExamples, mongooseConnection });
 
         /* Updates all the word's children exampleSuggestions */
