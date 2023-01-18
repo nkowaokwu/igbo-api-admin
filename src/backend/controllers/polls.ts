@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import admin from 'firebase-admin';
 import { NextFunction, Request, Response } from 'express';
 import TwitterApi from 'twitter-api-v2';
+import Twit from 'twit';
+import urlencode from 'urlencode';
 import moment from 'moment';
 import axios from 'axios';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -10,6 +12,10 @@ import {
   TWITTER_CLIENT_ID,
   TWITTER_CLIENT_SECRET,
   TWITTER_APP_URL,
+  TWITTER_CONSUMER_KEY,
+  TWITTER_CONSUMER_SECRET,
+  TWITTER_ACCESS_TOKEN,
+  TWITTER_ACCESS_TOKEN_SECRET,
   IGBO_API_EDITOR_PLATFORM_ROOT,
   DICTIONARY_APP_URL,
 } from 'src/backend/config';
@@ -154,6 +160,56 @@ export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest,
     return res.send(tweets);
   } catch (err) {
     return res.status(500).send(err);
+  }
+};
+
+const handleTwitResponse = (err, data, response) => {
+  if (!err) {
+    console.log('Successful merged construction tweet 🐦');
+    console.log('Returned data');
+    console.log(data);
+    console.log('Returned Response');
+    console.log(response);
+  } else {
+    console.log(err);
+  }
+};
+
+/* Posts an update tweet about a constructed term poll getting merged to Twitter and Slack */
+export const onMergeConstructedTermPoll = async (mergedWord: Interfaces.Word): Promise<any> => {
+  console.log(`Sending tweet and Slack message for ${mergedWord.word} with id ${mergedWord.id}`);
+  try {
+    const status = `
+    We have added ${mergedWord.word} as our latest constructed term.
+  You can see and even suggest edits to the word here! 👇🏾
+  
+  ${DICTIONARY_APP_URL}/search?word=${urlencode(mergedWord.word)}
+  
+  #Igbo #LearnIgbo
+  `;
+    const twitBot = new Twit({
+      consumer_key: TWITTER_CONSUMER_KEY,
+      consumer_secret: TWITTER_CONSUMER_SECRET,
+      access_token: TWITTER_ACCESS_TOKEN,
+      access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
+    });
+    // Sends the tweet on @nkowaokwu
+    twitBot.post('statuses/update', { status }, handleTwitResponse);
+
+    // Sends the message to Slack
+    const slackRes = await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+      type: 'igbo_api_editor_platform',
+      event: {
+        type: 'merged_constructed_term',
+      },
+      mergedWord,
+      nkowaokwuUrl: `${DICTIONARY_APP_URL}/search?word=${urlencode(mergedWord.word)}`,
+      editorUrl: `${IGBO_API_EDITOR_PLATFORM_ROOT}/#/words/${mergedWord.id}/show`,
+    });
+    console.log('Slack response');
+    console.log(slackRes);
+  } catch (err) {
+    console.log('Unable to send tweet and Slack message', err);
   }
 };
 

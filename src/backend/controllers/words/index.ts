@@ -39,6 +39,7 @@ import { sendMergedEmail } from '../email';
 import { renameAudioPronunciation } from '../utils/MediaAPIs/AudioAPI';
 import * as Interfaces from '../utils/interfaces';
 import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
+import { onMergeConstructedTermPoll } from '../polls';
 
 /* Gets words from JSON dictionary */
 export const getWordData = (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
@@ -372,7 +373,8 @@ export const mergeWord = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { user, suggestionDoc, mongooseConnection } = req;
+    const { user, suggestionDoc: suggestion, mongooseConnection } = req;
+    const suggestionDoc = suggestion as Interfaces.WordSuggestion;
     const mergedWord: Document<Interfaces.Word> | any = (
       suggestionDoc.originalWordId
         ? await mergeIntoWord(suggestionDoc, user.uid, mongooseConnection)
@@ -387,6 +389,10 @@ export const mergeWord = async (
       authorId: suggestionDoc.authorId,
       editorsNotes: suggestionDoc.editorsNotes,
     });
+    // Send a Slack notification and Tweet that we have merged a new word
+    if (suggestionDoc.twitterPollId && !suggestionDoc.originalWordId) {
+      onMergeConstructedTermPoll(mergedWord);
+    }
     return res.send(mergedWord);
   } catch (err) {
     return next(err);
