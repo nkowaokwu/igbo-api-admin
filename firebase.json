@@ -10,10 +10,21 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [ {
+    "rewrites": [{
       "source": "**",
       "function": "app"
-    } ]
+    }],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      }
+    ]
   },
   "emulators": {
     "functions": {
