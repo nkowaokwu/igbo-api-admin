@@ -80,7 +80,7 @@ export const wordSuggestionSchema = new Schema(
       index: true,
       immutable: true,
     },
-    stems: { type: [{ type: String }], default: [] },
+    stems: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
