@@ -4,9 +4,9 @@ import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
 export const exampleSchema = new Schema({
-  igbo: { type: String, default: '' },
-  english: { type: String, default: '' },
-  meaning: { type: String, default: '' },
+  igbo: { type: String, default: '', trim: true },
+  english: { type: String, default: '', trim: true },
+  meaning: { type: String, default: '', trim: true },
   nsibidi: { type: String, default: '' },
   style: {
     type: String,

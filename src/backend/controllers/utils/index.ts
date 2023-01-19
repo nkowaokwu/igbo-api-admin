@@ -14,7 +14,6 @@ import removePrefix from 'src/backend/shared/utils/removePrefix';
 import createQueryRegex from 'src/backend/shared/utils/createQueryRegex';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
-import HandledQueriesType from 'src/backend/controllers/utils/HandledQueriesType';
 import { findUser } from '../users';
 
 const DEFAULT_RESPONSE_LIMIT = 10;
@@ -227,9 +226,14 @@ const parseSortKeys = (sort: string): { key: string, direction: string } | null 
 
 /* Handles all the queries for searching in the database */
 export const handleQueries = (
-  { query = {}, user = {}, mongooseConnection }:
+  {
+    query = {},
+    body = {},
+    user = {},
+    mongooseConnection,
+  }:
   Interfaces.EditorRequest,
-): HandledQueriesType => {
+): Interfaces.HandleQueries => {
   const {
     keyword = '',
     page: pageQuery = 0,
@@ -256,6 +260,7 @@ export const handleQueries = (
     filters,
     user,
     strict,
+    body,
     mongooseConnection,
   };
 };

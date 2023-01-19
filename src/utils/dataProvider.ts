@@ -2,7 +2,7 @@ import { fetchUtils } from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
 import Collection from 'src/shared/constants/Collections';
-import { createAuthorizationHeader } from 'src/shared/API';
+import { createAuthorizationHeader } from 'src/shared/utils/request';
 import { API_ROUTE } from '../shared/constants';
 import authProvider from './authProvider';
 import IndexedDBAPI from './IndexedDBAPI';

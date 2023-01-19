@@ -14,9 +14,9 @@ export const exampleSuggestionSchema = new Schema({
     default: null,
     index: true,
   },
-  igbo: { type: String, default: '' },
-  english: { type: String, default: '' },
-  meaning: { type: String, default: '' },
+  igbo: { type: String, default: '', trim: true },
+  english: { type: String, default: '', trim: true },
+  meaning: { type: String, default: '', trim: true },
   nsibidi: { type: String, default: '' },
   style: {
     type: String,

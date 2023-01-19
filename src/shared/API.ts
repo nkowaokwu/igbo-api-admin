@@ -1,35 +1,14 @@
-import axios from 'axios';
 import { Record } from 'react-admin';
-import { getAuth } from 'firebase/auth';
 import IndexedDBAPI from 'src/utils/IndexedDBAPI';
-import { API_ROUTE } from './constants/index';
 import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collections';
-
-const auth = getAuth();
-
-export const createAuthorizationHeader = async (): Promise<string> => {
-  const { currentUser } = auth;
-  const accessToken = currentUser
-    ? await currentUser.getIdToken()
-    : localStorage.getItem('igbo-api-admin-access') || '';
-  return `Bearer ${accessToken}`;
-};
-
-const createHeaders = async () => ({
-  Authorization: await createAuthorizationHeader(),
-});
-
-const request = async (requestObject) => {
-  const headers = await createHeaders();
-  return axios({ ...requestObject, headers });
-};
+import request from './utils/request';
 
 const handleSubmitConstructedTermPoll = (poll: Poll) => (
   request({
     method: 'POST',
-    url: `${API_ROUTE}/twitter_poll`,
+    url: 'twitter_poll',
     data: poll,
   })
 );
@@ -41,7 +20,7 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `${API_ROUTE}/words/${id}?dialects=${dialects}`,
+    url: `words/${id}?dialects=${dialects}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.WORDS, data: res.data });
@@ -52,12 +31,12 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
 
 export const getWords = async (word: string): Promise<any> => (await request({
   method: 'GET',
-  url: `${API_ROUTE}/words?keyword=${word}`,
+  url: `words?keyword=${word}`,
 })).data;
 
 export const getWordSuggestions = async (word: string): Promise<any> => (await request({
   method: 'GET',
-  url: `${API_ROUTE}/wordSuggestions?keyword=${word}`,
+  url: `wordSuggestions?keyword=${word}`,
 })).data;
 
 export const getExample = async (id: string): Promise<any> => {
@@ -67,7 +46,7 @@ export const getExample = async (id: string): Promise<any> => {
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `${API_ROUTE}/examples/${id}`,
+    url: `examples/${id}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.EXAMPLES, data: res.data });
@@ -83,7 +62,7 @@ export const getCorpus = async (id: string): Promise<any> => {
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `${API_ROUTE}/corpora/${id}`,
+    url: `corpora/${id}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.CORPORA, data: res.data });
@@ -114,17 +93,17 @@ export const resolveWord = async (wordId: string): Promise<any> => {
 
 export const getAssociatedExampleSuggestions = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `${API_ROUTE}/examples/${id}/exampleSuggestions`,
+  url: `examples/${id}/exampleSuggestions`,
 })).data;
 
 export const getAssociatedWordSuggestions = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `${API_ROUTE}/words/${id}/wordSuggestions`,
+  url: `words/${id}/wordSuggestions`,
 })).data;
 
 export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `${API_ROUTE}/words/${id}/twitterPolls`,
+  url: `words/${id}/twitterPolls`,
 })).data;
 
 export const approveDocument = ({
@@ -135,7 +114,7 @@ export const approveDocument = ({
   record: Record,
 }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}/approve`,
+  url: `${resource}/${record.id}/approve`,
 })
   .then(async ({ data }) => {
     await IndexedDBAPI.putDocument({ resource, data });
@@ -149,7 +128,7 @@ export const denyDocument = ({
   record: Record,
 }): Promise<any> => request({
   method: 'PUT',
-  url: `${API_ROUTE}/${resource}/${record.id}/deny`,
+  url: `${resource}/${record.id}/deny`,
 })
   .then(async ({ data }) => {
     await IndexedDBAPI.putDocument({ resource, data });
@@ -163,7 +142,7 @@ export const mergeDocument = ({
   record: Record,
 }): Promise<any> => request({
   method: 'POST',
-  url: `${API_ROUTE}/${resource}`,
+  url: `${resource}`,
   data: { id: record.id },
 })
   .then(async (res) => {
@@ -179,7 +158,7 @@ export const deleteDocument = async (
   { resource: Collection, record: Record },
 ): Promise<any> => request({
   method: 'DELETE',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
+  url: `${resource}/${record.id}`,
 })
   .then(async () => {
     await IndexedDBAPI.deleteDocument({ resource, id: record.id });
@@ -190,7 +169,7 @@ export const combineDocument = (
   { primaryWordId: string, resource: Collection, record: Record },
 ): Promise<any> => request({
   method: 'DELETE',
-  url: `${API_ROUTE}/${resource}/${record.id}`,
+  url: `${resource}/${record.id}`,
   data: { primaryWordId },
 })
   .then(async ({ data }) => {

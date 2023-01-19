@@ -8,9 +8,24 @@ import { Request } from 'express';
 import { Role } from 'src/shared/constants/auth-types';
 import Collections from 'src/shared/constants/Collections';
 
+export interface HandleQueries {
+  searchWord: string,
+  regexKeyword: SearchRegExp,
+  page: number,
+  sort: { key: string; direction: string; },
+  skip: number,
+  limit: number,
+  filters: { [key: string]: string },
+  user: EditorRequest['user'],
+  strict: boolean,
+  body: EditorRequest['body'],
+  mongooseConnection: EditorRequest['mongooseConnection'],
+};
+
+// @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
   user: {
-    uid: string,
+    uid?: string,
   },
   query: {
     keyword?: string,

@@ -24,9 +24,10 @@ import AsyncPollList from 'src/Core/Collections/Polls/PollList';
 import AsyncPollCreate from 'src/Core/Collections/Polls/PollCreate';
 import AsyncUserList from 'src/Core/Collections/Users/UserList';
 import AsyncUserShow from 'src/Core/Collections/Users/UserShow';
+import Sandbox from 'src/Core/Collections/Sandbox';
 import withLastRoute from './withLastRoute';
 
-export const getResourceObjects = (permissions) => compact(flatten([
+export const getResourceObjects = (permissions: any) => compact(flatten([
   {
     name: 'words',
     key: 'words',
@@ -102,6 +103,12 @@ export const getResourceObjects = (permissions) => compact(flatten([
       list: withLastRoute(AsyncUserList),
       show: withLastRoute(AsyncUserShow),
       icon: () => <>👩🏾</>,
+    },
+    {
+      name: 'sandbox',
+      key: 'sandbox',
+      list: Sandbox,
+      icon: () => <>🏝</>,
     },
   ]),
 ]));

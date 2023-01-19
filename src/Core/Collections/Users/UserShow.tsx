@@ -7,6 +7,7 @@ const UserTitle = ({ record }: Record<any, any>): ReactElement => (
 );
 
 const UserShow = (props: ShowProps): ReactElement => (
+  // @ts-expect-error Show
   <Show
     title={<UserTitle />}
     {...props}

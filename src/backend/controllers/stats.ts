@@ -286,7 +286,7 @@ export const getUserMergeStats = async (
     });
     console.time(`Word suggestion merge creation for ${uid}`);
     const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).isoWeek()];
+      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).startOf('week').isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
@@ -297,7 +297,7 @@ export const getUserMergeStats = async (
     console.timeEnd(`Word suggestion merge creation for ${uid}`);
     console.time(`Example suggestion merge creation for ${uid}`);
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
-      const dateOfIsoWeek = isoWeekToDateMap[moment(exampleSuggestion.updatedAt).isoWeek()];
+      const dateOfIsoWeek = isoWeekToDateMap[moment(exampleSuggestion.updatedAt).startOf('week').isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
@@ -311,7 +311,7 @@ export const getUserMergeStats = async (
     console.timeEnd(`Example suggestion merge creation for ${uid}`);
     console.time(`Dialectal variation merge creation for ${uid}`);
     const dialectalVariationMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).isoWeek()];
+      const dateOfIsoWeek = isoWeekToDateMap[moment(wordSuggestion.updatedAt).startOf('week').isoWeek()];
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] = finalData[dateOfIsoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
           editor === userId

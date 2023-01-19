@@ -160,6 +160,27 @@ export const searchExampleSuggestionsRegexQuery = (
   merged: null,
   ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
+export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
+  igbo: { $exists: boolean, $type: string },
+  $expr: { $gt: ({ $strLenCP: string } | number)[] },
+  pronunciation: string,
+  exampleForSuggestion: { $ne: boolean },
+  merged: null,
+  userInteractions: { $nin: [string] },
+} => ({
+  igbo: { $exists: true, $type: 'string' },
+  $expr: { $gt: [{ $strLenCP: '$igbo' }, 10] },
+  pronunciation: '',
+  exampleForSuggestion: { $ne: true },
+  merged: null,
+  userInteractions: { $nin: [uid] },
+});
+export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
+  [key: string]: { $exists: boolean },
+} => ({
+  'approvals.1': { $exists: false },
+  'denials.1': { $exists: false },
+});
 export const searchPreExistingExampleSuggestionsRegexQuery = (
   { igbo, english, associatedWordId }: { igbo: string, english: string, associatedWordId: string },
 ): any => ({
@@ -178,7 +199,7 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
     { word: { $regex: RegExp } } | { variations: { $in: [RegExp] } }
     )[],
     merged: null,
-    updatedAt: any,
+    updatedAt?: any,
   } => ({
   $or: [wordQuery(regex), variationsQuery(regex)],
   merged: null,
