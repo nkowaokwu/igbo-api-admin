@@ -1,5 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { last, takeRight } from 'lodash';
+import {
+  compact,
+  last,
+  takeRight,
+  times,
+} from 'lodash';
 import {
   Box,
   Heading,
@@ -29,7 +34,9 @@ const LacunaProgress = ({
 
   useEffect(() => {
     if (dialectalVariationMergeStats) {
-      const CURRENT_WEEKS = moment().week() - moment(moment()).startOf('month').week() + 1;
+      const CURRENT_WEEKS = compact(times(4, (index) => (
+        !!moment().subtract(index, 'week').isSame(moment(), 'month')
+      ))).length;
       const monthData = takeRight(dialectalVariationMergeStats.datasets[0].data, CURRENT_WEEKS);
       setDialectalVariationProgress({
         month: monthData.reduce((totalSum, week) => totalSum + week, 0),
