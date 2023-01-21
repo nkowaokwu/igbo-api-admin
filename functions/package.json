@@ -52,7 +52,10 @@
     "string-similarity": "^4.0.3",
     "tailwindcss": "^1.9.6",
     "twit": "^2.2.11",
-    "twitter-api-v2": "^1.12.2"
+    "twitter-api-v2": "^1.12.2",
+    "urlencode": "^1.1.0",
+    "wave-visualizer": "^1.0.6",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.2.0",
