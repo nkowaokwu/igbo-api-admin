@@ -259,7 +259,6 @@ export const getUserMergeStats = async (
             mergedBy: { $ne: null },
             updatedAt: { $gt: threeMonthsAgo },
           },
-          'updatedAt',
         )
         .hint('Merged example suggestion index')
         .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
