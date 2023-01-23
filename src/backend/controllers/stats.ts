@@ -250,27 +250,27 @@ export const getUserMergeStats = async (
     const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS, 'weeks').toISOString());
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
-    console.time(`Querying user merge stat word and example suggestions for ${uid}`);
-    const [exampleSuggestions, wordSuggestions] = await Promise.all([
-      ExampleSuggestion
-        .find(
-          {
-            authorId: userId,
-            mergedBy: { $ne: null },
-            updatedAt: { $gt: threeMonthsAgo },
-          },
-        )
-        .hint('Merged example suggestion index')
-        .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[],
-      WordSuggestion
-        .find({
+    console.time(`Querying user merge stat example suggestions for ${uid}`);
+    const exampleSuggestions = await ExampleSuggestion
+      .find(
+        {
+          authorId: userId,
           mergedBy: { $ne: null },
           updatedAt: { $gt: threeMonthsAgo },
-        })
-        .hint('Merged word suggestion index')
-        .limit(WORD_SUGGESTION_QUERY_LIMIT),
-    ]);
-    console.timeEnd(`Querying user merge stat word and example suggestions for ${uid}`);
+        },
+      )
+      .hint('Merged example suggestion index')
+      .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT) as Interfaces.ExampleSuggestion[];
+    console.timeEnd(`Querying user merge stat example suggestions for ${uid}`);
+    console.time(`Querying user merge stat word suggestions for ${uid}`);
+    const wordSuggestions = await WordSuggestion
+      .find({
+        mergedBy: { $ne: null },
+        updatedAt: { $gt: threeMonthsAgo },
+      })
+      .hint('Merged word suggestion index')
+      .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
+    console.timeEnd(`Querying user merge stat word suggestions for ${uid}`);
     const defaultMerges = {};
     const isoWeekToDateMap = {};
     times(TWELVE_WEEKS, (index) => {
