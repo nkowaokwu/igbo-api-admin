@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { times } from 'lodash';
 import {
   Accordion,
   AccordionItem,
@@ -64,6 +65,8 @@ const wordSuggestionsChartOptions = createChartOptions('Merged Word Suggestions'
 const exampleSuggestionsChartOptions = createChartOptions('Merged Example Suggestions');
 const dialectalVariationsChartOptions = createChartOptions('Merged Dialectal Variations');
 const THREE_MONTH_WEEKS_COUNT = 12;
+const sortDates = (a, b) => a < b ? 1 : -1;
+const sortMerges = (merges) => Object.entries(merges).sort(sortDates).map(([, value]) => value).reverse();
 
 const UserStat = ({
   uid,
@@ -94,17 +97,15 @@ const UserStat = ({
           exampleSuggestionMerges,
           dialectalVariationMerges,
         } = merges;
-        const threeMonthsAgoWeek = moment().subtract(3, 'months').isoWeek();
-        const labels = [];
-        for (let i = threeMonthsAgoWeek; i <= threeMonthsAgoWeek + THREE_MONTH_WEEKS_COUNT; i += 1) {
-          labels.push(`Week of ${moment().isoWeek(i).startOf('week').format('MMMM Do')}`);
-        }
+        const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
+          `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
+        )).reverse();
         const wordSuggestionData = {
           labels,
           datasets: [
             {
               label: 'Word Suggestion Merges',
-              data: Object.values(wordSuggestionMerges),
+              data: sortMerges(wordSuggestionMerges),
               backgroundColor: '#48825D',
               borderWidth: 2,
               borderColor: '#18532D',
@@ -117,7 +118,7 @@ const UserStat = ({
           datasets: [
             {
               label: 'Example Suggestion Merges',
-              data: Object.values(exampleSuggestionMerges),
+              data: sortMerges(exampleSuggestionMerges),
               backgroundColor: '#3C83FF',
               borderWidth: 2,
               borderColor: '#2D62BE',
@@ -130,7 +131,7 @@ const UserStat = ({
           datasets: [
             {
               label: 'Dialectal Variation Merges',
-              data: Object.values(dialectalVariationMerges),
+              data: sortMerges(dialectalVariationMerges),
               backgroundColor: '#FF5733',
               borderWidth: 2,
               borderColor: '#CA4225',

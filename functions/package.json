@@ -51,6 +51,7 @@
     "remove-accents": "^0.4.2",
     "string-similarity": "^4.0.3",
     "tailwindcss": "^1.9.6",
+    "twit": "^2.2.11",
     "twitter-api-v2": "^1.12.2"
   },
   "devDependencies": {
