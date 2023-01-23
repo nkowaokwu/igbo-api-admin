@@ -247,7 +247,7 @@ export const getUserMergeStats = async (
     const { params: { uid }, mongooseConnection } = req;
     const TWELVE_WEEKS = 12;
     const userId = uid;
-    const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS, 'weeks').toISOString());
+    const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS, 'weeks').startOf('week').toISOString());
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     console.time(`Querying user merge stat example suggestions for ${uid}`);
