@@ -267,6 +267,7 @@ export const getUserMergeStats = async (
       .find({
         mergedBy: { $ne: null },
         updatedAt: { $gt: threeMonthsAgo },
+        userInteractions: { $in: [uid] },
       })
       .hint('Merged word suggestion index')
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
