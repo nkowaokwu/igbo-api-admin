@@ -247,7 +247,7 @@ export const getUserMergeStats = async (
     const { params: { uid }, mongooseConnection } = req;
     const TWELVE_WEEKS = 12;
     const userId = uid;
-    const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS, 'weeks').startOf('week').toISOString());
+    const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS - 1, 'weeks').startOf('week').toISOString());
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
     console.time(`Querying user merge stat example suggestions for ${uid}`);
@@ -291,7 +291,11 @@ export const getUserMergeStats = async (
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
-        console.log('No dateOfIsoWeek found for the following wordSuggestion timestamp:', wordSuggestion.updatedAt);
+        console.log(
+          'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
+          wordSuggestion.updatedAt,
+          wordSuggestionUpdateIsoWeek,
+        );
       }
       return finalData;
     }, { ...defaultMerges });
@@ -306,6 +310,7 @@ export const getUserMergeStats = async (
         console.log(
           'No dateOfIsoWeek found for the following exampleSuggestion timestamp:',
           exampleSuggestion.updatedAt,
+          exampleSuggestionUpdateIsoWeek,
         );
       }
       return finalData;
@@ -316,11 +321,16 @@ export const getUserMergeStats = async (
       const wordSuggestionUpdateIsoWeek = moment(wordSuggestion.updatedAt).startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
       if (dateOfIsoWeek) {
-        finalData[dateOfIsoWeek] = finalData[dateOfIsoWeek] + wordSuggestion.dialects.filter(({ editor }) => (
+        const countedHeadword = !wordSuggestion.originalWordId ? 1 : 0;
+        finalData[dateOfIsoWeek] = countedHeadword + wordSuggestion.dialects.filter(({ editor }) => (
           editor === userId
         )).length + (wordSuggestion.authorId === userId ? 1 : 0);
       } else {
-        console.log('No dateOfIsoWeek found for the following wordSuggestion timestamp:', wordSuggestion.updatedAt);
+        console.log(
+          'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
+          wordSuggestion.updatedAt,
+          wordSuggestionUpdateIsoWeek,
+        );
       }
       return finalData;
     }, { ...defaultMerges });
