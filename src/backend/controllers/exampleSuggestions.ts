@@ -9,10 +9,13 @@ import {
   searchExampleSuggestionsRegexQuery,
   searchForLastWeekQuery,
   searchPreExistingExampleSuggestionsRegexQuery,
+  searchRandomExampleSuggestionsRegexQuery,
+  searchRandomExampleSuggestionsToReviewRegexQuery,
 } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
+import ReviewActions from '../shared/constants/ReviewActions';
 
 export const createExampleSuggestion = async (
   data: Interfaces.ExampleClientData,
@@ -147,17 +150,17 @@ export const findExampleSuggestionById = (id: string, mongooseConnection)
 /* Grabs ExampleSuggestions */
 const findExampleSuggestions = (
   {
-    regexMatch,
-    skip,
-    limit,
+    query,
+    skip = 0,
+    limit = 10,
     mongooseConnection,
   }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
+  { query: any, skip?: number, limit?: number, mongooseConnection: Connection },
 ): Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
   return ExampleSuggestion
-    .find(regexMatch)
+    .find(query)
     .skip(skip)
     .limit(limit)
     .sort({ updatedAt: -1 });
@@ -179,11 +182,11 @@ export const getExampleSuggestions = (
       mongooseConnection,
       ...rest
     } = handleQueries(req);
-    const regexMatch = searchExampleSuggestionsRegexQuery(user.uid, regexKeyword, filters);
+    const query = searchExampleSuggestionsRegexQuery(user.uid, regexKeyword, filters);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
     return findExampleSuggestions({
-      regexMatch,
+      query,
       skip,
       limit,
       mongooseConnection,
@@ -193,16 +196,130 @@ export const getExampleSuggestions = (
           res,
           docs: exampleSuggestions,
           model: ExampleSuggestion,
-          query: regexMatch,
+          query,
           ...rest,
         })
       ))
-      .catch(() => {
-        throw new Error('An error has occurred while return example suggestions, double check your provided data');
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning example suggestions, double check your provided data');
       });
   } catch (err) {
     return next(err);
   }
+};
+
+/* Returns at least five random example suggestions */
+export const getRandomExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { limit, user, mongooseConnection } = await handleQueries(req);
+
+    const query = searchRandomExampleSuggestionsRegexQuery(user.uid);
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+
+    return await findExampleSuggestions({
+      query,
+      limit,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => (
+        packageResponse({
+          res,
+          docs: exampleSuggestions,
+          model: ExampleSuggestion,
+          query,
+        })
+      ))
+      .catch(() => {
+        throw new Error('An error has occurred while returning random example suggestions');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Returns at least five random example suggestions that need to be reviewed */
+export const getRandomExampleSuggestionsToReview = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { limit, mongooseConnection } = await handleQueries(req);
+
+    const query = searchRandomExampleSuggestionsToReviewRegexQuery();
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+
+    return await findExampleSuggestions({
+      query,
+      limit,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => (
+        packageResponse({
+          res,
+          docs: exampleSuggestions,
+          model: ExampleSuggestion,
+          query,
+        })
+      ))
+      .catch(() => {
+        throw new Error('An error has occurred while returning random example suggestions');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+/* Updates all listed example suggestions with audio pronunciations */
+export const putRandomExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { user, body, mongooseConnection } = await handleQueries(req);
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+
+    await Promise.all(body.map(async ({ id, pronunciation, review }) => {
+      const exampleSuggestion = await ExampleSuggestion.findById(id);
+      if (!exampleSuggestion) {
+        console.log(`No example suggestion with the id: ${id}`);
+        return null;
+      }
+      const userInteractions = new Set(exampleSuggestion.userInteractions);
+      if (pronunciation) {
+        console.log(`Updated example suggestion with pronunciation: ${id}`);
+        exampleSuggestion.pronunciation = pronunciation;
+      }
+      if (review === ReviewActions.APPROVE) {
+        const approvals = new Set(exampleSuggestion.approvals);
+        approvals.add(user.uid);
+        exampleSuggestion.approvals = Array.from(approvals);
+        exampleSuggestion.denials = exampleSuggestion.denials.filter((denial) => denial !== user.uid);
+        userInteractions.add(user.uid);
+        exampleSuggestion.userInteractions = Array.from(userInteractions);
+      }
+      if (review === ReviewActions.DENY) {
+        const denials = new Set(exampleSuggestion.denials);
+        denials.add(user.uid);
+        exampleSuggestion.denials = Array.from(denials);
+        exampleSuggestion.approvals = exampleSuggestion.approvals.filter((approval) => approval !== user.uid);
+        userInteractions.add(user.uid);
+        exampleSuggestion.userInteractions = Array.from(userInteractions);
+      }
+      if (review === ReviewActions.SKIP) {
+        console.log(`The user ${user.uid} skipped reviewing the word suggestion ${id}`);
+      }
+      return exampleSuggestion.save();
+    }));
+    return res.send(body.map(({ id }) => id));
+  } catch (err) {
+    return next(err);
+  };
 };
 
 /* Returns a single ExampleSuggestion by using an id */
@@ -210,7 +327,7 @@ export const getExampleSuggestion = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-) : Promise<any> | void => {
+) : Promise<any | void> => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -270,7 +387,7 @@ export const deleteExampleSuggestion = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-) : Promise<any> | void => {
+) : Promise<any | void> => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;

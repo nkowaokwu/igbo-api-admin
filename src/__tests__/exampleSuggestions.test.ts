@@ -1,11 +1,19 @@
-import { forEach, every, isEqual } from 'lodash';
+import {
+  forEach,
+  every,
+  isEqual,
+  times,
+} from 'lodash';
 import { v4 as uuid } from 'uuid';
+import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import {
   approveExampleSuggestion,
   suggestNewExample,
   updateExampleSuggestion,
   getExampleSuggestions,
   getExampleSuggestion,
+  getRandomExampleSuggestions,
+  putRandomExampleSuggestions,
   deleteExampleSuggestion,
   suggestNewWord,
   createWord,
@@ -19,7 +27,7 @@ import {
   updatedExampleSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
 } from './__mocks__/documentData';
-import { EXAMPLE_SUGGESTION_KEYS, INVALID_ID } from './shared/constants';
+import { AUTH_TOKEN, EXAMPLE_SUGGESTION_KEYS, INVALID_ID } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
 
@@ -274,6 +282,66 @@ describe('MongoDB Example Suggestions', () => {
       const res = await getExampleSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
+    });
+
+    it('should get five random example suggestions with no user interactions associated with user', async () => {
+      times(5, async () => {
+        const exampleRes = await suggestNewExample(
+          { ...exampleSuggestionData, igbo: uuid() },
+          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+        );
+        expect(exampleRes.body.approvals).toHaveLength(0);
+        expect(exampleRes.body.denials).toHaveLength(0);
+      });
+      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      expect(res.status).toEqual(200);
+      expect(res.body.length).toBeLessThanOrEqual(5);
+      res.body.forEach((exampleSuggestion) => {
+        expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        expect(exampleSuggestion.pronunciation).toBeFalsy();
+        expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
+        expect(exampleSuggestion.denials.length).toBeLessThanOrEqual(1);
+      });
+    });
+
+    it('should approve, deny, and skip example suggestions', async () => {
+      times(5, async () => {
+        const exampleRes = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
+        expect(exampleRes.body.approvals).toHaveLength(0);
+        expect(exampleRes.body.denials).toHaveLength(0);
+      });
+      const randomExampleSuggestionsRes = await getRandomExampleSuggestions();
+      expect(randomExampleSuggestionsRes.status).toEqual(200);
+      const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id }, index) => {
+        if (index === 0) {
+          return { id, review: ReviewActions.APPROVE };
+        }
+        if (index === 1) {
+          return { id, review: ReviewActions.DENY };
+        }
+        return { id, review: ReviewActions.SKIP };
+      });
+      const updatedRandomExampleSuggestionRes = await putRandomExampleSuggestions(reviewedExampleSuggestions);
+      expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
+      await Promise.all(updatedRandomExampleSuggestionRes.body.map(async (randomExampleSuggestionId, index) => {
+        const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);
+        if (index === 0) {
+          expect(randomExampleSuggestion.body.approvals).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        } else if (index === 1) {
+          expect(randomExampleSuggestion.body.denials).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        } else {
+          expect(randomExampleSuggestion.body.approvals).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.denials).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        }
+      }));
+      const newRandomExampleSuggestionsRes = await getRandomExampleSuggestions();
+      expect(newRandomExampleSuggestionsRes.status).toEqual(200);
+      newRandomExampleSuggestionsRes.body.forEach((newRandomExampleSuggestion) => {
+        expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+      });
     });
   });
 

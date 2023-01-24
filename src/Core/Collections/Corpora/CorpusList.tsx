@@ -23,7 +23,7 @@ const CorpusSuggestionList = (props: ListProps): React.ReactElement => {
   return (
     <List
       {...props}
-      title="Corpus Suggestions"
+      title="Corpora"
       actions={<ListActions />}
       bulkActionButtons={hasAdminOrMergerPermissions(permissions, <BulkSuggestionActions />)}
       pagination={<Pagination />}

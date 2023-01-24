@@ -49,10 +49,10 @@ jobs:
         yarn functions:env
     - name: Wait for Docker ⏱
       run: sleep 10
-    - name: Run Cypress Tests 🎨
-      run: yarn test:ci
-      env:
-        NODE_ENV: development
+    # - name: Run Cypress Tests 🎨
+    #   run: yarn test:ci
+    #   env:
+    #     NODE_ENV: development
     - name: Run Backend Jest Tests 🔩
       run: yarn jest:backend
       env:

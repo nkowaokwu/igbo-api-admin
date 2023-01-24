@@ -79,6 +79,11 @@ const theme = createTheme({
         backgroundColor: 'var(--chakra-colors-white)',
       },
     },
+    RaMenu: {
+      closed: {
+        width: '44px',
+      },
+    },
     RaMenuItemLink: {
       root: {
         color: 'var(--chakra-colors-gray-800)',

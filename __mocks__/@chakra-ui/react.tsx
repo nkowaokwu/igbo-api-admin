@@ -4,6 +4,12 @@ import * as Chakra from '../../node_modules/@chakra-ui/react';
 export const Tooltip = ({ children }) => <>{children}</>;
 export const {
   Box,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   Center,
   Square,
   Container,
@@ -98,11 +104,14 @@ export const {
   forwardRef,
   popperCSSVars,
   VisuallyHidden,
+  useBreakpoint,
   usePopover,
   useStyleConfig,
   useTheme,
   useToast,
   chakra,
 } = Chakra;
+
+export const useBreakpointValue = (breakpoints) => Object.values(breakpoints)[0];
 
 export default Chakra;

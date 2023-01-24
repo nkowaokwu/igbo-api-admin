@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 import mongoose from 'mongoose';
+// @ts-expect-error @types/superagent
 import { Request } from '@types/superagent';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
@@ -9,6 +10,7 @@ import { resultsFromDictionarySearch } from 'src/backend/services/words';
 import { sendEmail } from 'src/backend/controllers/email';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
+import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import './script';
 import { app as expressServer } from '../../../index';
 import {
@@ -46,6 +48,23 @@ export const getWordSuggestion = (id: mongoose.Types.ObjectId | string, options 
 export const deleteWordSuggestion = (id: string, options = { token: '' }): Request => (
   chaiServer
     .delete(`/wordSuggestions/${id}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const getRandomExampleSuggestions = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/exampleSuggestions/random')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const putRandomExampleSuggestions = (
+  data: { id: string, pronunciation?: string, review?: ReviewActions }[],
+  options = { token: '' },
+): Request => (
+  chaiServer
+    .put('/exampleSuggestions/random')
+    .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
@@ -340,4 +359,5 @@ export const searchMockedTerm = (term: string): any => {
   return resultsFromDictionarySearch(searchRegex, mockedData);
 };
 
+// @ts-expect-error sendEmail
 export const sendSendGridEmail = (message: Interfaces.ConstructedMessage): Request => sendEmail(message);

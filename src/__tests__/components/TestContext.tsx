@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { noop } from 'lodash';
 import { TestContext as ReactAdminTestContext } from 'ra-test';
 import { configure } from '@testing-library/react';
 import { DataProviderContext } from 'react-admin';
@@ -14,6 +15,8 @@ Object.defineProperty(global.navigator, 'mediaDevices', {
     getUserMedia: mockGetUserMedia,
   },
 });
+
+window.scrollTo = noop;
 
 jest.mock('firebase');
 jest.mock('firebase/auth');

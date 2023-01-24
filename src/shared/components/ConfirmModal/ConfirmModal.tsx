@@ -39,6 +39,7 @@ const ConfirmModal = ({
   const ContainerBody = useBreakpointValue({ base: DrawerBody, md: AlertDialogBody });
   const ContainerFooter = useBreakpointValue({ base: DrawerFooter, md: AlertDialogFooter });
   const cancelRef = useRef();
+
   return (
     <ContainerComponent
       closeOnEsc={false}

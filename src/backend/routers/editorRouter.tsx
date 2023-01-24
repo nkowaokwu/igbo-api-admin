@@ -35,6 +35,9 @@ import {
   deleteExampleSuggestion,
   getExampleSuggestion,
   getExampleSuggestions,
+  getRandomExampleSuggestions,
+  getRandomExampleSuggestionsToReview,
+  putRandomExampleSuggestions,
   putExampleSuggestion,
   postExampleSuggestion,
   approveExampleSuggestion,
@@ -58,6 +61,7 @@ import validateCorpusBody from '../middleware/validateCorpusBody';
 import validateCorpusMerge from '../middleware/validateCorpusMerge';
 import validateApprovals from '../middleware/validateApprovals';
 import cacheControl from '../middleware/cacheControl';
+import validateRandomExampleSuggestionBody from '../middleware/validateRandomExampleSuggestionBody';
 import interactWithSuggestion from '../middleware/interactWithSuggestion';
 import resolveWordDocument from '../middleware/resolveWordDocument';
 import UserRoles from '../shared/constants/UserRoles';
@@ -121,6 +125,9 @@ editorRouter.delete(
 );
 
 editorRouter.get('/exampleSuggestions', getExampleSuggestions);
+editorRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
+editorRouter.put('/exampleSuggestions/random', validateRandomExampleSuggestionBody, putRandomExampleSuggestions);
+editorRouter.get('/exampleSuggestions/random/review', getRandomExampleSuggestionsToReview);
 editorRouter.post(
   '/exampleSuggestions',
   authorization([]),

@@ -55,7 +55,7 @@ describe('MongoDB Stats', () => {
           variations: [],
         },
       ];
-      const isoWeek = moment().isoWeek();
+      const isoWeek = moment().startOf('week').toISOString();
       const firstStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const currentWeekMergedDialects: number = firstStatsRes.body.dialectalVariationMerges[isoWeek];
       const wordSuggestionRes = await suggestNewWord({
@@ -90,7 +90,7 @@ describe('MongoDB Stats', () => {
           variations: [],
         },
       ];
-      const isoWeek = moment().isoWeek();
+      const isoWeek = moment().startOf('week').toISOString();
       const mergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const adminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const currentWeekMergedDialectsForMerger: number = mergerStatsRes.body.dialectalVariationMerges[isoWeek];
@@ -149,7 +149,7 @@ describe('MongoDB Stats', () => {
       ];
       const mergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const adminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-      const isoWeek = moment().isoWeek();
+      const isoWeek = moment().startOf('week').toISOString();
       const currentWeekMergedExamplesForMerger: number = mergerStatsRes.body.exampleSuggestionMerges[isoWeek];
       const currentWeekMergedExamplesForAdmin: number = adminStatsRes.body.exampleSuggestionMerges[isoWeek];
       const wordSuggestionRes = await suggestNewWord({
