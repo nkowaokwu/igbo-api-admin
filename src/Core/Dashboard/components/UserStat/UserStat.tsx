@@ -61,7 +61,6 @@ const createChartOptions = (title) => ({
   },
 });
 
-const wordSuggestionsChartOptions = createChartOptions('Merged Word Suggestions');
 const exampleSuggestionsChartOptions = createChartOptions('Merged Example Suggestions');
 const dialectalVariationsChartOptions = createChartOptions('Merged Dialectal Variations');
 const THREE_MONTH_WEEKS_COUNT = 12;
@@ -80,7 +79,6 @@ const UserStat = ({
   totalDialectalVariations: number,
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
-  const [wordSuggestionMergeStats, setWordSuggestionMergeStats] = useState(null);
   const [exampleSuggestionMergeStats, setExampleSuggestionMergeStats] = useState(null);
   const [dialectalVariationMergeStats, setDialectalVariationMergeStats] = useState(null);
   const { permissions } = usePermissions();
@@ -93,26 +91,12 @@ const UserStat = ({
       if (uid) {
         const { json: merges } = await network(`/stats/users/${uid}/merge`);
         const {
-          wordSuggestionMerges,
           exampleSuggestionMerges,
           dialectalVariationMerges,
         } = merges;
         const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
           `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
         )).reverse();
-        const wordSuggestionData = {
-          labels,
-          datasets: [
-            {
-              label: 'Word Suggestion Merges',
-              data: sortMerges(wordSuggestionMerges),
-              backgroundColor: '#48825D',
-              borderWidth: 2,
-              borderColor: '#18532D',
-              borderRadius: 10,
-            },
-          ],
-        };
         const exampleSuggestionData = {
           labels,
           datasets: [
@@ -139,7 +123,6 @@ const UserStat = ({
             },
           ],
         };
-        setWordSuggestionMergeStats(wordSuggestionData);
         setExampleSuggestionMergeStats(exampleSuggestionData);
         setDialectalVariationMergeStats(dialectalVariationData);
       }
@@ -152,7 +135,6 @@ const UserStat = ({
         totalCompletedWords={totalCompletedWords}
         totalCompletedExamples={totalCompletedExamples}
         totalDialectalVariations={totalDialectalVariations}
-        wordSuggestionMergeStats={wordSuggestionMergeStats}
         exampleSuggestionMergeStat={exampleSuggestionMergeStats}
         dialectalVariationMergeStats={dialectalVariationMergeStats}
       />
@@ -201,9 +183,6 @@ const UserStat = ({
                 </AccordionButton>
               </ChakraTooltip>
               <AccordionPanel>
-                {wordSuggestionMergeStats ? (
-                  <Bar options={wordSuggestionsChartOptions} data={wordSuggestionMergeStats} />
-                ) : null}
                 {exampleSuggestionMergeStats ? (
                   <Bar options={exampleSuggestionsChartOptions} data={exampleSuggestionMergeStats} />
                 ) : null}
