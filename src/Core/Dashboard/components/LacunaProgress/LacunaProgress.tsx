@@ -25,7 +25,6 @@ const LacunaProgress = ({
   totalCompletedWords: number,
   totalCompletedExamples: number,
   totalDialectalVariations: number,
-  wordSuggestionMergeStats?: { datasets: [{ data: number[] }] },
   exampleSuggestionMergeStat?: { datasets: [{ data: number[] }] },
   dialectalVariationMergeStats?: { datasets: [{ data: number[] }] },
 }): ReactElement => {
@@ -109,7 +108,6 @@ const LacunaProgress = ({
 };
 
 LacunaProgress.defaultProps = {
-  wordSuggestionMergeStats: { datasets: [{ data: [] }] },
   exampleSuggestionMergeStat: { datasets: [{ data: [] }] },
   dialectalVariationMergeStats: { datasets: [{ data: [] }] },
 };

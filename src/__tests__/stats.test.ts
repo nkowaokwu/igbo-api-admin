@@ -29,7 +29,6 @@ describe('MongoDB Stats', () => {
 
     it('should get all user merge stats', async () => {
       const res = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
-      expect(res.body.wordSuggestionMerges).not.toBeUndefined();
       expect(res.body.exampleSuggestionMerges).not.toBeUndefined();
       expect(res.body.dialectalVariationMerges).not.toBeUndefined();
     });
