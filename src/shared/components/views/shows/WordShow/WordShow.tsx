@@ -139,7 +139,7 @@ const WordShow = (props: ShowProps): ReactElement => {
           title={`${resourceTitle[resource]} Document Details`}
         />
         <Box className="flex flex-col lg:flex-row mb-1">
-          <Box className="flex flex-col flex-auto justify-between items-start">
+          <Box className="flex flex-col flex-auto justify-start items-start">
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
               <Box>
                 <Heading fontSize="lg" className="text-xl text-gray-700">
