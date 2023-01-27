@@ -246,7 +246,6 @@ export const getUserMergeStats = async (
   try {
     const { params: { uid }, mongooseConnection } = req;
     const TWELVE_WEEKS = 12;
-    const userId = uid;
     const threeMonthsAgo = new Date(moment().subtract(TWELVE_WEEKS - 1, 'weeks').startOf('week').toISOString());
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
@@ -254,7 +253,7 @@ export const getUserMergeStats = async (
     const exampleSuggestions = await ExampleSuggestion
       .find(
         {
-          authorId: userId,
+          authorId: uid,
           mergedBy: { $ne: null },
           updatedAt: { $gt: threeMonthsAgo },
         },
@@ -266,8 +265,8 @@ export const getUserMergeStats = async (
     const wordSuggestions = await WordSuggestion
       .find({
         mergedBy: { $ne: null },
+        'dialects.editor': uid,
         updatedAt: { $gt: threeMonthsAgo },
-        userInteractions: { $in: [uid] },
       })
       .hint('Merged word suggestion index')
       .limit(WORD_SUGGESTION_QUERY_LIMIT) as Interfaces.WordSuggestion[];
@@ -284,22 +283,6 @@ export const getUserMergeStats = async (
       defaultMerges[week] = 0;
       isoWeekToDateMap[isoWeek] = week;
     });
-    console.time(`Word suggestion merge creation for ${uid}`);
-    const wordSuggestionMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const wordSuggestionUpdateIsoWeek = moment(wordSuggestion.updatedAt).startOf('week').isoWeek();
-      const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
-      if (dateOfIsoWeek) {
-        finalData[dateOfIsoWeek] += 1;
-      } else {
-        console.log(
-          'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
-          wordSuggestion.updatedAt,
-          wordSuggestionUpdateIsoWeek,
-        );
-      }
-      return finalData;
-    }, { ...defaultMerges });
-    console.timeEnd(`Word suggestion merge creation for ${uid}`);
     console.time(`Example suggestion merge creation for ${uid}`);
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
       const exampleSuggestionUpdateIsoWeek = moment(exampleSuggestion.updatedAt).startOf('week').isoWeek();
@@ -321,10 +304,10 @@ export const getUserMergeStats = async (
       const wordSuggestionUpdateIsoWeek = moment(wordSuggestion.updatedAt).startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
       if (dateOfIsoWeek) {
-        const countedHeadword = !wordSuggestion.originalWordId ? 1 : 0;
-        finalData[dateOfIsoWeek] = countedHeadword + wordSuggestion.dialects.filter(({ editor }) => (
-          editor === userId
-        )).length + (wordSuggestion.authorId === userId ? 1 : 0);
+        const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
+        finalData[dateOfIsoWeek] += countedHeadword + wordSuggestion.dialects.filter(({ editor }) => (
+          editor === uid
+        )).length;
       } else {
         console.log(
           'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
@@ -336,7 +319,7 @@ export const getUserMergeStats = async (
     }, { ...defaultMerges });
     console.timeEnd(`Dialectal variation merge creation for ${uid}`);
 
-    return res.send({ wordSuggestionMerges, exampleSuggestionMerges, dialectalVariationMerges });
+    return res.send({ exampleSuggestionMerges, dialectalVariationMerges });
   } catch (err) {
     return next(err);
   }
