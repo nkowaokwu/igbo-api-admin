@@ -33,9 +33,7 @@ const LacunaProgress = ({
 
   useEffect(() => {
     if (dialectalVariationMergeStats) {
-      const CURRENT_WEEKS = compact(times(4, (index) => (
-        !!moment().subtract(index, 'week').isSame(moment(), 'month')
-      ))).length;
+      const CURRENT_WEEKS = Math.abs(moment().startOf('month').diff(moment(), 'week')) + 1;
       const monthData = takeRight(dialectalVariationMergeStats.datasets[0].data, CURRENT_WEEKS);
       setDialectalVariationProgress({
         month: monthData.reduce((totalSum, week) => totalSum + week, 0),
@@ -45,7 +43,7 @@ const LacunaProgress = ({
   }, [dialectalVariationMergeStats]);
   useEffect(() => {
     if (exampleSuggestionMergeStat) {
-      const CURRENT_WEEKS = moment().week() - moment(moment()).startOf('month').week() + 1;
+      const CURRENT_WEEKS = Math.abs(moment().startOf('month').diff(moment(), 'week')) + 1;
       const monthData = takeRight(exampleSuggestionMergeStat.datasets[0].data, CURRENT_WEEKS);
       setExampleSentenceProgress({
         month: monthData.reduce((totalSum, week) => totalSum + week, 0),
