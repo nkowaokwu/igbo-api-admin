@@ -81,6 +81,7 @@ const UserStat = ({
   const [userStats, setUserStats] = useState(null);
   const [exampleSuggestionMergeStats, setExampleSuggestionMergeStats] = useState(null);
   const [dialectalVariationMergeStats, setDialectalVariationMergeStats] = useState(null);
+  const [currentMonthMergeStats, setCurrentMonthMergeStats] = useState(null);
   const { permissions } = usePermissions();
   const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
 
@@ -93,6 +94,7 @@ const UserStat = ({
         const {
           exampleSuggestionMerges,
           dialectalVariationMerges,
+          currentMonthMerges,
         } = merges;
         const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
           `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
@@ -125,6 +127,7 @@ const UserStat = ({
         };
         setExampleSuggestionMergeStats(exampleSuggestionData);
         setDialectalVariationMergeStats(dialectalVariationData);
+        setCurrentMonthMergeStats(currentMonthMerges);
       }
     })();
   }, []);
@@ -137,6 +140,7 @@ const UserStat = ({
         totalDialectalVariations={totalDialectalVariations}
         exampleSuggestionMergeStat={exampleSuggestionMergeStats}
         dialectalVariationMergeStats={dialectalVariationMergeStats}
+        currentMonthMergeStats={currentMonthMergeStats}
       />
       <Skeleton isLoaded={userStats} minHeight={32}>
         <Box mt={4}>
