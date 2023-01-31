@@ -1,10 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import {
-  compact,
-  last,
-  takeRight,
-  times,
-} from 'lodash';
+import { last } from 'lodash';
 import {
   Box,
   Heading,
@@ -21,36 +16,36 @@ const LacunaProgress = ({
   totalDialectalVariations,
   exampleSuggestionMergeStat,
   dialectalVariationMergeStats,
+  currentMonthMergeStats,
 } : {
   totalCompletedWords: number,
   totalCompletedExamples: number,
   totalDialectalVariations: number,
   exampleSuggestionMergeStat?: { datasets: [{ data: number[] }] },
   dialectalVariationMergeStats?: { datasets: [{ data: number[] }] },
+  currentMonthMergeStats?: { exampleSuggestions: number, dialectalVariations: number },
 }): ReactElement => {
   const [dialectalVariationProgress, setDialectalVariationProgress] = useState({ month: 0, week: 0 });
   const [exampleSentenceProgress, setExampleSentenceProgress] = useState({ month: 0, week: 0 });
 
   useEffect(() => {
-    if (dialectalVariationMergeStats) {
-      const CURRENT_WEEKS = Math.abs(moment().startOf('month').diff(moment(), 'week')) + 1;
-      const monthData = takeRight(dialectalVariationMergeStats.datasets[0].data, CURRENT_WEEKS);
+    if (dialectalVariationMergeStats && currentMonthMergeStats) {
       setDialectalVariationProgress({
-        month: monthData.reduce((totalSum, week) => totalSum + week, 0),
-        week: last(monthData),
+        month: currentMonthMergeStats.dialectalVariations,
+        week: last(dialectalVariationMergeStats.datasets[0].data),
       });
     }
-  }, [dialectalVariationMergeStats]);
+  }, [dialectalVariationMergeStats, currentMonthMergeStats]);
+
   useEffect(() => {
-    if (exampleSuggestionMergeStat) {
-      const CURRENT_WEEKS = Math.abs(moment().startOf('month').diff(moment(), 'week')) + 1;
-      const monthData = takeRight(exampleSuggestionMergeStat.datasets[0].data, CURRENT_WEEKS);
+    if (exampleSuggestionMergeStat && currentMonthMergeStats) {
       setExampleSentenceProgress({
-        month: monthData.reduce((totalSum, week) => totalSum + week, 0),
-        week: last(monthData),
+        month: currentMonthMergeStats.exampleSuggestions,
+        week: last(exampleSuggestionMergeStat.datasets[0].data),
       });
     }
-  }, [exampleSuggestionMergeStat]);
+  }, [exampleSuggestionMergeStat, currentMonthMergeStats]);
+
   return (
     <Box className="mb-6">
       <Box className="flex flex-col items-center text-center my-5">
