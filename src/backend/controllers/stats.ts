@@ -283,10 +283,19 @@ export const getUserMergeStats = async (
       defaultMerges[week] = 0;
       isoWeekToDateMap[isoWeek] = week;
     });
+    const currentMonthMerges = {
+      exampleSuggestions: 0,
+      dialectalVariations: 0,
+    };
     console.time(`Example suggestion merge creation for ${uid}`);
     const exampleSuggestionMerges = exampleSuggestions.reduce((finalData, exampleSuggestion) => {
-      const exampleSuggestionUpdateIsoWeek = moment(exampleSuggestion.updatedAt).startOf('week').isoWeek();
+      const exampleSuggestionUpdateDate = moment(exampleSuggestion.updatedAt);
+      const exampleSuggestionUpdateIsoWeek = exampleSuggestionUpdateDate.startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[exampleSuggestionUpdateIsoWeek];
+      const isSameMonth = moment().isSame(exampleSuggestionUpdateDate, 'month');
+      if (isSameMonth) {
+        currentMonthMerges.exampleSuggestions += 1;
+      }
       if (dateOfIsoWeek) {
         finalData[dateOfIsoWeek] += 1;
       } else {
@@ -301,13 +310,19 @@ export const getUserMergeStats = async (
     console.timeEnd(`Example suggestion merge creation for ${uid}`);
     console.time(`Dialectal variation merge creation for ${uid}`);
     const dialectalVariationMerges = wordSuggestions.reduce((finalData, wordSuggestion) => {
-      const wordSuggestionUpdateIsoWeek = moment(wordSuggestion.updatedAt).startOf('week').isoWeek();
+      const wordSuggestionUpdateDate = moment(wordSuggestion.updatedAt);
+      const wordSuggestionUpdateIsoWeek = wordSuggestionUpdateDate.startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
+      const isSameMonth = moment().isSame(wordSuggestionUpdateDate, 'month');
+      const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
+      const dialectEditorCount = wordSuggestion.dialects.filter(({ editor }) => (
+        editor === uid
+      )).length;
+      if (isSameMonth) {
+        currentMonthMerges.dialectalVariations += countedHeadword + dialectEditorCount;
+      }
       if (dateOfIsoWeek) {
-        const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
-        finalData[dateOfIsoWeek] += countedHeadword + wordSuggestion.dialects.filter(({ editor }) => (
-          editor === uid
-        )).length;
+        finalData[dateOfIsoWeek] += countedHeadword + dialectEditorCount;
       } else {
         console.log(
           'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
@@ -319,7 +334,7 @@ export const getUserMergeStats = async (
     }, { ...defaultMerges });
     console.timeEnd(`Dialectal variation merge creation for ${uid}`);
 
-    return res.send({ exampleSuggestionMerges, dialectalVariationMerges });
+    return res.send({ exampleSuggestionMerges, dialectalVariationMerges, currentMonthMerges });
   } catch (err) {
     return next(err);
   }
