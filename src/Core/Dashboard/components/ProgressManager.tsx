@@ -13,6 +13,7 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
   const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const [totalHeadwordAudioPronunciation, setTotalHeadwordAudioPronunciation] = useState(null);
   const [totalWordIsStandardIgbo, setTotalWordIsStandardIgbo] = useState(null);
+  const [totalWordsWithIgboDefinitions, setTotalWordsWithIgboDefinitions] = useState(null);
   const [totalWordsWithNsibidi, setTotalWordsWithNsibidi] = useState(null);
   const [totalWordSuggestionsWithNsibidi, setTotalWordSuggestionsWithNsibidi] = useState(null);
 
@@ -31,6 +32,7 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
           dialectal_variations,
           headword_audio_pronunciations,
           standard_igbo,
+          igbo_definitions,
           sufficient_examples,
           complete_examples,
           nsibidi_words,
@@ -41,6 +43,7 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
         setTotalDialectalVariations(dialectal_variations?.value || 0);
         setTotalHeadwordAudioPronunciation(headword_audio_pronunciations?.value || 0);
         setTotalWordIsStandardIgbo(standard_igbo?.value || 0);
+        setTotalWordsWithIgboDefinitions(igbo_definitions?.value || 0);
         setTotalSufficientExamples(sufficient_examples?.value || 0);
         setTotalCompletedExamples(complete_examples?.value || 0);
         setTotalWordsWithNsibidi(nsibidi_words?.value || 0);
@@ -68,6 +71,7 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
         totalDialectalVariations={totalDialectalVariations}
         totalHeadwordAudioPronunciation={totalHeadwordAudioPronunciation}
         totalWordIsStandardIgbo={totalWordIsStandardIgbo}
+        totalWordsWithIgboDefinitions={totalWordsWithIgboDefinitions}
         totalWordsWithNsibidi={totalWordsWithNsibidi}
         totalWordSuggestionsWithNsibidi={totalWordSuggestionsWithNsibidi}
       />

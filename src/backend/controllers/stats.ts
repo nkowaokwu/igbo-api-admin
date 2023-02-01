@@ -86,6 +86,7 @@ const countWords = async (words) => {
   let sufficientWordsCount = 0;
   let completeWordsCount = 0;
   let dialectalVariationsCount = 0;
+  let igboDefinitionsCount = 0;
   await Promise.all(words.map(async (word) => {
     const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(word);
     const { sufficientWordRequirements, completeWordRequirements } = await determineDocumentCompleteness(word, true);
@@ -105,14 +106,27 @@ const countWords = async (words) => {
     }
     // Tracks total dialectal variations
     dialectalVariationsCount += (Object.keys(word.dialects || {}).length + 1);
+
+    // Tracks total documents with Igbo definitions
+    igboDefinitionsCount += word.definitions.find(({ igboDefinitions = [] }) => igboDefinitions.length) ? 1 : 0;
   }));
 
-  return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
+  return {
+    sufficientWordsCount,
+    completeWordsCount,
+    dialectalVariationsCount,
+    igboDefinitionsCount,
+  };
 };
 
 /* Returns all the Words that are "sufficient" */
 const calculateWordStats = async (Word, Stat):
-Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVariationsCount: number } | void> => {
+Promise<{
+  sufficientWordsCount: number,
+  completeWordsCount: number,
+  dialectalVariationsCount: number,
+  igboDefinitionsCount: number,
+} | void> => {
   const INCLUDE_ALL_WORDS_LIMIT = 100000;
   const words = await findWordsWithMatch({
     match: { 'attributes.isStandardIgbo': { $eq: true } },
@@ -120,12 +134,23 @@ Promise<{ sufficientWordsCount: number, completeWordsCount: number, dialectalVar
     limit: INCLUDE_ALL_WORDS_LIMIT,
     Word,
   });
-  const { sufficientWordsCount, completeWordsCount, dialectalVariationsCount } = await countWords(words);
+  const {
+    sufficientWordsCount,
+    completeWordsCount,
+    dialectalVariationsCount,
+    igboDefinitionsCount,
+  } = await countWords(words);
   await updateStat({ type: StatTypes.SUFFICIENT_WORDS, value: sufficientWordsCount, Stat });
   await updateStat({ type: StatTypes.COMPLETE_WORDS, value: completeWordsCount, Stat });
   await updateStat({ type: StatTypes.DIALECTAL_VARIATIONS, value: dialectalVariationsCount, Stat });
+  await updateStat({ type: StatTypes.IGBO_DEFINITIONS, value: igboDefinitionsCount, Stat });
 
-  return { sufficientWordsCount, completeWordsCount, dialectalVariationsCount };
+  return {
+    sufficientWordsCount,
+    completeWordsCount,
+    dialectalVariationsCount,
+    igboDefinitionsCount,
+  };
 };
 
 const countCompletedExamples = async (examples) => {
