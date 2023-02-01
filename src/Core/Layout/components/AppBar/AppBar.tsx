@@ -16,7 +16,7 @@ const AppBar = ({ notifications, ...props } : { notifications: Interfaces.Notifi
     }}
     {...props}
   >
-    <Heading fontFamily="Silka" fontSize="lg" flex={1} id="react-admin-title" />
+    <Heading fontFamily="Silka" fontSize="lg" flex={1} id="react-admin-title" color="white" />
     <Notifications notifications={notifications} />
   </DefaultAppBar>
 );

@@ -5,6 +5,7 @@ import { pick } from 'lodash';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import authProvider from '../utils/authProvider';
 import PlatformLoader from './PlatformLoader';
+import ChakraTheme from './ChakraTheme';
 import '../styles.css';
 
 const auth = getAuth();
@@ -62,7 +63,7 @@ const App = (): React.ReactElement => {
 };
 
 export default (props: any): ReactElement => (
-  <ChakraProvider>
+  <ChakraProvider theme={ChakraTheme}>
     <App {...props} />
   </ChakraProvider>
 );

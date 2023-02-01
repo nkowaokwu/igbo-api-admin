@@ -1,52 +1,36 @@
 import React, { ReactElement } from 'react';
 import {
   Box,
-  Progress,
-  Heading,
   Skeleton,
+  Heading,
   Text,
-  Tooltip,
+  Divider,
 } from '@chakra-ui/react';
 import LinearProgressCardInterface from './LinearProgressCardInterface';
-
-const calculatePercentage = (numerator, denominator) => Math.floor((numerator / denominator) * 100);
+import StatBody from './StatBody';
 
 const LinearProgressCard = ({
-  totalCount,
-  goal,
   heading,
   description,
+  stats,
   isLoaded,
 }: LinearProgressCardInterface): ReactElement => (
   <Skeleton isLoaded={isLoaded}>
     <Box
-      className="text-center flex flex-col items-center"
-      backgroundColor="white"
-      borderRadius="md"
-      boxShadow="lg"
-      py={4}
-      px={3}
+      className="rounded border bg-white space-y-3"
+      borderColor="gray.300"
+      p={3}
     >
       <Box>
-        <Heading fontSize="3xl" className="text-gray-800" fontFamily="Silka">{heading}</Heading>
-        <Text fontSize="md" className="text-gray-700 italic">
-          {description}
-        </Text>
+        <Heading fontSize="lg" fontFamily="Silka">{heading}</Heading>
+        <Text fontFamily="Silka">{description}</Text>
       </Box>
-      <Box className="w-full flex flex-row justify-end">
-        <Box className="flex flex-col justify-center items-center w-full mt-4">
-          <Tooltip label={`${`${calculatePercentage(totalCount, goal)}% has been merged`}`}>
-            <Box width="full">
-              <Progress
-                value={calculatePercentage(totalCount, goal)}
-                size="lg"
-                width="full"
-              />
-            </Box>
-          </Tooltip>
-          <Text fontSize="xl" fontWeight="bold">{`${totalCount} / ${goal}`}</Text>
-        </Box>
+      <Box width="full">
+        <Divider backgroundColor="gray.100" />
       </Box>
+      {stats.map((stat) => (
+        <StatBody {...stat} />
+      ))}
     </Box>
   </Skeleton>
 );

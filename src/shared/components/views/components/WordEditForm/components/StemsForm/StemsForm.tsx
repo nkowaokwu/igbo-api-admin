@@ -156,7 +156,6 @@ const StemsForm = ({
           placeholder="Search for stem or use word id"
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddStem(e.id)}
-          className="form-input"
         />
         <Tooltip label="Click this button to add the stem">
           <IconButton

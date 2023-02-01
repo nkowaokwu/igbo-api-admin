@@ -27,7 +27,7 @@ const UserList = (props: ListProps): ReactElement => {
       <Responsive
         small={(
           <Datagrid>
-            <TextField label="Name" source="displayName" />
+            <TextField label="Name" source="displayName" defaultValue="No name" />
             <EmailField label="email" source="Email" />
             <TextField label="Role" source="role" />
             <TextField label="Editing Group" source="editingGroup" />
@@ -36,7 +36,7 @@ const UserList = (props: ListProps): ReactElement => {
         )}
         medium={(
           <Datagrid>
-            <TextField label="Name" source="displayName" />
+            <TextField label="Name" source="displayName" defaultValue="No name" />
             <EmailField label="Email" source="email" />
             <TextField label="Role" source="role" />
             <TextField label="Editing Group" source="editingGroup" />

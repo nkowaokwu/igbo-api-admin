@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { Box } from '@chakra-ui/react';
+import { Box, Tooltip } from '@chakra-ui/react';
+import { InfoIcon } from '@chakra-ui/icons';
 import { Input } from 'src/shared/primitives';
 import Tense from 'src/backend/shared/constants/Tense';
 import FormHeader from '../../../FormHeader';
@@ -43,6 +44,14 @@ const TensesForm = ({
                     data-test={`tenses-${key}-input`}
                     mb={4}
                   />
+                  {key === Tense.PRESENT_PASSIVE.value ? (
+                    <Tooltip
+                      label={'The present passive verb tense should only be filled in if the '
+                      + 'current verb is considered "special" like a medial verb'}
+                    >
+                      <InfoIcon color="gray" boxSize={4} />
+                    </Tooltip>
+                  ) : null}
                 </Box>
               );
             }}

@@ -110,28 +110,30 @@ const PollsCreate = (): ReactElement => {
       <Box className="bg-white shadow-sm p-10 mt-10">
         <Box className="flex flex-col-reverse lg:flex-row justify-between lg:items-center">
           <Heading>Create a new Constructed Term Poll</Heading>
-          <Tooltip label="This will authorize the @nkowaokwu Twitter account to post on your behalf" placement="top">
-            <Button
-              type="submit"
-              colorScheme="green"
-              variant="outline"
-              className="mb-4 lg:mb-0"
-              onClick={handleAccountAuthorization}
-            >
-              Authorize account
-            </Button>
-          </Tooltip>
-          <Tooltip label="This poll will be posted on the public @nkowaokwu Twitter account" placement="top">
-            <Button
-              type="submit"
-              colorScheme="green"
-              variant="solid"
-              isLoading={isSubmitting}
-              className="mb-4 lg:mb-0"
-            >
-              Post poll
-            </Button>
-          </Tooltip>
+          <Box className="flex flex-row space-x-4 items-center">
+            <Tooltip label="This will authorize the @nkowaokwu Twitter account to post on your behalf" placement="top">
+              <Button
+                type="submit"
+                colorScheme="green"
+                variant="outline"
+                className="mb-4 lg:mb-0"
+                onClick={handleAccountAuthorization}
+              >
+                Authorize account
+              </Button>
+            </Tooltip>
+            <Tooltip label="This poll will be posted on the public @nkowaokwu Twitter account" placement="top">
+              <Button
+                type="submit"
+                colorScheme="green"
+                variant="solid"
+                isLoading={isSubmitting}
+                className="mb-4 lg:mb-0"
+              >
+                Post poll
+              </Button>
+            </Tooltip>
+          </Box>
         </Box>
         <Text fontWeight="bold">What is a Constructed Term?</Text>
         <Text>

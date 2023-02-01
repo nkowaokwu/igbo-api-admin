@@ -1,4 +1,4 @@
-import React, { createElement } from 'react';
+import React, { createElement, useMemo } from 'react';
 import { capitalize } from 'lodash';
 import { useSelector } from 'react-redux';
 import { MenuItemLink, MenuProps, usePermissions } from 'react-admin';
@@ -9,11 +9,18 @@ import { getResourceObjects } from 'src/App/Resources';
 const Menu = ({ onMenuClick } : MenuProps) => {
   const permissions = usePermissions();
   const open = useSelector((state) => state.admin.ui.sidebarOpen);
-  const routes = getResourceObjects(permissions);
+  const routes = useMemo(() => (
+    getResourceObjects(permissions?.permissions ? permissions.permissions : permissions)
+  ), [permissions]);
 
   return (
     <Box>
-      {routes.map(({ name, options = { label: '' }, icon }) => (
+      {routes.map(({
+        name,
+        options = { label: '' },
+        icon,
+        exact = false,
+      }) => (
         <MenuItemLink
           key={name}
           to={`/${name}`}
@@ -21,6 +28,7 @@ const Menu = ({ onMenuClick } : MenuProps) => {
           leftIcon={createElement(icon)}
           onClick={onMenuClick}
           sidebarIsOpen={open}
+          exact={exact}
         />
       ))}
     </Box>

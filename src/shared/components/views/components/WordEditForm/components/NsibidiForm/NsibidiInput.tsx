@@ -19,7 +19,6 @@ const NsibidiInput = React.forwardRef((props : {
       <Input
         {...props}
         ref={ref}
-        className="form-input"
         placeholder={placeholder}
         data-test={dataTest}
       />

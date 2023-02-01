@@ -66,7 +66,8 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
     Array.isArray(definitions)
       && definitions.some(({ wordClass }) => isVerb(wordClass))
       && !Object.entries(tenses).every(([key, value]) => (
-        value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
+        (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue))
+        || (key === Tense.PRESENT_PASSIVE.value)
       ))
       ? 'All verb tenses are needed'
       : null,

@@ -60,7 +60,6 @@ const DialectForm = ({
             render={({ onChange }) => (
               <Input
                 onChange={onChange}
-                className="form-input"
                 placeholder="Dialectal variation"
                 data-test={`dialects-${index}-word-input`}
                 defaultValue={dialect.word || ''}

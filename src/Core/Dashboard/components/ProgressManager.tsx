@@ -5,7 +5,7 @@ import MilestoneProgress from './MilestoneProgress';
 import UserStat from './UserStat';
 
 const NO_PERMISSION_STATUS = 403;
-const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid: string } }): ReactElement => {
+const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => {
   const [totalSufficientWords, setTotalSufficientWords] = useState(null);
   const [totalCompletedWords, setTotalCompletedWords] = useState(null);
   const [totalSufficientExamples, setTotalSufficientExamples] = useState(null);
@@ -57,7 +57,6 @@ const ProgressManager = ({ permissions, user } : { permissions: any, user: { uid
       <Box className="mb-24">
         <UserStat
           uid={user?.uid}
-          permissions={permissions}
           totalCompletedWords={totalCompletedWords}
           totalCompletedExamples={totalCompletedExamples}
           totalDialectalVariations={totalDialectalVariations}

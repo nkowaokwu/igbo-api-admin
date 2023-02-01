@@ -147,7 +147,6 @@ const RelatedTermsForm = ({
           placeholder="Search for a related term or use word id"
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddRelatedTerm(e.id)}
-          className="form-input"
         />
         <Tooltip label="Click this button to add the related term">
           <IconButton

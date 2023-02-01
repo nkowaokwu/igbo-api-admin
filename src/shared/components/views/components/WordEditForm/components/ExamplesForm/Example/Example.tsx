@@ -89,7 +89,6 @@ const Example = ({
         <h3 className="text-gray-700">Igbo:</h3>
         <Input
           onChange={handleInputIgbo}
-          className="form-input"
           placeholder="Example in Igbo"
           data-test={`examples-${index}-igbo-input`}
           defaultValue={igbo || (formData.examples && formData.examples[index]?.igbo) || ''}
@@ -97,7 +96,6 @@ const Example = ({
         <h3 className="text-gray-700">English:</h3>
         <Input
           onChange={handleInputEnglish}
-          className="form-input"
           placeholder="Example in English (literal)"
           data-test={`examples-${index}-english-input`}
           defaultValue={english || (formData.examples && formData.examples[index]?.english) || ''}
@@ -105,7 +103,6 @@ const Example = ({
         <h3 className="text-gray-700">Meaning:</h3>
         <Input
           onChange={handleInputMeaning}
-          className="form-input"
           placeholder="Example in English (meaning)"
           data-test={`examples-${index}-meaning-input`}
           defaultValue={meaning || (formData.examples && formData.examples[index]?.meaning) || ''}

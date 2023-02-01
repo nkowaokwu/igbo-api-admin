@@ -40,6 +40,7 @@ export default (word: Word | Record): boolean => !!(
   && (invalidRelatedTermsWordClasses.includes(word.wordClass)
     || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))
   && isVerb(word.wordClass) && !Object.entries(word.tenses || {}).every(([key, value]) => (
-    value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)
+    (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue))
+    || (key === Tense.PRESENT_PASSIVE.value)
   ))
 );
