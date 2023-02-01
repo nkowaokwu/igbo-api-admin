@@ -8,6 +8,7 @@ import {
   WORDS_WITH_NSIBIDI_GOAL,
   WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL,
   IS_STANDARD_IGBO_GOAL,
+  IGBO_DEFINITIONS_GOAL,
   EXAMPLE_SENTENCES_GOAL,
 } from 'src/Core/constants';
 import ProgressCard from '../ProgressCard';
@@ -20,6 +21,7 @@ const MilestoneProgress = ({
   totalDialectalVariations,
   totalHeadwordAudioPronunciation,
   totalWordIsStandardIgbo,
+  totalWordsWithIgboDefinitions,
   totalWordsWithNsibidi,
   totalWordSuggestionsWithNsibidi,
 } : {
@@ -30,6 +32,7 @@ const MilestoneProgress = ({
   totalDialectalVariations: number,
   totalHeadwordAudioPronunciation: number,
   totalWordIsStandardIgbo: number,
+  totalWordsWithIgboDefinitions: number,
   totalWordsWithNsibidi: number,
   totalWordSuggestionsWithNsibidi: number,
 }): ReactElement => (
@@ -85,6 +88,14 @@ const MilestoneProgress = ({
             description={`There are currently ${totalWordIsStandardIgbo} words marked as Standard Igbo 
             on the platform. Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`}
             isLoaded={totalWordIsStandardIgbo !== null}
+          />
+          <ProgressCard
+            totalCount={totalWordsWithIgboDefinitions}
+            goal={IGBO_DEFINITIONS_GOAL}
+            heading="Words with Igbo Definitions"
+            description={`There are currently ${totalWordsWithIgboDefinitions} words with at least one Igbo definition 
+            on the platform. Our next goal is to mark a total of ${IGBO_DEFINITIONS_GOAL} words.`}
+            isLoaded={totalWordsWithIgboDefinitions !== null}
           />
         </Box>
       </Box>
