@@ -25,6 +25,7 @@ import AsyncPollCreate from 'src/Core/Collections/Polls/PollCreate';
 import AsyncUserList from 'src/Core/Collections/Users/UserList';
 import AsyncUserShow from 'src/Core/Collections/Users/UserShow';
 import Sandbox from 'src/Core/Collections/Sandbox';
+import AsyncDataCollectionList from 'src/Core/Collections/DataCollection/DataCollectionList';
 import withLastRoute from './withLastRoute';
 
 export const getResourceObjects = (permissions: any) => compact(flatten([
@@ -109,6 +110,15 @@ export const getResourceObjects = (permissions: any) => compact(flatten([
       key: 'sandbox',
       list: Sandbox,
       icon: () => <>🏝</>,
+    },
+  ]),
+  hasAdminPermissions(permissions, [
+    {
+      name: 'dataCollection',
+      key: 'dataCollection',
+      options: { label: 'Data Collection' },
+      list: withLastRoute(AsyncDataCollectionList),
+      icon: () => <>🗄</>,
     },
   ]),
 ]));
