@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { capitalize } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { Box, Tooltip } from '@chakra-ui/react';
-import { InfoIcon } from '@chakra-ui/icons';
+import { Box, Text, Tooltip } from '@chakra-ui/react';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Input } from 'src/shared/primitives';
 import Tense from 'src/backend/shared/constants/Tense';
 import FormHeader from '../../../FormHeader';
@@ -35,7 +35,17 @@ const TensesForm = ({
               const label = capitalize(key.replace(/([A-Z])/g, ' $1'));
               return (
                 <Box>
-                  <h3 className="text-gray-700 mb-2">{`${label}:`}</h3>
+                  <Text className="text-gray-700 mb-2">
+                    {`${label}:`}
+                    {key === Tense.PRESENT_PASSIVE.value ? (
+                      <Tooltip
+                        label={'The present passive verb tense should only be filled in if the '
+                        + 'current verb is considered "special" like a medial verb'}
+                      >
+                        <InfoOutlineIcon color="gray" boxSize={4} className="ml-2" />
+                      </Tooltip>
+                    ) : null}
+                  </Text>
                   <Input
                     onChange={(e) => onChange(e.target.value)}
                     defaultValue={record?.tenses?.[key]}
@@ -44,14 +54,6 @@ const TensesForm = ({
                     data-test={`tenses-${key}-input`}
                     mb={4}
                   />
-                  {key === Tense.PRESENT_PASSIVE.value ? (
-                    <Tooltip
-                      label={'The present passive verb tense should only be filled in if the '
-                      + 'current verb is considered "special" like a medial verb'}
-                    >
-                      <InfoIcon color="gray" boxSize={4} />
-                    </Tooltip>
-                  ) : null}
                 </Box>
               );
             }}
