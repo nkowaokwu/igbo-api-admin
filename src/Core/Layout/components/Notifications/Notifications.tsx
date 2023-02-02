@@ -61,7 +61,7 @@ const Notifications = (props): ReactElement => {
         as={Button}
         cursor="pointer"
         variant="ghost"
-        leftIcon={(() => <>📫</>)()}
+        leftIcon={(() => <>🔔</>)()}
         color="gray.800"
         {...props}
       >

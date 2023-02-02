@@ -66,7 +66,9 @@ const Toast = (): ReactElement => {
                 {translate('ra.action.undo')}
               </Button>
             ) : null}
-            <Text>{notification.message && translate(notification.message, notification.messageArgs)}</Text>
+            <Text color="white">
+              {notification.message && translate(notification.message, notification.messageArgs)}
+            </Text>
           </>
         ),
         status: notification.type,

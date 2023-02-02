@@ -101,7 +101,7 @@ const Login = (): ReactElement => {
       className={`flex flex-col justify-center items-center h-full
       lg:h-screen w-screen bg-gray-100 py-20 lg:py-0 overflow-hidden`}
     >
-      <Heading size="xl" className="mb-6" fontFamily="Silka">{'Igbo API Editor\'s Platform'}</Heading>
+      <Heading size="xl" className="mb-6 text-center" fontFamily="Silka">{'Igbo API Editor\'s Platform'}</Heading>
       <Box
         className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-lg rounded-lg overflow-hidden"
         maxWidth="750px"

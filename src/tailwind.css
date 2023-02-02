@@ -121,20 +121,8 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
   @apply bg-gray-200 !important;
 }
 
-.MuiListItemIcon-root .MuiSvgIcon-root {
-  fill: rgb(128, 128, 128) !important;
-}
-
-.MuiSvgIcon-root {
-  fill: rgb(128, 128, 128) !important;
-}
-
 .MuiButton-label .RaButton-smallIcon-78 {
   fill: rgb(255, 255, 255) !important;
-}
-
-[aria-label="Profile"] .MuiButton-label {
-  @apply text-gray-800;
 }
 
 .ant-collapse-header svg {
@@ -206,10 +194,6 @@ button.MuiButton-textSecondary:hover, button[class*="button-remove-"]:hover{
   @apply text-blue-600 !important;
 }
 
-svg[class*="RaConfirm"].MuiSvgIcon-root, svg[class*="RaAppBar-menuButtonIcon"]{
-fill: rgb(128, 128, 128) !important;
-}
-
 button[class*="button-remove-definitions"] svg[class*="RaSimpleFormIterator-leftIcon"] {
   fill: #3182ce !important;
 }
@@ -245,21 +229,7 @@ input#word, input#igbo {
 }
 
 #react-admin-title {
-  @apply text-gray-800 !important;
-}
-
-/* Form styles */
-.form-input {
-  @apply h-10;
-  @apply w-full;
-  @apply border-current;
-  @apply border-solid;
-  @apply border;
-  @apply border-gray-600;
-  @apply rounded-md;
-  @apply px-3;
-  @apply py-5;
-  @apply bg-white !important;
+  @apply text-white !important;
 }
 
 .form-textarea {

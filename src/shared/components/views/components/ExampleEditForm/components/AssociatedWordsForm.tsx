@@ -150,7 +150,6 @@ const AssociatedWordsForm = ({
           placeholder="Search for associated word or use word id"
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddAssociatedWord(e.id)}
-          className="form-input"
         />
         <Tooltip label="Click this button to add the associated word">
           <IconButton

@@ -40,7 +40,7 @@ const twitterClient = new TwitterApi({
 });
 
 const getTwitterClient = async () => {
-  const { refreshToken } = (await dbRef.get()).data();
+  const { refreshToken } = (await dbRef.get()).data() || {};
   const {
     client: refreshedClient,
     accessToken,
@@ -217,7 +217,13 @@ export const onMergeConstructedTermPoll = async (mergedWord: Interfaces.Word): P
 export const getPolls = async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<any> => {
   try {
     const { skip, limit } = handleQueries(req);
-    const { refreshToken } = (await dbRef.get()).data();
+    const { refreshToken } = (await dbRef.get()).data() || {};
+    if (!refreshToken) {
+      res.setHeader('Content-Range', 0);
+      res
+        .status(200)
+        .send([]);
+    }
     const dbPollsRef = db.collection('polls');
     const dbPollsWindowRef = db.collection('polls').orderBy('created_at', 'desc');
     const {

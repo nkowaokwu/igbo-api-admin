@@ -69,7 +69,6 @@ const HeadwordForm = ({
         render={(props) => (
           <Input
             {...props}
-            className="form-input"
             placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
             data-test="word-input"
           />
@@ -88,7 +87,6 @@ const HeadwordForm = ({
             render={(props) => (
               <Input
                 {...props}
-                className="form-input"
                 placeholder="Spelling of headword pronunciation, i.e. ụgbaala"
                 data-test="word-pronunciation-input"
               />
@@ -102,7 +100,6 @@ const HeadwordForm = ({
             render={(props) => (
               <Input
                 {...props}
-                className="form-input"
                 placeholder="Conceptual spelling of headword using dashes , i.e. isi-agụ"
                 data-test="conceptual-word-input"
               />

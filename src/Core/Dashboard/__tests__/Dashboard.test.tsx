@@ -12,6 +12,7 @@ it('render the dashboard', async () => {
   await findByText('Words with Nsịbịdị');
   await findByText('Word Suggestions with Nsịbịdị');
   await findByText('Standard Igbo Words');
+  await findByText('Words with Igbo Definitions');
   await findByText('Sufficient Igbo Example Sentences');
   await findByText('Complete Igbo Example Sentences');
 });

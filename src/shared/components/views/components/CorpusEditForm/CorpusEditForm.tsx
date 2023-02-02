@@ -206,7 +206,6 @@ const CorpusEditForm = ({
           <>
             <h2 className="form-header">Parent Corpus Id:</h2>
             <Input
-              className="form-input"
               data-test="original-id"
               value={record.originalCorpusId || record.id}
               isDisabled
@@ -221,7 +220,6 @@ const CorpusEditForm = ({
           render={(props) => (
             <Input
               {...props}
-              className="form-input"
               placeholder="Title of corpus"
               data-test="title-input"
             />

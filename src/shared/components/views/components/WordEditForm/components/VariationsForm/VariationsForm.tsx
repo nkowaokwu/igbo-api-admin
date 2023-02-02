@@ -29,10 +29,7 @@ const VariationsForm = (
       <Box className="list-container" key={variation}>
         <Controller
           render={(props) => (
-            <Input
-              {...props}
-              className="form-input"
-            />
+            <Input {...props} />
           )}
           name={`variations[${index}]`}
           control={control}

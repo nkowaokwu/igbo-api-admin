@@ -16,7 +16,6 @@ import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
 import { getResourceObjects } from './Resources';
-import Menu from './Menu';
 import Theme from './Theme';
 
 const Resources = memo(() => {
@@ -53,7 +52,6 @@ const IgboAPIAdmin = (): ReactElement => (
       dataProvider={dataProvider}
       authProvider={authProvider}
       catchAll={NotFound}
-      menu={Menu}
     >
       <Resources />
     </AdminContext>

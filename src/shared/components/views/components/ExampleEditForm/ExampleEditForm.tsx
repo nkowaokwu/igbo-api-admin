@@ -148,7 +148,6 @@ const ExampleEditForm = ({
           <>
             <h2 className="form-header">Parent Example Id:</h2>
             <Input
-              className="form-input"
               data-test="original-id"
               value={record.originalExampleId || record.id}
               isDisabled
@@ -207,7 +206,6 @@ const ExampleEditForm = ({
           render={(props) => (
             <Input
               {...props}
-              className="form-input"
               placeholder="Biko"
               data-test="igbo-input"
             />
@@ -229,7 +227,6 @@ const ExampleEditForm = ({
           render={(props) => (
             <Input
               {...props}
-              className="form-input"
               placeholder="Please"
               data-test="english-input"
             />

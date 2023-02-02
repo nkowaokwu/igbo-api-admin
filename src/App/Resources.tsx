@@ -30,6 +30,12 @@ import withLastRoute from './withLastRoute';
 
 export const getResourceObjects = (permissions: any) => compact(flatten([
   {
+    name: '#',
+    options: { label: 'Dashboard' },
+    icon: () => <>🏠</>,
+    exact: true,
+  },
+  {
     name: 'words',
     key: 'words',
     list: withLastRoute(AsyncWordList),
