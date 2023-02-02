@@ -37,6 +37,7 @@ export const {
   InputLeftElement,
   Code,
   Badge,
+  Divider,
   Tag,
   TagLabel,
   TagLeftIcon,
