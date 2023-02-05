@@ -19,8 +19,6 @@ import {
 import InputIdForm from './InputIdForm';
 import InputNoteForm from './InputNoteForm';
 
-const MAX_EDITING_GROUP_NUMBER = 3;
-
 const Confirmation = ({
   push,
   record,
@@ -31,7 +29,8 @@ const Confirmation = ({
   isOpen,
   onClose,
   view,
-  setIsLoading,
+  setIsLoading = () => null,
+  actionHelpers = {},
 }: ConfirmationButtonInterface): ReactElement => {
   const [idValue, setIdValue] = useState('');
   const [isConfirmOpen, setIsConfirmOpen] = useState(isOpen || false);
@@ -41,11 +40,7 @@ const Confirmation = ({
 
   useFirebaseUid(setUid);
 
-  const requiresInput = (
-    action?.type === ActionTypes.REQUEST_DELETE
-    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
-    || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
-  );
+  const requiresInput = action?.type === ActionTypes.REQUEST_DELETE;
 
   const buildUpdatedRecord = () => {
     switch (action.type) {
@@ -117,6 +112,7 @@ const Confirmation = ({
       resource,
       collection,
       value: selectionValue,
+      ...actionHelpers,
     })
       .then((res = { data: { id: '' } }) => {
         const { data } = res;
@@ -149,13 +145,11 @@ const Confirmation = ({
     action.executeAction({
       ...(action?.type === ActionTypes.COMBINE
         ? { primaryWordId: idValue }
-        : action?.type === ActionTypes.ASSIGN_EDITING_GROUP
-          ? { groupNumber: idValue }
-          : action?.type === ActionTypes.REQUEST_DELETE
-            ? { note: idValue }
-            : action?.type === ActionTypes.NOTIFY
-              ? { editorsNotes: `${record?.editorsNotes || ''}\n\n${idValue}` }
-              : {}),
+        : action?.type === ActionTypes.REQUEST_DELETE
+          ? { note: idValue }
+          : action?.type === ActionTypes.NOTIFY
+            ? { editorsNotes: `${record?.editorsNotes || ''}\n\n${idValue}` }
+            : {}),
       resource,
       record,
     })
@@ -201,7 +195,6 @@ const Confirmation = ({
   const handleConfirm = (): any => {
     if (
       action?.type === ActionTypes.COMBINE
-      || action?.type === ActionTypes.ASSIGN_EDITING_GROUP
       || action?.type === ActionTypes.REQUEST_DELETE
       || action?.type === ActionTypes.NOTIFY
     ) {
@@ -210,7 +203,9 @@ const Confirmation = ({
       handleClick();
     }
     setIsConfirmOpen(false);
-    onClose();
+    if (onClose) {
+      onClose();
+    }
     setIdValue('');
   };
 
@@ -219,8 +214,8 @@ const Confirmation = ({
   );
 
   useEffect(() => {
-    setIsConfirmOpen(!!action);
-  }, [action]);
+    setIsConfirmOpen(isOpen);
+  }, [isOpen]);
 
   return (
     <ConfirmModal
@@ -234,7 +229,9 @@ const Confirmation = ({
       onClose={() => {
         setIsConfirmOpen(false);
         setIdValue('');
-        onClose();
+        if (onClose) {
+          onClose();
+        }
       }}
     >
       {action?.content}
@@ -258,18 +255,6 @@ const Confirmation = ({
           data-test="primary-word-id-input"
           placeholder="Reason for deletion request"
           type="text"
-        />
-      ) : null}
-      {action?.type === ActionTypes.ASSIGN_EDITING_GROUP ? (
-        <InputIdForm
-          onSubmit={handleConfirm}
-          onChange={(e) => setIdValue(e.target.value)}
-          value={idValue}
-          header=""
-          data-test="editing-group-number-input"
-          placeholder="Editing Group Number"
-          type="number"
-          max={MAX_EDITING_GROUP_NUMBER}
         />
       ) : null}
       {action?.type === ActionTypes.NOTIFY ? (

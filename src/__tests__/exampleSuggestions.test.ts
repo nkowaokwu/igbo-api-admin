@@ -6,6 +6,7 @@ import {
 } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -15,6 +16,7 @@ import {
   getRandomExampleSuggestions,
   putRandomExampleSuggestions,
   deleteExampleSuggestion,
+  postBulkUploadExampleSuggestions,
   suggestNewWord,
   createWord,
   getWords,
@@ -68,6 +70,39 @@ describe('MongoDB Example Suggestions', () => {
       const res = await suggestNewExample(malformedData);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
+    });
+
+    it('should bulk upload at most 500 example suggestions', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleSuggestionData = { igbo };
+        return exampleSuggestionData;
+      });
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(200);
+    });
+
+    it('should throw an error due to too many example suggestions for bulk upload', async () => {
+      const payload = times(600, () => {
+        const igbo = uuid();
+        const exampleSuggestionData = { igbo };
+        return exampleSuggestionData;
+      });
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error with malformed bulk upload data', async () => {
+      const payload = { igbo: 'igbo' };
+      // @ts-expect-error payload
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error with malformed (extra field) bulk upload data', async () => {
+      const payload = [{ igbo: 'igbo', english: 'english' }];
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(400);
     });
   });
 

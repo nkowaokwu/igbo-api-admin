@@ -16,6 +16,7 @@ import * as Interfaces from './utils/interfaces';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import ReviewActions from '../shared/constants/ReviewActions';
+import SentenceType from '../shared/constants/SentenceType';
 
 export const createExampleSuggestion = async (
   data: Interfaces.ExampleClientData,
@@ -237,6 +238,40 @@ export const getRandomExampleSuggestions = async (
       .catch(() => {
         throw new Error('An error has occurred while returning random example suggestions');
       });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const postBulkUploadExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { body: data, mongooseConnection } = req;
+
+    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+
+    const result = await Promise.all(data.map(async ({ igbo }) => {
+      const existingExampleSuggestion = await ExampleSuggestion.findOne({ igbo });
+      if (existingExampleSuggestion) {
+        return {
+          success: false,
+          message: 'There is an example suggestion with identical Igbo text',
+          meta: { igbo },
+        };
+      }
+      const exampleSuggestion = new ExampleSuggestion({ igbo, type: SentenceType.DATA_COLLECTION });
+      const savedExampleSuggestion = await exampleSuggestion.save();
+      return {
+        success: true,
+        message: 'Success',
+        meta: { igbo, id: savedExampleSuggestion._id },
+      };
+    }));
+
+    return res.send(result);
   } catch (err) {
     return next(err);
   }

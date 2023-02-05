@@ -33,7 +33,7 @@ const populateList = (items = [], source) => {
 
   if (items.length > itemsPreview.length) {
     itemsPreview.push((
-      <li className="font-bold">
+      <li className="font-bold" key="final-list-key">
         {`${items.length - itemsPreview.length} more ${source}`}
       </li>
     ));

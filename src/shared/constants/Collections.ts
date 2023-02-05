@@ -9,6 +9,7 @@ enum Collections {
   USERS = 'users',
   POLLS = 'polls',
   NOTIFICATIONS = 'notifications',
+  DATA_DUMP = 'dataDump',
 };
 
 export default Collections;

@@ -57,6 +57,8 @@ const Select = ({
   const [action, setAction] = useState(null);
   const [uid, setUid] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  /* Required to determine when to render the confirmation model */
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const redirect = useRedirect();
   const toast = useToast();
   useFirebaseUid(setUid);
@@ -66,7 +68,12 @@ const Select = ({
   );
 
   const clearConfirmOpen = () => {
-    setAction(null);
+    setIsConfirmOpen(false);
+  };
+
+  const withConfirm = (value: any) => {
+    setIsConfirmOpen(true);
+    return value;
   };
 
   const userCollectionOptions = [
@@ -87,7 +94,7 @@ const Select = ({
     hasAdminPermissions(permissions, {
       value: 'deleteUser',
       label: 'Delete User',
-      onSelect: () => setAction(actionsMap.DeleteUser),
+      onSelect: () => withConfirm(setAction(actionsMap.DeleteUser)),
     }),
   ];
 
@@ -101,7 +108,7 @@ const Select = ({
             Merge
           </span>
         ))(),
-        onSelect: () => setAction(actionsMap.Merge),
+        onSelect: () => withConfirm(setAction(actionsMap.Merge)),
         props: {
           isDisabled: !hasEnoughApprovals,
           tooltipMessage: !hasEnoughApprovals
@@ -141,7 +148,7 @@ const Select = ({
           {record?.approvals?.includes(uid) ? 'Approved' : 'Approve'}
         </span>
       ))(),
-      onSelect: () => setAction(actionsMap.Approve),
+      onSelect: () => withConfirm(setAction(actionsMap.Approve)),
     },
     {
       value: 'deny',
@@ -151,7 +158,7 @@ const Select = ({
           {record?.denials?.includes(uid) ? 'Denied' : 'Deny'}
         </span>
       ))(),
-      onSelect: () => setAction(actionsMap.Deny),
+      onSelect: () => withConfirm(setAction(actionsMap.Deny)),
     },
     {
       value: 'notify',
@@ -161,7 +168,7 @@ const Select = ({
           Notify Editors
         </span>
       ))(),
-      onSelect: () => setAction(actionsMap.Notify),
+      onSelect: () => withConfirm(setAction(actionsMap.Notify)),
     }]),
     hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
       {
@@ -172,7 +179,7 @@ const Select = ({
             Delete
           </span>
         ))(),
-        onSelect: () => setAction(actionsMap.Delete),
+        onSelect: () => withConfirm(setAction(actionsMap.Delete)),
       },
     ])),
   ]));
@@ -203,7 +210,7 @@ const Select = ({
     hasAdminPermissions(permissions, resource === Collection.WORDS ? [{
       value: 'combineWord',
       label: 'Combine Word Into...',
-      onSelect: () => setAction(actionsMap.Combine),
+      onSelect: () => withConfirm(setAction(actionsMap.Combine)),
     }] : null),
     {
       value: 'requestDelete',
@@ -217,7 +224,7 @@ const Select = ({
               : 'Corpus'}`}
         </span>
       ))(),
-      onSelect: () => setAction(actionsMap[ActionTypes.REQUEST_DELETE]),
+      onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
     },
   ]));
 
@@ -266,7 +273,7 @@ const Select = ({
           Delete Poll
         </span>
       ))(),
-      onSelect: () => setAction(actionsMap[ActionTypes.DELETE_POLL]),
+      onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE_POLL])),
     },
   ];
 
@@ -310,7 +317,9 @@ const Select = ({
         onClose={clearConfirmOpen}
         view={view}
         setIsLoading={setIsLoading}
+        isOpen={isConfirmOpen}
       />
+      {/* @ts-expect-error label */}
       <Menu data-test="test-select-options" label="Editor's Action">
         <MenuButton
           as={Button}
