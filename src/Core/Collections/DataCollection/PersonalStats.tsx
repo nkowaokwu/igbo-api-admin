@@ -2,13 +2,13 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import LinearProgressCard from 'src/Core/Dashboard/components/LinearProgressCard';
 import { getTotalVerifiedExampleSuggestions, getTotalRecordedExampleSuggestions } from 'src/shared/DataCollectionAPI';
 
-const PersonalStats = (): ReactElement => {
+const PersonalStats = ({ uid } : { uid?: string }): ReactElement => {
   const [totalVerifiedExampleSuggestions, setTotalVerifiedExampleSuggestions] = useState(null);
   const [totalRecordedExampleSuggestions, setTotalRecordedExampleSuggestions] = useState(null);
   useEffect(() => {
     (async () => {
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions();
-      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions();
+      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(uid);
+      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(uid);
       setTotalVerifiedExampleSuggestions(verifiedExampleSuggestions);
       setTotalRecordedExampleSuggestions(recordedExampleSuggestions);
     })();

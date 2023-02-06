@@ -65,12 +65,14 @@ export const bulkUploadExampleSuggestions = async (
   return result;
 };
 
-export const getTotalVerifiedExampleSuggestions = async (): Promise<any> => (await request({
+export const getTotalVerifiedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
   method: 'GET',
   url: 'exampleSuggestions/random/stats/verified',
+  params: { uid },
 })).data;
 
-export const getTotalRecordedExampleSuggestions = async (): Promise<any> => (await request({
+export const getTotalRecordedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
   method: 'GET',
   url: 'exampleSuggestions/random/stats/recorded',
+  params: { uid },
 })).data;

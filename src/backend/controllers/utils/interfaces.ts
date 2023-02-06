@@ -20,6 +20,7 @@ export interface HandleQueries {
   strict: boolean,
   body: EditorRequest['body'],
   mongooseConnection: EditorRequest['mongooseConnection'],
+  uidQuery?: string,
 };
 
 // @ts-expect-error EditorRequest
@@ -34,6 +35,7 @@ export interface EditorRequest extends Request {
     sort?: string,
     filter?: string,
     strict?: string,
+    uid?: string,
   },
   suggestionDoc?: Suggestion,
   body: any,

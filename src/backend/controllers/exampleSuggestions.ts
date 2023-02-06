@@ -317,8 +317,9 @@ export const getTotalVerifiedExampleSuggestions = async (
   res: Response,
   next: NextFunction,
 ) : Promise<any | void> => {
-  const { user, mongooseConnection } = await handleQueries(req);
-  const query = { $or: [{ approvals: { $in: [user.uid] } }, { denials: { $in: [user.uid] } }] };
+  const { user, mongooseConnection, uidQuery } = await handleQueries(req);
+  const uid = uidQuery || user.uid;
+  const query = { $or: [{ approvals: { $in: [uid] } }, { denials: { $in: [uid] } }] };
 
   try {
     return await findExampleSuggestions({
@@ -342,9 +343,10 @@ export const getTotalRecordedExampleSuggestions = async (
   res: Response,
   next: NextFunction,
 ) : Promise<any | void> => {
-  const { user, mongooseConnection } = await handleQueries(req);
+  const { user, mongooseConnection, uidQuery } = await handleQueries(req);
+  const uid = uidQuery || user.uid;
   const query = {
-    userInteractions: { $in: [user.uid] },
+    userInteractions: { $in: [uid] },
     pronunciation: { $exists: true, $eq: /http/, $type: 'string' },
   };
 
