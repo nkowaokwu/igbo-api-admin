@@ -1,4 +1,5 @@
 import { Role } from 'src/shared/constants/auth-types';
+import { betaEmailList } from 'src/shared/constants/emailList';
 
 export const hasNoPermissions = (
   permissions: { role?: string } = { role: '' },
@@ -25,6 +26,16 @@ export const hasAdminPermissions = (
   returnWithPermission: any,
 ): any | null => {
   if (permissions?.role === Role.ADMIN) {
+    return returnWithPermission;
+  }
+  return null;
+};
+
+export const hasBetaPermissions = (
+  permissions: { role?: string, email?: string } = { role: '', email: '' },
+  returnWithPermission: any,
+): any | null => {
+  if (permissions?.role === Role.ADMIN || betaEmailList.includes(permissions?.email)) {
     return returnWithPermission;
   }
   return null;
