@@ -64,3 +64,13 @@ export const bulkUploadExampleSuggestions = async (
   console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
   return result;
 };
+
+export const getTotalVerifiedExampleSuggestions = async (): Promise<any> => (await request({
+  method: 'GET',
+  url: 'exampleSuggestions/random/stats/verified',
+})).data;
+
+export const getTotalRecordedExampleSuggestions = async (): Promise<any> => (await request({
+  method: 'GET',
+  url: 'exampleSuggestions/random/stats/recorded',
+})).data;

@@ -18,6 +18,7 @@ import { findUser } from './users';
 import ReviewActions from '../shared/constants/ReviewActions';
 import SentenceType from '../shared/constants/SentenceType';
 
+const NO_LIMIT = 20000;
 export const createExampleSuggestion = async (
   data: Interfaces.ExampleClientData,
   mongooseConnection: Connection,
@@ -309,6 +310,60 @@ export const getRandomExampleSuggestionsToReview = async (
     return next(err);
   }
 };
+
+/* Returns total number of example suggestions the user has approved or denied */
+export const getTotalVerifiedExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<any | void> => {
+  const { user, mongooseConnection } = await handleQueries(req);
+  const query = { $or: [{ approvals: { $in: [user.uid] } }, { denials: { $in: [user.uid] } }] };
+
+  try {
+    return await findExampleSuggestions({
+      query,
+      limit: NO_LIMIT,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => res.send({ count: exampleSuggestions.length }))
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning all total verified example suggestions');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Returns total number of example suggestions the user has approved or denied */
+export const getTotalRecordedExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+) : Promise<any | void> => {
+  const { user, mongooseConnection } = await handleQueries(req);
+  const query = {
+    userInteractions: { $in: [user.uid] },
+    pronunciation: { $exists: true, $eq: /http/, $type: 'string' },
+  };
+
+  try {
+    return await findExampleSuggestions({
+      query,
+      limit: NO_LIMIT,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => res.send({ count: exampleSuggestions.length }))
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning all total recorded example suggestions');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /* Updates all listed example suggestions with audio pronunciations */
 export const putRandomExampleSuggestions = async (
   req: Interfaces.EditorRequest,
@@ -470,6 +525,7 @@ export const approveExampleSuggestion = async (
     exampleSuggestion.approvals = Array.from(updatedApprovals);
     exampleSuggestion.denials = updatedDenials;
     const savedExampleSuggestion = await exampleSuggestion.save();
+    // userInteractions doesn't get updated on approvals to currently track data collection
     return res.send(savedExampleSuggestion);
   } catch (err) {
     return next(err);
@@ -495,6 +551,7 @@ export const denyExampleSuggestion = async (
     exampleSuggestion.denials = Array.from(updatedDenials);
     exampleSuggestion.approvals = updatedApprovals;
     const savedExampleSuggestion = await exampleSuggestion.save();
+    // userInteractions doesn't get updated on denials to currently track data collection
     return res.send(savedExampleSuggestion);
   } catch (err) {
     return next(err);
