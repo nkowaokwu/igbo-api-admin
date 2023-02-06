@@ -222,6 +222,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         <MenuItemOption value="isProverb" key="isProverb">
                           Is Proverb
                         </MenuItemOption>,
+                        <MenuItemOption value="isDataCollection" key="isDataCollection">
+                          Is Data Collection
+                        </MenuItemOption>,
                       ]
                       : null}
                     {isWordResource

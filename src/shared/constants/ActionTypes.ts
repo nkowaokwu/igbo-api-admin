@@ -19,6 +19,7 @@ enum ActionTypes {
   REQUEST_DELETE = 'Send Delete Request',
   DELETE_POLL = 'Delete Poll',
   DELETE_USER = 'DeleteUser',
+  BULK_UPLOAD_EXAMPLES = 'BulkUploadExamples',
 };
 
 export default ActionTypes;

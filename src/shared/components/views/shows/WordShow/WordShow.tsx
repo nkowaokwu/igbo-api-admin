@@ -323,56 +323,20 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Examples</Heading>
-              <ArrayDiffField
-                recordField="examples"
-                recordFieldSingular="example"
-                record={{ examples } as Interfaces.Word}
-                originalWordRecord={originalWordRecord}
-              >
-                <ExampleDiff
-                  diffRecord={diffRecord}
-                  resource={resource}
-                />
-              </ArrayDiffField>
+              <Box className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <ArrayDiffField
+                  recordField="examples"
+                  recordFieldSingular="example"
+                  record={{ examples } as Interfaces.Word}
+                  originalWordRecord={originalWordRecord}
+                >
+                  <ExampleDiff
+                    diffRecord={diffRecord}
+                    resource={resource}
+                  />
+                </ArrayDiffField>
+              </Box>
             </Box>
-            {archivedExamples.length ? (
-              <details className="mt-4 cursor-pointer">
-                <summary>
-                  <Heading
-                    display="inline"
-                    fontSize="lg"
-                    className="text-xl text-gray-600"
-                    ml={2}
-                  >
-                    Archived Examples 🗄
-                  </Heading>
-                </summary>
-                <Box className="flex flex-col mt-5">
-                  {archivedExamples.map((archivedExample, archivedExampleIndex) => (
-                    <Box
-                      key={`archived-example-${archivedExample.id}`}
-                      className="flex flex-row justify-start items-start"
-                    >
-                      <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
-                      <Box>
-                        <Text>{archivedExample.igbo}</Text>
-                        <Text>{archivedExample.english}</Text>
-                        <Text>{archivedExample.nsibidi}</Text>
-                        <Text>{archivedExample.meaning}</Text>
-                        <ReactAudioPlayer
-                          src={archivedExample.pronunciation}
-                          style={{ height: '40px', width: '250px' }}
-                          controls
-                        />
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-              </details>
-            ) : null}
-            {resource !== Collection.WORDS ? (
-              <Comments editorsNotes={editorsNotes} userComments={userComments} />
-            ) : null}
           </Box>
           <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
             <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
@@ -421,6 +385,44 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
           </Box>
         </Box>
+        {archivedExamples.length ? (
+          <details className="mt-4 cursor-pointer">
+            <summary>
+              <Heading
+                display="inline"
+                fontSize="lg"
+                className="text-xl text-gray-600"
+                ml={2}
+              >
+                Archived Examples 🗄
+              </Heading>
+            </summary>
+            <Box className="flex flex-col mt-5">
+              {archivedExamples.map((archivedExample, archivedExampleIndex) => (
+                <Box
+                  key={`archived-example-${archivedExample.id}`}
+                  className="flex flex-row justify-start items-start"
+                >
+                  <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+                  <Box>
+                    <Text>{archivedExample.igbo}</Text>
+                    <Text>{archivedExample.english}</Text>
+                    <Text>{archivedExample.nsibidi}</Text>
+                    <Text>{archivedExample.meaning}</Text>
+                    <ReactAudioPlayer
+                      src={archivedExample.pronunciation}
+                      style={{ height: '40px', width: '250px' }}
+                      controls
+                    />
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </details>
+        ) : null}
+        {resource !== Collection.WORDS ? (
+          <Comments editorsNotes={editorsNotes} userComments={userComments} />
+        ) : null}
       </Box>
     </Skeleton>
   );

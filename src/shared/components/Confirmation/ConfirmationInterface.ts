@@ -1,5 +1,6 @@
 import React from 'react';
 import { ButtonProps } from 'react-admin';
+import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 
 export interface UpdateButtonProps extends ButtonProps {
@@ -7,13 +8,14 @@ export interface UpdateButtonProps extends ButtonProps {
 };
 
 export interface ConfirmationButtonInterface extends UpdateButtonProps {
-  collection: string,
+  collection: Collections,
   selectionValue: string,
   action: any,
-  onClose: () => any,
+  onClose?: () => any,
   isOpen: boolean,
   view: Views
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>,
+  actionHelpers?: { [key: string]: any },
 }
 
 export interface ConfirmationInputInterface {

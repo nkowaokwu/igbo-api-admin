@@ -6,6 +6,7 @@ const OMIT_KEYS = [
   'archived',
   'updatedAt',
   'createdAt',
+  'type',
   'author',
   'authorEmail',
   'editor',

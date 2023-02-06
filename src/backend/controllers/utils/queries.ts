@@ -4,6 +4,7 @@ import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 
@@ -23,6 +24,7 @@ type Filters = {
   authorId?: any,
   mergedBy?: any,
   style?: any,
+  type?: any,
   wordClass?: any,
   userInteractions?: any,
   approvals?: any,
@@ -82,6 +84,9 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
         break;
       case 'isProverb':
         allFilters.style = { $eq: ExampleStyle.PROVERB.value };
+        break;
+      case 'isDataCollection':
+        allFilters.type = { $eq: SentenceType.DATA_COLLECTION };
         break;
       case 'wordClass':
         allFilters['definitions.wordClass'] = { $in: value };

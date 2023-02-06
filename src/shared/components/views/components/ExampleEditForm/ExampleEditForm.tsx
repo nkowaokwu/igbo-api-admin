@@ -104,7 +104,7 @@ const ExampleEditForm = ({
           approvals: map(record.approvals, (approval) => approval.uid),
           denials: map(record.denials, (denial) => denial.uid),
         },
-      ), [view === View.CREATE ? 'id' : '']);
+      ), [view === View.CREATE ? 'id' : '', 'type']);
       const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {

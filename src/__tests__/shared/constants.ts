@@ -31,6 +31,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'updatedAt',
   'merged',
   'mergedBy',
+  'type',
   'id',
 ];
 export const WORD_SUGGESTION_KEYS = [

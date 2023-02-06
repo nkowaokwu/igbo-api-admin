@@ -1,14 +1,16 @@
+import compact from 'lodash/compact';
 import { Record } from 'react-admin';
 import { EmptyResponse } from 'src/shared/server-validation';
 import { useCallable } from 'src/hooks/useCallable';
-import { Role } from './auth-types';
+import { bulkUploadExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import {
   approveDocument,
   denyDocument,
   mergeDocument,
   deleteDocument,
   combineDocument,
-} from '../API';
+} from 'src/shared/API';
+import { Role } from './auth-types';
 import ActionTypes from './ActionTypes';
 import Collections from './Collections';
 
@@ -173,5 +175,25 @@ export default {
       return Promise.resolve();
     },
     successMessage: 'User role has been deleted 🗑',
+  },
+  [ActionTypes.BULK_UPLOAD_EXAMPLES]: {
+    type: 'BulkUploadExamples',
+    title: 'Bulk Upload Example Suggestions',
+    content: 'Are you sure you want to upload multiple example suggestions at once? '
+    + 'This will take a few minutes to complete.',
+    executeAction: async ({
+      data: textareaValue,
+      onProgressSuccess,
+      onProgressFailure,
+    } : {
+      data: string,
+      onProgressSuccess: (value: any) => any,
+      onProgressFailure: (value: any) => any,
+    }): Promise<any> => {
+      const trimmedTextareaValue = textareaValue.trim();
+      const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
+      const payload = separatedSentences.map((text) => ({ igbo: text.trim() }));
+      await bulkUploadExampleSuggestions(payload, onProgressSuccess, onProgressFailure);
+    },
   },
 };

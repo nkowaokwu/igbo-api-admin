@@ -58,6 +58,13 @@ export const getRandomExampleSuggestions = (query = {}, options = { token: '' })
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const postBulkUploadExampleSuggestions = (data: { igbo: string }[], options = { token: '' }): Request => (
+  chaiServer
+    .post('/exampleSuggestions/upload')
+    .send(data)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 export const putRandomExampleSuggestions = (
   data: { id: string, pronunciation?: string, review?: ReviewActions }[],
   options = { token: '' },

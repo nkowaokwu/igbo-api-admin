@@ -19,7 +19,7 @@ const Textarea = React.forwardRef(({
   value: string,
   onChange: (value: any) => void,
   width?: string,
-  className: string,
+  className?: string,
   placeholder: string,
   rows?: number,
 }, ref): ReactElement => {

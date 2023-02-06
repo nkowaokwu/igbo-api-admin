@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
 import { normalizeIgbo } from './plugins/normalizationHooks';
@@ -13,6 +14,11 @@ export const exampleSuggestionSchema = new Schema({
     ref: 'Example',
     default: null,
     index: true,
+  },
+  type: {
+    type: String,
+    enum: Object.values(SentenceType),
+    default: SentenceType.DEFAULT,
   },
   igbo: { type: String, default: '', trim: true },
   english: { type: String, default: '', trim: true },
