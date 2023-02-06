@@ -338,16 +338,16 @@ export const getUserMergeStats = async (
       const wordSuggestionUpdateDate = moment(wordSuggestion.updatedAt);
       const wordSuggestionUpdateIsoWeek = wordSuggestionUpdateDate.startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
-      const isSameMonth = moment().isSame(wordSuggestionUpdateDate, 'month');
+      const isSameMonth = moment().isSame(wordSuggestion.updatedAt, 'month');
       const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
       const dialectEditorCount = wordSuggestion.dialects.filter(({ editor }) => (
         editor === uid
       )).length;
       if (isSameMonth) {
-        currentMonthMerges.dialectalVariations += countedHeadword + dialectEditorCount;
+        currentMonthMerges.dialectalVariations += (countedHeadword + dialectEditorCount);
       }
       if (dateOfIsoWeek) {
-        finalData[dateOfIsoWeek] += countedHeadword + dialectEditorCount;
+        finalData[dateOfIsoWeek] += (countedHeadword + dialectEditorCount);
       } else {
         console.log(
           'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
