@@ -38,6 +38,8 @@ import {
   getRandomExampleSuggestions,
   postBulkUploadExampleSuggestions,
   getRandomExampleSuggestionsToReview,
+  getTotalVerifiedExampleSuggestions,
+  getTotalRecordedExampleSuggestions,
   putRandomExampleSuggestions,
   putExampleSuggestion,
   postExampleSuggestion,
@@ -135,6 +137,8 @@ editorRouter.post(
   postBulkUploadExampleSuggestions,
 );
 editorRouter.get('/exampleSuggestions/random/review', getRandomExampleSuggestionsToReview);
+editorRouter.get('/exampleSuggestions/random/stats/verified', getTotalVerifiedExampleSuggestions);
+editorRouter.get('/exampleSuggestions/random/stats/recorded', getTotalRecordedExampleSuggestions);
 editorRouter.post(
   '/exampleSuggestions',
   authorization([]),

@@ -1,31 +1,30 @@
 import React from 'react';
 import { compact, flatten } from 'lodash';
-import { hasAdminPermissions } from 'src/shared/utils/permissions';
-import AsyncWordList from 'src/Core/Collections/Words/WordList';
-import AsyncWordShow from 'src/Core/Collections/Words/WordShow';
-import AsyncExampleList from 'src/Core/Collections/Examples/ExampleList';
-import AsyncExampleShow from 'src/Core/Collections/Examples/ExampleShow';
-import AsyncCorpusList from 'src/Core/Collections/Corpora/CorpusList';
-import AsyncCorpusShow from 'src/Core/Collections/Corpora/CorpusShow';
-import AsyncWordSuggestionList from 'src/Core/Collections/WordSuggestions/WordSuggestionList';
-import AsyncWordSuggestionEdit from 'src/Core/Collections/WordSuggestions/WordSuggestionEdit';
-import AsyncWordSuggestionCreate from 'src/Core/Collections/WordSuggestions/WordSuggestionCreate';
-import AsyncWordSuggestionShow from 'src/Core/Collections/WordSuggestions/WordSuggestionShow';
-import AsyncExampleSuggestionList from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionList';
-import AsyncExampleSuggestionEdit from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionEdit';
-import AsyncExampleSuggestionCreate from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionCreate';
-import AsyncExampleSuggestionShow from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionShow';
-import AsyncCorpusSuggestionList from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionList';
-import AsyncCorpusSuggestionEdit from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionEdit';
-import AsyncCorpusSuggestionCreate from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate';
-import AsyncCorpusSuggestionShow from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionShow';
-import AsyncNotificationList from 'src/Core/Collections/Notifications/NotificationList';
-import AsyncPollList from 'src/Core/Collections/Polls/PollList';
-import AsyncPollCreate from 'src/Core/Collections/Polls/PollCreate';
-import AsyncUserList from 'src/Core/Collections/Users/UserList';
-import AsyncUserShow from 'src/Core/Collections/Users/UserShow';
-import Sandbox from 'src/Core/Collections/Sandbox';
-import AsyncDataCollectionList from 'src/Core/Collections/DataCollection/DataCollectionList';
+import { hasAdminPermissions, hasBetaPermissions } from 'src/shared/utils/permissions';
+import WordList from 'src/Core/Collections/Words/WordList';
+import WordShow from 'src/Core/Collections/Words/WordShow';
+import ExampleList from 'src/Core/Collections/Examples/ExampleList';
+import ExampleShow from 'src/Core/Collections/Examples/ExampleShow';
+import CorpusList from 'src/Core/Collections/Corpora/CorpusList';
+import CorpusShow from 'src/Core/Collections/Corpora/CorpusShow';
+import WordSuggestionList from 'src/Core/Collections/WordSuggestions/WordSuggestionList';
+import WordSuggestionEdit from 'src/Core/Collections/WordSuggestions/WordSuggestionEdit';
+import WordSuggestionCreate from 'src/Core/Collections/WordSuggestions/WordSuggestionCreate';
+import WordSuggestionShow from 'src/Core/Collections/WordSuggestions/WordSuggestionShow';
+import ExampleSuggestionList from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionList';
+import ExampleSuggestionEdit from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionEdit';
+import ExampleSuggestionCreate from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionCreate';
+import ExampleSuggestionShow from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionShow';
+import CorpusSuggestionList from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionList';
+import CorpusSuggestionEdit from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionEdit';
+import CorpusSuggestionCreate from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate';
+import CorpusSuggestionShow from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionShow';
+import NotificationList from 'src/Core/Collections/Notifications/NotificationList';
+import PollList from 'src/Core/Collections/Polls/PollList';
+import PollCreate from 'src/Core/Collections/Polls/PollCreate';
+import UserList from 'src/Core/Collections/Users/UserList';
+import UserShow from 'src/Core/Collections/Users/UserShow';
+import DataCollection from 'src/Core/Collections/DataCollection';
 import DataDump from 'src/Core/Collections/DataDump';
 import withLastRoute from './withLastRoute';
 
@@ -39,23 +38,23 @@ export const getResourceObjects = (permissions: any) => compact(flatten([
   {
     name: 'words',
     key: 'words',
-    list: withLastRoute(AsyncWordList),
-    show: withLastRoute(AsyncWordShow),
+    list: withLastRoute(WordList),
+    show: withLastRoute(WordShow),
     icon: () => <>📗</>,
   },
   {
     name: 'examples',
     key: 'examples',
-    list: AsyncExampleList,
-    show: AsyncExampleShow,
+    list: ExampleList,
+    show: ExampleShow,
     icon: () => <>📘</>,
   },
   {
     name: 'corpora',
     key: 'corpora',
     options: { label: 'Corpora' },
-    list: withLastRoute(AsyncCorpusList),
-    show: withLastRoute(AsyncCorpusShow),
+    list: withLastRoute(CorpusList),
+    show: withLastRoute(CorpusShow),
     create: null,
     icon: () => <>📚</>,
   },
@@ -63,60 +62,54 @@ export const getResourceObjects = (permissions: any) => compact(flatten([
     name: 'wordSuggestions',
     key: 'wordSuggestions',
     options: { label: 'Word Suggestions' },
-    list: withLastRoute(AsyncWordSuggestionList),
-    edit: withLastRoute(AsyncWordSuggestionEdit),
-    create: withLastRoute(AsyncWordSuggestionCreate),
-    show: withLastRoute(AsyncWordSuggestionShow),
+    list: withLastRoute(WordSuggestionList),
+    edit: withLastRoute(WordSuggestionEdit),
+    create: withLastRoute(WordSuggestionCreate),
+    show: withLastRoute(WordSuggestionShow),
     icon: () => <>📒</>,
   },
   {
     name: 'exampleSuggestions',
     key: 'exampleSuggestions',
     options: { label: 'Example Suggestions' },
-    list: withLastRoute(AsyncExampleSuggestionList),
-    edit: withLastRoute(AsyncExampleSuggestionEdit),
-    create: withLastRoute(AsyncExampleSuggestionCreate),
-    show: withLastRoute(AsyncExampleSuggestionShow),
+    list: withLastRoute(ExampleSuggestionList),
+    edit: withLastRoute(ExampleSuggestionEdit),
+    create: withLastRoute(ExampleSuggestionCreate),
+    show: withLastRoute(ExampleSuggestionShow),
     icon: () => <>📕</>,
   },
   {
     name: 'corpusSuggestions',
     key: 'corpusSuggestions',
     options: { label: 'Corpus Suggestions' },
-    list: withLastRoute(AsyncCorpusSuggestionList),
-    edit: withLastRoute(AsyncCorpusSuggestionEdit),
-    create: withLastRoute(AsyncCorpusSuggestionCreate),
-    show: withLastRoute(AsyncCorpusSuggestionShow),
+    list: withLastRoute(CorpusSuggestionList),
+    edit: withLastRoute(CorpusSuggestionEdit),
+    create: withLastRoute(CorpusSuggestionCreate),
+    show: withLastRoute(CorpusSuggestionShow),
     icon: () => <>📓</>,
   },
   {
     name: 'notifications',
     key: 'notifications',
     options: { label: 'Platform Notifications' },
-    list: withLastRoute(AsyncNotificationList),
+    list: withLastRoute(NotificationList),
     icon: () => <>🔔</>,
   },
   {
     name: 'polls',
     key: 'polls',
     options: { label: 'Constructed Term Polls' },
-    list: withLastRoute(AsyncPollList),
-    create: withLastRoute(AsyncPollCreate),
+    list: withLastRoute(PollList),
+    create: withLastRoute(PollCreate),
     icon: () => <>🗳</>,
   },
   hasAdminPermissions(permissions, [
     {
       name: 'users',
       key: 'users',
-      list: withLastRoute(AsyncUserList),
-      show: withLastRoute(AsyncUserShow),
+      list: withLastRoute(UserList),
+      show: withLastRoute(UserShow),
       icon: () => <>👩🏾</>,
-    },
-    {
-      name: 'sandbox',
-      key: 'sandbox',
-      list: Sandbox,
-      icon: () => <>🏝</>,
     },
     {
       name: 'dataDump',
@@ -126,12 +119,12 @@ export const getResourceObjects = (permissions: any) => compact(flatten([
       icon: () => <>🏋🏾‍♂️</>,
     },
   ]),
-  hasAdminPermissions(permissions, [
+  hasBetaPermissions(permissions, [
     {
       name: 'dataCollection',
       key: 'dataCollection',
       options: { label: 'Data Collection' },
-      list: withLastRoute(AsyncDataCollectionList),
+      list: DataCollection,
       icon: () => <>🗄</>,
     },
   ]),

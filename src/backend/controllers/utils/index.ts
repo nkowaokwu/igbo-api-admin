@@ -241,6 +241,7 @@ export const handleQueries = (
     sort: sortQuery,
     filter: filterQuery,
     strict: strictQuery,
+    uid: uidQuery,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -261,6 +262,7 @@ export const handleQueries = (
     user,
     strict,
     body,
+    uidQuery,
     mongooseConnection,
   };
 };

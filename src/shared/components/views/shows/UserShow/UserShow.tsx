@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import network from 'src/Core/Dashboard/network';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
+import PersonalStats from 'src/Core/Collections/DataCollection/PersonalStats';
 
 const NO_PERMISSION_STATUS = 403;
 const UserShow = (props: ShowProps): ReactElement => {
@@ -64,12 +65,15 @@ const UserShow = (props: ShowProps): ReactElement => {
           </Box>
         </Box>
         {record.uid && !isLoading ? (
-          <UserStat
-            uid={record.uid}
-            totalCompletedWords={totalCompletedWords}
-            totalCompletedExamples={totalCompletedExamples}
-            totalDialectalVariations={totalDialectalVariations}
-          />
+          <>
+            <UserStat
+              uid={record.uid}
+              totalCompletedWords={totalCompletedWords}
+              totalCompletedExamples={totalCompletedExamples}
+              totalDialectalVariations={totalDialectalVariations}
+            />
+            <PersonalStats uid={record.uid} />
+          </>
         ) : null}
       </Box>
     </Skeleton>

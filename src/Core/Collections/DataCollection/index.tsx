@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 // import RecordSentenceAudio from './RecordSentenceAudio';
 import VerifySentenceAudio from './VerifySentenceAudio';
+// import DataCollectionHome from './DataCollectionHome';
 
-const Sandbox = (): ReactElement => <VerifySentenceAudio />;
+const DataCollection = (): ReactElement => <VerifySentenceAudio />;
 
-export default Sandbox;
+export default DataCollection;
