@@ -1,6 +1,5 @@
 import React from 'react';
-import { compact, flatten } from 'lodash';
-import { hasAdminPermissions, hasBetaPermissions } from 'src/shared/utils/permissions';
+import { hasAdminPermissions, hasEditorPermissions, hasTranscriberPermissions } from 'src/shared/utils/permissions';
 import WordList from 'src/Core/Collections/Words/WordList';
 import WordShow from 'src/Core/Collections/Words/WordShow';
 import ExampleList from 'src/Core/Collections/Examples/ExampleList';
@@ -28,7 +27,7 @@ import DataCollection from 'src/Core/Collections/DataCollection';
 import DataDump from 'src/Core/Collections/DataDump';
 import withLastRoute from './withLastRoute';
 
-export const getResourceObjects = (permissions: any) => compact(flatten([
+const editorRoutes = (permissions) => hasEditorPermissions(permissions, [
   {
     name: '#',
     options: { label: 'Dashboard' },
@@ -103,29 +102,37 @@ export const getResourceObjects = (permissions: any) => compact(flatten([
     create: withLastRoute(PollCreate),
     icon: () => <>🗳</>,
   },
-  hasAdminPermissions(permissions, [
-    {
-      name: 'users',
-      key: 'users',
-      list: withLastRoute(UserList),
-      show: withLastRoute(UserShow),
-      icon: () => <>👩🏾</>,
-    },
-    {
-      name: 'dataDump',
-      key: 'dataDump',
-      options: { label: 'Data Dump' },
-      list: DataDump,
-      icon: () => <>🏋🏾‍♂️</>,
-    },
-  ]),
-  hasBetaPermissions(permissions, [
-    {
-      name: 'dataCollection',
-      key: 'dataCollection',
-      options: { label: 'Data Collection' },
-      list: DataCollection,
-      icon: () => <>🗄</>,
-    },
-  ]),
-]));
+]) || [];
+
+const adminRoutes = (permissions) => hasAdminPermissions(permissions, [
+  {
+    name: 'users',
+    key: 'users',
+    list: withLastRoute(UserList),
+    show: withLastRoute(UserShow),
+    icon: () => <>👩🏾</>,
+  },
+  {
+    name: 'dataDump',
+    key: 'dataDump',
+    options: { label: 'Data Dump' },
+    list: DataDump,
+    icon: () => <>🏋🏾‍♂️</>,
+  },
+]) || [];
+
+const transcriberRoutes = (permissions) => hasTranscriberPermissions(permissions, [
+  {
+    name: 'dataCollection',
+    key: 'dataCollection',
+    options: { label: 'Data Collection' },
+    list: DataCollection,
+    icon: () => <>🗄</>,
+  },
+]) || [];
+
+export const getResourceObjects = (permissions: any) => [
+  ...editorRoutes(permissions),
+  ...adminRoutes(permissions),
+  ...transcriberRoutes(permissions),
+];

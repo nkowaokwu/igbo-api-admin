@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UpdatePermissions } from 'src/shared/constants/firestore-types';
-import { Role } from 'src/shared/constants/auth-types';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collections';
@@ -13,20 +13,22 @@ export const onCreateUserAccount = functions.https.onCall(async (user) => {
   try {
     const role = {
       role: process.env.NODE_ENV === 'production' && prodAdminEmailList.includes(user.email)
-        ? Role.ADMIN
+        ? UserRoles.ADMIN
         : process.env.NODE_ENV === 'production' && !prodAdminEmailList.includes(user.email)
-          ? Role.USER
+          ? UserRoles.USER
           // Creates admin, merger, and editor accounts while using auth emulator
           : (
             process.env.NODE_ENV !== 'production'
-            && (adminEmailList.includes(user.email) || user.email.startsWith('admin_'))
+            && (adminEmailList.includes(user.email) || user.email.startsWith('admin'))
           )
-            ? Role.ADMIN
-            : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge_')
-              ? Role.MERGER
-              : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor_')
-                ? Role.EDITOR
-                : Role.USER,
+            ? UserRoles.ADMIN
+            : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge')
+              ? UserRoles.MERGER
+              : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor')
+                ? UserRoles.EDITOR
+                : process.env.NODE_ENV !== 'production' && user.email.startsWith('transcriber')
+                  ? UserRoles.TRANSCRIBER
+                  : UserRoles.USER,
     };
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
@@ -96,7 +98,7 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
   } = data;
   const adminUser = await admin.auth().getUser(adminUid);
 
-  if (adminUser.customClaims.role !== Role.ADMIN && !adminEmailList.includes(adminUser.email)) {
+  if (adminUser.customClaims.role !== UserRoles.ADMIN && !adminEmailList.includes(adminUser.email)) {
     return new functions.https.HttpsError('unauthenticated', '', 'Unauthorized to make a permissions change');
   }
 

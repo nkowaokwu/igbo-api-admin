@@ -22,6 +22,12 @@ enum UserRoles {
   EDITOR = 'editor',
 
   /**
+   * Transcribers are people who only transcribe audio or record audio
+   * for example sentences to be created annotated Igbo data
+   */
+  TRANSCRIBER = 'transcriber',
+
+  /**
    * Users are people who don't have any type of access to the platform
    * but are recognized by the application.
    */

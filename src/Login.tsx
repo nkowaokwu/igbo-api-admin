@@ -18,13 +18,13 @@ import {
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
 import LocalStorageKeys from './shared/constants/LocalStorageKeys';
-import { Role } from './shared/constants/auth-types';
+import UserRoles from './backend/shared/constants/UserRoles';
 
 export interface SignupInfo {
   email: string,
   password: string,
   displayName: string,
-  role: Role.USER,
+  role: UserRoles.USER,
 }
 
 const auth = getAuth();
@@ -38,7 +38,12 @@ const Login = (): ReactElement => {
   const handleRedirect = async (user) => {
     const idTokenResult = await user.getIdTokenResult();
     const userRole = idTokenResult.claims.role;
-    const hasPermission = userRole === Role.ADMIN || userRole === Role.MERGER || userRole === Role.EDITOR;
+    const hasPermission = (
+      userRole === UserRoles.ADMIN
+      || userRole === UserRoles.MERGER
+      || userRole === UserRoles.EDITOR
+      || userRole === UserRoles.TRANSCRIBER
+    );
     if (!hasPermission) {
       signOut(auth);
       window.localStorage.clear();
