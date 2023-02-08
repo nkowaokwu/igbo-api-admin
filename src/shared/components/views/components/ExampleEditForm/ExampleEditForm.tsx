@@ -241,6 +241,27 @@ const ExampleEditForm = ({
       </Box>
       <Box className="flex flex-col">
         <FormHeader
+          title="Meaning"
+          tooltip="This field showcases the meaning of the sentence - typically for proverbs"
+        />
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              placeholder="Please"
+              data-test="english-input"
+            />
+          )}
+          name="meaning"
+          control={control}
+          defaultValue={record.meaning || getValues().meaning || ''}
+        />
+        {errors.meaning ? (
+          <p className="error">{errors.meaning.message}</p>
+        ) : null}
+      </Box>
+      <Box className="flex flex-col">
+        <FormHeader
           title="Nsịbịdị"
           tooltip="This field is for the Nsịbịdị representation of the sentence"
         />
