@@ -41,6 +41,7 @@ import Collection from 'src/shared/constants/Collections';
 import View from 'src/shared/constants/Views';
 import Requirements from 'src/backend/shared/constants/Requirements';
 import { TWITTER_APP_URL } from 'src/Core/constants';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
@@ -87,10 +88,15 @@ const Select = ({
       ))(),
       onSelect: () => redirect(View.SHOW, '/users', record.uid),
     },
-    { value: 'user', label: 'Set as User', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    { value: 'editor', label: 'Set as Editor', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    { value: 'merger', label: 'Set as Merger', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    { value: 'admin', label: 'Set as Admin', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
+    { value: UserRoles.USER, label: 'Set as User', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
+    {
+      value: UserRoles.TRANSCRIBER,
+      label: 'Set as Transcriber',
+      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
+    },
+    { value: UserRoles.EDITOR, label: 'Set as Editor', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
+    { value: UserRoles.MERGER, label: 'Set as Merger', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
+    { value: UserRoles.ADMIN, label: 'Set as Admin', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
     hasAdminPermissions(permissions, {
       value: 'deleteUser',
       label: 'Delete User',

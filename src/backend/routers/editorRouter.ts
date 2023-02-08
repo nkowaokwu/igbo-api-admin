@@ -71,7 +71,9 @@ import resolveWordDocument from '../middleware/resolveWordDocument';
 import UserRoles from '../shared/constants/UserRoles';
 
 const editorRouter = express.Router();
-editorRouter.use(authentication, authorization([UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN]));
+const platformRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN];
+const allRoles = platformRoles.concat[UserRoles.TRANSCRIBER];
+editorRouter.use(authentication, authorization(platformRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
 editorRouter.post(
@@ -90,12 +92,12 @@ editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
 
-editorRouter.get('/corpora', getCorpora);
-editorRouter.get('/corpora/:id', validId, getCorpus);
-editorRouter.post('/corpora', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
+editorRouter.get('/corpora', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), getCorpora);
+editorRouter.get('/corpora/:id', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), validId, getCorpus);
+editorRouter.post('/corpora', authorization([UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
 editorRouter.put(
   '/corpora/:id',
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  authorization([UserRoles.ADMIN]),
   validId,
   validateCorpusBody,
   putCorpus,
@@ -129,19 +131,37 @@ editorRouter.delete(
 );
 
 editorRouter.get('/exampleSuggestions', getExampleSuggestions);
-editorRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
-editorRouter.put('/exampleSuggestions/random', validateRandomExampleSuggestionBody, putRandomExampleSuggestions);
+editorRouter.get('/exampleSuggestions/random', authorization(allRoles), getRandomExampleSuggestions);
+editorRouter.put(
+  '/exampleSuggestions/random',
+  authorization(allRoles),
+  validateRandomExampleSuggestionBody,
+  putRandomExampleSuggestions,
+);
 editorRouter.post(
   '/exampleSuggestions/upload',
+  authorization([UserRoles.ADMIN]),
   validateBulkUploadExampleSuggestionBody,
   postBulkUploadExampleSuggestions,
 );
-editorRouter.get('/exampleSuggestions/random/review', getRandomExampleSuggestionsToReview);
-editorRouter.get('/exampleSuggestions/random/stats/verified', getTotalVerifiedExampleSuggestions);
-editorRouter.get('/exampleSuggestions/random/stats/recorded', getTotalRecordedExampleSuggestions);
+editorRouter.get(
+  '/exampleSuggestions/random/review',
+  authorization(allRoles),
+  getRandomExampleSuggestionsToReview,
+);
+editorRouter.get(
+  '/exampleSuggestions/random/stats/verified',
+  authorization(allRoles),
+  getTotalVerifiedExampleSuggestions,
+);
+editorRouter.get(
+  '/exampleSuggestions/random/stats/recorded',
+  authorization(allRoles),
+  getTotalRecordedExampleSuggestions,
+);
 editorRouter.post(
   '/exampleSuggestions',
-  authorization([]),
+  authorization(platformRoles),
   validateExampleBody,
   interactWithSuggestion,
   postExampleSuggestion,
@@ -157,12 +177,25 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/corpusSuggestions', getCorpusSuggestions);
-editorRouter.post('/corpusSuggestions', validateCorpusBody, interactWithSuggestion, postCorpusSuggestion);
-editorRouter.put('/corpusSuggestions/:id', validId, validateCorpusBody, interactWithSuggestion, putCorpusSuggestion);
-editorRouter.get('/corpusSuggestions/:id', validId, getCorpusSuggestion);
-editorRouter.put('/corpusSuggestions/:id/approve', validId, approveCorpusSuggestion);
-editorRouter.put('/corpusSuggestions/:id/deny', validId, denyCorpusSuggestion);
+editorRouter.get('/corpusSuggestions', authorization(allRoles), getCorpusSuggestions);
+editorRouter.post(
+  '/corpusSuggestions',
+  authorization(allRoles),
+  validateCorpusBody,
+  interactWithSuggestion,
+  postCorpusSuggestion,
+);
+editorRouter.put(
+  '/corpusSuggestions/:id',
+  authorization(allRoles),
+  validId,
+  validateCorpusBody,
+  interactWithSuggestion,
+  putCorpusSuggestion,
+);
+editorRouter.get('/corpusSuggestions/:id', authorization(allRoles), validId, getCorpusSuggestion);
+editorRouter.put('/corpusSuggestions/:id/approve', authorization(allRoles), validId, approveCorpusSuggestion);
+editorRouter.put('/corpusSuggestions/:id/deny', authorization(allRoles), validId, denyCorpusSuggestion);
 editorRouter.delete(
   '/corpusSuggestions/:id',
   validId,

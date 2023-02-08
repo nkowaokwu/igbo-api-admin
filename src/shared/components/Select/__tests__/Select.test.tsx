@@ -2,7 +2,7 @@ import React from 'react';
 import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-import { Role } from 'src/shared/constants/auth-types';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
 import Select from '../Select';
 
@@ -40,7 +40,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.ADMIN }}
+            permissions={{ role: UserRoles.ADMIN }}
             resource={Collections.WORDS}
           />
         </TestContext>,
@@ -76,7 +76,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.MERGER }}
+            permissions={{ role: UserRoles.MERGER }}
             resource={Collections.WORD_SUGGESTIONS}
           />
         </TestContext>,
@@ -112,7 +112,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.ADMIN }}
+            permissions={{ role: UserRoles.ADMIN }}
             resource={Collections.CORPORA}
           />
         </TestContext>,
@@ -147,7 +147,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.MERGER }}
+            permissions={{ role: UserRoles.MERGER }}
             resource={Collections.CORPUS_SUGGESTIONS}
           />
         </TestContext>,
@@ -200,7 +200,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.MERGER }}
+            permissions={{ role: UserRoles.MERGER }}
             resource={Collections.WORD_SUGGESTIONS}
           />
         </TestContext>,
@@ -223,7 +223,7 @@ describe('Editor\'s Actions', () => {
       const { findByTestId, findByText } = render(
         <TestContext>
           <Select
-            permissions={{ role: Role.MERGER }}
+            permissions={{ role: UserRoles.MERGER }}
             resource={Collections.WORD_SUGGESTIONS}
           />
         </TestContext>,

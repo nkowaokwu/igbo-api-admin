@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { ShowProps, useShowController } from 'react-admin';
+import { ShowProps, usePermissions, useShowController } from 'react-admin';
 import {
   Avatar,
   Box,
@@ -9,6 +9,7 @@ import {
 import network from 'src/Core/Dashboard/network';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
 import PersonalStats from 'src/Core/Collections/DataCollection/PersonalStats';
+import { hasNoEditorPermissions } from 'src/shared/utils/permissions';
 
 const NO_PERMISSION_STATUS = 403;
 const UserShow = (props: ShowProps): ReactElement => {
@@ -17,9 +18,10 @@ const UserShow = (props: ShowProps): ReactElement => {
   const [totalCompletedExamples, setTotalCompletedExamples] = useState(null);
   const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
   const showProps = useShowController(props);
+  const permissions = usePermissions();
   let { record } = showProps;
 
-  record = record || {};
+  record = record || { id: null };
 
   const {
     displayName,
@@ -40,19 +42,22 @@ const UserShow = (props: ShowProps): ReactElement => {
   }, [record]);
 
   useEffect(() => {
-    network('/stats/full')
-      .then(({ body }) => {
-        const {
-          complete_words,
-          dialectal_variations,
-          complete_examples,
-        } = JSON.parse(body);
-        setTotalCompletedWords(complete_words?.value || 0);
-        setTotalCompletedExamples(complete_examples?.value || 0);
-        setTotalDialectalVariations(dialectal_variations?.value || 0);
-      })
-      .catch(handleNoPermissionStatus);
-  }, []);
+    // @ts-expect-error permissions
+    if (!hasNoEditorPermissions(permissions, true)) {
+      network('/stats/full')
+        .then(({ body }) => {
+          const {
+            complete_words,
+            dialectal_variations,
+            complete_examples,
+          } = JSON.parse(body);
+          setTotalCompletedWords(complete_words?.value || 0);
+          setTotalCompletedExamples(complete_examples?.value || 0);
+          setTotalDialectalVariations(dialectal_variations?.value || 0);
+        })
+        .catch(handleNoPermissionStatus);
+    }
+  }, [permissions]);
 
   return (
     <Skeleton isLoaded={!isLoading}>

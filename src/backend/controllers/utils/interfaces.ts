@@ -5,7 +5,7 @@ import {
   Types,
 } from 'mongoose';
 import { Request } from 'express';
-import { Role } from 'src/shared/constants/auth-types';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
 
 export interface HandleQueries {
@@ -200,7 +200,7 @@ export interface NewUserData {
 export interface UpdatedRoleNotificationData {
   to: [string],
   displayName: string,
-  role: Role,
+  role: UserRoles,
 };
 
 export interface DocumentDeletionRequestNotification {

@@ -3,6 +3,7 @@ import { Record } from 'react-admin';
 import { EmptyResponse } from 'src/shared/server-validation';
 import { useCallable } from 'src/hooks/useCallable';
 import { bulkUploadExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import {
   approveDocument,
   denyDocument,
@@ -10,7 +11,6 @@ import {
   deleteDocument,
   combineDocument,
 } from 'src/shared/API';
-import { Role } from './auth-types';
 import ActionTypes from './ActionTypes';
 import Collections from './Collections';
 
@@ -124,14 +124,14 @@ export default {
   },
   [ActionTypes.CONVERT]: {
     type: 'Convert',
-    title: 'Change User Role',
+    title: 'Change User UserRoles',
     content: 'Are you sure you want to change this user\'s role?',
     executeAction: ({
       record,
       value: role,
     }: { record: Record, value: string }): Promise<any> => {
       // @ts-ignore
-      if (!Object.values(Role).includes(role)) {
+      if (!Object.values(UserRoles).includes(role)) {
         Promise.reject(new Error('Invalid user role'));
       }
       handleUpdatePermissions({ ...record, role });
