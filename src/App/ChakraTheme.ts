@@ -1,7 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 import { createBreakpoints } from '@chakra-ui/theme-tools';
 
-const primaryColor = '#48825D';
+const primaryColor = '#149E46';
 const primaryExtraLightColor = '#EBF6F0';
 const grayColor = '#4F4F4F';
 const lightGrayColor = '#F7FAFC';

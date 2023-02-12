@@ -11,8 +11,8 @@ import { InfoIcon } from '@chakra-ui/icons';
 const calculatePercentage = (numerator, denominator) => Math.floor((numerator / denominator) * 100);
 
 const StatBody = ({
-  totalCount,
-  goal,
+  totalCount: rawTotalCount,
+  goal: rawGoal,
   description,
   heading,
 } : {
@@ -21,6 +21,8 @@ const StatBody = ({
   description: string,
   heading: string,
 }): ReactElement => {
+  const totalCount = (rawTotalCount || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
+  const goal = (rawGoal || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
   const colorScheme = calculatePercentage(totalCount, goal) > 40 ? 'blue' : 'orange';
 
   return (
@@ -46,7 +48,7 @@ const StatBody = ({
             <Tooltip label={`${`${calculatePercentage(totalCount, goal)}% has been merged`}`}>
               <Box width="full">
                 <Progress
-                  value={calculatePercentage(totalCount, goal)}
+                  value={calculatePercentage(rawTotalCount, rawGoal)}
                   colorScheme={colorScheme}
                   size="lg"
                   width="full"

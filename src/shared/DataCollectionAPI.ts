@@ -23,15 +23,21 @@ export const getRandomExampleSuggestionsToReview = (
   },
 });
 
-export const putRandomExampleSuggestions = (data: {
+export const putRandomExampleSuggestions = (rawData: {
   id: any,
   pronunciation?: string,
   review?: ReviewActions,
-}[]): Promise<any> => request({
-  method: 'PUT',
-  url: 'exampleSuggestions/random',
-  data,
-});
+}[]): Promise<any> => {
+  const data = rawData.map(({ pronunciation, ...rest }) => ({
+    ...rest,
+    ...(pronunciation ? { pronunciation } : {}),
+  }));
+  return request({
+    method: 'PUT',
+    url: 'exampleSuggestions/random',
+    data,
+  });
+};
 
 export const bulkUploadExampleSuggestions = async (
   data: { igbo: string }[],
@@ -65,14 +71,14 @@ export const bulkUploadExampleSuggestions = async (
   return result;
 };
 
-export const getTotalVerifiedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
-  method: 'GET',
-  url: 'exampleSuggestions/random/stats/verified',
-  params: { uid },
-})).data;
-
 export const getTotalRecordedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
   method: 'GET',
   url: 'exampleSuggestions/random/stats/recorded',
+  params: { uid },
+})).data;
+
+export const getTotalVerifiedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
+  method: 'GET',
+  url: 'exampleSuggestions/random/stats/verified',
   params: { uid },
 })).data;

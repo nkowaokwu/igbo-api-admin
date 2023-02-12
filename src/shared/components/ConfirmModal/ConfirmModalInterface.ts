@@ -8,7 +8,7 @@ interface ConfirmModal {
   onConfirm: () => void,
   onClose: () => void,
   isDisabled?: boolean,
-  children: any,
+  children?: any,
 };
 
 export default ConfirmModal;

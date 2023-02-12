@@ -89,6 +89,7 @@ const theme = createTheme({
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
         overflowY: 'hidden',
+        padding: 0,
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',

@@ -10,6 +10,7 @@ import { onUpdateDashboardStats } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import apiRouter from './src/backend/routers/apiRouter';
 import editorRouter from './src/backend/routers/editorRouter';
+import transcriberRouter from './src/backend/routers/transcriberRouter';
 import adminRouter from './src/backend/routers/adminRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
@@ -43,6 +44,7 @@ server.use('/triggers', triggersRouter);
 server.get('/twitter_auth', onTwitterAuth);
 server.get('/twitter_callback', onTwitterCallback);
 server.use(apiRouter);
+server.use(transcriberRouter);
 server.use(editorRouter);
 server.use(adminRouter);
 server.get('**', (_, res) => {

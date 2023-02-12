@@ -20,6 +20,8 @@ import {
   suggestNewWord,
   createWord,
   getWords,
+  getTotalVerifiedExampleSuggestions,
+  getTotalRecordedExampleSuggestions,
 } from './shared/commands';
 import {
   wordSuggestionData,
@@ -318,7 +320,9 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
     });
+  });
 
+  describe('Igbo Soundbox', () => {
     it('should get five random example suggestions with no user interactions associated with user', async () => {
       times(5, async () => {
         const exampleRes = await suggestNewExample(
@@ -362,10 +366,10 @@ describe('MongoDB Example Suggestions', () => {
         const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);
         if (index === 0) {
           expect(randomExampleSuggestion.body.approvals).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-          expect(randomExampleSuggestion.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         } else if (index === 1) {
           expect(randomExampleSuggestion.body.denials).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-          expect(randomExampleSuggestion.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         } else {
           expect(randomExampleSuggestion.body.approvals).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
           expect(randomExampleSuggestion.body.denials).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
@@ -377,6 +381,17 @@ describe('MongoDB Example Suggestions', () => {
       newRandomExampleSuggestionsRes.body.forEach((newRandomExampleSuggestion) => {
         expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       });
+      const verifiedRes = await getTotalVerifiedExampleSuggestions();
+      expect(verifiedRes.body.count).toEqual(2);
+    });
+
+    it('should show all example suggestion stats for user', async () => {
+      const verifiedRes = await getTotalVerifiedExampleSuggestions();
+      const recordedRes = await getTotalRecordedExampleSuggestions();
+      expect(verifiedRes.status).toEqual(200);
+      expect(recordedRes.status).toEqual(200);
+      expect(typeof verifiedRes.body.count).toEqual('number');
+      expect(typeof recordedRes.body.count).toEqual('number');
     });
   });
 

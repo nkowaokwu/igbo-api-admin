@@ -23,9 +23,14 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
+import {
+  getTotalRecordedExampleSuggestions,
+  getTotalVerifiedExampleSuggestions,
+} from 'src/shared/DataCollectionAPI';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import LacunaProgress from '../LacunaProgress';
+import IgboSoundboxStats from '../IgboSoundboxStats';
 import Support from '../Support';
 
 ChartJS.register(
@@ -78,6 +83,7 @@ const UserStat = ({
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
+  const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
   const [currentMonthMergeStats, setCurrentMonthMergeStats] = useState(null);
   const { permissions } = usePermissions();
   const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
@@ -120,6 +126,12 @@ const UserStat = ({
         setMergeStats(updatedMergeStats);
         setCurrentMonthMergeStats(currentMonthMerges);
       }
+      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions();
+      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions();
+      setRecordingStats({
+        recorded: recordedExampleSuggestions,
+        verified: verifiedExampleSuggestions,
+      });
     })();
   }, []);
 
@@ -133,6 +145,7 @@ const UserStat = ({
           mergeStats={mergeStats}
           currentMonthMergeStats={currentMonthMergeStats}
         />
+        <IgboSoundboxStats recordingStats={recordingStats} />
         <PersonalStats userStats={userStats} />
         <Support />
       </Box>

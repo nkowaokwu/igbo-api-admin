@@ -1,4 +1,5 @@
 import express from 'express';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import {
   deleteWordSuggestion,
   getWordSuggestion,
@@ -7,72 +8,49 @@ import {
   postWordSuggestion,
   approveWordSuggestion,
   denyWordSuggestion,
-} from '../controllers/wordSuggestions';
-import {
-  deleteCorpusSuggestion,
-  getCorpusSuggestion,
-  getCorpusSuggestions,
-  putCorpusSuggestion,
-  postCorpusSuggestion,
-  approveCorpusSuggestion,
-  denyCorpusSuggestion,
-} from '../controllers/corpusSuggestions';
+} from 'src/backend/controllers/wordSuggestions';
+import { deleteCorpusSuggestion } from 'src/backend/controllers/corpusSuggestions';
 import {
   deleteWord,
   putWord,
   mergeWord,
   getAssociatedWordSuggestions,
   getAssociatedWordSuggestionsByTwitterId,
-} from '../controllers/words';
-import {
-  getCorpora,
-  getCorpus,
-  putCorpus,
-  mergeCorpus,
-} from '../controllers/corpora';
-import { putExample, mergeExample, getAssociatedExampleSuggestions } from '../controllers/examples';
+} from 'src/backend/controllers/words';
+import { putCorpus, mergeCorpus } from 'src/backend/controllers/corpora';
+import { putExample, mergeExample, getAssociatedExampleSuggestions } from 'src/backend/controllers/examples';
 import {
   deleteExampleSuggestion,
   getExampleSuggestion,
   getExampleSuggestions,
-  getRandomExampleSuggestions,
-  postBulkUploadExampleSuggestions,
-  getRandomExampleSuggestionsToReview,
-  getTotalVerifiedExampleSuggestions,
-  getTotalRecordedExampleSuggestions,
-  putRandomExampleSuggestions,
   putExampleSuggestion,
   postExampleSuggestion,
   approveExampleSuggestion,
   denyExampleSuggestion,
-} from '../controllers/exampleSuggestions';
+} from 'src/backend/controllers/exampleSuggestions';
 import {
   getStats,
   getUserStats,
   getUserMergeStats,
-} from '../controllers/stats';
-import { getPolls } from '../controllers/polls';
-import { getNotifications, getNotification, deleteNotification } from '../controllers/notifications';
-import validId from '../middleware/validId';
-import authentication from '../middleware/authentication';
-import authorization from '../middleware/authorization';
-import validateExampleBody from '../middleware/validateExampleBody';
-import validateExampleMerge from '../middleware/validateExampleMerge';
-import validateWordBody from '../middleware/validateWordBody';
-import validateWordMerge from '../middleware/validateWordMerge';
-import validateCorpusBody from '../middleware/validateCorpusBody';
-import validateCorpusMerge from '../middleware/validateCorpusMerge';
-import validateApprovals from '../middleware/validateApprovals';
-import cacheControl from '../middleware/cacheControl';
-import validateRandomExampleSuggestionBody from '../middleware/validateRandomExampleSuggestionBody';
-import validateBulkUploadExampleSuggestionBody from '../middleware/validateBulkUploadExampleSuggestionBody';
-import interactWithSuggestion from '../middleware/interactWithSuggestion';
-import resolveWordDocument from '../middleware/resolveWordDocument';
-import UserRoles from '../shared/constants/UserRoles';
+} from 'src/backend/controllers/stats';
+import { getPolls } from 'src/backend/controllers/polls';
+import { getNotifications, getNotification, deleteNotification } from 'src/backend/controllers/notifications';
+import validId from 'src/backend/middleware/validId';
+import authentication from 'src/backend/middleware/authentication';
+import authorization from 'src/backend/middleware/authorization';
+import validateExampleBody from 'src/backend/middleware/validateExampleBody';
+import validateExampleMerge from 'src/backend/middleware/validateExampleMerge';
+import validateWordBody from 'src/backend/middleware/validateWordBody';
+import validateWordMerge from 'src/backend/middleware/validateWordMerge';
+import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
+import validateCorpusMerge from 'src/backend/middleware/validateCorpusMerge';
+import validateApprovals from 'src/backend/middleware/validateApprovals';
+import cacheControl from 'src/backend/middleware/cacheControl';
+import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
+import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
 
 const editorRouter = express.Router();
 const platformRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN];
-const allRoles = platformRoles.concat[UserRoles.TRANSCRIBER];
 editorRouter.use(authentication, authorization(platformRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
@@ -92,8 +70,6 @@ editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]
 editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
 
-editorRouter.get('/corpora', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), getCorpora);
-editorRouter.get('/corpora/:id', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), validId, getCorpus);
 editorRouter.post('/corpora', authorization([UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
 editorRouter.put(
   '/corpora/:id',
@@ -131,34 +107,7 @@ editorRouter.delete(
 );
 
 editorRouter.get('/exampleSuggestions', getExampleSuggestions);
-editorRouter.get('/exampleSuggestions/random', authorization(allRoles), getRandomExampleSuggestions);
-editorRouter.put(
-  '/exampleSuggestions/random',
-  authorization(allRoles),
-  validateRandomExampleSuggestionBody,
-  putRandomExampleSuggestions,
-);
-editorRouter.post(
-  '/exampleSuggestions/upload',
-  authorization([UserRoles.ADMIN]),
-  validateBulkUploadExampleSuggestionBody,
-  postBulkUploadExampleSuggestions,
-);
-editorRouter.get(
-  '/exampleSuggestions/random/review',
-  authorization(allRoles),
-  getRandomExampleSuggestionsToReview,
-);
-editorRouter.get(
-  '/exampleSuggestions/random/stats/verified',
-  authorization(allRoles),
-  getTotalVerifiedExampleSuggestions,
-);
-editorRouter.get(
-  '/exampleSuggestions/random/stats/recorded',
-  authorization(allRoles),
-  getTotalRecordedExampleSuggestions,
-);
+
 editorRouter.post(
   '/exampleSuggestions',
   authorization(platformRoles),
@@ -177,25 +126,6 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/corpusSuggestions', authorization(allRoles), getCorpusSuggestions);
-editorRouter.post(
-  '/corpusSuggestions',
-  authorization(allRoles),
-  validateCorpusBody,
-  interactWithSuggestion,
-  postCorpusSuggestion,
-);
-editorRouter.put(
-  '/corpusSuggestions/:id',
-  authorization(allRoles),
-  validId,
-  validateCorpusBody,
-  interactWithSuggestion,
-  putCorpusSuggestion,
-);
-editorRouter.get('/corpusSuggestions/:id', authorization(allRoles), validId, getCorpusSuggestion);
-editorRouter.put('/corpusSuggestions/:id/approve', authorization(allRoles), validId, approveCorpusSuggestion);
-editorRouter.put('/corpusSuggestions/:id/deny', authorization(allRoles), validId, denyCorpusSuggestion);
 editorRouter.delete(
   '/corpusSuggestions/:id',
   validId,
@@ -203,6 +133,8 @@ editorRouter.delete(
   deleteCorpusSuggestion,
 );
 
+// TODO: use the new resourcePermission middleware to only grant
+// access to stats to the user who owns the stats or the admin
 editorRouter.get('/stats/full', getStats);
 editorRouter.get('/stats/user', cacheControl, getUserStats);
 editorRouter.get('/stats/users/:uid/merge', getUserMergeStats);

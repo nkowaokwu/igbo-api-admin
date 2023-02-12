@@ -58,6 +58,20 @@ export const getRandomExampleSuggestions = (query = {}, options = { token: '' })
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const getTotalVerifiedExampleSuggestions = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/exampleSuggestions/random/stats/verified')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const getTotalRecordedExampleSuggestions = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/exampleSuggestions/random/stats/recorded')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 export const postBulkUploadExampleSuggestions = (data: { igbo: string }[], options = { token: '' }): Request => (
   chaiServer
     .post('/exampleSuggestions/upload')

@@ -23,7 +23,7 @@ import PollList from 'src/Core/Collections/Polls/PollList';
 import PollCreate from 'src/Core/Collections/Polls/PollCreate';
 import UserList from 'src/Core/Collections/Users/UserList';
 import UserShow from 'src/Core/Collections/Users/UserShow';
-import DataCollection from 'src/Core/Collections/DataCollection';
+import IgboSoundbox from 'src/Core/Collections/IgboSoundbox';
 import DataDump from 'src/Core/Collections/DataDump';
 import withLastRoute from './withLastRoute';
 
@@ -123,11 +123,11 @@ const adminRoutes = (permissions) => hasAdminPermissions(permissions, [
 
 const transcriberRoutes = (permissions) => hasTranscriberPermissions(permissions, [
   {
-    name: 'dataCollection',
-    key: 'dataCollection',
-    options: { label: 'Data Collection' },
-    list: DataCollection,
-    icon: () => <>🗄</>,
+    name: 'igboSoundbox',
+    key: 'igboSoundbox',
+    options: { label: 'Igbo Soundbox' },
+    list: IgboSoundbox,
+    icon: () => <>🔊</>,
   },
 ]) || [];
 

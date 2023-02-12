@@ -15,6 +15,7 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
+import { hasTranscriberPermissions } from 'src/shared/utils/permissions';
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
 import LocalStorageKeys from './shared/constants/LocalStorageKeys';
@@ -38,12 +39,7 @@ const Login = (): ReactElement => {
   const handleRedirect = async (user) => {
     const idTokenResult = await user.getIdTokenResult();
     const userRole = idTokenResult.claims.role;
-    const hasPermission = (
-      userRole === UserRoles.ADMIN
-      || userRole === UserRoles.MERGER
-      || userRole === UserRoles.EDITOR
-      || userRole === UserRoles.TRANSCRIBER
-    );
+    const hasPermission = Object.values(UserRoles).includes(userRole);
     if (!hasPermission) {
       signOut(auth);
       window.localStorage.clear();
@@ -53,7 +49,10 @@ const Login = (): ReactElement => {
     localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
     localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    const redirectUrl = (rawRedirectUrl || '#/').replace('#/', '') || '/';
+    const redirectUrl = (
+      hasTranscriberPermissions({ role: userRole }, '/igboSoundbox')
+      || (rawRedirectUrl || '#/').replace('#/', '') || '/'
+    );
     redirect(redirectUrl);
   };
 

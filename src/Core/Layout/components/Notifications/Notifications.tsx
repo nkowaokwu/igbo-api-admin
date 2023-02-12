@@ -63,6 +63,15 @@ const Notifications = (props): ReactElement => {
         variant="ghost"
         leftIcon={(() => <>🔔</>)()}
         color="gray.800"
+        _hover={{
+          backgroundColor: 'transparent',
+        }}
+        _active={{
+          backgroundColor: 'transparent',
+        }}
+        _focus={{
+          backgroundColor: 'transparent',
+        }}
         {...props}
       >
         {notifications.filter(({ opened }) => !opened).length ? (
