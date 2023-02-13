@@ -8,7 +8,6 @@ import {
 } from '@chakra-ui/react';
 import network from 'src/Core/Dashboard/network';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
-import PersonalStats from 'src/Core/Collections/DataCollection/PersonalStats';
 import { hasNoEditorPermissions } from 'src/shared/utils/permissions';
 
 const NO_PERMISSION_STATUS = 403;
@@ -77,7 +76,6 @@ const UserShow = (props: ShowProps): ReactElement => {
               totalCompletedExamples={totalCompletedExamples}
               totalDialectalVariations={totalDialectalVariations}
             />
-            <PersonalStats uid={record.uid} />
           </>
         ) : null}
       </Box>

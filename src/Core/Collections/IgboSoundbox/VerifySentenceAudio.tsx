@@ -4,53 +4,38 @@ import {
   Box,
   Button,
   Heading,
+  IconButton,
   Spinner,
   Text,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
-import { ArrowBackIcon, CheckIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import {
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  CheckIcon,
+  SmallCloseIcon,
+} from '@chakra-ui/icons';
 import { getRandomExampleSuggestionsToReview, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SandboxAudioRecorder from './SandboxAudioRecorder';
 import Completed from './Completed';
+import EmptyExamples from './EmptyExamples';
+import ProgressCircles from './components/ProgressCircles';
+import CardMessage from './constants/CardMessage';
+import CardMessageColor from './constants/CardMessageColor';
+import InteractionButton from './components/InteractionButton';
 
-const cardMessage = {
-  [ReviewActions.APPROVE]: 'You have marked this audio as approved',
-  [ReviewActions.DENY]: 'You have marked this audio as denied',
-  [ReviewActions.SKIP]: 'You have skipped this audio',
-};
+// TODO: write frontend tests for navigating between different views
 
-const cardMessageColor = {
-  [ReviewActions.APPROVE]: 'green',
-  [ReviewActions.DENY]: 'red',
-  [ReviewActions.SKIP]: 'gray',
-};
-
-const ProgressCircles = ({ reviews, exampleIndex } : { reviews: ReviewActions[], exampleIndex: number }) => (
-  <Box display="flex" flexDirection="row" className="space-x-6" my="6">
-    {reviews.map((review, reviewIndex) => (
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Box
-          borderRadius="full"
-          backgroundColor="white"
-          borderWidth="2px"
-          borderColor={cardMessageColor[review]}
-          height="40px"
-          width="40px"
-        />
-        <Text userSelect="none" opacity={exampleIndex === reviewIndex ? 1 : 0} mt="2">☝🏾</Text>
-      </Box>
-    ))}
-  </Box>
-);
-
-const VerifySentenceAudio = (): ReactElement => {
+const VerifySentenceAudio = ({
+  setIsDirty,
+  goHome,
+} : {
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>
+  goHome: () => void,
+}): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [reviews, setReviews] = useState<ReviewActions[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +43,7 @@ const VerifySentenceAudio = (): ReactElement => {
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
   const isCompleteDisabled = reviews.some((review) => !review) || isUploading;
+  const toast = useToast();
 
   const updateReviews = (action: ReviewActions) => {
     const updatedReviews = [...reviews];
@@ -80,19 +66,22 @@ const VerifySentenceAudio = (): ReactElement => {
   const handleSkip = () => {
     updateReviews(ReviewActions.SKIP);
     handleNext();
+    setIsDirty(true);
   };
 
   const handleDeny = () => {
     updateReviews(ReviewActions.DENY);
     handleNext();
+    setIsDirty(true);
   };
 
   const handleApprove = () => {
     updateReviews(ReviewActions.APPROVE);
     handleNext();
+    setIsDirty(true);
   };
 
-  const handleUploadAudio = async () => {
+  const handleUploadReviews = async () => {
     try {
       const payload = examples.map((example, exampleIndex) => ({
         id: example.id,
@@ -101,20 +90,31 @@ const VerifySentenceAudio = (): ReactElement => {
       setIsLoading(true);
       await putRandomExampleSuggestions(payload);
     } catch (err) {
-      console.log('Unable to submit audio', err);
+      toast({
+        title: 'An error occurred',
+        description: 'Unable to upload example sentence reviews.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleComplete = async () => {
-    console.log('Submit recordings');
     try {
       setIsUploading(true);
-      await handleUploadAudio();
+      await handleUploadReviews();
       setIsComplete(true);
     } catch (err) {
-      console.log('Error while completing', err);
+      toast({
+        title: 'An error occurred',
+        description: 'Unable to complete verifying example sentences.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setIsUploading(false);
     }
@@ -132,41 +132,87 @@ const VerifySentenceAudio = (): ReactElement => {
       })();
     }
   }, [isComplete]);
+  const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
+  const noExamples = !isLoading && !examples?.length && !isComplete;
 
-  return !isLoading && exampleIndex !== -1 && !isComplete ? (
+  return shouldRenderExamples ? (
     <Box
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      className="space-y-4 py-6"
     >
-      <Heading as="h1">Verify sentence audio</Heading>
-      <Text>Listen closely to each sentence and approve if the audio matches with its sentence</Text>
+      <Heading as="h1" fontSize="2xl" color="gray.600">Listen to know if this sentence matches the audio</Heading>
+      <Text fontFamily="Silka">The audio should be understandable Igbo</Text>
       <Box
-        backgroundColor="white"
-        boxShadow="md"
+        backgroundColor="gray.100"
         borderRadius="md"
-        height={['64', 'sm']}
+        borderColor="gray.300"
+        borderWidth="1px"
+        minHeight={32}
         width={['full', 'lg']}
         m="12"
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        px="6"
+        p="6"
+        className="space-y-6"
       >
-        <Text fontSize="2xl" textAlign="center">
+        <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}
         </Text>
+        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciation} canRecord={false} />
       </Box>
       <Text
         userSelect="none"
-        color={cardMessageColor[reviews[exampleIndex]]}
+        color={CardMessageColor[reviews[exampleIndex]]}
         opacity={reviews[exampleIndex] ? 1 : 0}
       >
-        {cardMessage[reviews[exampleIndex]] || 'Nothing'}
+        {CardMessage[reviews[exampleIndex]] || 'Nothing'}
       </Text>
-      <Text>{`${exampleIndex + 1} / ${examples.length}`}</Text>
+      <Box className="w-full flex flex-row justify-center items-center space-x-4">
+        <Tooltip label="You will go back to the previous sentence to review. You will not lose your progress.">
+          <IconButton
+            variant="ghost"
+            onClick={exampleIndex !== 0 ? handleBack : noop}
+            icon={<ArrowBackIcon />}
+            aria-label="Previous sentence"
+            disabled={exampleIndex === 0}
+            _hover={{
+              backgroundColor: 'white',
+            }}
+            _active={{
+              backgroundColor: 'white',
+            }}
+            _focus={{
+              backgroundColor: 'white',
+            }}
+          />
+        </Tooltip>
+        <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
+        <IconButton
+          variant="ghost"
+          onClick={!reviews[exampleIndex]
+            ? handleSkip
+            : exampleIndex === reviews.length - 1
+              ? noop
+              : handleNext}
+          icon={<ArrowForwardIcon />}
+          aria-label="Next sentence"
+          disabled={exampleIndex === reviews.length - 1}
+          _hover={{
+            backgroundColor: 'white',
+          }}
+          _active={{
+            backgroundColor: 'white',
+          }}
+          _focus={{
+            backgroundColor: 'white',
+          }}
+        />
+      </Box>
       <ProgressCircles reviews={reviews} exampleIndex={exampleIndex} />
       <Box
         display="flex"
@@ -175,7 +221,6 @@ const VerifySentenceAudio = (): ReactElement => {
         alignItems="center"
         className="space-y-3"
       >
-        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciation} canRecord={false} />
         <Box
           display="flex"
           flexDirection="row"
@@ -183,31 +228,20 @@ const VerifySentenceAudio = (): ReactElement => {
           alignItems="center"
           className="space-x-3"
         >
-          <Button
-            colorScheme="red"
+          <InteractionButton
             onClick={handleDeny}
             rightIcon={<SmallCloseIcon />}
-            aria-label="Deny audio"
+            ariaLabel="Deny audio"
           >
             Deny
-          </Button>
-          <Tooltip label="Skipping will mark this sentence audio as neither approved nor denied. It has been skipped.">
-            <Button
-              colorScheme="gray"
-              onClick={handleSkip}
-              aria-label="Skip sentence"
-            >
-              Skip
-            </Button>
-          </Tooltip>
-          <Button
-            colorScheme="green"
+          </InteractionButton>
+          <InteractionButton
             onClick={handleApprove}
             rightIcon={<CheckIcon />}
-            aria-label="Approve audio"
+            ariaLabel="Approve audio"
           >
             Approve
-          </Button>
+          </InteractionButton>
         </Box>
         <Box
           data-test="editor-recording-options"
@@ -217,24 +251,18 @@ const VerifySentenceAudio = (): ReactElement => {
           alignItems="center"
           className="space-x-3"
         >
-          <Tooltip label="You will go back to the previous sentence to review. You will not lose your progress.">
-            <Button
-              colorScheme="orange"
-              onClick={exampleIndex !== 0 ? handleBack : noop}
-              leftIcon={<ArrowBackIcon />}
-              aria-label="Previous sentence"
-              disabled={exampleIndex === 0}
-            >
-              Back
-            </Button>
-          </Tooltip>
           <Tooltip label="Review all sentences before completing.">
             <Box>
               <Button
                 colorScheme="green"
                 onClick={!isCompleteDisabled ? handleComplete : noop}
+                rightIcon={(() => <>💾</>)()}
                 aria-label="Complete recordings"
                 disabled={isCompleteDisabled}
+                borderRadius="full"
+                fontFamily="Silka"
+                fontWeight="bold"
+                p={6}
               >
                 Complete
               </Button>
@@ -243,8 +271,10 @@ const VerifySentenceAudio = (): ReactElement => {
         </Box>
       </Box>
     </Box>
+  ) : noExamples ? (
+    <EmptyExamples setIsDirty={setIsDirty} goHome={goHome} />
   ) : isComplete ? (
-    <Completed setIsComplete={setIsComplete} />
+    <Completed setIsComplete={setIsComplete} setIsDirty={setIsDirty} goHome={goHome} />
   ) : (
     <Box
       width="full"

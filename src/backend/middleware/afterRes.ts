@@ -1,4 +1,5 @@
 import { Response, NextFunction } from 'express';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 
 export default () => async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<void> => {

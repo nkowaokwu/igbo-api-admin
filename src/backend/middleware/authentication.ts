@@ -9,7 +9,9 @@ import UserRoles from '../shared/constants/UserRoles';
 const config = functions.config();
 /* Validates the user-provided auth token */
 const authentication = async (
-  req: Interfaces.EditorRequest, res: Response, next: NextFunction,
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
 ): Promise<Response | void> => {
   try {
     const authHeader = req?.headers?.Authorization || req?.headers?.authorization;

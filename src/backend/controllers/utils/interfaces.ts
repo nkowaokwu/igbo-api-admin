@@ -27,6 +27,8 @@ export interface HandleQueries {
 export interface EditorRequest extends Request {
   user: {
     uid?: string,
+    role?: UserRoles,
+    editingGroup?: number | undefined,
   },
   query: {
     keyword?: string,

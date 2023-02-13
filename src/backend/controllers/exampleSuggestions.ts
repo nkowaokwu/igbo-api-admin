@@ -337,7 +337,7 @@ export const getTotalVerifiedExampleSuggestions = async (
   }
 };
 
-/* Returns total number of example suggestions the user has approved or denied */
+/* Returns total number of example suggestions the user has recorded */
 export const getTotalRecordedExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
@@ -347,7 +347,8 @@ export const getTotalRecordedExampleSuggestions = async (
   const uid = uidQuery || user.uid;
   const query = {
     userInteractions: { $in: [uid] },
-    pronunciation: { $exists: true, $eq: /http/, $type: 'string' },
+    'denials.1': { $exists: false },
+    pronunciation: { $regex: /^http/, $type: 'string' },
   };
 
   try {
@@ -386,22 +387,21 @@ export const putRandomExampleSuggestions = async (
       if (pronunciation) {
         console.log(`Updated example suggestion with pronunciation: ${id}`);
         exampleSuggestion.pronunciation = pronunciation;
+        // Only add uid to userInteractions for recording audio
+        userInteractions.add(user.uid);
+        exampleSuggestion.userInteractions = Array.from(userInteractions);
       }
       if (review === ReviewActions.APPROVE) {
         const approvals = new Set(exampleSuggestion.approvals);
         approvals.add(user.uid);
         exampleSuggestion.approvals = Array.from(approvals);
         exampleSuggestion.denials = exampleSuggestion.denials.filter((denial) => denial !== user.uid);
-        userInteractions.add(user.uid);
-        exampleSuggestion.userInteractions = Array.from(userInteractions);
       }
       if (review === ReviewActions.DENY) {
         const denials = new Set(exampleSuggestion.denials);
         denials.add(user.uid);
         exampleSuggestion.denials = Array.from(denials);
         exampleSuggestion.approvals = exampleSuggestion.approvals.filter((approval) => approval !== user.uid);
-        userInteractions.add(user.uid);
-        exampleSuggestion.userInteractions = Array.from(userInteractions);
       }
       if (review === ReviewActions.SKIP) {
         console.log(`The user ${user.uid} skipped reviewing the word suggestion ${id}`);

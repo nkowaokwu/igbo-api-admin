@@ -4,17 +4,26 @@ import {
   Box,
   Button,
   Heading,
+  IconButton,
   Spinner,
   Text,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestions, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import SandboxAudioRecorder from './SandboxAudioRecorder';
 import Completed from './Completed';
+import EmptyExamples from './EmptyExamples';
 
-const RecordSentenceAudio = (): ReactElement => {
+const RecordSentenceAudio = ({
+  setIsDirty,
+  goHome,
+} : {
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>
+  goHome: () => void,
+}): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [pronunciations, setPronunciations] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,11 +31,13 @@ const RecordSentenceAudio = (): ReactElement => {
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
   const isCompleteDisabled = pronunciations.every((pronunciation) => !pronunciation) || isUploading;
+  const toast = useToast();
 
   const handlePronunciation = (audioData) => {
     const updatedPronunciations = [...pronunciations];
     updatedPronunciations[exampleIndex] = audioData;
     setPronunciations(updatedPronunciations);
+    setIsDirty(true);
   };
 
   const handleNext = () => {
@@ -45,6 +56,7 @@ const RecordSentenceAudio = (): ReactElement => {
     const updatedPronunciations = [...pronunciations];
     updatedPronunciations[exampleIndex] = '';
     setPronunciations(updatedPronunciations);
+    setIsDirty(true);
     handleNext();
   };
 
@@ -57,6 +69,13 @@ const RecordSentenceAudio = (): ReactElement => {
       setIsLoading(true);
       await putRandomExampleSuggestions(payload);
     } catch (err) {
+      toast({
+        title: 'An error occurred',
+        description: 'Unable to upload example sentence recordings.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
       console.log('Unable to submit audio', err);
     } finally {
       setIsLoading(false);
@@ -64,13 +83,18 @@ const RecordSentenceAudio = (): ReactElement => {
   };
 
   const handleComplete = async () => {
-    console.log('Submit recordings');
     try {
       setIsUploading(true);
       await handleUploadAudio();
       setIsComplete(true);
     } catch (err) {
-      console.log('Error while completing', err);
+      toast({
+        title: 'An error occurred',
+        description: 'Unable to complete recording example sentences.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setIsUploading(false);
     }
@@ -88,34 +112,79 @@ const RecordSentenceAudio = (): ReactElement => {
       })();
     }
   }, [isComplete]);
+  const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
+  const noExamples = !isLoading && !examples?.length && !isComplete;
 
-  return !isLoading && exampleIndex !== -1 && !isComplete ? (
+  return shouldRenderExamples ? (
     <Box
       display="flex"
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      className="space-y-4 py-6"
     >
-      <Heading as="h1">Record sentence audio</Heading>
-      <Text>Record audio for each sentence</Text>
+      <Heading as="h1" fontSize="2xl" color="gray.600">Record sentence audio</Heading>
+      <Text fontFamily="Silka">Record audio for each sentence</Text>
       <Box
-        backgroundColor="white"
-        boxShadow="md"
+        backgroundColor="gray.100"
         borderRadius="md"
-        height="sm"
-        width="lg"
+        borderColor="gray.300"
+        borderWidth="1px"
+        minHeight={32}
+        width={['full', 'lg']}
         m="12"
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        px="6"
+        p="6"
+        className="space-y-6"
       >
-        <Text fontSize="2xl" textAlign="center">
+        <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}
         </Text>
       </Box>
-      <Text mb="12">{`${exampleIndex + 1} / ${examples.length}`}</Text>
+      <Box className="mb-12 w-full flex flex-row justify-center items-center space-x-4">
+        <Tooltip label="You will not lose your current progress by going back.">
+          <IconButton
+            variant="ghost"
+            onClick={exampleIndex !== 0 ? handleBack : noop}
+            icon={<ArrowBackIcon />}
+            aria-label="Previous sentence"
+            disabled={exampleIndex === 0}
+            _hover={{
+              backgroundColor: 'white',
+            }}
+            _active={{
+              backgroundColor: 'white',
+            }}
+            _focus={{
+              backgroundColor: 'white',
+            }}
+          />
+        </Tooltip>
+        <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
+        <IconButton
+          variant="ghost"
+          onClick={!examples[exampleIndex]
+            ? handleSkip
+            : exampleIndex === examples.length - 1
+              ? noop
+              : handleNext}
+          icon={<ArrowForwardIcon />}
+          aria-label="Next sentence"
+          disabled={exampleIndex === examples.length - 1}
+          _hover={{
+            backgroundColor: 'white',
+          }}
+          _active={{
+            backgroundColor: 'white',
+          }}
+          _focus={{
+            backgroundColor: 'white',
+          }}
+        />
+      </Box>
       <Box
         display="flex"
         flexDirection="column"
@@ -135,54 +204,30 @@ const RecordSentenceAudio = (): ReactElement => {
           alignItems="center"
           className="space-x-3"
         >
-          <Tooltip label="You will not lose your current progress by going back.">
-            <Button
-              colorScheme="orange"
-              onClick={exampleIndex !== 0 ? handleBack : noop}
-              leftIcon={<ArrowBackIcon />}
-              aria-label="Previous sentence"
-              disabled={exampleIndex === 0}
-            >
-              Back
-            </Button>
+          <Tooltip label={isCompleteDisabled ? 'Please record at least one audio to complete this section' : ''}>
+            <Box>
+              <Button
+                colorScheme="green"
+                onClick={!isCompleteDisabled ? handleComplete : noop}
+                rightIcon={(() => <>💾</>)()}
+                aria-label="Complete recordings"
+                disabled={isCompleteDisabled}
+                borderRadius="full"
+                fontFamily="Silka"
+                fontWeight="bold"
+                p={6}
+              >
+                Complete
+              </Button>
+            </Box>
           </Tooltip>
-          <Tooltip label="You will skip this sentence without recording audio">
-            <Button
-              colorScheme="gray"
-              onClick={handleSkip}
-              aria-label="Skip sentence"
-            >
-              Skip
-            </Button>
-          </Tooltip>
-          {exampleIndex !== examples.length - 1 ? (
-            <Button
-              colorScheme="blue"
-              onClick={handleNext}
-              rightIcon={<ArrowForwardIcon />}
-              aria-label="Next sentence"
-            >
-              Next
-            </Button>
-          ) : (
-            <Tooltip label={isCompleteDisabled ? 'Please record at least one audio to complete this section' : ''}>
-              <Box>
-                <Button
-                  colorScheme="green"
-                  onClick={!isCompleteDisabled ? handleComplete : noop}
-                  aria-label="Complete recordings"
-                  disabled={isCompleteDisabled}
-                >
-                  Complete
-                </Button>
-              </Box>
-            </Tooltip>
-          )}
         </Box>
       </Box>
     </Box>
+  ) : noExamples ? (
+    <EmptyExamples recording goHome={goHome} setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed recording setIsComplete={setIsComplete} />
+    <Completed recording setIsComplete={setIsComplete} setIsDirty={setIsDirty} goHome={goHome} />
   ) : (
     <Box
       width="full"
