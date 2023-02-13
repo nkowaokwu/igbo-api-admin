@@ -18,7 +18,7 @@ const IgboSoundboxStats = ({
     {
       totalCount: recordingStats.verified,
       goal: GOAL,
-      heading: 'Verified example Sentences',
+      heading: 'Verified example sentences',
       description: 'The number of example sentences you have reviewed.',
     },
   ];

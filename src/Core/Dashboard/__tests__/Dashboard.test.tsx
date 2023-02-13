@@ -3,6 +3,8 @@ import { render } from '@testing-library/react';
 import Dashboard from 'src/Core/Dashboard';
 import TestContext from 'src/__tests__/components/TestContext';
 
+jest.mock('src/shared/DataCollectionAPI');
+
 it('render the dashboard', async () => {
   const { findByText, findAllByText } = render(<TestContext><Dashboard /></TestContext>);
   await findByText('"Complete" Words');
@@ -15,4 +17,6 @@ it('render the dashboard', async () => {
   await findByText('Words with Igbo Definitions');
   await findByText('Sufficient Igbo Example Sentences');
   await findByText('Complete Igbo Example Sentences');
+  await findByText('Recorded example sentences');
+  await findByText('Verified example sentences');
 });
