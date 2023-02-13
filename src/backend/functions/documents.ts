@@ -90,17 +90,18 @@ export const onUpdateDocument = functions.https.onCall(async (
         author,
         context,
       });
-      await sendDocumentUpdateNotification({
-        author: author.displayName,
-        to,
-        translator: context.auth.token.name,
-        translatorEmail: context.auth.token.email,
-        type,
-        resource,
-        id: record.id,
-        word: record.word || record.igbo,
-        editorsNotes: record.editorsNotes,
-      });
+      // Skipping sending emails to save on SendGrid API costs
+      // await sendDocumentUpdateNotification({
+      //   author: author.displayName,
+      //   to,
+      //   translator: context.auth.token.name,
+      //   translatorEmail: context.auth.token.email,
+      //   type,
+      //   resource,
+      //   id: record.id,
+      //   word: record.word || record.igbo,
+      //   editorsNotes: record.editorsNotes,
+      // });
     } else {
       console.log('No one to send to:', to);
     }
