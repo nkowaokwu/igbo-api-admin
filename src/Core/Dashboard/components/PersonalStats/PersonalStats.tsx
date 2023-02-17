@@ -8,7 +8,7 @@ import {
 import userStatBodies from './userStatBodies';
 
 const PersonalStats = ({ userStats } : { userStats: { [key: string]: number } }): ReactElement => (
-  <Box className="rounded border p-4 space-y-4 bg-white w-full lg:w-5/12" borderColor="gray.300">
+  <Box className="rounded border p-4 space-y-4 bg-white w-full" borderColor="gray.300">
     <Box>
       <Text fontWeight="bold" fontFamily="Silka" color="gray.700">
         Personal Contributions

@@ -77,8 +77,8 @@ export const getTotalRecordedExampleSuggestions = async (uid?: string): Promise<
   params: { uid },
 })).data;
 
-export const getTotalVerifiedExampleSuggestions = async (uid?: string): Promise<any> => (await request({
+export const getTotalVerifiedExampleSuggestions = async (uid?: string | null): Promise<any> => (await request({
   method: 'GET',
   url: 'exampleSuggestions/random/stats/verified',
-  params: { uid },
+  params: uid ? { uid } : {},
 })).data;

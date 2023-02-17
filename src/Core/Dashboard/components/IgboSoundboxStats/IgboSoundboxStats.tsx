@@ -24,7 +24,7 @@ const IgboSoundboxStats = ({
   ];
 
   return (
-    <Box className="mb-6 space-y-3 w-full lg:w-5/12">
+    <Box className="mb-6 space-y-3 w-full">
       <LinearProgressCard
         heading="Igbo Soundbox Contributions"
         description="Your personalized Lacuna Fund statistics"
