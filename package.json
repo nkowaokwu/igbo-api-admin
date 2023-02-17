@@ -74,6 +74,7 @@
     "@chakra-ui/react": "^1.6.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@heartexlabs/label-studio": "^1.4.0",
     "@hookform/resolvers": "^1.2.0",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.11",
