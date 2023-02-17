@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { get, truncate } from 'lodash';
-import { Text } from '@chakra-ui/react';
+import { Text, Tooltip, chakra } from '@chakra-ui/react';
 import WordClass from '../constants/WordClass';
 import { ArrayPreviewProps } from '../interfaces';
 import ResolvedWord from './ResolvedWord';
@@ -20,6 +20,11 @@ const populateList = (items = [], source) => {
         <>
           <Text className="italic text-gray-700">
             {get(WordClass[item.wordClass], 'label') || '[UPDATE PART OF SPEECH]'}
+            {get(item, 'nsibidi') ? (
+              <Tooltip label={get(item, 'nsibidi')}>
+                <chakra.span className="akagu not-italic cursor-default" ml={3}>{get(item, 'nsibidi')}</chakra.span>
+              </Tooltip>
+            ) : null}
           </Text>
           {(item.definitions || []).map((definition) => (
             <Text>{truncate(definition, { length: 120 }) || 'no definition'}</Text>
