@@ -53,9 +53,13 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
         break;
       case 'nsibidi':
         if (value) {
-          allFilters.$and = [{ nsibidi: { $ne: null } }, { nsibidi: { $ne: '' } }];
+          allFilters.$and = [{ 'definitions.nsibidi': { $ne: null } }, { 'definitions.nsibidi': { $ne: '' } }];
         } else {
-          allFilters.$or = [...allFilters.$or, { nsibidi: { $eq: null } }, { nsibidi: { $eq: '' } }];
+          allFilters.$or = [
+            ...allFilters.$or,
+            { 'definitions.nsibidi': { $eq: null } },
+            { 'definitions.nsibidi': { $eq: '' } },
+          ];
         }
         break;
       case WordAttributes.IS_CONSTRUCTED_TERM.value:

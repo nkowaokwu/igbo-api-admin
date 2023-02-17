@@ -52,25 +52,34 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
         <Text fontSize="xl" className="font-bold">Word</Text>
         <Text>{get(record, 'word')}</Text>
       </Box>
-      <Box>
-        <Text fontSize="xl" className="font-bold">Nsịbịdị</Text>
-        <Text
-          className={record.nsibidi ? 'akagu' : 'italic text-gray-600'}
-        >
-          {get(record, 'nsibidi') || 'No Nsịbịdị'}
-        </Text>
-      </Box>
     </Box>
     <Box className="flex flex-row items-start space-x-8">
       <Box className="space-y-2">
         <Box>
           <Text fontSize="xl" className="font-bold">Definition Groups</Text>
           <Box>
-            {(get(record, 'definitions') || []).map(({ wordClass, definitions, id }) => (
+            {(get(record, 'definitions') || []).map(({
+              wordClass,
+              definitions,
+              nsibidi,
+              id,
+            }) => (
               <Box key={id}>
-                <Box>
-                  <Text fontSize="lg" className="font-bold">Part of Speech</Text>
-                  <Text>{get(WordClass[wordClass], 'label')}</Text>
+                <Box className="flex flex-row space-x-3 items-start">
+                  <Box>
+                    <Text fontSize="lg" className="font-bold">Part of Speech</Text>
+                    <Text>{get(WordClass[wordClass], 'label')}</Text>
+                  </Box>
+                  <Box>
+                    <Text fontSize="lg" className="font-bold">Nsịbịdị</Text>
+                    <Tooltip label={nsibidi}>
+                      <Text
+                        className={`${nsibidi ? 'akagu' : 'italic text-gray-600'} cursor-default`}
+                      >
+                        {nsibidi || 'No Nsịbịdị'}
+                      </Text>
+                    </Tooltip>
+                  </Box>
                 </Box>
                 <Text fontSize="lg" className="font-bold">Definitions</Text>
                 {definitions?.length ? definitions.map((definition, index) => (
@@ -136,7 +145,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
       <Text fontSize="lg" className="font-bold">Examples</Text>
       <Box className="space-y-2">
         {get(record, 'examples.length') ? record.examples.map((example, index) => {
-          const { igbo, english } = example;
+          const { igbo, english, nsibidi } = example;
           return (
             <>
               <Box className="flex flex-row items-center space-x-2">
@@ -144,6 +153,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
                 <Box>
                   <Text>{igbo}</Text>
                   <Text className="italic text-gray-600">{english}</Text>
+                  <Text className={nsibidi ? 'akagu' : 'italic text-gray-600'}>{nsibidi || 'No Nsịbịdị'}</Text>
                 </Box>
               </Box>
               <AudioRecordingPreview record={example} />

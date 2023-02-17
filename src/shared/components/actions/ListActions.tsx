@@ -120,7 +120,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   useEffect(() => {
     const updatedFilters: { wordClass?: string[] } = currentFilters.reduce(
       (allFilters, filter) => {
-        if (filter !== 'word' && filter !== 'example') {
+        if (filter === 'noNsibidi') {
+          // @ts-expect-error nsibidi
+          allFilters.nsibidi = false;
+        } else if (filter !== 'word' && filter !== 'example') {
           allFilters[filter] = true;
         }
         return allFilters;
@@ -240,6 +243,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         </MenuItemOption>,
                         <MenuItemOption value="nsibidi" key="nsibidi">
                           Has Nsịbịdị
+                        </MenuItemOption>,
+                        <MenuItemOption value="noNsibidi" key="noNsibidi">
+                          Has No Nsịbịdị
                         </MenuItemOption>,
                         <MenuItemOption
                           value={WordAttributes.IS_CONSTRUCTED_TERM.value}
