@@ -126,8 +126,8 @@ const UserStat = ({
         setMergeStats(updatedMergeStats);
         setCurrentMonthMergeStats(currentMonthMerges);
       }
-      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions();
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions();
+      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(uid);
+      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(uid);
       setRecordingStats({
         recorded: recordedExampleSuggestions,
         verified: verifiedExampleSuggestions,
@@ -137,16 +137,18 @@ const UserStat = ({
 
   return (
     <Box>
-      <Box className="flex flex-col lg:flex-row space-y-3 lg:space-y-0 lg:space-x-4">
-        <LacunaProgress
-          totalCompletedWords={totalCompletedWords}
-          totalCompletedExamples={totalCompletedExamples}
-          totalDialectalVariations={totalDialectalVariations}
-          mergeStats={mergeStats}
-          currentMonthMergeStats={currentMonthMergeStats}
-        />
-        <IgboSoundboxStats recordingStats={recordingStats} />
-        <PersonalStats userStats={userStats} />
+      <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
+        <Box className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 grid-gap-2">
+          <LacunaProgress
+            totalCompletedWords={totalCompletedWords}
+            totalCompletedExamples={totalCompletedExamples}
+            totalDialectalVariations={totalDialectalVariations}
+            mergeStats={mergeStats}
+            currentMonthMergeStats={currentMonthMergeStats}
+          />
+          <IgboSoundboxStats recordingStats={recordingStats} />
+          <PersonalStats userStats={userStats} />
+        </Box>
         <Support />
       </Box>
       {showMergeCharts ? (

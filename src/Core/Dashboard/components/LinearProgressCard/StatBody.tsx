@@ -23,7 +23,8 @@ const StatBody = ({
 }): ReactElement => {
   const totalCount = (rawTotalCount || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
   const goal = (rawGoal || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
-  const colorScheme = calculatePercentage(totalCount, goal) > 40 ? 'blue' : 'orange';
+  const calculatedPercentage = calculatePercentage(rawTotalCount, rawGoal);
+  const colorScheme = calculatedPercentage > 40 ? 'blue' : 'orange';
 
   return (
     <>
@@ -45,10 +46,10 @@ const StatBody = ({
         </Box>
         <Box className="w-full flex flex-row justify-end">
           <Box className="flex flex-col justify-center items-center w-full mt-4">
-            <Tooltip label={`${`${calculatePercentage(totalCount, goal)}% has been merged`}`}>
+            <Tooltip label={`${`${calculatedPercentage}% has been completed`}`}>
               <Box width="full">
                 <Progress
-                  value={calculatePercentage(rawTotalCount, rawGoal)}
+                  value={calculatedPercentage}
                   colorScheme={colorScheme}
                   size="lg"
                   width="full"

@@ -68,7 +68,7 @@ const LacunaProgress = ({
   }, [mergeStats, currentMonthMergeStats]);
 
   return (
-    <Box className="mb-6 space-y-3 w-full lg:w-5/12">
+    <Box className="mb-6 space-y-3 w-full">
       <LinearProgressCard
         heading={'Lacuna Fund Project "weekly"'}
         description="Your personalized Lacuna Fund statistics"
