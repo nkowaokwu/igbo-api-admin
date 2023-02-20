@@ -173,14 +173,12 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   igbo: { $exists: boolean, $type: string },
   $expr: { $gt: ({ $strLenCP: string } | number)[] },
   pronunciation: string,
-  exampleForSuggestion: { $ne: boolean },
   merged: null,
   userInteractions: { $nin: [string] },
 } => ({
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 10] },
   pronunciation: '',
-  exampleForSuggestion: { $ne: true },
   merged: null,
   userInteractions: { $nin: [uid] },
 });
