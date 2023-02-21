@@ -24,7 +24,6 @@ describe('Corpus Edit', () => {
       </TestContext>,
     );
     await findByText('Title');
-    await findByText('Transcript');
     await findByText('Editor\'s Comments');
   });
 
