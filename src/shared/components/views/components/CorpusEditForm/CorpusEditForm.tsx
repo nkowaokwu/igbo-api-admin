@@ -1,19 +1,11 @@
-import React, { ReactElement, useState, useEffect } from 'react';
-import {
-  assign,
-  map,
-  omit,
-  compact,
-} from 'lodash';
-import {
-  Box,
-  Button,
-  ListItem,
-  Text,
-  UnorderedList,
-  chakra,
-  useToast,
-} from '@chakra-ui/react';
+import React, {
+  ReactElement,
+  useState,
+  useEffect,
+  FormEvent,
+} from 'react';
+import { assign, map, omit } from 'lodash';
+import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import { EditFormProps } from 'src/shared/interfaces';
@@ -27,28 +19,10 @@ import Collection from 'src/shared/constants/Collections';
 import FilePicker from 'src/shared/primitives/FilePicker';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
 import ActionTypes from 'src/shared/constants/ActionTypes';
+import LabelStudioReact from 'src/shared/components/LabelStudioReact';
 import CorpusEditFormResolver from './CorpusEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
-
-const convertToSeconds = (hms: string) => {
-  const a = hms.split(':'); // split it at the colons
-  // minutes are worth 60 seconds. Hours are worth 60 minutes.
-  const seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
-  return seconds;
-};
-
-const getLineNumberAndColumnIndex = (textareaElement): string => {
-  let selectionIndex = textareaElement.selectionStart;
-  const secondHalf = textareaElement.value.substr(selectionIndex, textareaElement.value.length);
-  if (textareaElement.value[selectionIndex] !== '\n') {
-    selectionIndex = secondHalf.indexOf('\n') + selectionIndex;
-  }
-
-  const textLines = textareaElement.value.substr(0, selectionIndex).split('\n');
-
-  return textLines[textLines.length - 1];
-};
 
 const CorpusEditForm = ({
   view,
@@ -59,7 +33,6 @@ const CorpusEditForm = ({
   isPreExistingSuggestion,
 }: EditFormProps) : ReactElement => {
   const {
-    handleSubmit,
     getValues,
     setValue,
     control,
@@ -74,7 +47,6 @@ const CorpusEditForm = ({
   });
   const [, setOriginalRecord] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [seekTime, setSeekTime] = useState(0);
   const [mediaFile, setMediaFile] = useState<File>(null);
   const watchedMedia = watch('media');
   const watchedTitle = watch('title');
@@ -106,20 +78,6 @@ const CorpusEditForm = ({
     }
     if (duration) {
       setValue('duration', duration);
-    }
-  };
-
-  const handleTextSelection = (e) => {
-    const currentLine = getLineNumberAndColumnIndex(e.target);
-    if (currentLine.startsWith('[') || currentLine.endsWith(']')) {
-      const validTimes = compact(currentLine.split(/[[\]-]/));
-      const time = validTimes[0];
-      if (time && time.length === time.replace(/:/g, '').length + 2) {
-        const seconds = convertToSeconds(time);
-        if (typeof seconds === 'number') {
-          setSeekTime(seconds);
-        }
-      }
     }
   };
 
@@ -197,10 +155,26 @@ const CorpusEditForm = ({
     }
   };
 
+  const handleOnSubmit = (annotations) => {
+    const data = {
+      ...getValues(),
+      annotations,
+    };
+    onSubmit(data);
+  };
+
+  const handleOnUpdate = (annotations) => {
+    const data = {
+      ...getValues(),
+      annotations,
+    };
+    onSubmit(data);
+  };
+
   useBeforeWindowUnload();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={(e: FormEvent) => e.preventDefault()}>
       <Box className="flex flex-col">
         {record.originalCorpusId || (view === View.CREATE && record.id) ? (
           <>
@@ -222,6 +196,7 @@ const CorpusEditForm = ({
               {...props}
               placeholder="Title of corpus"
               data-test="title-input"
+              className="mb-2"
             />
           )}
           name="title"
@@ -231,100 +206,27 @@ const CorpusEditForm = ({
         {errors.title ? (
           <p className="error">Title is required</p>
         ) : null}
-      </Box>
-      <Box className="flex flex-col justify-between items-start">
         <FilePicker
           url={watchedMedia}
           title={watchedTitle}
           onFileSelect={handleFileSelect}
-          seekTime={seekTime}
           name="media"
           register={register}
           errors={errors}
         />
-        <Text fontSize="xs" color="gray.600">
-          <chakra.span fontSize="md" fontWeight="bold">Note: </chakra.span>
-          The audio seek will automatically jump to timestamp highlighted in your transcription 😉
-        </Text>
-        <Box className="flex flex-col w-full">
-          <FormHeader
-            title="Transcript"
-            tooltip="This is the transcription of the associated media."
-          />
-          <Controller
-            render={(props) => (
-              <Textarea
-                {...props}
-                rows={20}
-                style={{
-                  fontFamily: 'monospace',
-                  width: '100%',
-                }}
-                onSelect={handleTextSelection}
-                placeholder={`[00:00:00-00:00:10]
-Nke a bụ ahịrịokwu Igbo
-
-[00:00:12-00:00:15]
-Nke a bụ ahịrịokwu Igbo`}
-                data-test="transcript-input"
-              />
-            )}
-            name="body"
-            control={control}
-            defaultValue={record.body || getValues().body || ''}
-          />
-          <Box className="flex flex-col lg:flex-row space-y-2 lg:space-x-4">
-            <Box>
-              <Text className="italic" fontSize="xs" color="gray.600" my={2}>
-                Please transcribe Igbo text sentence by sentence according to the following pattern:
-              </Text>
-              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
-                [01:22:23-01:22:25]
-              </Text>
-              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
-                Nke a bụ ahịrịokwu Igbo
-              </Text>
-              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
-                [01:22:26-01:22:29]
-              </Text>
-              <Text fontFamily="monospace" fontSize="xs" color="gray.600">
-                Nke a bụ ahịrịokwu Igbo
-              </Text>
-            </Box>
-            <Box>
-              <Text fontWeight="bold" color="gray.600" fontSize="sm">
-                Please read:
-              </Text>
-              <UnorderedList fontSize="xs">
-                <ListItem>
-                  Each sentence will be prepended with a timestamp in the format of [HH:MM:SS]
-                  <UnorderedList>
-                    <ListItem>
-                      &quot;HH&quot; are the hours
-                    </ListItem>
-                    <ListItem>
-                      &quot;MM&quot; are the minutes
-                    </ListItem>
-                    <ListItem>
-                      &quot;SS&quot; are the seconds
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
-                <ListItem>
-                  You do
-                  <chakra.span fontWeight="bold"> NOT </chakra.span>
-                  need to add a period to the sentence.
-                </ListItem>
-                <ListItem>
-                  When you hear a different voice, that must be transcribed as its own sentence.
-                </ListItem>
-              </UnorderedList>
-            </Box>
-          </Box>
-          {errors.body ? (
-            <p className="error">Transcription is required</p>
-          ) : null}
-        </Box>
+        <LabelStudioReact
+          data={watchedMedia}
+          annotations={[
+            {
+              id: record?.id,
+              result: record?.annotations || [],
+              created_at: record?.createdAt,
+              updated_at: record?.updatedAt,
+            },
+          ]}
+          onSubmit={handleOnSubmit}
+          onUpdate={handleOnUpdate}
+        />
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -356,17 +258,6 @@ Nke a bụ ahịrịokwu Igbo`}
           width="full"
         >
           Cancel
-        </Button>
-        <Button
-          type="submit"
-          colorScheme="green"
-          variant="solid"
-          className="m-0"
-          isLoading={isSubmitting}
-          loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
-          width="full"
-        >
-          {view === View.CREATE ? 'Submit' : 'Update'}
         </Button>
       </Box>
     </form>
