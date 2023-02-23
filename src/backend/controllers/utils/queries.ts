@@ -178,7 +178,7 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   userInteractions: { $nin: [string] },
 } => ({
   igbo: { $exists: true, $type: 'string' },
-  $expr: { $gt: [{ $strLenCP: '$igbo' }, 10] },
+  $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
   pronunciation: '',
   // TODO: use type when bulk uploading is getting used
   // type: SentenceType.DATA_COLLECTION,
