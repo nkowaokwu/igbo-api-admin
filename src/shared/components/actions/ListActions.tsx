@@ -123,6 +123,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         if (filter === 'noNsibidi') {
           // @ts-expect-error nsibidi
           allFilters.nsibidi = false;
+        } else if (filter === 'noPronunciation') {
+          // @ts-expect-error pronunciation
+          allFilters.pronunciation = false;
         } else if (filter !== 'word' && filter !== 'example') {
           allFilters[filter] = true;
         }
@@ -240,6 +243,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         </MenuItemOption>,
                         <MenuItemOption value="pronunciation" key="pronunciation">
                           Has Pronunciation
+                        </MenuItemOption>,
+                        <MenuItemOption value="noPronunciation" key="noPronunciation">
+                          Has No Pronunciation
                         </MenuItemOption>,
                         <MenuItemOption value="nsibidi" key="nsibidi">
                           Has Nsịbịdị
