@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { compact, times } from 'lodash';
+import { times } from 'lodash';
 import moment from 'moment';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
@@ -18,6 +18,7 @@ import determineIsAsCompleteAsPossible from './utils/determineIsAsCompleteAsPoss
 import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
+import ExampleStyle from '../shared/constants/ExampleStyle';
 
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
@@ -153,10 +154,20 @@ Promise<{
   };
 };
 
-const countCompletedExamples = async (examples) => {
-  const sufficientExamplesCount = compact(await Promise.all(examples.map(async (example) => (
-    !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length)))).length;
-  return sufficientExamplesCount;
+const countExampleStats = async (examples: Interfaces.Example[]) => {
+  let completedExamplesCount = 0;
+  let proverbExamplesCount = 0;
+  await Promise.all(examples.map(async (example) => {
+    const isExampleComplete = (await determineExampleCompleteness(example, true)).completeExampleRequirements.length
+      ? 0
+      : 1;
+    completedExamplesCount += isExampleComplete;
+    proverbExamplesCount += (example.style === ExampleStyle.PROVERB) ? 1 : 0;
+  }));
+  return {
+    completedExamplesCount,
+    proverbExamplesCount,
+  };
 };
 
 /* Returns all the Examples that are on the platform */
@@ -172,8 +183,9 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
   const sufficientExamplesCount = examples.length;
   await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount, Stat });
 
-  const completedExamplesCount = await countCompletedExamples(examples);
+  const { completedExamplesCount, proverbExamplesCount } = await countExampleStats(examples);
   await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount, Stat });
+  await updateStat({ type: StatTypes.PROVERB_EXAMPLES, value: proverbExamplesCount, Stat });
 
   return { sufficientExamplesCount, completedExamplesCount };
 };
@@ -365,6 +377,7 @@ export const getUserMergeStats = async (
   }
 };
 
+/* Gets all stats for the entire platform */
 export const getStats = async (
   req: Interfaces.EditorRequest,
   res: Response,
