@@ -10,86 +10,90 @@ import {
   IS_STANDARD_IGBO_GOAL,
   IGBO_DEFINITIONS_GOAL,
   EXAMPLE_SENTENCES_GOAL,
+  PROVERBS_GOAL,
 } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
 const MilestoneProgress = ({
-  totalSufficientWords,
-  totalCompletedWords,
-  totalSufficientExamples,
-  totalCompletedExamples,
-  totalDialectalVariations,
-  totalHeadwordAudioPronunciation,
-  totalWordIsStandardIgbo,
-  totalWordsWithIgboDefinitions,
-  totalWordsWithNsibidi,
-  totalWordSuggestionsWithNsibidi,
+  sufficientWords,
+  completeWords,
+  sufficientExamples,
+  proverbExamples,
+  completeExamples,
+  dialectalVariations,
+  headwordAudioPronunciations,
+  standardIgbo,
+  igboDefinitions,
+  nsibidiWords,
+  nsibidiWordSuggestions,
 }: {
-  totalSufficientWords: number,
-  totalCompletedWords: number,
-  totalSufficientExamples: number,
-  totalCompletedExamples: number,
-  totalDialectalVariations: number,
-  totalHeadwordAudioPronunciation: number,
-  totalWordIsStandardIgbo: number,
-  totalWordsWithIgboDefinitions: number,
-  totalWordsWithNsibidi: number,
-  totalWordSuggestionsWithNsibidi: number,
+  sufficientWords: number,
+  completeWords: number,
+  sufficientExamples: number,
+  proverbExamples: number,
+  completeExamples: number,
+  dialectalVariations: number,
+  headwordAudioPronunciations: number,
+  standardIgbo: number,
+  igboDefinitions: number,
+  wordsWithIgboDefinitions: number,
+  nsibidiWords: number,
+  nsibidiWordSuggestions: number,
 }): ReactElement => {
   const wordStats = [
     {
-      totalCount: totalSufficientWords,
+      totalCount: sufficientWords,
       goal: SUFFICIENT_WORDS_GOAL,
       heading: '"Sufficient" Words',
-      description: `There are currently ${totalSufficientWords} "sufficient" words on the platform.
+      description: `There are currently ${sufficientWords} "sufficient" words on the platform.
       Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`,
     }, {
-      totalCount: totalCompletedWords,
+      totalCount: completeWords,
       goal: COMPLETE_WORDS_GOAL,
       heading: '"Complete" Words',
-      description: `There are currently ${totalCompletedWords} "complete" words on the platform.
+      description: `There are currently ${completeWords} "complete" words on the platform.
       Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`,
     }, {
-      totalCount: totalDialectalVariations,
+      totalCount: dialectalVariations,
       goal: DIALECTAL_VARIATIONS_GOAL,
       heading: 'Dialectal Variations',
-      description: `There are currently ${totalDialectalVariations} dialectal word variations on the platform.
+      description: `There are currently ${dialectalVariations} dialectal word variations on the platform.
       Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`,
     }, {
-      totalCount: totalHeadwordAudioPronunciation,
+      totalCount: headwordAudioPronunciations,
       goal: HEADWORD_AUDIO_PRONUNCIATION_GOAL,
       heading: 'Headwords with Audio Pronunciations',
-      description: `There are currently ${totalHeadwordAudioPronunciation} headwords 
+      description: `There are currently ${headwordAudioPronunciations} headwords 
       with audio pronunciations on the platform.
       Our next goal is to record a total of ${HEADWORD_AUDIO_PRONUNCIATION_GOAL} headwords.`,
     }, {
-      totalCount: totalWordIsStandardIgbo,
+      totalCount: standardIgbo,
       goal: IS_STANDARD_IGBO_GOAL,
       heading: 'Standard Igbo Words',
-      description: `There are currently ${totalWordIsStandardIgbo} words marked as Standard Igbo 
+      description: `There are currently ${standardIgbo} words marked as Standard Igbo 
       on the platform. Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`,
     }, {
-      totalCount: totalWordsWithIgboDefinitions,
+      totalCount: igboDefinitions,
       goal: IGBO_DEFINITIONS_GOAL,
       heading: 'Words with Igbo Definitions',
-      description: `There are currently ${totalWordsWithIgboDefinitions} words with at least one Igbo definition 
+      description: `There are currently ${igboDefinitions} words with at least one Igbo definition 
       on the platform. Our next goal is to mark a total of ${IGBO_DEFINITIONS_GOAL} words.`,
     },
   ];
 
   const nsibidiStats = [
     {
-      totalCount: totalWordsWithNsibidi,
+      totalCount: nsibidiWords,
       goal: WORDS_WITH_NSIBIDI_GOAL,
       heading: 'Words with Nsịbịdị',
-      description: `There are currently ${totalWordsWithNsibidi} words with Nsịbịdị on the platform. 
+      description: `There are currently ${nsibidiWords} words with Nsịbịdị on the platform. 
       Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`,
     },
     {
-      totalCount: totalWordSuggestionsWithNsibidi,
+      totalCount: nsibidiWordSuggestions,
       goal: WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL,
       heading: 'Word Suggestions with Nsịbịdị',
-      description: `There are currently ${totalWordSuggestionsWithNsibidi} word suggestions 
+      description: `There are currently ${nsibidiWordSuggestions} word suggestions 
       with Nsịbịdị on the platform. Our next goal is to record a total of 
       ${WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL} word suggestions with Nsịbịdị.`,
     },
@@ -97,32 +101,43 @@ const MilestoneProgress = ({
 
   const exampleStats = [
     {
-      totalCount: totalSufficientExamples,
+      totalCount: sufficientExamples,
       goal: EXAMPLE_SENTENCES_GOAL,
       heading: 'Sufficient Igbo Example Sentences',
-      description: `There are currently ${totalSufficientExamples} sufficient example 
+      description: `There are currently ${sufficientExamples} sufficient example 
       sentences on the platform. Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} 
       sufficient example sentences.`,
     },
     {
-      totalCount: totalCompletedExamples,
+      totalCount: completeExamples,
       goal: EXAMPLE_SENTENCES_GOAL,
       heading: 'Complete Igbo Example Sentences',
-      description: `There are currently ${totalCompletedExamples} complete example sentences on the platform.
+      description: `There are currently ${completeExamples} complete example sentences on the platform.
       Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} complete example sentences.`,
+    },
+    {
+      totalCount: proverbExamples,
+      goal: PROVERBS_GOAL,
+      heading: 'Igbo Proverbs Example Sentences',
+      description: `There are currently ${proverbExamples} complete example sentences on the platform.
+      Our next goal is to mark a total of ${PROVERBS_GOAL} complete example sentences.`,
     },
   ];
 
   const isWordStatsLoaded = (
-    totalSufficientWords !== null
-    && totalCompletedWords !== null
-    && totalDialectalVariations !== null
-    && totalHeadwordAudioPronunciation !== null
-    && totalWordIsStandardIgbo !== null
-    && totalWordsWithIgboDefinitions !== null
+    sufficientWords !== null
+    && completeWords !== null
+    && dialectalVariations !== null
+    && headwordAudioPronunciations !== null
+    && standardIgbo !== null
+    && igboDefinitions !== null
   );
-  const isNsibidiStatsLoaded = totalWordsWithNsibidi !== null && totalWordSuggestionsWithNsibidi !== null;
-  const isExampleStatsLoaded = totalSufficientExamples !== null && totalCompletedExamples !== null;
+  const isNsibidiStatsLoaded = nsibidiWords !== null && nsibidiWordSuggestions !== null;
+  const isExampleStatsLoaded = (
+    sufficientExamples !== null
+    && completeExamples !== null
+    && proverbExamples !== null
+  );
 
   return (
     <Box className="space-y-3">
