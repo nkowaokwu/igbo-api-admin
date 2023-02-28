@@ -155,16 +155,19 @@ Promise<{
 };
 
 const countExampleStats = async (examples: Interfaces.Example[]) => {
+  let sufficientExamplesCount = 0;
   let completedExamplesCount = 0;
   let proverbExamplesCount = 0;
   await Promise.all(examples.map(async (example) => {
-    const isExampleComplete = (await determineExampleCompleteness(example, true)).completeExampleRequirements.length
-      ? 0
-      : 1;
-    completedExamplesCount += isExampleComplete;
-    proverbExamplesCount += (example.style === ExampleStyle.PROVERB) ? 1 : 0;
+    const isExampleSufficient = !!example.associatedWords?.[0];
+    const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
+    const isExampleProverb = example.style === ExampleStyle.PROVERB;
+    sufficientExamplesCount += isExampleSufficient ? 1 : 0;
+    completedExamplesCount += isExampleComplete ? 1 : 0;
+    proverbExamplesCount += isExampleProverb ? 1 : 0;
   }));
   return {
+    sufficientExamplesCount,
     completedExamplesCount,
     proverbExamplesCount,
   };
@@ -177,13 +180,11 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
     .find({
       $and: [
         { $expr: { $gt: [{ $strLenCP: '$igbo' }, 3] } },
-        { 'associatedWords.0': { $exists: true } },
       ],
     });
-  const sufficientExamplesCount = examples.length;
-  await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount, Stat });
 
-  const { completedExamplesCount, proverbExamplesCount } = await countExampleStats(examples);
+  const { sufficientExamplesCount, completedExamplesCount, proverbExamplesCount } = await countExampleStats(examples);
+  await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount, Stat });
   await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount, Stat });
   await updateStat({ type: StatTypes.PROVERB_EXAMPLES, value: proverbExamplesCount, Stat });
 
