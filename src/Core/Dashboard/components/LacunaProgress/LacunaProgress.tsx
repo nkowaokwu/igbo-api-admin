@@ -9,13 +9,9 @@ const MONTHS_LEFT = moment().diff(moment([2023, 6, 1]), 'months', true) || 1;
 const TEAM_MEMBERS = 4;
 const WEEKLY = 4;
 const LacunaProgress = ({
-  totalDialectalVariations,
   mergeStats,
   currentMonthMergeStats,
 } : {
-  totalCompletedWords: number,
-  totalCompletedExamples: number,
-  totalDialectalVariations: number,
   mergeStats?: { datasets: [{ data: number[] }, { data: number[] }] },
   currentMonthMergeStats?: { exampleSuggestions: number, dialectalVariations: number },
 }): ReactElement => {
@@ -25,13 +21,13 @@ const LacunaProgress = ({
   const monthlyStats = [
     {
       totalCount: dialectalVariationProgress.month,
-      goal: Math.ceil((totalDialectalVariations - DIALECTAL_VARIATIONS_GOAL) / MONTHS_LEFT / TEAM_MEMBERS),
+      goal: Math.ceil((DIALECTAL_VARIATIONS_GOAL - dialectalVariationProgress.month) / MONTHS_LEFT / TEAM_MEMBERS),
       heading: 'Dialectal Variations',
       description: `The number of dialectal variations you have contributed for ${moment().format('MMMM')}.`,
     },
     {
       totalCount: exampleSentenceProgress.month,
-      goal: Math.ceil((exampleSentenceProgress.month - EXAMPLE_SENTENCES_GOAL) / MONTHS_LEFT / TEAM_MEMBERS),
+      goal: Math.ceil((EXAMPLE_SENTENCES_GOAL - exampleSentenceProgress.month) / MONTHS_LEFT / TEAM_MEMBERS),
       heading: 'Example Sentences',
       description: `The number of example sentences you have contributed for ${moment().format('MMMM')}.`,
     },
@@ -40,14 +36,14 @@ const LacunaProgress = ({
   const weeklyStats = [
     {
       totalCount: dialectalVariationProgress.week,
-      goal: Math.ceil((totalDialectalVariations - DIALECTAL_VARIATIONS_GOAL)
+      goal: Math.ceil((DIALECTAL_VARIATIONS_GOAL - dialectalVariationProgress.week)
         / MONTHS_LEFT / TEAM_MEMBERS / WEEKLY),
       heading: 'Dialectal Variations',
       description: 'The number of dialectal variations you have contributed for the week.',
     },
     {
       totalCount: exampleSentenceProgress.week,
-      goal: Math.ceil((exampleSentenceProgress.week - EXAMPLE_SENTENCES_GOAL)
+      goal: Math.ceil((EXAMPLE_SENTENCES_GOAL - exampleSentenceProgress.week)
       / MONTHS_LEFT / TEAM_MEMBERS / WEEKLY),
       heading: 'Example Sentences',
       description: 'The number of example sentences you have contributed for the week.',
