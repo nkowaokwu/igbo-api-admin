@@ -5,7 +5,7 @@ import moment from 'moment';
 import { DIALECTAL_VARIATIONS_GOAL, EXAMPLE_SENTENCES_GOAL } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
-const MONTHS_LEFT = moment([2021, 9, 1]).diff(moment([2022, 6, 1]), 'months', true) || 1;
+const MONTHS_LEFT = moment().diff(moment([2023, 6, 1]), 'months', true) || 1;
 const TEAM_MEMBERS = 4;
 const WEEKLY = 4;
 const LacunaProgress = ({
