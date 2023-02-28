@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
+import { camelCase } from 'lodash';
 import { ShowProps, usePermissions, useShowController } from 'react-admin';
 import {
   Avatar,
@@ -13,9 +14,7 @@ import { hasNoEditorPermissions } from 'src/shared/utils/permissions';
 const NO_PERMISSION_STATUS = 403;
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [totalCompletedWords, setTotalCompletedWords] = useState(null);
-  const [totalCompletedExamples, setTotalCompletedExamples] = useState(null);
-  const [totalDialectalVariations, setTotalDialectalVariations] = useState(null);
+  const [stats, setStats] = useState({});
   const showProps = useShowController(props);
   const permissions = usePermissions();
   let { record } = showProps;
@@ -45,14 +44,15 @@ const UserShow = (props: ShowProps): ReactElement => {
     if (!hasNoEditorPermissions(permissions, true)) {
       network('/stats/full')
         .then(({ body }) => {
-          const {
-            complete_words,
-            dialectal_variations,
-            complete_examples,
-          } = JSON.parse(body);
-          setTotalCompletedWords(complete_words?.value || 0);
-          setTotalCompletedExamples(complete_examples?.value || 0);
-          setTotalDialectalVariations(dialectal_variations?.value || 0);
+          const parsedBody = JSON.parse(body);
+          const updatedStats = Object.entries(parsedBody).reduce((
+            finalStats,
+            [key, value]: [string, { value: number }],
+          ) => ({
+            ...finalStats,
+            [camelCase(key)]: value.value,
+          }), {});
+          setStats(updatedStats);
         })
         .catch(handleNoPermissionStatus);
     }
@@ -70,12 +70,7 @@ const UserShow = (props: ShowProps): ReactElement => {
         </Box>
         {record.uid && !isLoading ? (
           <>
-            <UserStat
-              uid={record.uid}
-              totalCompletedWords={totalCompletedWords}
-              totalCompletedExamples={totalCompletedExamples}
-              totalDialectalVariations={totalDialectalVariations}
-            />
+            <UserStat uid={record.uid} {...stats} />
           </>
         ) : null}
       </Box>

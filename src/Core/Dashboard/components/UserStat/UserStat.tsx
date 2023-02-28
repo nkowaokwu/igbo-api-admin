@@ -27,6 +27,7 @@ import {
   getTotalRecordedExampleSuggestions,
   getTotalVerifiedExampleSuggestions,
 } from 'src/shared/DataCollectionAPI';
+import { getAuth } from 'firebase/auth';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import LacunaProgress from '../LacunaProgress';
@@ -90,44 +91,44 @@ const UserStat = ({
 
   useEffect(() => {
     (async () => {
-      network(uid ? `/stats/users/${uid}` : '/stats/user')
+      const { currentUser } = getAuth();
+      const userUid = uid || currentUser?.uid;
+      network(`/stats/users/${userUid}`)
         .then((res) => setUserStats(res.json));
-      if (uid) {
-        const { json: merges } = await network(`/stats/users/${uid}/merge`);
-        const {
-          exampleSuggestionMerges,
-          dialectalVariationMerges,
-          currentMonthMerges,
-        } = merges;
-        const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
-          `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
-        )).reverse();
-        const updatedMergeStats = {
-          labels,
-          datasets: [
-            {
-              label: 'Example Suggestion Merges',
-              data: sortMerges(exampleSuggestionMerges),
-              backgroundColor: '#3C83FF',
-              borderWidth: 2,
-              borderColor: '#2D62BE',
-              borderRadius: 10,
-            },
-            {
-              label: 'Dialectal Variation Merges',
-              data: sortMerges(dialectalVariationMerges),
-              backgroundColor: '#FF5733',
-              borderWidth: 2,
-              borderColor: '#CA4225',
-              borderRadius: 10,
-            },
-          ],
-        };
-        setMergeStats(updatedMergeStats);
-        setCurrentMonthMergeStats(currentMonthMerges);
-      }
-      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(uid);
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(uid);
+      const { json: merges } = await network(`/stats/users/${userUid}/merge`);
+      const {
+        exampleSuggestionMerges,
+        dialectalVariationMerges,
+        currentMonthMerges,
+      } = merges;
+      const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
+        `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
+      )).reverse();
+      const updatedMergeStats = {
+        labels,
+        datasets: [
+          {
+            label: 'Example Suggestion Merges',
+            data: sortMerges(exampleSuggestionMerges),
+            backgroundColor: '#3C83FF',
+            borderWidth: 2,
+            borderColor: '#2D62BE',
+            borderRadius: 10,
+          },
+          {
+            label: 'Dialectal Variation Merges',
+            data: sortMerges(dialectalVariationMerges),
+            backgroundColor: '#FF5733',
+            borderWidth: 2,
+            borderColor: '#CA4225',
+            borderRadius: 10,
+          },
+        ],
+      };
+      setMergeStats(updatedMergeStats);
+      setCurrentMonthMergeStats(currentMonthMerges);
+      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(userUid);
+      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
       setRecordingStats({
         recorded: recordedExampleSuggestions,
         verified: verifiedExampleSuggestions,
