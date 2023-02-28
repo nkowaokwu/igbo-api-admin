@@ -71,17 +71,7 @@ const THREE_MONTH_WEEKS_COUNT = 12;
 const sortDates = (a, b) => a < b ? 1 : -1;
 const sortMerges = (merges) => Object.entries(merges).sort(sortDates).map(([, value]) => value).reverse();
 
-const UserStat = ({
-  uid,
-  totalCompletedWords,
-  totalCompletedExamples,
-  totalDialectalVariations,
-} : {
-  uid?: string,
-  totalCompletedWords: number,
-  totalCompletedExamples: number,
-  totalDialectalVariations: number,
-}): ReactElement => {
+const UserStat = ({ uid } : { uid?: string }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
@@ -140,13 +130,7 @@ const UserStat = ({
     <Box>
       <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
         <Box className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 grid-gap-2">
-          <LacunaProgress
-            totalCompletedWords={totalCompletedWords}
-            totalCompletedExamples={totalCompletedExamples}
-            totalDialectalVariations={totalDialectalVariations}
-            mergeStats={mergeStats}
-            currentMonthMergeStats={currentMonthMergeStats}
-          />
+          <LacunaProgress mergeStats={mergeStats} currentMonthMergeStats={currentMonthMergeStats} />
           <IgboSoundboxStats recordingStats={recordingStats} />
           <PersonalStats userStats={userStats} />
         </Box>

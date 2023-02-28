@@ -34,7 +34,6 @@ const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => 
   return (
     <>
       <Box className="mb-24">
-        {/* @ts-expect-error props */}
         <UserStat uid={user?.uid} {...stats} />
       </Box>
       {/* @ts-expect-error props */}
