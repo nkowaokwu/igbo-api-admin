@@ -161,7 +161,7 @@ const countExampleStats = async (examples: Interfaces.Example[]) => {
   await Promise.all(examples.map(async (example) => {
     const isExampleSufficient = !!example.associatedWords?.[0];
     const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
-    const isExampleProverb = example.style === ExampleStyle.PROVERB;
+    const isExampleProverb = example.style === ExampleStyle.PROVERB.value;
     sufficientExamplesCount += isExampleSufficient ? 1 : 0;
     completedExamplesCount += isExampleComplete ? 1 : 0;
     proverbExamplesCount += isExampleProverb ? 1 : 0;
