@@ -71,7 +71,15 @@ const THREE_MONTH_WEEKS_COUNT = 12;
 const sortDates = (a, b) => a < b ? 1 : -1;
 const sortMerges = (merges) => Object.entries(merges).sort(sortDates).map(([, value]) => value).reverse();
 
-const UserStat = ({ uid } : { uid?: string }): ReactElement => {
+const UserStat = ({
+  uid,
+  dialectalVariations,
+  completeExamples,
+} : {
+  uid?: string,
+  dialectalVariations: number,
+  completeExamples: number,
+}): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
@@ -130,7 +138,12 @@ const UserStat = ({ uid } : { uid?: string }): ReactElement => {
     <Box>
       <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
         <Box className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 grid-gap-2">
-          <LacunaProgress mergeStats={mergeStats} currentMonthMergeStats={currentMonthMergeStats} />
+          <LacunaProgress
+            mergeStats={mergeStats}
+            currentMonthMergeStats={currentMonthMergeStats}
+            dialectalVariations={dialectalVariations}
+            completeExamples={completeExamples}
+          />
           <IgboSoundboxStats recordingStats={recordingStats} />
           <PersonalStats userStats={userStats} />
         </Box>
