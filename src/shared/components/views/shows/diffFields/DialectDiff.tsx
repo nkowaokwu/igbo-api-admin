@@ -80,7 +80,7 @@ const DialectDiff = (
               <AccordionPanel pb={4} className="space-y-3">
                 <Heading as="h2" size="sm" className="text-left mr-2">Dialects:</Heading>
                 <ul style={{ listStyle: 'inside' }}>
-                  {dialects.map((dialect) => (
+                  {Array.isArray(dialects) && dialects.map((dialect) => (
                     <li key={dialect}>{Dialects[dialect].label}</li>
                   ))}
                 </ul>
