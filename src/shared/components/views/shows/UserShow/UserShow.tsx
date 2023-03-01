@@ -40,8 +40,7 @@ const UserShow = (props: ShowProps): ReactElement => {
   }, [record]);
 
   useEffect(() => {
-    // @ts-expect-error permissions
-    if (!hasNoEditorPermissions(permissions, true)) {
+    if (!hasNoEditorPermissions(permissions?.permissions, true)) {
       network('/stats/full')
         .then(({ body }) => {
           const parsedBody = JSON.parse(body);
