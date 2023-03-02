@@ -330,7 +330,10 @@ export const getUserMergeStats = async (
       const exampleSuggestionUpdateDate = moment(exampleSuggestion.updatedAt);
       const exampleSuggestionUpdateIsoWeek = exampleSuggestionUpdateDate.startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[exampleSuggestionUpdateIsoWeek];
-      const isSameMonth = moment().isSame(exampleSuggestionUpdateDate, 'month');
+      const isSameMonth = (
+        moment().isSame(exampleSuggestionUpdateDate, 'month')
+        || moment().isSame(exampleSuggestion.updatedAt, 'month')
+      );
       if (isSameMonth) {
         currentMonthMerges.exampleSuggestions += 1;
       }
@@ -351,7 +354,10 @@ export const getUserMergeStats = async (
       const wordSuggestionUpdateDate = moment(wordSuggestion.updatedAt);
       const wordSuggestionUpdateIsoWeek = wordSuggestionUpdateDate.startOf('week').isoWeek();
       const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
-      const isSameMonth = moment().isSame(wordSuggestion.updatedAt, 'month');
+      const isSameMonth = (
+        moment().isSame(wordSuggestionUpdateDate, 'month')
+        || moment().isSame(wordSuggestion.updatedAt, 'month')
+      );
       const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
       const dialectEditorCount = wordSuggestion.dialects.filter(({ editor }) => (
         editor === uid
