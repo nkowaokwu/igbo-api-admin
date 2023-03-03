@@ -106,7 +106,7 @@ const countWords = async (words) => {
       completeWordsCount += 1;
     }
     // Tracks total dialectal variations
-    dialectalVariationsCount += (Object.keys(word.dialects || {}).length + 1);
+    dialectalVariationsCount += (word.dialects || []).length + 1;
 
     // Tracks total documents with Igbo definitions
     igboDefinitionsCount += word.definitions.find(({ igboDefinitions = [] }) => igboDefinitions.length) ? 1 : 0;
