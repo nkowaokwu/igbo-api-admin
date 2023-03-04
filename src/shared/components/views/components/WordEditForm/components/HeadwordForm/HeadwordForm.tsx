@@ -32,6 +32,7 @@ const HeadwordForm = ({
   record,
   getValues,
   watch,
+  onChange,
 }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
@@ -69,6 +70,10 @@ const HeadwordForm = ({
         render={(props) => (
           <Input
             {...props}
+            onChange={(e) => {
+              onChange(e);
+              return props.onChange(e);
+            }}
             placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
             data-test="word-input"
           />

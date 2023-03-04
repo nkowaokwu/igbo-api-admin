@@ -95,6 +95,7 @@ const WordEditForm = ({
   const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialects, setDialects] = useState(record.dialects);
+  const [warningMessage, setWarningMessage] = useState('');
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
@@ -103,6 +104,12 @@ const WordEditForm = ({
   const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
   const areAllWordClassesInvalidForRelatedTerms = watchedWordClasses.every((watchedWordClass) => (
     invalidRelatedTermsWordClasses.includes(watchedWordClass?.value)));
+
+  const handleWarningMessage = (e) => {
+    setWarningMessage((record?.word || '') !== e.target.value
+      ? 'A change in the headword has been detected. Please consider re-recording the audio to match.'
+      : '');
+  };
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -254,6 +261,7 @@ const WordEditForm = ({
               record={record}
               getValues={getValues}
               watch={watch}
+              onChange={handleWarningMessage}
             />
             <TagsForm
               errors={errors}
@@ -270,6 +278,7 @@ const WordEditForm = ({
                   setPronunciation={setValue}
                   record={record}
                   originalRecord={originalRecord}
+                  warningMessage={warningMessage}
                 />
               )}
               defaultValue={record.pronunciation || ''}

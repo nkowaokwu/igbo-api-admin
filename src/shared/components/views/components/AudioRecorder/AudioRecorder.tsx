@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   IconButton,
+  Text,
   Tooltip,
   useToast,
 } from '@chakra-ui/react';
@@ -24,6 +25,7 @@ const AudioRecorder = ({
   originalRecord: originalRecordProp,
   formTitle,
   formTooltip,
+  warningMessage,
 }: {
   path: string,
   getFormValues: (key: string) => any,
@@ -32,6 +34,7 @@ const AudioRecorder = ({
   originalRecord: Record,
   formTitle?: string,
   formTooltip?: string,
+  warningMessage?: string,
 }): ReactElement => {
   const originalRecord = record.originalWordId || record.originalExampleId
     ? originalRecordProp
@@ -213,6 +216,11 @@ const AudioRecorder = ({
             </Box>
           )}
         </Box>
+        {warningMessage ? (
+          <Box mt={2} p={2} backgroundColor="yellow.100" borderRadius="md">
+            <Text color="yellow.700">{warningMessage}</Text>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );
