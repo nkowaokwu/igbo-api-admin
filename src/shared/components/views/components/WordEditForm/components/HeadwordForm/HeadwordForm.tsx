@@ -20,7 +20,7 @@ const generateIPALabel = (word = '') => {
   });
   return (
     <Text>
-      <chakra.span fontWeight="bold">Generated IPA: </chakra.span>
+      <chakra.span fontWeight="bold" fontFamily="Silka">Generated IPA: </chakra.span>
       {IPA}
     </Text>
   );
@@ -32,6 +32,7 @@ const HeadwordForm = ({
   record,
   getValues,
   watch,
+  onChange,
 }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
@@ -69,6 +70,10 @@ const HeadwordForm = ({
         render={(props) => (
           <Input
             {...props}
+            onChange={(e) => {
+              onChange(e);
+              return props.onChange(e);
+            }}
             placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
             data-test="word-input"
           />
@@ -79,10 +84,10 @@ const HeadwordForm = ({
       />
       <details className="mt-4 cursor-pointer">
         <summary>
-          <chakra.span fontWeight="bold">Advanced Headword Options</chakra.span>
+          <chakra.span fontWeight="bold" fontFamily="Silka">Advanced Headword Options</chakra.span>
         </summary>
         <Box className="space-y-3 mt-3">
-          <chakra.span fontWeight="bold">Headword pronunciation spelling: </chakra.span>
+          <chakra.span fontWeight="bold" fontFamily="Silka">Headword pronunciation spelling: </chakra.span>
           <Controller
             render={(props) => (
               <Input

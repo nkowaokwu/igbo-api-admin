@@ -6,8 +6,10 @@ import {
   Box,
   Button,
   IconButton,
+  Text,
   Tooltip,
   useToast,
+  chakra,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import { DEFAULT_EXAMPLE_RECORD, DEFAULT_WORD_RECORD } from 'src/shared/constants';
@@ -24,6 +26,7 @@ const AudioRecorder = ({
   originalRecord: originalRecordProp,
   formTitle,
   formTooltip,
+  warningMessage,
 }: {
   path: string,
   getFormValues: (key: string) => any,
@@ -32,6 +35,7 @@ const AudioRecorder = ({
   originalRecord: Record,
   formTitle?: string,
   formTooltip?: string,
+  warningMessage?: string,
 }): ReactElement => {
   const originalRecord = record.originalWordId || record.originalExampleId
     ? originalRecordProp
@@ -87,10 +91,10 @@ const AudioRecorder = ({
             controls
           />
           {shouldRenderNewPronunciationLabel() && (
-            <span className="text-green-500 mt-2">New pronunciation recorded</span>
+            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">New pronunciation recorded</chakra.span>
           )}
         </Box>
-      ) : <span className="text-gray-700 italic">No audio pronunciation</span>}
+      ) : <chakra.span className="text-gray-700 italic" fontFamily="Silka">No audio pronunciation</chakra.span>}
     </Box>
   );
 
@@ -213,6 +217,17 @@ const AudioRecorder = ({
             </Box>
           )}
         </Box>
+        {warningMessage ? (
+          <Box
+            mt={2}
+            p={2}
+            backgroundColor="yellow.100"
+            borderRadius="md"
+            data-test="audio-recording-warning-message"
+          >
+            <Text color="yellow.700">{warningMessage}</Text>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );

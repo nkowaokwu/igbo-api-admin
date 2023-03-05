@@ -18,6 +18,8 @@ export const getWords = jest.fn(async () => ([
   },
 ]));
 
+export const getWordSuggestions = jest.fn(async () => ([]));
+
 export const resolveWord = jest.fn(async () => ({
   word: 'resolved word',
   id: '567',

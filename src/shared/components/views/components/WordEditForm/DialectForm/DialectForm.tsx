@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { useState, ReactElement } from 'react';
 import {
   Box,
   Heading,
@@ -24,6 +24,7 @@ const DialectForm = ({
   dialects,
   originalRecord,
 }: DialectFormInterface) : ReactElement => {
+  const [warningMessage, setWarningMessage] = useState('');
   const dialect = dialects[index];
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
@@ -33,6 +34,12 @@ const DialectForm = ({
     || errors.dialects[index]?.message
     || errors.dialects.message
     : '').replace(`dialects[${index}].dialects`, 'Dialects');
+
+  const handleWarningMessage = (e) => {
+    setWarningMessage((record?.word || '') !== e.target.value
+      ? 'A change in this dialect has been detected. Please consider re-recording the audio to match.'
+      : '');
+  };
 
   return (
     <Box
@@ -59,7 +66,10 @@ const DialectForm = ({
           <Controller
             render={({ onChange }) => (
               <Input
-                onChange={onChange}
+                onChange={(e) => {
+                  handleWarningMessage(e);
+                  return onChange(e);
+                }}
                 placeholder="Dialectal variation"
                 data-test={`dialects-${index}-word-input`}
                 defaultValue={dialect.word || ''}
@@ -89,6 +99,7 @@ const DialectForm = ({
                 }}
                 record={record}
                 originalRecord={originalRecord}
+                warningMessage={warningMessage}
               />
             )}
             name={`dialects.${index}.pronunciation`}

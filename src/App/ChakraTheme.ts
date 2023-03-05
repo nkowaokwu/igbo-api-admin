@@ -197,6 +197,11 @@ export default extendTheme({
         variant: '',
       },
     },
+    Button: {
+      baseStyle: {
+        fontFamily: 'Silka',
+      },
+    },
     Textarea: {
       baseStyle: {
         backgroundColor: 'gray.200',

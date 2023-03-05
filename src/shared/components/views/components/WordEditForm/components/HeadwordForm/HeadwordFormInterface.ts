@@ -7,6 +7,7 @@ interface HeadwordForm {
   record: Interfaces.Word,
   watch: any,
   getValues: (key?: string) => any,
+  onChange: (value?: any) => void,
 };
 
 export default HeadwordForm;
