@@ -1,5 +1,10 @@
 import React, { ReactElement } from 'react';
-import { Box, Checkbox, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Checkbox,
+  Tooltip,
+  chakra,
+} from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -34,7 +39,7 @@ const HeadwordAttributes = ({
           data-test={`${WordAttributes.IS_STANDARD_IGBO.value}-checkbox`}
           size="lg"
         >
-          <span className="font-bold">{WordAttributes.IS_STANDARD_IGBO.label}</span>
+          <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_STANDARD_IGBO.label}</chakra.span>
         </Checkbox>
       )}
       defaultValue={record.attributes?.[WordAttributes.IS_STANDARD_IGBO.value]
@@ -57,7 +62,7 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_ACCENTED.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_ACCENTED.label}</chakra.span>
             </Checkbox>
           )}
           defaultValue={!!(isHeadwordAccented
@@ -83,7 +88,7 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_SLANG.label}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_SLANG.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_SLANG.label}</chakra.span>
             </Checkbox>
           )}
           defaultValue={record.attribute?.[WordAttributes.IS_SLANG.value]
@@ -113,7 +118,9 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.label}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_CONSTRUCTED_TERM.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">
+                {WordAttributes.IS_CONSTRUCTED_TERM.label}
+              </chakra.span>
             </Checkbox>
           )}
           defaultValue={isConstructedPollTerm || record.attribute?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
@@ -135,7 +142,9 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_BORROWED_TERM.label}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_BORROWED_TERM.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">
+                {WordAttributes.IS_BORROWED_TERM.label}
+              </chakra.span>
             </Checkbox>
           )}
           defaultValue={record.attribute?.[WordAttributes.IS_BORROWED_TERM.value]
@@ -160,7 +169,7 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_STEM.label}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_STEM.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_STEM.label}</chakra.span>
             </Checkbox>
           )}
           defaultValue={record.attribute?.[WordAttributes.IS_STEM.value]
@@ -184,7 +193,7 @@ const HeadwordAttributes = ({
               data-test={`${WordAttributes.IS_COMMON.label}-checkbox`}
               size="lg"
             >
-              <span className="font-bold">{WordAttributes.IS_COMMON.label}</span>
+              <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_COMMON.label}</chakra.span>
             </Checkbox>
           )}
           defaultValue={record.attribute?.[WordAttributes.IS_COMMON.value]

@@ -46,7 +46,7 @@ const ExamplesForm = ({
           <h2>
             <AccordionButton>
               <Box flex="1" textAlign="left">
-                {`Examples (${examples.length})`}
+                <Text fontFamily="Silka">{`Examples (${examples.length})`}</Text>
               </Box>
               <AccordionIcon />
             </AccordionButton>
@@ -64,7 +64,7 @@ const ExamplesForm = ({
               />
             )) : (
               <Box className="flex w-full justify-center mb-2">
-                <Text className="italic text-gray-700">No examples</Text>
+                <Text className="italic text-gray-700" fontFamily="Silka">No examples</Text>
               </Box>
             )}
           </AccordionPanel>

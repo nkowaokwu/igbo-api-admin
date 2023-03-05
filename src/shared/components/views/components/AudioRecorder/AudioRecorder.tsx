@@ -9,6 +9,7 @@ import {
   Text,
   Tooltip,
   useToast,
+  chakra,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import { DEFAULT_EXAMPLE_RECORD, DEFAULT_WORD_RECORD } from 'src/shared/constants';
@@ -90,10 +91,10 @@ const AudioRecorder = ({
             controls
           />
           {shouldRenderNewPronunciationLabel() && (
-            <span className="text-green-500 mt-2">New pronunciation recorded</span>
+            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">New pronunciation recorded</chakra.span>
           )}
         </Box>
-      ) : <span className="text-gray-700 italic">No audio pronunciation</span>}
+      ) : <chakra.span className="text-gray-700 italic" fontFamily="Silka">No audio pronunciation</chakra.span>}
     </Box>
   );
 
