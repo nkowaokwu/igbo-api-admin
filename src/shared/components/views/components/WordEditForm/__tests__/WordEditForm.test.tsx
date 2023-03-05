@@ -2,10 +2,11 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import WordEditForm from '../WordEditForm';
+
+jest.mock('src/Core/Dashboard/network');
 
 describe('Word Edit', () => {
   beforeEach(() => {
@@ -114,5 +115,21 @@ describe('Word Edit', () => {
     userEvent.click(await findByText('retrieved word'));
     await findByText('ADJ');
     await findByText('resolved word definition');
+  });
+
+  it('show the updated headword warning message within audio recorder', async () => {
+    const { findByTestId } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    userEvent.type(await findByTestId('word-input'), 'new headword');
+    await findByTestId('audio-recording-warning-message');
   });
 });

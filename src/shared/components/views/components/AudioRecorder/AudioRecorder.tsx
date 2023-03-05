@@ -217,7 +217,13 @@ const AudioRecorder = ({
           )}
         </Box>
         {warningMessage ? (
-          <Box mt={2} p={2} backgroundColor="yellow.100" borderRadius="md">
+          <Box
+            mt={2}
+            p={2}
+            backgroundColor="yellow.100"
+            borderRadius="md"
+            data-test="audio-recording-warning-message"
+          >
             <Text color="yellow.700">{warningMessage}</Text>
           </Box>
         ) : null}

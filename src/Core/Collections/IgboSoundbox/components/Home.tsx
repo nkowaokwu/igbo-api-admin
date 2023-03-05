@@ -27,7 +27,6 @@ const IgboSoundboxHome = ({
   }, []);
   return (
     <Box className="gradient-background">
-      {/* <PersonalStats /> */}
       <Box className="w-full h-full flex flex-col xl:flex-row justify-center items-center space-y-12 xl:space-y-0">
         <OptionCard
           title="Record your voice"
