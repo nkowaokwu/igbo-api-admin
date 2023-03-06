@@ -22,7 +22,7 @@ const DialectDiff = (
   { record: propRecord, diffRecord, resource }:
   { record: Interfaces.Word | Interfaces.Example, diffRecord: any, resource: string },
 ): ReactElement => {
-  const record = { ...(propRecord || {}), dialects: propRecord?.dialects || {} };
+  const record = { ...(propRecord || {}), dialects: propRecord?.dialects || [] };
   const updatedDialects = [];
   // @ts-ignore
   return record?.word ? (
@@ -64,7 +64,7 @@ const DialectDiff = (
           defaultIndex={[0]}
           allowMultiple
         >
-          {((record.dialects || []) as Interfaces.WordDialect[]).map(({
+          {((Array.isArray(record.dialects) ? record.dialects : []) as Interfaces.WordDialect[]).map(({
             variations = [],
             dialects = [],
             pronunciation,
