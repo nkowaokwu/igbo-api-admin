@@ -12,12 +12,14 @@ import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import WordTags from 'src/backend/shared/constants/WordTags';
-import ResolvedWord from 'src/shared/components/ResolvedWord';
+import ResolvedWord from 'src/shared/components/ResolvedWord/ResolvedWord';
 import AudioRecordingPreview from './AudioRecordingPreview';
 import StandardIgboPreview from './StandardIgboPreview';
 import ConstructedTermPreview from './ConstructedTermPreview';
+import isResourceSuggestion from '../utils/isResourceSuggestion';
+import Collections from '../constants/Collections';
 
-const WordPanel = ({ record }: { record?: Record }): ReactElement => (
+const WordPanel = ({ record, resource }: { record?: Record, resource: Collections }): ReactElement => (
   <Box className="space-y-3 py-3">
     <Box>
       <Heading fontSize="2xl">Word Quick View</Heading>
@@ -106,7 +108,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
           {get(record, 'relatedTerms.length') ? record.relatedTerms.map((relatedTerm, index) => (
             <Box key={relatedTerm} className="flex flex-row space-x-1">
               <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <ResolvedWord wordId={relatedTerm} />
+              <ResolvedWord wordId={relatedTerm} isSuggestion={isResourceSuggestion(resource)} />
             </Box>
           )) : <Text className="text-gray-500 italic">No related terms</Text>}
         </Box>
@@ -156,7 +158,9 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
                   <Text className={nsibidi ? 'akagu' : 'italic text-gray-600'}>{nsibidi || 'No Nsịbịdị'}</Text>
                 </Box>
               </Box>
-              <AudioRecordingPreview record={example} />
+              {example.pronunciations.map((pronunciation) => (
+                <AudioRecordingPreview record={{ pronunciation }} />
+              ))}
             </>
           );
         }) : <Text className="text-gray-500 italic">No examples</Text>}

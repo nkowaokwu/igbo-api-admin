@@ -15,7 +15,10 @@ export const ExampleEditFormSchema = yup.object().shape({
   associatedDefinitionsSchemas: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
   originalExampleId: yup.string().nullable().optional(),
-  pronunciation: yup.string().optional(),
+  pronunciations: yup.array().of(yup.object().shape({
+    audio: yup.string(),
+    speaker: yup.string().optional(),
+  })),
 });
 
 const resolver = {

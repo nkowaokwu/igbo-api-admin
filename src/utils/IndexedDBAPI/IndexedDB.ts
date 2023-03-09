@@ -15,8 +15,8 @@ const igboAPIEditorPlatformDB = new Dexie('IgboAPIEditorPlatform') as IgboAPIEdi
 
 const wordKeys = 'id, word, wordPronunciation, conceptualWord, definitions, dialects, tags, tenses, pronunciation, attributes, variations, stems, relatedTerms, hypernyms, hyponyms, nsibidi';
 const wordSuggestionKeys = 'id, word, wordPronunciation, conceptualWord, definitions, dialects, tags, tenses, pronunciation, attributes, variations, stems, relatedTerms, hypernyms, hyponyms, nsibidi, originalWordId, editorsNotes, userComments, authorEmail, authorId, merged, mergedBy, userInteractions, twitterPollId';
-const exampleKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciation, exampleForSuggestion';
-const exampleSuggestionKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciation, exampleForSuggestion, originalExampleId, exampleForSuggestion, editorsNotes, userComments, authorEmail, authorId, source, merged, mergedBy, userInteractions';
+const exampleKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciations, exampleForSuggestion';
+const exampleSuggestionKeys = 'id, igbo, english, meaning, style, associatedWords, associatedDefinitionsSchemas, pronunciations, exampleForSuggestion, originalExampleId, exampleForSuggestion, editorsNotes, userComments, authorEmail, authorId, source, merged, mergedBy, userInteractions';
 const corpusKeys = 'id, title, body, media, duration, tags';
 const corpusSuggestionKeys = 'id, title, body, media, duration, tags, editorsNotes, authorEmail, authorId, approvals, denials, merged, mergedBy, userInteractions';
 

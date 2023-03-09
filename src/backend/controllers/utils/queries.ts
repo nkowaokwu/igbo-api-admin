@@ -41,14 +41,28 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
         break;
       case 'pronunciation':
         if (value) {
-          allFilters.pronunciation = {
-            $and: [
-              { $exists: true, $type: 'string' },
-              { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
-            ],
-          };
+          allFilters.$or = [...allFilters.$or, {
+            pronunciation: {
+              $and: [
+                { $exists: true, $type: 'string' },
+                { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
+              ],
+            },
+            pronunciations: {
+              $and: [
+                { $exists: true, $type: 'string' },
+                { $gt: [{ $strLenCP: '$pronunciations.0.audio' }, 10] },
+              ],
+            },
+          }];
         } else {
-          allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
+          allFilters.$or = [
+            ...allFilters.$or,
+            { pronunciation: { $eq: null } },
+            { pronunciation: { $eq: '' } },
+            { 'pronunciations.0': { $eq: null } },
+            { 'pronunciations.0': { $eq: '' } },
+          ];
         }
         break;
       case 'nsibidi':
@@ -172,13 +186,15 @@ export const searchExampleSuggestionsRegexQuery = (
 export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   igbo: { $exists: boolean, $type: string },
   $expr: { $gt: ({ $strLenCP: string } | number)[] },
-  pronunciation: string,
+  'pronunciations.0': { $exists: boolean },
+  exampleForSuggestion: { $ne: boolean },
   merged: null,
   userInteractions: { $nin: [string] },
 } => ({
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 10] },
-  pronunciation: '',
+  'pronunciations.0': { $exists: false },
+  exampleForSuggestion: { $ne: true },
   merged: null,
   userInteractions: { $nin: [uid] },
 });

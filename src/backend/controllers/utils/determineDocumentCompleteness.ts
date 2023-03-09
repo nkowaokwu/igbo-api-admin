@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
-import { Word } from 'src/backend/controllers/utils/interfaces';
+import { Example, Word } from 'src/backend/controllers/utils/interfaces';
 import Tense from 'src/backend/shared/constants/Tense';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { invalidRelatedTermsWordClasses } from './determineIsAsCompleteAsPossible';
@@ -15,7 +15,7 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
     word,
     definitions = [],
     pronunciation,
-    examples = [],
+    examples = [] as Example[],
     attributes: {
       isStandardIgbo,
       isAccented,
@@ -71,10 +71,9 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       ))
       ? 'All verb tenses are needed'
       : null,
-    (Array.isArray(examples)
-      && examples.some(({ pronunciation }) => !pronunciation)
-      && 'All example sentences need pronunciations'
-    ),
+    Array.isArray(examples)
+      && examples.some(({ pronunciations }) => pronunciations.some((pronunciation) => !pronunciation))
+      && 'All example sentences need pronunciations',
     Array.isArray(dialects) && !dialects.length && 'A dialectal variation is needed',
     (Array.isArray(dialects)
       && dialects.some(({ dialects, pronunciation }) => !dialects?.length || !pronunciation)

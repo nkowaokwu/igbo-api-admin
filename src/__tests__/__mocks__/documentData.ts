@@ -58,7 +58,7 @@ export const updatedWordData = {
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
-  pronunciation: '',
+  pronunciations: [{ audio: '', speaker: '' }],
   associatedWords: [],
 };
 

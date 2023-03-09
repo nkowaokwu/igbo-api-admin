@@ -13,12 +13,7 @@ import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
-const ExamplesForm = ({
-  examples,
-  setExamples,
-  getValues,
-  definitionGroupId,
-}: ExamplesFormInterface): ReactElement => (
+const ExamplesForm = ({ examples, setExamples, getValues }: ExamplesFormInterface): ReactElement => (
   // List of examples associated with the definition schema
   // const definitionsGroupExamples = examples.filter(({ associatedDefinitionsSchemas }) => (
   //   associatedDefinitionsSchemas?.includes(definitionGroupId)
@@ -60,7 +55,6 @@ const ExamplesForm = ({
                 example={example}
                 getValues={getValues}
                 index={index}
-                definitionGroupId={definitionGroupId}
               />
             )) : (
               <Box className="flex w-full justify-center mb-2">
@@ -71,11 +65,7 @@ const ExamplesForm = ({
         </AccordionItem>
       </Accordion>
     </Box>
-    <AddExampleButton
-      examples={examples}
-      setExamples={setExamples}
-      definitionGroupId={definitionGroupId}
-    />
+    <AddExampleButton examples={examples} setExamples={setExamples} />
   </>
 );
 

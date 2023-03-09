@@ -34,6 +34,8 @@ const TestContext = ({
   children: any,
   dataProvider?: any,
   isListView?: boolean,
+  initialState?: any,
+  enableReducers?: boolean,
 }): ReactElement => {
   const nativeDataProvider = () => Promise.resolve({
     data: {},

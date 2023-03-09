@@ -132,4 +132,42 @@ describe('Word Edit', () => {
     userEvent.type(await findByTestId('word-input'), 'new headword');
     await findByTestId('audio-recording-warning-message');
   });
+
+  it('render the stems', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{
+            id: '123',
+            definitions: [{ wordClass: 'NNC', definitions: [] }],
+            stems: ['word-id'],
+          }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    await findByText('resolved word suggestion');
+  });
+
+  it('render the related terms', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{
+            id: '123',
+            definitions: [{ wordClass: 'NNC', definitions: [] }],
+            relatedTerms: ['word-id'],
+          }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    await findByText('resolved word suggestion');
+  });
 });

@@ -203,7 +203,7 @@ export const createWord = async (
 };
 
 /**
- * After merging the example word suggestion, we want to move all the nested
+ * After merging the word suggestion, we want to move all the nested
  * example suggestion data into the new Example documents
  * @param wordSuggestion
  * @param originalWord

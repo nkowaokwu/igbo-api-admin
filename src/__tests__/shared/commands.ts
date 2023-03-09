@@ -80,7 +80,7 @@ export const postBulkUploadExampleSuggestions = (data: { igbo: string }[], optio
 );
 
 export const putRandomExampleSuggestions = (
-  data: { id: string, pronunciation?: string, review?: ReviewActions }[],
+  data: { id: string, pronunciations?: { audio: string, speaker: string }[], review?: ReviewActions }[],
   options = { token: '' },
 ): Request => (
   chaiServer

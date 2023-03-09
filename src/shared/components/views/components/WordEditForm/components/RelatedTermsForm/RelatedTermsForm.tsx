@@ -1,86 +1,18 @@
-import React, { useState, ReactElement, useEffect } from 'react';
-import { compact } from 'lodash';
+import React, { useState, ReactElement } from 'react';
 import {
   Box,
   IconButton,
-  Spinner,
   Tooltip,
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
-import { Input, WordPill } from 'src/shared/primitives';
-import { getWord, resolveWord } from 'src/shared/API';
+import { Input } from 'src/shared/primitives';
+import { getWord } from 'src/shared/API';
+import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
-
-const RelatedTerms = (
-  { relatedTermIds, updateRelatedTerms }
-  : { relatedTermIds: string[], updateRelatedTerms: (value: string[]) => void },
-) => {
-  const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
-  const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
-
-  const resolveRelatedTerms = (callback) => async () => {
-    setIsLoadingRelatedTerms(true);
-    try {
-      const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
-        const word = await resolveWord(relatedTermId).catch(() => null);
-        return word;
-      })));
-      setResolvedRelatedTerms(compactedResolvedRelatedTerms);
-      callback(compactedResolvedRelatedTerms);
-    } finally {
-      setIsLoadingRelatedTerms(false);
-    }
-  };
-  useEffect(() => {
-    resolveRelatedTerms((relatedTerms) => {
-      // Remove stale, invalid Word Ids
-      updateRelatedTerms(relatedTerms.map(({ id }) => id));
-    })();
-  }, []);
-  useEffect(() => {
-    resolveRelatedTerms(() => {})();
-  }, [relatedTermIds]);
-
-  return isLoadingRelatedTerms ? (
-    <Spinner />
-  ) : resolvedRelatedTerms && resolvedRelatedTerms.length ? (
-    <Box display="flex" flexDirection="column" className="space-y-3 py-4">
-      {resolvedRelatedTerms.map((word, index) => (
-        <Box
-          key={word.id}
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          borderColor="blue.400"
-          borderWidth="1px"
-          backgroundColor="blue.50"
-          borderRadius="full"
-          minWidth="36"
-          py={2}
-          px={6}
-        >
-          <WordPill
-            {...word}
-            index={index}
-            onDelete={() => {
-              const filteredRelatedTerms = [...relatedTermIds];
-              filteredRelatedTerms.splice(index, 1);
-              updateRelatedTerms(filteredRelatedTerms);
-            }}
-          />
-        </Box>
-      ))}
-    </Box>
-  ) : (
-    <Box className="flex w-full justify-center">
-      <p className="text-gray-600 mb-4 italic">No related terms</p>
-    </Box>
-  );
-};
+import RelatedTerms from './RelatedTerms';
 
 const RelatedTermsForm = ({
   errors,
@@ -89,6 +21,7 @@ const RelatedTermsForm = ({
   control,
   setValue,
   record,
+  resource,
 }: RelatedTermsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
@@ -160,6 +93,7 @@ const RelatedTermsForm = ({
       <RelatedTerms
         relatedTermIds={relatedTerms}
         updateRelatedTerms={updateRelatedTerms}
+        isSuggestion={isResourceSuggestion(resource)}
       />
       {errors.relatedTerms && (
         <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>

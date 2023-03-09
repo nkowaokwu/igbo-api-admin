@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { every } from 'lodash';
 import Dialects from '../shared/constants/Dialects';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
-import { uploadWordPronunciation } from './plugins/pronunciationHooks';
+import { uploadWordPronunciation } from './plugins/wordPronunciationHook';
 import { normalizeHeadword } from './plugins/normalizationHooks';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';

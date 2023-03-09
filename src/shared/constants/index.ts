@@ -38,7 +38,7 @@ export const DEFAULT_EXAMPLE_RECORD = {
   author: '',
   igbo: '',
   english: '',
-  pronunciation: '',
+  pronunciations: [],
   associatedWords: [],
   approvals: [],
   denials: [],

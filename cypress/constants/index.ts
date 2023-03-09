@@ -1,5 +1,6 @@
 import Dialects from '../../src/backend/shared/constants/Dialects';
 import WordClass from '../../src/backend/shared/constants/WordClass';
+import * as Interfaces from '../../src/backend/controllers/utils/interfaces';
 
 export const DialectOptions = Dialects;
 
@@ -36,10 +37,12 @@ export const UserSelectOptions = {
   DELETE_USER: 'Delete User',
 };
 
-export const wordSuggestionData = {
+export const wordSuggestionData: Interfaces.WordSuggestion = {
   word: 'main_word',
   definitions: [{
     definitions: ['first'],
+    igboDefinitions: [],
+    nsibidi: '',
     wordClass: 'NNC',
   }],
   variations: ['main_word_variation'],
@@ -52,16 +55,24 @@ export const wordSuggestionData = {
     },
   ],
   examples: [
+    // @ts-expect-error
     {
       igbo: 'First Igbo nested sentence',
       english: 'First English nested sentence',
-      pronunciation: 'data:audio/',
+      pronunciations: [{
+        audio: 'data:audio/',
+        speaker: '',
+      }],
       associatedWords: [],
     },
+    // @ts-expect-error
     {
       igbo: 'Second Igbo nested sentence',
       english: 'Second English nested sentence',
-      pronunciation: 'data:audio/',
+      pronunciations: [{
+        audio: 'data:audio/',
+        speaker: '',
+      }],
       associatedWords: [],
     },
   ],

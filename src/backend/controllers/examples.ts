@@ -12,6 +12,7 @@ import { exampleSchema } from 'src/backend/models/Example';
 import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
+import { isPronunciationMp3, getPronunciationId } from 'src/shared/utils/splitAudioUrl';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
@@ -302,8 +303,11 @@ export const deleteExample = async (
     const { id: exampleId } = req.params;
     const Example = mongooseConnection.model('Example', exampleSchema);
     const example = await Example.findById(exampleId) as Interfaces.Example;
-    const isPronunciationMp3 = example.pronunciation && example.pronunciation.includes('.mp3');
-    await deleteAudioPronunciation(exampleId, isPronunciationMp3);
+    await Promise.all(example.pronunciations.map(async (pronunciation) => {
+      const isAudioMp3 = isPronunciationMp3(pronunciation.audio);
+      const pronunciationId = getPronunciationId(pronunciation.audio);
+      await deleteAudioPronunciation(pronunciationId, isAudioMp3);
+    }));
     return res.send(true);
   } catch (err) {
     return next(err);

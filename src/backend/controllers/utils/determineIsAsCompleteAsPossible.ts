@@ -24,7 +24,7 @@ export default (word: Word | Record): boolean => !!(
   && (
     Array.isArray(word.examples)
     && word.examples.length
-    && word.examples.every(({ pronunciation }) => pronunciation)
+    && word.examples.every(({ pronunciations }) => pronunciations.every((pronunciation) => !!pronunciation))
   )
   && (
     word.dialects && typeof word.dialects === 'object'

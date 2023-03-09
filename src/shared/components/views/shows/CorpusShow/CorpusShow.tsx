@@ -200,7 +200,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                   {/* @ts-ignore */}
                   <ArrayDiffField
                     recordField="tags"
-                    recordFieldSingular="tag"
                     record={record}
                     // @ts-ignore
                     originalWordRecord={originalWordRecord}

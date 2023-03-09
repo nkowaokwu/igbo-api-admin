@@ -12,14 +12,15 @@ import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
-import Collection from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collections';
 import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
-import ResolvedWord from 'src/shared/components/ResolvedWord';
+import ResolvedWord from 'src/shared/components/ResolvedWord/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -64,7 +65,7 @@ const WordShow = (props: ShowProps): ReactElement => {
   const [originalWordRecord, setOriginalWordRecord] = useState<Interfaces.Word | null>({});
   const [diffRecord, setDiffRecord] = useState(null);
   const showProps = useShowController(props);
-  const { resource } = showProps;
+  const { resource } = showProps as { resource: Collections };
   // @ts-expect-error
   let { record } : { record: Interfaces.Word } = showProps;
   const { permissions } = props;
@@ -149,7 +150,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   </>
                 </Heading>
                 <EditDocumentIds
-                  collection={Collection.WORDS}
+                  collection={Collections.WORDS}
                   originalId={originalWordId}
                   id={id}
                   title="Parent Word Id:"
@@ -270,7 +271,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                     <Heading fontSize="md" className="text-xl text-gray-600">Definitions</Heading>
                     <ArrayDiffField
                       recordField={`definitions.${index}.definitions`}
-                      recordFieldSingular="definition"
                       record={record}
                       originalWordRecord={originalWordRecord}
                     >
@@ -284,7 +284,6 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Heading fontSize="lg" className="text-xl text-gray-600">Variations</Heading>
               <ArrayDiffField
                 recordField="variations"
-                recordFieldSingular="variation"
                 record={record}
                 originalWordRecord={originalWordRecord}
               >
@@ -295,14 +294,15 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Heading fontSize="lg" className="text-xl text-gray-600">Word Stems</Heading>
               <ArrayDiffField
                 recordField="stems"
-                recordFieldSingular="stem"
                 record={record}
                 originalWordRecord={originalWordRecord}
               >
                 <ArrayDiff
                   diffRecord={diffRecord}
                   recordField="stems"
-                  renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
+                  renderNestedObject={(wordId) => (
+                    <ResolvedWord wordId={wordId} isSuggestion={isResourceSuggestion(resource)} />
+                  )}
                 />
               </ArrayDiffField>
             </Box>
@@ -310,14 +310,15 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Heading fontSize="lg" className="text-xl text-gray-600">Related Terms</Heading>
               <ArrayDiffField
                 recordField="relatedTerms"
-                recordFieldSingular="relatedTerm"
                 record={record}
                 originalWordRecord={originalWordRecord}
               >
                 <ArrayDiff
                   diffRecord={diffRecord}
                   recordField="relatedTerms"
-                  renderNestedObject={(wordId) => <ResolvedWord wordId={wordId} />}
+                  renderNestedObject={(wordId) => (
+                    <ResolvedWord wordId={wordId} isSuggestion={isResourceSuggestion(resource)} />
+                  )}
                 />
               </ArrayDiffField>
             </Box>
@@ -326,13 +327,14 @@ const WordShow = (props: ShowProps): ReactElement => {
               <Box className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <ArrayDiffField
                   recordField="examples"
-                  recordFieldSingular="example"
                   record={{ examples } as Interfaces.Word}
                   originalWordRecord={originalWordRecord}
                 >
                   <ExampleDiff
                     diffRecord={diffRecord}
                     resource={resource}
+                    record={record}
+                    originalWordRecord={originalWordRecord}
                   />
                 </ArrayDiffField>
               </Box>
@@ -340,7 +342,7 @@ const WordShow = (props: ShowProps): ReactElement => {
           </Box>
           <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
             <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
-            {resource !== Collection.WORDS && (
+            {resource !== Collections.WORDS && (
               <>
                 <SourceField record={record} source="source" />
                 <ShowDocumentStats
@@ -348,7 +350,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   denials={denials}
                   merged={merged}
                   author={author}
-                  collection={Collection.WORDS}
+                  collection={Collections.WORDS}
                 />
               </>
             )}
@@ -359,7 +361,6 @@ const WordShow = (props: ShowProps): ReactElement => {
                   <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
                   <ArrayDiffField
                     recordField="tags"
-                    recordFieldSingular="tag"
                     record={record}
                     originalWordRecord={originalWordRecord}
                   >
@@ -420,7 +421,7 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
           </details>
         ) : null}
-        {resource !== Collection.WORDS ? (
+        {resource !== Collections.WORDS ? (
           <Comments editorsNotes={editorsNotes} userComments={userComments} />
         ) : null}
       </Box>

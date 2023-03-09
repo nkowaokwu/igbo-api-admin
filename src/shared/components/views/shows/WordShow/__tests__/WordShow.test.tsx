@@ -10,7 +10,7 @@ import WordShow from '../WordShow';
 configure({ testIdAttribute: 'data-test' });
 
 const record = {
-  id: 123,
+  id: '123',
   word: 'tésting word',
   definitions: [{
     wordClass: WordClass.ADJ.value,
@@ -22,7 +22,7 @@ const record = {
   examples: [{
     igbo: 'igbo',
     english: 'english',
-    pronunciation: '',
+    pronunciations: [{ audio: '', speaker: '' }],
     associatedWords: [],
   }],
   pronunciation: '1234',
@@ -40,7 +40,7 @@ const completeRecord = {
   examples: [{
     igbo: 'igbo',
     english: 'english',
-    pronunciation: 'example-pronunciation',
+    pronunciations: [{ audio: 'example-pronunciation', speaker: '' }, { audio: 'example-pronunciation', speaker: '' }],
     associatedWords: ['associatedWordId'],
   }],
   pronunciation: 'word-pronunciation',
@@ -128,6 +128,23 @@ describe('Word Show', () => {
     await findByText('Dialects');
     await findByText('Editor\'s Note');
     await findByText('User\'s comments');
+  });
+
+  it('render multiple pronunciations for nested example suggestion', async () => {
+    dataProvider.getOne = () => Promise.resolve({
+      data: completeRecord,
+    });
+    const { findAllByTestId } = render(
+      <TestContext
+        enableReducers
+        initialState={{ admin: { resources: { wordSuggestions: { data: {} } } } }}
+        dataProvider={dataProvider}
+      >
+        <WordShow basePath="/" resource={Collections.WORD_SUGGESTIONS} id={record.id} />
+      </TestContext>,
+    );
+
+    await findAllByTestId('nested-examples-pronunciation');
   });
 
   // Unable to test Tooltip component

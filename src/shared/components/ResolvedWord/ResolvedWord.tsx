@@ -6,15 +6,18 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
-import { getWord } from '../API';
+import { getWord, getWordSuggestion } from '../../API';
+import Collections from '../../constants/Collections';
 
-const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
+const ResolvedWord = ({ wordId, isSuggestion }: { wordId: string, isSuggestion: boolean }): ReactElement => {
   const [resolvedWord, setResolvedWord] = useState(null);
   const [isLinked, setIsLinked] = useState(true);
+  const wordResource = isSuggestion ? Collections.WORD_SUGGESTIONS : Collections.WORDS;
+  const getDocument = isSuggestion ? getWordSuggestion : getWord;
 
   useEffect(() => {
     (async () => {
-      const word = await getWord(wordId, { dialects: true })
+      const word = await getDocument(wordId, { dialects: true })
         .catch(() => {
           setIsLinked(false);
           return { word: wordId };
@@ -25,7 +28,7 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
 
   return resolvedWord ? (
     isLinked ? (
-      <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{resolvedWord.word}</a>
+      <a className="text-blue-400 underline" href={`#/${wordResource}/${wordId}/show`}>{resolvedWord.word}</a>
     ) : (
       <Tooltip
         label={`This word metadata is not linked. To properly link this 

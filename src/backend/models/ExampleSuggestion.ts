@@ -3,7 +3,7 @@ import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
-import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
+import { uploadExamplePronunciation } from './plugins/examplePronunciationHook';
 import { normalizeIgbo } from './plugins/normalizationHooks';
 
 const { Schema, Types } = mongoose;
@@ -31,7 +31,13 @@ export const exampleSuggestionSchema = new Schema({
   },
   associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
   associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
-  pronunciation: { type: String, default: '' },
+  pronunciations: {
+    type: [{
+      audio: { type: String, default: '' },
+      speaker: { type: String, default: '' },
+    }],
+    default: [],
+  },
   exampleForSuggestion: { type: Boolean, default: false },
   editorsNotes: { type: String, default: '' },
   userComments: { type: String, default: '' },

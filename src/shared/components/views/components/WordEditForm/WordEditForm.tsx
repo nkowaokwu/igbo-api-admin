@@ -67,7 +67,7 @@ const WordEditForm = ({
     defaultValues: {
       dialects: record?.dialects || [],
       examples: record?.examples
-        ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
+        ? record.examples.map((example) => ({ ...example, pronunciations: example.pronunciations || [] }))
         : [],
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
@@ -122,14 +122,14 @@ const WordEditForm = ({
         english,
         meaning,
         nsibidi,
-        pronunciation,
+        pronunciations,
       }, index) => (
         {
           igbo,
           english,
           nsibidi,
-          pronunciation,
           meaning,
+          pronunciations,
           ...(originalExamplesFromIds[index]?.dataset?.originalExampleId
             ? { originalExampleId: originalExamplesFromIds[index]?.dataset?.originalExampleId }
             : {}
@@ -303,6 +303,7 @@ const WordEditForm = ({
                 control={control}
                 setValue={setValue}
                 record={record}
+                resource={resource}
               />
             </Box>
           </Box>
@@ -347,6 +348,7 @@ const WordEditForm = ({
             control={control}
             setValue={setValue}
             record={record}
+            resource={resource}
           />
         ) : null}
       </Box>

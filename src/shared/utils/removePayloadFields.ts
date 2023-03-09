@@ -33,7 +33,15 @@ const removePayloadFields = (payload: any): any => {
     cleanedPayload.dialects = cleanedPayload.dialects.map((dialect) => omit(dialect, OMIT_KEYS));
   }
   if (Array.isArray(cleanedPayload.examples)) {
-    cleanedPayload.examples = cleanedPayload.examples.map((example) => omit(example, ['authorId', 'archived']));
+    cleanedPayload.examples = cleanedPayload.examples.map((example) => (
+      omit({
+        ...example,
+        pronunciations: example.pronunciations.map((pronunciation) => omit(pronunciation, ['_id'])),
+      }, ['authorId', 'archived'])
+    ));
+  }
+  if (Array.isArray(cleanedPayload.pronunciations)) {
+    cleanedPayload.pronunciations = cleanedPayload.pronunciations.map((pronunciation) => omit(pronunciation, ['_id']));
   }
   return cleanedPayload;
 };

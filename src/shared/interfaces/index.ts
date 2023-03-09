@@ -7,6 +7,7 @@ import {
   RedirectionSideEffect,
   TransformData,
 } from 'react-admin';
+import Collections from '../constants/Collections';
 
 export interface EditFormProps {
   view: string,
@@ -16,7 +17,7 @@ export interface EditFormProps {
     onFailure?: OnFailure;
     transform?: TransformData;
   }) => void,
-  resource: string,
+  resource: Collections,
   history: any,
   isPreExistingSuggestion?: boolean,
 };
@@ -31,6 +32,7 @@ export interface ArrayPreviewProps {
   source: string,
   label?: string,
   record?: Record,
+  resource: Collections,
 };
 
 export interface WordClassTextFieldProps {

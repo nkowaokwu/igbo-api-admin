@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading, Text } from '@chakra-ui/react';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 const EditDocumentIds = ({
   collection,
@@ -9,7 +10,7 @@ const EditDocumentIds = ({
 } : {
   collection: string,
   originalId: string,
-  id: string,
+  id: Interfaces.Word['id'] | string,
   title: string,
 }): ReactElement => (
   <Box className="flex flex-col my-2">

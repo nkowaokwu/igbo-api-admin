@@ -20,8 +20,17 @@ export const getWords = jest.fn(async () => ([
 
 export const getWordSuggestions = jest.fn(async () => ([]));
 
-export const resolveWord = jest.fn(async () => ({
-  word: 'resolved word',
+export const getWordSuggestion = jest.fn(async () => ({
+  word: 'retrieved word suggestion',
+  id: '567',
+  definitions: [{
+    wordClass: 'NNC',
+    definitions: ['first definition'],
+  }],
+}));
+
+export const resolveWord = jest.fn(async (stemId, isSuggestion) => ({
+  word: `resolved word${isSuggestion ? ' suggestion' : ''}`,
   id: '567',
   definitions: [{
     wordClass: 'ADJ',

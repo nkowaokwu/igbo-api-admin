@@ -40,7 +40,10 @@ export const exampleDataSchema = Joi.object().keys({
     }
     return true;
   }).allow(null).optional(),
-  pronunciation: Joi.string().allow(''),
+  pronunciations: Joi.array().items(Joi.object().keys({
+    audio: Joi.string().allow(''),
+    speaker: Joi.string().allow('').optional(),
+  })),
   exampleForSuggestion: Joi.boolean().optional(),
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),

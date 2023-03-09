@@ -1,6 +1,7 @@
 import { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
+import { isPronunciationMp3, getPronunciationId } from 'src/shared/utils/splitAudioUrl';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
 import { wordSchema } from '../models/Word';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
@@ -17,6 +18,8 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import ReviewActions from '../shared/constants/ReviewActions';
 import SentenceType from '../shared/constants/SentenceType';
+import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
+import { wordSuggestionSchema } from '../models/WordSuggestion';
 
 const NO_LIMIT = 20000;
 export const createExampleSuggestion = async (
@@ -106,11 +109,30 @@ export const updateExampleSuggestion = (
       if (exampleSuggestion.merged) {
         throw new Error('Unable to edit a merged example suggestion');
       }
+
+      // Handle deleting audio pronunciations that lived on the older version
+      // of the current example suggestion
+      if (exampleSuggestion.pronunciations.length > data.pronunciations.length) {
+        const deletePronunciations = exampleSuggestion.pronunciations.filter(({ audio }) => (
+          !data.pronunciations.find(({ audio: dataPronunciation }) => dataPronunciation === audio)
+        ));
+
+        // Delete the old audio pronunciations
+        if (deletePronunciations.length) {
+          console.log('Deleting the following example suggestions audio:', deletePronunciations);
+          await Promise.all(deletePronunciations.map(async (deletePronunciation) => {
+            const isAudioMp3 = isPronunciationMp3(deletePronunciation.audio);
+            const pronunciationId = getPronunciationId(deletePronunciation.audio);
+            await deleteAudioPronunciation(pronunciationId, isAudioMp3);
+          }));
+        }
+      }
       const updatedExampleSuggestion = assign(exampleSuggestion, data);
-      if (
+      const hasMismatchingAssociatedDefinitionSchemasLengths = (
         !updatedExampleSuggestion.associatedDefinitionsSchemas
         || !updatedExampleSuggestion.associatedDefinitionsSchemas.length
-      ) {
+      );
+      if (hasMismatchingAssociatedDefinitionSchemasLengths) {
         // updatedExampleSuggestion = await applyAssociatedDefinitionSchemas(updatedExampleSuggestion);
       }
       return updatedExampleSuggestion.save();
@@ -126,9 +148,10 @@ export const putExampleSuggestion = async (
   try {
     const { body: data, params: { id }, mongooseConnection } = req;
     const Word = mongooseConnection.model('Word', wordSchema);
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     await Promise.all(
       map(data.associatedWords, async (associatedWordId) => {
-        if (!(await Word.findById(associatedWordId))) {
+        if (!(await Word.findById(associatedWordId)) && !(await WordSuggestion.findById(associatedWordId))) {
           throw new Error('Example suggestion associated words can only contain Word ids');
         }
       }),
@@ -141,7 +164,7 @@ export const putExampleSuggestion = async (
   }
 };
 
-export const findExampleSuggestionById = (id: string, mongooseConnection)
+export const findExampleSuggestionById = (id: string, mongooseConnection: Connection)
 : Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   return (

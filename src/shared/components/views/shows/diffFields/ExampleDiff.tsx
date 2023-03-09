@@ -4,16 +4,20 @@ import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import DiffField from './DiffField';
+import ArrayDiff from './ArrayDiff';
+import ArrayDiffField from './ArrayDiffField';
 
 const ExampleDiff = ({
   value,
   index,
   diffRecord,
+  record,
   resource,
 } : {
   value?: ExampleClientData,
   index?: number,
   diffRecord: Record,
+  record: Record,
   resource: string,
 }): ReactElement => (
   <Box className="flex flex-col space-y-2">
@@ -39,11 +43,22 @@ const ExampleDiff = ({
         fallbackValue={value.nsibidi}
         renderNestedObject={(value) => <chakra.span className="akagu">{value}</chakra.span>}
       />
-      <ReactAudioPlayer
-        src={value.pronunciation}
-        style={{ height: '40px', width: '250px' }}
-        controls
-      />
+      <ArrayDiffField
+        recordField={`examples.${index}.pronunciations`}
+        record={record}
+      >
+        <ArrayDiff
+          diffRecord={diffRecord}
+          renderNestedObject={(pronunciation) => (
+            <ReactAudioPlayer
+              data-test="nested-examples-pronunciation"
+              src={pronunciation?.audio}
+              style={{ height: '40px', width: '250px' }}
+              controls
+            />
+          )}
+        />
+      </ArrayDiffField>
     </Box>
     <a
       className="link"

@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { ShowProps, useShowController } from 'react-admin';
+import { Record, ShowProps, useShowController } from 'react-admin';
 import {
   Box,
   Heading,
@@ -11,10 +11,11 @@ import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
-import Collection from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collections';
 import { getExample } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
-import ResolvedWord from 'src/shared/components/ResolvedWord';
+import ResolvedWord from 'src/shared/components/ResolvedWord/ResolvedWord';
+import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import DiffField from '../diffFields/DiffField';
 import {
   ShowDocumentStats,
@@ -23,12 +24,15 @@ import {
   Comments,
 } from '../../components';
 import { determineDate } from '../../utils';
+import ArrayDiffField from '../diffFields/ArrayDiffField';
+import ArrayDiff from '../diffFields/ArrayDiff';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
   const [, setOriginalExampleRecord] = useState({});
   const [diffRecord, setDiffRecord] = useState(null);
-  const { record, resource } = useShowController(props);
+  const { record, resource } = useShowController(props) as { record: Record, resource: Collections };
+  const isSuggestion = isResourceSuggestion(resource);
   const { permissions } = props;
   const {
     id,
@@ -36,7 +40,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     approvals,
     denials,
     merged,
-    pronunciation,
     igbo,
     english,
     meaning,
@@ -98,11 +101,10 @@ const ExampleShow = (props: ShowProps): ReactElement => {
         <Box className="flex flex-col-reverse lg:flex-row mt-1">
           <Box className="flex flex-col flex-auto justify-between items-start">
             <h3 className="text-xl text-gray-700">
-              {'Last Updated: '}
-              {determineDate(updatedAt)}
+              {`Last Updated: ${determineDate(updatedAt)}`}
             </h3>
             <EditDocumentIds
-              collection={Collection.EXAMPLES}
+              collection={Collections.EXAMPLES}
               originalId={originalExampleId}
               id={id}
               title="Parent Example Id:"
@@ -118,25 +120,22 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
               <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
-                <DiffField
-                  path="pronunciation"
-                  diffRecord={diffRecord}
-                  fallbackValue={pronunciation ? (
-                    <ReactAudioPlayer
-                      src={pronunciation}
-                      style={{ height: '40px', width: '250px' }}
-                      controls
-                    />
-                  ) : <span>No audio pronunciation</span>}
-                  renderNestedObject={() => (
-                    <ReactAudioPlayer
-                      src={pronunciation}
-                      style={{ height: '40px', width: '250px' }}
-                      controls
-                    />
-                  )}
-                />
+                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciations</Heading>
+                <ArrayDiffField
+                  recordField="pronunciations"
+                  record={record}
+                >
+                  <ArrayDiff
+                    diffRecord={diffRecord}
+                    renderNestedObject={(pronunciation) => (
+                      <ReactAudioPlayer
+                        src={pronunciation?.audio}
+                        style={{ height: '40px', width: '250px' }}
+                        controls
+                      />
+                    )}
+                  />
+                </ArrayDiffField>
               </Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">
                 Igbo
@@ -175,20 +174,20 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
               />
               <Box className="flex flex-col mt-5">
-                <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
+                <Heading fontWeight="bold" fontSize="lg" className="text-xl text-gray-600">Associated Words</Heading>
                 {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (
                   <Box className="flex flex-row items-center space-x-2">
                     <Text>{`${index + 1}. `}</Text>
-                    <ResolvedWord key={associatedWord} wordId={associatedWord} />
+                    <ResolvedWord key={associatedWord} wordId={associatedWord} isSuggestion={isSuggestion} />
                   </Box>
                 )) : <span className="text-gray-500 italic">No associated word Ids</span>}
               </Box>
-              {resource !== Collection.EXAMPLES ? (
+              {resource !== Collections.EXAMPLES ? (
                 <Comments editorsNotes={editorsNotes} userComments={userComments} />
               ) : null}
             </Box>
           </Box>
-          {resource !== Collection.EXAMPLES && (
+          {resource !== Collections.EXAMPLES && (
             <Box className="mb-10 lg:mb-0 flex flex-col items-end">
               <SourceField record={record} source="source" />
               <ShowDocumentStats
@@ -196,7 +195,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 denials={denials}
                 merged={merged}
                 author={author}
-                collection={Collection.EXAMPLES}
+                collection={Collections.EXAMPLES}
               />
             </Box>
           )}
