@@ -185,6 +185,7 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
   [key: string]: { $exists: boolean },
 } => ({
+  'pronunciation': { $and: [{ $ne: '' }, { $ne: null }] },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },
 });
