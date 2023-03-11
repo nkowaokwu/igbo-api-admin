@@ -61,9 +61,9 @@ const DiffField = ({
 
   const ValueLabel = ({ children } : { children: any }) => (
     typeof fallbackValue === 'boolean' ? (
-      <code className={`text-lg text-gray-800 ${className}`}>{children}</code>
+      <code className={`text-md text-gray-800 ${className}`}>{children}</code>
     ) : (
-      <h2 className={`text-xl text-gray-800 ${className}`} style={{ whiteSpace: 'pre-wrap' }}>{children}</h2>
+      <h2 className={`text-md text-gray-800 ${className}`} style={{ whiteSpace: 'pre-wrap' }}>{children}</h2>
     ));
 
   return diffFromPath ? (

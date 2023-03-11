@@ -130,7 +130,7 @@ const WordShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="bg-white shadow-sm p-10 mt-10">
+      <Box className="bg-white shadow-sm py-4 px-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}

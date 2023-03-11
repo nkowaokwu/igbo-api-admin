@@ -157,6 +157,8 @@ export interface Example extends Document<any>, LeanDocument<any> {
   associatedDefinitionsSchemas: string[],
   pronunciations: { audio: string, speaker: string }[],
   updatedAt: Date,
+  editorsNotes: string,
+  userComments: string,
 }
 
 export interface ExampleSuggestion extends Example, Suggestion {

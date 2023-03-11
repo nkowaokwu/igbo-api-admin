@@ -12,7 +12,6 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { DEFAULT_EXAMPLE_RECORD, DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import { Example, Word } from 'src/backend/controllers/utils/interfaces';
 import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
@@ -27,6 +26,7 @@ const AudioRecorder = ({
   formTitle,
   formTooltip,
   warningMessage,
+  index,
 }: {
   path: string,
   getFormValues: (key: string) => any,
@@ -36,12 +36,11 @@ const AudioRecorder = ({
   formTitle?: string,
   formTooltip?: string,
   warningMessage?: string,
+  index?: number
 }): ReactElement => {
   const originalRecord = record.originalWordId || record.originalExampleId
     ? originalRecordProp
-    : record?.associatedWords
-      ? DEFAULT_EXAMPLE_RECORD
-      : DEFAULT_WORD_RECORD;
+    : record;
   const pathLabel = path === 'headword'
     ? 'Standard Igbo'
     : path.startsWith('examples') // Handles path for nested examples
@@ -49,33 +48,42 @@ const AudioRecorder = ({
       : path;
   const valuePath = path.startsWith('dialects')
     ? `${path}.pronunciation`
-    : 'pronunciation';
+    : path.startsWith('pronunciations')
+      ? path
+      : 'pronunciation';
   const formValuePath = path.startsWith('dialects')
     ? `${path}.pronunciation`
-    : 'pronunciation';
+    : path.startsWith('pronunciations')
+      ? path
+      : 'pronunciation';
   const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording, recordingDuration] = useRecorder();
   const toast = useToast();
 
+  const cleanedFormValue = (formValue: string | { audio?: string }) => (
+    typeof formValue === 'string' ? formValue : formValue?.audio
+  );
+
   /* Resets the audio pronunciation to its original value */
   const resetRecording = () => {
     const pronunciationPath = valuePath;
-    const originalPronunciationValue = path.startsWith('dialects')
-      ? get(originalRecord, `${pronunciationPath}`)
-      : originalRecord.pronunciation;
-    setPronunciation(formValuePath, originalPronunciationValue);
-    setPronunciationValue(getFormValues(formValuePath));
+    const formValue = cleanedFormValue(getFormValues(formValuePath));
+    const originalPronunciationValue = get(originalRecord, `${pronunciationPath}`);
+    setPronunciation(formValuePath, originalPronunciationValue?.audio || originalPronunciationValue);
+    setPronunciationValue(formValue);
     toast({
       title: 'Reset Audio Pronunciation',
       description: 'The audio pronunciation for this slot has been reset to its original value',
       status: 'info',
-      duration: 9000,
+      duration: 4000,
       isClosable: true,
     });
   };
 
   const shouldRenderNewPronunciationLabel = () => {
-    const currentPronunciationPath = getFormValues(valuePath);
+    const formValue = cleanedFormValue(getFormValues(formValuePath));
+    // Handle objects that include the audio key
+    const currentPronunciationPath = formValue;
     return currentPronunciationPath && currentPronunciationPath.startsWith('data');
   };
 
@@ -100,8 +108,9 @@ const AudioRecorder = ({
 
   /* Grabbing the default pronunciation value for the word or example document */
   useEffect(() => {
-    if (has(record, 'pronunciation') && !pronunciationValue) {
-      setPronunciationValue(get(record, valuePath));
+    if ((has(record, 'pronunciations') || has(record, 'pronunciation')) && !pronunciationValue) {
+      const formValue = cleanedFormValue(get(record, valuePath));
+      setPronunciationValue(formValue);
     }
   }, [record]);
 
@@ -115,7 +124,7 @@ const AudioRecorder = ({
     const base64data = audioBlob;
     if (base64data) {
       setPronunciation(formValuePath, base64data);
-      setPronunciationValue(getFormValues(formValuePath));
+      setPronunciationValue(base64data);
     }
     if (base64data) {
       toast({
@@ -132,7 +141,7 @@ const AudioRecorder = ({
   return (
     <Box className="flex flex-col w-full my-2">
       <FormHeader
-        title={formTitle}
+        title={typeof index === 'number' ? `${index + 1}. ${formTitle}` : formTitle}
         tooltip={formTooltip}
       />
       <Box

@@ -199,8 +199,11 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   userInteractions: { $nin: [uid] },
 });
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
-  [key: string]: { $exists: boolean },
+  [key: string]: { $exists: boolean } | { $ne: boolean },
 } => ({
+  merged: null,
+  exampleForSuggestion: { $ne: true },
+  'pronunciations.0': { $exists: true },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },
 });

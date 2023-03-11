@@ -229,6 +229,17 @@ export default extendTheme({
         variant: '',
       },
     },
+    Table: {
+      parts: ['th', 'td'],
+      baseStyle: {
+        th: {
+          'padding-left': '0 !important',
+        },
+        td: {
+          'padding-left': '0 !important',
+        },
+      },
+    },
     Icon: {
       baseStyle: {
         ':hover': {

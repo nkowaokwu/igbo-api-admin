@@ -17,6 +17,7 @@ export const randomExampleSuggestionSchema = Joi.array().items(Joi.object().keys
     speaker: Joi.string().allow('').optional(),
   })),
   review: Joi.string().allow(...Object.values(ReviewActions)).optional(),
+  editorsNotes: Joi.string().allow('').optional(),
 }));
 
 export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {

@@ -131,21 +131,18 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
 
 /* Suggestion change styles */
 .addition-change {
-  @apply text-xl;
   @apply bg-green-100;
   @apply text-green-500;
   @apply px-3;
 }
 
 .deletion-change {
-  @apply text-xl;
   @apply bg-red-100;
   @apply text-red-500;
   @apply px-3;
 }
 
 .warning-change {
-  @apply text-xl;
   @apply bg-yellow-100;
   @apply text-yellow-500;
 }

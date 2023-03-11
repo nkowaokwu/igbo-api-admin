@@ -5,7 +5,6 @@ import {
   Heading,
   Skeleton,
   Text,
-  chakra,
 } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
@@ -16,7 +15,6 @@ import { getExample } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
 import ResolvedWord from 'src/shared/components/ResolvedWord/ResolvedWord';
 import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
-import DiffField from '../diffFields/DiffField';
 import {
   ShowDocumentStats,
   EditDocumentIds,
@@ -26,6 +24,7 @@ import {
 import { determineDate } from '../../utils';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
+import ExampleTableContainer from './ExampleTableContainer';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +88,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   return (
     <Skeleton isLoaded={!isLoading}>
 
-      <Box className="bg-white shadow-sm p-10 mt-10">
+      <Box className="bg-white shadow-sm py-4 px-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}
@@ -100,7 +99,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
         />
         <Box className="flex flex-col-reverse lg:flex-row mt-1">
           <Box className="flex flex-col flex-auto justify-between items-start">
-            <h3 className="text-xl text-gray-700">
+            <h3 className="text-gray-700">
               {`Last Updated: ${determineDate(updatedAt)}`}
             </h3>
             <EditDocumentIds
@@ -109,18 +108,20 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               id={id}
               title="Parent Example Id:"
             />
-            <Box>
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Sentence Style
-              </Heading>
-              <DiffField
-                path="style"
+            <Box
+              className="w-full flex flex-col lg:flex-row justify-between
+              items-start space-y-0 lg:space-y-0 lg:space-x-4"
+            >
+              <ExampleTableContainer
                 diffRecord={diffRecord}
-                fallbackValue={style}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                igbo={igbo}
+                english={english}
+                meaning={meaning}
+                nsibidi={nsibidi}
+                style={style}
               />
               <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciations</Heading>
+                <Heading fontSize="lg" className="text-gray-600">Audio Pronunciations</Heading>
                 <ArrayDiffField
                   recordField="pronunciations"
                   record={record}
@@ -136,56 +137,20 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                     )}
                   />
                 </ArrayDiffField>
+                <Box className="flex flex-col mt-5">
+                  <Heading fontWeight="bold" fontSize="lg" className="text-gray-600">Associated Words</Heading>
+                  {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (
+                    <Box className="flex flex-row items-center space-x-2">
+                      <Text>{`${index + 1}. `}</Text>
+                      <ResolvedWord key={associatedWord} wordId={associatedWord} isSuggestion={isSuggestion} />
+                    </Box>
+                  )) : <span className="text-gray-500 italic">No associated word Ids</span>}
+                </Box>
               </Box>
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Igbo
-              </Heading>
-              <DiffField
-                path="igbo"
-                diffRecord={diffRecord}
-                fallbackValue={igbo}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                English
-              </Heading>
-              <DiffField
-                path="english"
-                diffRecord={diffRecord}
-                fallbackValue={english}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Meaning
-              </Heading>
-              <DiffField
-                path="meaning"
-                diffRecord={diffRecord}
-                fallbackValue={meaning}
-                renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Nsịbịdị
-              </Heading>
-              <DiffField
-                path="nsibidi"
-                diffRecord={diffRecord}
-                fallbackValue={nsibidi}
-                renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
-              />
-              <Box className="flex flex-col mt-5">
-                <Heading fontWeight="bold" fontSize="lg" className="text-xl text-gray-600">Associated Words</Heading>
-                {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (
-                  <Box className="flex flex-row items-center space-x-2">
-                    <Text>{`${index + 1}. `}</Text>
-                    <ResolvedWord key={associatedWord} wordId={associatedWord} isSuggestion={isSuggestion} />
-                  </Box>
-                )) : <span className="text-gray-500 italic">No associated word Ids</span>}
-              </Box>
-              {resource !== Collections.EXAMPLES ? (
-                <Comments editorsNotes={editorsNotes} userComments={userComments} />
-              ) : null}
             </Box>
+            {resource !== Collections.EXAMPLES ? (
+              <Comments editorsNotes={editorsNotes} userComments={userComments} />
+            ) : null}
           </Box>
           {resource !== Collections.EXAMPLES && (
             <Box className="mb-10 lg:mb-0 flex flex-col items-end">

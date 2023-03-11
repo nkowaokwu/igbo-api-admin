@@ -7,11 +7,11 @@ const ProgressCircles = ({
   reviews,
   exampleIndex,
 } : {
-  reviews: ReviewActions[],
+  reviews: { editorsNotes: string, review: ReviewActions }[],
   exampleIndex: number,
 }) : ReactElement => (
   <Box display="flex" flexDirection="row" className="space-x-6" my="6">
-    {reviews.map((review, reviewIndex) => (
+    {reviews.map(({ review }, reviewIndex) => (
       <Box
         display="flex"
         flexDirection="column"

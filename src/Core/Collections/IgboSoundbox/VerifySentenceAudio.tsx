@@ -7,6 +7,7 @@ import {
   IconButton,
   Spinner,
   Text,
+  Textarea,
   Tooltip,
   useToast,
 } from '@chakra-ui/react';
@@ -14,6 +15,7 @@ import {
   ArrowBackIcon,
   ArrowForwardIcon,
   CheckIcon,
+  EditIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
 import { getRandomExampleSuggestionsToReview, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
@@ -27,8 +29,6 @@ import CardMessage from './constants/CardMessage';
 import CardMessageColor from './constants/CardMessageColor';
 import InteractionButton from './components/InteractionButton';
 
-// TODO: write frontend tests for navigating between different views
-
 const VerifySentenceAudio = ({
   setIsDirty,
   goHome,
@@ -37,7 +37,9 @@ const VerifySentenceAudio = ({
   goHome: () => void,
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
-  const [reviews, setReviews] = useState<ReviewActions[]>([]);
+  const [reviews, setReviews] = useState<{ editorsNotes: string, review: ReviewActions }[]>([]);
+  const [noteValue, setNoteValue] = useState('');
+  const [isAddNoteVisible, setIsAddNoteVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -47,7 +49,10 @@ const VerifySentenceAudio = ({
 
   const updateReviews = (action: ReviewActions) => {
     const updatedReviews = [...reviews];
-    updatedReviews[exampleIndex] = action;
+    if (!updatedReviews[exampleIndex]) {
+      updatedReviews[exampleIndex] = { editorsNotes: '', review: ReviewActions.SKIP };
+    };
+    updatedReviews[exampleIndex].review = action;
     setReviews(updatedReviews);
   };
 
@@ -69,6 +74,15 @@ const VerifySentenceAudio = ({
     setIsDirty(true);
   };
 
+  const handleAddNoteVisibility = () => {
+    setIsAddNoteVisible(!isAddNoteVisible);
+    setNoteValue(reviews[exampleIndex]?.editorsNotes);
+  };
+
+  const handleNoteValueChange = (e) => {
+    setNoteValue(e.target.value);
+  };
+
   const handleDeny = () => {
     updateReviews(ReviewActions.DENY);
     handleNext();
@@ -85,7 +99,7 @@ const VerifySentenceAudio = ({
     try {
       const payload = examples.map((example, exampleIndex) => ({
         id: example.id,
-        review: reviews[exampleIndex],
+        ...reviews[exampleIndex],
       }));
       setIsLoading(true);
       await putRandomExampleSuggestions(payload);
@@ -132,6 +146,24 @@ const VerifySentenceAudio = ({
       })();
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    const updatedReviews = [...reviews];
+    if (!updatedReviews[exampleIndex]) {
+      updatedReviews[exampleIndex] = { editorsNotes: '', review: ReviewActions.SKIP };
+    };
+    updatedReviews[exampleIndex].editorsNotes = isAddNoteVisible ? noteValue : '';
+    setReviews(updatedReviews);
+  }, [noteValue, isAddNoteVisible]);
+
+  useEffect(() => {
+    if (reviews[exampleIndex]?.editorsNotes) {
+      setIsAddNoteVisible(true);
+      setNoteValue(reviews[exampleIndex].editorsNotes);
+    } else {
+      setIsAddNoteVisible(false);
+    }
+  }, [exampleIndex]);
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
 
@@ -143,7 +175,9 @@ const VerifySentenceAudio = ({
       alignItems="center"
       className="space-y-4 py-6"
     >
-      <Heading as="h1" fontSize="2xl" color="gray.600">Listen to know if this sentence matches the audio</Heading>
+      <Heading as="h1" fontSize="2xl" color="gray.600">
+        Listen to know if this sentence matches all attached audio
+      </Heading>
       <Text fontFamily="Silka">The audio should be understandable Igbo</Text>
       <Box
         backgroundColor="gray.100"
@@ -163,14 +197,16 @@ const VerifySentenceAudio = ({
         <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}
         </Text>
-        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciation} canRecord={false} />
+        {examples[exampleIndex].pronunciations.map(({ audio }) => (
+          <SandboxAudioRecorder pronunciation={audio} canRecord={false} />
+        ))}
       </Box>
       <Text
         userSelect="none"
-        color={CardMessageColor[reviews[exampleIndex]]}
+        color={CardMessageColor[reviews[exampleIndex]?.review]}
         opacity={reviews[exampleIndex] ? 1 : 0}
       >
-        {CardMessage[reviews[exampleIndex]] || 'Nothing'}
+        {CardMessage[reviews[exampleIndex]?.review] || 'Nothing'}
       </Text>
       <Box className="w-full flex flex-row justify-center items-center space-x-4">
         <Tooltip label="You will go back to the previous sentence to review. You will not lose your progress.">
@@ -229,6 +265,13 @@ const VerifySentenceAudio = ({
           className="space-x-3"
         >
           <InteractionButton
+            onClick={handleAddNoteVisibility}
+            rightIcon={<EditIcon />}
+            ariaLabel="Add note"
+          >
+            Add Note
+          </InteractionButton>
+          <InteractionButton
             onClick={handleDeny}
             rightIcon={<SmallCloseIcon />}
             ariaLabel="Deny audio"
@@ -269,6 +312,12 @@ const VerifySentenceAudio = ({
             </Box>
           </Tooltip>
         </Box>
+        {isAddNoteVisible ? (
+          <Textarea
+            value={noteValue}
+            onChange={handleNoteValueChange}
+          />
+        ) : null}
       </Box>
     </Box>
   ) : noExamples ? (

@@ -26,6 +26,7 @@ export const getRandomExampleSuggestionsToReview = (
 export const putRandomExampleSuggestions = (rawData: {
   id: any,
   pronunciation?: string,
+  editorsNotes?: string,
   review?: ReviewActions,
 }[]): Promise<any> => {
   const data = rawData.map(({ pronunciation, ...rest }) => ({
