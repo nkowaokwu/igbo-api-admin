@@ -21,9 +21,9 @@ import Collection from 'src/shared/constants/Collections';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import { API_ROUTE, wordSuggestionData, exampleSuggestionData } from '../constants';
 
-firebase.initializeApp(useFirebaseConfig());
+// firebase.initializeApp(useFirebaseConfig());
 
-attachCustomCommands({ Cypress, cy, firebase });
+// attachCustomCommands({ Cypress, cy, firebase });
 
 Cypress.on('window:before:load', (window) => {
   // eslint-disable-next-line
@@ -47,8 +47,10 @@ Cypress.Commands.add('cleanLogin', (email: string, password: string) => {
   const loginEmail = email || 'admin@example.com';
   const loginPassword = 'password' || password;
   times(3, () => cy.clearLocalStorage());
-  cy.logout();
+  // cy.logout();
   cy.visit('/');
+  console.log(useFirebaseConfig());
+  // cy.login('123SOMEUID');
   cy.typeLogin(loginEmail, loginPassword);
 });
 

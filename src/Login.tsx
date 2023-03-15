@@ -7,7 +7,6 @@ import {
   EmailAuthProvider,
   FacebookAuthProvider,
 } from 'firebase/auth';
-import { useRedirect } from 'react-admin';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {
   Box,
@@ -15,7 +14,6 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
-import { hasTranscriberPermissions } from 'src/shared/utils/permissions';
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
 import LocalStorageKeys from './shared/constants/LocalStorageKeys';
@@ -34,7 +32,6 @@ const Login = (): ReactElement => {
   const [errorUponSubmitting, setErrorUponSubmitting] = useState(null);
   const handleCreateUserAccount = useCallable<any, EmptyResponse>('createUserAccount');
   const filledAuthForm = successfulCreateAccount || errorUponSubmitting;
-  const redirect = useRedirect();
 
   const handleRedirect = async (user) => {
     const idTokenResult = await user.getIdTokenResult();
@@ -48,12 +45,13 @@ const Login = (): ReactElement => {
     localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, idTokenResult.token);
     localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
     localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
-    const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    const redirectUrl = (
-      hasTranscriberPermissions({ role: userRole }, '/igboSoundbox')
-      || (rawRedirectUrl || '#/').replace('#/', '') || '/'
-    );
-    redirect(redirectUrl);
+    // const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
+    // const redirectPath = (
+    //   hasTranscriberPermissions({ role: userRole }, '/igboSoundbox')
+    //   || (rawRedirectUrl || '#/').replace('#/', '') || '/'
+    // );
+    window.location.reload();
+    // window.location.href = `${window.location.origin}/#${redirectPath}`;
   };
 
   const uiConfig = {
@@ -94,7 +92,6 @@ const Login = (): ReactElement => {
       if (!user) {
         return false;
       }
-      await handleRedirect(user);
       return false;
     });
   }, []);

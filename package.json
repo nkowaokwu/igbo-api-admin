@@ -16,7 +16,7 @@
     "build:cypress:dev": "yarn build:css && yarn build:server && yarn build:copy:html && yarn build:dictionaries",
     "build:dev": "yarn build:css && yarn build:server && yarn build:copy:html && yarn build:dictionaries",
     "functions:env": "node_modules/.bin/firebase functions:config:get > .runtimeconfig.json && shx cp ./.runtimeconfig.json ./functions",
-    "start:emulators": "node_modules/.bin/firebase emulators:start --only functions,firestore,hosting,pubsub",
+    "start:emulators": "node_modules/.bin/firebase emulators:start --only functions,firestore,hosting,pubsub,auth",
     "prebuild:dev": "node_modules/.bin/firebase functions:config:set runtime.env=\"development\" && yarn functions:env",
     "prebuild:cypress:dev": "node_modules/.bin/firebase functions:config:set runtime.env=\"cypress\" && yarn functions:env",
     "prebuild": "yarn clean:build && node_modules/.bin/firebase functions:config:set runtime.env=\"production\" && yarn functions:env",

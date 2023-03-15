@@ -16,7 +16,11 @@ export const MONGO_URI = config?.runtime?.env === 'cypress' || process.env.NODE_
 const serviceAccount = config?.runtime?.env === 'production' ? (() => {
   let localProductionServiceAccount;
   if (!productionServiceAccount?.project_id) {
-    localProductionServiceAccount = require('../../../prod-firebase-service-account.json'); // eslint-disable-line
+    try {
+      localProductionServiceAccount = require('../../../prod-firebase-service-account.json'); // eslint-disable-line
+    } catch (e) {
+      console.log('No prod file found');
+    }
   }
   return {
     projectId: productionServiceAccount?.project_id || localProductionServiceAccount.project_id,
@@ -28,7 +32,11 @@ const serviceAccount = config?.runtime?.env === 'production' ? (() => {
 })() : (() => {
   let localStagingServiceAccount;
   if (!stagingServiceAccount?.project_id) {
-    localStagingServiceAccount = require('../../../staging-firebase-service-account.json'); // eslint-disable-line
+    try {
+      localStagingServiceAccount = require('../../../staging-firebase-service-account.json'); // eslint-disable-line
+    } catch (e) {
+      console.log('No staging file found');
+    }
   }
   return {
     projectId: stagingServiceAccount?.project_id || localStagingServiceAccount.project_id,

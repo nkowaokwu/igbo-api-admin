@@ -10,23 +10,21 @@ import { sendNewUserNotification, sendUpdatedRoleNotification } from '../control
 const db = admin.firestore();
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.https.onCall(async (user) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   try {
     const role = {
-      role: process.env.NODE_ENV === 'production' && prodAdminEmailList.includes(user.email)
+      role: isProduction && prodAdminEmailList.includes(user.email)
         ? UserRoles.ADMIN
-        : process.env.NODE_ENV === 'production' && !prodAdminEmailList.includes(user.email)
+        : isProduction && !prodAdminEmailList.includes(user.email)
           ? UserRoles.USER
           // Creates admin, merger, and editor accounts while using auth emulator
-          : (
-            process.env.NODE_ENV !== 'production'
-            && (adminEmailList.includes(user.email) || user.email.startsWith('admin'))
-          )
+          : (!isProduction && (adminEmailList.includes(user.email) || user.email.startsWith('admin')))
             ? UserRoles.ADMIN
-            : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge')
+            : !isProduction && user.email.startsWith('merge')
               ? UserRoles.MERGER
-              : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor')
+              : !isProduction && user.email.startsWith('editor')
                 ? UserRoles.EDITOR
-                : process.env.NODE_ENV !== 'production' && user.email.startsWith('transcriber')
+                : !isProduction && user.email.startsWith('transcriber')
                   ? UserRoles.TRANSCRIBER
                   : UserRoles.USER,
     };

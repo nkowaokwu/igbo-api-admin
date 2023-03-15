@@ -84,15 +84,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
 
-  /* Insert page value into input whenever window location changes */
-  useEffect(() => {
-    const parsedHashQueries = queryString.parse(window.location.hash);
-    setJumpToPage(
-      // @ts-expect-error string
-      parsedHashQueries[`/${resource}?page`] || parsedHashQueries.page || '',
-    );
-  }, [window.location.hash]);
-
   /* Jumps to user-specified page */
   const handleJumpToPage = (e) => {
     e.preventDefault();
@@ -117,6 +108,16 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   }) => {
     setJumpToPage(target.value);
   };
+
+  /* Insert page value into input whenever window location changes */
+  useEffect(() => {
+    const parsedHashQueries = queryString.parse(window.location.hash);
+    setJumpToPage(
+      // @ts-expect-error string
+      parsedHashQueries[`/${resource}?page`] || parsedHashQueries.page || '',
+    );
+  }, [window.location.hash]);
+
   useEffect(() => {
     const updatedFilters: { wordClass?: string[] } = currentFilters.reduce(
       (allFilters, filter) => {
