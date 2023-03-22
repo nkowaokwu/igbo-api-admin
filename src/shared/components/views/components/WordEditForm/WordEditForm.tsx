@@ -303,7 +303,6 @@ const WordEditForm = ({
                 control={control}
                 setValue={setValue}
                 record={record}
-                resource={resource}
               />
             </Box>
           </Box>
@@ -348,7 +347,6 @@ const WordEditForm = ({
             control={control}
             setValue={setValue}
             record={record}
-            resource={resource}
           />
         ) : null}
       </Box>

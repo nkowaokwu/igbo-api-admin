@@ -20,7 +20,6 @@ import ResolvedWord from 'src/shared/components/ResolvedWord/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -301,7 +300,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   diffRecord={diffRecord}
                   recordField="stems"
                   renderNestedObject={(wordId) => (
-                    <ResolvedWord wordId={wordId} isSuggestion={isResourceSuggestion(resource)} />
+                    <ResolvedWord wordId={wordId} />
                   )}
                 />
               </ArrayDiffField>
@@ -317,7 +316,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   diffRecord={diffRecord}
                   recordField="relatedTerms"
                   renderNestedObject={(wordId) => (
-                    <ResolvedWord wordId={wordId} isSuggestion={isResourceSuggestion(resource)} />
+                    <ResolvedWord wordId={wordId} />
                   )}
                 />
               </ArrayDiffField>

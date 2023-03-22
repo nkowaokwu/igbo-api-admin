@@ -9,7 +9,7 @@ import { WarningIcon } from '@chakra-ui/icons';
 import { getWord, getWordSuggestion } from '../../API';
 import Collections from '../../constants/Collections';
 
-const ResolvedWord = ({ wordId, isSuggestion }: { wordId: string, isSuggestion: boolean }): ReactElement => {
+const ResolvedWord = ({ wordId, isSuggestion = false }: { wordId: string, isSuggestion?: boolean }): ReactElement => {
   const [resolvedWord, setResolvedWord] = useState(null);
   const [isLinked, setIsLinked] = useState(true);
   const wordResource = isSuggestion ? Collections.WORD_SUGGESTIONS : Collections.WORDS;

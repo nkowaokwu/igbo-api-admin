@@ -8,12 +8,10 @@ const Stems = (
   {
     stemIds,
     updateStems,
-    isSuggestion,
   }
   : {
     stemIds: string[],
     updateStems: (value: string[]) => void,
-    isSuggestion: boolean
   },
 ): ReactElement => {
   const [resolvedStems, setResolvedStems] = useState(null);
@@ -28,7 +26,7 @@ const Stems = (
        * to save the Word Suggestion, omitting the unwanted word.
        */
       const compactedResolvedStems = compact(await Promise.all(stemIds.map(async (stemId) => {
-        const word = await resolveWord(stemId, isSuggestion).catch(() => null);
+        const word = await resolveWord(stemId).catch(() => null);
         return word;
       })));
       setResolvedStems(compactedResolvedStems);

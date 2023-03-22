@@ -9,7 +9,6 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import { getWord } from 'src/shared/API';
-import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
 import RelatedTerms from './RelatedTerms';
@@ -21,7 +20,6 @@ const RelatedTermsForm = ({
   control,
   setValue,
   record,
-  resource,
 }: RelatedTermsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
@@ -93,7 +91,6 @@ const RelatedTermsForm = ({
       <RelatedTerms
         relatedTermIds={relatedTerms}
         updateRelatedTerms={updateRelatedTerms}
-        isSuggestion={isResourceSuggestion(resource)}
       />
       {errors.relatedTerms && (
         <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>

@@ -31,7 +31,7 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
     'exampleForSuggestion',
     'meaning',
     'nsibidi',
-    'pronunciation',
+    'pronunciations',
     'originalExampleId',
   ].join(' ');
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
@@ -197,7 +197,7 @@ export const assignExampleSuggestionToExampleData = async ({
   const Example = mongooseConnection.model('Example', exampleSchema);
 
   // Archiving examples
-  // 1. Get all word suggestion' nested example suggestions
+  // 1. Get all word suggestion's nested example suggestions
   const exampleSuggestions: Interfaces.ExampleSuggestion[] = (
     await ExampleSuggestion.find({ associatedWords: wordSuggestion.id.toString() })
   );
@@ -271,9 +271,27 @@ const deleteUneditedExampleSuggestions = async ({
   await Promise.all(Object.keys(existingExampleSuggestionIds).map(((id) => ExampleSuggestion.findByIdAndRemove(id))));
 };
 
+const createExampleData = async ({
+  example,
+  user,
+  suggestionDocId,
+} : {
+  example: Interfaces.ExampleClientData,
+  user: { uid: string },
+  suggestionDocId: string,
+}) => ({
+  ...example,
+  // If the example suggestion has an originalExampleId then it's not brand new and should
+  // not be considered as such by attributing the user.uid as the author
+  authorId: !example.originalExampleId ? user.uid : null,
+  exampleForSuggestion: true,
+  associatedWords: await generateAssociatedWords(example, suggestionDocId),
+  // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
+});
+
 /**
- * Handles either creating or updating nested Example Suggestions within
- * a Word Suggestion
+ * Handles either creating or updating nested Example Suggestions data
+ *  within a Word Suggestion
  * @returns Example Suggestion documents
  */
 export const updateNestedExampleSuggestions = async (
@@ -296,20 +314,12 @@ export const updateNestedExampleSuggestions = async (
   });
   const updatedExampleSuggestions = Promise.all(map(clientExamples, async (example) => {
     /**
-     * If the nested example client data doesn\'t have an
+     * If the nested example client data doesn't have an
      * id then a brand new Example Suggestion will be created
      * for the Word Suggestion
      */
     if (!example.id) {
-      const exampleData = {
-        ...example,
-        // If the example suggestion has an originalExampleId then it's not brand new and should
-        // not be considered as such by attributing the user.uid as the author
-        authorId: !example.originalExampleId ? user.uid : null,
-        exampleForSuggestion: true,
-        associatedWords: await generateAssociatedWords(example, suggestionDocId),
-        // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
-      };
+      const exampleData = await createExampleData({ example, user, suggestionDocId });
       const exampleSuggestion = await createExampleSuggestion(exampleData, mongooseConnection);
       return exampleSuggestion;
     }

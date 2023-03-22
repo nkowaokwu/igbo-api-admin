@@ -8,12 +8,10 @@ const RelatedTerms = (
   {
     relatedTermIds,
     updateRelatedTerms,
-    isSuggestion,
   }
   : {
     relatedTermIds: string[],
     updateRelatedTerms: (value: string[]) => void,
-    isSuggestion: boolean,
   },
 ): ReactElement => {
   const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
@@ -23,7 +21,7 @@ const RelatedTerms = (
     setIsLoadingRelatedTerms(true);
     try {
       const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
-        const word = await resolveWord(relatedTermId, isSuggestion).catch(() => null);
+        const word = await resolveWord(relatedTermId).catch(() => null);
         return word;
       })));
       setResolvedRelatedTerms(compactedResolvedRelatedTerms);

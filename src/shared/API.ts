@@ -79,7 +79,7 @@ export const getCorpus = async (id: string): Promise<any> => {
 /**
  * Resolves either a word or word suggestion document
  */
-export const resolveWord = async (wordId: string, isSuggestion: boolean): Promise<any> => {
+export const resolveWord = async (wordId: string, isSuggestion?: boolean): Promise<any> => {
   const resource = isSuggestion ? Collections.WORD_SUGGESTIONS : Collections.WORDS;
   const cachedWord = await IndexedDBAPI.getDocument({ resource, id: wordId });
   if (cachedWord) {

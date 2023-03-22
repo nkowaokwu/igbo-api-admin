@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { has, startCase } from 'lodash';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-import { useToast } from '@chakra-ui/react';
+import { Link, useToast } from '@chakra-ui/react';
 import { useRefresh } from 'react-admin';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ActionTypes from 'src/shared/constants/ActionTypes';
@@ -96,9 +96,9 @@ const Confirmation = ({
     const successDescription = action.hasLink ? (
       <span>
         {`${action.successMessage} `}
-        <a className="underline text-blue font-bold" href={`#/${newResource}/${id}/show`}>
+        <Link color="white" className="underline text-white font-bold" href={`#/${newResource}/${id}/show`}>
           View the updated document here
-        </a>
+        </Link>
       </span>
     ) : action.successMessage;
     return successDescription;

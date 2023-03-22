@@ -9,7 +9,6 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import { getWord } from 'src/shared/API';
-import isResourceSuggestion from 'src/shared/utils/isResourceSuggestion';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 import Stems from './Stems';
@@ -21,7 +20,6 @@ const StemsForm = ({
   control,
   setValue,
   record,
-  resource,
 } : StemsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
@@ -90,11 +88,7 @@ const StemsForm = ({
           />
         </Tooltip>
       </Box>
-      <Stems
-        stemIds={stems}
-        updateStems={updateStems}
-        isSuggestion={isResourceSuggestion(resource)}
-      />
+      <Stems stemIds={stems} updateStems={updateStems} />
       {errors.stems && (
         <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>
       )}
