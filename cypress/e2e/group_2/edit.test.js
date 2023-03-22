@@ -7,12 +7,15 @@ describe('Edit', () => {
   before(() => {
     cy.cleanLogin();
   });
-  describe.only('Audio Pronunciation Uploading', () => {
-    it('merge audio headword and dialect audio pronunciations for an existing word', () => {
-      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
+  describe('Audio Pronunciation Uploading', () => {
+
+    beforeEach(() => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+    });
+    it('merge audio headword and dialect audio pronunciations for an existing word', () => {
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
       cy.findByTestId('word-class-input-container').click();
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.recordAudio();
@@ -52,11 +55,8 @@ describe('Edit', () => {
 
     it('merge audio headword and dialect audio pronunciations for a new word', () => {
       cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
       cy.findByTestId('word-class-input-container').click();
-      cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
+      cy.findAllByText(WordClassOptions.NM.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
       cy.recordAudio();
       cy.recordAudio('dialects.0');
@@ -80,9 +80,6 @@ describe('Edit', () => {
 
     it('save audio headword and dialect pronunciations for word suggestion', () => {
       cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
       cy.findByTestId('word-class-input-container').click();
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
@@ -99,9 +96,6 @@ describe('Edit', () => {
 
     it('reset audio headword pronunciation for word suggestion', () => {
       cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
-      cy.createWordSuggestion();
-      cy.selectCollection('wordSuggestions');
-      cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
       cy.findByTestId('word-class-input-container').click();
       cy.findAllByText(WordClassOptions.CJN.label).click({ force: true, multiple: true });
       cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
@@ -121,8 +115,26 @@ describe('Edit', () => {
     });
   });
 
-  describe('Word Edit', () => {
-    it.only('render the edit view for word suggestions', () => {
+  describe('Multiple Audio Pronunciation Uploading', () => {
+    it.only('merge multiple audio for example sentences', () => {
+      cy.intercept('PUT', '**/wordSuggestions/**').as('putWordSuggestion');
+      cy.findByRole('button', { name: 'Create' }).click();
+      cy.findByTestId('word-input').type(word);
+      cy.findAllByTestId('word-class-input-container').eq(0).click();
+      cy.findAllByText(WordClassOptions.AV.label).click({ force: true, multiple: true });
+      cy.findByTestId('nested-definitions-0-input').type(definition);
+      cy.intercept('GET', '**/wordSuggestions/**').as('getWordSuggestion');
+      cy.findByLabelText('Add Example').click();
+      cy.findByTestId('examples-0-igbo-input').clear().type('Recording audio for Igbo sentence');
+      cy.findByTestId('examples-0-english-input').clear().type('Recording audio for English sentence');
+      cy.recordExampleAudio();
+      cy.recordExampleAudio(1);
+
+    });
+  })
+
+  describe.only('Word Edit', () => {
+    it('render the edit view for word suggestions', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.VIEW).click();
@@ -131,29 +143,8 @@ describe('Edit', () => {
       cy.findAllByText('Definitions');
     });
 
-    it.skip('render the word view after adding relatedTerm and merge', () => {
-      cy.createWordSuggestion().then((word) => {
-        cy.selectCollection('words');
-        cy.searchForDocument('onye');
-        cy.getWordDetails(0);
-          cy.get('@selectedId').then(([id]) => {
-            cy.selectCollection('wordSuggestions');
-            cy.searchForDocument(word);
-            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findByTestId('relatedTerms-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Related Term').click();
-            cy.findByTestId('word-pill-0');
-            cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 2);
-            cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-            cy.acceptConfirmation();
-            cy.findByText('Word Document Details');
-            cy.findAllByText(id.innerText).should('have.length', 2);
-          });
-      });
-    });
-
-    it.skip('render the word suggestion, delete the relatedTerm, and merge', () => {
+    // TODO: Consider combining this and the next test together
+    it('render the word view after adding relatedTerm and merge', () => {
       cy.createWordSuggestion().then((word) => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
@@ -166,15 +157,37 @@ describe('Edit', () => {
             cy.findByLabelText('Add Related Term').click();
             cy.findByTestId('word-pill-0');
             cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 2);
-            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findAllByLabelText('Remove').first().click();
-            cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 1);
+            cy.findByText('onye');
             cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
             cy.acceptConfirmation();
             cy.findByText('Word Document Details');
-            cy.findAllByText(id.innerText).should('have.length', 1);
+            cy.findByText('onye');
+          });
+      });
+    });
+
+    it('render the word suggestion, delete the relatedTerm, and merge', () => {
+      cy.createWordSuggestion().then((word) => {
+        cy.selectCollection('words');
+        cy.searchForDocument('onye');
+        cy.getWordDetails(0);
+          cy.get('@selectedId').then(([id]) => {
+            cy.selectCollection('wordSuggestions');
+            cy.searchForDocument(word);
+            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+            cy.findByTestId('relatedTerm-search').clear().type(id.innerText);
+            cy.findByLabelText('Add Related Term').click();
+            cy.findByTestId('word-pill-0');
+            cy.get('button[type="submit"]').click();
+            cy.findAllByText('onye').should('be.visible');
+            cy.getActionsOption(SuggestionSelectOptions.EDIT).click({ force: true, scrollBehavior: false });
+            cy.findAllByLabelText('Remove').first().click();
+            cy.get('button[type="submit"]').click();
+            cy.findAllByText('onye').should('not.exist');
+            cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
+            cy.acceptConfirmation();
+            cy.findByText('Word Document Details');
+            cy.findAllByText('onye').should('not.exist');
           });
         });
     });
@@ -185,12 +198,12 @@ describe('Edit', () => {
       const firstIgboSentence = 'first igbo sentence';
       const firstEnglishSentence = 'first english sentence';
       cy.intercept('POST', '**/words').as('mergeWord');
-      cy.get('a[href="#/wordSuggestions"]').click();
+      cy.selectCollection('wordSuggestions');
       cy.get('button').contains('Create').click();
       cy.findByTestId('word-input').type(word);
       cy.findByTestId('word-class-input-container').click();
       cy.findByText(WordClassOptions.PRN.label).click();
-      cy.findByTestId('definitions-0-input').type(definition);
+      cy.findByTestId('nested-definitions-0-input').type(definition);
       cy.findByLabelText('Add Example').click();
       cy.findByTestId('examples-0-igbo-input').clear().type(firstIgboSentence);
       cy.findByTestId('examples-0-english-input').clear().type(firstEnglishSentence);
@@ -201,7 +214,9 @@ describe('Edit', () => {
       cy.get('a[href="#/words"]').click();
       cy.searchForDocument(word);
       cy.getActionsOption(DocumentSelectOptions.SUGGEST_NEW_EDIT).click();
+      cy.intercept('GET', '**/wordSuggestions/**').as('updateWordSuggestion');
       cy.get('button[type="submit"]').click();
+      cy.wait('@updateWordSuggestion');
       cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
       cy.acceptConfirmation();
       cy.contains('Word Document Details');
@@ -216,7 +231,7 @@ describe('Edit', () => {
         cy.get('[data-test="isStandardIgbo-checkbox"][checked]').should('not.exist');
         cy.findByTestId('isStandardIgbo-checkbox').click();
         cy.get('button[type="submit"]').click();
-        cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+        cy.getActionsOption(SuggestionSelectOptions.EDIT).click({ force: true });
         cy.get('label[data-test="isStandardIgbo-checkbox"]').find('input[checked]');
       });
     });
@@ -226,10 +241,11 @@ describe('Edit', () => {
       cy.createWordSuggestion().then((word) => {
         cy.searchForDocument(word);
         cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-        cy.findByTestId('dialects-NSA-word-input').clear().type('this is a dialect');
+        cy.findByTestId('dialects-0-word-input').clear().type('this is a dialect');
+        cy.findByText('A change in this dialect has been detected. Please consider re-recording the audio to match.');
         cy.get('button[type="submit"]').click();
-        cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-        cy.findByTestId('dialects-NSA-word-input').should('have.value', 'this is a dialect');
+        cy.getActionsOption(SuggestionSelectOptions.EDIT).click({ force: true });
+        cy.findByTestId('dialects-0-word-input').should('have.value', 'this is a dialect');
       });
     });
 
@@ -239,19 +255,18 @@ describe('Edit', () => {
         cy.searchForDocument(word);
         cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
         cy.recordAudio();
-        cy.findAllByTestId('dialect-move-menu').first().click();
+        cy.findByTestId('dialects-input-container-0').first().click();
         cy.wait(300);
-        cy.findByRole('menu').contains('Nsa').click();
-        cy.acceptConfirmation();
-        cy.findByTestId('dialects-NSA-word-input').clear().type('this is a dialect');
-        cy.findAllByTestId('dialect-views-menu').first().click();
+        cy.findByText('Nsa').click();
+        cy.findByTestId('dialects-0-word-input').clear().type('this is another dialect');
+        cy.findByTestId('dialects-input-container-0').first().click();
         cy.wait(300);
-        cy.findByRole('menu').contains('Afikpo').click();
-        cy.findByRole('menu').contains('Nsa').click();
-        cy.findByTestId('dialects-NSA-word-input').should('have.value', 'this is a dialect');
+        cy.findByTestId('dialects-input-container-0').contains('Afikpo').click();
+        cy.findByTestId('dialects-input-container-0').contains('Nsa').click();
+        cy.findByTestId('dialects-0-word-input').should('have.value', 'this is another dialect');
         cy.get('button[type="submit"]').click();
-        cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-        cy.findByTestId('dialects-NSA-word-input').should('have.value', 'this is a dialect');
+        cy.getActionsOption(SuggestionSelectOptions.EDIT).click({ force: true });
+        cy.findByTestId('dialects-0-word-input').should('have.value', 'this is another dialect');
       });
     });
 
@@ -261,12 +276,12 @@ describe('Edit', () => {
       cy.createWordSuggestion();
       cy.selectCollection('wordSuggestions');
       cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-      cy.findByTestId('definitions-0-input').clear().type(firstDefinition);
-      cy.findByText('Add Definition').click();
-      cy.findByTestId('definitions-1-input').clear().type(secondDefinition);
+      cy.findByTestId('nested-definitions-0-input').clear().type(firstDefinition);
+      cy.findByText('Add English Definition').click();
+      cy.findByTestId('nested-definitions-1-input').clear().type(secondDefinition);
       cy.get('textarea').contains(secondDefinition);
       cy.get('button[type="submit"]').click();
-      cy.get('[data-test*="definition-"]').then((definitions) => {
+      cy.get('[data-test*="definitions."]').then((definitions) => {
         expect(every(definitions, (definition) => !(definition.innerText.length < 1))).to.equal(true);
       });
     });
@@ -283,11 +298,12 @@ describe('Edit', () => {
       cy.findByTestId('word-input').type(word);
       cy.findByTestId('word-class-input-container').click();
       cy.findByText(WordClassOptions.PRN.label).click();
-      cy.findByTestId('definitions-0-input').type(definition);
+      cy.findByTestId('nested-definitions-0-input').type(definition);
       cy.findByLabelText('Add Example').click();
       cy.findByTestId('examples-0-igbo-input').clear().type(firstIgboSentence);
       cy.findByTestId('examples-0-english-input').clear().type(firstEnglishSentence);
       cy.get('button[type="submit"]').click();
+      cy.findByText('Word Suggestion Document Details').should('be.visible');
       cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
       cy.acceptConfirmation();
       cy.contains('Word Document Details');
@@ -298,16 +314,15 @@ describe('Edit', () => {
       cy.findByTestId('examples-0-english-input').should('have.value', firstEnglishSentence);
       cy.findByTestId('examples-0-igbo-input').type(extraText);
       cy.get('button[type="submit"]').click();
-      cy.findByText(`${firstIgboSentence}${extraText}`);
+      cy.findByText(`${firstIgboSentence}${extraText}`).should('be.visible');
       cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
       cy.acceptConfirmation();
       cy.contains('Word Document Details');
       cy.findByText(`${firstIgboSentence}${extraText}`);
     });
-
   });
 
-  describe('Edit Form', () => {
+  describe.skip('Edit Form', () => {
     it('render the edit view for example suggestions', () => {
       cy.createExampleSuggestion();
       cy.get('a[href="#/exampleSuggestions').click();

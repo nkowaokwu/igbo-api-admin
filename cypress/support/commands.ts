@@ -279,14 +279,14 @@ Cypress.Commands.add('getExampleDetails', (position: number = 1) => {
 
 /* Grabs the editor's action dropdown for the first document in the list */
 // Alternative query: https://github.com/cypress-io/cypress/issues/549#issuecomment-523399928
-Cypress.Commands.add('getActionsOption', { scrollBehavior: false }, (optionText: string, position: number = 0) => {
-  cy.findAllByTestId('actions-menu').should('be.visible').as('editorActions');
+Cypress.Commands.add('getActionsOption', (optionText: string, position: number = 0) => {
+  cy.findAllByTestId('actions-menu').as('editorActions');
   cy.get('@editorActions')
     .eq(position)
     .scrollIntoView()
-    .click({ force: true  });
+    .click({ force: true, scrollBehavior: false });
+  cy.wait(1000);
   cy.findByRole('menuitem', { name: optionText }).as('menuItem');
-  cy.wait(500);
   return cy.get('@menuItem');
 });
 
@@ -309,16 +309,26 @@ Cypress.Commands.add('checkForErrorMessage', () => {
 
 /* Records a new audio recording for a specified headword or dialect */
 Cypress.Commands.add('recordAudio', (dialect: string = '') => {
-  cy.findByTestId(`start-recording-button${dialect ? `-${dialect}` : ''}`).click();
-  cy.wait(1000);
-  cy.findByTestId(`stop-recording-button${dialect ? `-${dialect}` : ''}`).click();
+  cy.wait(500); // Wait for record button to be available
+  cy.findByTestId(`start-recording-button${dialect ? `-${dialect}` : ''}`).should('be.visible').click();
+  cy.wait(500); // Wait for stop record button to be available
+  cy.findByTestId(`stop-recording-button${dialect ? `-${dialect}` : ''}`).should('be.visible').click();
 });
+
+/* Records a new audio recording for a specific nested example sentence */
+Cypress.Commands.add('recordExampleAudio', (position: number = 0) => {
+  cy.findAllByText('Add sentence recording').eq(position).click();
+  cy.wait(500); // Wait for record button to be available
+  cy.findByTestId(`start-recording-button-pronunciations.${position}`).should('be.visible').click();
+  cy.wait(500); // Wait for the stop record button to be available
+  cy.findByTestId(`stop-recording-button-pronunciations.${position}`).should('be.visible').click();
+})
 
 /* Uses the search bar to search for a selected collection document */
 Cypress.Commands.add('searchForDocument', (keyword: string) => {
   cy.intercept('GET', '**/**?filter=**').as('searchingDocuments');
   cy.findByTestId('search-bar').then(([searchBar]) => {
-    cy.wait(2000);
+    cy.wait(500);
     if (!keyword) {
       cy.wrap(searchBar).clear();
       cy.wait(500);
@@ -327,7 +337,7 @@ Cypress.Commands.add('searchForDocument', (keyword: string) => {
       cy.wait('@searchingDocuments');
       cy.wait(500);
       // Looks for the result document in the list
-      cy.get('td').find('span').contains(keyword);
+      cy.get('td').find('p').contains(keyword);
     }
   });
 });

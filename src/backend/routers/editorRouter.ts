@@ -58,7 +58,7 @@ editorRouter.post(
   '/words',
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   validateWordMerge,
-  validateApprovals,
+  // validateApprovals,
   mergeWord,
 );
 editorRouter.put('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putWord);

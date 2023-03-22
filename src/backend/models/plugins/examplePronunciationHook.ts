@@ -54,3 +54,16 @@ export const uploadExamplePronunciation = (schema: Schema<Interfaces.ExampleSugg
     }
   });
 };
+
+// TODO: handle logic of deleting example pronunciations
+// TODO: make sure that recording and resetting audio for example suggestions still works in WordEditForm
+// TODO: make sure that recording and resetting audio for word suggestions still works in WordEditForm
+// TODO: make sure that existing audio is loaded correctly for examples in WordEditForm
+// TODO: make sure that headword audio and dialectal variations still exist and can be reset and recorded
+// TODO: update example show view with multiple audio
+// TODO: update word show view with multiple audio for examples
+// TODO: update word panel to show multiple example sentences
+// TODO: update Igbo Soundbox logic to handle adding multiple audio
+// TODO: make sure that word suggestions are getting resolved within example suggestions
+// TODO: make sure that no data is lost when updating an example suggestion with resolvable data (related terms, word stems, and associated words)
+// TODO: make sure that combining words works for stems, relatedTerms, variations, example sentences
