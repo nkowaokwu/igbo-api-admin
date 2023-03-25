@@ -96,11 +96,13 @@ export const corpusSuggestionId = new ObjectId();
 export const corpusSuggestionData = {
   title: 'corpus title',
   body: 'corpus body',
+  annotations: [],
 };
 
 export const updatedCorpusSuggestionData = {
   title: 'updated corpus title',
   body: 'updated corpus body',
+  annotations: [],
 };
 
 export const malformedCorpusSuggestionData = {

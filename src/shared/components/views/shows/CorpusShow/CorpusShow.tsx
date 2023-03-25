@@ -16,8 +16,6 @@ import {
 } from '../../components';
 import { determineDate } from '../../utils';
 import DiffField from '../diffFields/DiffField';
-import ArrayDiffField from '../diffFields/ArrayDiffField';
-import ArrayDiff from '../diffFields/ArrayDiff';
 
 const DIFF_FILTER_KEYS = [
   'id',
@@ -39,7 +37,6 @@ const DIFF_FILTER_KEYS = [
 
 const CorpusShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [originalWordRecord, setOriginalWordRecord] = useState<any>({});
   const [diffRecord, setDiffRecord] = useState(null);
   const showProps = useShowController(props);
   const { resource } = showProps;
@@ -52,7 +49,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
     id,
     author,
     title,
-    body,
     editorsNotes,
     userComments,
     merged,
@@ -77,7 +73,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
           console.log(err);
         }) : null;
         const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
-        setOriginalWordRecord(originalWord);
         setDiffRecord(differenceRecord);
       } catch (err) {
         console.log(err);
@@ -167,14 +162,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                   )}
                 />
               </Box>
-              <Box className="flex flex-col" fontFamily="monospace">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Transcript</Heading>
-                <DiffField
-                  path="body"
-                  diffRecord={diffRecord}
-                  fallbackValue={body}
-                />
-              </Box>
             </Box>
             {resource !== Collection.CORPORA ? (
               <Comments editorsNotes={editorsNotes} userComments={userComments} showUserComments={false} />
@@ -193,24 +180,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
                 />
               </>
             )}
-            <Box className="flex flex-col w-full justify-between">
-              <Box className="flex flex-col space-y-6 mt-5">
-                <Box className="flex flex-col mt-5">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">Tags</Heading>
-                  {/* @ts-ignore */}
-                  <ArrayDiffField
-                    recordField="tags"
-                    recordFieldSingular="tag"
-                    record={record}
-                    // @ts-ignore
-                    originalWordRecord={originalWordRecord}
-                  >
-                    {/* @ts-ignore */}
-                    <ArrayDiff diffRecord={diffRecord} recordField="tags" />
-                  </ArrayDiffField>
-                </Box>
-              </Box>
-            </Box>
           </Box>
         </Box>
       </Box>

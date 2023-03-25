@@ -21,6 +21,7 @@ window.scrollTo = noop;
 jest.mock('firebase');
 jest.mock('firebase/auth');
 jest.mock('@chakra-ui/react');
+jest.mock('@heartexlabs/label-studio');
 jest.mock('react-admin');
 jest.mock('src/shared/API');
 jest.mock('src/shared/DataCollectionAPI');

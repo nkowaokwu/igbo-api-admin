@@ -42,7 +42,7 @@ const FilePicker = ({
   title?: string,
   accept?: string,
   onFileSelect: (value: any) => void,
-  seekTime: number,
+  seekTime?: number,
   register: any,
   name: string,
   errors: any,

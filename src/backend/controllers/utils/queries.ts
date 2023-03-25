@@ -173,12 +173,15 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   igbo: { $exists: boolean, $type: string },
   $expr: { $gt: ({ $strLenCP: string } | number)[] },
   pronunciation: string,
+  // type: SentenceType,
   merged: null,
   userInteractions: { $nin: [string] },
 } => ({
   igbo: { $exists: true, $type: 'string' },
-  $expr: { $gt: [{ $strLenCP: '$igbo' }, 10] },
+  $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
   pronunciation: '',
+  // TODO: use type when bulk uploading is getting used
+  // type: SentenceType.DATA_COLLECTION,
   merged: null,
   userInteractions: { $nin: [uid] },
 });

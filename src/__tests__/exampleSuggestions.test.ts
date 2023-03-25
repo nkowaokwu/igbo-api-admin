@@ -345,7 +345,10 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should approve, deny, and skip example suggestions', async () => {
       times(5, async () => {
-        const exampleRes = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
+        const exampleRes = await suggestNewExample(
+          { ...exampleSuggestionData, igbo: uuid() },
+          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+        );
         expect(exampleRes.body.approvals).toHaveLength(0);
         expect(exampleRes.body.denials).toHaveLength(0);
       });
@@ -360,6 +363,7 @@ describe('MongoDB Example Suggestions', () => {
         }
         return { id, review: ReviewActions.SKIP };
       });
+      console.log(randomExampleSuggestionsRes.body);
       const updatedRandomExampleSuggestionRes = await putRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(updatedRandomExampleSuggestionRes.body.map(async (randomExampleSuggestionId, index) => {

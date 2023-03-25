@@ -23,6 +23,7 @@ import EditToolbar from './toolbars/EditToolbar';
 import ListActions from './actions/ListActions';
 import Pagination from './toolbars/Pagination';
 import Select from './Select';
+import LabelStudioReact from './LabelStudioReact';
 import {
   CorpusShow,
   ExampleShow,
@@ -59,6 +60,7 @@ export {
   ListActions,
   Pagination,
   Select,
+  LabelStudioReact,
   CorpusShow,
   ExampleShow,
   UserShow,
