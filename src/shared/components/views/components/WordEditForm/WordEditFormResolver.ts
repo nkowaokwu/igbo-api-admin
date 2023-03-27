@@ -48,6 +48,7 @@ const schema = yup.object().shape({
   relatedTerms: yup.array().min(0).of(yup.string()),
   pronunciation: yup.string().optional(),
   twitterPollId: yup.string().optional(),
+  frequency: yup.number().min(1).max(5),
 });
 
 const resolver = (): any => ({
