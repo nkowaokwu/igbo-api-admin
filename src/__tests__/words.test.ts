@@ -50,6 +50,7 @@ describe('MongoDB Words', () => {
       expect(result.status).toEqual(200);
       expect(result.body.id).not.toEqual(undefined);
       expect(result.body.authorId).toEqual(undefined);
+      expect(result.body.frequency).toEqual(3);
       const updatedWordRes = await getWord(result.body.id);
       expect(updatedWordRes.status).toEqual(200);
       const wordRes = await getWordSuggestion(res.body.id);
