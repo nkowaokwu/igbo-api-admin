@@ -38,6 +38,7 @@ describe('MongoDB Word Suggestions', () => {
       const res = await suggestNewWord(wordSuggestionData);
       expect(res.status).toEqual(200);
       expect(res.body.id).not.toEqual(undefined);
+      expect(res.body.frequency).toEqual(2);
     });
 
     it('should save submitted word suggestion with a nested example suggestion', async () => {

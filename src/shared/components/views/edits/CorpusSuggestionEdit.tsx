@@ -36,7 +36,7 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
   setOnFailure(() => {});
 
   return record ? (
-    <Box className="bg-white shadow-sm p-10 mt-10">
+    <Box className="bg-white shadow-sm lg:px-10 mt-10">
       <EditDocumentTopBar
         record={record}
         resource={resource}

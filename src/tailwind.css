@@ -99,6 +99,15 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
   z-index: 0;
 }
 
+#label-studio div[class*="editor--"] {
+  width: auto !important;
+}
+
+.lsf-topbar__group:first-child {
+  visibility: hidden;
+  position: absolute;
+}
+
 .TopToolbar {
   justify-content: space-between !important;
   padding-top: 16px !important;
@@ -341,6 +350,11 @@ input#word, input#igbo {
 @media (min-width: 1024px) {
   html {
     width: 100vw;
+  }
+
+  .lsf-topbar__group:first-child {
+    visibility: visible;
+    position: relative;
   }
 
   .form-buttons-container {

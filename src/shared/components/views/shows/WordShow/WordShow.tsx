@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
+import { get } from 'lodash';
 import { ShowProps, useShowController } from 'react-admin';
 import {
   Box,
@@ -365,6 +366,14 @@ const WordShow = (props: ShowProps): ReactElement => {
                   >
                     <ArrayDiff diffRecord={diffRecord} recordField="tags" />
                   </ArrayDiffField>
+                </Box>
+                <Box className="flex flex-col mt-5">
+                  <Heading fontSize="lg" className="text-xl text-gray-600">Word Frequency</Heading>
+                  <DiffField
+                    path="frequency"
+                    diffRecord={diffRecord}
+                    fallbackValue={get(record, 'frequency') || 1}
+                  />
                 </Box>
                 <Box>
                   <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Dialects</Heading>

@@ -36,6 +36,7 @@ import StemsForm from './components/StemsForm';
 import RelatedTermsForm from './components/RelatedTermsForm';
 import HeadwordForm from './components/HeadwordForm';
 import TagsForm from './components/TagsForm';
+import FrequencyForm from './components/FrequencyForm';
 import TensesForm from './components/TensesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
@@ -78,6 +79,7 @@ const WordEditForm = ({
         ...finalAttributes,
         [attribute.value]: false,
       }), {}),
+      frequency: record?.frequency,
     },
     ...WordEditFormResolver(),
   });
@@ -264,6 +266,11 @@ const WordEditForm = ({
               onChange={handleWarningMessage}
             />
             <TagsForm
+              errors={errors}
+              control={control}
+              record={record}
+            />
+            <FrequencyForm
               errors={errors}
               control={control}
               record={record}

@@ -14,6 +14,7 @@ export const wordSuggestionData = {
   dialects: [],
   wordPronunciation: '',
   conceptualWord: '',
+  frequency: 2,
 };
 
 export const wordSuggestionApprovedData = {
@@ -40,6 +41,7 @@ export const updatedWordSuggestionData = {
     wordClass: WordClass.ADJ.value,
     definitions: ['first', 'second'],
   }],
+  frequency: 3,
 };
 
 export const malformedWordData = {

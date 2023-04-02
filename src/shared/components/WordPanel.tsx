@@ -119,6 +119,12 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
             </Box>
           )) : <Text className="text-gray-500 italic">No tags</Text>}
         </Box>
+        <Box>
+          <Text fontSize="lg" className="font-bold">Tags</Text>
+          {get(record, 'frequency') ? (
+            <Text>{record.frequency}</Text>
+          ) : <Text className="text-gray-500 italic">No word frequency</Text>}
+        </Box>
       </Box>
       <Box>
         <Box>

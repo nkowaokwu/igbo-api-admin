@@ -48,7 +48,7 @@ export const wordDataSchema = Joi.object().keys({
     ...finalSchema,
     [value]: Joi.string().allow('').optional(),
   }), {})).optional(),
-  frequency: Joi.number().optional(),
+  frequency: Joi.number().min(1).max(5).optional(),
   variations: Joi.array().min(0).items(Joi.string()),
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),
