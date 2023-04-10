@@ -1,4 +1,4 @@
-import React, { memo, ReactElement, useMemo } from 'react';
+import React, { memo, ReactElement, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import {
   AdminContext,
@@ -11,6 +11,7 @@ import {
   Layout,
   Error,
   NotFound,
+  Loading,
 } from 'src/Core';
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
@@ -19,8 +20,8 @@ import { getResourceObjects } from './Resources';
 import Theme from './Theme';
 
 const Resources = memo(() => {
-  const { permissions } = usePermissions();
-  const memoizedResources = useMemo(() => getResourceObjects(permissions).map((resource) => (
+  const [permissions, setPermissions] = useState(usePermissions());
+  const resources = getResourceObjects(permissions).map((resource) => (
     <Resource
       name={resource.name}
       options={resource.options}
@@ -31,16 +32,17 @@ const Resources = memo(() => {
       create={resource.create}
       icon={resource.icon}
     />
-  )), [permissions]);
+  ));
 
   return (
     <AdminUI
       layout={(props) => <Layout {...props} error={Error} />}
       dashboard={Dashboard}
       loginPage={Login}
+      loading={() => <Loading setPermissions={setPermissions} />}
       theme={Theme}
     >
-      {memoizedResources}
+      {resources}
     </AdminUI>
   );
 }, () => true);
