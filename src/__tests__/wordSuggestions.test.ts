@@ -351,7 +351,11 @@ describe('MongoDB Word Suggestions', () => {
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
         definitions: wordSuggestionRes.body.definitions
-          .concat({ wordClass: WordClass.AV.value, definitions: ['first verb'], igboDefinitions: ['akwa'] }),
+          .concat({
+            wordClass: WordClass.AV.value,
+            definitions: ['first verb'],
+            igboDefinitions: [{ igbo: 'akwa', nsibidi: '' }],
+          }),
       });
       expect(updatedWordSuggestionRes.body.definitions[0].wordClass)
         .toEqual(wordSuggestionData.definitions[0].wordClass);
@@ -366,7 +370,7 @@ describe('MongoDB Word Suggestions', () => {
       const finalWordSuggestionRes = await updateWordSuggestion(updatedWordSuggestionRes.body);
       expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClass.NNC.value);
       expect(isEqual(finalWordSuggestionRes.body.definitions[0].definitions, ['first'])).toEqual(true);
-      expect(isEqual(finalWordSuggestionRes.body.definitions[1].igboDefinitions, ['akwa'])).toEqual(true);
+      expect(isEqual(finalWordSuggestionRes.body.definitions[1].igboDefinitions[0].igbo, 'akwa')).toEqual(true);
     });
 
     it('should create a word suggestion with tenses', async () => {

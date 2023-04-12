@@ -89,7 +89,8 @@ describe('Word Show', () => {
     await findByText('Nsịbịdị');
     await findByText('Definition Groups');
     await findByText('Part of Speech');
-    await findByText('Definitions');
+    await findByText('English Definitions');
+    await findByText('Igbo Definitions');
     await findByText('Variations');
     await findByText('Word Stems');
     await findByText('Examples');
@@ -120,7 +121,8 @@ describe('Word Show', () => {
     await findByText('Part of Speech');
     await findByText('Definition Groups');
     await findByText(WordClass[record.definitions[0].wordClass].label);
-    await findByText('Definitions');
+    await findByText('English Definitions');
+    await findByText('Igbo Definitions');
     await findByText(record.definitions[0].definitions[0]);
     await findByText('Variations');
     await findByText('Word Stems');
