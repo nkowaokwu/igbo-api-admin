@@ -18,44 +18,44 @@ const DefinitionsForm = ({
   control,
 }: DefinitionsFormInterface): ReactElement => {
   const handleAddDefinitionGroup = () => {
-    const updateDefinitions = [...definitions];
+    const updatedDefinitions = [...definitions];
     // @ts-expect-error _id
-    updateDefinitions.push({
+    updatedDefinitions.push({
       wordClass: '',
       definitions: [],
     });
-    setDefinitions(updateDefinitions);
+    setDefinitions(updatedDefinitions);
   };
   const handleDeleteDefinitionGroup = (groupIndex) => {
-    const updateDefinitions = [...definitions];
-    updateDefinitions.splice(groupIndex, 1);
-    setDefinitions(updateDefinitions);
+    const updatedDefinitions = [...definitions];
+    updatedDefinitions.splice(groupIndex, 1);
+    setDefinitions(updatedDefinitions);
   };
   const handleAddGroupDefinition = (groupIndex) => {
-    const updateDefinitions = [...definitions];
-    updateDefinitions[groupIndex].definitions.push('');
-    setDefinitions(updateDefinitions);
+    const updatedDefinitions = [...definitions];
+    updatedDefinitions[groupIndex].definitions.push('');
+    setDefinitions(updatedDefinitions);
   };
   const handleAddGroupIgboDefinition = (groupIndex) => {
-    const updateDefinitions = [...definitions];
-    if (!updateDefinitions[groupIndex].igboDefinitions) {
-      updateDefinitions[groupIndex].igboDefinitions = [];
+    const updatedDefinitions = [...definitions];
+    if (!updatedDefinitions[groupIndex].igboDefinitions) {
+      updatedDefinitions[groupIndex].igboDefinitions = [];
     }
-    updateDefinitions[groupIndex].igboDefinitions.push('');
-    setDefinitions(updateDefinitions);
+    updatedDefinitions[groupIndex].igboDefinitions.push({ igbo: '', nsibidi: '' });
+    setDefinitions(updatedDefinitions);
   };
   const handleDeleteGroupDefinition = (groupIndex, nestedDefinitionIndex) => {
-    const updateDefinitions = [...definitions];
-    updateDefinitions[groupIndex].definitions.splice(nestedDefinitionIndex, 1);
-    setDefinitions(updateDefinitions);
+    const updatedDefinitions = [...definitions];
+    updatedDefinitions[groupIndex].definitions.splice(nestedDefinitionIndex, 1);
+    setDefinitions(updatedDefinitions);
   };
   const handleDeleteGroupIgboDefinition = (groupIndex, nestedDefinitionIndex) => {
-    const updateDefinitions = [...definitions];
-    if (!updateDefinitions[groupIndex].igboDefinitions) {
-      updateDefinitions[groupIndex].igboDefinitions = [];
+    const updatedDefinitions = [...definitions];
+    if (!updatedDefinitions[groupIndex].igboDefinitions) {
+      updatedDefinitions[groupIndex].igboDefinitions = [];
     }
-    updateDefinitions[groupIndex].igboDefinitions.splice(nestedDefinitionIndex, 1);
-    setDefinitions(updateDefinitions);
+    updatedDefinitions[groupIndex].igboDefinitions.splice(nestedDefinitionIndex, 1);
+    setDefinitions(updatedDefinitions);
   };
 
   return (

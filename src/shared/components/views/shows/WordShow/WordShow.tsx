@@ -21,6 +21,7 @@ import ResolvedWord from 'src/shared/components/ResolvedWord';
 import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import isVerb from 'src/backend/shared/utils/isVerb';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
@@ -257,7 +258,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     />
                   </Box>
                   <Box className="flex flex-col">
-                    <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị</Heading>
+                    <Heading fontSize="md" className="text-xl text-gray-600">Nsịbịdị</Heading>
                     <DiffField
                       path={`definitions.${index}.nsibidi`}
                       diffRecord={diffRecord}
@@ -268,7 +269,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     />
                   </Box>
                   <Box className="flex flex-col">
-                    <Heading fontSize="md" className="text-xl text-gray-600">Definitions</Heading>
+                    <Heading fontSize="md" className="text-xl text-gray-600">English Definitions</Heading>
                     <ArrayDiffField
                       recordField={`definitions.${index}.definitions`}
                       recordFieldSingular="definition"
@@ -276,6 +277,26 @@ const WordShow = (props: ShowProps): ReactElement => {
                       originalWordRecord={originalWordRecord}
                     >
                       <ArrayDiff diffRecord={diffRecord} recordField={`definitions.${index}.definitions`} />
+                    </ArrayDiffField>
+                  </Box>
+                  <Box className="flex flex-col">
+                    <Heading fontSize="md" className="text-xl text-gray-600">Igbo Definitions</Heading>
+                    <ArrayDiffField
+                      recordField={`definitions.${index}.igboDefinitions`}
+                      recordFieldSingular="igboDefinition"
+                      record={record}
+                      originalWordRecord={originalWordRecord}
+                    >
+                      <ArrayDiff
+                        diffRecord={diffRecord}
+                        recordField={`definitions.${index}.igboDefinitions`}
+                        renderNestedObject={({ igbo, nsibidi }) => (
+                          <Box className="flex flex-col space-y-2">
+                            <span>{igbo}</span>
+                            {nsibidi ? <span className="akagu">{nsibidi}</span> : null}
+                          </Box>
+                        )}
+                      />
                     </ArrayDiffField>
                   </Box>
                 </Box>
@@ -383,13 +404,16 @@ const WordShow = (props: ShowProps): ReactElement => {
                     resource={resource}
                   />
                 </Box>
-                <Box>
-                  <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Tenses</Heading>
-                  <TenseDiff
-                    record={record}
-                    resource={resource}
-                  />
-                </Box>
+                {/* @ts-expect-error wordClass string */}
+                {record?.definitions.some(({ wordClass }) => isVerb(wordClass)) ? (
+                  <Box>
+                    <Heading fontSize="lg" className="text-xl text-gray-600 mb-2">Tenses</Heading>
+                    <TenseDiff
+                      record={record}
+                      resource={resource}
+                    />
+                  </Box>
+                ) : null}
               </Box>
             </Box>
           </Box>

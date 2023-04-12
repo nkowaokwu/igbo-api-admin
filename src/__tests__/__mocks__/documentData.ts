@@ -10,6 +10,7 @@ export const wordSuggestionData = {
   definitions: [{
     wordClass: WordClass.NNC.value,
     definitions: ['first'],
+    igboDefinitions: [{ igbo: 'igbo', nsibidi: 'nsibidi' }],
   }],
   dialects: [],
   wordPronunciation: '',

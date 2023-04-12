@@ -4,6 +4,7 @@ import { Box, IconButton } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Textarea } from 'src/shared/primitives';
 import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
+import NsibidiInput from '../NsibidiForm/NsibidiInput';
 import AddSection from './AddSection';
 
 const IgboDefinitions = ({
@@ -26,20 +27,34 @@ const IgboDefinitions = ({
           <h3 className="text-xl text-gray-600 mr-2">
             {`${igboDefinitionIndex + 1}.`}
           </h3>
-          <Controller
-            render={(props) => (
-              <Textarea
-                {...props}
-                rows={3}
-                className="form-textarea"
-                placeholder="Definition in Igbo"
-                data-test={`nested-definitions-igbo-${igboDefinitionIndex}-input`}
-              />
-            )}
-            name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}]`}
-            defaultValue={igboDefinition || ''}
-            control={control}
-          />
+          <Box className="flex flex-col space-y-2 w-full">
+            <Controller
+              render={(props) => (
+                <Textarea
+                  {...props}
+                  rows={3}
+                  className="form-textarea"
+                  placeholder="Definition in Igbo"
+                  data-test={`nested-definitions-igbo-${igboDefinitionIndex}-input`}
+                />
+              )}
+              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].igbo`}
+              defaultValue={igboDefinition?.igbo || ''}
+              control={control}
+            />
+            <Controller
+              render={(props) => (
+                <NsibidiInput
+                  {...props}
+                  placeholder="Definition in Nsịbịdị"
+                  data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
+                />
+              )}
+              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
+              defaultValue={igboDefinition?.nsibidi || ''}
+              control={control}
+            />
+          </Box>
           <IconButton
             colorScheme="red"
             onClick={() => handleDeleteGroupIgboDefinition(index, igboDefinitionIndex)}
