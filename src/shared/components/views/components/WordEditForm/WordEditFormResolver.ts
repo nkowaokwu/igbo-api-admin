@@ -31,7 +31,10 @@ const schema = yup.object().shape({
       }
       return false;
     }),
-    igboDefinitions: yup.array().min(0).of(yup.string()).optional(),
+    igboDefinitions: yup.array().min(0).of(yup.object().shape({
+      igbo: yup.string().optional(),
+      nsibidi: yup.string().optional(),
+    })).optional(),
   })),
   variations: yup.array().min(0).of(yup.string()),
   dialects: yup.array().min(0).of(yup.object().shape({
