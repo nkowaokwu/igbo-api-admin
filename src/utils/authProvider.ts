@@ -16,6 +16,10 @@ export default {
       localStorage.removeItem(LocalStorageKeys[key]);
     });
     window.location.hash = '#/login';
+    window.localStorage.removeItem(LocalStorageKeys.UID);
+    window.localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
+    window.localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
+    window.localStorage.removeItem(LocalStorageKeys.FORM);
     return firebaseAuthProvider.logout(args);
   },
 };

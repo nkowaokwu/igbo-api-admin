@@ -2,7 +2,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { betaEmailList } from 'src/shared/constants/emailList';
 
 export const hasNoEditorPermissions = (
-  permissions: { role?: string } = { role: '' },
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
 ): any | void => {
   if (
@@ -16,7 +16,7 @@ export const hasNoEditorPermissions = (
 };
 
 export const hasEditorPermissions = (
-  permissions: { role?: string } = { role: '' },
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
 ): any | void => {
   if (
@@ -30,7 +30,7 @@ export const hasEditorPermissions = (
 };
 
 export const hasAdminOrMergerPermissions = (
-  permissions: { role?: string } = { role: '' },
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
 ): any | void => {
   if (permissions?.role === UserRoles.ADMIN || permissions?.role === UserRoles.MERGER) {
@@ -40,7 +40,7 @@ export const hasAdminOrMergerPermissions = (
 };
 
 export const hasAdminPermissions = (
-  permissions: { role?: string } = { role: '' },
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
 ): any | null => {
   if (permissions?.role === UserRoles.ADMIN) {
@@ -50,7 +50,7 @@ export const hasAdminPermissions = (
 };
 
 export const hasBetaPermissions = (
-  permissions: { role?: string, email?: string } = { role: '', email: '' },
+  permissions: { role?: UserRoles, email?: string } = { role: UserRoles.USER, email: '' },
   returnWithPermission: any,
 ): any | null => {
   if (permissions?.role === UserRoles.ADMIN || betaEmailList.includes(permissions?.email)) {
@@ -60,12 +60,25 @@ export const hasBetaPermissions = (
 };
 
 export const hasTranscriberPermissions = (
-  permissions: { role?: string } = { role: '' },
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
 ): any | null => {
   if (
     permissions?.role === UserRoles.TRANSCRIBER
     || hasBetaPermissions(permissions, true)
+  ) {
+    return returnWithPermission;
+  }
+  return null;
+};
+
+export const hasAccessToPlatformPermissions = (
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
+  returnWithPermission: any,
+): any | null => {
+  if (
+    Object.values(UserRoles).includes(permissions?.role)
+    && permissions?.role !== UserRoles.USER
   ) {
     return returnWithPermission;
   }

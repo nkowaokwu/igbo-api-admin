@@ -45,7 +45,7 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Reco
       {filteredWords.length || filteredWordSuggestions.length ? (
         <Text color="orange.500" fontSize="sm" className="italic mt-4">
           {'⚠️ If you are seeing similar existing below, '}
-          <chakra.span fontWeight="bold">please consider delete this document if necessary</chakra.span>
+          <chakra.span fontWeight="bold">please consider deleting this document if necessary</chakra.span>
           {' and edit those existing documents to avoid duplicates.'}
         </Text>
       ) : null}
