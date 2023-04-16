@@ -1,8 +1,6 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useState } from 'react';
 import {
   getAuth,
-  onAuthStateChanged,
-  signOut,
   GoogleAuthProvider,
   EmailAuthProvider,
   FacebookAuthProvider,
@@ -14,8 +12,10 @@ import {
   Button,
   Heading,
   Text,
+  useToast,
 } from '@chakra-ui/react';
-import { hasTranscriberPermissions } from 'src/shared/utils/permissions';
+import { hasTranscriberPermissions, hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
+import authProvider from './utils/authProvider';
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
 import LocalStorageKeys from './shared/constants/LocalStorageKeys';
@@ -35,22 +35,30 @@ const Login = (): ReactElement => {
   const handleCreateUserAccount = useCallable<any, EmptyResponse>('createUserAccount');
   const filledAuthForm = successfulCreateAccount || errorUponSubmitting;
   const redirect = useRedirect();
+  const toast = useToast();
 
   const handleRedirect = async (user) => {
     const idTokenResult = await user.getIdTokenResult();
     const userRole = idTokenResult.claims.role;
-    const hasPermission = Object.values(UserRoles).includes(userRole);
+    const permissions = { role: userRole };
+    const hasPermission = hasAccessToPlatformPermissions(permissions, true);
     if (!hasPermission) {
-      signOut(auth);
-      window.localStorage.clear();
+      authProvider.logout();
       setErrorUponSubmitting('You do not have permission to access the platform');
+      toast({
+        title: 'Insufficient permissions',
+        description: 'You\'re account doesn\'t have the necessary permissions to access the platform.',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+      });
     }
     localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, idTokenResult.token);
     localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
     localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
     const redirectUrl = (
-      hasTranscriberPermissions({ role: userRole }, '/igboSoundbox')
+      hasTranscriberPermissions(permissions, '/igboSoundbox')
       || (rawRedirectUrl || '#/').replace('#/', '') || '/'
     );
     redirect(redirectUrl);
@@ -73,31 +81,15 @@ const Login = (): ReactElement => {
       signInSuccessWithAuthResult: (user) => {
         if (user.additionalUserInfo.isNewUser) {
           handleCreateUserAccount(user.user.toJSON());
-          signOut(auth);
-          localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
-          localStorage.removeItem(LocalStorageKeys.UID);
-          localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
-          localStorage.removeItem(LocalStorageKeys.FORM);
           setSuccessfulCreateAccount(true);
           return false;
         }
         handleRedirect(user.user);
-        return true;
+        return false;
       },
       signInFailure: ({ message }) => setErrorUponSubmitting(message),
     },
   };
-
-  // Listen to the Firebase Auth state and set the local state.
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        return false;
-      }
-      await handleRedirect(user);
-      return false;
-    });
-  }, []);
 
   const refreshPage = () => window.location.reload();
   return (
