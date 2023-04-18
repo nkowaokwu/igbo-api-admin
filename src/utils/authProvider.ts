@@ -3,6 +3,13 @@ import { omit } from 'lodash';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 
+const clearLocalStorage = () => {
+  window.localStorage.removeItem(LocalStorageKeys.UID);
+  window.localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
+  window.localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
+  window.localStorage.removeItem(LocalStorageKeys.FORM);
+};
+
 const LOGIN_HASH = '#/login';
 const firebaseConfig = useFirebaseConfig();
 const firebaseAuthProvider = FirebaseAuthProvider(firebaseConfig, { lazyLoading: { enabled: true }, logging: false });
@@ -16,10 +23,7 @@ export default {
       localStorage.removeItem(LocalStorageKeys[key]);
     });
     window.location.hash = '#/login';
-    window.localStorage.removeItem(LocalStorageKeys.UID);
-    window.localStorage.removeItem(LocalStorageKeys.ACCESS_TOKEN);
-    window.localStorage.removeItem(LocalStorageKeys.PERMISSIONS);
-    window.localStorage.removeItem(LocalStorageKeys.FORM);
+    clearLocalStorage();
     return firebaseAuthProvider.logout(args);
   },
 };

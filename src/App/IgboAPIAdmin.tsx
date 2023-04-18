@@ -42,7 +42,7 @@ const Resources = memo(() => {
   ));
 
   useEffect(() => {
-    if (permissions) {
+    if (permissions?.loaded) {
       const hasPermission = hasAccessToPlatformPermissions(permissions, true);
       if (!hasPermission) {
         authProvider.logout();
