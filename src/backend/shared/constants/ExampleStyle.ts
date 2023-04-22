@@ -18,4 +18,10 @@ export default {
     description: 'This is a proverb sentence.',
     colorScheme: 'orange',
   },
+  BIBLICAL: {
+    value: 'biblical',
+    label: 'Biblical',
+    description: 'This is a sentence from the Bible.',
+    colorScheme: 'green',
+  },
 };
