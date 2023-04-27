@@ -7,6 +7,8 @@ import {
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -30,6 +32,7 @@ import {
   malformedExampleSuggestionData,
   updatedExampleSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
+  bulkUploadExampleSuggestionData,
 } from './__mocks__/documentData';
 import { AUTH_TOKEN, EXAMPLE_SUGGESTION_KEYS, INVALID_ID } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
@@ -77,17 +80,54 @@ describe('MongoDB Example Suggestions', () => {
     it('should bulk upload at most 500 example suggestions', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
         const igbo = uuid();
-        const exampleSuggestionData = { igbo };
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleSuggestionData;
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
+      expect(res.body.every(({ style, type }) => (
+        type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value
+      )));
+    });
+
+    it('should bulk upload at most 500 example suggestions with biblical type', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceType.BIBLICAL };
+        return exampleSuggestionData;
+      });
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ type }) => type === SentenceType.BIBLICAL));
+    });
+
+    it('should bulk upload at most 500 example suggestions with proverb style', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, style: ExampleStyle.PROVERB.value };
+        return exampleSuggestionData;
+      });
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+    });
+
+    it('should bulk upload at most 500 example suggestions with english', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const english = uuid();
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, english };
+        return exampleSuggestionData;
+      });
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
     });
 
     it('should throw an error due to too many example suggestions for bulk upload', async () => {
       const payload = times(600, () => {
         const igbo = uuid();
-        const exampleSuggestionData = { igbo };
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleSuggestionData;
       });
       const res = await postBulkUploadExampleSuggestions(payload);
@@ -95,16 +135,30 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should throw an error with malformed bulk upload data', async () => {
-      const payload = { igbo: 'igbo' };
+      const payload = { ...bulkUploadExampleSuggestionData, invalidKey: 'igbo' };
       // @ts-expect-error payload
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(400);
     });
 
-    it('should throw an error with malformed (extra field) bulk upload data', async () => {
-      const payload = [{ igbo: 'igbo', english: 'english' }];
+    it('should throw an error with malformed data (not an array)', async () => {
+      const payload = { ...bulkUploadExampleSuggestionData, igbo: 'igbo' };
+      // @ts-expect-error payload
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error with already existing data', async () => {
+      const igbo = uuid();
+      const firstPayload = [{ ...bulkUploadExampleSuggestionData, igbo }];
+      await postBulkUploadExampleSuggestions(firstPayload);
+
+      const payload = [
+        { ...bulkUploadExampleSuggestionData, igbo },
+        { ...bulkUploadExampleSuggestionData, igbo },
+      ];
+      const res = await postBulkUploadExampleSuggestions(payload);
+      expect(res.body[0].success).toBe(false);
     });
   });
 
