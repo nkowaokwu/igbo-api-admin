@@ -11,6 +11,10 @@ import {
   deleteDocument,
   combineDocument,
 } from 'src/shared/API';
+import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
+import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
 import ActionTypes from './ActionTypes';
 import Collections from './Collections';
 
@@ -182,18 +186,35 @@ export default {
     content: 'Are you sure you want to upload multiple example suggestions at once? '
     + 'This will take a few minutes to complete.',
     executeAction: async ({
-      data: textareaValue,
+      data,
       onProgressSuccess,
       onProgressFailure,
     } : {
-      data: string,
+      data: { file: ExampleClientData[], text: string, isExample: boolean }
       onProgressSuccess: (value: any) => any,
       onProgressFailure: (value: any) => any,
     }): Promise<any> => {
-      const trimmedTextareaValue = textareaValue.trim();
+      let payload = [];
+      const { file, text, isExample } = data;
+      const trimmedTextareaValue = text.trim();
       const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
-      const payload = separatedSentences.map((text) => ({ igbo: text.trim() }));
-      await bulkUploadExampleSuggestions(payload, onProgressSuccess, onProgressFailure);
+
+      // Combines the data from both the uploaded file and text area input
+      payload = payload.concat(separatedSentences.map((sentenceText) => ({
+        igbo: sentenceText.trim(),
+        english: '',
+        style: ExampleStyle.NO_STYLE.value,
+        type: SentenceType.DATA_COLLECTION,
+      })), file);
+
+      try {
+        // Validating the body of the bulk sentences
+        bulkSentencesSchema.validate(payload);
+        await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
+      } catch (err) {
+        console.log('Data validation for bulk sentence upload failed.');
+        throw err;
+      }
     },
   },
 };

@@ -11,6 +11,7 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import type StatusType from './StatusType';
 
 const UploadStatus = ({
@@ -45,15 +46,31 @@ const UploadStatus = ({
                 </Text>
                 {message ? (
                   <Text fontWeight="bold" fontSize="sm">
-                    {'Error message: '}
+                    {'Response message: '}
                     <chakra.span fontWeight="normal">
                       {message}
                     </chakra.span>
                   </Text>
                 ) : null}
                 <Text fontWeight="bold" fontSize="sm">
-                  {'Sentence: '}
-                  <chakra.span fontWeight="normal">{meta.igbo}</chakra.span>
+                  {'Igbo Sentence: '}
+                  <chakra.span fontWeight="normal">{meta.sentenceData.igbo}</chakra.span>
+                </Text>
+                <Text fontWeight="bold" fontSize="sm">
+                  {'English Sentence: '}
+                  <chakra.span fontWeight="normal" className={!meta.sentenceData.english ? 'text-gray-500 italic' : ''}>
+                    {meta.sentenceData.english || 'N/A'}
+                  </chakra.span>
+                </Text>
+                <Text fontWeight="bold" fontSize="sm">
+                  {'Sentence Type: '}
+                  <chakra.span fontWeight="normal">{meta.sentenceData.type}</chakra.span>
+                </Text>
+                <Text fontWeight="bold" fontSize="sm">
+                  {'Sentence Style: '}
+                  <chakra.span fontWeight="normal">
+                    {ExampleStyle[(meta.sentenceData.style || 'NO_STYLE').toUpperCase()].label}
+                  </chakra.span>
                 </Text>
                 {meta.id ? (
                   <Text fontWeight="bold" fontSize="sm">

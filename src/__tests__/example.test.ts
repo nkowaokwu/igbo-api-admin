@@ -1,4 +1,14 @@
-import { isEqual, forIn, some } from 'lodash';
+import {
+  isEqual,
+  forIn,
+  some,
+  times,
+} from 'lodash';
+import { v4 as uuid } from 'uuid';
+
+import SentenceType from 'src/backend/shared/constants/SentenceType';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import {
   createExample,
   getExamples,
@@ -7,6 +17,7 @@ import {
   suggestNewExample,
   getExampleSuggestion,
   getExampleSuggestions,
+  postBulkUploadExamples,
 } from './shared/commands';
 import { AUTH_TOKEN } from './shared/constants';
 import {
@@ -14,6 +25,7 @@ import {
   exampleSuggestionData,
   malformedExampleSuggestionData,
   updatedExampleData,
+  bulkUploadExampleSuggestionData,
 } from './__mocks__/documentData';
 
 describe('MongoDB Examples', () => {
@@ -95,6 +107,96 @@ describe('MongoDB Examples', () => {
       const exampleRes = await getExamples({ keyword: exampleData.igbo });
       expect(exampleRes.status).toEqual(200);
       expect(some(exampleRes.body, (example) => example.igbo === exampleData.igbo)).toEqual(true);
+    });
+
+    it('should bulk upload at most 500 examples', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo };
+        return exampleData;
+      });
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ style, type }) => (
+        type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value
+      )));
+    });
+
+    it('should bulk upload at most 500 examples with biblical type', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceType.BIBLICAL };
+        return exampleData;
+      });
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ type }) => type === SentenceType.BIBLICAL));
+    });
+
+    it('should bulk upload at most 500 examples with proverb style', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, style: ExampleStyle.PROVERB.value };
+        return exampleData;
+      });
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+    });
+
+    it('should bulk upload at most 500 examples with english', async () => {
+      const payload = times(BULK_UPLOAD_LIMIT, () => {
+        const igbo = uuid();
+        const english = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, english };
+        return exampleData;
+      });
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(200);
+      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+    });
+
+    it('should throw an error due to too many examples for bulk upload', async () => {
+      const payload = times(600, () => {
+        const igbo = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo };
+        return exampleData;
+      });
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error with malformed bulk upload data', async () => {
+      const payload = { ...bulkUploadExampleSuggestionData, invalidKey: 'igbo' };
+      // @ts-expect-error payload
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error with malformed data (not an array)', async () => {
+      const payload = { ...bulkUploadExampleSuggestionData, igbo: 'igbo' };
+      // @ts-expect-error payload
+      const res = await postBulkUploadExamples(payload);
+      expect(res.status).toEqual(400);
+    });
+
+    it('should throw an error bulk uploading examples with already existing data', async () => {
+      const igbo = uuid();
+      const firstPayload = [{ ...bulkUploadExampleSuggestionData, igbo }];
+      await postBulkUploadExamples(firstPayload);
+
+      const payload = [
+        { ...bulkUploadExampleSuggestionData, igbo },
+        { ...bulkUploadExampleSuggestionData, igbo },
+      ];
+      const res = await postBulkUploadExamples(payload);
+      expect(res.body[0].success).toBe(false);
+    });
+
+    it('should throw an error with insufficient permissions', async () => {
+      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: uuid() }];
+      const res = await postBulkUploadExamples(payload, { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN });
+      expect(res.status).toEqual(403);
     });
   });
 

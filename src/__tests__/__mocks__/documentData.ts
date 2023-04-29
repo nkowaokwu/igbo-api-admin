@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 import WordClass from 'src/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
@@ -75,6 +76,11 @@ export const exampleSuggestionApprovedData = {
 
 export const malformedExampleSuggestionData = {
   associatedWords: ['wrong'],
+};
+
+export const bulkUploadExampleSuggestionData = {
+  english: '',
+  type: SentenceType.DATA_COLLECTION,
 };
 
 export const exampleId = new ObjectId('5f864d7401203866b6546dd3');

@@ -244,6 +244,7 @@ export const getRandomExampleSuggestions = async (
   }
 };
 
+/* Bulk uploads examples suggestions for data dump */
 export const postBulkUploadExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
@@ -254,21 +255,24 @@ export const postBulkUploadExampleSuggestions = async (
 
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
-    const result = await Promise.all(data.map(async ({ igbo }) => {
-      const existingExampleSuggestion = await ExampleSuggestion.findOne({ igbo });
+    const result = await Promise.all(data.map(async (sentenceData: Interfaces.ExampleClientData) => {
+      const existingExampleSuggestion = await ExampleSuggestion.findOne({ igbo: sentenceData.igbo });
       if (existingExampleSuggestion) {
         return {
           success: false,
           message: 'There is an example suggestion with identical Igbo text',
-          meta: { igbo },
+          meta: sentenceData,
         };
       }
-      const exampleSuggestion = new ExampleSuggestion({ igbo, type: SentenceType.DATA_COLLECTION });
+      const exampleSuggestion = new ExampleSuggestion({
+        ...sentenceData,
+        type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+      });
       const savedExampleSuggestion = await exampleSuggestion.save();
       return {
         success: true,
         message: 'Success',
-        meta: { igbo, id: savedExampleSuggestion._id },
+        meta: { sentenceData, id: savedExampleSuggestion._id },
       };
     }));
 

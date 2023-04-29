@@ -7,6 +7,7 @@ import {
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 
 export interface HandleQueries {
   searchWord: string,
@@ -169,6 +170,8 @@ export interface ExampleClientData {
   english?: string,
   meaning?: string,
   nsibidi?: string,
+  type?: SentenceType,
+  style?: string,
   pronunciation?: string,
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
