@@ -190,12 +190,12 @@ export default {
       onProgressSuccess,
       onProgressFailure,
     } : {
-      data: { file: ExampleClientData[], text: string }
+      data: { file: ExampleClientData[], text: string, isExample: boolean }
       onProgressSuccess: (value: any) => any,
       onProgressFailure: (value: any) => any,
     }): Promise<any> => {
       let payload = [];
-      const { file, text } = data;
+      const { file, text, isExample } = data;
       const trimmedTextareaValue = text.trim();
       const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
 
@@ -210,7 +210,7 @@ export default {
       try {
         // Validating the body of the bulk sentences
         bulkSentencesSchema.validate(payload);
-        await bulkUploadExampleSuggestions(payload, onProgressSuccess, onProgressFailure);
+        await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
       } catch (err) {
         console.log('Data validation for bulk sentence upload failed.');
         throw err;

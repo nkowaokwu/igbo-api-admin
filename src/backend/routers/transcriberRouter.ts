@@ -8,6 +8,7 @@ import {
   getTotalRecordedExampleSuggestions,
   putRandomExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
+import { postBulkUploadExamples } from 'src/backend/controllers/examples';
 import {
   getCorpusSuggestion,
   getCorpusSuggestions,
@@ -29,6 +30,13 @@ import resourcePermission from 'src/backend/middleware/resourcePermission';
 const transcriberRouter = express.Router();
 const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER];
 transcriberRouter.use(authentication, authorization(allRoles));
+
+transcriberRouter.post(
+  '/examples/upload',
+  authorization([UserRoles.ADMIN]),
+  validateBulkUploadExampleSuggestionBody,
+  postBulkUploadExamples,
+);
 
 transcriberRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
 transcriberRouter.put(

@@ -13,6 +13,7 @@ import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import SuggestionTypes from '../shared/constants/SuggestionTypes';
+import SentenceType from '../shared/constants/SentenceType';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
 import { findExampleSuggestionById } from './exampleSuggestions';
@@ -305,6 +306,44 @@ export const deleteExample = async (
     const isPronunciationMp3 = example.pronunciation && example.pronunciation.includes('.mp3');
     await deleteAudioPronunciation(exampleId, isPronunciationMp3);
     return res.send(true);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Bulk uploads examples for data dump */
+export const postBulkUploadExamples = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { body: data, mongooseConnection } = req;
+
+    const Example = mongooseConnection.model('Example', exampleSchema);
+
+    const result = await Promise.all(data.map(async (sentenceData: Interfaces.ExampleClientData) => {
+      const existingExample = await Example.findOne({ igbo: sentenceData.igbo });
+      if (existingExample) {
+        return {
+          success: false,
+          message: 'There is an example with identical Igbo text',
+          meta: sentenceData,
+        };
+      }
+      const example = new Example({
+        ...sentenceData,
+        type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+      });
+      const savedExample = await example.save();
+      return {
+        success: true,
+        message: 'Success',
+        meta: { sentenceData, id: savedExample._id },
+      };
+    }));
+
+    return res.send(result);
   } catch (err) {
     return next(err);
   }

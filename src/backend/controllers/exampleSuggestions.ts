@@ -244,6 +244,7 @@ export const getRandomExampleSuggestions = async (
   }
 };
 
+/* Bulk uploads examples suggestions for data dump */
 export const postBulkUploadExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,

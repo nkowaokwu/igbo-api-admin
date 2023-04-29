@@ -40,17 +40,18 @@ export const putRandomExampleSuggestions = (rawData: {
 };
 
 export const bulkUploadExampleSuggestions = async (
-  data: { igbo: string }[],
+  payload: { sentences: { igbo: string }[], isExample: boolean },
   onProgressSuccess: (value: any) => void,
   onProgressFailure: (err: Error) => void,
 ): Promise<any> => {
+  const { sentences, isExample } = payload;
   let chunkIndex = 0;
   const groupSize = BULK_UPLOAD_LIMIT;
   const dataChunks = [];
-  while (chunkIndex < data.length) {
+  while (chunkIndex < sentences.length) {
     const chunkStart = chunkIndex;
-    const chunkEnd = chunkIndex + groupSize >= data.length ? data.length : chunkIndex + groupSize;
-    const dataChunk = data.slice(chunkStart, chunkEnd);
+    const chunkEnd = chunkIndex + groupSize >= sentences.length ? sentences.length : chunkIndex + groupSize;
+    const dataChunk = sentences.slice(chunkStart, chunkEnd);
     dataChunks.push(dataChunk);
     chunkIndex += groupSize;
   }
@@ -60,7 +61,7 @@ export const bulkUploadExampleSuggestions = async (
       .then(() => (
         request({
           method: 'POST',
-          url: 'exampleSuggestions/upload',
+          url: isExample ? 'examples/upload' : 'exampleSuggestions/upload',
           data: dataChunk,
         })
       ))

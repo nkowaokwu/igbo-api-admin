@@ -19,6 +19,7 @@ import {
   Tooltip,
   Progress,
   Link,
+  Switch,
   useToast,
   chakra,
 } from '@chakra-ui/react';
@@ -42,6 +43,7 @@ const DataDump = (): ReactElement => {
   const [successes, setSuccesses] = useState<StatusType[][]>([]);
   const [failures, setFailures] = useState([]);
   const [fileData, setFileData] = useState([]);
+  const [isExample, setIsExample] = useState(false);
   const [totalSentences, setTotalSentences] = useState(-1);
   const toast = useToast();
   const isDataPresent = textareaValue.length || fileData?.length;
@@ -49,6 +51,10 @@ const DataDump = (): ReactElement => {
     ...actionsMap.BulkUploadExamples,
     content: `Are you sure you want to upload ${totalSentences} example suggestions at once? `
     + 'This will take a few minutes to complete.',
+  };
+
+  const handleExampleDocumentType = (event) => {
+    setIsExample(event.target.checked);
   };
 
   const handleChangeTextarea = (e) => {
@@ -154,7 +160,7 @@ const DataDump = (): ReactElement => {
         isOpen={isConfirmationOpen}
         view={Views.SHOW}
         actionHelpers={{
-          data: { file: fileData, text: textareaValue },
+          data: { file: fileData, text: textareaValue, isExample },
           onProgressFailure,
           onProgressSuccess,
         }}
@@ -227,11 +233,13 @@ const DataDump = (): ReactElement => {
               </Box>
             </Box>
             <Box className="w-full lg:w-4/12 flex flex-row justify-end items-center">
-              <Tooltip label="Click here to see data uploading alternatives">
-                <details className="cursor-pointer">
+              <details className="cursor-pointer">
+                <Tooltip label="Click here to see data uploading alternatives">
                   <summary className="lg:text-right mb-2">
                     <chakra.span m="2" fontWeight="bold">More data upload options</chakra.span>
                   </summary>
+                </Tooltip>
+                <Box className="space-y-2">
                   <Box className="space-y-2 p-4 rounded-md" backgroundColor="gray.200">
                     <Text fontWeight="bold">Select a JSON file to bulk upload example sentences.</Text>
                     <input
@@ -250,8 +258,20 @@ const DataDump = (): ReactElement => {
                       </Text>
                     ) : null}
                   </Box>
-                </details>
-              </Tooltip>
+                  <Tooltip label="Either upload these sentences as either Examples or Example Suggestions">
+                    <Box className="flex flex-row justify-start items-center space-x-2">
+                      <Text fontWeight="bold" color={!isExample ? '' : 'gray.300'}>Example Suggestion</Text>
+                      <Switch onChange={handleExampleDocumentType} />
+                      <Text fontWeight="bold" color={isExample ? '' : 'gray.300'}>Example</Text>
+                    </Box>
+                  </Tooltip>
+                  {isExample ? (
+                    <Text className="italic" fontSize="sm">These sentences will become examples</Text>
+                  ) : (
+                    <Text className="italic" fontSize="sm">These sentences will become example suggestions.</Text>
+                  )}
+                </Box>
+              </details>
             </Box>
           </Box>
         </form>
