@@ -160,6 +160,12 @@ describe('MongoDB Example Suggestions', () => {
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.body[0].success).toBe(false);
     });
+
+    it('should throw an error bulk uploading example suggestions with insufficient permissions', async () => {
+      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: uuid() }];
+      const res = await postBulkUploadExampleSuggestions(payload, { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN });
+      expect(res.status).toEqual(403);
+    });
   });
 
   describe('/PUT mongodb exampleSuggestions', () => {
