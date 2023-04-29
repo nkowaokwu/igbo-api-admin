@@ -166,13 +166,13 @@ const DataDump = (): ReactElement => {
         }}
       />
       <Box className="space-y-3">
-        <Heading>Bulk Upload Example Suggestions</Heading>
+        <Heading>Bulk Upload Sentences</Heading>
         <Text fontFamily="Silka">
           {`This page expects a list of newline-separated sentences that
           will be bulk uploaded to the Igbo API dataset.`}
         </Text>
         <Text fontSize="sm" fontWeight="bold" fontFamily="Silka">
-          {'Want to see all data dumped example suggestions? Use the '}
+          {'Want to see all data dumped examples or example suggestions? Use the '}
           <Link href={isDataCollectionLink} color="green">
             {'\'Is Data Collection\' Filter'}
           </Link>

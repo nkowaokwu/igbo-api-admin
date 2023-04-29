@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
@@ -8,6 +9,11 @@ export const exampleSchema = new Schema({
   english: { type: String, default: '', trim: true },
   meaning: { type: String, default: '', trim: true },
   nsibidi: { type: String, default: '' },
+  type: {
+    type: String,
+    enum: Object.values(SentenceType),
+    default: SentenceType.DEFAULT,
+  },
   style: {
     type: String,
     enum: Object.values(ExampleStyle).map(({ value }) => value),
