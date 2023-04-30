@@ -266,7 +266,7 @@ const DataDump = (): ReactElement => {
                     </Box>
                   </Tooltip>
                   {isExample ? (
-                    <Text className="italic" fontSize="sm">These sentences will become examples</Text>
+                    <Text className="italic" fontSize="sm">These sentences will become examples.</Text>
                   ) : (
                     <Text className="italic" fontSize="sm">These sentences will become example suggestions.</Text>
                   )}
