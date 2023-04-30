@@ -92,6 +92,9 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
       case 'isDataCollection':
         allFilters.type = { $eq: SentenceType.DATA_COLLECTION };
         break;
+      case 'isBiblical':
+        allFilters.type = { $eq: SentenceType.BIBLICAL };
+        break;
       case 'wordClass':
         allFilters['definitions.wordClass'] = { $in: value };
         break;
@@ -186,9 +189,9 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   userInteractions: { $nin: [uid] },
 });
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
-  [key: string]: { $exists: boolean },
+  [key: string]: { $exists: boolean } | { $and: { $ne: string | null }[] },
 } => ({
-  'pronunciation': { $and: [{ $ne: '' }, { $ne: null }] },
+  pronunciation: { $and: [{ $ne: '' }, { $ne: null }] },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },
 });

@@ -261,7 +261,7 @@ export const postBulkUploadExampleSuggestions = async (
         return {
           success: false,
           message: 'There is an example suggestion with identical Igbo text',
-          meta: sentenceData,
+          meta: { sentenceData },
         };
       }
       const exampleSuggestion = new ExampleSuggestion({

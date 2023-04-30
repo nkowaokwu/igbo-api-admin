@@ -328,7 +328,7 @@ export const postBulkUploadExamples = async (
         return {
           success: false,
           message: 'There is an example with identical Igbo text',
-          meta: sentenceData,
+          meta: { sentenceData },
         };
       }
       const example = new Example({

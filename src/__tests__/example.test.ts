@@ -191,6 +191,7 @@ describe('MongoDB Examples', () => {
       ];
       const res = await postBulkUploadExamples(payload);
       expect(res.body[0].success).toBe(false);
+      expect(res.body[0].meta.sentenceData).toBeDefined();
     });
 
     it('should throw an error with insufficient permissions', async () => {
