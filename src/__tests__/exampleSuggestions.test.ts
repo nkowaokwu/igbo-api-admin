@@ -159,6 +159,7 @@ describe('MongoDB Example Suggestions', () => {
       ];
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.body[0].success).toBe(false);
+      expect(res.body[0].meta.sentenceData).toBeDefined();
     });
 
     it('should throw an error bulk uploading example suggestions with insufficient permissions', async () => {
