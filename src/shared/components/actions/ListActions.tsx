@@ -231,6 +231,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         <MenuItemOption value="isDataCollection" key="isDataCollection">
                           Is Data Collection
                         </MenuItemOption>,
+                        <MenuItemOption value="isBiblical" key="isBiblical">
+                          Is Biblical
+                        </MenuItemOption>,
                       ]
                       : null}
                     {isWordResource
