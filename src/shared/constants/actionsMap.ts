@@ -182,8 +182,8 @@ export default {
   },
   [ActionTypes.BULK_UPLOAD_EXAMPLES]: {
     type: 'BulkUploadExamples',
-    title: 'Bulk Upload Example Suggestions',
-    content: 'Are you sure you want to upload multiple example suggestions at once? '
+    title: 'Bulk Upload Sentences',
+    content: 'Are you sure you want to upload multiple sentences at once? '
     + 'This will take a few minutes to complete.',
     executeAction: async ({
       data,
