@@ -19,6 +19,7 @@ import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import ExampleStyle from '../shared/constants/ExampleStyle';
+import SentenceType from '../shared/constants/SentenceType';
 
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
@@ -158,18 +159,22 @@ const countExampleStats = async (examples: Interfaces.Example[]) => {
   let sufficientExamplesCount = 0;
   let completedExamplesCount = 0;
   let proverbExamplesCount = 0;
+  let biblicalExamplesCount = 0;
   await Promise.all(examples.map(async (example) => {
     const isExampleSufficient = !!example.associatedWords?.[0];
     const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
     const isExampleProverb = example.style === ExampleStyle.PROVERB.value;
+    const isExampleBiblical = example.style === ExampleStyle.BIBLICAL.value || example.type === SentenceType.BIBLICAL;
     sufficientExamplesCount += isExampleSufficient ? 1 : 0;
     completedExamplesCount += isExampleComplete ? 1 : 0;
     proverbExamplesCount += isExampleProverb ? 1 : 0;
+    biblicalExamplesCount += isExampleBiblical ? 1 : 0;
   }));
   return {
     sufficientExamplesCount,
     completedExamplesCount,
     proverbExamplesCount,
+    biblicalExamplesCount,
   };
 };
 
@@ -183,10 +188,16 @@ Promise<{ sufficientExamplesCount: number, completedExamplesCount: number } | vo
       ],
     });
 
-  const { sufficientExamplesCount, completedExamplesCount, proverbExamplesCount } = await countExampleStats(examples);
+  const {
+    sufficientExamplesCount,
+    completedExamplesCount,
+    proverbExamplesCount,
+    biblicalExamplesCount,
+  } = await countExampleStats(examples);
   await updateStat({ type: StatTypes.SUFFICIENT_EXAMPLES, value: sufficientExamplesCount, Stat });
   await updateStat({ type: StatTypes.COMPLETE_EXAMPLES, value: completedExamplesCount, Stat });
   await updateStat({ type: StatTypes.PROVERB_EXAMPLES, value: proverbExamplesCount, Stat });
+  await updateStat({ type: StatTypes.BIBLICAL_EXAMPLES, value: biblicalExamplesCount, Stat });
 
   return { sufficientExamplesCount, completedExamplesCount };
 };
