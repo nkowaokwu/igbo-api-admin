@@ -55,6 +55,16 @@ export const getExample = async (id: string): Promise<any> => {
   return result;
 };
 
+export const getNsibidiCharacter = async (id: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `nsibidi/${id}`,
+})).data;
+
+export const getNsibidiCharacters = async (nsibidi: string): Promise<any> => (await request({
+  method: 'GET',
+  url: `nsibidi?keyword=${nsibidi}`,
+})).data;
+
 export const getCorpus = async (id: string): Promise<any> => {
   const cachedCorpus = await IndexedDBAPI.getDocument({ resource: Collection.CORPORA, id });
   if (cachedCorpus) {
