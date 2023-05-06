@@ -180,6 +180,12 @@ export interface ExampleClientData {
   originalExampleId?: string,
 };
 
+export interface Nsibidi {
+  nsibidi: string,
+  definitions: { text: string }[],
+  pronunciations: { text: string }[],
+};
+
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {
   cachedAt: Date,
 }

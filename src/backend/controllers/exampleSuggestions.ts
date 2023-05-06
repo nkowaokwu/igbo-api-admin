@@ -444,7 +444,10 @@ export const getExampleSuggestion = async (
   }
 };
 
-export const removeExampleSuggestion = (id: string, mongooseConnection): Promise<Interfaces.ExampleSuggestion> => {
+export const removeExampleSuggestion = (
+  id: string,
+  mongooseConnection: Connection,
+): Promise<Interfaces.ExampleSuggestion> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
 
   return (
