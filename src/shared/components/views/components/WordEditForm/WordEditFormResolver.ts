@@ -22,6 +22,7 @@ const schema = yup.object().shape({
       label: yup.mixed().oneOf(Object.values(WordClass).map(({ label }) => label)),
     }).required(),
     nsibidi: yup.string().optional(),
+    nsibidiMeta: yup.array().min(0).of(yup.string()).optional(),
     definitions: yup.mixed().test('definition-types', 'Definition is required', (value) => {
       if (Array.isArray(value)) {
         return value.length >= 1 && value[0].length >= 1;
@@ -34,6 +35,7 @@ const schema = yup.object().shape({
     igboDefinitions: yup.array().min(0).of(yup.object().shape({
       igbo: yup.string().optional(),
       nsibidi: yup.string().optional(),
+      nsibidiMeta: yup.array().min(0).of(yup.string()).optional(),
     })).optional(),
   })),
   variations: yup.array().min(0).of(yup.string()),
