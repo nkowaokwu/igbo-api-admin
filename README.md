@@ -126,9 +126,11 @@ Then go back to step 5 above.
 
 ### Step 6: Account Login
 
-You can login with the email `admin@example.com` and the password `password`
+You can login with the email `admin@example.com` and the password `password` to create a new admin account.
 
-If you would like to log in with your own Google or Facebook account, please reach out to Ijemma so she can grant you access.
+If you don't create this account you will see the following error message
+
+![Screenshot from 2023-05-06 21-21-32](https://user-images.githubusercontent.com/16169291/236648564-ab43c67f-bced-4f6c-a886-165a3ec95861.png)
 
 ### Step 7: (Optional) Seeding the Database
 
