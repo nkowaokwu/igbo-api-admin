@@ -3,12 +3,12 @@ import { toJSONPlugin } from './plugins';
 
 const { Schema } = mongoose;
 
-export const nsibidiSchema = new Schema({
+export const nsibidiCharacterSchema = new Schema({
   nsibidi: { type: String, required: true, index: true },
   definitions: { type: [{ text: String }], default: [] },
   pronunciations: { type: [{ text: String }], default: [] },
 });
 
-toJSONPlugin(nsibidiSchema);
+toJSONPlugin(nsibidiCharacterSchema);
 
-mongoose.model('Nsibidi', nsibidiSchema);
+mongoose.model('NsibidiCharacter', nsibidiCharacterSchema);

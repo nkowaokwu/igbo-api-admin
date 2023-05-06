@@ -180,7 +180,7 @@ export interface ExampleClientData {
   originalExampleId?: string,
 };
 
-export interface Nsibidi {
+export interface NsibidiCharacter {
   nsibidi: string,
   definitions: { text: string }[],
   pronunciations: { text: string }[],
