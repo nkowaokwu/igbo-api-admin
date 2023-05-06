@@ -21,10 +21,12 @@ const definitionSchema = new Schema({
   label: { type: String, default: '', trim: true },
   definitions: { type: [{ type: String }], default: [] },
   nsibidi: { type: String, default: '', index: true },
+  nsibidiMeta: { type: [{ type: Types.ObjectId, ref: 'Nsibidi' }], default: [] },
   igboDefinitions: {
     type: [{
       igbo: String,
       nsibidi: String,
+      nsibidiMeta: { type: [{ type: Types.ObjectId, ref: 'Nsibidi' }], default: [] },
     }],
     default: [],
   },
