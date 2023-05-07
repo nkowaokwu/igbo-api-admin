@@ -16,9 +16,6 @@ Contributions are always welcome. Please first join the Nkọwa okwu volunteer c
 
 This is an open-source project that requires that you create your own Firebase account.
 
-**Note**: If this is your first time running this project, you **must** request access 
-to the Firebase project to start developing. Reach out to [@ijemmao](https://github.com/ijemmao) on Slack.
-
 ### Prerequisites
 
 To run this project locally, the following tools need to be installed:
