@@ -5,12 +5,15 @@ import WordClass from 'src/shared/constants/WordClass';
 const { ObjectId } = mongoose.Types;
 
 export const wordId = new ObjectId('5f864d7401203866b6546dd3');
+export const nsibidiCharacterId = new ObjectId('5f864d7401203866b6546dd4');
 export const wordSuggestionId = new ObjectId();
 export const wordSuggestionData = {
   word: 'word',
   definitions: [{
     wordClass: WordClass.NNC.value,
     definitions: ['first'],
+    nsibidi: 'nsibidi',
+    nsibidiCharacters: [nsibidiCharacterId],
     igboDefinitions: [{ igbo: 'igbo', nsibidi: 'nsibidi' }],
   }],
   dialects: [],

@@ -440,6 +440,13 @@ describe('MongoDB Word Suggestions', () => {
       expect(exampleSuggestionRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(exampleSuggestionRes.body.authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
     });
+
+    it('should update a word suggestion with an nsibidi character', async () => {
+      const wordSuggestionRes = await suggestNewWord(wordSuggestionData);
+      expect(wordSuggestionRes.status).toEqual(200);
+      expect(wordSuggestionRes.body.definitions[0].nsibidiCharacters[0])
+        .toEqual(wordSuggestionData.definitions[0].nsibidiCharacters[0].toString());
+    });
   });
 
   describe('/GET mongodb wordSuggestions', () => {

@@ -87,6 +87,7 @@ describe('Word Show', () => {
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
     await findByText('Nsịbịdị');
+    await findByText('Nsịbịdị Characters');
     await findByText('Definition Groups');
     await findByText('Part of Speech');
     await findByText('English Definitions');
