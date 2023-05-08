@@ -19,7 +19,7 @@ import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
-import { onCancel, sanitizeArray } from '../utils';
+import { onCancel, sanitizeArray, sanitizeNsibidiCharacters } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
 import AudioRecorder from '../AudioRecorder';
@@ -45,6 +45,7 @@ const ExampleEditForm = ({
     defaultValues: {
       ...record,
       style,
+      nsibidiCharacters: (record?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
     },
     ...ExampleEditFormResolver,
   });
@@ -83,6 +84,7 @@ const ExampleEditForm = ({
       associatedDefinitionsSchemas: sanitizeArray(record.associatedDefinitionsSchemas || []),
       style: data.style.value,
       associatedWords: sanitizeArray(data.associatedWords),
+      nsibidiCharacters: sanitizeNsibidiCharacters(data.nsibidiCharacters),
     };
     return cleanedData;
   };
@@ -97,7 +99,6 @@ const ExampleEditForm = ({
         {
           ...record,
           ...data,
-          style: data.style.value,
         },
         createCacheExampleData(data, record),
         {

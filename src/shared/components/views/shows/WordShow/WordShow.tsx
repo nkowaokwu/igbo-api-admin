@@ -275,11 +275,11 @@ const WordShow = (props: ShowProps): ReactElement => {
                       recordField={`definitions.${index}.nsibidiCharacters`}
                       recordFieldSingular="nsibidiCharacter"
                       record={record}
-                      originalWordRecord={originalWordRecord}
+                      originalRecord={originalWordRecord}
                     >
                       <ArrayDiff
                         diffRecord={diffRecord}
-                        recordField={`definitions.${index}.definitions`}
+                        recordField={`definitions.${index}.nsibidiCharacters`}
                         renderNestedObject={(nsibidiCharacterId) => (
                           <ResolvedNsibidiCharacter nsibidiCharacterId={nsibidiCharacterId} />
                         )}
@@ -292,7 +292,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                       recordField={`definitions.${index}.definitions`}
                       recordFieldSingular="definition"
                       record={record}
-                      originalWordRecord={originalWordRecord}
+                      originalRecord={originalWordRecord}
                     >
                       <ArrayDiff diffRecord={diffRecord} recordField={`definitions.${index}.definitions`} />
                     </ArrayDiffField>
@@ -303,7 +303,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                       recordField={`definitions.${index}.igboDefinitions`}
                       recordFieldSingular="igboDefinition"
                       record={record}
-                      originalWordRecord={originalWordRecord}
+                      originalRecord={originalWordRecord}
                     >
                       <ArrayDiff
                         diffRecord={diffRecord}
@@ -326,7 +326,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                 recordField="variations"
                 recordFieldSingular="variation"
                 record={record}
-                originalWordRecord={originalWordRecord}
+                originalRecord={originalWordRecord}
               >
                 <ArrayDiff diffRecord={diffRecord} recordField="variations" />
               </ArrayDiffField>
@@ -337,7 +337,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                 recordField="stems"
                 recordFieldSingular="stem"
                 record={record}
-                originalWordRecord={originalWordRecord}
+                originalRecord={originalWordRecord}
               >
                 <ArrayDiff
                   diffRecord={diffRecord}
@@ -352,7 +352,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                 recordField="relatedTerms"
                 recordFieldSingular="relatedTerm"
                 record={record}
-                originalWordRecord={originalWordRecord}
+                originalRecord={originalWordRecord}
               >
                 <ArrayDiff
                   diffRecord={diffRecord}
@@ -368,7 +368,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   recordField="examples"
                   recordFieldSingular="example"
                   record={{ examples } as Interfaces.Word}
-                  originalWordRecord={originalWordRecord}
+                  originalRecord={originalWordRecord}
                 >
                   <ExampleDiff
                     diffRecord={diffRecord}
@@ -401,7 +401,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                     recordField="tags"
                     recordFieldSingular="tag"
                     record={record}
-                    originalWordRecord={originalWordRecord}
+                    originalRecord={originalWordRecord}
                   >
                     <ArrayDiff diffRecord={diffRecord} recordField="tags" />
                   </ArrayDiffField>

@@ -28,7 +28,7 @@ import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/de
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
-import { sanitizeArray, onCancel } from '../utils';
+import { sanitizeArray, sanitizeNsibidiCharacters, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
@@ -115,9 +115,6 @@ const WordEditForm = ({
       ? 'A change in the headword has been detected. Please consider re-recording the audio to match.'
       : '');
   };
-
-  /* Transforms nsibidiCharacters to be an array of just strings */
-  const sanitizeNsibidiCharacters = (nsibidiCharacters: { id: string }[]) => nsibidiCharacters.map(({ id }) => id);
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {

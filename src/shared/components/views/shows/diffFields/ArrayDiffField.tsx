@@ -1,21 +1,21 @@
 import React, { ReactElement } from 'react';
 import { capitalize, get, has } from 'lodash';
 import { Box, Text } from '@chakra-ui/react';
-import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { Word, Example } from 'src/backend/controllers/utils/interfaces';
 
 const ArrayDiffField = (
   {
     recordField,
     recordFieldSingular,
     record,
-    originalWordRecord,
+    originalRecord,
     children = [],
   }
   : {
     recordField: string,
     recordFieldSingular: string,
-    record: Interfaces.Word,
-    originalWordRecord: Interfaces.Word,
+    record: Word | Example,
+    originalRecord: Word | Example,
     children: ReactElement[] | ReactElement,
   },
 ): ReactElement => {
@@ -23,10 +23,10 @@ const ArrayDiffField = (
   // getting the longest one
   const longestRecordField = (recordField === 'examples'
     ? get(record, recordField)
-    : !originalWordRecord || !has(originalWordRecord, recordField)
+    : !originalRecord || !has(originalRecord, recordField)
       ? get(record, recordField)
-      : get(originalWordRecord, recordField)?.length > get(record, recordField)?.length
-        ? get(originalWordRecord, recordField)
+      : get(originalRecord, recordField)?.length > get(record, recordField)?.length
+        ? get(originalRecord, recordField)
         : get(record, recordField)) || [];
 
   return longestRecordField?.length ? longestRecordField?.map((value, index) => (

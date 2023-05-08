@@ -11,7 +11,7 @@ const NsibidiForm = React.forwardRef(({
   record,
   getValues,
   setValue,
-  name,
+  name = 'nsibidi',
   errors,
   hideFormHeader,
   defaultValue,
