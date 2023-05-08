@@ -72,7 +72,10 @@ const WordEditForm = ({
         : [],
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
-      nsibidi: record.nsibidi,
+      definitions: (record.definitions || []).map((definition) => ({
+        ...definition,
+        nsibidiCharacters: (definition?.nsibidiCharacters || []).map((nsibidiCharacter) => ({ id: nsibidiCharacter })),
+      })),
       tenses: record.tenses || {},
       pronunciation: record.pronunciation || '',
       attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
@@ -112,6 +115,9 @@ const WordEditForm = ({
       ? 'A change in the headword has been detected. Please consider re-recording the audio to match.'
       : '');
   };
+
+  /* Transforms nsibidiCharacters to be an array of just strings */
+  const sanitizeNsibidiCharacters = (nsibidiCharacters: { id: string }[]) => nsibidiCharacters.map(({ id }) => id);
 
   /* Gets the original example id and associated words to prepare to send to the API */
   const sanitizeExamples = (examples = []) => {
@@ -160,6 +166,7 @@ const WordEditForm = ({
         ...definition,
         wordClass: definition.wordClass.value,
         definitions: sanitizeArray(definition.definitions),
+        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters),
       })),
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),
@@ -317,6 +324,7 @@ const WordEditForm = ({
       </Box>
       <DefinitionsForm
         getValues={getValues}
+        setValue={setValue}
         options={options}
         record={record}
         definitions={definitions}
@@ -335,6 +343,7 @@ const WordEditForm = ({
         examples={examples}
         setExamples={setExamples}
         getValues={getValues}
+        setValue={setValue}
         errors={errors}
       />
       <Box className={'flex '

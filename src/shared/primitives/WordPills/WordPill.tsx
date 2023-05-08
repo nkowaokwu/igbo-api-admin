@@ -38,8 +38,8 @@ const WordPill = ({
     borderRadius="md"
     p={2}
   >
-    <Box display="flex" flexDirection="column" className="space-y-1">
-      <Box display="flex" flexDirection="row" alignItems="center" className="space-x-2">
+    <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="row" alignItems="start" className="space-x-2">
         <Text fontSize="sm" color="blue.500" fontWeight="bold">
           <chakra.span fontWeight="normal">
             {`${index + 1}. `}
@@ -50,7 +50,7 @@ const WordPill = ({
           {get(pronunciations, '[0].text') || get(definitions, '[0].wordClass')}
         </Text>
       </Box>
-      <Text fontSize="xs" color="blue.400" m={0}>
+      <Text fontSize="xs" color="blue.400">
         {truncate(get(definitions, '[0].text') || get(definitions, '[0].definitions[0]'))}
       </Text>
     </Box>
@@ -59,6 +59,9 @@ const WordPill = ({
         variant="ghost"
         color="red.400"
         aria-label="Remove"
+        minWidth={6}
+        alignItems="start"
+        justifyContent="end"
         onClick={onDelete}
         _hover={{
           backgroundColor: 'transparent',
