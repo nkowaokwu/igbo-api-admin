@@ -5,6 +5,7 @@ interface ExamplesFormInterface {
   example: Example,
   setExamples: (value: any) => void,
   getValues: (key?: string) => any,
+  setValue: (key: string, value: any) => void,
   index: number,
   definitionGroupId?: string,
 };
