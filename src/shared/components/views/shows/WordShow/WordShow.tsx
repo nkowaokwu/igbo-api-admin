@@ -18,6 +18,7 @@ import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
+import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -267,6 +268,23 @@ const WordShow = (props: ShowProps): ReactElement => {
                         <span className={value ? 'akagu' : ''}>{value || 'N/A'}</span>
                       )}
                     />
+                  </Box>
+                  <Box className="flex flex-col">
+                    <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị Characters</Heading>
+                    <ArrayDiffField
+                      recordField={`definitions.${index}.nsibidiCharacters`}
+                      recordFieldSingular="nsibidiCharacter"
+                      record={record}
+                      originalWordRecord={originalWordRecord}
+                    >
+                      <ArrayDiff
+                        diffRecord={diffRecord}
+                        recordField={`definitions.${index}.definitions`}
+                        renderNestedObject={(nsibidiCharacterId) => (
+                          <ResolvedNsibidiCharacter nsibidiCharacterId={nsibidiCharacterId} />
+                        )}
+                      />
+                    </ArrayDiffField>
                   </Box>
                   <Box className="flex flex-col">
                     <Heading fontSize="md" className="text-xl text-gray-600">English Definitions</Heading>

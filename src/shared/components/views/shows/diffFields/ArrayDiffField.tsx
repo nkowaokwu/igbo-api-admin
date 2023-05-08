@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { get, has } from 'lodash';
+import { capitalize, get, has } from 'lodash';
 import { Box, Text } from '@chakra-ui/react';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
@@ -21,13 +21,13 @@ const ArrayDiffField = (
 ): ReactElement => {
   // If we have examples, we want to use the current record examples array instead of
   // getting the longest one
-  const longestRecordField = recordField === 'examples'
+  const longestRecordField = (recordField === 'examples'
     ? get(record, recordField)
     : !originalWordRecord || !has(originalWordRecord, recordField)
       ? get(record, recordField)
       : get(originalWordRecord, recordField)?.length > get(record, recordField)?.length
         ? get(originalWordRecord, recordField)
-        : get(record, recordField);
+        : get(record, recordField)) || [];
 
   return longestRecordField?.length ? longestRecordField?.map((value, index) => (
     <Box
@@ -41,7 +41,7 @@ const ArrayDiffField = (
         React.cloneElement(child, { value, index })
       ))}
     </Box>
-  )) : <Text className="text-gray-500 italic">{`No ${recordField}`}</Text>;
+  )) : <Text className="text-gray-500 italic">{`No ${capitalize(recordField)}`}</Text>;
 };
 
 export default ArrayDiffField;

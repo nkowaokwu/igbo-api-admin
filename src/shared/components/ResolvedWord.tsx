@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import { getWord } from '../API';
+import Collections from '../constants/Collections';
 
 const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
   const [resolvedWord, setResolvedWord] = useState(null);
@@ -25,7 +26,7 @@ const ResolvedWord = ({ wordId }: { wordId: string }): ReactElement => {
 
   return resolvedWord ? (
     isLinked ? (
-      <a className="text-blue-400 underline" href={`#/words/${wordId}/show`}>{resolvedWord.word}</a>
+      <a className="text-blue-400 underline" href={`#/${Collections.WORDS}/${wordId}/show`}>{resolvedWord.word}</a>
     ) : (
       <Tooltip
         label={`This word metadata is not linked. To properly link this 
