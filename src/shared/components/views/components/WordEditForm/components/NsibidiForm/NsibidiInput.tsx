@@ -1,53 +1,72 @@
-import React, { useState, ReactElement, useEffect } from 'react';
-import { Text, Tooltip, chakra } from '@chakra-ui/react';
+import React, { ReactElement } from 'react';
+import {
+  Text,
+  Tooltip,
+  useToast,
+  chakra,
+} from '@chakra-ui/react';
 import { Input } from 'src/shared/primitives';
-import { getNsibidiCharacters } from 'src/shared/API';
-import NsibidiDropdown from './components/NsibidiDropdown';
+import Collections from 'src/shared/constants/Collections';
+import { getNsibidiCharacter } from 'src/shared/API';
+import NsibidiCharacters from './NsibidiCharacters';
 
 const NsibidiInput = React.forwardRef((props : {
-  value: string
+  value?: string
   onChange: (value: any) => void,
   placeholder?: string,
   'data-test'?: string,
   defaultValue?: string,
+  append: (value: any) => void,
+  remove: (index: number) => void,
+  nsibidiCharacterIds: { id: string }[],
 }, ref): ReactElement => {
-  const [nsibidiOptions, setNsibidiOptions] = useState([]);
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  const [isNsibidiDropdownVisible, setIsNsibidiDropdownVisible] = useState(false);
   const {
     value,
     placeholder = 'i.e. 貝名, 貝è捧捧, 和硝',
     'data-test': dataTest = 'nsibidi-input',
+    append,
+    remove,
+    nsibidiCharacterIds,
   } = props;
+  const toast = useToast();
 
-  const handleNsibidiChange = async (e: HTMLInputElement) => {
-    const input = e.target.value;
-    const nsibidiCharacters = await getNsibidiCharacters(input);
-    // TODO: filter out characters that are already attached
-    setNsibidiOptions(nsibidiCharacters);
+  const updateNsibidiCharacters = (nsibidiCharacterId) => {
+    // Avoids appending an Nsibidi character that's already in the array
+    if (!nsibidiCharacterIds.find(({ id }) => id === nsibidiCharacterId)) {
+      append({ id: nsibidiCharacterId });
+    }
   };
 
-  const handleFocusInput = () => {
-    setIsInputFocused(true);
+  const handleAddNsibidiCharacter = async (userInput = value) => {
+    try {
+      const canAddNsibidiCharacter = !value.includes(userInput);
+      if (canAddNsibidiCharacter) {
+        const nsibidiCharacter = await getNsibidiCharacter(userInput);
+        updateNsibidiCharacters(nsibidiCharacter.id);
+      } else {
+        throw new Error('Invalid word id');
+      }
+    } catch (err) {
+      toast({
+        title: 'Unable to add stem',
+        description: 'There was an error .',
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+      });
+    }
   };
 
-  const handleBlurInput = () => {
-    setIsInputFocused(false);
-  };
-
-  useEffect(() => {
-    setIsNsibidiDropdownVisible(nsibidiOptions.length && isInputFocused);
-  }, [isInputFocused, nsibidiOptions]);
   return (
     <>
       <Input
         {...props}
         ref={ref}
+        searchApi
+        collection={Collections.NSIBIDI_CHARACTERS}
         placeholder={placeholder}
         data-test={dataTest}
-        onChange={handleNsibidiChange}
-        onFocus={handleFocusInput}
-        onBlur={handleBlurInput}
+        onSelect={(e) => handleAddNsibidiCharacter(e.id)}
       />
       {value ? (
         <Tooltip
@@ -60,9 +79,11 @@ const NsibidiInput = React.forwardRef((props : {
           </Text>
         </Tooltip>
       ) : null}
-      {isNsibidiDropdownVisible ? (
-        <NsibidiDropdown />
-      ) : null}
+      <NsibidiCharacters
+        nsibidiCharacterIds={nsibidiCharacterIds}
+        updateNsibidiCharacters={updateNsibidiCharacters}
+        remove={remove}
+      />
     </>
   );
 });
