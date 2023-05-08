@@ -127,8 +127,8 @@ editorRouter.delete(
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/nsibidi', getNsibidiCharacters);
-editorRouter.get('/nsibidi/:id', validId, getNsibidiCharacter);
+editorRouter.get('/nsibidiCharacters', getNsibidiCharacters);
+editorRouter.get('/nsibidiCharacters/:id', validId, getNsibidiCharacter);
 
 editorRouter.delete(
   '/corpusSuggestions/:id',

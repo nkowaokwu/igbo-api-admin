@@ -20,7 +20,7 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `words/${id}?dialects=${dialects}`,
+    url: `${Collection.WORDS}/${id}?dialects=${dialects}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.WORDS, data: res.data });
@@ -31,12 +31,12 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
 
 export const getWords = async (word: string): Promise<any> => (await request({
   method: 'GET',
-  url: `words?keyword=${word}`,
+  url: `${Collection.WORDS}?keyword=${word}`,
 })).data;
 
 export const getWordSuggestions = async (word: string): Promise<any> => (await request({
   method: 'GET',
-  url: `wordSuggestions?keyword=${word}`,
+  url: `${Collection.WORD_SUGGESTIONS}?keyword=${word}`,
 })).data;
 
 export const getExample = async (id: string): Promise<any> => {
@@ -46,7 +46,7 @@ export const getExample = async (id: string): Promise<any> => {
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `examples/${id}`,
+    url: `${Collection.EXAMPLES}/${id}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.EXAMPLES, data: res.data });
@@ -57,12 +57,12 @@ export const getExample = async (id: string): Promise<any> => {
 
 export const getNsibidiCharacter = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `nsibidi/${id}`,
+  url: `${Collection.NSIBIDI_CHARACTERS}/${id}`,
 })).data;
 
 export const getNsibidiCharacters = async (nsibidi: string): Promise<any> => (await request({
   method: 'GET',
-  url: `nsibidi?keyword=${nsibidi}`,
+  url: `${Collection.NSIBIDI_CHARACTERS}?keyword=${nsibidi}`,
 })).data;
 
 export const getCorpus = async (id: string): Promise<any> => {
@@ -72,7 +72,7 @@ export const getCorpus = async (id: string): Promise<any> => {
   }
   const { data: result } = await request({
     method: 'GET',
-    url: `corpora/${id}`,
+    url: `${Collection.CORPORA}/${id}`,
   })
     .then(async (res) => {
       await IndexedDBAPI.putDocument({ resource: Collection.CORPORA, data: res.data });
@@ -101,19 +101,37 @@ export const resolveWord = async (wordId: string): Promise<any> => {
   return wordRes;
 };
 
+export const resolveNsibidiCharacter = async (nsibidiCharacterId: string): Promise<any> => {
+  const nsibidiCharacterRes = await getNsibidiCharacter(nsibidiCharacterId)
+    .catch(async () => {
+      /**
+       * If there is a regular Nsibidi character string (not a MongoDB Id) then the platform
+       * will search the Igbo API and find the matching Nsibidi character and insert
+       * that Nsibidi character's id
+       */
+
+      const { json: nsibidiCharactersResults } = (
+        await network(`/${Collection.NSIBIDI_CHARACTERS}?keyword=${nsibidiCharacterId}`)
+      );
+      const fallbackWord = nsibidiCharactersResults.find(({ nsibidi }) => nsibidi === nsibidiCharacterId);
+      return fallbackWord;
+    });
+  return nsibidiCharacterRes;
+};
+
 export const getAssociatedExampleSuggestions = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `examples/${id}/exampleSuggestions`,
+  url: `${Collection.EXAMPLES}/${id}/exampleSuggestions`,
 })).data;
 
 export const getAssociatedWordSuggestions = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `words/${id}/wordSuggestions`,
+  url: `${Collection.WORDS}/${id}/wordSuggestions`,
 })).data;
 
 export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promise<any> => (await request({
   method: 'GET',
-  url: `words/${id}/twitterPolls`,
+  url: `${Collection.WORDS}/${id}/twitterPolls`,
 })).data;
 
 export const approveDocument = ({
