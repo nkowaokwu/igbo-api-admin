@@ -10,24 +10,33 @@ import {
 import { CloseIcon } from '@chakra-ui/icons';
 
 const WordPill = ({
-  word,
+  nsibidi,
   definitions,
+  pronunciations,
+  word,
   onDelete,
   index,
 }: {
-  word: string,
-  wordClass: string,
-  definitions: [string],
+  word?: string,
+  nsibidi?: string,
+  wordClass?: string,
+  definitions: ({ text: string } | string)[],
+  pronunciations?: { text: string }[],
   onDelete: () => void;
   index: number,
 }): ReactElement => (
   <Box
     data-test={`word-pill-${index}`}
-    width="full"
+    width="fit-content"
     display="flex"
     flexDirection="row"
     justifyContent="space-between"
     alignItems="center"
+    borderColor="blue.400"
+    borderWidth="1px"
+    backgroundColor="blue.50"
+    borderRadius="md"
+    p={2}
   >
     <Box display="flex" flexDirection="column" className="space-y-1">
       <Box display="flex" flexDirection="row" alignItems="center" className="space-x-2">
@@ -35,12 +44,14 @@ const WordPill = ({
           <chakra.span fontWeight="normal">
             {`${index + 1}. `}
           </chakra.span>
-          {word}
+          {word || nsibidi}
         </Text>
-        <Text fontSize="sm" fontStyle="italic" color="blue.400">{get(definitions, '[0].wordClass')}</Text>
+        <Text fontSize="xs" fontStyle="italic" color="blue.400">
+          {get(pronunciations, '[0].text') || get(definitions, '[0].wordClass')}
+        </Text>
       </Box>
-      <Text fontSize="sm" color="blue.400">
-        {truncate(get(definitions, '[0].definitions[0]'))}
+      <Text fontSize="xs" color="blue.400" m={0}>
+        {truncate(get(definitions, '[0].text') || get(definitions, '[0].definitions[0]'))}
       </Text>
     </Box>
     <Tooltip label="Remove item">
@@ -55,7 +66,7 @@ const WordPill = ({
         _active={{
           backgroundColor: 'transparent',
         }}
-        icon={<CloseIcon boxSize={4} />}
+        icon={<CloseIcon boxSize={3} />}
       />
     </Tooltip>
   </Box>

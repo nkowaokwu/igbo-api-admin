@@ -9,7 +9,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { compact } from 'lodash';
 import { Controller } from 'react-hook-form';
-import { Input, WordPill } from 'src/shared/primitives';
+import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
@@ -43,6 +43,12 @@ const Stems = (
     }
   };
 
+  const handleDeleteStems = (index: number) => {
+    const filteredStems = [...stemIds];
+    filteredStems.splice(index, 1);
+    updateStems(filteredStems);
+  };
+
   useEffect(() => {
     resolveStems((stems) => {
       // Remove stale, invalid Word Ids
@@ -57,32 +63,10 @@ const Stems = (
     <Spinner />
   ) : resolvedStems && resolvedStems.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3 py-4">
-      {resolvedStems.map((word, index) => (
-        <Box
-          key={word.id}
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          borderColor="blue.400"
-          borderWidth="1px"
-          backgroundColor="blue.50"
-          borderRadius="full"
-          minWidth="36"
-          py={2}
-          px={6}
-        >
-          <WordPill
-            {...word}
-            index={index}
-            onDelete={() => {
-              const filteredStems = [...stemIds];
-              filteredStems.splice(index, 1);
-              updateStems(filteredStems);
-            }}
-          />
-        </Box>
-      ))}
+      <WordPills
+        pills={resolvedStems}
+        onDelete={handleDeleteStems}
+      />
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
@@ -133,6 +117,7 @@ const StemsForm = ({
       setInput('');
     }
   };
+
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2 " height="fit-content">
       <Controller

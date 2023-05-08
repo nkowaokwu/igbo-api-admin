@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Controller } from 'react-hook-form';
-import { Input, WordPill } from 'src/shared/primitives';
+import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
@@ -34,6 +34,13 @@ const RelatedTerms = (
       setIsLoadingRelatedTerms(false);
     }
   };
+
+  const handleDeleteRelatedTerms = (index: number) => {
+    const filteredRelatedTerms = [...relatedTermIds];
+    filteredRelatedTerms.splice(index, 1);
+    updateRelatedTerms(filteredRelatedTerms);
+  };
+
   useEffect(() => {
     resolveRelatedTerms((relatedTerms) => {
       // Remove stale, invalid Word Ids
@@ -48,32 +55,10 @@ const RelatedTerms = (
     <Spinner />
   ) : resolvedRelatedTerms && resolvedRelatedTerms.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3 py-4">
-      {resolvedRelatedTerms.map((word, index) => (
-        <Box
-          key={word.id}
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-          alignItems="center"
-          borderColor="blue.400"
-          borderWidth="1px"
-          backgroundColor="blue.50"
-          borderRadius="full"
-          minWidth="36"
-          py={2}
-          px={6}
-        >
-          <WordPill
-            {...word}
-            index={index}
-            onDelete={() => {
-              const filteredRelatedTerms = [...relatedTermIds];
-              filteredRelatedTerms.splice(index, 1);
-              updateRelatedTerms(filteredRelatedTerms);
-            }}
-          />
-        </Box>
-      ))}
+      <WordPills
+        pills={resolvedRelatedTerms}
+        onDelete={handleDeleteRelatedTerms}
+      />
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
