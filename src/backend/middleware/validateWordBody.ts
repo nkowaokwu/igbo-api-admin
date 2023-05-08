@@ -22,14 +22,14 @@ export const wordDataSchema = Joi.object().keys({
   wordPronunciation: Joi.string().allow('', null).optional(),
   conceptualWord: Joi.string().allow('', null).optional(),
   nsibidi: Joi.string().allow(''),
-  nsibidiMeta: Joi.array().min(1).items(Joi.string()).optional(),
+  nsibidiCharacters: Joi.array().min(1).items(Joi.string()).optional(),
   definitions: Joi.array().min(1).items(Joi.object().keys({
     wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
     definitions: Joi.array().min(1).items(Joi.string()).required(),
     igboDefinitions: Joi.array().min(0).items(Joi.object().keys({
       igbo: Joi.string().allow('', null),
       nsibidi: Joi.string().allow('', null),
-      nsibidiMeta: Joi.array().min(1).items(Joi.string()).optional(),
+      nsibidiCharacters: Joi.array().min(1).items(Joi.string()).optional(),
       _id: Joi.string().optional(),
     })).optional(),
     nsibidi: Joi.string().allow('').optional(),
