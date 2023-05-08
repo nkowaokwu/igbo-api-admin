@@ -9,6 +9,7 @@ enum Collections {
   USERS = 'users',
   POLLS = 'polls',
   NOTIFICATIONS = 'notifications',
+  NSIBIDI_CHARACTERS = 'nsibidiCharacters',
   DATA_DUMP = 'dataDump',
 };
 
