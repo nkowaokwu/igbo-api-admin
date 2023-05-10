@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
+import WordClass from 'src/shared/constants/WordClass';
 import Views from 'src/shared/constants/Views';
 import WordEditForm from '../WordEditForm';
 
@@ -58,6 +59,23 @@ describe('Word Edit', () => {
     await findByTestId('dialects-0-word-input');
     userEvent.click(await findByText('Add Dialectal Variation'));
     await findByTestId('dialects-1-word-input');
+  });
+
+  it('render part of speech within dropdown', async () => {
+    const { findByText, queryByText } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{ id: '123', definitions: [{ definitions: ['first definition'], wordClass: WordClass.AV.value }] }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    await findByText('Part of Speech');
+    await findByText('Active verb');
+    expect(await queryByText('Adjective')).toBeNull();
   });
 
   it('add a definition group to word suggestion', async () => {

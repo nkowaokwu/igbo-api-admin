@@ -125,7 +125,7 @@ const Example = ({
           defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
           append={handleAppendNsibidiCharacter}
           remove={handleDeleteNsibidiCharacter}
-          nsibidiCharacterIds={examples[index].nsibidiCharacters}
+          nsibidiCharacterIds={examples[index].nsibidiCharacters || []}
         />
         <AudioRecorder
           path="pronunciation"

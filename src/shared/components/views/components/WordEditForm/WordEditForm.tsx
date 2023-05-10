@@ -72,10 +72,6 @@ const WordEditForm = ({
         : [],
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
-      definitions: (record.definitions || []).map((definition) => ({
-        ...definition,
-        nsibidiCharacters: (definition?.nsibidiCharacters || []).map((nsibidiCharacter) => ({ id: nsibidiCharacter })),
-      })),
       tenses: record.tenses || {},
       pronunciation: record.pronunciation || '',
       attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
@@ -91,6 +87,7 @@ const WordEditForm = ({
     wordClass: '',
     definitions: [''],
     igboDefinitions: [],
+    nsibidiCharacters: [],
     nsibidi: '',
   }]);
   // Examples are not tracked in react-hook-form due to their data structure complexity
@@ -163,7 +160,7 @@ const WordEditForm = ({
         ...definition,
         wordClass: definition.wordClass.value,
         definitions: sanitizeArray(definition.definitions),
-        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters),
+        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters || []),
       })),
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),

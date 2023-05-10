@@ -26,7 +26,7 @@ const NsibidiInput = React.forwardRef((props : {
     'data-test': dataTest = 'nsibidi-input',
     append,
     remove,
-    nsibidiCharacterIds,
+    nsibidiCharacterIds = [],
   } = props;
   const toast = useToast();
 
