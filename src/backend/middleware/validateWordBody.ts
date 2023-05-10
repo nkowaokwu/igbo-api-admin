@@ -21,6 +21,7 @@ export const wordDataSchema = Joi.object().keys({
   word: Joi.string().required(),
   wordPronunciation: Joi.string().allow('', null).optional(),
   conceptualWord: Joi.string().allow('', null).optional(),
+  // Deprecated: top-level nsibidi
   nsibidi: Joi.string().allow(''),
   definitions: Joi.array().min(1).items(Joi.object().keys({
     wordClass: Joi.string().valid(...Object.keys(WordClass)).required(),
@@ -28,9 +29,11 @@ export const wordDataSchema = Joi.object().keys({
     igboDefinitions: Joi.array().min(0).items(Joi.object().keys({
       igbo: Joi.string().allow('', null),
       nsibidi: Joi.string().allow('', null),
+      nsibidiCharacters: Joi.array().min(0).items(Joi.string()).optional(),
       _id: Joi.string().optional(),
     })).optional(),
     nsibidi: Joi.string().allow('').optional(),
+    nsibidiCharacters: Joi.array().min(0).items(Joi.string()).optional(),
     label: Joi.string().allow('').optional(),
   })).required(),
   attributes: Joi.object().keys(Object.values(WordAttributes).reduce((finalSchema, { value }) => ({

@@ -15,7 +15,10 @@ import Collection from 'src/shared/constants/Collections';
 import { getExample } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
+import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import DiffField from '../diffFields/DiffField';
+import ArrayDiffField from '../diffFields/ArrayDiffField';
+import ArrayDiff from '../diffFields/ArrayDiff';
 import {
   ShowDocumentStats,
   EditDocumentIds,
@@ -26,7 +29,7 @@ import { determineDate } from '../../utils';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [, setOriginalExampleRecord] = useState({});
+  const [originalExampleRecord, setOriginalExampleRecord] = useState({});
   const [diffRecord, setDiffRecord] = useState(null);
   const { record, resource } = useShowController(props);
   const { permissions } = props;
@@ -174,6 +177,23 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 fallbackValue={nsibidi}
                 renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
               />
+              <Box className="flex flex-col">
+                <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị Characters</Heading>
+                <ArrayDiffField
+                  recordField="nsibidiCharacters"
+                  recordFieldSingular="nsibidiCharacter"
+                  record={record}
+                  originalRecord={originalExampleRecord}
+                >
+                  <ArrayDiff
+                    diffRecord={diffRecord}
+                    recordField="nsibidiCharacters"
+                    renderNestedObject={(nsibidiCharacterId) => (
+                      <ResolvedNsibidiCharacter nsibidiCharacterId={nsibidiCharacterId} />
+                    )}
+                  />
+                </ArrayDiffField>
+              </Box>
               <Box className="flex flex-col mt-5">
                 <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
                 {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (

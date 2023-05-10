@@ -70,6 +70,7 @@ export interface DefinitionSchema {
   definitions: string[],
   igboDefinitions: { igbo: string, nsibidi: string }[],
   nsibidi: string,
+  nsibidiCharacters: (Types.ObjectId | string)[],
   _id?: Types.ObjectId,
   id?: string,
 }
@@ -154,6 +155,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   english?: string,
   meaning?: string,
   nsibidi?: string,
+  nsibidiCharacters: string[],
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
   pronunciation: string,
@@ -178,6 +180,13 @@ export interface ExampleClientData {
   exampleForSuggestion?: boolean,
   authorId?: string,
   originalExampleId?: string,
+};
+
+export interface NsibidiCharacter {
+  id: Types.ObjectId,
+  nsibidi: string,
+  definitions: { text: string }[],
+  pronunciations: { text: string }[],
 };
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {

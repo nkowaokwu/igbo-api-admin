@@ -132,4 +132,21 @@ describe('Word Edit', () => {
     userEvent.type(await findByTestId('word-input'), 'new headword');
     await findByTestId('audio-recording-warning-message');
   });
+
+  it('render nsibidi options', async () => {
+    const { findByTestId, findByText } = render(
+      <TestContext>
+        <WordEditForm
+          view={Views.EDIT}
+          resource={Collections.WORD_SUGGESTIONS}
+          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
+          save={() => {}}
+          history={{}}
+        />
+      </TestContext>,
+    );
+    userEvent.type(await findByTestId('nsibidi-input'), 'nsibidi');
+    await findByText('first definition');
+    await findByText('first pronunciation');
+  });
 });

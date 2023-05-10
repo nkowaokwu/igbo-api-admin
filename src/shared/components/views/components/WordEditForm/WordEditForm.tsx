@@ -28,7 +28,7 @@ import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/de
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
-import { sanitizeArray, onCancel } from '../utils';
+import { sanitizeArray, sanitizeNsibidiCharacters, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
@@ -72,7 +72,10 @@ const WordEditForm = ({
         : [],
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
-      nsibidi: record.nsibidi,
+      definitions: (record.definitions || []).map((definition) => ({
+        ...definition,
+        nsibidiCharacters: (definition?.nsibidiCharacters || []).map((nsibidiCharacter) => ({ id: nsibidiCharacter })),
+      })),
       tenses: record.tenses || {},
       pronunciation: record.pronunciation || '',
       attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
@@ -160,6 +163,7 @@ const WordEditForm = ({
         ...definition,
         wordClass: definition.wordClass.value,
         definitions: sanitizeArray(definition.definitions),
+        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters),
       })),
       variations: sanitizeArray(data.variations),
       relatedTerms: sanitizeArray(data.relatedTerms),
@@ -317,6 +321,7 @@ const WordEditForm = ({
       </Box>
       <DefinitionsForm
         getValues={getValues}
+        setValue={setValue}
         options={options}
         record={record}
         definitions={definitions}
@@ -335,6 +340,7 @@ const WordEditForm = ({
         examples={examples}
         setExamples={setExamples}
         getValues={getValues}
+        setValue={setValue}
         errors={errors}
       />
       <Box className={'flex '

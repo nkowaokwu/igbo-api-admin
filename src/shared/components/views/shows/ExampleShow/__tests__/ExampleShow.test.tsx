@@ -39,6 +39,7 @@ describe('Example Show', () => {
     await findByText('first igbo example');
     await findByText('first english example');
     await findByText('English');
+    await findByText('Nsịbịdị');
     await findByText('Associated Words');
     expect(await queryByText('Editor\'s Note')).toBeNull();
     expect(await queryByText('User\'s comments')).toBeNull();

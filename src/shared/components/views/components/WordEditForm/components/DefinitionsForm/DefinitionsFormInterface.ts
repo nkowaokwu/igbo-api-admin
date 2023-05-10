@@ -3,7 +3,8 @@ import { Control } from 'react-hook-form';
 import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
 
 interface DefinitionsForm {
-  getValues: (value: any) => any,
+  getValues: (key?: any) => any,
+  setValue: (key: string, value: any) => void,
   options: any,
   record: Record,
   definitions: DefinitionSchema[],

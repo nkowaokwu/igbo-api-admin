@@ -10,6 +10,7 @@ import IgboDefinitions from './IgboDefinitions';
 
 const DefinitionsForm = ({
   getValues,
+  setValue,
   options,
   record,
   definitions,
@@ -117,7 +118,9 @@ const DefinitionsForm = ({
                 control={control}
                 record={record}
                 getValues={getValues}
+                setValue={setValue}
                 name={`definitions[${index}].nsibidi`}
+                errors={errors}
               />
             </Box>
             <Box className="flex flex-row items-center my-5 w-full justify-between">
@@ -141,6 +144,10 @@ const DefinitionsForm = ({
                 control={control}
                 handleDeleteGroupIgboDefinition={handleDeleteGroupIgboDefinition}
                 handleAddGroupIgboDefinition={handleAddGroupIgboDefinition}
+                errors={errors}
+                record={record}
+                getValues={getValues}
+                setValue={setValue}
               />
             </Box>
             {(errors.definitions || [])[index] ? (

@@ -18,6 +18,18 @@ export const getWords = jest.fn(async () => ([
   },
 ]));
 
+export const getNsibidiCharacter = jest.fn(async () => ({
+  nsibidi: 'nsibidi',
+  definitions: [{ text: 'first definition' }],
+  pronunciations: [{ text: 'first pronunciation' }],
+}));
+
+export const getNsibidiCharacters = jest.fn(async () => ([{
+  nsibidi: 'nsibidi',
+  definitions: [{ text: 'first definition' }],
+  pronunciations: [{ text: 'first pronunciation' }],
+}]));
+
 export const getWordSuggestions = jest.fn(async () => ([]));
 
 export const resolveWord = jest.fn(async () => ({

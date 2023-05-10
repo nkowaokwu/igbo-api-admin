@@ -24,6 +24,7 @@ export const exampleSuggestionSchema = new Schema({
   english: { type: String, default: '', trim: true },
   meaning: { type: String, default: '', trim: true },
   nsibidi: { type: String, default: '' },
+  nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
   style: {
     type: String,
     enum: Object.values(ExampleStyle).map(({ value }) => value),

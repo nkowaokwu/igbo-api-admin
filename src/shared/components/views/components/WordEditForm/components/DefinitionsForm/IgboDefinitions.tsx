@@ -1,24 +1,33 @@
 import React, { ReactElement } from 'react';
 import { Control, Controller } from 'react-hook-form';
+import { Record } from 'react-admin';
 import { Box, IconButton } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Textarea } from 'src/shared/primitives';
 import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
-import NsibidiInput from '../NsibidiForm/NsibidiInput';
 import AddSection from './AddSection';
+import NsibidiForm from '../NsibidiForm';
 
 const IgboDefinitions = ({
   igboDefinitions,
   index,
   control,
+  errors,
   handleDeleteGroupIgboDefinition,
   handleAddGroupIgboDefinition,
+  record,
+  getValues,
+  setValue,
 } : {
   igboDefinitions: DefinitionSchema['igboDefinitions'],
   index: number,
   control: Control,
   handleDeleteGroupIgboDefinition: (value: number, secondValue: number) => void,
   handleAddGroupIgboDefinition: (value: number) => void,
+  errors: any,
+  record: Record,
+  getValues: (key?: string) => any,
+  setValue: (key: string, value) => void,
 }): ReactElement => (
   <Box className="w-full">
     {igboDefinitions.map((igboDefinition, igboDefinitionIndex) => (
@@ -42,17 +51,15 @@ const IgboDefinitions = ({
               defaultValue={igboDefinition?.igbo || ''}
               control={control}
             />
-            <Controller
-              render={(props) => (
-                <NsibidiInput
-                  {...props}
-                  placeholder="Definition in Nsịbịdị"
-                  data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
-                />
-              )}
-              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
-              defaultValue={igboDefinition?.nsibidi || ''}
+            <NsibidiForm
               control={control}
+              record={record}
+              getValues={getValues}
+              setValue={setValue}
+              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
+              placeholder="Definition in Nsịbịdị"
+              data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
+              errors={errors}
             />
           </Box>
           <IconButton

@@ -28,6 +28,7 @@ import {
   approveExampleSuggestion,
   denyExampleSuggestion,
 } from 'src/backend/controllers/exampleSuggestions';
+import { getNsibidiCharacters, getNsibidiCharacter } from 'src/backend/controllers/nsibidiCharacters';
 import {
   getStats,
   getUserStats,
@@ -125,6 +126,9 @@ editorRouter.delete(
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   deleteExampleSuggestion,
 );
+
+editorRouter.get('/nsibidiCharacters', getNsibidiCharacters);
+editorRouter.get('/nsibidiCharacters/:id', validId, getNsibidiCharacter);
 
 editorRouter.delete(
   '/corpusSuggestions/:id',

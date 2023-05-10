@@ -10,15 +10,17 @@ import { debounce, get } from 'lodash';
 import {
   Box,
   Input as ChakraInput,
+  InputProps,
   Spinner,
   Text,
   chakra,
 } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
 import useEventListener from 'src/hooks/useEventListener';
-import { getWords } from '../API';
+import { getNsibidiCharacters, getWords } from '../API';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
 import { handlePosition, handleIsEditing } from './utils/positions';
+import Collections from '../constants/Collections';
 
 const Input = React.forwardRef(({
   value,
@@ -28,6 +30,7 @@ const Input = React.forwardRef(({
   type,
   onSelect,
   searchApi,
+  collection,
   ...rest
 } : {
   value?: string,
@@ -40,12 +43,13 @@ const Input = React.forwardRef(({
   defaultValue?: string,
   onSelect?: (e: any) => void,
   searchApi?: boolean,
+  collection?: Collections,
   isDisabled?: boolean,
-}, ref): ReactElement => {
+} | InputProps, ref): ReactElement => {
   const [isVisible, setIsVisible] = useState(false);
   const [positionRect, setPositionRect] = useState({});
-  const [autoCompleteWords, setAutoCompleteWords] = useState([]);
-  const [isSearchingAutoCompleteWords, setIsSearchingAutoCompleteWords] = useState(false);
+  const [autoCompleteResults, setAutoCompleteResults] = useState([]);
+  const [isSearchingAutoCompleteResults, setIsSearchingAutoCompleteResults] = useState(false);
   const [isAutoCompleteVisible, setIsAutoCompleteVisible] = useState(false);
   const accentedLetterPopupRef = useRef(null);
   const inputRef = useRef(ref);
@@ -62,15 +66,16 @@ const Input = React.forwardRef(({
   };
 
   const debounceInput = useCallback(debounce(async (search) => {
-    setIsSearchingAutoCompleteWords(true);
+    setIsSearchingAutoCompleteResults(true);
+    const fetchMethod = collection === Collections.NSIBIDI_CHARACTERS ? getNsibidiCharacters : getWords;
     try {
-      const words = await getWords(search);
+      const results = await fetchMethod(search);
       act(() => {
-        setAutoCompleteWords(words);
+        setAutoCompleteResults(results);
       });
-      setIsAutoCompleteVisible(!!words.length);
+      setIsAutoCompleteVisible(!!results.length);
     } finally {
-      setIsSearchingAutoCompleteWords(false);
+      setIsSearchingAutoCompleteResults(false);
     }
   }, 300), []);
 
@@ -79,7 +84,7 @@ const Input = React.forwardRef(({
       !e.target.closest('[data-test="search-bar-form"]')
       && !e.target.closest('[data-test="accented-letter-popup"]')) {
       act(() => {
-        setAutoCompleteWords([]);
+        setAutoCompleteResults([]);
       });
     }
   };
@@ -90,10 +95,10 @@ const Input = React.forwardRef(({
   useEventListener('click', handleDismissAutocomplete);
 
   useEffect(() => {
-    if (isSearchingAutoCompleteWords) {
+    if (isSearchingAutoCompleteResults) {
       setIsVisible(false);
     }
-  }, [isSearchingAutoCompleteWords]);
+  }, [isSearchingAutoCompleteResults]);
 
   const handleTextInput = useCallback((e) => {
     onChange(e);
@@ -122,8 +127,9 @@ const Input = React.forwardRef(({
         }}
         {...rest}
       />
-      {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteWords) ? (
+      {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteResults) ? (
         <Box
+          data-test="auto-complete-container"
           position="absolute"
           top={`calc(${inputRef.current.clientHeight}px + 1rem)`}
           left="0"
@@ -135,14 +141,14 @@ const Input = React.forwardRef(({
           borderWidth="1px"
           zIndex={1}
         >
-          {isSearchingAutoCompleteWords ? (
+          {isSearchingAutoCompleteResults ? (
             <Box width="full" display="flex" justifyContent="center" py={4}>
               <Spinner color="primary" />
             </Box>
           ) : (
-            autoCompleteWords.map((word, index) => (
+            autoCompleteResults.map((result, index) => (
               <Box
-                key={word.id}
+                key={result.id}
                 py={3}
                 px={2}
                 _hover={{ backgroundColor: 'selected' }}
@@ -150,23 +156,43 @@ const Input = React.forwardRef(({
                 cursor="pointer"
                 userSelect="none"
                 className="transition-all duration-100"
-                onClick={() => handleSelectAutocomplete(word)}
+                onClick={() => handleSelectAutocomplete(result)}
                 {...(!index ? { borderTopRadius: 'md' } : {})}
-                {...(index === autoCompleteWords.length - 1 ? { borderBottomRadius: 'md' } : {})}
+                {...(index === autoCompleteResults.length - 1 ? { borderBottomRadius: 'md' } : {})}
               >
-                <Text fontWeight="bold">
-                  {word.word}
-                  <chakra.span
-                    fontStyle="italic"
-                    color="gray.400"
-                    fontSize="sm"
-                    fontWeight="normal"
-                    ml={3}
-                  >
-                    {word.wordClass}
-                  </chakra.span>
-                </Text>
-                <Text color="gray.600">{get(word, 'definitions[0].definitions[0]')}</Text>
+                {result.word ? (
+                  <>
+                    <Text fontWeight="bold">
+                      {result.word}
+                      <chakra.span
+                        fontStyle="italic"
+                        color="gray.400"
+                        fontSize="sm"
+                        fontWeight="normal"
+                        ml={3}
+                      >
+                        {result.wordClass}
+                      </chakra.span>
+                    </Text>
+                    <Text color="gray.600">{get(result, 'definitions[0].definitions[0]')}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text fontWeight="bold">
+                      {result.nsibidi}
+                      <chakra.span
+                        fontStyle="italic"
+                        color="gray.400"
+                        fontSize="sm"
+                        fontWeight="normal"
+                        ml={3}
+                      >
+                        {get(result, 'pronunciations[0].text')}
+                      </chakra.span>
+                    </Text>
+                    <Text color="gray.600">{get(result, 'definitions[0].text')}</Text>
+                  </>
+                )}
               </Box>
             ))
           )}
@@ -176,7 +202,7 @@ const Input = React.forwardRef(({
         ref={accentedLetterPopupRef}
         inputRef={inputRef}
         positionRect={positionRect}
-        isVisible={type !== 'file' && !isSearchingAutoCompleteWords && isVisible}
+        isVisible={type !== 'file' && !isSearchingAutoCompleteResults && isVisible}
       />
     </Box>
   );

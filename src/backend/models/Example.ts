@@ -9,6 +9,7 @@ export const exampleSchema = new Schema({
   english: { type: String, default: '', trim: true },
   meaning: { type: String, default: '', trim: true },
   nsibidi: { type: String, default: '' },
+  nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
   type: {
     type: String,
     enum: Object.values(SentenceType),

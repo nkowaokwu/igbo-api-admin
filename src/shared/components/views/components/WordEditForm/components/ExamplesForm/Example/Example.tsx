@@ -56,6 +56,16 @@ const Example = ({
     updatedExamples[index].nsibidi = e.target.value;
   };
 
+  const handleAppendNsibidiCharacter = (nsibidiCharacterId) => {
+    const updatedExamples = [...examples];
+    updatedExamples[index].nsibidiCharacters.push(nsibidiCharacterId);
+  };
+
+  const handleDeleteNsibidiCharacter = (index) => {
+    const updatedExamples = [...examples];
+    updatedExamples.splice(index, 1);
+  };
+
   const handleSetPronunciation = (path, value) => {
     // Setting the react-hook-form value
     const updatedExamples = [...examples];
@@ -113,6 +123,9 @@ const Example = ({
           placeholder="Example in Nsịbịdị"
           data-test={`examples-${index}-nsibidi-input`}
           defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
+          append={handleAppendNsibidiCharacter}
+          remove={handleDeleteNsibidiCharacter}
+          nsibidiCharacterIds={examples[index].nsibidiCharacters}
         />
         <AudioRecorder
           path="pronunciation"

@@ -8,3 +8,8 @@ export const onCancel = ({ view, resource, history }: { view: string, resource: 
   localStorage.removeItem('igbo-api-admin-form');
   return view === View.CREATE ? history.push(`/${resource}`) : history.push(View.SHOW);
 };
+
+/* Transforms nsibidiCharacters to be an array of just strings */
+export const sanitizeNsibidiCharacters = (nsibidiCharacters: { id: string }[]): string[] => (
+  nsibidiCharacters.map(({ id }) => id)
+);

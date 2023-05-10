@@ -182,7 +182,6 @@
     "google-gax": "^2.9.2",
     "husky": "^4.3.0",
     "jest": "^27.5.1",
-    "jest-fetch-mock": "^3.0.3",
     "kill-port": "^1.6.1",
     "lint-staged": "^10.4.2",
     "mocha": "^8.2.1",
