@@ -17,7 +17,7 @@ export const getNsibidiCharacters = (
     } = handleQueries(req);
 
     // Loosely matches with an included Nsibidi character
-    const regex = new RegExp([...searchWord].join('|'));
+    const regex = new RegExp(searchWord);
     const query = { nsibidi: { $regex: regex } };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
