@@ -68,6 +68,10 @@ const Input = React.forwardRef(({
   const debounceInput = useCallback(debounce(async (search) => {
     setIsSearchingAutoCompleteResults(true);
     const fetchMethod = collection === Collections.NSIBIDI_CHARACTERS ? getNsibidiCharacters : getWords;
+    if (!search) {
+      setIsSearchingAutoCompleteResults(false);
+      return;
+    }
     try {
       const results = await fetchMethod(search);
       act(() => {
@@ -140,6 +144,8 @@ const Input = React.forwardRef(({
           borderColor="gray.200"
           borderWidth="1px"
           zIndex={1}
+          maxHeight="500px"
+          overflowY="scroll"
         >
           {isSearchingAutoCompleteResults ? (
             <Box width="full" display="flex" justifyContent="center" py={4}>
@@ -178,7 +184,7 @@ const Input = React.forwardRef(({
                   </>
                 ) : (
                   <>
-                    <Text fontWeight="bold">
+                    <Text fontWeight="bold" className="akagu">
                       {result.nsibidi}
                       <chakra.span
                         fontStyle="italic"
