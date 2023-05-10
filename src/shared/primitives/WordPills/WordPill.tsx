@@ -12,7 +12,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 const WordPill = ({
   nsibidi,
   definitions,
-  pronunciations,
+  pronunciation,
   word,
   onDelete,
   index,
@@ -21,7 +21,7 @@ const WordPill = ({
   nsibidi?: string,
   wordClass?: string,
   definitions: ({ text: string } | string)[],
-  pronunciations?: { text: string }[],
+  pronunciation?: string,
   onDelete: () => void;
   index: number,
 }): ReactElement => (
@@ -47,7 +47,7 @@ const WordPill = ({
           {word || nsibidi}
         </Text>
         <Text fontSize="xs" fontStyle="italic" color="blue.400">
-          {get(pronunciations, '[0].text') || get(definitions, '[0].wordClass')}
+          {pronunciation || get(definitions, '[0].wordClass')}
         </Text>
       </Box>
       <Text fontSize="xs" color="blue.400">
