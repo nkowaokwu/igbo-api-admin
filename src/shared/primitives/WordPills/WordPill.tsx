@@ -47,7 +47,7 @@ const WordPill = ({
           {word || nsibidi}
         </Text>
         <Text fontSize="xs" fontStyle="italic" color="blue.400">
-          {pronunciation || get(definitions, '[0].wordClass')}
+          {get(definitions, '[0].wordClass') || pronunciation}
         </Text>
       </Box>
       <Text fontSize="xs" color="blue.400">

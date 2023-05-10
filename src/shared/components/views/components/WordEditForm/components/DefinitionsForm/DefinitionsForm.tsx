@@ -24,6 +24,7 @@ const DefinitionsForm = ({
     updatedDefinitions.push({
       wordClass: '',
       definitions: [],
+      nsibidiCharacters: [],
     });
     setDefinitions(updatedDefinitions);
   };
