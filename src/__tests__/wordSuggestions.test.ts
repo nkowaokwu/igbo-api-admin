@@ -3,7 +3,9 @@ import {
   forIn,
   isEqual,
   pick,
+  times,
 } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import WordClass from 'src/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
@@ -18,6 +20,8 @@ import {
   getWordSuggestion,
   getExampleSuggestion,
   getExample,
+  getRandomWordSuggestions,
+  putRandomWordSuggestions,
 } from './shared/commands';
 import {
   wordSuggestionId,
@@ -626,6 +630,54 @@ describe('MongoDB Word Suggestions', () => {
       const result = await deleteWordSuggestion(res.body.id);
       expect(result.status).toEqual(404);
       expect(result.body.error).not.toEqual(undefined);
+    });
+  });
+
+  describe('Igbo Definitions', () => {
+    it('should get five random word suggestions with no user interactions associated with user', async () => {
+      times(5, async () => {
+        const wordRes = await suggestNewWord(
+          { ...wordSuggestionData, word: uuid() },
+          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+        );
+        expect(wordRes.body.approvals).toHaveLength(0);
+        expect(wordRes.body.denials).toHaveLength(0);
+      });
+      const res = await getRandomWordSuggestions({});
+      expect(res.status).toEqual(200);
+      expect(res.body.length).toBeLessThanOrEqual(5);
+      res.body.forEach((wordSuggestion) => {
+        expect(wordSuggestion.definitions[0].igboDefinitions[0]).toBeUndefined();
+      });
+    });
+
+    it('should save the Igbo definitions for each word suggestion with no duplicates', async () => {
+      times(5, async () => {
+        const wordRes = await suggestNewWord(
+          { ...wordSuggestionData, word: uuid() },
+          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+        );
+        expect(wordRes.body.approvals).toHaveLength(0);
+        expect(wordRes.body.denials).toHaveLength(0);
+      });
+      const randomRes = await getRandomWordSuggestions({});
+      expect(randomRes.status).toEqual(200);
+      expect(randomRes.body.length).toBeLessThanOrEqual(5);
+      const igboDefinitions = randomRes.body.map((wordSuggestion) => ({
+        id: wordSuggestion._id,
+        igboDefinition: wordSuggestion.word,
+      }));
+      const res = await putRandomWordSuggestions(igboDefinitions);
+      expect(res.status).toEqual(200);
+      await Promise.all(res.body.map(async (wordSuggestionId) => {
+        const updatedWordRes = await getWordSuggestion(wordSuggestionId);
+        const currentIgboDefinition = igboDefinitions.find(({ id }) => id === wordSuggestionId).igboDefinition;
+        expect(updatedWordRes.body.definitions[0].igboDefinitions[0].igbo)
+          .toEqual(currentIgboDefinition);
+        const singleWordRes = await getWordSuggestions({ keyword: currentIgboDefinition });
+        expect(singleWordRes.status).toEqual(200);
+        expect(singleWordRes.body).toHaveLength(1);
+      }));
     });
   });
 });

@@ -102,7 +102,7 @@ export const createWordSuggestion = async ({
     return savedWordSuggestion;
   } catch (err) {
     if (wordSuggestion) {
-      wordSuggestion.delete();
+      await wordSuggestion.delete();
     }
     throw err;
   };
