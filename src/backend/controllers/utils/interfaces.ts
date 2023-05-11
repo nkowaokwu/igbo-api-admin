@@ -8,6 +8,7 @@ import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
 export interface HandleQueries {
   searchWord: string,
@@ -24,13 +25,15 @@ export interface HandleQueries {
   uidQuery?: string,
 };
 
+export interface FirebaseUser {
+  uid?: string,
+  role?: UserRoles,
+  editingGroup?: number | undefined,
+};
+
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
-  user: {
-    uid?: string,
-    role?: UserRoles,
-    editingGroup?: number | undefined,
-  },
+  user: FirebaseUser,
   query: {
     keyword?: string,
     page?: number | string,
@@ -147,6 +150,9 @@ export interface WordSuggestion extends Word, Suggestion {
   originalWordId?: Types.ObjectId,
   examples?: ExampleSuggestion[],
   twitterPollUrl?: string,
+  crowdsourcing: {
+    [key in CrowdsourcingType]: boolean;
+  },
 };
 
 export interface Example extends Document<any>, LeanDocument<any> {
@@ -164,6 +170,9 @@ export interface Example extends Document<any>, LeanDocument<any> {
 
 export interface ExampleSuggestion extends Example, Suggestion {
   exampleForSuggestion: boolean,
+  crowdsourcing: {
+    [key in CrowdsourcingType]: boolean;
+  }
 };
 
 export interface ExampleClientData {

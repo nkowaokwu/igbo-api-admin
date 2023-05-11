@@ -8,6 +8,7 @@ import {
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import ConfirmModal from 'src/shared/components/ConfirmModal';
 import { ArrowBackIcon } from '@chakra-ui/icons';
+import NavbarWrapper from '../../components/NavbarWrapper';
 
 const Navbar = ({
   currentView,
@@ -49,11 +50,8 @@ const Navbar = ({
       >
         <Text>Leaving this page without submitting your work will lead to your current work to be lost.</Text>
       </ConfirmModal>
-      <Box
-        className={`bg-white w-full h-16 flex flex-row 
-        ${currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'} items-center`}
-        borderBottomColor="gray.200"
-        borderBottomWidth="1px"
+      <NavbarWrapper
+        className={currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'}
       >
         {currentView === IgboSoundboxViews.HOME ? (
           <Heading fontFamily="Silka" textAlign="center">Igbo Soundbox</Heading>
@@ -128,7 +126,7 @@ const Navbar = ({
             </Button>
           </Box>
         )}
-      </Box>
+      </NavbarWrapper>
     </>
   );
 };

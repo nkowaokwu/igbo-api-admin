@@ -9,6 +9,7 @@ import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import WordAttributes from '../shared/constants/WordAttributes';
 import WordTags from '../shared/constants/WordTags';
+import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
 
 const { Schema, Types } = mongoose;
 
@@ -100,8 +101,21 @@ export const wordSuggestionSchema = new Schema(
     userInteractions: { type: [{ type: String }], default: [] },
     frequency: { type: Number, default: 1 },
     twitterPollId: { type: String, default: '' },
-  },
-  { toObject: toObjectPlugin, timestamps: true },
+    crowdsourcing: {
+      type: Object,
+      validate: (v) => {
+        const crowdsourcingKeys = Object.keys(CrowdsourcingType);
+        return Object.entries(v).map(([key, value]) => (
+          crowdsourcingKeys.includes(key) && typeof value === 'boolean'
+        ));
+      },
+      required: false,
+      default: Object.keys(CrowdsourcingType).reduce((finalCrowdsourcing, key) => ({
+        ...finalCrowdsourcing,
+        [key]: false,
+      }), {}),
+    },
+  }, { toObject: toObjectPlugin, timestamps: true },
 );
 
 toJSONPlugin(wordSuggestionSchema);

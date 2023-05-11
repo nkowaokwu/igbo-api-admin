@@ -299,3 +299,8 @@ export const searchForAssociatedSuggestionsByTwitterId = (twitterPollId: string)
   twitterPollId,
   merged: { $eq: null },
 });
+export const searchWordsWithoutIgboDefinitions = (): {
+  [key: string]: { $exists: boolean },
+} => ({
+  'definitions.0.igboDefinitions.0': { $exists: false },
+});

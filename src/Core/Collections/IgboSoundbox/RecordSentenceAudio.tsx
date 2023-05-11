@@ -2,9 +2,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
 import {
   Box,
-  Button,
   Heading,
-  IconButton,
   Spinner,
   Text,
   Tooltip,
@@ -13,8 +11,10 @@ import {
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestions, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import SandboxAudioRecorder from './SandboxAudioRecorder';
-import Completed from './Completed';
+import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
 const RecordSentenceAudio = ({
@@ -125,47 +125,21 @@ const RecordSentenceAudio = ({
     >
       <Heading as="h1" fontSize="2xl" color="gray.600">Record sentence audio</Heading>
       <Text fontFamily="Silka">Record audio for each sentence</Text>
-      <Box
-        backgroundColor="gray.100"
-        borderRadius="md"
-        borderColor="gray.300"
-        borderWidth="1px"
-        minHeight={32}
-        width={['full', 'lg']}
-        m="12"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        p="6"
-        className="space-y-6"
-      >
+      <Card>
         <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}
         </Text>
-      </Box>
+      </Card>
       <Box className="mb-12 w-full flex flex-row justify-center items-center space-x-4">
-        <Tooltip label="You will not lose your current progress by going back.">
-          <IconButton
-            variant="ghost"
-            onClick={exampleIndex !== 0 ? handleBack : noop}
-            icon={<ArrowBackIcon />}
-            aria-label="Previous sentence"
-            disabled={exampleIndex === 0}
-            _hover={{
-              backgroundColor: 'white',
-            }}
-            _active={{
-              backgroundColor: 'white',
-            }}
-            _focus={{
-              backgroundColor: 'white',
-            }}
-          />
-        </Tooltip>
+        <ActivityButton
+          tooltipLabel="You will not lose your current progress by going back."
+          onClick={exampleIndex !== 0 ? handleBack : noop}
+          icon={<ArrowBackIcon />}
+          aria-label="Previous sentence"
+          disabled={exampleIndex === 0}
+        />
         <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
-        <IconButton
-          variant="ghost"
+        <ActivityButton
           onClick={!examples[exampleIndex]
             ? handleSkip
             : exampleIndex === examples.length - 1
@@ -174,15 +148,6 @@ const RecordSentenceAudio = ({
           icon={<ArrowForwardIcon />}
           aria-label="Next sentence"
           disabled={exampleIndex === examples.length - 1}
-          _hover={{
-            backgroundColor: 'white',
-          }}
-          _active={{
-            backgroundColor: 'white',
-          }}
-          _focus={{
-            backgroundColor: 'white',
-          }}
         />
       </Box>
       <Box
@@ -206,19 +171,14 @@ const RecordSentenceAudio = ({
         >
           <Tooltip label={isCompleteDisabled ? 'Please record at least one audio to complete this section' : ''}>
             <Box>
-              <Button
-                colorScheme="green"
+              <PrimaryButton
                 onClick={!isCompleteDisabled ? handleComplete : noop}
                 rightIcon={(() => <>💾</>)()}
                 aria-label="Complete recordings"
                 disabled={isCompleteDisabled}
-                borderRadius="full"
-                fontFamily="Silka"
-                fontWeight="bold"
-                p={6}
               >
                 Complete
-              </Button>
+              </PrimaryButton>
             </Box>
           </Tooltip>
         </Box>
@@ -227,7 +187,12 @@ const RecordSentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples recording goHome={goHome} setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed recording setIsComplete={setIsComplete} setIsDirty={setIsDirty} goHome={goHome} />
+    <Completed
+      type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO}
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+      goHome={goHome}
+    />
   ) : (
     <Box
       width="full"

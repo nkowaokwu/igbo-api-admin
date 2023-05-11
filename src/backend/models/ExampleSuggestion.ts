@@ -5,6 +5,7 @@ import SentenceType from 'src/backend/shared/constants/SentenceType';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/pronunciationHooks';
 import { normalizeIgbo } from './plugins/normalizationHooks';
+import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
 
 const { Schema, Types } = mongoose;
 // @ts-ignore
@@ -44,6 +45,20 @@ export const exampleSuggestionSchema = new Schema({
   merged: { type: Types.ObjectId, ref: 'Example', default: null },
   mergedBy: { type: String, default: null },
   userInteractions: { type: [{ type: String }], default: [] },
+  crowdsourcing: {
+    type: Object,
+    validate: (v) => {
+      const crowdsourcingKeys = Object.keys(CrowdsourcingType);
+      return Object.entries(v).map(([key, value]) => (
+        crowdsourcingKeys.includes(key) && typeof value === 'boolean'
+      ));
+    },
+    required: false,
+    default: Object.keys(CrowdsourcingType).reduce((finalCrowdsourcing, key) => ({
+      ...finalCrowdsourcing,
+      [key]: false,
+    }), {}),
+  },
 }, { toObject: toObjectPlugin, timestamps: true });
 
 toJSONPlugin(exampleSuggestionSchema);

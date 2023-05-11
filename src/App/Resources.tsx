@@ -24,6 +24,7 @@ import PollCreate from 'src/Core/Collections/Polls/PollCreate';
 import UserList from 'src/Core/Collections/Users/UserList';
 import UserShow from 'src/Core/Collections/Users/UserShow';
 import IgboSoundbox from 'src/Core/Collections/IgboSoundbox';
+import IgboDefinitions from 'src/Core/Collections/IgboDefinitions';
 import DataDump from 'src/Core/Collections/DataDump';
 import withLastRoute from './withLastRoute';
 
@@ -129,9 +130,16 @@ const transcriberRoutes = (permissions) => hasTranscriberPermissions(permissions
     list: IgboSoundbox,
     icon: () => <>🔊</>,
   },
+  {
+    name: 'igboDefinitions',
+    key: 'igboDefinitions',
+    options: { label: 'Igbo Definitions' },
+    list: IgboDefinitions,
+    icon: () => <>✍🏾</>,
+  },
 ]) || [];
 
-export const getResourceObjects = (permissions: any) => [
+export const getResourceObjects = (permissions: any): any => [
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
   ...transcriberRoutes(permissions),

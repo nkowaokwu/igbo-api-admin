@@ -287,7 +287,7 @@ export const updateNestedExampleSuggestions = async (
     suggestionDocId: string,
     clientExamples: Interfaces.ExampleClientData[],
     mongooseConnection: Connection,
-    user: { uid: string },
+    user: Interfaces.FirebaseUser,
   },
 ): Promise<Interfaces.ExampleSuggestion[]> => {
   const existingExampleSuggestionIds = await generateExistingExampleSuggestionsObject({

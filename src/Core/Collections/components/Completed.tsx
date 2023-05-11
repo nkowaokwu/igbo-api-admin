@@ -5,17 +5,18 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
 const Completed = (
   {
     setIsComplete,
-    recording = false,
     setIsDirty,
     goHome,
+    type,
   }
   : {
     setIsComplete: React.Dispatch<React.SetStateAction<boolean>>,
-    recording?: boolean,
+    type: CrowdsourcingType,
     setIsDirty: React.Dispatch<React.SetStateAction<boolean>>,
     goHome: () => void,
   },
@@ -38,7 +39,13 @@ const Completed = (
       <Box className="space-y-4">
         <Heading textAlign="center">Great work!</Heading>
         <Text textAlign="center">
-          {recording ? 'Your sentence recordings have been submitted.' : 'Your sentence reviews have been submitted.'}
+          {type === CrowdsourcingType.RECORD_EXAMPLE_AUDIO
+            ? 'Your sentence recordings have been submitted.'
+            : type === CrowdsourcingType.VERIFY_EXAMPLE_AUDIO
+              ? 'Your sentence reviews have been submitted.'
+              : type === CrowdsourcingType.INPUT_IGBO_DEFINITION
+                ? 'Your Igbo definitions have been submitted.'
+                : 'Your Igbo definition reviews have been submitted.'}
         </Text>
       </Box>
       <Box className="space-x-3">
@@ -58,7 +65,13 @@ const Completed = (
           fontWeight="bold"
           onClick={handleMore}
         >
-          {recording ? 'Record more sentences' : 'Review more sentences'}
+          {type === CrowdsourcingType.RECORD_EXAMPLE_AUDIO
+            ? 'Record more sentences'
+            : type === CrowdsourcingType.VERIFY_EXAMPLE_AUDIO
+              ? 'Review more sentences'
+              : type === CrowdsourcingType.INPUT_IGBO_DEFINITION
+                ? 'Add more Igbo definitions'
+                : 'Review more Igbo definitions'}
         </Button>
       </Box>
     </Box>
