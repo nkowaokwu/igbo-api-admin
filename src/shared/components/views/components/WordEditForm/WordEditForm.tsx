@@ -153,7 +153,7 @@ const WordEditForm = ({
 
   /* Prepares the data to be cached */
   const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {
-    const cleanedData = {
+    const cleanedData = omit({
       ...record,
       ...data,
       definitions: (data.definitions || []).map((definition) => ({
@@ -168,7 +168,7 @@ const WordEditForm = ({
       examples: sanitizeExamples(examples),
       pronunciation: getValues().pronunciation || '',
       tags: sanitizeTags(data.tags),
-    };
+    }, ['crowdsourcing']);
     return cleanedData;
   };
 

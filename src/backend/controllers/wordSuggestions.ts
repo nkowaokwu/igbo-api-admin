@@ -300,7 +300,7 @@ export const getWordSuggestion = async (
       .findById(id)
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
-          throw new Error('No word suggestion exists with the provided id.');
+          throw new Error(`No word suggestion exists with the provided id: ${id}`);
         }
         const wordSuggestionWithExamples = (
           await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection)
@@ -327,7 +327,7 @@ export const deleteWordSuggestion = async (
     const { mongooseConnection } = req;
     const { id } = req.params;
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-      'ExampleSuggestionExampleSuggestion',
+      'ExampleSuggestion',
       exampleSuggestionSchema,
     );
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
