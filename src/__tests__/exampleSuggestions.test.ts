@@ -424,7 +424,6 @@ describe('MongoDB Example Suggestions', () => {
         }
         return { id, review: ReviewActions.SKIP };
       });
-      console.log(randomExampleSuggestionsRes.body);
       const updatedRandomExampleSuggestionRes = await putRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(updatedRandomExampleSuggestionRes.body.map(async (randomExampleSuggestionId, index) => {

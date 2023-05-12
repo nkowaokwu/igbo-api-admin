@@ -34,6 +34,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'mergedBy',
   'type',
   'id',
+  'crowdsourcing',
 ];
 export const WORD_SUGGESTION_KEYS = [
   'originalWordId',

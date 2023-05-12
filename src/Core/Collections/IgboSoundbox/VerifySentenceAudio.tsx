@@ -19,8 +19,9 @@ import {
 import { getRandomExampleSuggestionsToReview, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import SandboxAudioRecorder from './SandboxAudioRecorder';
-import Completed from './Completed';
+import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 import ProgressCircles from './components/ProgressCircles';
 import CardMessage from './constants/CardMessage';
@@ -274,7 +275,12 @@ const VerifySentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples setIsDirty={setIsDirty} goHome={goHome} />
   ) : isComplete ? (
-    <Completed setIsComplete={setIsComplete} setIsDirty={setIsDirty} goHome={goHome} />
+    <Completed
+      type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO}
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+      goHome={goHome}
+    />
   ) : (
     <Box
       width="full"

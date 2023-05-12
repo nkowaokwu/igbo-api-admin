@@ -39,6 +39,13 @@ export const getWordSuggestions = (query = {}, options = { token: '' }): Request
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const getRandomWordSuggestions = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/wordSuggestions/random')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 export const getWordSuggestion = (id: mongoose.Types.ObjectId | string, options = { token: '' }): Request => (
   chaiServer
     .get(`/wordSuggestions/${id}`)
@@ -48,6 +55,16 @@ export const getWordSuggestion = (id: mongoose.Types.ObjectId | string, options 
 export const deleteWordSuggestion = (id: string, options = { token: '' }): Request => (
   chaiServer
     .delete(`/wordSuggestions/${id}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const putRandomWordSuggestions = (
+  data: { id: string, pronunciation?: string, review?: ReviewActions }[],
+  options = { token: '' },
+): Request => (
+  chaiServer
+    .put('/wordSuggestions/random')
+    .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 

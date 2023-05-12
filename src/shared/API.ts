@@ -213,3 +213,16 @@ export const combineDocument = (
   });
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
+
+export const getWordSuggestionsWithoutIgboDefinitions = async (): Promise<any> => (await request({
+  method: 'GET',
+  url: `${Collection.WORD_SUGGESTIONS}/random`,
+})).data;
+
+export const setWordSuggestionsWithoutIgboDefinitions = (
+  async (igboDefinitions: { id: string, igboDefinition: string }[]) : Promise<any> => (await request({
+    method: 'PUT',
+    url: `${Collection.WORD_SUGGESTIONS}/random`,
+    data: igboDefinitions,
+  })).data
+);

@@ -22,6 +22,7 @@ const OMIT_KEYS = [
   'duration',
   'source',
   'twitterPollId',
+  'crowdsourcing',
 ];
 
 const removePayloadFields = (payload: any): any => {

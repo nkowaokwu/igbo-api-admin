@@ -20,8 +20,8 @@ module.exports = (_, argv) => ({
   },
   devServer: {
     port: clientPort,
-    liveReload: true,
-    watchContentBase: true,
+    liveReload: false,
+    watchContentBase: false,
     writeToDisk: true,
     publicPath: '/',
     contentBase: './public',
