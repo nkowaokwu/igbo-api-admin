@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { packageResponse, handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 import { nsibidiCharacterSchema } from '../models/NsibidiCharacter';
+import createRegExp from '../shared/utils/createRegExp';
 
 /* Returns all matching Nsibidi documents */
 export const getNsibidiCharacters = (
@@ -17,7 +18,7 @@ export const getNsibidiCharacters = (
     } = handleQueries(req);
 
     // Loosely matches with an included Nsibidi character
-    const regex = new RegExp(searchWord);
+    const regex = createRegExp(searchWord).wordReg;
     const query = { nsibidi: { $regex: regex } };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
