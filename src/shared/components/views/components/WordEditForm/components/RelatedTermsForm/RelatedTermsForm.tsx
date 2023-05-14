@@ -8,15 +8,15 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { Controller } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
 
 const RelatedTerms = (
-  { relatedTermIds, updateRelatedTerms }
-  : { relatedTermIds: string[], updateRelatedTerms: (value: string[]) => void },
+  { relatedTermIds, updateRelatedTerms, control }
+  : { relatedTermIds: string[], updateRelatedTerms: (value: string[]) => void, control: Control },
 ) => {
   const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
   const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
@@ -47,9 +47,6 @@ const RelatedTerms = (
       updateRelatedTerms(relatedTerms.map(({ id }) => id));
     })();
   }, []);
-  useEffect(() => {
-    resolveRelatedTerms(() => {})();
-  }, [relatedTermIds]);
 
   return isLoadingRelatedTerms ? (
     <Spinner />
@@ -58,6 +55,8 @@ const RelatedTerms = (
       <WordPills
         pills={resolvedRelatedTerms}
         onDelete={handleDeleteRelatedTerms}
+        control={control}
+        formName="relatedTerms"
       />
     </Box>
   ) : (
@@ -145,6 +144,7 @@ const RelatedTermsForm = ({
       <RelatedTerms
         relatedTermIds={relatedTerms}
         updateRelatedTerms={updateRelatedTerms}
+        control={control}
       />
       {errors.relatedTerms && (
         <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>

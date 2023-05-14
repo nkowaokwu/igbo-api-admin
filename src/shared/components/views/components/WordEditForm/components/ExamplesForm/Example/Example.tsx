@@ -8,71 +8,34 @@ import {
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collections';
+import { Controller } from 'react-hook-form';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
 
 const Example = ({
-  setExamples,
-  examples,
   example,
-  getValues,
   index,
+  remove,
+  control,
+  setValue,
 }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
   const {
-    igbo,
-    english,
-    meaning,
-    nsibidi,
+    igbo = '',
+    english = '',
+    meaning = '',
+    pronunciation = '',
+    nsibidi = '',
     id = '',
-    associatedWords,
+    associatedWords = [],
     originalExampleId,
   } = example;
-  const formData = getValues();
   const [isExistingExample, setIsExistingExample] = useState(!!originalExampleId);
   const deleteMessage = isExistingExample
     ? `This is an existing example suggestion that is being updated. Clicking this button will NOT
     permanently delete the example sentence, rather it will be archived (saved) but hidden.`
     : 'This is a new example suggestion. Clicking this button will delete it permanently.';
-
-  const handleInputIgbo = (e) => {
-    const updatedExamples = [...examples];
-    updatedExamples[index].igbo = e.target.value;
-  };
-
-  const handleInputEnglish = (e) => {
-    const updatedExamples = [...examples];
-    updatedExamples[index].english = e.target.value;
-  };
-
-  const handleInputMeaning = (e) => {
-    const updatedExamples = [...examples];
-    updatedExamples[index].meaning = e.target.value;
-  };
-
-  const handleInputNsibidi = (e) => {
-    const updatedExamples = [...examples];
-    updatedExamples[index].nsibidi = e.target.value;
-  };
-
-  const handleAppendNsibidiCharacter = (nsibidiCharacterId) => {
-    const updatedExamples = [...examples];
-    updatedExamples[index].nsibidiCharacters.push(nsibidiCharacterId);
-  };
-
-  const handleDeleteNsibidiCharacter = (index) => {
-    const updatedExamples = [...examples];
-    updatedExamples.splice(index, 1);
-  };
-
-  const handleSetPronunciation = (path, value) => {
-    // Setting the react-hook-form value
-    const updatedExamples = [...examples];
-    updatedExamples[index].pronunciation = value;
-    // Setting the local WordEditForm value
-    setExamples(updatedExamples);
-  };
 
   useEffect(() => {
     setIsExistingExample(!!originalExampleId);
@@ -97,40 +60,69 @@ const Example = ({
         className="flex flex-col w-full space-y-3"
       >
         <h3 className="text-gray-700">Igbo:</h3>
-        <Input
-          onChange={handleInputIgbo}
-          placeholder="Example in Igbo"
-          data-test={`examples-${index}-igbo-input`}
-          defaultValue={igbo || (formData.examples && formData.examples[index]?.igbo) || ''}
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              placeholder="Example in Igbo"
+              data-test={`examples-${index}-igbo-input`}
+            />
+          )}
+          name={`examples.${index}.igbo`}
+          defaultValue={igbo}
+          control={control}
         />
         <h3 className="text-gray-700">English:</h3>
-        <Input
-          onChange={handleInputEnglish}
-          placeholder="Example in English (literal)"
-          data-test={`examples-${index}-english-input`}
-          defaultValue={english || (formData.examples && formData.examples[index]?.english) || ''}
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              placeholder="Example in English (literal)"
+              data-test={`examples-${index}-english-input`}
+            />
+          )}
+          name={`examples.${index}.english`}
+          defaultValue={english}
+          control={control}
         />
         <h3 className="text-gray-700">Meaning:</h3>
-        <Input
-          onChange={handleInputMeaning}
-          placeholder="Example in English (meaning)"
-          data-test={`examples-${index}-meaning-input`}
-          defaultValue={meaning || (formData.examples && formData.examples[index]?.meaning) || ''}
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              placeholder="Example in English (meaning)"
+              data-test={`examples-${index}-meaning-input`}
+            />
+          )}
+          name={`examples.${index}.meaning`}
+          defaultValue={meaning}
+          control={control}
         />
         <h3 className="text-gray-700">Nsịbịdị:</h3>
-        <NsibidiInput
-          onChange={handleInputNsibidi}
-          placeholder="Example in Nsịbịdị"
-          data-test={`examples-${index}-nsibidi-input`}
-          defaultValue={nsibidi || (formData.examples && formData.examples[index]?.nsibidi) || ''}
-          append={handleAppendNsibidiCharacter}
-          remove={handleDeleteNsibidiCharacter}
-          nsibidiCharacterIds={examples[index].nsibidiCharacters || []}
+        <Controller
+          render={(props) => (
+            <NsibidiInput
+              {...props}
+              placeholder="Example in Nsịbịdị"
+              data-test={`examples-${index}-nsibidi-input`}
+              nsibidiFormName={`examples.${index}.nsibidiCharacters`}
+              control={control}
+            />
+          )}
+          name={`examples.${index}.nsibidi`}
+          defaultValue={nsibidi}
+          control={control}
+        />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples.${index}.pronunciation`}
+          ref={control.register}
+          defaultValue={pronunciation}
         />
         <AudioRecorder
           path="pronunciation"
-          getFormValues={() => example?.pronunciation}
-          setPronunciation={handleSetPronunciation}
+          getFormValues={() => control.getValues(`examples.${index}.pronunciation`)}
+          setPronunciation={(_, value) => setValue(`examples.${index}.pronunciation`, value)}
           record={example}
           originalRecord={originalRecord}
           formTitle="Igbo Sentence Recording"
@@ -145,11 +137,7 @@ const Example = ({
             backgroundColor: isExistingExample ? 'orange.200' : 'red.200',
           }}
           aria-label={isExistingExample ? 'Archive Example' : 'Delete Example'}
-          onClick={() => {
-            const updateExamples = [...examples];
-            updateExamples.splice(index, 1);
-            setExamples(updateExamples);
-          }}
+          onClick={() => remove(index)}
           className="ml-3"
           icon={isExistingExample ? (() => <>🗄</>)() : (() => <>🗑</>)()}
         />

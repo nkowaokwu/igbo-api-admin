@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
-import { Controller, useFieldArray } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
 import NsidibiFormInterface from './NsidibiFormInterface';
 import NsibidiInput from './NsibidiInput';
@@ -18,10 +18,6 @@ const NsibidiForm = React.forwardRef(({
   ...rest
 }: NsidibiFormInterface, ref): ReactElement => {
   const nsibidiCharactersName = `${name}Characters` || 'nsibidiCharacters';
-  const { fields: nsibidiCharacters, append, remove } = useFieldArray({
-    control,
-    name: nsibidiCharactersName,
-  });
   return (
     <Box ref={ref} className="flex flex-col w-full">
       {!hideFormHeader ? (
@@ -38,31 +34,16 @@ const NsibidiForm = React.forwardRef(({
           <NsibidiInput
             {...props}
             {...rest}
-            append={append}
-            remove={remove}
-            nsibidiCharacterIds={nsibidiCharacters}
+            placeholder="Input in Nsịbịdị"
+            data-test="definition-group-nsibidi-input"
+            nsibidiFormName={nsibidiCharactersName}
+            control={control}
           />
         )}
-        name={name || 'nsibidi'}
-        control={control}
+        name={name}
         defaultValue={defaultValue || (name ? get(record, name) : (record.nsibidi || getValues().nsibidi)) || ''}
+        control={control}
       />
-      {nsibidiCharacters.map(({ id: nsibidiCharacterId }, index) => {
-        const currentNsibidiCharacterName = `${nsibidiCharactersName}.${index}.id`;
-        return (
-          <Controller
-            render={(props) => (
-              <input
-                {...props}
-                style={{ opacity: 0, position: 'absolute', pointerEvents: 'none' }}
-              />
-            )}
-            name={currentNsibidiCharacterName}
-            control={control}
-            defaultValue={nsibidiCharacterId}
-          />
-        );
-      })}
       {get(errors, `${name || 'nsibidi'}`) ? (
         <p className="error">{errors.nsibidi.message}</p>
       ) : null}

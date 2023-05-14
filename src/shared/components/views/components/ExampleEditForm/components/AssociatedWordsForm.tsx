@@ -8,15 +8,15 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { Controller } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { resolveWord, getWord, getWords } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
 const AssociatedWords = (
-  { associatedWordIds, updateAssociatedWords }
-  : { associatedWordIds: string[], updateAssociatedWords: (value: any) => void },
+  { associatedWordIds, updateAssociatedWords, control }
+  : { associatedWordIds: string[], updateAssociatedWords: (value: any) => void, control: Control },
 ): ReactElement => {
   const [resolvedAssociatedWords, setResolvedAssociatedWords] = useState(null);
   const [isLoadingAssociatedWords, setIsLoadingAssociatedWords] = useState(false);
@@ -50,10 +50,6 @@ const AssociatedWords = (
     })();
   }, []);
 
-  useEffect(() => {
-    resolveAssociatedWords(() => {})();
-  }, [associatedWordIds]);
-
   return isLoadingAssociatedWords ? (
     <Spinner />
   ) : resolvedAssociatedWords && resolvedAssociatedWords.length ? (
@@ -61,6 +57,8 @@ const AssociatedWords = (
       <WordPills
         pills={resolvedAssociatedWords}
         onDelete={handleDeleteAssociatedWords}
+        control={control}
+        formName="associatedWords"
       />
     </Box>
   ) : (
@@ -147,6 +145,7 @@ const AssociatedWordsForm = ({
       <AssociatedWords
         associatedWordIds={associatedWords}
         updateAssociatedWords={updateAssociatedWords}
+        control={control}
       />
       {errors.associatedWords && (
         <p className="error">{errors.associatedWords.message || errors.associatedWords[0]?.message}</p>

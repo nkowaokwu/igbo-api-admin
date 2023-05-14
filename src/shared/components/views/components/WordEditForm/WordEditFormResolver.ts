@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClass from 'src/shared/constants/WordClass';
+import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
   attributes: yup.object().shape(Object.entries(WordAttributes).reduce((finalAttributes, [, { value }]) => ({
@@ -53,11 +54,16 @@ const schema = yup.object().shape({
     ...finalSchema,
     [tenseValue.value]: yup.string().optional(),
   }), {})).optional(),
-  stems: yup.array().min(0).of(yup.string()),
-  relatedTerms: yup.array().min(0).of(yup.string()),
+  stems: yup.array().min(0).of(yup.object().shape({
+    id: yup.string(),
+  })),
+  relatedTerms: yup.array().min(0).of(yup.object().shape({
+    id: yup.string(),
+  })),
   pronunciation: yup.string().optional(),
   twitterPollId: yup.string().optional(),
   frequency: yup.number().min(1).max(5),
+  examples: yup.array().min(0).of(ExampleEditFormSchema),
 });
 
 const resolver = (): any => ({

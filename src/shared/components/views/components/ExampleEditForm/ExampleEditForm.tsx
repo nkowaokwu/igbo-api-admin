@@ -267,6 +267,7 @@ const ExampleEditForm = ({
         getValues={getValues}
         setValue={setValue}
         errors={errors}
+        name="nsibidi"
       />
       <Box className="mt-2">
         <AssociatedWordsForm

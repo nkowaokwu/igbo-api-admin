@@ -1,10 +1,8 @@
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import { Control } from 'react-hook-form';
 
 interface ExamplesFormInterface {
-  examples: ExampleSuggestion[],
-  setExamples: (value: any) => void,
-  getValues: () => any,
-  definitionGroupId: string,
+  control: Control,
+  setValue: (key: string, value: any) => void,
 };
 
 export default ExamplesFormInterface;

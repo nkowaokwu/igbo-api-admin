@@ -633,6 +633,24 @@ describe('MongoDB Word Suggestions', () => {
     });
   });
 
+  describe('Nsibidi Characters', () => {
+    it('should include nsibidiCharacters in nested example suggestion', async () => {
+      const wordRes = await suggestNewWord({
+        ...wordSuggestionData,
+        examples: [
+          {
+            igbo: 'igbo',
+            english: 'english',
+            nsibidiCharacters: [],
+            nsibidi: 'a',
+          },
+        ],
+      });
+      expect(wordRes.status).toEqual(200);
+      expect(wordRes.body.examples[0].nsibidiCharacters).toHaveLength(0);
+    });
+  });
+
   describe('Igbo Definitions', () => {
     it('should get five random word suggestions with no user interactions associated with user', async () => {
       times(5, async () => {

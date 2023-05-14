@@ -8,15 +8,15 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { compact } from 'lodash';
-import { Controller } from 'react-hook-form';
+import { Control, Controller } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 
 const Stems = (
-  { stemIds, updateStems }
-  : { stemIds: string[], updateStems: (value: string[]) => void },
+  { stemIds, updateStems, control }
+  : { stemIds: string[], updateStems: (value: string[]) => void, control: Control },
 ) => {
   const [resolvedStems, setResolvedStems] = useState(null);
   const [isLoadingStems, setIsLoadingStems] = useState(false);
@@ -55,9 +55,6 @@ const Stems = (
       updateStems(stems.map(({ id }) => id));
     })();
   }, []);
-  useEffect(() => {
-    resolveStems(() => {})();
-  }, [stemIds]);
 
   return isLoadingStems ? (
     <Spinner />
@@ -66,6 +63,8 @@ const Stems = (
       <WordPills
         pills={resolvedStems}
         onDelete={handleDeleteStems}
+        control={control}
+        formName="stems"
       />
     </Box>
   ) : (
@@ -154,6 +153,7 @@ const StemsForm = ({
       <Stems
         stemIds={stems}
         updateStems={updateStems}
+        control={control}
       />
       {errors.stems && (
         <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>

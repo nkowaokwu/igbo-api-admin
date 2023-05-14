@@ -31,6 +31,7 @@ export const placeExampleSuggestionsOnSuggestionDoc = async (
     'exampleForSuggestion',
     'meaning',
     'nsibidi',
+    'nsibidiCharacters',
     'pronunciation',
     'originalExampleId',
   ].join(' ');

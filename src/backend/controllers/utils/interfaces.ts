@@ -185,7 +185,7 @@ export interface ExampleClientData {
   style?: string,
   pronunciation?: string,
   associatedWords: string[],
-  associatedDefinitionsSchemas: string[],
+  associatedDefinitionsSchemas?: string[],
   exampleForSuggestion?: boolean,
   authorId?: string,
   originalExampleId?: string,

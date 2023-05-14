@@ -1,18 +1,11 @@
 import React, { ReactElement } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 
 const AddExampleButton = (
+  { append }:
   {
-    examples,
-    setExamples,
-    definitionGroupId,
-  }:
-  {
-    examples: Omit<ExampleSuggestion, 'id'>[],
-    setExamples: (array) => void,
-    definitionGroupId: string,
+    append: (value: Partial<Record<string, any>> | Partial<Record<string, any>>[], shouldFocus?: boolean) => void
   },
 ): ReactElement => (
   <Box className="w-full flex flex-row justify-end" my={6}>
@@ -20,11 +13,7 @@ const AddExampleButton = (
       width="full"
       colorScheme="green"
       aria-label="Add Example"
-      onClick={() => {
-        const updateExamples = [...examples];
-        updateExamples.push({ igbo: '', english: '', associatedDefinitionsSchemas: [definitionGroupId] });
-        setExamples(updateExamples);
-      }}
+      onClick={append}
       leftIcon={<AddIcon />}
     >
       Add Example

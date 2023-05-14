@@ -28,7 +28,12 @@ import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/de
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
-import { sanitizeArray, sanitizeNsibidiCharacters, onCancel } from '../utils';
+import {
+  sanitizeArray,
+  sanitizeIds,
+  sanitizeExamples,
+  onCancel,
+} from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
@@ -68,7 +73,11 @@ const WordEditForm = ({
     defaultValues: {
       dialects: record?.dialects || [],
       examples: record?.examples
-        ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
+        ? record.examples.map((example) => ({
+          ...example,
+          pronunciation: example.pronunciation || '',
+          nsibidiCharacters: example.nsibidiCharacters.map((id) => ({ id })),
+        }))
         : [],
       relatedTerms: record.relatedTerms || [],
       stems: record.stems || [],
@@ -90,8 +99,6 @@ const WordEditForm = ({
     nsibidiCharacters: [],
     nsibidi: '',
   }]);
-  // Examples are not tracked in react-hook-form due to their data structure complexity
-  const [examples, setExamples] = useState(record.examples || []);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
   const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
@@ -113,39 +120,6 @@ const WordEditForm = ({
       : '');
   };
 
-  /* Gets the original example id and associated words to prepare to send to the API */
-  const sanitizeExamples = (examples = []) => {
-    const examplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-example-id]');
-    const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
-    const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
-    return examples
-      .map(({
-        igbo,
-        english,
-        meaning,
-        nsibidi,
-        pronunciation,
-      }, index) => (
-        {
-          igbo,
-          english,
-          nsibidi,
-          pronunciation,
-          meaning,
-          ...(originalExamplesFromIds[index]?.dataset?.originalExampleId
-            ? { originalExampleId: originalExamplesFromIds[index]?.dataset?.originalExampleId }
-            : {}
-          ),
-          ...(examplesFromIds[index]?.dataset?.exampleId
-            ? { id: examplesFromIds[index]?.dataset?.exampleId }
-            : {}
-          ),
-          associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
-        }
-      ))
-      .filter((example) => example.igbo && example.english);
-  };
-
   /* Gets tag values */
   const sanitizeTags = (tags: Word['tags']) => (
     tags.map(({ value }) => value)
@@ -160,12 +134,12 @@ const WordEditForm = ({
         ...definition,
         wordClass: definition.wordClass.value,
         definitions: sanitizeArray(definition.definitions),
-        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters || []),
+        nsibidiCharacters: sanitizeIds(definition.nsibidiCharacters || []),
       })),
       variations: sanitizeArray(data.variations),
-      relatedTerms: sanitizeArray(data.relatedTerms),
-      stems: sanitizeArray(data.stems),
-      examples: sanitizeExamples(examples),
+      relatedTerms: sanitizeIds(data.relatedTerms),
+      stems: sanitizeIds(data.stems),
+      examples: sanitizeExamples(data.examples),
       pronunciation: getValues().pronunciation || '',
       tags: sanitizeTags(data.tags),
     }, ['crowdsourcing']);
@@ -334,11 +308,8 @@ const WordEditForm = ({
         />
       ) : null}
       <ExamplesForm
-        examples={examples}
-        setExamples={setExamples}
-        getValues={getValues}
         setValue={setValue}
-        errors={errors}
+        control={control}
       />
       <Box className={'flex '
         + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
