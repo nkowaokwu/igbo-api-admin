@@ -25,7 +25,7 @@ import {
   EditDocumentTopBar,
   Comments,
 } from '../../components';
-import { determineDate } from '../../utils';
+import { determineDate } from '../utils';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);

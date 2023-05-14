@@ -1,4 +1,4 @@
-import { sanitizeArray, sanitizeExamples, sanitizeIds } from '../components/utils';
+import { sanitizeArray, sanitizeExamples, sanitizeIds } from '../utils';
 
 describe('Word Edit Form utils', () => {
   it('sanitizes an array', () => {

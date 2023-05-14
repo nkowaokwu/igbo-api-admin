@@ -29,7 +29,7 @@ import {
   EditDocumentIds,
   Comments,
 } from '../../components';
-import { determineDate } from '../../utils';
+import { determineDate } from '../utils';
 import DialectDiff from '../diffFields/DialectDiff';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';

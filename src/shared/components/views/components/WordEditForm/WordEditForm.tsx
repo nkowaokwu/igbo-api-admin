@@ -76,7 +76,7 @@ const WordEditForm = ({
         ? record.examples.map((example) => ({
           ...example,
           pronunciation: example.pronunciation || '',
-          nsibidiCharacters: example.nsibidiCharacters.map((id) => ({ id })),
+          nsibidiCharacters: (example.nsibidiCharacters || []).map((id) => ({ id })),
         }))
         : [],
       relatedTerms: record.relatedTerms || [],
