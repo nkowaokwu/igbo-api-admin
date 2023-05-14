@@ -189,9 +189,13 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   userInteractions: { $nin: [uid] },
 });
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
-  [key: string]: { $exists: boolean } | { $and: { $ne: string | null }[] },
+  pronunciation: { $exists: boolean, $type: string },
+  $expr: { $gt: [{ $strLenCP: string }, number] },
+  'approvals.1': { $exists: boolean },
+  'denials.1': { $exists: boolean },
 } => ({
-  pronunciation: { $and: [{ $ne: '' }, { $ne: null }] },
+  pronunciation: { $exists: true, $type: 'string' },
+  $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },
 });

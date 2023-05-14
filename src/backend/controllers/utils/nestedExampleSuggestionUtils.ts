@@ -119,24 +119,6 @@ const generateAssociatedWords = async (example: Interfaces.ExampleClientData, su
   )
 );
 
-// eslint-disable-next-line
-// const generateAssociatedDefinitionsSchemas = async (example: Interfaces.ExampleClientData, mongooseConnection: any): Promise<string[]> => {
-//   const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-//   let associatedDefinitionsSchemas: string[] = [];
-//   if (
-//     (!example.associatedDefinitionsSchemas || !example.associatedDefinitionsSchemas.length)
-//     && example.associatedWords[0]
-//   ) {
-//     // If we have no associated definitions schemas but an associated word, let's set the default value
-//     const associatedWordSuggestion = await WordSuggestion.findById(example.associatedWords[0]);
-//     const definitionSchemaId = (get(associatedWordSuggestion, 'definitions[0]._id') || '').toString();
-//     associatedDefinitionsSchemas = [definitionSchemaId];
-//   } else {
-//     associatedDefinitionsSchemas = example.associatedDefinitionsSchemas;
-//   }
-//   return compact(flatten(associatedDefinitionsSchemas));
-// };
-
 /**
  * Archives example sentences that should be "deleted"
  * @param param0
