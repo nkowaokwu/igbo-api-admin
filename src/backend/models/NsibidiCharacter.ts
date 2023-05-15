@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import { toJSONPlugin } from './plugins';
 
 const { Schema } = mongoose;

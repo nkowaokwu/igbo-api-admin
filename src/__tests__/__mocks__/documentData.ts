@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
 

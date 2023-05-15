@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-labels */
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import { flow } from 'lodash';
 import { Word } from 'src/backend/controllers/utils/interfaces';
 

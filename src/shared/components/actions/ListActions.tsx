@@ -24,7 +24,7 @@ import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Filter from '../Filter';

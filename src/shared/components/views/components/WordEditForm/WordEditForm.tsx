@@ -17,7 +17,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import Views from 'src/shared/constants/Views';
 import WordEditForm from '../WordEditForm';
 

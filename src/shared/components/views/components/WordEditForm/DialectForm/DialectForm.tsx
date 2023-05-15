@@ -23,7 +23,7 @@ const DialectForm = ({
   setDialects,
   dialects,
   originalRecord,
-}: DialectFormInterface) : ReactElement => {
+}: DialectFormInterface): ReactElement => {
   const [warningMessage, setWarningMessage] = useState('');
   const dialect = dialects[index];
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
