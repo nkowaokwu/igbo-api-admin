@@ -26,15 +26,9 @@ const schema = yup.object().shape({
     nsibidiCharacters: yup.array().min(0).of(yup.object().shape({
       id: yup.string(),
     })).optional(),
-    definitions: yup.mixed().test('definition-types', 'Definition is required', (value) => {
-      if (Array.isArray(value)) {
-        return value.length >= 1 && value[0].length >= 1;
-      }
-      if (typeof value === 'string') {
-        return value.length >= 1;
-      }
-      return false;
-    }),
+    definitions: yup.array().min(0).of(yup.object().shape({
+      text: yup.string(),
+    })),
     igboDefinitions: yup.array().min(0).of(yup.object().shape({
       igbo: yup.string().optional(),
       nsibidi: yup.string().optional(),

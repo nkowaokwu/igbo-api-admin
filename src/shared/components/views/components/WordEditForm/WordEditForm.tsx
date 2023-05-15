@@ -1,10 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import {
-  assign,
-  map,
-  omit,
-  values,
-} from 'lodash';
+import { assign, map, omit } from 'lodash';
 import {
   Box,
   Button,
@@ -17,7 +12,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
-import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
@@ -25,12 +19,11 @@ import { Word } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
 import {
   sanitizeArray,
-  sanitizeIds,
+  sanitizeWith,
   sanitizeExamples,
   onCancel,
 } from '../utils';
@@ -46,6 +39,7 @@ import TensesForm from './components/TensesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
+import createDefaultWordFormValues from './utils/createDefaultWordFormValues';
 
 const WordEditForm = ({
   view,
@@ -62,6 +56,7 @@ const WordEditForm = ({
   if (record.examples) {
     record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
   }
+
   const {
     handleSubmit,
     getValues,
@@ -70,35 +65,11 @@ const WordEditForm = ({
     errors,
     watch,
   } = useForm({
-    defaultValues: {
-      dialects: record?.dialects || [],
-      examples: record?.examples
-        ? record.examples.map((example) => ({
-          ...example,
-          pronunciation: example.pronunciation || '',
-          nsibidiCharacters: (example.nsibidiCharacters || []).map((id) => ({ id })),
-        }))
-        : [],
-      relatedTerms: record.relatedTerms || [],
-      stems: record.stems || [],
-      tenses: record.tenses || {},
-      pronunciation: record.pronunciation || '',
-      attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
-        ...finalAttributes,
-        [attribute.value]: false,
-      }), {}),
-      frequency: record?.frequency,
-    },
+    defaultValues: createDefaultWordFormValues(record),
     ...WordEditFormResolver(),
   });
+
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [definitions, setDefinitions] = useState(record.definitions || [{
-    wordClass: '',
-    definitions: [''],
-    igboDefinitions: [],
-    nsibidiCharacters: [],
-    nsibidi: '',
-  }]);
   const [variations, setVariations] = useState(record.variations || []);
   const [stems, setStems] = useState(record.stems || []);
   const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
@@ -108,8 +79,7 @@ const WordEditForm = ({
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
-  const options = values(WordClass);
-  const watchedWordClasses = definitions.map(({ wordClass }) => wordClass);
+  const watchedWordClasses = (getValues('definitions') || []).map(({ wordClass }) => wordClass);
   const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
   const areAllWordClassesInvalidForRelatedTerms = watchedWordClasses.every((watchedWordClass) => (
     invalidRelatedTermsWordClasses.includes(watchedWordClass?.value)));
@@ -133,15 +103,15 @@ const WordEditForm = ({
       definitions: (data.definitions || []).map((definition) => ({
         ...definition,
         wordClass: definition.wordClass.value,
-        definitions: sanitizeArray(definition.definitions),
-        nsibidiCharacters: sanitizeIds(definition.nsibidiCharacters || []),
+        definitions: sanitizeWith(definition.definitions, 'text'),
+        nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
       })),
-      variations: sanitizeArray(data.variations),
-      relatedTerms: sanitizeIds(data.relatedTerms),
-      stems: sanitizeIds(data.stems),
-      examples: sanitizeExamples(data.examples),
+      variations: sanitizeArray(data.variations || []),
+      relatedTerms: sanitizeWith(data.relatedTerms || []),
+      stems: sanitizeWith(data.stems || []),
+      examples: sanitizeExamples(data.examples || []),
       pronunciation: getValues().pronunciation || '',
-      tags: sanitizeTags(data.tags),
+      tags: sanitizeTags(data.tags || []),
     }, ['crowdsourcing']);
     return cleanedData;
   };
@@ -179,6 +149,13 @@ const WordEditForm = ({
       });
     } catch (err) {
       console.log(err);
+      toast({
+        title: 'Error',
+        description: 'An error occurred while saving word suggestion',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
       setIsSubmitting(false);
     }
   };
@@ -290,16 +267,7 @@ const WordEditForm = ({
           </Box>
         </Box>
       </Box>
-      <DefinitionsForm
-        getValues={getValues}
-        setValue={setValue}
-        options={options}
-        record={record}
-        definitions={definitions}
-        setDefinitions={setDefinitions}
-        errors={errors}
-        control={control}
-      />
+      <DefinitionsForm errors={errors} control={control} record={record} />
       {isAnyDefinitionGroupAVerb ? (
         <TensesForm
           record={record}

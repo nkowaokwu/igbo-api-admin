@@ -41,6 +41,15 @@ const DialectForm = ({
       : '');
   };
 
+  const handleDialectSelect = (onChange) => (e) => {
+    const values = e || [];
+    const updatedNestedDialects = values.map(({ value }) => value);
+    const updatedDialects = [...dialects];
+    updatedDialects[index].dialects = updatedNestedDialects;
+    onChange(updatedNestedDialects);
+    setDialects(updatedDialects);
+  };
+
   return (
     <Box
       className="mb-4 bg-gray-200 rounded p-3"
@@ -117,14 +126,7 @@ const DialectForm = ({
                 isMulti
                 options={Object.values(Dialects)}
                 placeholder="Select associated dialects"
-                onChange={(e) => {
-                  const values = e || [];
-                  const updatedNestedDialects = values.map(({ value }) => value);
-                  const updatedDialects = [...dialects];
-                  updatedDialects[index].dialects = updatedNestedDialects;
-                  onChange(updatedNestedDialects);
-                  setDialects(updatedDialects);
-                }}
+                onChange={handleDialectSelect(onChange)}
                 defaultValue={defaultDialectsValue}
               />
             )}

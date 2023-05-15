@@ -10,11 +10,11 @@ export const onCancel = ({ view, resource, history }: { view: string, resource: 
   return view === View.CREATE ? history.push(`/${resource}`) : history.push(View.SHOW);
 };
 
-/* Transforms objects with the id key to be an array of just id strings */
-export const sanitizeIds = (idObjects: { id: string }[]): string[] => (
+/* Transforms objects with the id or custom key to be an array of just id strings */
+export const sanitizeWith = (idObjects: { [key: string]: string }[], sanitizeKey = 'id'): string[] => (
   compact(idObjects.map((idObject) => {
-    if (idObject?.id) {
-      return idObject.id;
+    if (idObject?.[sanitizeKey]) {
+      return idObject[sanitizeKey];
     }
     return null;
   }))
@@ -49,7 +49,7 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
           : {}
         ),
         associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
-        nsibidiCharacters: sanitizeIds(nsibidiCharacters || []),
+        nsibidiCharacters: sanitizeWith(nsibidiCharacters || []),
       }
     ))
     .filter((example) => example.igbo && example.english);

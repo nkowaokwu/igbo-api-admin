@@ -1,4 +1,4 @@
-import { sanitizeArray, sanitizeExamples, sanitizeIds } from '../utils';
+import { sanitizeArray, sanitizeExamples, sanitizeWith } from '../utils';
 
 describe('Word Edit Form utils', () => {
   it('sanitizes an array', () => {
@@ -10,13 +10,19 @@ describe('Word Edit Form utils', () => {
   it('converts array of objects with an id key objects into array of ids', () => {
     const mockData = [{ id: 'first' }, { id: 'second' }, { id: 'third' }];
 
-    expect(sanitizeIds(mockData)).toEqual(['first', 'second', 'third']);
+    expect(sanitizeWith(mockData)).toEqual(['first', 'second', 'third']);
   });
 
   it('converts array of objects with an id key with one null value into an array of ids', () => {
     const mockData = [{ id: 'first' }, { id: 'second' }, { id: 'third' }, null];
 
-    expect(sanitizeIds(mockData)).toEqual(['first', 'second', 'third']);
+    expect(sanitizeWith(mockData)).toEqual(['first', 'second', 'third']);
+  });
+
+  it('converts array of objects with an text key with one null value into an array of text', () => {
+    const mockData = [{ text: 'first' }, { text: 'second' }, { text: 'third' }, null];
+
+    expect(sanitizeWith(mockData, 'text')).toEqual(['first', 'second', 'third']);
   });
 
   it('sanitizes an array of examples', () => {

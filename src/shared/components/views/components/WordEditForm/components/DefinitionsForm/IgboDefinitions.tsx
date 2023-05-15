@@ -1,36 +1,28 @@
 import React, { ReactElement } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { Record } from 'react-admin';
 import { Box, IconButton } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Textarea } from 'src/shared/primitives';
-import { DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
 import AddSection from './AddSection';
 import NsibidiForm from '../NsibidiForm';
 
 const IgboDefinitions = ({
-  igboDefinitions,
-  index,
+  definitions,
+  groupIndex,
   control,
   errors,
   handleDeleteGroupIgboDefinition,
   handleAddGroupIgboDefinition,
-  record,
-  getValues,
-  setValue,
 } : {
-  igboDefinitions: DefinitionSchema['igboDefinitions'],
-  index: number,
+  definitions: { id: string, igbo: string, nsibidi: string, nsibidiCharacters: [] }[],
+  groupIndex: number,
   control: Control,
-  handleDeleteGroupIgboDefinition: (value: number, secondValue: number) => void,
-  handleAddGroupIgboDefinition: (value: number) => void,
+  handleDeleteGroupIgboDefinition: (index: number) => void,
+  handleAddGroupIgboDefinition: () => void,
   errors: any,
-  record: Record,
-  getValues: (key?: string) => any,
-  setValue: (key: string, value) => void,
 }): ReactElement => (
   <Box className="w-full">
-    {igboDefinitions.map((igboDefinition, igboDefinitionIndex) => (
+    {definitions.map((igboDefinition, igboDefinitionIndex) => (
       <Box key={igboDefinition}>
         <Box className="list-container">
           <h3 className="text-xl text-gray-600 mr-2">
@@ -44,19 +36,17 @@ const IgboDefinitions = ({
                   rows={3}
                   className="form-textarea"
                   placeholder="Definition in Igbo"
-                  data-test={`nested-definitions-igbo-${igboDefinitionIndex}-input`}
+                  // eslint-disable-next-line max-len
+                  data-test={`nested-definitions-definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].igbo`}
                 />
               )}
-              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].igbo`}
+              name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].igbo`}
               defaultValue={igboDefinition?.igbo || ''}
               control={control}
             />
             <NsibidiForm
               control={control}
-              record={record}
-              getValues={getValues}
-              setValue={setValue}
-              name={`definitions[${index}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
+              name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
               placeholder="Definition in Nsịbịdị"
               data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
               errors={errors}
@@ -64,7 +54,8 @@ const IgboDefinitions = ({
           </Box>
           <IconButton
             colorScheme="red"
-            onClick={() => handleDeleteGroupIgboDefinition(index, igboDefinitionIndex)}
+            onClick={() => handleDeleteGroupIgboDefinition(igboDefinitionIndex)}
+            data-test={`delete-button-definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}]`}
             className="ml-3"
             aria-label="Delete"
             icon={<DeleteIcon />}
@@ -74,9 +65,8 @@ const IgboDefinitions = ({
     ))}
     <AddSection
       label="Add Igbo Definition"
-      onClick={() => handleAddGroupIgboDefinition(index)}
+      onClick={handleAddGroupIgboDefinition}
     />
   </Box>
 );
-
 export default IgboDefinitions;

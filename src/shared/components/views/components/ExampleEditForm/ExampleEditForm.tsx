@@ -263,9 +263,6 @@ const ExampleEditForm = ({
       </Box>
       <NsibidiForm
         control={control}
-        record={record}
-        getValues={getValues}
-        setValue={setValue}
         errors={errors}
         name="nsibidi"
       />

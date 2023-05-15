@@ -3,20 +3,18 @@ import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
-import NsidibiFormInterface from './NsidibiFormInterface';
+import NsibidiFormInterface from './NsibidiFormInterface';
 import NsibidiInput from './NsibidiInput';
 
 const NsibidiForm = React.forwardRef(({
   control,
-  record,
-  getValues,
-  setValue,
   name = 'nsibidi',
   errors,
   hideFormHeader,
   defaultValue,
   ...rest
-}: NsidibiFormInterface, ref): ReactElement => {
+}: NsibidiFormInterface, ref): ReactElement => {
+  const { getValues } = control;
   const nsibidiCharactersName = `${name}Characters` || 'nsibidiCharacters';
   return (
     <Box ref={ref} className="flex flex-col w-full">
@@ -41,7 +39,7 @@ const NsibidiForm = React.forwardRef(({
           />
         )}
         name={name}
-        defaultValue={defaultValue || (name ? get(record, name) : (record.nsibidi || getValues().nsibidi)) || ''}
+        defaultValue={defaultValue || getValues(name) || ''}
         control={control}
       />
       {get(errors, `${name || 'nsibidi'}`) ? (
