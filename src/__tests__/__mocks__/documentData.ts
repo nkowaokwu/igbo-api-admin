@@ -82,6 +82,7 @@ export const wordRecord = {
     nsibidiCharacters: [],
     igboDefinitions: [],
   }],
+  examples: [],
 };
 
 export const exampleSuggestionData = {

@@ -1,5 +1,11 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { assign, map, omit } from 'lodash';
+import {
+  assign,
+  compact,
+  get,
+  map,
+  omit,
+} from 'lodash';
 import {
   Box,
   Button,
@@ -63,6 +69,7 @@ const WordEditForm = ({
     defaultValues: createDefaultWordFormValues(record),
     ...WordEditFormResolver(),
   });
+  watch('definitions');
 
   const [originalRecord, setOriginalRecord] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +78,7 @@ const WordEditForm = ({
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
-  const watchedWordClasses = (getValues('definitions') || []).map(({ wordClass }) => wordClass);
+  const watchedWordClasses = compact((get(getValues(), 'definitions') || []).map(({ wordClass }) => wordClass?.value));
   const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
   const areAllWordClassesInvalidForRelatedTerms = watchedWordClasses.every((watchedWordClass) => (
     invalidRelatedTermsWordClasses.includes(watchedWordClass?.value)));
@@ -180,7 +187,7 @@ const WordEditForm = ({
   }, [errors]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form data-test="word-edit-form" onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
@@ -240,8 +247,6 @@ const WordEditForm = ({
               record={record}
               originalRecord={originalRecord}
               control={control}
-              getValues={getValues}
-              setValue={setValue}
               setDialects={setDialects}
               dialects={dialects}
             />
@@ -263,10 +268,7 @@ const WordEditForm = ({
           control={control}
         />
       ) : null}
-      <ExamplesForm
-        setValue={setValue}
-        control={control}
-      />
+      <ExamplesForm control={control} />
       <Box className={'flex '
         + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
         + 'flex-col'}

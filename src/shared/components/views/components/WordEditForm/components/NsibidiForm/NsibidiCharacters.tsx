@@ -22,7 +22,7 @@ const NsibidiCharacters = (
   const [resolvedNsibidiCharacters, setResolvedNsibidiCharacters] = useState(null);
   const [isLoadingNsibidiCharacters, setIsLoadingNsibidiCharacters] = useState(false);
 
-  const resolveNsibidiCharacters = async () => {
+  const resolveCharacters = async () => {
     setIsLoadingNsibidiCharacters(true);
     try {
       /**
@@ -43,7 +43,7 @@ const NsibidiCharacters = (
   };
 
   useEffect(() => {
-    resolveNsibidiCharacters();
+    resolveCharacters();
   }, [nsibidiCharacterIds]);
 
   return isLoadingNsibidiCharacters ? (

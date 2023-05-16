@@ -41,6 +41,13 @@ export const resolveWord = jest.fn(async () => ({
   }],
 }));
 
+export const resolveNsibidiCharacter = jest.fn(async () => ({
+  nsibidi: 'resolved nsibidi',
+  id: '987',
+  pronunciation: '',
+  definitions: [{ text: 'first nsibidi definition' }],
+}));
+
 export const getExample = jest.fn(async () => ({
   igbo: 'igbo',
   english: 'english',

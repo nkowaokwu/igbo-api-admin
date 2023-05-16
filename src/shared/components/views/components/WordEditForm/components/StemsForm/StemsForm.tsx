@@ -1,12 +1,5 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import {
-  Box,
-  IconButton,
-  Spinner,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { Box, Spinner, useToast } from '@chakra-ui/react';
 import { compact } from 'lodash';
 import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
@@ -128,14 +121,6 @@ const StemsForm = ({
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddStem(e.id)}
         />
-        <Tooltip label="Click this button to add the stem">
-          <IconButton
-            colorScheme="green"
-            aria-label="Add stem"
-            onClick={() => handleAddStem()}
-            icon={<AddIcon />}
-          />
-        </Tooltip>
       </Box>
       <Stems
         stemIds={stems}

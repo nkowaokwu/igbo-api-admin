@@ -38,6 +38,7 @@ const TestContext = ({
   dataProvider,
   isListView,
   record,
+  index,
   ...rest
 } : {
   view?: Views,
@@ -47,6 +48,10 @@ const TestContext = ({
   dataProvider?: any,
   isListView?: boolean,
   record?: Record,
+  groupIndex?: number,
+  index?: number,
+  dialects?: any[],
+  setDialects?: (value: any) => void,
 }): ReactElement => {
   const nativeDataProvider = () => Promise.resolve({
     data: {},
@@ -74,10 +79,13 @@ const TestContext = ({
               getValues: jest.fn(),
               setValue: jest.fn(),
               setDialects: jest.fn(),
+              // TODO: useFieldArray for dialects
               dialects: staticWordRecord.dialects,
               options: Object.entries(WordClass),
               history,
               watch,
+              // TODO: useFieldArray for dialects
+              index,
               ...rest,
               ...child.props,
             },

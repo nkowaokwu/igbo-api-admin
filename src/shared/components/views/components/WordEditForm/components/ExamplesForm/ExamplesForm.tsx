@@ -14,11 +14,12 @@ import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
-const ExamplesForm = ({ control, setValue }: ExamplesFormInterface): ReactElement => {
+const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
   const { fields: examples, append, remove } = useFieldArray({
     control,
     name: 'examples',
   });
+  const { setValue } = control;
 
   return (
     <>

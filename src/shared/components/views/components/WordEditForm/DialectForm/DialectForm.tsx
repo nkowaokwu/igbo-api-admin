@@ -18,13 +18,12 @@ const DialectForm = ({
   record,
   errors,
   control,
-  getValues,
-  setValue,
   setDialects,
   dialects,
   originalRecord,
 }: DialectFormInterface) : ReactElement => {
   const [warningMessage, setWarningMessage] = useState('');
+  const { getValues, setValue } = control;
   const dialect = dialects[index];
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
