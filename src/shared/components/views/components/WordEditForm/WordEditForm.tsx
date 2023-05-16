@@ -1,9 +1,10 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import {
   assign,
+  compact,
+  get,
   map,
   omit,
-  values,
 } from 'lodash';
 import {
   Box,
@@ -17,7 +18,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
-import WordClass from 'src/shared/constants/WordClass';
 import { getWord } from 'src/shared/API';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
@@ -25,10 +25,9 @@ import { Word } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
-import { sanitizeArray, sanitizeNsibidiCharacters, onCancel } from '../utils';
+import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
@@ -41,6 +40,7 @@ import TensesForm from './components/TensesForm';
 import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
+import createDefaultWordFormValues from './utils/createDefaultWordFormValues';
 
 const WordEditForm = ({
   view,
@@ -57,6 +57,7 @@ const WordEditForm = ({
   if (record.examples) {
     record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
   }
+
   const {
     handleSubmit,
     getValues,
@@ -65,44 +66,19 @@ const WordEditForm = ({
     errors,
     watch,
   } = useForm({
-    defaultValues: {
-      dialects: record?.dialects || [],
-      examples: record?.examples
-        ? record.examples.map((example) => ({ ...example, pronunciation: example.pronunciation || '' }))
-        : [],
-      relatedTerms: record.relatedTerms || [],
-      stems: record.stems || [],
-      tenses: record.tenses || {},
-      pronunciation: record.pronunciation || '',
-      attributes: record.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({
-        ...finalAttributes,
-        [attribute.value]: false,
-      }), {}),
-      frequency: record?.frequency,
-    },
+    defaultValues: createDefaultWordFormValues(record),
     ...WordEditFormResolver(),
   });
+  watch('definitions');
+
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [definitions, setDefinitions] = useState(record.definitions || [{
-    wordClass: '',
-    definitions: [''],
-    igboDefinitions: [],
-    nsibidiCharacters: [],
-    nsibidi: '',
-  }]);
-  // Examples are not tracked in react-hook-form due to their data structure complexity
-  const [examples, setExamples] = useState(record.examples || []);
-  const [variations, setVariations] = useState(record.variations || []);
-  const [stems, setStems] = useState(record.stems || []);
-  const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialects, setDialects] = useState(record.dialects);
   const [warningMessage, setWarningMessage] = useState('');
   const notify = useNotify();
   const redirect = useRedirect();
   const toast = useToast();
-  const options = values(WordClass);
-  const watchedWordClasses = definitions.map(({ wordClass }) => wordClass);
+  const watchedWordClasses = compact((get(getValues(), 'definitions') || []).map(({ wordClass }) => wordClass?.value));
   const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
   const areAllWordClassesInvalidForRelatedTerms = watchedWordClasses.every((watchedWordClass) => (
     invalidRelatedTermsWordClasses.includes(watchedWordClass?.value)));
@@ -111,39 +87,6 @@ const WordEditForm = ({
     setWarningMessage((record?.word || '') !== e.target.value
       ? 'A change in the headword has been detected. Please consider re-recording the audio to match.'
       : '');
-  };
-
-  /* Gets the original example id and associated words to prepare to send to the API */
-  const sanitizeExamples = (examples = []) => {
-    const examplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-example-id]');
-    const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
-    const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
-    return examples
-      .map(({
-        igbo,
-        english,
-        meaning,
-        nsibidi,
-        pronunciation,
-      }, index) => (
-        {
-          igbo,
-          english,
-          nsibidi,
-          pronunciation,
-          meaning,
-          ...(originalExamplesFromIds[index]?.dataset?.originalExampleId
-            ? { originalExampleId: originalExamplesFromIds[index]?.dataset?.originalExampleId }
-            : {}
-          ),
-          ...(examplesFromIds[index]?.dataset?.exampleId
-            ? { id: examplesFromIds[index]?.dataset?.exampleId }
-            : {}
-          ),
-          associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
-        }
-      ))
-      .filter((example) => example.igbo && example.english);
   };
 
   /* Gets tag values */
@@ -159,15 +102,15 @@ const WordEditForm = ({
       definitions: (data.definitions || []).map((definition) => ({
         ...definition,
         wordClass: definition.wordClass.value,
-        definitions: sanitizeArray(definition.definitions),
-        nsibidiCharacters: sanitizeNsibidiCharacters(definition.nsibidiCharacters || []),
+        definitions: sanitizeWith(definition.definitions, 'text'),
+        nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
       })),
-      variations: sanitizeArray(data.variations),
-      relatedTerms: sanitizeArray(data.relatedTerms),
-      stems: sanitizeArray(data.stems),
-      examples: sanitizeExamples(examples),
+      variations: sanitizeWith(data.variations || [], 'text'),
+      relatedTerms: sanitizeWith(data.relatedTerms || []),
+      stems: sanitizeWith(data.stems || []),
+      examples: sanitizeExamples(data.examples || []),
       pronunciation: getValues().pronunciation || '',
-      tags: sanitizeTags(data.tags),
+      tags: sanitizeTags(data.tags || []),
     }, ['crowdsourcing']);
     return cleanedData;
   };
@@ -205,6 +148,13 @@ const WordEditForm = ({
       });
     } catch (err) {
       console.log(err);
+      toast({
+        title: 'Error',
+        description: 'An error occurred while saving word suggestion',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
       setIsSubmitting(false);
     }
   };
@@ -237,7 +187,7 @@ const WordEditForm = ({
   }, [errors]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form data-test="word-edit-form" onSubmit={handleSubmit(onSubmit)}>
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
@@ -262,7 +212,6 @@ const WordEditForm = ({
               errors={errors}
               control={control}
               record={record}
-              getValues={getValues}
               watch={watch}
               onChange={handleWarningMessage}
             />
@@ -298,34 +247,20 @@ const WordEditForm = ({
               record={record}
               originalRecord={originalRecord}
               control={control}
-              getValues={getValues}
-              setValue={setValue}
               setDialects={setDialects}
               dialects={dialects}
             />
             <Box className="flex flex-col w-full">
               <StemsForm
                 errors={errors}
-                stems={stems}
-                setStems={setStems}
                 control={control}
-                setValue={setValue}
                 record={record}
               />
             </Box>
           </Box>
         </Box>
       </Box>
-      <DefinitionsForm
-        getValues={getValues}
-        setValue={setValue}
-        options={options}
-        record={record}
-        definitions={definitions}
-        setDefinitions={setDefinitions}
-        errors={errors}
-        control={control}
-      />
+      <DefinitionsForm errors={errors} control={control} record={record} />
       {isAnyDefinitionGroupAVerb ? (
         <TensesForm
           record={record}
@@ -333,29 +268,16 @@ const WordEditForm = ({
           control={control}
         />
       ) : null}
-      <ExamplesForm
-        examples={examples}
-        setExamples={setExamples}
-        getValues={getValues}
-        setValue={setValue}
-        errors={errors}
-      />
+      <ExamplesForm control={control} />
       <Box className={'flex '
         + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
         + 'flex-col'}
       >
-        <VariationsForm
-          variations={variations}
-          setVariations={setVariations}
-          control={control}
-        />
-        {!areAllWordClassesInvalidForRelatedTerms ? (
+        <VariationsForm control={control} />
+        {!areAllWordClassesInvalidForRelatedTerms.length || !areAllWordClassesInvalidForRelatedTerms ? (
           <RelatedTermsForm
             errors={errors}
-            relatedTerms={relatedTerms}
-            setRelatedTerms={setRelatedTerms}
             control={control}
-            setValue={setValue}
             record={record}
           />
         ) : null}

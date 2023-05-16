@@ -14,7 +14,7 @@ import {
   EditDocumentIds,
   Comments,
 } from '../../components';
-import { determineDate } from '../../utils';
+import { determineDate } from '../utils';
 import DiffField from '../diffFields/DiffField';
 
 const DIFF_FILTER_KEYS = [

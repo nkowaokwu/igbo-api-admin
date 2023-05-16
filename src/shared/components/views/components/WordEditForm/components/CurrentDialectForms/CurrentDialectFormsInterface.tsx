@@ -7,8 +7,6 @@ interface CurrentDialectForms {
   record: Record,
   originalRecord: Record,
   control: Control,
-  getValues: () => any,
-  setValue: (key: string, value: any) => void,
   setDialects: (value: ({ word: string } & WordDialect)[]) => void,
   dialects: ({ word: string } & WordDialect)[]
 };

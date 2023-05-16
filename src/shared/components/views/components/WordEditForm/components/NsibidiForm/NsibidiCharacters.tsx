@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
+import { Control } from 'react-hook-form';
 import { compact } from 'lodash';
 import { WordPills } from 'src/shared/primitives';
 import { resolveNsibidiCharacter } from 'src/shared/API';
@@ -8,16 +9,20 @@ const NsibidiCharacters = (
   {
     nsibidiCharacterIds,
     remove,
+    control,
+    nsibidiFormName,
   }
   : {
     nsibidiCharacterIds: { id: string }[],
     remove: (index: number) => void,
+    control: Control,
+    nsibidiFormName: string,
   },
 ): ReactElement => {
   const [resolvedNsibidiCharacters, setResolvedNsibidiCharacters] = useState(null);
   const [isLoadingNsibidiCharacters, setIsLoadingNsibidiCharacters] = useState(false);
 
-  const resolveNsibidiCharacters = async () => {
+  const resolveCharacters = async () => {
     setIsLoadingNsibidiCharacters(true);
     try {
       /**
@@ -38,23 +43,23 @@ const NsibidiCharacters = (
   };
 
   useEffect(() => {
-    (async () => {
-      await resolveNsibidiCharacters();
-    })();
+    resolveCharacters();
   }, [nsibidiCharacterIds]);
 
   return isLoadingNsibidiCharacters ? (
     <Spinner />
-  ) : resolvedNsibidiCharacters && resolvedNsibidiCharacters.length ? (
+  ) : resolvedNsibidiCharacters?.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3 py-4">
       <WordPills
         pills={resolvedNsibidiCharacters}
         onDelete={remove}
+        control={control}
+        formName={nsibidiFormName}
       />
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
-      <p className="text-gray-600 mb-4">No Nsibidi characters</p>
+      <p className="text-gray-600 mb-4">No Nsịbịdị characters</p>
     </Box>
   );
 };

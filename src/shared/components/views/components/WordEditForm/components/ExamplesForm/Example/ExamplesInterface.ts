@@ -1,13 +1,12 @@
+import { Control } from 'react-hook-form';
 import { Example } from 'src/backend/controllers/utils/interfaces';
 
 interface ExamplesFormInterface {
-  examples: Example[],
   example: Example,
-  setExamples: (value: any) => void,
-  getValues: (key?: string) => any,
-  setValue: (key: string, value: any) => void,
   index: number,
-  definitionGroupId?: string,
+  remove: (index?: number | number[]) => void
+  control: Control,
+  setValue: (key: string, value: any) => void,
 };
 
 export default ExamplesFormInterface;

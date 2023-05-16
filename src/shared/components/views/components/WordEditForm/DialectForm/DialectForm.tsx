@@ -18,13 +18,12 @@ const DialectForm = ({
   record,
   errors,
   control,
-  getValues,
-  setValue,
   setDialects,
   dialects,
   originalRecord,
 }: DialectFormInterface) : ReactElement => {
   const [warningMessage, setWarningMessage] = useState('');
+  const { getValues, setValue } = control;
   const dialect = dialects[index];
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
@@ -39,6 +38,15 @@ const DialectForm = ({
     setWarningMessage((record?.word || '') !== e.target.value
       ? 'A change in this dialect has been detected. Please consider re-recording the audio to match.'
       : '');
+  };
+
+  const handleDialectSelect = (onChange) => (e) => {
+    const values = e || [];
+    const updatedNestedDialects = values.map(({ value }) => value);
+    const updatedDialects = [...dialects];
+    updatedDialects[index].dialects = updatedNestedDialects;
+    onChange(updatedNestedDialects);
+    setDialects(updatedDialects);
   };
 
   return (
@@ -117,14 +125,7 @@ const DialectForm = ({
                 isMulti
                 options={Object.values(Dialects)}
                 placeholder="Select associated dialects"
-                onChange={(e) => {
-                  const values = e || [];
-                  const updatedNestedDialects = values.map(({ value }) => value);
-                  const updatedDialects = [...dialects];
-                  updatedDialects[index].dialects = updatedNestedDialects;
-                  onChange(updatedNestedDialects);
-                  setDialects(updatedDialects);
-                }}
+                onChange={handleDialectSelect(onChange)}
                 defaultValue={defaultDialectsValue}
               />
             )}

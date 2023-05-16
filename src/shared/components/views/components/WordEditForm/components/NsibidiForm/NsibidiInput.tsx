@@ -5,6 +5,7 @@ import {
   useToast,
   chakra,
 } from '@chakra-ui/react';
+import { Control, useFieldArray } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import Collections from 'src/shared/constants/Collections';
 import { getNsibidiCharacter } from 'src/shared/API';
@@ -16,19 +17,22 @@ const NsibidiInput = React.forwardRef((props : {
   placeholder?: string,
   'data-test'?: string,
   defaultValue?: string,
-  append: (value: any) => void,
-  remove: (index: number) => void,
-  nsibidiCharacterIds: { id: string }[],
+  nsibidiFormName: string,
+  control: Control,
 }, ref): ReactElement => {
   const {
-    value,
+    value = '',
     placeholder = 'i.e. 貝名, 貝è捧捧, 和硝',
     'data-test': dataTest = 'nsibidi-input',
-    append,
-    remove,
-    nsibidiCharacterIds = [],
+    nsibidiFormName,
+    control,
   } = props;
   const toast = useToast();
+
+  const { fields: nsibidiCharacterIds, append, remove } = useFieldArray({
+    control,
+    name: nsibidiFormName,
+  });
 
   const updateNsibidiCharacters = (nsibidiCharacterId) => {
     // Avoids appending an Nsibidi character that's already in the array
@@ -48,8 +52,8 @@ const NsibidiInput = React.forwardRef((props : {
       }
     } catch (err) {
       toast({
-        title: 'Unable to add stem',
-        description: 'There was an error .',
+        title: 'Unable to add Nsịbịdị',
+        description: 'There was an error.',
         status: 'warning',
         duration: 4000,
         isClosable: true,
@@ -81,8 +85,9 @@ const NsibidiInput = React.forwardRef((props : {
       ) : null}
       <NsibidiCharacters
         nsibidiCharacterIds={nsibidiCharacterIds}
-        updateNsibidiCharacters={updateNsibidiCharacters}
         remove={remove}
+        control={control}
+        nsibidiFormName={nsibidiFormName}
       />
     </>
   );

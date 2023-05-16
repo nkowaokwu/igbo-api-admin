@@ -1,27 +1,20 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import {
-  Box,
-  IconButton,
-  Spinner,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { Box, Spinner, useToast } from '@chakra-ui/react';
 import { compact } from 'lodash';
-import { Controller } from 'react-hook-form';
+import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 
 const Stems = (
-  { stemIds, updateStems }
-  : { stemIds: string[], updateStems: (value: string[]) => void },
+  { stemIds, remove, control }
+  : { stemIds: { id: string }[], remove: (index: number) => void, control: Control },
 ) => {
   const [resolvedStems, setResolvedStems] = useState(null);
   const [isLoadingStems, setIsLoadingStems] = useState(false);
 
-  const resolveStems = (callback) => async () => {
+  const resolveStems = async () => {
     setIsLoadingStems(true);
     try {
       /**
@@ -29,34 +22,22 @@ const Stems = (
        * by its MongoDB Id or regular word search, the compact array will be used
        * to save the Word Suggestion, omitting the unwanted word.
        */
-      const compactedResolvedStems = compact(await Promise.all(stemIds.map(async (stemId) => {
+      const compactedResolvedStems = compact(await Promise.all(stemIds.map(async ({ id: stemId }) => {
         const word = await resolveWord(stemId).catch(() => null);
         return word;
       })));
       setResolvedStems(compactedResolvedStems);
-      callback(compactedResolvedStems);
-      if (!(resolvedStems && resolvedStems.every(({ id }, index) => stemIds[index] === id))) {
-        updateStems(compactedResolvedStems.map(({ id }) => id));
-      }
     } finally {
       setIsLoadingStems(false);
     }
   };
 
   const handleDeleteStems = (index: number) => {
-    const filteredStems = [...stemIds];
-    filteredStems.splice(index, 1);
-    updateStems(filteredStems);
+    remove(index);
   };
 
   useEffect(() => {
-    resolveStems((stems) => {
-      // Remove stale, invalid Word Ids
-      updateStems(stems.map(({ id }) => id));
-    })();
-  }, []);
-  useEffect(() => {
-    resolveStems(() => {})();
+    resolveStems();
   }, [stemIds]);
 
   return isLoadingStems ? (
@@ -66,6 +47,8 @@ const Stems = (
       <WordPills
         pills={resolvedStems}
         onDelete={handleDeleteStems}
+        control={control}
+        formName="stems"
       />
     </Box>
   ) : (
@@ -77,19 +60,15 @@ const Stems = (
 
 const StemsForm = ({
   errors,
-  stems,
-  setStems,
   control,
-  setValue,
   record,
 } : StemsFormInterface): ReactElement => {
+  const { fields: stems, append, remove } = useFieldArray({
+    control,
+    name: 'stems',
+  });
   const [input, setInput] = useState('');
   const toast = useToast();
-
-  const updateStems = (value) => {
-    setStems(value);
-    setValue('stems', value);
-  };
 
   const canAddStem = (userInput) => (
     !stems.includes(userInput)
@@ -101,7 +80,7 @@ const StemsForm = ({
     try {
       if (canAddStem(userInput)) {
         const word = await getWord(userInput);
-        updateStems([...stems, word.id]);
+        append({ id: word.id });
       } else {
         throw new Error('Invalid word id');
       }
@@ -142,18 +121,11 @@ const StemsForm = ({
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddStem(e.id)}
         />
-        <Tooltip label="Click this button to add the stem">
-          <IconButton
-            colorScheme="green"
-            aria-label="Add stem"
-            onClick={() => handleAddStem()}
-            icon={<AddIcon />}
-          />
-        </Tooltip>
       </Box>
       <Stems
         stemIds={stems}
-        updateStems={updateStems}
+        remove={remove}
+        control={control}
       />
       {errors.stems && (
         <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>

@@ -23,6 +23,7 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
         />
         <Box
           className="w-full"
+          data-test="tags-input-container"
         >
           <Controller
             render={({ onChange, ref }) => (

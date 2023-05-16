@@ -30,11 +30,11 @@ const HeadwordForm = ({
   errors,
   control,
   record,
-  getValues,
   watch,
   onChange,
 }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
+  const { getValues } = control;
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
   const watchedWord = watch('word');
@@ -58,7 +58,6 @@ const HeadwordForm = ({
         />
         <HeadwordAttributes
           record={record}
-          getValues={getValues}
           errors={errors}
           control={control}
           isHeadwordAccented={!!(isHeadwordAccented?.length)}

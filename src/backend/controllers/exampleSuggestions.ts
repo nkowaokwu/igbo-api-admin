@@ -306,7 +306,7 @@ export const getRandomExampleSuggestions = async (
         })))
       .catch(() => {
         throw new Error(
-          'An error has occurred while returning random example suggestions',
+          'An error has occurred while returning random example suggestions to edit',
         );
       });
   } catch (err) {
@@ -390,9 +390,10 @@ export const getRandomExampleSuggestionsToReview = async (
           model: ExampleSuggestion,
           query,
         })))
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         throw new Error(
-          'An error has occurred while returning random example suggestions',
+          'An error has occurred while returning random example suggestions to review',
         );
       });
   } catch (err) {

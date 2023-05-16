@@ -7,8 +7,6 @@ interface DialectForm {
   errors: { [key: string]: any },
   record: Record,
   control: Control,
-  getValues: (key?: string) => any,
-  setValue: (key: string, value: any) => any,
   setDialects: (value: ({ word: string } & WordDialect)[]) => void,
   dialects: ({ word: string } & WordDialect)[],
   originalRecord: any,

@@ -1,8 +1,17 @@
 import mongoose from 'mongoose';
+import Dialects from 'src/backend/shared/constants/Dialects';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import WordClass from 'src/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
+
+const mockDialects = [{
+  word: 'word',
+  dialects: [Dialects.ABI.value],
+  id: 'dialect-id',
+  variations: [],
+  pronunciation: '',
+}];
 
 export const wordId = new ObjectId('5f864d7401203866b6546dd3');
 export const nsibidiCharacterId = new ObjectId('5f864d7401203866b6546dd4');
@@ -60,6 +69,20 @@ export const updatedWordData = {
     wordClass: WordClass.AV.value,
     definitions: [],
   }],
+};
+
+export const wordRecord = {
+  word: 'word',
+  id: new ObjectId(),
+  dialects: mockDialects,
+  definitions: [{
+    wordClass: WordClass.AV.value,
+    definitions: ['first definition'],
+    nsibidi: 'first nsibidi',
+    nsibidiCharacters: [],
+    igboDefinitions: [],
+  }],
+  examples: [],
 };
 
 export const exampleSuggestionData = {

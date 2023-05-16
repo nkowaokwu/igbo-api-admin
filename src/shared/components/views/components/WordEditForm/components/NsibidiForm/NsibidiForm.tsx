@@ -1,27 +1,21 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
-import { Controller, useFieldArray } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
-import NsidibiFormInterface from './NsidibiFormInterface';
+import NsibidiFormInterface from './NsibidiFormInterface';
 import NsibidiInput from './NsibidiInput';
 
 const NsibidiForm = React.forwardRef(({
   control,
-  record,
-  getValues,
-  setValue,
   name = 'nsibidi',
   errors,
   hideFormHeader,
   defaultValue,
   ...rest
-}: NsidibiFormInterface, ref): ReactElement => {
+}: NsibidiFormInterface, ref): ReactElement => {
+  const { getValues } = control;
   const nsibidiCharactersName = `${name}Characters` || 'nsibidiCharacters';
-  const { fields: nsibidiCharacters, append, remove } = useFieldArray({
-    control,
-    name: nsibidiCharactersName,
-  });
   return (
     <Box ref={ref} className="flex flex-col w-full">
       {!hideFormHeader ? (
@@ -38,31 +32,16 @@ const NsibidiForm = React.forwardRef(({
           <NsibidiInput
             {...props}
             {...rest}
-            append={append}
-            remove={remove}
-            nsibidiCharacterIds={nsibidiCharacters}
+            placeholder="Input in Nsịbịdị"
+            data-test="definition-group-nsibidi-input"
+            nsibidiFormName={nsibidiCharactersName}
+            control={control}
           />
         )}
-        name={name || 'nsibidi'}
+        name={name}
+        defaultValue={defaultValue || getValues(name) || ''}
         control={control}
-        defaultValue={defaultValue || (name ? get(record, name) : (record.nsibidi || getValues().nsibidi)) || ''}
       />
-      {nsibidiCharacters.map(({ id: nsibidiCharacterId }, index) => {
-        const currentNsibidiCharacterName = `${nsibidiCharactersName}.${index}.id`;
-        return (
-          <Controller
-            render={(props) => (
-              <input
-                {...props}
-                style={{ opacity: 0, position: 'absolute', pointerEvents: 'none' }}
-              />
-            )}
-            name={currentNsibidiCharacterName}
-            control={control}
-            defaultValue={nsibidiCharacterId}
-          />
-        );
-      })}
       {get(errors, `${name || 'nsibidi'}`) ? (
         <p className="error">{errors.nsibidi.message}</p>
       ) : null}

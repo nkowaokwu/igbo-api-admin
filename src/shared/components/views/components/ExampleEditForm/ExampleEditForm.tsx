@@ -263,10 +263,8 @@ const ExampleEditForm = ({
       </Box>
       <NsibidiForm
         control={control}
-        record={record}
-        getValues={getValues}
-        setValue={setValue}
         errors={errors}
+        name="nsibidi"
       />
       <Box className="mt-2">
         <AssociatedWordsForm
