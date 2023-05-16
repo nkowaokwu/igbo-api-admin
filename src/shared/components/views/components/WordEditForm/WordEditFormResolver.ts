@@ -37,7 +37,9 @@ const schema = yup.object().shape({
       })).optional(),
     })).optional(),
   })),
-  variations: yup.array().min(0).of(yup.string()),
+  variations: yup.array().min(0).of(yup.object().shape({
+    text: yup.string(),
+  })),
   dialects: yup.array().min(0).of(yup.object().shape({
     dialects: yup.array().min(1).of(yup.string()),
     variations: yup.array().min(0).of(yup.string()).optional(),

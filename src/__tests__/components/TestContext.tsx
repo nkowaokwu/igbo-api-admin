@@ -46,6 +46,9 @@ const TestContext = ({
   const nativeDataProvider = () => Promise.resolve({
     data: {},
   });
+  const history = jest.fn(() => ({
+    listen: jest.fn(),
+  }));
   const staticWordRecord = cloneDeep(record || wordRecord);
   const { control } = useForm({
     // @ts-expect-error
@@ -68,6 +71,7 @@ const TestContext = ({
               setDialects: jest.fn(),
               dialects: staticWordRecord.dialects,
               options: Object.entries(WordClass),
+              history,
               ...rest,
               ...child.props,
             },

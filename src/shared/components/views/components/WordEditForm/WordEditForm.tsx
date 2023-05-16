@@ -21,12 +21,7 @@ import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import WordEditFormResolver from './WordEditFormResolver';
-import {
-  sanitizeArray,
-  sanitizeWith,
-  sanitizeExamples,
-  onCancel,
-} from '../utils';
+import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
 import ExamplesForm from './components/ExamplesForm';
 import VariationsForm from './components/VariationsForm';
@@ -70,9 +65,6 @@ const WordEditForm = ({
   });
 
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [variations, setVariations] = useState(record.variations || []);
-  const [stems, setStems] = useState(record.stems || []);
-  const [relatedTerms, setRelatedTerms] = useState(record.relatedTerms || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialects, setDialects] = useState(record.dialects);
   const [warningMessage, setWarningMessage] = useState('');
@@ -106,7 +98,7 @@ const WordEditForm = ({
         definitions: sanitizeWith(definition.definitions, 'text'),
         nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
       })),
-      variations: sanitizeArray(data.variations || []),
+      variations: sanitizeWith(data.variations || [], 'text'),
       relatedTerms: sanitizeWith(data.relatedTerms || []),
       stems: sanitizeWith(data.stems || []),
       examples: sanitizeExamples(data.examples || []),
@@ -257,10 +249,7 @@ const WordEditForm = ({
             <Box className="flex flex-col w-full">
               <StemsForm
                 errors={errors}
-                stems={stems}
-                setStems={setStems}
                 control={control}
-                setValue={setValue}
                 record={record}
               />
             </Box>
@@ -283,18 +272,11 @@ const WordEditForm = ({
         + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
         + 'flex-col'}
       >
-        <VariationsForm
-          variations={variations}
-          setVariations={setVariations}
-          control={control}
-        />
-        {!areAllWordClassesInvalidForRelatedTerms ? (
+        <VariationsForm control={control} />
+        {!areAllWordClassesInvalidForRelatedTerms.length || !areAllWordClassesInvalidForRelatedTerms ? (
           <RelatedTermsForm
             errors={errors}
-            relatedTerms={relatedTerms}
-            setRelatedTerms={setRelatedTerms}
             control={control}
-            setValue={setValue}
             record={record}
           />
         ) : null}

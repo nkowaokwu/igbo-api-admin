@@ -177,7 +177,7 @@ const Input = React.forwardRef(({
                         fontWeight="normal"
                         ml={3}
                       >
-                        {result.wordClass}
+                        {get(result, 'definitions.0.wordClass')}
                       </chakra.span>
                     </Text>
                     <Text color="gray.600">{get(result, 'definitions[0].definitions[0]')}</Text>

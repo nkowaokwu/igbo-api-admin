@@ -14,7 +14,8 @@ export const onCancel = ({ view, resource, history }: { view: string, resource: 
 export const sanitizeWith = (idObjects: { [key: string]: string }[], sanitizeKey = 'id'): string[] => (
   compact(idObjects.map((idObject) => {
     if (idObject?.[sanitizeKey]) {
-      return idObject[sanitizeKey];
+      const value = idObject[sanitizeKey];
+      return typeof value === 'string' ? trim(value) : value;
     }
     return null;
   }))

@@ -17,8 +17,9 @@ const createDefaultWordFormValues = (record: Record): any => {
         nsibidiCharacters: (example.nsibidiCharacters || []).map((id) => ({ id })),
       }))
       : [],
-    relatedTerms: record?.relatedTerms || [],
-    stems: record?.stems || [],
+    variations: (record?.variations || []).map((variation) => ({ text: variation })),
+    relatedTerms: (record?.relatedTerms || []).map((relatedTerm) => ({ id: relatedTerm })),
+    stems: (record?.stems || []).map((stem) => ({ id: stem })),
     tenses: record?.tenses || {},
     pronunciation: record?.pronunciation || '',
     attributes: record?.attributes || Object.values(WordAttributes).reduce((finalAttributes, attribute) => ({

@@ -1,52 +1,40 @@
 import React, { useState, ReactElement, useEffect } from 'react';
 import { compact } from 'lodash';
-import {
-  Box,
-  IconButton,
-  Spinner,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import { Control, Controller } from 'react-hook-form';
+import { Box, Spinner, useToast } from '@chakra-ui/react';
+import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
 
 const RelatedTerms = (
-  { relatedTermIds, updateRelatedTerms, control }
-  : { relatedTermIds: string[], updateRelatedTerms: (value: string[]) => void, control: Control },
+  { relatedTermIds, remove, control }
+  : { relatedTermIds: { id: string }[], remove: (index: number) => void, control: Control },
 ) => {
   const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
   const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
 
-  const resolveRelatedTerms = (callback) => async () => {
+  const resolveRelatedTerms = async () => {
     setIsLoadingRelatedTerms(true);
     try {
-      const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds.map(async (relatedTermId) => {
-        const word = await resolveWord(relatedTermId).catch(() => null);
-        return word;
-      })));
+      const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds
+        .map(async ({ id: relatedTermId }) => {
+          const word = await resolveWord(relatedTermId).catch(() => null);
+          return word;
+        })));
       setResolvedRelatedTerms(compactedResolvedRelatedTerms);
-      callback(compactedResolvedRelatedTerms);
     } finally {
       setIsLoadingRelatedTerms(false);
     }
   };
 
   const handleDeleteRelatedTerms = (index: number) => {
-    const filteredRelatedTerms = [...relatedTermIds];
-    filteredRelatedTerms.splice(index, 1);
-    updateRelatedTerms(filteredRelatedTerms);
+    remove(index);
   };
 
   useEffect(() => {
-    resolveRelatedTerms((relatedTerms) => {
-      // Remove stale, invalid Word Ids
-      updateRelatedTerms(relatedTerms.map(({ id }) => id));
-    })();
-  }, []);
+    resolveRelatedTerms();
+  }, [relatedTermIds]);
 
   return isLoadingRelatedTerms ? (
     <Spinner />
@@ -68,19 +56,15 @@ const RelatedTerms = (
 
 const RelatedTermsForm = ({
   errors,
-  relatedTerms,
-  setRelatedTerms,
   control,
-  setValue,
   record,
 }: RelatedTermsFormInterface): ReactElement => {
+  const { fields: relatedTerms, append, remove } = useFieldArray({
+    control,
+    name: 'relatedTerms',
+  });
   const [input, setInput] = useState('');
   const toast = useToast();
-
-  const updateRelatedTerms = (value) => {
-    setRelatedTerms(value);
-    setValue('relatedTerms', value);
-  };
 
   const canAddRelatedTerm = (userInput) => (
     !relatedTerms.includes(userInput)
@@ -92,7 +76,7 @@ const RelatedTermsForm = ({
     try {
       if (canAddRelatedTerm(userInput)) {
         const word = await getWord(userInput);
-        updateRelatedTerms([...relatedTerms, word.id]);
+        append({ id: word.id });
       } else {
         throw new Error('Invalid word id');
       }
@@ -132,18 +116,10 @@ const RelatedTermsForm = ({
           onChange={(e) => setInput(e.target.value)}
           onSelect={(e) => handleAddRelatedTerm(e.id)}
         />
-        <Tooltip label="Click this button to add the related term">
-          <IconButton
-            colorScheme="green"
-            aria-label="Add Related Term"
-            onClick={() => handleAddRelatedTerm()}
-            icon={<AddIcon />}
-          />
-        </Tooltip>
       </Box>
       <RelatedTerms
         relatedTermIds={relatedTerms}
-        updateRelatedTerms={updateRelatedTerms}
+        remove={remove}
         control={control}
       />
       {errors.relatedTerms && (
