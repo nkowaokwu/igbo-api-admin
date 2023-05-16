@@ -1,9 +1,9 @@
 import React from 'react';
+import { last } from 'lodash';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
-import WordClass from 'src/shared/constants/WordClass';
 import Views from 'src/shared/constants/Views';
 import WordEditForm from '../WordEditForm';
 
@@ -14,15 +14,13 @@ describe('Word Edit', () => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });
   it('render word edit form', async () => {
-    const { findByText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
-          save={() => {}}
-          history={{}}
-        />
+    const { findByText, findAllByText } = render(
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
     await findByText('Headword');
@@ -34,7 +32,7 @@ describe('Word Edit', () => {
     await findByText('Definition Groups (1)');
     await findByText('Add English Definition');
     await findByText('Add Igbo Definition');
-    await findByText('Word Pronunciation');
+    await findAllByText('Word Pronunciation');
     await findByText('Spelling Variations');
     await findByText('Word Stems');
     await findByText('Examples');
@@ -44,14 +42,12 @@ describe('Word Edit', () => {
 
   it('render dialectal variations', async () => {
     const { findByText, findByTestId } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
     await findByText('Dialectal Variations');
@@ -63,14 +59,12 @@ describe('Word Edit', () => {
 
   it('render part of speech within dropdown', async () => {
     const { findByText, queryByText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123', definitions: [{ definitions: ['first definition'], wordClass: WordClass.AV.value }] }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
     await findByText('Part of Speech');
@@ -80,14 +74,12 @@ describe('Word Edit', () => {
 
   it('add a definition group to word suggestion', async () => {
     const { findByText, findAllByText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
 
@@ -99,14 +91,12 @@ describe('Word Edit', () => {
 
   it('add a word stem to word suggestion', async () => {
     const { findByText, findByPlaceholderText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123' }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
 
@@ -117,34 +107,33 @@ describe('Word Edit', () => {
   });
 
   it('add a word relatedTerm to word suggestion', async () => {
-    const { findByText, findByPlaceholderText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
-          save={() => {}}
-          history={{}}
-        />
+    const { findByText, findAllByText, findByPlaceholderText } = render(
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
 
     userEvent.type(await findByPlaceholderText('Search for a related term or use word id'), 'cat');
-    userEvent.click(await findByText('retrieved word'));
+    await findAllByText('retrieved word');
+    await findAllByText('NNC');
+    await findAllByText('first definition');
+    userEvent.click(last(await findAllByText('retrieved word')));
     await findByText('ADJ');
     await findByText('resolved word definition');
   });
 
   it('show the updated headword warning message within audio recorder', async () => {
     const { findByTestId } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
     userEvent.type(await findByTestId('word-input'), 'new headword');
@@ -153,17 +142,15 @@ describe('Word Edit', () => {
 
   it('render nsibidi options', async () => {
     const { findByTestId, findByText } = render(
-      <TestContext>
-        <WordEditForm
-          view={Views.EDIT}
-          resource={Collections.WORD_SUGGESTIONS}
-          record={{ id: '123', definitions: [{ wordClass: 'NNC', definitions: [] }] }}
-          save={() => {}}
-          history={{}}
-        />
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        save={() => {}}
+      >
+        <WordEditForm />
       </TestContext>,
     );
-    userEvent.type(await findByTestId('nsibidi-input'), 'nsibidi');
+    userEvent.type(await findByTestId('definition-group-nsibidi-input'), 'nsibidi');
     await findByText('first definition');
     await findByText('first pronunciation');
   });

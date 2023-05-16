@@ -8,6 +8,8 @@ import { configure } from '@testing-library/react';
 import createDefaultWordFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultWordFormValues';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordClass from 'src/shared/constants/WordClass';
+import Collections from 'src/shared/constants/Collections';
+import Views from 'src/shared/constants/Views';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -38,7 +40,10 @@ const TestContext = ({
   record,
   ...rest
 } : {
-  children: JSX.Element[],
+  view?: Views,
+  resource?: Collections,
+  save?: () => void,
+  children: JSX.Element | JSX.Element[],
   dataProvider?: any,
   isListView?: boolean,
   record?: Record,
@@ -50,7 +55,7 @@ const TestContext = ({
     listen: jest.fn(),
   }));
   const staticWordRecord = cloneDeep(record || wordRecord);
-  const { control } = useForm({
+  const { control, watch } = useForm({
     // @ts-expect-error
     defaultValues: createDefaultWordFormValues(staticWordRecord),
   });
@@ -72,6 +77,7 @@ const TestContext = ({
               dialects: staticWordRecord.dialects,
               options: Object.entries(WordClass),
               history,
+              watch,
               ...rest,
               ...child.props,
             },

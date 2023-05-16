@@ -6,7 +6,6 @@ interface HeadwordForm {
   control: Control,
   record: Interfaces.Word,
   watch: any,
-  getValues: (key?: string) => any,
   onChange: (value?: any) => void,
 };
 

@@ -205,7 +205,6 @@ const WordEditForm = ({
               errors={errors}
               control={control}
               record={record}
-              getValues={getValues}
               watch={watch}
               onChange={handleWarningMessage}
             />
