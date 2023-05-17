@@ -40,7 +40,7 @@ const IgboDefinitions = ({
                   data-test={`nested-definitions-definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].igbo`}
                 />
               )}
-              name={`definitions.${groupIndex}.igboDefinitions${igboDefinitionIndex}.igbo`}
+              name={`definitions.${groupIndex}.igboDefinitions.${igboDefinitionIndex}.igbo`}
               defaultValue={igboDefinition?.igbo || ''}
               control={control}
             />

@@ -37,7 +37,7 @@ const DiffField = ({
       // Converting all stringified numbers to raw numbers
       const parsedKey = parseInt(splitKey, 10);
       return isNaN(parsedKey) ? splitKey : parsedKey;
-    });
+    }) || [];
     const diff = find(diffRecord, ({ path: diffRecordPath, index }) => {
       if (!diffRecordPath) {
         return null;

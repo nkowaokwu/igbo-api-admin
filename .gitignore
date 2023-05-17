@@ -51,6 +51,7 @@ public/
 # Database
 db
 data/
+dump/
 
 # Tests
 cypress/screenshots
