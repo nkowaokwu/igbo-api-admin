@@ -142,9 +142,11 @@ const VerifySentenceAudio = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      className="space-y-4 py-6"
+      className="space-y-4 p-6"
     >
-      <Heading as="h1" fontSize="2xl" color="gray.600">Listen to know if this sentence matches the audio</Heading>
+      <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
+        Listen to know if this sentence matches the audio
+      </Heading>
       <Text fontFamily="Silka">The audio should be understandable Igbo</Text>
       <Box
         backgroundColor="gray.100"

@@ -36,9 +36,7 @@ const handleNavigation = ({
   hash: string,
   state?: IgboSoundboxViews,
 }) => {
-  window.location.search = `igboSoundboxView=${state}`;
-  window.location.replace(hash);
-  // window.location.hash = hash;
+  window.location.href = `${window.location.origin}/?igboSoundboxView=${state}${hash}`;
 };
 
 const CrowdsourcingProgressManager = (): ReactElement => (

@@ -8,6 +8,7 @@ const Card = ({ children } : { children: any }): ReactElement => (
     borderColor="gray.300"
     borderWidth="1px"
     minHeight={32}
+    height="full"
     width={['full', 'lg']}
     my="12"
     display="flex"

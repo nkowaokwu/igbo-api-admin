@@ -121,10 +121,12 @@ const RecordSentenceAudio = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      className="space-y-4 py-6"
+      className="space-y-4 p-6 h-full lg:h-auto"
     >
-      <Heading as="h1" fontSize="2xl" color="gray.600">Record sentence audio</Heading>
-      <Text fontFamily="Silka">Record audio for each sentence</Text>
+      <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
+        Record sentence audio
+      </Heading>
+      <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
       <Card>
         <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}

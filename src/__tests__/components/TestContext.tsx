@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { cloneDeep, noop } from 'lodash';
 import { DataProviderContext, Record } from 'react-admin';
 import { useForm } from 'react-hook-form';
@@ -17,6 +17,18 @@ const mockGetUserMedia = jest.fn(async () => (
   new Promise<void>((resolve) => resolve())
 ));
 
+export const mocks = {
+  Audio: {
+    pause: jest.fn(),
+    play: jest.fn(),
+  },
+};
+// Audio mock
+global.Audio = jest.fn().mockImplementation(() => ({
+  pause: mocks.Audio.pause,
+  play: mocks.Audio.play,
+}));
+
 Object.defineProperty(global.navigator, 'mediaDevices', {
   value: {
     getUserMedia: mockGetUserMedia,
@@ -30,6 +42,7 @@ jest.mock('firebase/auth');
 jest.mock('@chakra-ui/react');
 jest.mock('@heartexlabs/label-studio');
 jest.mock('react-admin');
+jest.mock('mic-recorder-to-mp3');
 jest.mock('src/shared/API');
 jest.mock('src/shared/DataCollectionAPI');
 
@@ -65,6 +78,8 @@ const TestContext = ({
     defaultValues: createDefaultWordFormValues(staticWordRecord),
   });
 
+  const [, setIsDirty] = useState(false);
+
   return (
     <ReactAdminTestContext {...rest}>
       <DataProviderContext.Provider value={dataProvider || nativeDataProvider}>
@@ -86,6 +101,7 @@ const TestContext = ({
               watch,
               // TODO: useFieldArray for dialects
               index,
+              setIsDirty,
               ...rest,
               ...child.props,
             },
