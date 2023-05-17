@@ -11,10 +11,19 @@ const RelatedTerms = (
   { relatedTermIds, remove, control }
   : { relatedTermIds: { id: string }[], remove: (index: number) => void, control: Control },
 ) => {
-  const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState(null);
+  const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState([]);
   const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
 
   const resolveRelatedTerms = async () => {
+    const shouldResolve = (
+      resolvedRelatedTerms?.length !== relatedTermIds.length
+      || !relatedTermIds.every(({ id }) => (
+        resolvedRelatedTerms.find(({ id: resolvedId }) => resolvedId === id)
+      ))
+    );
+    if (!shouldResolve) {
+      return;
+    }
     setIsLoadingRelatedTerms(true);
     try {
       const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds
