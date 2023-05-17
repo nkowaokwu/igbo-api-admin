@@ -15,6 +15,15 @@ const Stems = (
   const [isLoadingStems, setIsLoadingStems] = useState(false);
 
   const resolveStems = async () => {
+    const shouldResolve = (
+      resolvedStems?.length !== stemIds.length
+      || !stemIds.every(({ id }) => (
+        resolvedStems.find(({ id: resolvedId }) => resolvedId === id)
+      ))
+    );
+    if (!shouldResolve) {
+      return;
+    }
     setIsLoadingStems(true);
     try {
       /**

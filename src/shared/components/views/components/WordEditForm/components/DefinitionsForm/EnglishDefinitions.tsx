@@ -36,7 +36,7 @@ const EnglishDefinitions = ({
                 data-test={`nested-definitions-definitions[${groupIndex}].definitions[${nestedDefinitionIndex}]`}
               />
             )}
-            name={`definitions[${groupIndex}].definitions[${nestedDefinitionIndex}].text`}
+            name={`definitions.${groupIndex}.definitions.${nestedDefinitionIndex}.text`}
             defaultValue={get(nestedDefinition, 'text') || ''}
             control={control}
             rules={{

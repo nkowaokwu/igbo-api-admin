@@ -1,5 +1,10 @@
 import React from 'react';
-import { hasAdminPermissions, hasEditorPermissions, hasTranscriberPermissions } from 'src/shared/utils/permissions';
+import {
+  hasAdminPermissions,
+  hasEditorPermissions,
+  hasAtLeastTranscriberPermissions,
+  hasAccessToPlatformPermissions,
+} from 'src/shared/utils/permissions';
 import WordList from 'src/Core/Collections/Words/WordList';
 import WordShow from 'src/Core/Collections/Words/WordShow';
 import ExampleList from 'src/Core/Collections/Examples/ExampleList';
@@ -28,13 +33,16 @@ import IgboDefinitions from 'src/Core/Collections/IgboDefinitions';
 import DataDump from 'src/Core/Collections/DataDump';
 import withLastRoute from './withLastRoute';
 
-const editorRoutes = (permissions) => hasEditorPermissions(permissions, [
+const defaultRoutes = (permissions) => hasAccessToPlatformPermissions(permissions, [
   {
     name: '#',
     options: { label: 'Dashboard' },
     icon: () => <>🏠</>,
     exact: true,
   },
+]) || [];
+
+const editorRoutes = (permissions) => hasEditorPermissions(permissions, [
   {
     name: 'words',
     key: 'words',
@@ -122,7 +130,7 @@ const adminRoutes = (permissions) => hasAdminPermissions(permissions, [
   },
 ]) || [];
 
-const transcriberRoutes = (permissions) => hasTranscriberPermissions(permissions, [
+const transcriberRoutes = (permissions) => hasAtLeastTranscriberPermissions(permissions, [
   {
     name: 'igboSoundbox',
     key: 'igboSoundbox',
@@ -140,6 +148,7 @@ const transcriberRoutes = (permissions) => hasTranscriberPermissions(permissions
 ]) || [];
 
 export const getResourceObjects = (permissions: any): any => [
+  ...defaultRoutes(permissions),
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
   ...transcriberRoutes(permissions),

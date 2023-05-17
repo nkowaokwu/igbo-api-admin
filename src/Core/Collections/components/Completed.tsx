@@ -48,16 +48,7 @@ const Completed = (
                 : 'Your Igbo definition reviews have been submitted.'}
         </Text>
       </Box>
-      <Box className="space-x-3">
-        <Button
-          colorScheme="gray"
-          borderRadius="full"
-          fontFamily="Silka"
-          fontWeight="bold"
-          onClick={goHome}
-        >
-          Go back home
-        </Button>
+      <Box className="space-x-3 w-full flex flex-row justify-center items-center flex-wrap">
         <Button
           colorScheme="green"
           borderRadius="full"
@@ -72,6 +63,15 @@ const Completed = (
               : type === CrowdsourcingType.INPUT_IGBO_DEFINITION
                 ? 'Add more Igbo definitions'
                 : 'Review more Igbo definitions'}
+        </Button>
+        <Button
+          colorScheme="gray"
+          borderRadius="full"
+          fontFamily="Silka"
+          fontWeight="bold"
+          onClick={goHome}
+        >
+          Go back home
         </Button>
       </Box>
     </Box>

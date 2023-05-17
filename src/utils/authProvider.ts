@@ -2,6 +2,7 @@ import { FirebaseAuthProvider } from 'react-admin-firebase';
 import { omit } from 'lodash';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 const clearLocalStorage = () => {
   window.localStorage.removeItem(LocalStorageKeys.UID);
@@ -25,5 +26,9 @@ export default {
     window.location.hash = '#/login';
     clearLocalStorage();
     return firebaseAuthProvider.logout(args);
+  },
+  getPermissions: async (): Promise<{ role: UserRoles }> => {
+    const role = window.localStorage.getItem(LocalStorageKeys.PERMISSIONS) as UserRoles;
+    return { role };
   },
 };

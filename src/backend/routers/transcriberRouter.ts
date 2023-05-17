@@ -1,14 +1,5 @@
 import express from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
-import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
-import {
-  getRandomExampleSuggestions,
-  postBulkUploadExampleSuggestions,
-  getRandomExampleSuggestionsToReview,
-  getTotalVerifiedExampleSuggestions,
-  getTotalRecordedExampleSuggestions,
-  putRandomExampleSuggestions,
-} from 'src/backend/controllers/exampleSuggestions';
 import { postBulkUploadExamples } from 'src/backend/controllers/examples';
 import {
   getCorpusSuggestion,
@@ -23,11 +14,8 @@ import validId from 'src/backend/middleware/validId';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
-import validateRandomExampleSuggestionBody from 'src/backend/middleware/validateRandomExampleSuggestionBody';
-import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
-import resourcePermission from 'src/backend/middleware/resourcePermission';
 
 const transcriberRouter = express.Router();
 const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER];
@@ -38,37 +26,6 @@ transcriberRouter.post(
   authorization([UserRoles.ADMIN]),
   validateBulkUploadExampleSuggestionBody,
   postBulkUploadExamples,
-);
-
-transcriberRouter.get('/wordSuggestions/random', getRandomWordSuggestions);
-transcriberRouter.put(
-  '/wordSuggestions/random',
-  validateRandomWordSuggestionBody,
-  putRandomWordSuggestions,
-);
-
-transcriberRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
-transcriberRouter.put(
-  '/exampleSuggestions/random',
-  validateRandomExampleSuggestionBody,
-  putRandomExampleSuggestions,
-);
-transcriberRouter.post(
-  '/exampleSuggestions/upload',
-  authorization([UserRoles.ADMIN]),
-  validateBulkUploadExampleSuggestionBody,
-  postBulkUploadExampleSuggestions,
-);
-transcriberRouter.get('/exampleSuggestions/random/review', getRandomExampleSuggestionsToReview);
-transcriberRouter.get(
-  '/exampleSuggestions/random/stats/verified',
-  resourcePermission,
-  getTotalVerifiedExampleSuggestions,
-);
-transcriberRouter.get(
-  '/exampleSuggestions/random/stats/recorded',
-  resourcePermission,
-  getTotalRecordedExampleSuggestions,
 );
 
 transcriberRouter.get('/corpora', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), getCorpora);

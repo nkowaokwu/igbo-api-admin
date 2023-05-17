@@ -1,10 +1,5 @@
-import React, {
-  memo,
-  ReactElement,
-  useEffect,
-  useState,
-} from 'react';
-import { Box, useToast } from '@chakra-ui/react';
+import React, { memo, ReactElement, useState } from 'react';
+import { Box } from '@chakra-ui/react';
 import {
   AdminContext,
   AdminUI,
@@ -21,13 +16,11 @@ import {
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
-import { hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
 import { getResourceObjects } from './Resources';
 import Theme from './Theme';
 
 const Resources = memo(() => {
   const [permissions, setPermissions] = useState(usePermissions());
-  const toast = useToast();
   const resources = getResourceObjects(permissions).map((resource) => (
     <Resource
       name={resource.name}
@@ -40,24 +33,6 @@ const Resources = memo(() => {
       icon={resource.icon}
     />
   ));
-
-  useEffect(() => {
-    if (permissions?.loaded) {
-      const hasPermission = hasAccessToPlatformPermissions(permissions, true);
-      if (!hasPermission) {
-        authProvider.logout();
-        if (permissions?.role) {
-          toast({
-            title: 'Insufficient permissions',
-            description: 'You\'re account doesn\'t have the necessary permissions to access the platform.',
-            status: 'warning',
-            duration: 4000,
-            isClosable: true,
-          });
-        }
-      }
-    }
-  }, [permissions]);
 
   return (
     <AdminUI

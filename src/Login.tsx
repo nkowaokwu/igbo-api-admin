@@ -9,17 +9,22 @@ import { useRedirect } from 'react-admin';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {
   Box,
-  Button,
   Heading,
   Text,
+  ToastId,
   useToast,
 } from '@chakra-ui/react';
-import { hasTranscriberPermissions, hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
+import {
+  hasTranscriberPermissions,
+  hasAccessToPlatformPermissions,
+  hasCrowdsourcerPermission,
+} from 'src/shared/utils/permissions';
 import authProvider from './utils/authProvider';
 import { useCallable } from './hooks/useCallable';
 import { EmptyResponse } from './shared/server-validation';
 import LocalStorageKeys from './shared/constants/LocalStorageKeys';
 import UserRoles from './backend/shared/constants/UserRoles';
+import { FirebaseUser } from './backend/controllers/utils/interfaces';
 
 export interface SignupInfo {
   email: string,
@@ -30,22 +35,21 @@ export interface SignupInfo {
 
 const auth = getAuth();
 const Login = (): ReactElement => {
-  const [successfulCreateAccount, setSuccessfulCreateAccount] = useState(null);
-  const [errorUponSubmitting, setErrorUponSubmitting] = useState(null);
+  const [, setErrorUponSubmitting] = useState(null);
   const handleCreateUserAccount = useCallable<any, EmptyResponse>('createUserAccount');
-  const filledAuthForm = successfulCreateAccount || errorUponSubmitting;
   const redirect = useRedirect();
   const toast = useToast();
 
-  const handleRedirect = async (user) => {
-    const idTokenResult = await user.getIdTokenResult();
-    const userRole = idTokenResult.claims.role;
+  const handleRedirect = async (user: FirebaseUser): Promise<ToastId | null> => {
+    const idTokenResult = await user.getIdTokenResult(true);
+    const userRole = idTokenResult.claims.role as UserRoles;
+    const { token, claims: { user_id: userId } } = idTokenResult;
     const permissions = { role: userRole };
     const hasPermission = hasAccessToPlatformPermissions(permissions, true);
     if (!hasPermission) {
       authProvider.logout();
       setErrorUponSubmitting('You do not have permission to access the platform');
-      toast({
+      return toast({
         title: 'Insufficient permissions',
         description: 'You\'re account doesn\'t have the necessary permissions to access the platform.',
         status: 'warning',
@@ -53,15 +57,17 @@ const Login = (): ReactElement => {
         isClosable: true,
       });
     }
-    localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, idTokenResult.token);
-    localStorage.setItem(LocalStorageKeys.UID, idTokenResult.claims.user_id);
-    localStorage.setItem(LocalStorageKeys.PERMISSIONS, idTokenResult.claims.role);
+    localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, token);
+    localStorage.setItem(LocalStorageKeys.UID, userId as string);
+    localStorage.setItem(LocalStorageKeys.PERMISSIONS, userRole);
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
     const redirectUrl = (
       hasTranscriberPermissions(permissions, '/igboSoundbox')
+      || hasCrowdsourcerPermission(permissions, '/')
       || (rawRedirectUrl || '#/').replace('#/', '') || '/'
     );
     redirect(redirectUrl);
+    return null;
   };
 
   const uiConfig = {
@@ -78,20 +84,19 @@ const Login = (): ReactElement => {
     ],
     callbacks: {
       // Avoid redirects after sign-in.
-      signInSuccessWithAuthResult: (user) => {
+      signInSuccessWithAuthResult: async (user) => {
         if (user.additionalUserInfo.isNewUser) {
-          handleCreateUserAccount(user.user.toJSON());
-          setSuccessfulCreateAccount(true);
-          return false;
+          handleCreateUserAccount(user.user.toJSON())
+            .then(() => handleRedirect(user.user));
+        } else {
+          handleRedirect(user.user);
         }
-        handleRedirect(user.user);
         return false;
       },
       signInFailure: ({ message }) => setErrorUponSubmitting(message),
     },
   };
 
-  const refreshPage = () => window.location.reload();
   return (
     <Box
       className={`flex flex-col justify-center items-center h-full
@@ -120,26 +125,7 @@ const Login = (): ReactElement => {
             className={`flex flex-col justify-center w-full h-full lg:w-1/2
             space-y-3 lg:space-y-2 py-5 px-5 overflow-y-overlay`}
           >
-            {filledAuthForm ? (
-              <Box>
-                {successfulCreateAccount ? (
-                  <Text data-test="login-success-message" className="text-green-500 mt-2 text-center">
-                    New account has been created. Wait for admin approval to be admitted to the platform.
-                    You will receive a Slack DM once you have been granted access.
-                  </Text>
-                ) : null}
-                {errorUponSubmitting ? (
-                  <Text data-test="login-error-message" className="error text-red-500 mt-2 text-center">
-                    {`Error: ${errorUponSubmitting}. Reach out to ${LocalStorageKeys.ADMIN_NAME} if you have questions`}
-                  </Text>
-                ) : null}
-                <Box className="w-full flex flex-row justify-center items-center my-4">
-                  <Button colorScheme="green" onClick={refreshPage}>
-                    Refresh Page
-                  </Button>
-                </Box>
-              </Box>
-            ) : <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />}
+            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
           </Box>
         </Box>
       </Box>

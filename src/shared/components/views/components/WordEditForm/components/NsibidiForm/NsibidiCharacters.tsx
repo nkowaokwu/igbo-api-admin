@@ -4,6 +4,7 @@ import { Control } from 'react-hook-form';
 import { compact } from 'lodash';
 import { WordPills } from 'src/shared/primitives';
 import { resolveNsibidiCharacter } from 'src/shared/API';
+import { NsibidiCharacter } from 'src/backend/controllers/utils/interfaces';
 
 const NsibidiCharacters = (
   {
@@ -19,10 +20,20 @@ const NsibidiCharacters = (
     nsibidiFormName: string,
   },
 ): ReactElement => {
-  const [resolvedNsibidiCharacters, setResolvedNsibidiCharacters] = useState(null);
+  const [resolvedNsibidiCharacters, setResolvedNsibidiCharacters] = useState<NsibidiCharacter[]>([]);
   const [isLoadingNsibidiCharacters, setIsLoadingNsibidiCharacters] = useState(false);
 
   const resolveCharacters = async () => {
+    const shouldResolve = (
+      resolvedNsibidiCharacters?.length !== nsibidiCharacterIds.length
+      || !nsibidiCharacterIds.every(({ id }) => (
+        resolvedNsibidiCharacters.find(({ id: resolvedId }) => resolvedId === id)
+      ))
+    );
+    if (!shouldResolve) {
+      return;
+    }
+
     setIsLoadingNsibidiCharacters(true);
     try {
       /**
@@ -34,9 +45,8 @@ const NsibidiCharacters = (
           const nsibidiCharacter = await resolveNsibidiCharacter(nsibidiCharacterId).catch(() => null);
           return nsibidiCharacter;
         })),
-      );
+      ) as NsibidiCharacter[];
       setResolvedNsibidiCharacters(compactedResolvedNsibidiCharacters);
-      return compactedResolvedNsibidiCharacters;
     } finally {
       setIsLoadingNsibidiCharacters(false);
     }

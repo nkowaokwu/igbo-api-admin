@@ -1,10 +1,16 @@
-import React, { ReactElement } from 'react';
+import React, { useEffect, ReactElement } from 'react';
 import { Box, Spinner, Text } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 
 const Loading = ({ setPermissions } : { setPermissions: React.Dispatch<React.SetStateAction<any>> }): ReactElement => {
   const { permissions } = usePermissions();
-  setPermissions(permissions);
+
+  useEffect(() => {
+    if (permissions?.role) {
+      setPermissions(permissions);
+    }
+  }, [permissions]);
+
   return (
     <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
       <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" className="space-y-6">

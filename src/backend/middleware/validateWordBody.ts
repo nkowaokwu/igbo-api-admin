@@ -62,7 +62,7 @@ export const wordDataSchema = Joi.object().keys({
   examples: Joi.array().min(0).items(exampleDataSchema.append({
     id: Joi.string().external(async (value) => {
       if (value && !Types.ObjectId.isValid(value)) {
-        throw new Error('Invalid original word id provided');
+        throw new Error('Invalid example id provided');
       }
       return true;
     }).allow(null).optional(),

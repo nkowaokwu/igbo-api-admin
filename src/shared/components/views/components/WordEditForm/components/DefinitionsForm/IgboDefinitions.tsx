@@ -40,13 +40,13 @@ const IgboDefinitions = ({
                   data-test={`nested-definitions-definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].igbo`}
                 />
               )}
-              name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].igbo`}
+              name={`definitions.${groupIndex}.igboDefinitions.${igboDefinitionIndex}.igbo`}
               defaultValue={igboDefinition?.igbo || ''}
               control={control}
             />
             <NsibidiForm
               control={control}
-              name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
+              name={`definitions.${groupIndex}.igboDefinitions.${igboDefinitionIndex}.nsibidi`}
               placeholder="Definition in Nsịbịdị"
               data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
               errors={errors}

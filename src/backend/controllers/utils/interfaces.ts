@@ -9,6 +9,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import { User } from 'firebase/auth';
 
 export interface HandleQueries {
   searchWord: string,
@@ -25,12 +26,9 @@ export interface HandleQueries {
   uidQuery?: string,
 };
 
-export interface FirebaseUser {
-  uid?: string,
-  role?: UserRoles,
+export interface FirebaseUser extends User {
   editingGroup?: number | undefined,
 };
-
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
   user: FirebaseUser,
@@ -192,7 +190,7 @@ export interface ExampleClientData {
 };
 
 export interface NsibidiCharacter {
-  id: Types.ObjectId,
+  id: Types.ObjectId | string,
   nsibidi: string,
   definitions: { text: string }[],
   pronunciations: { text: string }[],

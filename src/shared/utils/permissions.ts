@@ -72,6 +72,20 @@ export const hasTranscriberPermissions = (
   return null;
 };
 
+export const hasAtLeastTranscriberPermissions = (
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
+  returnWithPermission: any,
+): any | null => {
+  if (
+    permissions?.role === UserRoles.TRANSCRIBER
+    || permissions?.role === UserRoles.CROWDSOURCER
+    || hasBetaPermissions(permissions, true)
+  ) {
+    return returnWithPermission;
+  }
+  return null;
+};
+
 export const hasAccessToPlatformPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
   returnWithPermission: any,
@@ -80,6 +94,16 @@ export const hasAccessToPlatformPermissions = (
     Object.values(UserRoles).includes(permissions?.role)
     && permissions?.role !== UserRoles.USER
   ) {
+    return returnWithPermission;
+  }
+  return null;
+};
+
+export const hasCrowdsourcerPermission = (
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
+  returnWithPermission: any,
+): any | null => {
+  if (permissions?.role === UserRoles.CROWDSOURCER) {
     return returnWithPermission;
   }
   return null;
