@@ -6,10 +6,11 @@ import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collections';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
+import { FirebaseUser } from '../controllers/utils/interfaces';
 
 const db = admin.firestore();
 /* Creates a user account and assigns the role to 'user' */
-export const onCreateUserAccount = functions.https.onCall(async (user) => {
+export const onCreateUserAccount = functions.https.onCall(async (user: FirebaseUser) => {
   try {
     const role = {
       role: process.env.NODE_ENV === 'production' && prodAdminEmailList.includes(user.email)
