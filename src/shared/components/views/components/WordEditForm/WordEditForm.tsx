@@ -132,7 +132,7 @@ const WordEditForm = ({
           setIsSubmitting(false);
           handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-          redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
+          redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { id: data.id || record.id });
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
