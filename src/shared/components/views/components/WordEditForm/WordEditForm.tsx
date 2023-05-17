@@ -13,7 +13,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { Record, useNotify, useRedirect } from 'react-admin';
+import { Record, useNotify } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import { Textarea } from 'src/shared/primitives';
 import { EditFormProps } from 'src/shared/interfaces';
@@ -26,6 +26,7 @@ import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import ActionTypes from 'src/shared/constants/ActionTypes';
+import Collections from 'src/shared/constants/Collections';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -76,7 +77,6 @@ const WordEditForm = ({
   const [dialects, setDialects] = useState(record.dialects);
   const [warningMessage, setWarningMessage] = useState('');
   const notify = useNotify();
-  const redirect = useRedirect();
   const toast = useToast();
   const watchedWordClasses = compact((get(getValues(), 'definitions') || []).map(({ wordClass }) => wordClass?.value));
   const isAnyDefinitionGroupAVerb = watchedWordClasses.some((watchedWordClass) => isVerb(watchedWordClass));
@@ -132,7 +132,10 @@ const WordEditForm = ({
           setIsSubmitting(false);
           handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-          redirect(View.SHOW, '/wordSuggestions', data.id || record.id, { id: data.id || record.id });
+
+          // Pushing new history state to completely reload the view page with record data
+          const wordId = data.id || record.id;
+          window.location.hash = `#/${Collections.WORD_SUGGESTIONS}/${wordId}/${View.SHOW}`;
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
