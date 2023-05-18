@@ -10,21 +10,23 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import {
   Box,
   Heading,
+  Hide,
   Text,
   ToastId,
   useToast,
 } from '@chakra-ui/react';
+import moment from 'moment';
 import {
   hasTranscriberPermissions,
   hasAccessToPlatformPermissions,
   hasCrowdsourcerPermission,
 } from 'src/shared/utils/permissions';
-import authProvider from './utils/authProvider';
-import { useCallable } from './hooks/useCallable';
-import { EmptyResponse } from './shared/server-validation';
-import LocalStorageKeys from './shared/constants/LocalStorageKeys';
-import UserRoles from './backend/shared/constants/UserRoles';
-import { FirebaseUser } from './backend/controllers/utils/interfaces';
+import authProvider from '../utils/authProvider';
+import { useCallable } from '../hooks/useCallable';
+import { EmptyResponse } from '../shared/server-validation';
+import LocalStorageKeys from '../shared/constants/LocalStorageKeys';
+import UserRoles from '../backend/shared/constants/UserRoles';
+import { FirebaseUser } from '../backend/controllers/utils/interfaces';
 
 export interface SignupInfo {
   email: string,
@@ -96,37 +98,63 @@ const Login = (): ReactElement => {
       signInFailure: ({ message }) => setErrorUponSubmitting(message),
     },
   };
-
   return (
     <Box
-      className={`flex flex-col justify-center items-center h-full
-      lg:h-screen w-screen bg-gray-100 py-20 lg:py-0 overflow-hidden`}
+      display="flex"
+      flexDirection="row"
+      height="100vh"
     >
-      <Heading size="xl" className="mb-6 text-center" fontFamily="Silka">{'Igbo API Editor\'s Platform'}</Heading>
-      <Box
-        className="w-11/12 lg:w-8/12 xl:w-1/2 h-auto bg-white shadow-lg rounded-lg overflow-hidden"
-        maxWidth="750px"
-      >
+      <Hide below="lg">
         <Box
-          className="h-full flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2 lg:items-center rounded"
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+          flex={1}
+          backgroundColor="#417453"
+          // eslint-disable-next-line max-len
+          backgroundImage="url('https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/pattern.png')"
+          backgroundSize="82px 44px"
+          height="full"
+          padding={12}
         >
-          <Box
-            className={`flex flex-col justify-center w-full lg:w-1/2 h-full flex-grow
-            bg-indigo-600 text-white py-5 lg:py-3 px-5`}
-          >
-            <Heading size="lg" className="text-white mb-3 text-center lg:text-left" fontFamily="Silka">Welcome</Heading>
-            <Text size="lg" className="text-white text-center lg:text-left">
-              {`The Igbo API Editor's Platform is the main platform that allows 
-            for directly editing, updating, adding, and maintaining the words and examples in 
-            the Igbo API database.`}
+          <Heading as="h1" fontFamily="Silka" color="white" fontSize="2xl">Igbo API Editor Platform</Heading>
+          <Box className="space-y-4 w-10/12">
+            <Heading as="h2" fontFamily="Silka" color="white" fontSize={{ base: '4xl', md: '6xl' }}>
+              Building accessible Igbo technology for everyone.
+            </Heading>
+            <Text as="h3" fontFamily="Silka" color="white" fontSize="xl">
+              Create an account and join 200+ volunteers to build the largest Igbo dataset ever.
             </Text>
           </Box>
-          <Box
-            className={`flex flex-col justify-center w-full h-full lg:w-1/2
-            space-y-3 lg:space-y-2 py-5 px-5 overflow-y-overlay`}
-          >
-            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-          </Box>
+          <Text as="p" color="blue.100" fontSize="md">
+            {`© ${moment().year()} Nkọwa okwu. All rights reserved.`}
+          </Text>
+        </Box>
+      </Hide>
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent={{ base: 'start', lg: 'center ' }}
+        alignItems="center"
+        flex={1}
+        width={{ base: '100vw', lg: 'auto' }}
+        backgroundColor="white"
+        height="full"
+        padding={12}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          className="space-y-4"
+        >
+          <Hide above="lg">
+            <Heading as="h1" fontFamily="Silka" color="gray.700" fontSize="2xl" textAlign="center">
+              Igbo API Editor Platform
+            </Heading>
+          </Hide>
+          <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center">Log in to your account</Heading>
+          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
         </Box>
       </Box>
     </Box>

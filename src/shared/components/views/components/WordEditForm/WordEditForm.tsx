@@ -5,6 +5,7 @@ import {
   get,
   map,
   omit,
+  uniqBy,
 } from 'lodash';
 import {
   Box,
@@ -21,7 +22,7 @@ import View from 'src/shared/constants/Views';
 import { getWord } from 'src/shared/API';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
-import { Word } from 'src/backend/controllers/utils/interfaces';
+import { ExampleClientData, Word } from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
@@ -42,6 +43,15 @@ import AudioRecorder from '../AudioRecorder';
 import CurrentDialectsForms from './components/CurrentDialectForms/CurrentDialectsForms';
 import FormHeader from '../FormHeader';
 import createDefaultWordFormValues from './utils/createDefaultWordFormValues';
+
+type FormData = {
+  definitions: any[],
+  variations: { text: string }[],
+  relatedTerms: { id: string }[],
+  stems: { id: string }[],
+  examples: ExampleClientData[],
+  tags: string[],
+};
 
 const WordEditForm = ({
   view,
@@ -95,7 +105,7 @@ const WordEditForm = ({
   );
 
   /* Prepares the data to be cached */
-  const createCacheWordData = (data, record: Record | Word = { id: null, dialects: {} }) => {
+  const createCacheWordData = (data: FormData, record: Record | Word = { id: null, dialects: {} }) => {
     const cleanedData = omit({
       ...record,
       ...data,
@@ -106,8 +116,8 @@ const WordEditForm = ({
         nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
       })),
       variations: sanitizeWith(data.variations || [], 'text'),
-      relatedTerms: sanitizeWith(data.relatedTerms || []),
-      stems: sanitizeWith(data.stems || []),
+      relatedTerms: sanitizeWith(uniqBy(data.relatedTerms || [], 'id')),
+      stems: sanitizeWith(uniqBy(data.stems || [], 'id')),
       examples: sanitizeExamples(data.examples || []),
       pronunciation: getValues().pronunciation || '',
       tags: sanitizeTags(data.tags || []),
@@ -139,6 +149,7 @@ const WordEditForm = ({
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
+          console.log('Saving error', error);
           toast({
             title: 'Error',
             description: body?.error || message || errorMessage || 'An error occurred while saving word suggestion',
@@ -150,7 +161,7 @@ const WordEditForm = ({
         },
       });
     } catch (err) {
-      console.log(err);
+      console.log('Caught saving error', err);
       toast({
         title: 'Error',
         description: 'An error occurred while saving word suggestion',
