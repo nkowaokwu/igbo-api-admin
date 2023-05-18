@@ -139,6 +139,7 @@ const WordEditForm = ({
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
+          console.log('Saving error', error);
           toast({
             title: 'Error',
             description: body?.error || message || errorMessage || 'An error occurred while saving word suggestion',
@@ -150,7 +151,7 @@ const WordEditForm = ({
         },
       });
     } catch (err) {
-      console.log(err);
+      console.log('Caught saving error', err);
       toast({
         title: 'Error',
         description: 'An error occurred while saving word suggestion',
