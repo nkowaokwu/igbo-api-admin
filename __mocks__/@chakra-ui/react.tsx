@@ -72,6 +72,7 @@ export const {
   Image,
   Icon,
   IconButton,
+  Hide,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
