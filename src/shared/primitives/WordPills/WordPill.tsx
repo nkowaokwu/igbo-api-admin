@@ -40,7 +40,7 @@ const WordPill = ({
   >
     <Box display="flex" flexDirection="column">
       <Box display="flex" flexDirection="row" alignItems="start" className="space-x-2">
-        <Text fontSize="sm" color="blue.500" fontWeight="bold" className={nsibidi ? 'akagu' : ''}>
+        <Text fontSize="sm" color="blue.500" fontWeight="bold" className={!word ? 'akagu' : ''}>
           <chakra.span fontWeight="normal">
             {`${index + 1}. `}
           </chakra.span>
