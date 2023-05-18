@@ -25,6 +25,7 @@ export const sanitizeWith = (idObjects: { [key: string]: string }[], sanitizeKey
 export const sanitizeExamples = (examples = []): ExampleClientData[] => {
   const originalExamplesFromIds: NodeListOf<HTMLElement> = document.querySelectorAll('[data-original-example-id]');
   const examplesFromAssociatedWords: NodeListOf<HTMLElement> = document.querySelectorAll('[data-associated-words]');
+
   return examples
     .map(({
       igbo,
@@ -34,24 +35,24 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
       nsibidiCharacters,
       pronunciation,
     }, index) => {
-      const currentOriginalExample = originalExamplesFromIds[index]?.dataset;
-      return ({
+      const { originalExampleId, exampleId } = originalExamplesFromIds[index]?.dataset;
+      return {
         igbo,
         english,
         nsibidi,
         pronunciation,
         meaning,
-        ...(currentOriginalExample?.originalExampleId
-          ? { originalExampleId: currentOriginalExample.originalExampleId }
+        ...(originalExampleId
+          ? { originalExampleId }
           : {}
         ),
-        ...(currentOriginalExample?.exampleId
-          ? { id: currentOriginalExample.exampleId }
+        ...(exampleId
+          ? { id: exampleId?.includes('-') ? null : exampleId }
           : {}
         ),
         associatedWords: examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(','),
         nsibidiCharacters: sanitizeWith(nsibidiCharacters || []),
-      });
+      };
     })
     .filter((example) => example.igbo && example.english);
 };
