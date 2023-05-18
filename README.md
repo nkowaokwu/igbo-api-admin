@@ -59,11 +59,11 @@ Then log into your Firebase account by running:
 npx firebase login
 ```
 
-### Step 2: Create Firebase Projects
+### Step 2: Create Firebase Project
 
 This project, in production, uses a production and staging Firebase projects to enable authentication, functions, and firestore.
 
-For local development, you will need to create your **own** Firebase project to be able to make changes.
+For local development, you will need to create your **own single** Firebase project to be able to make changes.
 
 Navigate to [Firebase](https://console.firebase.google.com) and create a new Firebase project.
 
