@@ -61,31 +61,39 @@ npx firebase login
 
 ### Step 2: Create Firebase Projects
 
-This project requires there to be a production and staging Firebase project to enable authentication, functions, and firestore.
+This project, in production, uses a production and staging Firebase projects to enable authentication, functions, and firestore.
 
-Go to [Firebase](https://console.firebase.google.com) and creating two new projects:
+For local development, you will need to create your **own** Firebase project to be able to make changes.
 
-* A production project
-* A staging project
+Navigate to [Firebase](https://console.firebase.google.com) and create a new Firebase project.
 
-Once you've created your two new projects, go to the [`.firebaserc`]('./.firebaserc) in the root directory of the project,
-and replace the `igbo-api-admin` and `igbo-api-admin-staging` with  your production project name in `"default"` 
-and your staging project name in `"staging"`:
+Once you've created your two new projects, copy your new Firebase Project ID that can be found at  **Project Settings > General > Project ID**:
+![](./docs/firebase_project_id.png)
+
+Go to your [`.firebaserc`]('./.firebaserc) file in the root directory of the project,
+and replace the `igbo-api-admin` and `igbo-api-admin-staging` with  your Project ID:
 
 ```json
 {
   "projects": {
-    "default": "<production_project_name>",
-    "staging": "<staging_project_name>"
+    "default": "<project_id>",
+    "staging": "<project_id>",
   }
 }
 ```
+
+**Note**: The `.firebaserc` is not checked into git as these changes are only meant to be local to make it easier for you to develop locally.
 
 ### Step 3: Copy your Service Account Files
 
 Now that you have your project aliased in `.firebaserc`, we want the project to start using those projects.
 
-Save the service accounts that you downloaded from Firebase as `prod-firebase-service-account.json` and `staging-firebase-service-account.json` in the top-level `/functions`.
+
+Download the service account for your Firebase project by going to **Project Settings > Service accounts > Generate new private key**
+
+![](./docs/firebase_service_account.png)
+
+Save the service account that you downloaded from Firebase as `prod-firebase-service-account.json` and `staging-firebase-service-account.json` in the top-level `/functions`.
 
 Once you save those files in `/functions`, you're own Igbo API Editor Platform is ready to go!
 
@@ -133,20 +141,7 @@ If you don't create this account you will see the following error message
 
 You will need local data to see how the Igbo API Editor Platform works.
 
-**For words and examples**, you will need to make a `POST` request to the following route:
-
-```
-/api/v1/test/populate
-```
-
-For example:
-
-```
-http://localhost:8080/api/v1/test/populate // POST
-```
-
-After about 20 seconds, if you see the `✅ Seeding successful.` message in your terminal,
-then you have successfully populated your database!
+Setup a local working version of the [Igbo API](https://github.com/nkowaokwu/igbo_api#seeding-) and follow the `Seeding 🌱` step.
 
 ## Build Production
 

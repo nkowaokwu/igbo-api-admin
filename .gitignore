@@ -35,6 +35,9 @@ functions/.runtimeconfig.json
 functions/src/shared/__mocks__
 functions/src/tests
 
+# Firebase
+.firebaserc
+firebase.json
 **/prod-firebase-service-account.json
 **/staging-firebase-service-account.json
 
