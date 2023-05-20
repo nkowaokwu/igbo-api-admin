@@ -119,7 +119,6 @@
     "react-device-detect": "^1.17.0",
     "react-dom": "^16.12.0",
     "react-draggable": "^4.4.3",
-    "react-firebaseui": "^6.0.0",
     "react-hook-form": "^6.9.6",
     "react-player": "2.11.0",
     "react-redux": "^7.2.1",
