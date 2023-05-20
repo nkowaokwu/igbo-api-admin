@@ -53,6 +53,6 @@ describe('IgboSoundbox', () => {
     userEvent.click((await findAllByText('Start here'))[0]);
     userEvent.click(await findByTestId('start-recording-button'));
     userEvent.click(await findByTestId('stop-recording-button'));
-    userEvent.click(await findByText('Complete'));
+    userEvent.click(await findByText('Submit Batch'));
   });
 });

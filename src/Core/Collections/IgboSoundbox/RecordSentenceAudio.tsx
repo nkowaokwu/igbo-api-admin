@@ -30,7 +30,10 @@ const RecordSentenceAudio = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
-  const isCompleteDisabled = pronunciations.every((pronunciation) => !pronunciation) || isUploading;
+  const isCompleteDisabled = (
+    (pronunciations.every((pronunciation) => !pronunciation) || isUploading)
+    || exampleIndex !== (examples?.length || 0) - 1
+  );
   const toast = useToast();
 
   const handlePronunciation = (audioData) => {
@@ -180,7 +183,7 @@ const RecordSentenceAudio = ({
                 aria-label="Complete recordings"
                 disabled={isCompleteDisabled}
               >
-                Complete
+                Submit Batch
               </PrimaryButton>
             </Box>
           </Tooltip>

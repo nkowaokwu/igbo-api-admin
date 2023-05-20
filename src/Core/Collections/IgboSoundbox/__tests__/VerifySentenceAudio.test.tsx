@@ -14,7 +14,7 @@ describe('VerifySentenceAudio', () => {
     await findByText('Listen to know if this sentence matches the audio');
     await findByText('Deny');
     await findByText('Approve');
-    await findByText('Complete');
+    await findByText('Submit Batch');
   });
 
   it('deny and approve sentences', async () => {

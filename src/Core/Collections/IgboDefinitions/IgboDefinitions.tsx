@@ -132,7 +132,7 @@ const IgboDefinitions = (): ReactElement => {
               aria-label="Complete Igbo definitions"
               disabled={isLoading}
             >
-              Submit
+              Submit Batch
             </PrimaryButton>
           ) : null}
         </Box>

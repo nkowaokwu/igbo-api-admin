@@ -18,7 +18,7 @@ const Dashboard = (): ReactElement => {
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions?.permissions, true);
   return (
     <Box>
-      <Box style={{ minHeight: '120vh' }} className="w-full" backgroundColor="gray.100" p={3}>
+      <Box style={{ minHeight: '120vh' }} className="w-full" backgroundColor="gray.100">
         {isCrowdsourcer ? <CrowdsourcingProgressManager user={user} /> : <ProgressManager user={user} />}
       </Box>
     </Box>

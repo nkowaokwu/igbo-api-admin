@@ -3,38 +3,20 @@ import * as admin from 'firebase-admin';
 import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
-import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
+import { adminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collections';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
-import { FirebaseUser } from '../controllers/utils/interfaces';
+import { assignUserRole } from './utils';
 
 const db = admin.firestore();
 /* Creates a user account and assigns the role to 'user' */
-export const onCreateUserAccount = functions.https.onCall(async (user: FirebaseUser) => {
+export const onCreateUserAccount = functions.auth.user().onCreate(async (user) => {
   try {
-    const role = {
-      role: process.env.NODE_ENV === 'production' && prodAdminEmailList.includes(user.email)
-        ? UserRoles.ADMIN
-        : process.env.NODE_ENV === 'production' && !prodAdminEmailList.includes(user.email)
-          ? UserRoles.CROWDSOURCER
-          // Creates admin, merger, and editor accounts while using auth emulator
-          : (
-            process.env.NODE_ENV !== 'production'
-            && (adminEmailList.includes(user.email) || user.email.startsWith('admin'))
-          )
-            ? UserRoles.ADMIN
-            : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge')
-              ? UserRoles.MERGER
-              : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor')
-                ? UserRoles.EDITOR
-                : process.env.NODE_ENV !== 'production' && user.email.startsWith('transcriber')
-                  ? UserRoles.TRANSCRIBER
-                  : process.env.NODE_ENV !== 'production' && user.email.startsWith('user')
-                    ? UserRoles.USER
-                    : UserRoles.CROWDSOURCER,
-    };
+    const role = assignUserRole(user);
+
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
+
     return successResponse({ uid: user.uid });
   } catch (err) {
     return errorResponse(err);

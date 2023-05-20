@@ -267,7 +267,7 @@ const VerifySentenceAudio = ({
                 fontWeight="bold"
                 p={6}
               >
-                Complete
+                Submit Batch
               </Button>
             </Box>
           </Tooltip>

@@ -1,10 +1,12 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import {
+  UserCredential,
   getAuth,
   updateProfile,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
 } from 'firebase/auth';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import {
@@ -19,6 +21,7 @@ import {
   VStack,
   useToast,
 } from '@chakra-ui/react';
+import PersonIcon from '@mui/icons-material/Person';
 import { EmailIcon, LockIcon } from '@chakra-ui/icons';
 import { handleUserResult } from './handleUserResult';
 
@@ -45,28 +48,41 @@ const EmailLogin = ({
     // @ts-expect-error displayName
     const displayName = e.target?.displayName?.value;
 
-    const loginUserPromise = userLoginState === UserLoginState.PASSWORD_RECOVERY
+    await (userLoginState === UserLoginState.PASSWORD_RECOVERY
       ? sendPasswordResetEmail(auth, email)
       : userLoginState === UserLoginState.LOGIN
         ? signInWithEmailAndPassword(auth, email, password)
-        : createUserWithEmailAndPassword(auth, email, password);
-    await loginUserPromise
-      .then(async () => {
+        : createUserWithEmailAndPassword(auth, email, password))
+      .then(async (userCredential: UserCredential | void) => {
         if (userLoginState === UserLoginState.PASSWORD_RECOVERY) {
+          setErrorMessage('');
           setSuccessMessage('Check your email to reset your password.');
-        } else {
-          handleUserResult({
-            toast,
-            setErrorMessage,
+        } else if (userLoginState === UserLoginState.SIGNUP && userCredential) {
+          await updateProfile(userCredential.user, {
+            displayName,
           });
+          await sendEmailVerification(userCredential.user).then(() => {
+            setErrorMessage('');
+            setSuccessMessage('Check your email to verify your account.');
+          });
+        } else {
+          if (!auth.currentUser.emailVerified) {
+            setErrorMessage('Please verify your email to login.');
+            return setSuccessMessage('');
+          }
           try {
             await updateProfile(auth.currentUser, {
               displayName,
             });
+            handleUserResult({
+              toast,
+              setErrorMessage,
+            });
           } catch (err) {
-            console.log('Unable to update display name', err);
+            console.log('Unable to sign in user', err);
           }
         }
+        return null;
       })
       .catch((error) => {
         setErrorMessage(error.message);
@@ -77,19 +93,15 @@ const EmailLogin = ({
     setUserLoginState(UserLoginState.PASSWORD_RECOVERY);
   };
 
-  useEffect(() => {
-    if (userLoginState !== UserLoginState.PASSWORD_RECOVERY) {
-      setSuccessMessage('');
-    }
-  }, [userLoginState]);
-
   return (
     <form onSubmit={handleUserLogin} className="w-full space-y-3">
       {userLoginState === UserLoginState.SIGNUP ? (
         <>
           <FormLabel>Full name</FormLabel>
           <InputGroup>
-            <InputLeftElement pointerEvents="none" />
+            <InputLeftElement pointerEvents="none">
+              <PersonIcon sx={{ color: 'var(--chakra-colors-gray-400)' }} />
+            </InputLeftElement>
             <Input
               placeholder="Full name"
               name="displayName"
@@ -122,9 +134,6 @@ const EmailLogin = ({
           }}
         />
       </InputGroup>
-      <Fade in={!!successMessage}>
-        <Text color="green.400">{successMessage}</Text>
-      </Fade>
       {userLoginState !== UserLoginState.PASSWORD_RECOVERY ? (
         <>
           <FormLabel>Password</FormLabel>
@@ -190,6 +199,9 @@ const EmailLogin = ({
           Forgot password?
         </Button>
       ) : null}
+      <Fade in={!!successMessage}>
+        <Text textAlign="center" color="green.300">{successMessage}</Text>
+      </Fade>
       <VStack>
         <Button
           type="submit"
