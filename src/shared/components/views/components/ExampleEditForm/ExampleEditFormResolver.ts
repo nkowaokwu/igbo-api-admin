@@ -17,6 +17,7 @@ export const ExampleEditFormSchema = yup.object().shape({
   associatedWords: yup.array().min(0).of(yup.string()),
   associatedDefinitionsSchemas: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
+  exampleId: yup.string().optional(),
   originalExampleId: yup.string().nullable().optional(),
   pronunciation: yup.string().optional(),
 });

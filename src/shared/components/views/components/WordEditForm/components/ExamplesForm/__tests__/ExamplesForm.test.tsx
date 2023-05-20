@@ -9,8 +9,10 @@ import ExamplesForm from '../ExamplesForm';
 
 describe('ExamplesForm', () => {
   it('renders the examples', async () => {
+    const testRecord = cloneDeep(wordRecord);
+    testRecord.examples = [];
     const { findByText } = render(
-      <TestContext>
+      <TestContext record={testRecord}>
         <ExamplesForm />
       </TestContext>,
     );
@@ -27,7 +29,6 @@ describe('ExamplesForm', () => {
       </TestContext>,
     );
 
-    userEvent.click(await findByText('Add Example'));
     await findByText('Examples (1)');
     await findByTestId('examples-0-igbo-input');
     await findByTestId('examples-0-english-input');
@@ -49,7 +50,6 @@ describe('ExamplesForm', () => {
       </TestContext>,
     );
 
-    userEvent.click(await findByText('Add Example'));
     await findByText('Examples (1)');
     userEvent.type(await findByTestId('examples-0-igbo-input'), 'igbo input');
     userEvent.type(await findByTestId('examples-0-english-input'), 'english input');
@@ -78,14 +78,14 @@ describe('ExamplesForm', () => {
     );
 
     userEvent.click(await findByText('Add Example'));
-    await findByText('Examples (1)');
+    await findByText('Examples (2)');
     userEvent.type(await findByTestId('examples-0-igbo-input'), 'igbo input');
     userEvent.type(await findByTestId('examples-0-english-input'), 'english input');
     userEvent.type(await findByTestId('examples-0-meaning-input'), 'meaning input');
     userEvent.type(await findByTestId('examples-0-nsibidi-input'), 'nsibidi input');
 
     userEvent.click(await findByLabelText('Add Example'));
-    await findByText('Examples (2)');
+    await findByText('Examples (3)');
 
     userEvent.type(await findByTestId('examples-1-igbo-input'), 'second igbo input');
     userEvent.type(await findByTestId('examples-1-english-input'), 'second english input');
