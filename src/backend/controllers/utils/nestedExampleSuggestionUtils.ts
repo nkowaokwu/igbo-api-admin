@@ -288,7 +288,7 @@ export const updateNestedExampleSuggestions = async (
         ...example,
         // If the example suggestion has an originalExampleId then it's not brand new and should
         // not be considered as such by attributing the user.uid as the author
-        authorId: !example.originalExampleId ? user.uid : null,
+        authorId: !example.originalExampleId ? user.uid : example.authorId,
         exampleForSuggestion: true,
         associatedWords: await generateAssociatedWords(example, suggestionDocId),
         // associatedDefinitionsSchemas: await generateAssociatedDefinitionsSchemas(example),
