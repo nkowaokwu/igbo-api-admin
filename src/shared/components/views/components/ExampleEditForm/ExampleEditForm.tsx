@@ -19,7 +19,7 @@ import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
-import { onCancel, sanitizeArray, sanitizeNsibidiCharacters } from '../utils';
+import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
 import AudioRecorder from '../AudioRecorder';
@@ -46,13 +46,11 @@ const ExampleEditForm = ({
       ...record,
       style,
       nsibidiCharacters: (record?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
+      associatedWords: (record?.associatedWords || []).map((associatedWordId) => ({ id: associatedWordId })),
     },
     ...ExampleEditFormResolver,
   });
   const [originalRecord, setOriginalRecord] = useState(null);
-  const [associatedWords, setAssociatedWords] = useState(
-    record?.associatedWords?.length ? record.associatedWords : [''],
-  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const notify = useNotify();
   const redirect = useRedirect();
@@ -83,8 +81,8 @@ const ExampleEditForm = ({
       ...data,
       associatedDefinitionsSchemas: sanitizeArray(record.associatedDefinitionsSchemas || []),
       style: data.style.value,
-      associatedWords: sanitizeArray(data.associatedWords),
-      nsibidiCharacters: sanitizeNsibidiCharacters(data.nsibidiCharacters),
+      associatedWords: sanitizeWith(data.associatedWords || []),
+      nsibidiCharacters: sanitizeWith(data.nsibidiCharacters || []),
     };
     return cleanedData;
   };
@@ -269,10 +267,7 @@ const ExampleEditForm = ({
       <Box className="mt-2">
         <AssociatedWordsForm
           errors={errors}
-          associatedWords={associatedWords}
-          setAssociatedWords={setAssociatedWords}
           control={control}
-          setValue={setValue}
           record={record}
         />
       </Box>

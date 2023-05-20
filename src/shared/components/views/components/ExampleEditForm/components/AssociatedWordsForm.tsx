@@ -8,46 +8,50 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { resolveWord, getWord, getWords } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
 const AssociatedWords = (
-  { associatedWordIds, updateAssociatedWords, control }
-  : { associatedWordIds: string[], updateAssociatedWords: (value: any) => void, control: Control },
+  { associatedWordIds, remove, control }
+  : { associatedWordIds: { id: string }[], remove: (index: number) => void, control: Control },
 ): ReactElement => {
   const [resolvedAssociatedWords, setResolvedAssociatedWords] = useState(null);
   const [isLoadingAssociatedWords, setIsLoadingAssociatedWords] = useState(false);
 
-  const resolveAssociatedWords = (callback) => async () => {
+  const resolveAssociatedWords = async () => {
+    const shouldResolve = (
+      resolvedAssociatedWords?.length !== associatedWordIds.length
+      || !associatedWordIds.every(({ id }) => (
+        resolvedAssociatedWords.find(({ id: resolvedId }) => resolvedId === id)
+      ))
+    );
+    if (!shouldResolve) {
+      return;
+    }
+
     setIsLoadingAssociatedWords(true);
     try {
       const resolvedAssociatedWords = compact(
-        await Promise.all(compact(associatedWordIds).map(async (associatedWordId) => {
+        await Promise.all(compact(associatedWordIds).map(async ({ id: associatedWordId }) => {
           const associatedWord = await resolveWord(associatedWordId).catch(() => null);
           return associatedWord;
         })),
       );
       setResolvedAssociatedWords(resolvedAssociatedWords);
-      callback(resolvedAssociatedWords);
     } finally {
       setIsLoadingAssociatedWords(false);
     }
   };
 
   const handleDeleteAssociatedWords = (index: number) => {
-    const filteredAssociatedWords = [...associatedWordIds];
-    filteredAssociatedWords.splice(index, 1);
-    updateAssociatedWords(filteredAssociatedWords);
+    remove(index);
   };
 
   useEffect(() => {
-    resolveAssociatedWords((words) => {
-      // Removes stale, invalid Word Ids
-      updateAssociatedWords(words.map(({ id }) => id));
-    })();
+    resolveAssociatedWords();
   }, []);
 
   return isLoadingAssociatedWords ? (
@@ -70,19 +74,16 @@ const AssociatedWords = (
 
 const AssociatedWordsForm = ({
   errors,
-  associatedWords,
-  setAssociatedWords,
   control,
-  setValue,
   record,
 }: AssociatedWordsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
 
-  const updateAssociatedWords = (value) => {
-    setAssociatedWords(value);
-    setValue('associatedWords', value);
-  };
+  const { fields: associatedWords, append, remove } = useFieldArray({
+    control,
+    name: 'associatedWords',
+  });
 
   const canAddAssociatedWord = (userInput) => (
     !associatedWords.includes(userInput)
@@ -94,7 +95,7 @@ const AssociatedWordsForm = ({
     try {
       if (canAddAssociatedWord(userInput)) {
         const word = await getWord(userInput) || (await getWords(userInput))?.[0];
-        updateAssociatedWords([...associatedWords, word.id]);
+        append({ id: word.id });
       } else {
         throw new Error('Invalid word id');
       }
@@ -144,7 +145,7 @@ const AssociatedWordsForm = ({
       </Box>
       <AssociatedWords
         associatedWordIds={associatedWords}
-        updateAssociatedWords={updateAssociatedWords}
+        remove={remove}
         control={control}
       />
       {errors.associatedWords && (
