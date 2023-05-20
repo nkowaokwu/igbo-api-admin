@@ -5,7 +5,6 @@ import Collection from 'src/shared/constants/Collections';
 import { createAuthorizationHeader } from 'src/shared/utils/request';
 import { API_ROUTE } from '../shared/constants';
 import authProvider from './authProvider';
-import IndexedDBAPI from './IndexedDBAPI';
 
 export const httpClient = async (
   url: string,
@@ -58,7 +57,6 @@ export default {
       if (!json) {
         throw body;
       }
-      await IndexedDBAPI.putDocument({ resource, data: params.data });
       return { data: json };
     })
   ),
@@ -68,10 +66,7 @@ export default {
       headers: new Headers({
         'Content-Type': 'text/plain',
       }),
-    }).then(async ({ json }) => {
-      await IndexedDBAPI.deleteDocument({ resource, id: params.id });
-      return { data: json };
-    })
+    }).then(async ({ json }) => ({ data: json }))
   ),
   deleteMany: (resource: Collection, params: any): Promise<{ data: any } | void> => (
     Promise.all(
@@ -82,10 +77,6 @@ export default {
             'Content-Type': 'text/plain',
           }),
         })
-          .then(async (res) => {
-            await IndexedDBAPI.deleteDocument({ resource, id });
-            return res;
-          })
       )),
     ).then((responses) => ({
       data: responses.map(({ json }) => json.id),
