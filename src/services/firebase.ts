@@ -1,6 +1,7 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import firebaseJson from '../../firebase.json'; // eslint-disable-line
 
@@ -19,11 +20,13 @@ const shouldUseEmulator = (
   || window.location.hostname === 'localhost'
 );
 
+const auth = getAuth();
 const db = getFirestore(app);
 const functions = getFunctions(getApp());
 
 if (shouldUseEmulator) {
   /* Use Firebase Emulators */
+  connectAuthEmulator(auth, `http://localhost:${firebaseJson.emulators.auth.port}`);
   connectFirestoreEmulator(db, 'localhost', firebaseJson.emulators.firestore.port);
   connectFunctionsEmulator(functions, 'localhost', firebaseJson.emulators.functions.port);
   console.debug(`Using Firestore emulator: http://localhost:${firebaseJson.emulators.firestore.port}`);

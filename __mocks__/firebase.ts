@@ -11,8 +11,5 @@ firebase.firestore = jest.fn(() => ({
     settings: jest.fn(() => ({})),
   }
 }));
-firebase.auth.GoogleAuthProvider = jest.fn().mockImplementation();
-firebase.auth.FacebookAuthProvider = jest.fn().mockImplementation();
-firebase.auth.EmailAuthProvider = jest.fn().mockImplementation();
 
 export default firebase;
