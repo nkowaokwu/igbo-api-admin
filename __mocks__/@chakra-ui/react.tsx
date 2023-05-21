@@ -73,6 +73,8 @@ export const {
   Icon,
   IconButton,
   Hide,
+  Fade,
+  FormLabel,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -117,6 +119,8 @@ export const {
   useTheme,
   useToast,
   chakra,
+  extendTheme,
+  ChakraProvider,
 } = Chakra;
 
 export const useBreakpointValue = (breakpoints) => Object.values(breakpoints)[0];

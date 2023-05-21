@@ -1,5 +1,4 @@
 import * as ReactAdmin from '../node_modules/react-admin';
-
 // Fake, mocked features
 export const useListContext = jest.fn(() => ({
   basePath: '/',
@@ -12,12 +11,17 @@ export const fetchUtils = {
 
 // Real, non-mocked features
 export const {
+  AppBar,
   AdminUI,
+  AdminContext,
+  Layout,
   Resource,
   sanitizeListRestProps,
   TopToolbar,
   DataProviderContext,
   Title,
+  MenuItemLink,
+  MenuProps,
   useNotify,
   useListFilterContext,
   useRedirect,

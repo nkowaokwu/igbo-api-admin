@@ -40,10 +40,10 @@ const handleNavigation = ({
 };
 
 const CrowdsourcingProgressManager = (): ReactElement => (
-  <Box className="flex flex-col justify-start items-center">
-    <Box className="py-6 flex flex-col justify-center items-center space-y-2">
-      <Heading fontFamily="Silka" textAlign="center" fontSize="xl">
-        Kedụ ọdi enyemaka ị ga-achọ inyere anyị?
+  <Box className="flex flex-col justify-start items-center p-3 space-y-4">
+    <Box className="flex flex-col justify-center items-center space-y-2">
+      <Heading fontFamily="sans-serif" textAlign="center" fontSize="xl">
+        Kedụ ụdị enyemaaka ị chọrọ inye anyị?
       </Heading>
       <Text fontSize="xs" fontFamily="Silka" fontStyle="italic">
         What would you like to help with?

@@ -32,13 +32,13 @@ const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => 
   }, []);
 
   return (
-    <>
+    <Box p={3}>
       <Box className="mb-24">
         <UserStat uid={user?.uid} {...stats} />
       </Box>
       {/* @ts-expect-error props */}
       <MilestoneProgress {...stats} />
-    </>
+    </Box>
   );
 };
 

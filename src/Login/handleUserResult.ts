@@ -29,15 +29,17 @@ export const handleUserResult = async ({
   const hasPermission = hasAccessToPlatformPermissions(permissions, true);
   if (!hasPermission) {
     authProvider.logout();
-    setErrorMessage('You do not have permission to access the platform');
+    const errorMessage = 'You\'re account doesn\'t have the necessary permissions to access the platform.';
+    setErrorMessage(errorMessage);
     // eslint-disable-next-line
-    return toast({
+    toast({
       title: 'Insufficient permissions',
-      description: 'You\'re account doesn\'t have the necessary permissions to access the platform.',
+      description: errorMessage,
       status: 'warning',
       duration: 4000,
       isClosable: true,
     });
+    throw new Error(errorMessage);
   }
 
   localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, token);
