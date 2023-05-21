@@ -10,7 +10,7 @@ const mockDialects = [{
   dialects: [Dialects.ABI.value],
   id: 'dialect-id',
   variations: [],
-  pronunciation: '',
+  pronunciations: [{ audio: '', speaker: '' }],
 }];
 
 export const wordId = new ObjectId('5f864d7401203866b6546dd3');

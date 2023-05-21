@@ -104,7 +104,7 @@ export const postBulkUploadExamples = (data: { igbo: string }[], options = { tok
 );
 
 export const putRandomExampleSuggestions = (
-  data: { id: string, pronunciation?: string, review?: ReviewActions }[],
+  data: { id: string, pronunciations?: { audio: string, speaker: string }[], review?: ReviewActions }[],
   options = { token: '' },
 ): Request => (
   chaiServer

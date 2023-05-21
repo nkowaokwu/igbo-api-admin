@@ -27,7 +27,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'style',
   'source',
   'userInteractions',
-  'pronunciation',
+  'pronunciations',
   'createdAt',
   'updatedAt',
   'merged',
