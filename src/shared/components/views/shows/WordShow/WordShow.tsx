@@ -371,6 +371,7 @@ const WordShow = (props: ShowProps): ReactElement => {
                   originalRecord={originalWordRecord}
                 >
                   <ExampleDiff
+                    record={record}
                     diffRecord={diffRecord}
                     resource={resource}
                   />

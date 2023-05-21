@@ -33,7 +33,7 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
       meaning,
       nsibidi,
       nsibidiCharacters,
-      pronunciation,
+      pronunciations,
       exampleId,
     }, index) => {
       const { originalExampleId } = originalExamplesFromIds[index]?.dataset || {};
@@ -41,7 +41,7 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
         igbo,
         english,
         nsibidi,
-        pronunciation,
+        pronunciations,
         meaning,
         ...(originalExampleId
           ? { originalExampleId }

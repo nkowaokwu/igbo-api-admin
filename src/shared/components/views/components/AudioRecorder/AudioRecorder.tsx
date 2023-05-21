@@ -47,12 +47,11 @@ const AudioRecorder = ({
     : path.startsWith('examples') // Handles path for nested examples
       ? 'Example'
       : path;
-  const valuePath = path.startsWith('dialects')
-    ? `${path}.pronunciation`
-    : 'pronunciation';
-  const formValuePath = path.startsWith('dialects')
-    ? `${path}.pronunciation`
-    : 'pronunciation';
+  const valuePath = path.endsWith('audio')
+    ? path
+    : path.startsWith('dialects')
+      ? `${path}.pronunciation`
+      : 'pronunciation';
   const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording, recordingDuration] = useRecorder();
   const toast = useToast();
@@ -63,8 +62,8 @@ const AudioRecorder = ({
     const originalPronunciationValue = path.startsWith('dialects')
       ? get(originalRecord, `${pronunciationPath}`)
       : originalRecord.pronunciation;
-    setPronunciation(formValuePath, originalPronunciationValue);
-    setPronunciationValue(getFormValues(formValuePath));
+    setPronunciation(valuePath, originalPronunciationValue);
+    setPronunciationValue(getFormValues(valuePath));
     toast({
       title: 'Reset Audio Pronunciation',
       description: 'The audio pronunciation for this slot has been reset to its original value',
@@ -100,7 +99,12 @@ const AudioRecorder = ({
 
   /* Grabbing the default pronunciation value for the word or example document */
   useEffect(() => {
-    if (has(record, 'pronunciation') && !pronunciationValue) {
+    const recordHasPronunciationField = (
+      has(record, 'pronunciation')
+      || has(record, 'pronunciations')
+    );
+
+    if (recordHasPronunciationField && !pronunciationValue) {
       setPronunciationValue(get(record, valuePath));
     }
   }, [record]);
@@ -114,8 +118,8 @@ const AudioRecorder = ({
   useEffect(() => {
     const base64data = audioBlob;
     if (base64data) {
-      setPronunciation(formValuePath, base64data);
-      setPronunciationValue(getFormValues(formValuePath));
+      setPronunciation(valuePath, base64data);
+      setPronunciationValue(getFormValues(valuePath));
     }
     if (base64data) {
       toast({

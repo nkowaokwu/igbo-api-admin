@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { get } from 'lodash';
 import {
   Box,
   IconButton,
@@ -25,7 +26,7 @@ const Example = ({
     igbo = '',
     english = '',
     meaning = '',
-    pronunciation = '',
+    pronunciations = [],
     nsibidi = '',
     exampleId = '',
     associatedWords = [],
@@ -127,14 +128,21 @@ const Example = ({
         />
         <input
           style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-          name={`examples.${index}.pronunciation`}
+          name={`examples.${index}.pronunciations.0.audio`}
           ref={control.register}
-          defaultValue={pronunciation}
+          defaultValue={pronunciations[0]?.audio}
         />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples.${index}.pronunciations.0.speaker`}
+          ref={control.register}
+          defaultValue={pronunciations[0]?.speaker}
+        />
+        {/* Only updates the first audio in the example's pronunciation array */}
         <AudioRecorder
-          path="pronunciation"
-          getFormValues={() => control.getValues(`examples.${index}.pronunciation`)}
-          setPronunciation={(_, value) => setValue(`examples.${index}.pronunciation`, value)}
+          path="pronunciations.0.audio"
+          getFormValues={() => get(control.getValues(), `examples.${index}.pronunciations.0.audio`)}
+          setPronunciation={(_, value) => setValue(`examples.${index}.pronunciations.0.audio`, value)}
           record={example}
           originalRecord={originalRecord}
           formTitle="Igbo Sentence Recording"
