@@ -32,42 +32,10 @@ import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
 import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
+import assignEditorsToDialects from './utils/assignEditorsToDialects';
 
 const OBJECTID_LENGTH = 24;
 const RANDOM_WORDS_LIMIT = 5;
-const assignEditorsToDialects = ({
-  clientData,
-  compareData,
-  userId,
-} : {
-  clientData: Interfaces.WordSuggestion,
-  compareData: Interfaces.Word | Interfaces.WordSuggestion,
-  userId: string,
-}) => {
-  const updatedData = assign(clientData);
-  if (!updatedData.dialects) {
-    updatedData.dialects = [];
-  }
-  // Sets all newly created dialects' editor to the current user
-  // if the word suggestion doesn't come from an existing word document
-  if (!compareData) {
-    updatedData.dialects = (clientData?.dialects || []).map((dialect) => ({
-      ...dialect,
-      editor: userId,
-    }));
-  } else {
-    updatedData.dialects.forEach((_, index) => {
-      const wordDialect = compareData.dialects[index];
-
-      if (!wordDialect) {
-        updatedData.dialects[index].editor = userId;
-      } else {
-        updatedData.dialects[index].editor = wordDialect?.editor;
-      }
-    });
-  }
-  return updatedData;
-};
 
 export const createWordSuggestion = async ({
   data,

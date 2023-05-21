@@ -1,6 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import {
   assign,
+  get,
   map,
   omit,
   pick,
@@ -18,6 +19,7 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -56,6 +58,7 @@ const ExampleEditForm = ({
   const redirect = useRedirect();
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
+  const uid = useFirebaseUid();
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -182,9 +185,12 @@ const ExampleEditForm = ({
           <Controller
             render={() => (
               <AudioRecorder
-                path="headword"
-                getFormValues={getValues}
-                setPronunciation={setValue}
+                path="pronunciations.0.audio"
+                getFormValues={() => get(getValues(), 'pronunciations.0.audio')}
+                setPronunciation={(_, value) => {
+                  setValue('pronunciations.0.audio', value);
+                  setValue('pronunciations.0.speaker', uid);
+                }}
                 record={record}
                 originalRecord={originalRecord}
                 formTitle="Igbo Sentence Recording"

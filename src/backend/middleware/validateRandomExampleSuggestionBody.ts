@@ -12,10 +12,7 @@ export const randomExampleSuggestionSchema = Joi.array().items(Joi.object().keys
     }
     return true;
   }).allow(null).optional(),
-  pronunciations: Joi.array().items(Joi.object().keys({
-    audio: Joi.string().allow(''),
-    speaker: Joi.string().allow('').optional(),
-  })),
+  pronunciation: Joi.string().optional(),
   review: Joi.string().allow(...Object.values(ReviewActions)).optional(),
 }));
 

@@ -415,7 +415,8 @@ describe('MongoDB Example Suggestions', () => {
       });
       const randomExampleSuggestionsRes = await getRandomExampleSuggestions();
       expect(randomExampleSuggestionsRes.status).toEqual(200);
-      const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id }, index) => {
+      const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
+        expect(pronunciations[0]).toBeTruthy();
         if (index === 0) {
           return { id, review: ReviewActions.APPROVE };
         }

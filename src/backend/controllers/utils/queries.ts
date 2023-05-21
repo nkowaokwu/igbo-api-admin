@@ -8,6 +8,7 @@ import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 
+const EXAMPLE_PRONUNCIATION_LIMIT = 4;
 type ExampleSearchQuery = [
   { igbo: RegExp },
   { english: RegExp },
@@ -41,14 +42,28 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
         break;
       case 'pronunciation':
         if (value) {
-          allFilters.pronunciation = {
-            $and: [
-              { $exists: true, $type: 'string' },
-              { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
-            ],
-          };
+          allFilters.$or = [...allFilters.$or, {
+            pronunciation: {
+              $and: [
+                { $exists: true, $type: 'string' },
+                { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
+              ],
+            },
+            pronunciations: {
+              $and: [
+                { $exists: true, $type: 'string' },
+                { $gt: [{ $strLenCP: '$pronunciations.0.audio' }, 10] },
+              ],
+            },
+          }];
         } else {
-          allFilters.$or = [...allFilters.$or, { pronunciation: { $eq: null } }, { pronunciation: { $eq: '' } }];
+          allFilters.$or = [
+            ...allFilters.$or,
+            { pronunciation: { $eq: null } },
+            { pronunciation: { $eq: '' } },
+            { 'pronunciations.0': { $eq: null } },
+            { 'pronunciations.0': { $eq: '' } },
+          ];
         }
         break;
       case 'nsibidi':
@@ -175,26 +190,28 @@ export const searchExampleSuggestionsRegexQuery = (
 export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   igbo: { $exists: boolean, $type: string },
   $expr: { $gt: ({ $strLenCP: string } | number)[] },
-  pronunciation: string,
-  // type: SentenceType,
+  // @ts-expect-error
+  [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   merged: null,
-  userInteractions: { $nin: [string] },
+  'pronunciations.speaker': { $nin: [string] },
 } => ({
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
-  pronunciation: '',
-  // TODO: use type when bulk uploading is getting used
-  // type: SentenceType.DATA_COLLECTION,
+  [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   merged: null,
-  userInteractions: { $nin: [uid] },
+  'pronunciations.speaker': { $nin: [uid] },
 });
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
-  pronunciation: { $exists: boolean, $type: string },
+  merged: null,
+  exampleForSuggestion: { $ne: true },
+  'pronunciations.0': { $exists: boolean, $type: string },
   $expr: { $gt: [{ $strLenCP: string }, number] },
   'approvals.1': { $exists: boolean },
   'denials.1': { $exists: boolean },
 } => ({
-  pronunciation: { $exists: true, $type: 'string' },
+  merged: null,
+  exampleForSuggestion: { $ne: true },
+  'pronunciations.0': { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },

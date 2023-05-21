@@ -6,10 +6,11 @@ import {
   Spinner,
   Tooltip,
 } from '@chakra-ui/react';
+import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collections';
-import { Controller } from 'react-hook-form';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -22,6 +23,7 @@ const Example = ({
   setValue,
 }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
+  const uid = useFirebaseUid();
   const {
     igbo = '',
     english = '',
@@ -126,23 +128,30 @@ const Example = ({
           defaultValue={nsibidi}
           control={control}
         />
-        <input
-          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-          name={`examples.${index}.pronunciations.0.audio`}
-          ref={control.register}
-          defaultValue={pronunciations[0]?.audio}
-        />
-        <input
-          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-          name={`examples.${index}.pronunciations.0.speaker`}
-          ref={control.register}
-          defaultValue={pronunciations[0]?.speaker}
-        />
+        {pronunciations.map((_, pronunciationIndex) => (
+          <>
+            <input
+              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+              name={`examples.${index}.pronunciations.${pronunciationIndex}.audio`}
+              ref={control.register}
+              defaultValue={pronunciations[pronunciationIndex]?.audio}
+            />
+            <input
+              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+              name={`examples.${index}.pronunciations.${pronunciationIndex}.speaker`}
+              ref={control.register}
+              defaultValue={pronunciations[pronunciationIndex]?.speaker}
+            />
+          </>
+        ))}
         {/* Only updates the first audio in the example's pronunciation array */}
         <AudioRecorder
           path="pronunciations.0.audio"
           getFormValues={() => get(control.getValues(), `examples.${index}.pronunciations.0.audio`)}
-          setPronunciation={(_, value) => setValue(`examples.${index}.pronunciations.0.audio`, value)}
+          setPronunciation={(_, value) => {
+            setValue(`examples.${index}.pronunciations.0.audio`, value);
+            setValue(`examples.${index}.pronunciations.0.speaker`, uid);
+          }}
           record={example}
           originalRecord={originalRecord}
           formTitle="Igbo Sentence Recording"
