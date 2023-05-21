@@ -162,7 +162,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   nsibidiCharacters: string[],
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
-  pronunciation: string,
+  pronunciations: { audio: string, speaker: string }[],
   updatedAt: Date,
 }
 
@@ -179,9 +179,10 @@ export interface ExampleClientData {
   english?: string,
   meaning?: string,
   nsibidi?: string,
+  nsibidiCharacters?: string[],
   type?: SentenceType,
   style?: string,
-  pronunciation?: string,
+  pronunciations?: { audio: string, speaker: string }[],
   associatedWords: string[],
   associatedDefinitionsSchemas?: string[],
   exampleForSuggestion?: boolean,
