@@ -27,7 +27,7 @@ const Example = ({
     meaning = '',
     pronunciation = '',
     nsibidi = '',
-    id = '',
+    exampleId = '',
     associatedWords = [],
     originalExampleId,
   } = example;
@@ -52,13 +52,25 @@ const Example = ({
   }, []);
 
   return originalRecord ? (
-    <Box className="list-container" key={`${id}-${igbo}-${english}`}>
+    <Box className="list-container" key={`${exampleId}-${igbo}-${english}`}>
       <Box
-        data-example-id={id}
+        data-example-id={exampleId}
         data-original-example-id={originalExampleId}
         data-associated-words={associatedWords}
         className="flex flex-col w-full space-y-3"
       >
+        <Controller
+          render={(props) => (
+            <input
+              {...props}
+              style={{ opacity: 0, pointerEvents: 'none', position: 'absolute' }}
+              data-test={`examples-${index}-igbo-id`}
+            />
+          )}
+          name={`examples.${index}.exampleId`}
+          defaultValue={exampleId}
+          control={control}
+        />
         <h3 className="text-gray-700">Igbo:</h3>
         <Controller
           render={(props) => (

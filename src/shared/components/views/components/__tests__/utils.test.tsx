@@ -52,6 +52,7 @@ describe('Word Edit Form utils', () => {
   it('sanitizes an array of examples with correct example ids', () => {
     const mockData = [
       {
+        exampleId: '5f90c35f49f7e863e92b8b31',
         igbo: 'igbo',
         english: 'english',
         meaning: 'meaning',
@@ -122,7 +123,6 @@ describe('Word Edit Form utils', () => {
         '5f90c35f49f7e863e92b8b33',
         '5f90c35f49f7e863e92b8b34',
       ],
-      id: null,
       originalExampleId: '5f90c35f49f7e863e92b8b32',
     }]);
   });

@@ -15,6 +15,7 @@ const createDefaultWordFormValues = (record: Record): any => {
         ...example,
         pronunciation: example.pronunciation || '',
         nsibidiCharacters: (example.nsibidiCharacters || []).map((id) => ({ id })),
+        exampleId: example?.id,
       }))
       : [],
     variations: (record?.variations || []).map((variation) => ({ text: variation })),

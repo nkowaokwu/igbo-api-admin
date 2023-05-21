@@ -82,7 +82,9 @@ export const wordRecord = {
     nsibidiCharacters: [],
     igboDefinitions: [],
   }],
-  examples: [],
+  examples: [
+    { id: 'example-id', igbo: 'igbo', english: 'english' },
+  ],
 };
 
 export const exampleSuggestionData = {

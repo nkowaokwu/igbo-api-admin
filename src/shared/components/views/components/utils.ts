@@ -34,8 +34,9 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
       nsibidi,
       nsibidiCharacters,
       pronunciation,
+      exampleId,
     }, index) => {
-      const { originalExampleId, exampleId } = originalExamplesFromIds[index]?.dataset || {};
+      const { originalExampleId } = originalExamplesFromIds[index]?.dataset || {};
       return {
         igbo,
         english,
@@ -47,7 +48,7 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
           : {}
         ),
         ...(exampleId
-          ? { id: exampleId?.includes('-') ? null : exampleId }
+          ? { id: exampleId }
           : {}
         ),
         associatedWords: compact(examplesFromAssociatedWords[index]?.dataset?.associatedWords.split(',')),
