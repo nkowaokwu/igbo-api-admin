@@ -29,6 +29,9 @@ export default {
   },
   getPermissions: async (): Promise<{ role: UserRoles }> => {
     const role = window.localStorage.getItem(LocalStorageKeys.PERMISSIONS) as UserRoles;
+    if (!role) {
+      return role;
+    }
     return { role };
   },
 };
