@@ -115,13 +115,15 @@ const theme = createTheme({
     RaMenuItemLink: {
       root: {
         color: 'var(--chakra-colors-gray-600)',
+        margin: 'var(--chakra-sizes-2)',
+        borderRadius: '10px',
+        '&:focus': {
+          color: 'var(--chakra-colors-green-500)',
+        },
       },
       active: {
         color: 'var(--chakra-colors-green-500)',
-        backgroundColor: 'var(--chakra-colors-gray-200)',
-        borderRightWidth: '5px',
-        borderRightColor: 'var(--chakra-colors-green-500)',
-        borderRightStyle: 'solid',
+        backgroundColor: 'var(--chakra-colors-green-100)',
         '&:hover': {
           color: 'var(--chakra-colors-green-500)',
         },
