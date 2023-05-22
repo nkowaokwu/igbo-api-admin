@@ -139,6 +139,8 @@ Navigate to localhost:4000 and then go to the Login tab to see the Functions log
 
 There you will see a link to verify the email within the auth emulator. Click on that link and your account will be granted access.
 
+![](./docs/verify-email.png)
+
 ### Step 7: (Optional) Seeding the Database
 
 You will need local data to see how the Igbo API Editor Platform works.
