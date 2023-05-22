@@ -67,6 +67,7 @@ const EmailLogin = ({
           });
         } else {
           if (!auth.currentUser.emailVerified) {
+            await sendEmailVerification(userCredential.user);
             setErrorMessage('Please verify your email to login.');
             return setSuccessMessage('');
           }
