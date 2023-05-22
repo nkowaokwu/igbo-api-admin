@@ -91,6 +91,7 @@ export const wordRecord: WordClientData = {
       english: 'english',
       meaning: '',
       nsibidi: '',
+      style: undefined,
       nsibidiCharacters: [],
       pronunciations: [],
       associatedWords: [],

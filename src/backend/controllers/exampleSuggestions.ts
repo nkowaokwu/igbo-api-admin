@@ -60,7 +60,6 @@ export const createExampleSuggestion = async (
     data,
   ) as Interfaces.ExampleSuggestion;
   return newExampleSuggestion.save().catch((err) => {
-    console.log('what is the data', data, data.pronunciations);
     console.log(err.message);
     throw new Error(
       'An error has occurred while saving, double check your provided data',

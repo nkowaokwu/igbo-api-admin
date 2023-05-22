@@ -1,7 +1,6 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import {
   assign,
-  get,
   map,
   omit,
   pick,
@@ -24,7 +23,7 @@ import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
-import AudioRecorder from '../AudioRecorder';
+import ExampleAudioPronunciationsForm from './components/ExampleAudioPronunciationsForm';
 import NsibidiForm from '../WordEditForm/components/NsibidiForm';
 
 const ExampleEditForm = ({
@@ -182,26 +181,6 @@ const ExampleEditForm = ({
               <p className="error">{errors.style.message}</p>
             ) : null}
           </Box>
-          <Controller
-            render={() => (
-              <AudioRecorder
-                path="pronunciations.0.audio"
-                getFormValues={() => get(getValues(), 'pronunciations.0.audio')}
-                setPronunciation={(_, value) => {
-                  setValue('pronunciations.0.audio', value);
-                  setValue('pronunciations.0.speaker', uid);
-                }}
-                record={record}
-                originalRecord={originalRecord}
-                formTitle="Igbo Sentence Recording"
-                formTooltip="Record the audio for the Igbo example sentence only one time.
-                You are able to record over pre-existing recordings."
-              />
-            )}
-            defaultValue={record.pronunciation || ''}
-            name="pronunciation"
-            control={control}
-          />
         </Box>
         <FormHeader
           title="Igbo"
@@ -254,7 +233,7 @@ const ExampleEditForm = ({
             <Input
               {...props}
               placeholder="Please"
-              data-test="english-input"
+              data-test="meaning-input"
             />
           )}
           name="meaning"
@@ -269,6 +248,12 @@ const ExampleEditForm = ({
         control={control}
         errors={errors}
         name="nsibidi"
+      />
+      <ExampleAudioPronunciationsForm
+        control={control}
+        record={record}
+        originalRecord={originalRecord}
+        uid={uid}
       />
       <Box className="mt-2">
         <AssociatedWordsForm
