@@ -108,7 +108,7 @@ describe('Word Edit Form utils', () => {
         meaning: 'meaning',
         nsibidi: 'nsibidi',
         nsibidiCharacters: [{ id: 'first' }],
-        pronunciation: '',
+        pronunciations: [],
       },
     ];
 
@@ -118,7 +118,7 @@ describe('Word Edit Form utils', () => {
       meaning: 'meaning',
       nsibidi: 'nsibidi',
       nsibidiCharacters: ['first'],
-      pronunciation: '',
+      pronunciations: [],
       associatedWords: [
         '5f90c35f49f7e863e92b8b33',
         '5f90c35f49f7e863e92b8b34',

@@ -10,7 +10,7 @@ import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordTags from 'src/backend/shared/constants/WordTags';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordEditForm from '../WordEditForm';
 

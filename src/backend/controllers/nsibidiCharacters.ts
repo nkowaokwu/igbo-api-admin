@@ -19,7 +19,6 @@ export const getNsibidiCharacters = (
 
     // Loosely matches with an included Nsibidi character
     const regex = createRegExp(searchWord).wordReg;
-    console.log({ $regex: regex });
     const query = {
       $or: [
         { nsibidi: { $regex: regex } },

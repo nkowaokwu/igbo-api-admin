@@ -55,13 +55,13 @@ export const wordSuggestionData = {
     {
       igbo: 'First Igbo nested sentence',
       english: 'First English nested sentence',
-      pronunciation: { audio: 'data:audio/', speaker: '' },
+      pronunciations: [{ audio: 'data:audio/', speaker: '' }],
       associatedWords: [],
     },
     {
       igbo: 'Second Igbo nested sentence',
       english: 'Second English nested sentence',
-      pronunciation: { audio: 'data:audio/', speaker: '' },
+      pronunciations: [{ audio: 'data:audio/', speaker: '' }],
       associatedWords: [],
     },
   ],

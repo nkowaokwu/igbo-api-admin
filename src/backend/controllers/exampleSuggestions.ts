@@ -427,7 +427,7 @@ export const getTotalRecordedExampleSuggestions = async (
   const query = {
     userInteractions: { $in: [uid] },
     'denials.1': { $exists: false },
-    pronunciation: { $regex: /^http/, $type: 'string' },
+    'pronunciations.audio': { $regex: /^http/, $type: 'string' },
   };
 
   try {

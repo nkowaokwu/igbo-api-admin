@@ -39,7 +39,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     approvals,
     denials,
     merged,
-    pronunciation,
     igbo,
     english,
     meaning,
@@ -121,25 +120,23 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
               <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciation</Heading>
-                <DiffField
-                  path="pronunciation"
-                  diffRecord={diffRecord}
-                  fallbackValue={pronunciation ? (
-                    <ReactAudioPlayer
-                      src={pronunciation}
-                      style={{ height: '40px', width: '250px' }}
-                      controls
-                    />
-                  ) : <span>No audio pronunciation</span>}
-                  renderNestedObject={() => (
-                    <ReactAudioPlayer
-                      src={pronunciation}
-                      style={{ height: '40px', width: '250px' }}
-                      controls
-                    />
-                  )}
-                />
+                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciations</Heading>
+                <ArrayDiffField
+                  recordField="pronunciations"
+                  record={record}
+                >
+                  <ArrayDiff
+                    diffRecord={diffRecord}
+                    renderNestedObject={(pronunciation) => (
+                      <ReactAudioPlayer
+                        data-test="pronunciations"
+                        src={pronunciation?.audio}
+                        style={{ height: '40px', width: '250px' }}
+                        controls
+                      />
+                    )}
+                  />
+                </ArrayDiffField>
               </Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">
                 Igbo

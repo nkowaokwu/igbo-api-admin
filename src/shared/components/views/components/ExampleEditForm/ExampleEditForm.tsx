@@ -44,7 +44,7 @@ const ExampleEditForm = ({
     errors,
   } = useForm({
     defaultValues: {
-      ...record,
+      ...omit(record, 'pronunciation'),
       style,
       nsibidiCharacters: (record?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
       associatedWords: (record?.associatedWords || []).map((associatedWordId) => ({ id: associatedWordId })),

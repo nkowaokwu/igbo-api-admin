@@ -94,10 +94,12 @@ describe('MongoDB Stats', () => {
       const adminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const currentWeekMergedDialectsForMerger: number = mergerStatsRes.body.dialectalVariationMerges[isoWeek];
       const currentWeekMergedDialectsForAdmin: number = adminStatsRes.body.dialectalVariationMerges[isoWeek];
+
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
         dialects,
       }, { noApprovals: true, token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      expect(wordSuggestionRes.status).toEqual(200);
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
         dialects: [
@@ -110,9 +112,11 @@ describe('MongoDB Stats', () => {
           },
         ],
       });
+      expect(updatedWordSuggestionRes.status).toEqual(200);
       await createWord(updatedWordSuggestionRes.body.id);
       const updatedMergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const updatedAdminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+
       const updatedCurrentWeekMergedDialectsForMerger: number = (
         updatedMergerStatsRes.body.dialectalVariationMerges[isoWeek]
       );
@@ -130,19 +134,19 @@ describe('MongoDB Stats', () => {
         {
           igbo: 'first igbo',
           english: 'first english',
-          pronunciation: 'data://',
+          pronunciations: [{ audio: 'data://', speaker: '' }],
           associatedWords: [],
         },
         {
           igbo: 'second igbo',
           english: 'second english',
-          pronunciation: 'data://',
+          pronunciations: [{ audio: 'data://', speaker: '' }],
           associatedWords: [],
         },
         {
           igbo: 'third igbo',
           english: 'third english',
-          pronunciation: 'data://',
+          pronunciations: [{ audio: 'data://', speaker: '' }],
           associatedWords: [],
         },
       ];
@@ -162,7 +166,7 @@ describe('MongoDB Stats', () => {
           {
             igbo: 'fourth igbo',
             english: 'fourth english',
-            pronunciation: 'data://',
+            pronunciations: [{ audio: 'data://', speaker: '' }],
             associatedWords: [],
           },
         ],

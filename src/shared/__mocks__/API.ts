@@ -32,6 +32,7 @@ export const getNsibidiCharacters = jest.fn(async () => ([{
 
 export const getWordSuggestions = jest.fn(async () => ([]));
 
+// Used by word stems test
 export const resolveWord = jest.fn(async () => ({
   word: 'resolved word',
   id: '567',

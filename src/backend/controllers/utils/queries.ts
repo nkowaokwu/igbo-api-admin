@@ -49,7 +49,7 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
                 { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
               ],
             },
-            pronunciations: {
+            'pronunciations.0.audio': {
               $and: [
                 { $exists: true, $type: 'string' },
                 { $gt: [{ $strLenCP: '$pronunciations.0.audio' }, 10] },
@@ -61,8 +61,8 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
             ...allFilters.$or,
             { pronunciation: { $eq: null } },
             { pronunciation: { $eq: '' } },
-            { 'pronunciations.0': { $eq: null } },
-            { 'pronunciations.0': { $eq: '' } },
+            { 'pronunciations.0.audio': { $eq: null } },
+            { 'pronunciations.0.audio': { $eq: '' } },
           ];
         }
         break;
@@ -193,26 +193,28 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
   // @ts-expect-error
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   merged: null,
-  'pronunciations.speaker': { $nin: [string] },
+  $and: { [key: string]: { $nin: [string] } }[]
 } => ({
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   merged: null,
-  'pronunciations.speaker': { $nin: [uid] },
+  $and: [
+    { 'pronunciations.speaker': { $nin: [uid] } },
+    { userInteractions: { $nin: [uid] } },
+  ],
 });
+// TODO: will need to extend functionality to review individual audio sentences
 export const searchRandomExampleSuggestionsToReviewRegexQuery = () : {
   merged: null,
   exampleForSuggestion: { $ne: true },
-  'pronunciations.0': { $exists: boolean, $type: string },
-  $expr: { $gt: [{ $strLenCP: string }, number] },
+  'pronunciations.0.audio': { $exists: boolean, $type: string, $ne: string },
   'approvals.1': { $exists: boolean },
   'denials.1': { $exists: boolean },
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
-  'pronunciations.0': { $exists: true, $type: 'string' },
-  $expr: { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
+  'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
   'approvals.1': { $exists: false },
   'denials.1': { $exists: false },
 });

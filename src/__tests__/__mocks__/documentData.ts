@@ -4,7 +4,7 @@ import Dialects from 'src/backend/shared/constants/Dialects';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
 
@@ -118,7 +118,7 @@ export const wordRecord: WordClientData = {
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
-  pronunciation: '',
+  pronunciations: [],
   associatedWords: [],
 };
 

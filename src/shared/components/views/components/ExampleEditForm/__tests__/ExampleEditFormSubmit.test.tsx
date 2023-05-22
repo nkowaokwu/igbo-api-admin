@@ -154,16 +154,16 @@ describe('Submit ExampleEditForm', () => {
       </TestContext>,
     );
     userEvent.type(await findByPlaceholderText('Search for associated word or use word id'), 'word');
-    await findAllByText('retrieved word');
-    await findAllByText('NNC');
-    await findAllByText('first definition');
     userEvent.click(last(await findAllByText('retrieved word')));
+    await findAllByText('resolved word');
+    await findAllByText('ADJ');
+    await findAllByText('resolved word definition');
     fireEvent.submit(await findByText('Update'));
 
     await waitFor(() => expect(mockSave).toBeCalledWith(
       {
         ...testExample,
-        associatedWords: ['234'],
+        associatedWords: ['567'],
       },
       Views.SHOW,
       { onFailure: expect.any(Function), onSuccess: expect.any(Function) },

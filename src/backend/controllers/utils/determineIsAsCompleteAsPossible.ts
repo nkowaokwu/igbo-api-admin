@@ -23,7 +23,7 @@ export default (word: Word | Record): boolean => !!(
   && (
     Array.isArray(word.examples)
     && word.examples.length
-    && word.examples.every(({ pronunciations }) => pronunciations.every((pronunciation) => !!pronunciation))
+    && word.examples.every(({ pronunciations }) => pronunciations.every((pronunciation) => !!pronunciation?.audio))
   )
   && (
     word.dialects && typeof word.dialects === 'object'
@@ -38,8 +38,8 @@ export default (word: Word | Record): boolean => !!(
   && ((Array.isArray(word.stems) && word.stems.length) || word.attributes.isStem)
   && (invalidRelatedTermsWordClasses.includes(word.wordClass)
     || (Array.isArray(word.relatedTerms) && word.relatedTerms.length))
-  && isVerb(word.wordClass) ? (!Object.entries(word.tenses || {}).every(([key, value]) => (
-      (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue))
+  && (isVerb(word.wordClass) ? (!Object.entries(word.tenses || {}).every(([key, value]) => (
+    (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue))
     || (key === Tense.PRESENT_PASSIVE.value)))
-    ) : null
+  ) : true)
 );
