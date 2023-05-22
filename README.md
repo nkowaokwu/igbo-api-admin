@@ -133,9 +133,11 @@ Then go back to step 5 above.
 
 You can login with the email `admin@example.com` and the password `password` to create a new admin account.
 
-If you don't create this account you will see the following error message
+You will be asked to verify your email to be granted access.
 
-![Screenshot from 2023-05-06 21-21-32](https://user-images.githubusercontent.com/16169291/236648564-ab43c67f-bced-4f6c-a886-165a3ec95861.png)
+Navigate to localhost:4000 and then go to the Login tab to see the Functions logs.
+
+There you will see a link to verify the email within the auth emulator. Click on that link and your account will be granted access.
 
 ### Step 7: (Optional) Seeding the Database
 
