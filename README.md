@@ -135,7 +135,7 @@ You can login with the email `admin@example.com` and the password `password` to 
 
 You will be asked to verify your email to be granted access.
 
-Navigate to [localhost:4000](http://localhost:4000) and then go to the Login tab to see the Functions logs.
+Navigate to [localhost:4000](http://localhost:4000) and then go to the Logs tab to see the Functions logs.
 
 There you will see a link to verify the email within the auth emulator. Click on that link and your account will be granted access.
 
