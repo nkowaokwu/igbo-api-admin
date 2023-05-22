@@ -1,5 +1,4 @@
 import { Record } from 'react-admin';
-import IndexedDBAPI from 'src/utils/IndexedDBAPI';
 import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collections';
@@ -14,18 +13,10 @@ const handleSubmitConstructedTermPoll = (poll: Poll) => (
 );
 
 export const getWord = async (id: string, { dialects } = { dialects: true }): Promise<any> => {
-  const cachedWord = await IndexedDBAPI.getDocument({ resource: Collection.WORDS, id });
-  if (cachedWord) {
-    return cachedWord;
-  }
   const { data: result } = await request({
     method: 'GET',
     url: `${Collection.WORDS}/${id}?dialects=${dialects}`,
-  })
-    .then(async (res) => {
-      await IndexedDBAPI.putDocument({ resource: Collection.WORDS, data: res.data });
-      return res;
-    });
+  });
   return result;
 };
 
@@ -40,18 +31,10 @@ export const getWordSuggestions = async (word: string): Promise<any> => (await r
 })).data;
 
 export const getExample = async (id: string): Promise<any> => {
-  const cachedExample = await IndexedDBAPI.getDocument({ resource: Collection.EXAMPLES, id });
-  if (cachedExample) {
-    return cachedExample;
-  }
   const { data: result } = await request({
     method: 'GET',
     url: `${Collection.EXAMPLES}/${id}`,
-  })
-    .then(async (res) => {
-      await IndexedDBAPI.putDocument({ resource: Collection.EXAMPLES, data: res.data });
-      return res;
-    });
+  });
   return result;
 };
 
@@ -66,26 +49,14 @@ export const getNsibidiCharacters = async (nsibidi: string): Promise<any> => (aw
 })).data;
 
 export const getCorpus = async (id: string): Promise<any> => {
-  const cachedCorpus = await IndexedDBAPI.getDocument({ resource: Collection.CORPORA, id });
-  if (cachedCorpus) {
-    return cachedCorpus;
-  }
   const { data: result } = await request({
     method: 'GET',
     url: `${Collection.CORPORA}/${id}`,
-  })
-    .then(async (res) => {
-      await IndexedDBAPI.putDocument({ resource: Collection.CORPORA, data: res.data });
-      return res;
-    });
+  });
   return result;
 };
 
 export const resolveWord = async (wordId: string): Promise<any> => {
-  const cachedWord = await IndexedDBAPI.getDocument({ resource: Collection.WORDS, id: wordId });
-  if (cachedWord) {
-    return cachedWord;
-  }
   const wordRes = await getWord(wordId, { dialects: true })
     .catch(async () => {
       /**
@@ -143,10 +114,7 @@ export const approveDocument = ({
 }): Promise<any> => request({
   method: 'PUT',
   url: `${resource}/${record.id}/approve`,
-})
-  .then(async ({ data }) => {
-    await IndexedDBAPI.putDocument({ resource, data });
-  });
+});
 
 export const denyDocument = ({
   resource,
@@ -157,10 +125,7 @@ export const denyDocument = ({
 }): Promise<any> => request({
   method: 'PUT',
   url: `${resource}/${record.id}/deny`,
-})
-  .then(async ({ data }) => {
-    await IndexedDBAPI.putDocument({ resource, data });
-  });
+});
 
 export const mergeDocument = ({
   resource,
@@ -172,14 +137,7 @@ export const mergeDocument = ({
   method: 'POST',
   url: `${resource}`,
   data: { id: record.id },
-})
-  .then(async (res) => {
-    await Promise.all([
-      IndexedDBAPI.putDocument({ resource, data: res.data }),
-      IndexedDBAPI.deleteDocument({ resource: Collection.WORD_SUGGESTIONS, id: record.id }),
-    ]);
-    return res;
-  });
+});
 
 export const deleteDocument = async (
   { resource, record }:
@@ -187,10 +145,7 @@ export const deleteDocument = async (
 ): Promise<any> => request({
   method: 'DELETE',
   url: `${resource}/${record.id}`,
-})
-  .then(async () => {
-    await IndexedDBAPI.deleteDocument({ resource, id: record.id });
-  });
+});
 
 export const combineDocument = (
   { primaryWordId, resource, record }:
@@ -199,18 +154,7 @@ export const combineDocument = (
   method: 'DELETE',
   url: `${resource}/${record.id}`,
   data: { primaryWordId },
-})
-  .then(async ({ data }) => {
-    try {
-      await Promise.all([
-        IndexedDBAPI.deleteDocument({ resource, id: record.id }),
-        IndexedDBAPI.putDocument({ resource, data }),
-      ]);
-    } catch (err) {
-      console.log('IndexedDB error:', err.message);
-    }
-    return { data };
-  });
+});
 
 export const submitConstructedTermPoll = (poll: Poll): Promise<any> => handleSubmitConstructedTermPoll(poll);
 

@@ -65,6 +65,8 @@ export const {
   AccordionItem,
   AccordionPanel,
   Spinner,
+  Tabs,
+  TabList,
   TabPanel,
   TabPanels,
   Tab,

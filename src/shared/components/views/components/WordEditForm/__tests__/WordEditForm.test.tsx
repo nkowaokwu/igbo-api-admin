@@ -12,7 +12,7 @@ import WordEditForm from '../WordEditForm';
 
 jest.mock('src/Core/Dashboard/network');
 
-describe('Word Edit', () => {
+describe('Word Edit Form', () => {
   beforeEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });
@@ -43,7 +43,7 @@ describe('Word Edit', () => {
     await findByText('Editor\'s Comments');
   });
 
-  it.skip('saves the word form', async () => {
+  it.skip('submits the word form', async () => {
     const mockSave = jest.fn();
     const { findByTestId } = render(
       <TestContext
@@ -54,9 +54,9 @@ describe('Word Edit', () => {
         <WordEditForm />
       </TestContext>,
     );
-    // (await findByTestId('word-edit-form')).dispatchEvent(new Event('submit'));
     fireEvent.submit(await findByTestId('word-edit-form'));
-    expect(mockSave).toBeCalledWith({});
+    expect(mockHandleSubmit).toBeCalled();
+    expect(mockSave).toBeCalled();
   });
 
   it('render dialectal variations', async () => {

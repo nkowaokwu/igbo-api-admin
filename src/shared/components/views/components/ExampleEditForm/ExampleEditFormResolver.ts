@@ -14,7 +14,9 @@ export const ExampleEditFormSchema = yup.object().shape({
     value: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ value }) => value)),
     label: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ label }) => label)),
   }).required(),
-  associatedWords: yup.array().min(0).of(yup.string()),
+  associatedWords: yup.array().min(0).of(yup.object().shape({
+    id: yup.string(),
+  })),
   associatedDefinitionsSchemas: yup.array().min(0).of(yup.string()),
   id: yup.string().optional(),
   exampleId: yup.string().optional(),
