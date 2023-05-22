@@ -1,13 +1,21 @@
 import React, { useEffect, ReactElement } from 'react';
-import { Box, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Spinner,
+  Text,
+  usePrevious,
+} from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 
 const Loading = ({ setPermissions } : { setPermissions: React.Dispatch<React.SetStateAction<any>> }): ReactElement => {
   const { permissions } = usePermissions();
+  const prevPermissions = usePrevious(permissions);
 
   useEffect(() => {
     if (permissions?.role) {
       setPermissions(permissions);
+    } else if (!permissions?.role && prevPermissions !== permissions) {
+      window.location.hash = '#/login';
     }
   }, [permissions]);
 

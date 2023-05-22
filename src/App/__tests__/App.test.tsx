@@ -4,9 +4,9 @@ import App from '../App';
 
 describe('App', () => {
   it('render the Igbo API Editor Platform', async () => {
-    const { findByText } = render(
+    const { queryByText } = render(
       <App />,
     );
-    await findByText('Loading the page, please wait a moment');
+    expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
 });
