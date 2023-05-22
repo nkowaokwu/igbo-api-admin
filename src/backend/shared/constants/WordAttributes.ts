@@ -8,10 +8,6 @@ export default {
     value: 'isAccented',
     label: 'Is Accented',
   },
-  IS_COMPLETE: {
-    value: 'isComplete',
-    label: 'Is Complete',
-  },
   IS_SLANG: {
     value: 'isSlang',
     label: 'Is Slang',
@@ -28,6 +24,13 @@ export default {
     value: 'isStem',
     label: 'Is Stem',
   },
+
+  // @Deprecated
+  IS_COMPLETE: {
+    value: 'isComplete',
+    label: 'Is Complete',
+  },
+  // @Deprecated
   IS_COMMON: {
     value: 'isCommon',
     label: 'Is Common Term',

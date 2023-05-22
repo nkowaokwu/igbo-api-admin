@@ -49,7 +49,7 @@ export interface EditorRequest extends Request {
 
 export interface WordClientData extends Word {
   authorId?: string,
-  examples?: ExampleSuggestion[],
+  examples?: ExampleClientData[],
 }
 
 export interface CorpusClientData extends Corpus {
@@ -101,7 +101,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   hypernyms: string[],
   hyponyms: string[],
   updatedAt: Date,
-  examples?: (Example | ExampleSuggestion)[],
+  examples?: (Example | ExampleSuggestion | ExampleClientData)[],
 };
 
 export interface Notification {

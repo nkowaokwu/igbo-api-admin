@@ -114,6 +114,7 @@ const WordEditForm = ({
         wordClass: definition.wordClass.value,
         definitions: sanitizeWith(definition.definitions, 'text'),
         nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
+        igboDefinitions: definition.igboDefinitions || [],
       })),
       variations: sanitizeWith(data.variations || [], 'text'),
       relatedTerms: sanitizeWith(uniqBy(data.relatedTerms || [], 'id')),

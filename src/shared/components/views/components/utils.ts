@@ -41,7 +41,7 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
         igbo,
         english,
         nsibidi,
-        pronunciations,
+        pronunciations: (pronunciations || []).filter(({ audio }) => audio),
         meaning,
         ...(originalExampleId
           ? { originalExampleId }
