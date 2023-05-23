@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import PartOfSpeech from '../PartOfSpeechForm';
 
 describe('PartOfSpeech', () => {

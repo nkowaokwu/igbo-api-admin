@@ -7,7 +7,7 @@ import { configure } from '@testing-library/react';
 // eslint-disable-next-line max-len
 import createDefaultWordFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultWordFormValues';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 

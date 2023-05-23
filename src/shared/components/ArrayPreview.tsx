@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { get, truncate } from 'lodash';
 import { Text, Tooltip, chakra } from '@chakra-ui/react';
-import WordClass from '../constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import { ArrayPreviewProps } from '../interfaces';
 import ResolvedWord from './ResolvedWord';
 

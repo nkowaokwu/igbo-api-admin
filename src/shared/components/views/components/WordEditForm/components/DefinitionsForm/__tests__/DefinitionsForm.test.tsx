@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import DefinitionsForm from '../DefinitionsForm';
 
 describe('DefinitionsForm', () => {

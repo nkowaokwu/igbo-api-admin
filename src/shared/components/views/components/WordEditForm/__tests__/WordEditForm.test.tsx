@@ -7,7 +7,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import Tense from 'src/backend/shared/constants/Tense';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import WordEditForm from '../WordEditForm';
 
 jest.mock('src/Core/Dashboard/network');
