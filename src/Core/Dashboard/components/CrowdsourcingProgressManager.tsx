@@ -32,7 +32,7 @@ const crowdsourcingOptions: CrowdsourcingOption[] = [
 const handleNavigation = ({
   hash,
   state,
-} : {
+}: {
   hash: string,
   state?: IgboSoundboxViews,
 }) => {
@@ -57,6 +57,11 @@ const CrowdsourcingProgressManager = (): ReactElement => (
         state,
       }) => (
         <Box
+          cursor="pointer"
+          _hover={{
+            background: "white",
+            color: "teal.500",
+          }}
           borderColor="gray.300"
           borderWidth="1px"
           borderRadius="md"
