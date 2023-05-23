@@ -1,7 +1,7 @@
 import React, { useState, ReactElement, useEffect } from 'react';
 import { compact } from 'lodash';
 import { Box, Spinner, useToast } from '@chakra-ui/react';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
@@ -103,12 +103,6 @@ const RelatedTermsForm = ({
   };
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2 " height="fit-content">
-      <Controller
-        render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-        name="relatedTerms"
-        control={control}
-        defaultValue=""
-      />
       <Box className="flex items-center my-5 w-full justify-between">
         <FormHeader
           title="Related Terms"

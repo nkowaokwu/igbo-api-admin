@@ -75,6 +75,13 @@ export const getRandomExampleSuggestions = (query = {}, options = { token: '' })
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const getRandomExampleSuggestionsToReview = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/exampleSuggestions/random/review')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 export const getTotalVerifiedExampleSuggestions = (query = {}, options = { token: '' }): Request => (
   chaiServer
     .get('/exampleSuggestions/random/stats/verified')
@@ -104,7 +111,7 @@ export const postBulkUploadExamples = (data: { igbo: string }[], options = { tok
 );
 
 export const putRandomExampleSuggestions = (
-  data: { id: string, pronunciation?: string, review?: ReviewActions }[],
+  data: { id: string, pronunciations?: { audio: string, speaker: string }[], review?: ReviewActions }[],
   options = { token: '' },
 ): Request => (
   chaiServer

@@ -222,20 +222,22 @@ describe('MongoDB Word Suggestions', () => {
         ...wordSuggestionWithNestedExampleSuggestionData,
         examples: [{
           ...wordSuggestionWithNestedExampleSuggestionData.examples[0],
-          pronunciation: 'data:audio/mp3recording audio',
+          pronunciations: [{ audio: 'data:audio/mp3recording audio', speaker: '' }],
         }],
       });
       expect(wordRes.status).toEqual(200);
       const nestedExampleId = wordRes.body.examples[0].id;
-      expect(wordRes.body.examples[0].pronunciation)
-        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
+      expect(wordRes.body.examples[0].pronunciations[0].audio
+        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
+        .toBeTruthy();
       const secondWordRes = await updateWordSuggestion({
         ...wordRes.body,
         word: 'changed',
       });
       expect(secondWordRes.status).toEqual(200);
-      expect(secondWordRes.body.examples[0].pronunciation)
-        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
+      expect(secondWordRes.body.examples[0].pronunciations[0].audio
+        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
+        .toBeTruthy();
       const res = await updateWordSuggestion({
         ...secondWordRes.body,
         examples: [{
@@ -246,8 +248,9 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.status).toEqual(200);
       expect(res.body.word).toEqual('changed');
       expect(res.body.examples[0].igbo).toEqual('changed igbo');
-      expect(res.body.examples[0].pronunciation)
-        .toEqual(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}`);
+      expect(res.body.examples[0].pronunciations[0].audio
+        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
+        .toBeTruthy();
     });
 
     it('should fail to update nested exampleSuggestion inside wordSuggestion for invalid associatedWords', async () => {
@@ -418,7 +421,7 @@ describe('MongoDB Word Suggestions', () => {
         examples: [{
           igbo: 'testing with igbo',
           english: 'testing with english',
-          pronunciation: 'data://',
+          pronunciations: [{ audio: 'data://', speaker: '' }],
         }],
       }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
       expect(updatedWordSuggestionRes.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);

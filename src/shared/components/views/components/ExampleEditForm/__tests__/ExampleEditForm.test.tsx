@@ -7,7 +7,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import ExampleEditForm from '../ExampleEditForm';
 
-describe('Example Edit Form', () => {
+describe('Example Edit', () => {
   beforeEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });

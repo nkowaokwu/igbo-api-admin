@@ -18,11 +18,12 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
+import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
 import AssociatedWordsForm from './components/AssociatedWordsForm';
-import AudioRecorder from '../AudioRecorder';
+import ExampleAudioPronunciationsForm from './components/ExampleAudioPronunciationsForm';
 import NsibidiForm from '../WordEditForm/components/NsibidiForm';
 
 const ExampleEditForm = ({
@@ -43,7 +44,7 @@ const ExampleEditForm = ({
     errors,
   } = useForm({
     defaultValues: {
-      ...record,
+      ...omit(record, 'pronunciation'),
       style,
       nsibidiCharacters: (record?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
       associatedWords: (record?.associatedWords || []).map((associatedWordId) => ({ id: associatedWordId })),
@@ -56,6 +57,7 @@ const ExampleEditForm = ({
   const redirect = useRedirect();
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
+  const uid = useFirebaseUid();
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -179,23 +181,6 @@ const ExampleEditForm = ({
               <p className="error">{errors.style.message}</p>
             ) : null}
           </Box>
-          <Controller
-            render={() => (
-              <AudioRecorder
-                path="headword"
-                getFormValues={getValues}
-                setPronunciation={setValue}
-                record={record}
-                originalRecord={originalRecord}
-                formTitle="Igbo Sentence Recording"
-                formTooltip="Record the audio for the Igbo example sentence only one time.
-                You are able to record over pre-existing recordings."
-              />
-            )}
-            defaultValue={record.pronunciation || ''}
-            name="pronunciation"
-            control={control}
-          />
         </Box>
         <FormHeader
           title="Igbo"
@@ -248,7 +233,7 @@ const ExampleEditForm = ({
             <Input
               {...props}
               placeholder="Please"
-              data-test="english-input"
+              data-test="meaning-input"
             />
           )}
           name="meaning"
@@ -263,6 +248,12 @@ const ExampleEditForm = ({
         control={control}
         errors={errors}
         name="nsibidi"
+      />
+      <ExampleAudioPronunciationsForm
+        control={control}
+        record={record}
+        originalRecord={originalRecord}
+        uid={uid}
       />
       <Box className="mt-2">
         <AssociatedWordsForm

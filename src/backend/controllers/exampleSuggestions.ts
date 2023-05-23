@@ -18,6 +18,8 @@ import { findUser } from './users';
 import ReviewActions from '../shared/constants/ReviewActions';
 import SentenceType from '../shared/constants/SentenceType';
 import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
+import handleExampleSuggestionAudioPronunciations from './utils/handleExampleSuggestionAudioPronunciations';
+import { wordSuggestionSchema } from '../models/WordSuggestion';
 
 const NO_LIMIT = 20000;
 export const createExampleSuggestion = async (
@@ -57,7 +59,8 @@ export const createExampleSuggestion = async (
   const newExampleSuggestion = new ExampleSuggestion(
     data,
   ) as Interfaces.ExampleSuggestion;
-  return newExampleSuggestion.save().catch(() => {
+  return newExampleSuggestion.save().catch((err) => {
+    console.log(err.message);
     throw new Error(
       'An error has occurred while saving, double check your provided data',
     );
@@ -95,24 +98,6 @@ export const postExampleSuggestion = async (
   }
 };
 
-/* Finds and applies the first definition schema ids for the associated words to the Example Suggestion */
-// const applyAssociatedDefinitionSchemas = (
-//   async (exampleSuggestion: Interfaces.ExampleSuggestion): Promise<Interfaces.ExampleSuggestion> => {
-//     const updatedExampleSuggestion = assign(exampleSuggestion);
-//     const wordSuggestions: Interfaces.WordSuggestion[] = (
-//       await WordSuggestion.find({ _id: exampleSuggestion.associatedWords })
-//     );
-//     if (!updatedExampleSuggestion.associatedDefinitionsSchemas) {
-//       updatedExampleSuggestion.associatedDefinitionsSchemas = [];
-//     }
-//     const definitionSchemas = compact(wordSuggestions.map((wordSuggestion) => (
-//       get(wordSuggestion, 'definitions[0]._id')
-//     )));
-//     updatedExampleSuggestion.associatedDefinitionsSchemas = definitionSchemas;
-//     return updatedExampleSuggestion;
-//   }
-// );
-
 export const updateExampleSuggestion = ({
   id,
   data: clientData,
@@ -122,7 +107,7 @@ export const updateExampleSuggestion = ({
   data: Interfaces.ExampleSuggestion;
   mongooseConnection: Connection;
 }): Promise<Interfaces.ExampleSuggestion | void> => {
-  const data = assign(clientData);
+  const data = assign(clientData) as Interfaces.ExampleClientData;
   delete data.authorId;
   const ExampleSuggestion = (
     mongooseConnection.model<Interfaces.ExampleSuggestion>(
@@ -138,13 +123,10 @@ export const updateExampleSuggestion = ({
       if (exampleSuggestion.merged) {
         throw new Error('Unable to edit a merged example suggestion');
       }
+
+      handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
+
       const updatedExampleSuggestion = assign(exampleSuggestion, data);
-      if (
-        !updatedExampleSuggestion.associatedDefinitionsSchemas
-        || !updatedExampleSuggestion.associatedDefinitionsSchemas.length
-      ) {
-        // updatedExampleSuggestion = await applyAssociatedDefinitionSchemas(updatedExampleSuggestion);
-      }
       return updatedExampleSuggestion.save();
     },
   );
@@ -163,9 +145,10 @@ export const putExampleSuggestion = async (
       mongooseConnection,
     } = req;
     const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
+    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     await Promise.all(
       map(data.associatedWords, async (associatedWordId) => {
-        if (!(await Word.findById(associatedWordId))) {
+        if (!(await Word.findById(associatedWordId)) && !(await WordSuggestion.findById(associatedWordId))) {
           throw new Error(
             'Example suggestion associated words can only contain Word ids',
           );
@@ -444,7 +427,7 @@ export const getTotalRecordedExampleSuggestions = async (
   const query = {
     userInteractions: { $in: [uid] },
     'denials.1': { $exists: false },
-    pronunciation: { $regex: /^http/, $type: 'string' },
+    'pronunciations.audio': { $regex: /^http/, $type: 'string' },
   };
 
   try {
@@ -491,8 +474,9 @@ export const putRandomExampleSuggestions = async (
         }
         const userInteractions = new Set(exampleSuggestion.userInteractions);
         if (pronunciation) {
-          console.log(`Updated example suggestion with pronunciation: ${id}`);
-          exampleSuggestion.pronunciation = pronunciation;
+          exampleSuggestion.pronunciations.push({ audio: pronunciation, speaker: user.uid });
+          console.log(`Pushed new pronunciation object to example suggestion ${id}`);
+
           // Only add uid to userInteractions for recording audio
           userInteractions.add(user.uid);
           exampleSuggestion.userInteractions = Array.from(userInteractions);

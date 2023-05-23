@@ -49,7 +49,7 @@ export interface EditorRequest extends Request {
 
 export interface WordClientData extends Word {
   authorId?: string,
-  examples?: ExampleSuggestion[],
+  examples?: ExampleClientData[],
 }
 
 export interface CorpusClientData extends Corpus {
@@ -101,7 +101,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   hypernyms: string[],
   hyponyms: string[],
   updatedAt: Date,
-  examples?: (Example | ExampleSuggestion)[],
+  examples?: (Example | ExampleSuggestion | ExampleClientData)[],
 };
 
 export interface Notification {
@@ -162,7 +162,7 @@ export interface Example extends Document<any>, LeanDocument<any> {
   nsibidiCharacters: string[],
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
-  pronunciation: string,
+  pronunciations: { audio: string, speaker: string }[],
   updatedAt: Date,
 }
 
@@ -179,9 +179,10 @@ export interface ExampleClientData {
   english?: string,
   meaning?: string,
   nsibidi?: string,
+  nsibidiCharacters?: string[],
   type?: SentenceType,
   style?: string,
-  pronunciation?: string,
+  pronunciations?: { audio: string, speaker: string }[],
   associatedWords: string[],
   associatedDefinitionsSchemas?: string[],
   exampleForSuggestion?: boolean,

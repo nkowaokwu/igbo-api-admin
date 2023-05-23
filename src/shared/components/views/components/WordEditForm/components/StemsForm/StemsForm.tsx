@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { Box, Spinner, useToast } from '@chakra-ui/react';
 import { compact } from 'lodash';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
@@ -108,12 +108,6 @@ const StemsForm = ({
 
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2 " height="fit-content">
-      <Controller
-        render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-        name="stems"
-        control={control}
-        defaultValue=""
-      />
       <Box className="flex items-center my-5 w-full justify-between">
         <FormHeader
           title="Word Stems"

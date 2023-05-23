@@ -9,27 +9,29 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
   completeExampleRequirements: string[],
 }> => {
   const {
-    associatedWords,
-    style,
-    pronunciation,
-    igbo,
-    english,
-    meaning,
+    associatedWords = [],
+    style = '',
+    pronunciations = [],
+    igbo = '',
+    english = '',
+    meaning = '',
     archived = false,
   } = record;
 
   const isAudioAvailable = await new Promise((resolve) => {
     if (!skipAudioCheck) {
-      axios.get(pronunciation)
-        .then(() => resolve(true))
-        .catch(() => {
-          if (pronunciation?.startsWith?.('https://igbo-api-test-local/')) {
-            return resolve(true);
-          }
-          return resolve(false);
-        });
+      pronunciations.forEach(({ audio }) => {
+        axios.get(audio)
+          .then(() => resolve(true))
+          .catch(() => {
+            if (audio?.startsWith?.('https://igbo-api-test-local/')) {
+              return resolve(true);
+            }
+            return resolve(false);
+          });
+      });
     }
-    return resolve(pronunciation?.startsWith('https://'));
+    return resolve(pronunciations[0]?.audio?.startsWith('https://'));
   });
 
   const sufficientExampleRequirements = compact([
@@ -41,8 +43,8 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
 
   const completeExampleRequirements = compact([
     ...sufficientExampleRequirements,
-    (!pronunciation || !isAudioAvailable) && 'An audio pronunciation is needed',
-    style === ExampleStyle.PROVERB && !meaning && 'Meaning is required for proverb',
+    pronunciations.some((pronunciation) => (!pronunciation || !isAudioAvailable)) && 'An audio pronunciation is needed',
+    style === ExampleStyle.PROVERB.value && !meaning && 'Meaning is required for proverb',
   ]);
 
   return {

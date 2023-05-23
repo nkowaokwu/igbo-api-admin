@@ -28,11 +28,14 @@ const DialectForm = ({
   const defaultDialectsValue = (dialect.dialects || []).map((value) => (
     { label: Dialects[value].label, value }
   ));
-  const errorMessage = (errors.dialects
-    ? errors.dialects[index]?.dialects?.message
+  const error = errors.dialects
+    ? (
+      errors.dialects[index]?.dialects?.message
     || errors.dialects[index]?.message
     || errors.dialects.message
-    : '').replace(`dialects[${index}].dialects`, 'Dialects');
+    ) : null;
+
+  const errorMessage = (typeof error === 'string' ? error : '').replace(`dialects[${index}].dialects`, 'Dialects');
 
   const handleWarningMessage = (e) => {
     setWarningMessage((record?.word || '') !== e.target.value

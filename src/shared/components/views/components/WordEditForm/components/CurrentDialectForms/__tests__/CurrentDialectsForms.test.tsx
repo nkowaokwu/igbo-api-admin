@@ -50,7 +50,6 @@ describe('CurrentDialectsForms', () => {
       id: 'dialect-id',
       word: 'word',
       pronunciation: '',
-      variations: [],
     }]);
   });
 
@@ -70,7 +69,6 @@ describe('CurrentDialectsForms', () => {
       id: 'dialect-id',
       word: 'word',
       pronunciation: '',
-      variations: [],
     }]);
   });
 

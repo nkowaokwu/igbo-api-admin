@@ -85,7 +85,7 @@ const HeadwordAttributes = ({
                 isChecked={value}
                 defaultIsChecked={record.attributes?.[WordAttributes.IS_SLANG.value]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_SLANG.label}-checkbox`}
+                data-test={`${WordAttributes.IS_SLANG.value}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_SLANG.label}</chakra.span>
@@ -115,7 +115,7 @@ const HeadwordAttributes = ({
                 }
                 isDisabled={isConstructedPollTerm}
                 ref={ref}
-                data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.label}-checkbox`}
+                data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.value}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
@@ -139,7 +139,7 @@ const HeadwordAttributes = ({
                 isChecked={value}
                 defaultIsChecked={record.attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_BORROWED_TERM.label}-checkbox`}
+                data-test={`${WordAttributes.IS_BORROWED_TERM.value}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
@@ -166,7 +166,7 @@ const HeadwordAttributes = ({
                 isChecked={value}
                 defaultIsChecked={record.attributes?.[WordAttributes.IS_STEM.value]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_STEM.label}-checkbox`}
+                data-test={`${WordAttributes.IS_STEM.value}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_STEM.label}</chakra.span>

@@ -34,7 +34,7 @@ describe('Example Show', () => {
     );
 
     await findByText('Example Document Details');
-    await findByText('Audio Pronunciation');
+    await findByText('Audio Pronunciations');
     await findByText('Igbo');
     await findByText('first igbo example');
     await findByText('first english example');
@@ -62,7 +62,7 @@ describe('Example Show', () => {
     );
 
     await findByText('Example Suggestion Document Details');
-    await findByText('Audio Pronunciation');
+    await findByText('Audio Pronunciations');
     await findByText('Igbo');
     await findByText('first igbo example');
     await findByText('first english example');

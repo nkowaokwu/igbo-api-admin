@@ -11,11 +11,10 @@ const createDefaultWordFormValues = (record: Record): any => {
     })),
     dialects: record?.dialects || [],
     examples: record?.examples
-      ? record.examples.map((example) => ({
+      ? record.examples.map(({ id, ...example }) => ({
         ...example,
-        pronunciation: example.pronunciation || '',
-        nsibidiCharacters: (example.nsibidiCharacters || []).map((id) => ({ id })),
-        exampleId: example?.id,
+        nsibidiCharacters: (example.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
+        exampleId: id,
       }))
       : [],
     variations: (record?.variations || []).map((variation) => ({ text: variation })),

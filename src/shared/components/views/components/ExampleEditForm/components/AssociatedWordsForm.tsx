@@ -8,7 +8,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { resolveWord, getWord, getWords } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
@@ -52,7 +52,7 @@ const AssociatedWords = (
 
   useEffect(() => {
     resolveAssociatedWords();
-  }, []);
+  }, [associatedWordIds]);
 
   return isLoadingAssociatedWords ? (
     <Spinner />
@@ -113,12 +113,6 @@ const AssociatedWordsForm = ({
   };
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
-      <Controller
-        render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-        name="associatedWords"
-        control={control}
-        defaultValue=""
-      />
       <Box className="flex items-center my-5 w-full justify-between">
         <FormHeader
           title="Associated Words"

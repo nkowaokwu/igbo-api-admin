@@ -153,16 +153,17 @@ describe('MongoDB Words', () => {
       });
     });
     // eslint-disable-next-line max-len
-    it('should create a new word from existing word and examples, attempt to delete, but sentence should still be there', async () => {
+    it('should create a new word from existing word and examples, attempt to delete, but sentence should still be there as archived', async () => {
       const exampleData = {
         igbo: 'first igbo',
         english: 'first english',
-        pronunciation: 'data://',
+        pronunciations: [{ audio: 'data://', speaker: '' }],
       };
       const res = await suggestNewWord({
         ...wordSuggestionData,
         examples: [exampleData],
       });
+      expect(res.status).toEqual(200);
       expect(res.body.examples[0].authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const wordRes = await createWord(res.body.id);
       const result = await getWord(wordRes.body.id);
@@ -182,14 +183,24 @@ describe('MongoDB Words', () => {
       expect(childRes.body.examples[0].authorId).toBeFalsy();
       const updatedChildRes = await updateWordSuggestion({
         ...childRes.body,
-        examples: [], // Delete the example suggestion,
+        // Delete the example suggestion and create a new example sentence
+        examples: [
+          {
+            ...exampleData,
+            igbo: 'second example sentence',
+          },
+        ],
       });
-      expect(updatedChildRes.body.examples).toHaveLength(0);
+      expect(updatedChildRes.body.examples).toHaveLength(1);
+      expect(updatedChildRes.body.examples[0].igbo).toEqual('second example sentence');
       const secondWordRes = await createWord(updatedChildRes.body.id);
       const finalRes = await getWord(secondWordRes.body.id);
       expect(finalRes.status).toEqual(200);
+      expect(finalRes.body.examples).toHaveLength(2);
       expect(finalRes.body.examples[0]).toBeTruthy();
       expect(finalRes.body.examples[0].archived).toBeTruthy();
+      expect(finalRes.body.examples[1]).toBeTruthy();
+      expect(finalRes.body.examples[1].archived).toBeFalsy();
     });
   });
 

@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
+import { WordClientData } from 'src/backend/controllers/utils/interfaces';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
+import Tense from 'src/backend/shared/constants/Tense';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClass from 'src/backend/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
@@ -9,7 +12,6 @@ const mockDialects = [{
   word: 'word',
   dialects: [Dialects.ABI.value],
   id: 'dialect-id',
-  variations: [],
   pronunciation: '',
 }];
 
@@ -71,7 +73,7 @@ export const updatedWordData = {
   }],
 };
 
-export const wordRecord = {
+export const wordRecord: WordClientData = {
   word: 'word',
   id: new ObjectId(),
   dialects: mockDialects,
@@ -83,14 +85,40 @@ export const wordRecord = {
     igboDefinitions: [],
   }],
   examples: [
-    { id: 'example-id', igbo: 'igbo', english: 'english' },
+    {
+      id: 'example-id',
+      igbo: 'igbo',
+      english: 'english',
+      meaning: '',
+      nsibidi: '',
+      style: undefined,
+      nsibidiCharacters: [],
+      pronunciations: [],
+      associatedWords: [],
+    },
   ],
+  editorsNotes: '',
+  frequency: 1,
+  pronunciation: '',
+  relatedTerms: [],
+  attributes: Object.values(WordAttributes).reduce((attributes, { value }) => {
+    if (value !== WordAttributes.IS_COMMON.value && value !== WordAttributes.IS_COMPLETE.value) {
+      attributes[value] = false;
+    }
+    return attributes;
+  }, {}),
+  tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: '' }), {}),
+  variations: [],
+  conceptualWord: '',
+  wordPronunciation: '',
+  stems: [],
+  tags: [],
 };
 
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
-  pronunciation: '',
+  pronunciations: [],
   associatedWords: [],
 };
 

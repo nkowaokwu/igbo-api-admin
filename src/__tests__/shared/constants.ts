@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import testAuthTokens from 'src/backend/shared/constants/testAuthTokens';
 
 export const LOCAL_ROUTE = '/';
 export const TEST_ROUTE = '/test';
@@ -27,7 +28,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'style',
   'source',
   'userInteractions',
-  'pronunciation',
+  'pronunciations',
   'createdAt',
   'updatedAt',
   'merged',
@@ -67,11 +68,6 @@ export const MESSAGE = {
   dynamic_template_data: {},
 };
 export const INVALID_MESSAGE = {};
-export const AUTH_TOKEN = {
-  ADMIN_AUTH_TOKEN: 'admin-auth-token',
-  MERGER_AUTH_TOKEN: 'merger-auth-token',
-  EDITOR_AUTH_TOKEN: 'editor-auth-token',
-  USER_AUTH_TOKEN: 'user-auth-token',
-};
+export const AUTH_TOKEN = testAuthTokens;
 export const API_KEY = 'fallback_api_key';
 export const ORIGIN_HEADER = 'test.com';
