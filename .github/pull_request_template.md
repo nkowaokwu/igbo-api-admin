@@ -4,15 +4,17 @@
 
 ## Problem
 
-_What problem are you trying to solve?_
+<!-- What problem are you trying to solve? -->
 
 
 ## Solution
 
-_How did you solve the problem?_
+<!-- How did you solve the problem? -->
 
 
 ## Before & After Screenshots
+  
+<!-- If you don't have any screenshots, please remove this section -->
 
 **BEFORE**:
 [insert screenshot here]
@@ -21,19 +23,22 @@ _How did you solve the problem?_
 [insert screenshot here]
   
 ## QA
-_How did you test your solution?_
+<!-- How did you test your solution? -->
   
-- [ ] Wrote or updated Jest or Cypress test(s)?
-- [ ] Manually QA'd the solution
-- [ ] etc.
+<!-- - [ ] Wrote or updated Jest or Cypress test(s)? -->
+<!-- - [ ] Manually QA'd the solution -->
+<!-- - [ ] etc. -->
 
 
 ## Other changes (e.g. bug fixes, UI tweaks, small refactors)
-
+  
+<!-- If you don't have any other changes, please remove this section -->
 
 ## Deploy Notes
 
-_Notes regarding deployment of the contained body of work. These should note any
+<!-- If you don't have any other changes, please remove this section -->
+
+<!-- _Notes regarding deployment of the contained body of work. These should note any
 new dependencies, new scripts, etc. Delete this section if you don't have any 
 changes in these areas_
 
@@ -51,4 +56,4 @@ changes in these areas_
 
 **New dev dependencies**:
 
-- `dependency` : dependency details
+- `dependency` : dependency details -->
