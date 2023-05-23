@@ -39,14 +39,7 @@ If you don't have Firebase globally install, run the following command:
 npm install -g firebase firebase-cli
 ```
 
-Install the Firebase project's dependencies:
-
-```bash
-cd functions/
-yarn install
-```
-
-And then the regular project's dependencies:
+Install the project's dependencies:
 
 ```bash
 cd ../
