@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Dialects from 'src/backend/shared/constants/Dialects';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 
 const { ObjectId } = mongoose.Types;
 

@@ -15,7 +15,7 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import View from 'src/shared/constants/Views';
 import { getWords, getWordSuggestions } from 'src/shared/API';
 

@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { getWordSuggestionsWithoutIgboDefinitions, setWordSuggestionsWithoutIgboDefinitions } from 'src/shared/API';

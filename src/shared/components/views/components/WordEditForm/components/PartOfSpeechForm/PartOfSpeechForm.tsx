@@ -3,7 +3,7 @@ import { values } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import FormHeader from '../../../FormHeader';
 import PartOfSpeechFormInterface from './PartOfSpeechFormInterface';
 

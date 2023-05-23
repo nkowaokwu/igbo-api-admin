@@ -1,4 +1,4 @@
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import { Record } from 'react-admin';
 

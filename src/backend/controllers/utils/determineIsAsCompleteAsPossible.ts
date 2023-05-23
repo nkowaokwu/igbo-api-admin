@@ -1,5 +1,5 @@
 import { Record } from 'react-admin';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { Word } from './interfaces';

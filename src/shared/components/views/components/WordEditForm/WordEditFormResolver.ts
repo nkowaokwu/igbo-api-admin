@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({

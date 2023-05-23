@@ -7,7 +7,7 @@ import {
 } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
-import WordClass from 'src/shared/constants/WordClass';
+import WordClass from 'src/backend/shared/constants/WordClass';
 import {
   INVALID_ID,
   MESSAGE,
