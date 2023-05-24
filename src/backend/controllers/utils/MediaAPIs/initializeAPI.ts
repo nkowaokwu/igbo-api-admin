@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import {
   AWS_ACCESS_KEY,
   AWS_SECRET_ACCESS_KEY,
@@ -13,15 +13,15 @@ const baseParams = {
   Bucket: bucket,
 };
 
-const s3 = (() => {
-  AWS.config.update({
+const s3Config: S3ClientConfig = {
+  region,
+  credentials: {
     accessKeyId: AWS_ACCESS_KEY,
     secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    region,
-  });
+  },
+};
 
-  return new AWS.S3();
-})();
+const s3: S3Client = new S3Client(s3Config);
 
 const initializeAPI = (mediaPath: string): {
   bucket: string,
@@ -31,7 +31,7 @@ const initializeAPI = (mediaPath: string): {
   baseParams: {
     [key: string]: string
   },
-  s3: AWS.S3,
+  s3: S3Client,
 } => {
   if (!mediaPath) {
     throw new Error('Media Path is required');

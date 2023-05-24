@@ -1,5 +1,6 @@
 import removeAccents from 'src/backend/utils/removeAccents';
 import { isAWSProduction, isCypress } from 'src/backend/config';
+import { PutObjectCommand, DeleteObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
 import initializeAPI from './initializeAPI';
 
 const {
@@ -28,10 +29,15 @@ export const createAudioPronunciation = async (id: string, pronunciationData: st
     ACL: 'public-read',
     ContentEncoding: 'base64',
     ContentType: 'audio/mp3',
+    Bucket: bucket,
   };
 
-  const { Location } = await s3.upload(params).promise();
-  return Location;
+  const command = new PutObjectCommand(params);
+  await s3.send(command);
+
+  const audioPronunciationUri = `${uriPath}/${audioId}.mp3`;
+
+  return audioPronunciationUri;
 };
 
 /* Deletes an audio object in the AWS S3 Bucket */
@@ -48,9 +54,12 @@ export const deleteAudioPronunciation = async (id: string, isMp3 = false): Promi
     const params = {
       ...baseParams,
       Key: `${mediaPath}/${audioId}.${extension}`,
+      Bucket: bucket,
     };
 
-    const deletedObject = await s3.deleteObject(params).promise();
+    const command = await new DeleteObjectCommand(params);
+    const deletedObject = await s3.send(command);
+
     return deletedObject;
   } catch (err) {
     throw new Error(`Error occurred while deleting audio: ${err.message} with id ${id}`);
@@ -78,9 +87,12 @@ export const copyAudioPronunciation = async (
       Key: `${mediaPath}/${newAudioId}.${extension}`,
       ACL: 'public-read',
       CopySource: `${bucket}/${mediaPath}/${oldAudioId}.${extension}`,
+      Bucket: bucket,
     };
 
-    await s3.copyObject(copyParams).promise();
+    const command = new CopyObjectCommand(copyParams);
+    await s3.send(command);
+
     const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
     return copiedAudioPronunciationUri;
   } catch (err) {
