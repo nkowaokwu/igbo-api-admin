@@ -351,9 +351,9 @@ export const getRandomExampleSuggestionsToReview = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { limit, mongooseConnection } = await handleQueries(req);
+    const { limit, user, mongooseConnection } = await handleQueries(req);
 
-    const query = searchRandomExampleSuggestionsToReviewRegexQuery();
+    const query = searchRandomExampleSuggestionsToReviewRegexQuery(user.uid);
     const ExampleSuggestion = (
       mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',
