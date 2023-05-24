@@ -128,7 +128,7 @@ const Example = ({
           defaultValue={nsibidi}
           control={control}
         />
-        {pronunciations.map((_, pronunciationIndex) => (
+        {pronunciations?.length ? pronunciations.map((_, pronunciationIndex) => (
           <>
             <input
               style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
@@ -143,14 +143,33 @@ const Example = ({
               defaultValue={pronunciations[pronunciationIndex]?.speaker}
             />
           </>
-        ))}
+        )) : (
+          <>
+            <input
+              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+              name={`examples.${index}.pronunciations.0.audio`}
+              ref={control.register}
+              defaultValue={pronunciations[0]?.audio}
+            />
+            <input
+              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+              name={`examples.${index}.pronunciations.0.speaker`}
+              ref={control.register}
+              defaultValue={pronunciations[0]?.speaker}
+            />
+          </>
+        )}
         {/* Only updates the first audio in the example's pronunciation array */}
         <AudioRecorder
           path="pronunciations.0.audio"
           getFormValues={() => get(control.getValues(), `examples.${index}.pronunciations.0.audio`)}
           setPronunciation={(_, value) => {
-            setValue(`examples.${index}.pronunciations.0.audio`, value);
-            setValue(`examples.${index}.pronunciations.0.speaker`, uid);
+            if (!get(control.getValues(), `examples.${index}.pronunciations.0`)) {
+              setValue(`examples.${index}.pronunciations`, [{ audio: value, speaker: uid }]);
+            } else {
+              setValue(`examples.${index}.pronunciations.0.audio`, value);
+              setValue(`examples.${index}.pronunciations.0.speaker`, uid);
+            }
           }}
           record={example}
           originalRecord={originalRecord}
