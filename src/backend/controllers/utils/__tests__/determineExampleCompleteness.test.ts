@@ -23,6 +23,13 @@ describe('determineExampleCompleteness', () => {
     const result = await determineExampleCompleteness(testExample);
     expect(result.completeExampleRequirements).toHaveLength(1);
   });
+  it('determines example is not complete with no pronunciations', async () => {
+    const testExample = cloneDeep(example);
+    testExample.pronunciations = [];
+    // @ts-expect-error
+    const result = await determineExampleCompleteness(testExample);
+    expect(result.completeExampleRequirements).toHaveLength(1);
+  });
   it('determines example is complete', async () => {
     // @ts-expect-error
     const result = await determineExampleCompleteness(example);

@@ -88,6 +88,7 @@ export interface Word extends Document<any>, LeanDocument<any> {
   normalized: string,
   frequency: number,
   stems: string[],
+  tags: string[],
   attributes: {
     isStandardIgbo: boolean,
     isAccented: boolean,

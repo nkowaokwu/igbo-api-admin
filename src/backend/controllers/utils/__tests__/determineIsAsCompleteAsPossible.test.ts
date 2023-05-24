@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import determineIsAsCompleteAsPossible from '../determineIsAsCompleteAsPossible';
 
 const word = {
@@ -31,5 +32,11 @@ describe('determineIsAsCompleteAsPossible', () => {
   it('determines if word is as complete as possible', () => {
     // @ts-expect-error
     expect(determineIsAsCompleteAsPossible(word)).toBe(true);
+  });
+  it('determines if word is not as complete as possible because example doesn\'t have pronunciations', () => {
+    const testWord = cloneDeep(word);
+    testWord.examples[0].pronunciations = [];
+    // @ts-expect-error
+    expect(determineIsAsCompleteAsPossible(testWord)).toBe(false);
   });
 });

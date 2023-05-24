@@ -72,7 +72,9 @@ export default async (record: Word | Record, skipAudioCheck = false) : Promise<{
       ? 'All verb tenses are needed'
       : null,
     Array.isArray(examples)
-      && examples.some(({ pronunciations }) => pronunciations.some((pronunciation) => !pronunciation))
+      && examples.some(({ pronunciations }) => (
+        !pronunciations.length || pronunciations.some((pronunciation) => !pronunciation?.audio)
+      ))
       && 'All example sentences need pronunciations',
     Array.isArray(dialects) && !dialects.length && 'A dialectal variation is needed',
     (Array.isArray(dialects)
