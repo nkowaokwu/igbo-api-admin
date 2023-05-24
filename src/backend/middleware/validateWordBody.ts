@@ -3,7 +3,7 @@ import { Response, NextFunction } from 'express';
 import { map, trim } from 'lodash';
 import Joi from 'joi';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordTags from '../shared/constants/WordTags';

@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import mongoose from 'mongoose';
 import { every } from 'lodash';
-import Dialects from '../shared/constants/Dialects';
+import Dialects from '../shared/constants/Dialect';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadWordPronunciation } from './plugins/wordPronunciationHook';
 import { normalizeHeadword } from './plugins/normalizationHooks';

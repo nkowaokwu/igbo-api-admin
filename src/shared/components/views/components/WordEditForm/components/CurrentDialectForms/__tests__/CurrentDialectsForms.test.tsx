@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import CurrentDialectsForms from '../CurrentDialectsForms';
 
 describe('CurrentDialectsForms', () => {

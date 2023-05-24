@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { every } from 'lodash';
-import Dialects from '../shared/constants/Dialects';
+import Dialects from '../shared/constants/Dialect';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';

@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
