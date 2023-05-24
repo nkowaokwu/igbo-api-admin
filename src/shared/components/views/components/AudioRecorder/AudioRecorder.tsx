@@ -80,7 +80,7 @@ const AudioRecorder = ({
   };
 
   const renderStatusLabel = () => (
-    <Box className="text-center flex flex-row justify-center">
+    <Box className="text-center flex flex-row justify-center" p={2}>
       {pronunciationValue && !isRecording ? (
         <Box className="flex flex-col">
           <ReactAudioPlayer
@@ -142,12 +142,13 @@ const AudioRecorder = ({
         borderRadius="md"
         p={3}
       >
-        <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">
+        <Box className="flex flex-col justify-center items-center w-full">
           {!isRecording ? (
-            <Box className={`flex flex-row justify-center
-            ${pronunciationValue ? 'items-start' : 'items-center'} space-x-3`}
+            <Box className={`flex flex-row flex-wrap justify-center
+            ${pronunciationValue ? 'items-start' : 'items-center'}`}
             >
-              <Tooltip label="Start recording">
+              <Box p={2}>
+               <Tooltip label="Start recording">
                 <Button
                   borderRadius="full"
                   borderColor="gray.300"
@@ -168,9 +169,11 @@ const AudioRecorder = ({
                 >
                   <Box height="10px" width="10px" borderRadius="full" backgroundColor="red.600" />
                 </Button>
-              </Tooltip>
+               </Tooltip>
+              </Box>
               {renderStatusLabel()}
-              <Tooltip label="Reset recording">
+              <Box p={2}>
+               <Tooltip label="Reset recording">
                 <IconButton
                   aria-label="Reset recording"
                   icon={<RepeatIcon color="gray.600" />}
@@ -183,7 +186,8 @@ const AudioRecorder = ({
                   }}
                   variant="ghost"
                 />
-              </Tooltip>
+               </Tooltip>
+              </Box>
             </Box>
           ) : (
             <Box>
