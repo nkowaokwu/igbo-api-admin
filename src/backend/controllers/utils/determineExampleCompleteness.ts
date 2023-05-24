@@ -43,7 +43,8 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
 
   const completeExampleRequirements = compact([
     ...sufficientExampleRequirements,
-    pronunciations.some((pronunciation) => (!pronunciation || !isAudioAvailable)) && 'An audio pronunciation is needed',
+    (pronunciations.some((pronunciation) => (!pronunciation || !isAudioAvailable)) || !pronunciations.length)
+    && 'An audio pronunciation is needed',
     style === ExampleStyle.PROVERB.value && !meaning && 'Meaning is required for proverb',
   ]);
 

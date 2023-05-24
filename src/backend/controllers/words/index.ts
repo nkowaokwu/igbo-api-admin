@@ -1,12 +1,6 @@
 import mongoose, { Connection, Document, LeanDocument } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import {
-  assign,
-  filter,
-  map,
-  omit,
-  uniqBy,
-} from 'lodash';
+import { assign, map, omit } from 'lodash';
 import removePrefix from 'src/backend/shared/utils/removePrefix';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
@@ -38,7 +32,12 @@ import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
 import { renameAudioPronunciation } from '../utils/MediaAPIs/AudioAPI';
 import * as Interfaces from '../utils/interfaces';
-import { handleSyncingSynonyms, handleSyncingAntonyms } from './helpers';
+import {
+  handleSyncingSynonyms,
+  handleSyncingAntonyms,
+  combineWords,
+  replaceWordIdsFromExampleAssociatedWords,
+} from './helpers';
 import { onMergeConstructedTermPoll } from '../polls';
 
 /* Gets words from JSON dictionary */
@@ -440,20 +439,6 @@ export const putWord = async (
   }
 };
 
-/* Replaces all instances of oldId inside all of the examples with
- * with the newId */
-const replaceWordIdsFromExampleAssociatedWords = (examples: Interfaces.Example[], oldId: string, newId: string) => (
-  Promise.all(map(examples, (example) => {
-    const cleanedWordExample = assign(example);
-    cleanedWordExample.associatedWords.push(newId);
-    cleanedWordExample.associatedWords = uniqBy(
-      filter(cleanedWordExample.associatedWords, (associatedWord) => associatedWord.toString() !== oldId.toString()),
-      (associatedWord) => associatedWord.toString(),
-    );
-    return cleanedWordExample.save();
-  }))
-);
-
 /* Deletes the specified Word document while moving its contents
  * to another Word document, which preserves the original Word
  * document's data */
@@ -467,52 +452,15 @@ export const deleteWord = async (
     const { primaryWordId }: { primaryWordId: string } = data;
     const Word = mongooseConnection.model('Word', wordSchema);
 
-    const {
-      pronunciation,
-      definitions = [],
-      variations = [],
-      stems = [],
-      relatedTerms = [],
-      hypernyms = [],
-      hyponyms = [],
-      nsibidi,
-    }: Document<Interfaces.Word> | any = await Word.findById(toBeDeletedWordId);
+    const wordToDelete: Interfaces.Word = await Word.findById(toBeDeletedWordId);
     const toBeDeletedWordExamples: Interfaces.Example[] | any = (
       await findExampleByAssociatedWordId(toBeDeletedWordId, mongooseConnection)
     );
     const savedCombinedWord = await findAndUpdateWord(
       primaryWordId,
       mongooseConnection,
-      async (combineWord: Interfaces.Word) => {
-        const updatedWord = assign(combineWord);
-        updatedWord.pronunciation = updatedWord.pronunciation || pronunciation;
-        // @ts-expect-error
-        const updatedDefinitions: Interfaces.Word['definitions'] = (
-          // @ts-expect-error
-          [...updatedWord.definitions].map((definitionGroup) => definitionGroup.toObject())
-        );
-        definitions.forEach((definitionGroup: Interfaces.DefinitionSchema) => {
-          const existingDefinitionGroupIndex = updatedDefinitions
-            .findIndex(({ wordClass }) => definitionGroup.wordClass === wordClass);
-          if (existingDefinitionGroupIndex !== -1) {
-            updatedDefinitions[existingDefinitionGroupIndex] = {
-              ...updatedDefinitions[existingDefinitionGroupIndex],
-              definitions: Array.from(
-                new Set([...updatedDefinitions[existingDefinitionGroupIndex].definitions,
-                  ...definitionGroup.definitions]),
-              ),
-            };
-          } else {
-            updatedDefinitions.push(definitionGroup);
-          }
-        });
-        updatedWord.definitions = updatedDefinitions;
-        updatedWord.variations = Array.from(new Set([...updatedWord.variations, ...variations]));
-        updatedWord.stems = Array.from(new Set([...(updatedWord.stems || []), ...(stems || [])]));
-        updatedWord.relatedTerms = Array.from(new Set([...updatedWord.relatedTerms, ...relatedTerms]));
-        updatedWord.hypernyms = Array.from(new Set([...updatedWord.hypernyms, ...hypernyms]));
-        updatedWord.hyponyms = Array.from(new Set([...updatedWord.hyponyms, ...hyponyms]));
-        updatedWord.nsibidi = updatedWord.nsibidi || nsibidi;
+      async (wordToCombine: Interfaces.Word) => {
+        const updatedWord = combineWords({ wordToCombine, wordToDelete });
 
         /* Deletes the specified word and connected wordSuggestions regardless of their merged status */
         await Word.deleteOne({ _id: toBeDeletedWordId });

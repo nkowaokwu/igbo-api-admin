@@ -40,6 +40,14 @@ describe('determineDocumentCompleteness', () => {
     const result = await determineDocumentCompleteness(word);
     expect(result.completeWordRequirements).toHaveLength(2);
   });
+
+  it('determines word is not complete because it has no example audio', async () => {
+    const updatedWord = cloneDeep(word);
+    updatedWord.examples[0].pronunciations = [];
+    // @ts-expect-error
+    const result = await determineDocumentCompleteness(updatedWord);
+    expect(result.completeWordRequirements).toHaveLength(3);
+  });
   it('determines word is complete', async () => {
     const testWord = cloneDeep(word);
     testWord.stems = ['first stem'];
