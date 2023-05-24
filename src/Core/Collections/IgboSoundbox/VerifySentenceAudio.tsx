@@ -166,7 +166,7 @@ const VerifySentenceAudio = ({
         <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
           {examples[exampleIndex].igbo}
         </Text>
-        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciation} canRecord={false} />
+        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciations[0].audio} canRecord={false} />
       </Box>
       <Text
         userSelect="none"
