@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import WordTags from 'src/backend/shared/constants/WordTags';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import AudioRecordingPreview from './AudioRecordingPreview';

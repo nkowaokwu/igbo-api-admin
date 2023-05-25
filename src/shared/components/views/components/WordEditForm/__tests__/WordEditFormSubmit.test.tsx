@@ -7,7 +7,7 @@ import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordTags from 'src/backend/shared/constants/WordTags';
 import WordClass from 'src/backend/shared/constants/WordClass';

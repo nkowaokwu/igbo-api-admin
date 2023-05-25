@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { WordClientData } from 'src/backend/controllers/utils/interfaces';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';

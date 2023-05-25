@@ -9,7 +9,7 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import DialectFormInterface from './DialectFormInterface';
 import AudioRecorder from '../../AudioRecorder';
 

@@ -12,7 +12,7 @@ import {
   chakra,
 } from '@chakra-ui/react';
 import ReactAudioPlayer from 'react-audio-player';
-import Dialects from 'src/backend/shared/constants/Dialects';
+import Dialects from 'src/backend/shared/constants/Dialect';
 import Collection from 'src/shared/constants/Collections';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import DiffField from './DiffField';
