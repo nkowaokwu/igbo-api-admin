@@ -437,11 +437,13 @@ describe('MongoDB Example Suggestions', () => {
       });
       const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
-      expect(res.body.length).toBeLessThanOrEqual(5);
+      expect(res.body).toHaveLength(5);
       res.body.forEach((exampleSuggestion) => {
         expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         expect(exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.ADMIN_AUTH_TOKEN))
           .toBeTruthy();
+        expect(exampleSuggestion.approvals).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        expect(exampleSuggestion.denials).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
         expect(exampleSuggestion.denials.length).toBeLessThanOrEqual(1);
       });
