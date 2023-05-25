@@ -221,6 +221,8 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = (uid: string) : 
   $and: [
     { 'pronunciations.speaker': { $nin: [uid] } },
     { userInteractions: { $nin: [uid] } },
+    { approvals: { $nin: [uid] } },
+    { denials: { $nin: [uid] } },
   ],
 });
 export const searchPreExistingExampleSuggestionsRegexQuery = (
