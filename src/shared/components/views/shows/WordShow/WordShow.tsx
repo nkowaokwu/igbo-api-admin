@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { get } from 'lodash';
+import { assign, get } from 'lodash';
 import { ShowProps, useShowController } from 'react-admin';
 import {
   Box,
@@ -96,11 +96,23 @@ const WordShow = (props: ShowProps): ReactElement => {
   } = record;
 
   const examples = rawExamples.filter(({ archived = false }) => !archived);
+  examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
   const archivedExamples = rawExamples.filter(({ archived = false }) => archived);
 
   const resourceTitle = {
     wordSuggestions: 'Word Suggestion',
     words: 'Word',
+  };
+
+  const prepareOriginalWordRecordForExamples = (): Interfaces.Word => {
+    if (!!originalWordRecord && 'examples' in originalWordRecord) {
+      // @ts-expect-error
+      return {
+        ...assign(originalWordRecord),
+        examples: originalWordRecord.examples.filter(({ archived = false }) => !archived),
+      };
+    }
+    return originalWordRecord;
   };
 
   /* Grabs the original word if it exists */
@@ -368,10 +380,10 @@ const WordShow = (props: ShowProps): ReactElement => {
                   recordField="examples"
                   recordFieldSingular="example"
                   record={{ examples } as Interfaces.Word}
-                  originalRecord={originalWordRecord}
+                  originalRecord={prepareOriginalWordRecordForExamples()}
                 >
                   <ExampleDiff
-                    record={record}
+                    record={{ examples } as Interfaces.Word}
                     diffRecord={diffRecord}
                     resource={resource}
                   />
