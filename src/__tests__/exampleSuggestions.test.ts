@@ -17,7 +17,6 @@ import {
   getExampleSuggestion,
   getRandomExampleSuggestions,
   getRandomExampleSuggestionsToReview,
-  putRandomExampleSuggestions,
   deleteExampleSuggestion,
   postBulkUploadExampleSuggestions,
   suggestNewWord,
@@ -25,6 +24,8 @@ import {
   getWords,
   getTotalVerifiedExampleSuggestions,
   getTotalRecordedExampleSuggestions,
+  putAudioForRandomExampleSuggestions,
+  putReviewForRandomExampleSuggestions,
 } from './shared/commands';
 import {
   wordSuggestionData,
@@ -401,7 +402,7 @@ describe('MongoDB Example Suggestions', () => {
         id,
         pronunciation: `pronunciation-${id}`,
       }));
-      const updatedExamplesRes = await putRandomExampleSuggestions(updateExamplePayload);
+      const updatedExamplesRes = await putAudioForRandomExampleSuggestions(updateExamplePayload);
       expect(updatedExamplesRes.status).toEqual(200);
       await Promise.all(updatedExamplesRes.body.map(async (id) => {
         const exampleSuggestionRes = await getExampleSuggestion(id);
@@ -412,7 +413,7 @@ describe('MongoDB Example Suggestions', () => {
       }));
 
       // Save again but with crowdsourcer permissions
-      const crowdsourcerUpdatedExamplesRes = await putRandomExampleSuggestions(
+      const crowdsourcerUpdatedExamplesRes = await putAudioForRandomExampleSuggestions(
         updateExamplePayload,
         { token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN },
       );
@@ -503,7 +504,7 @@ describe('MongoDB Example Suggestions', () => {
         }
         return { id, review: ReviewActions.SKIP };
       });
-      const updatedRandomExampleSuggestionRes = await putRandomExampleSuggestions(reviewedExampleSuggestions);
+      const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(reviewedExampleSuggestions.map(async ({ id: randomExampleSuggestionId }, index) => {
         const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);

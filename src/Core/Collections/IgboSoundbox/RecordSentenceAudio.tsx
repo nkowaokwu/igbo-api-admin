@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { getRandomExampleSuggestions, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import SandboxAudioRecorder from './SandboxAudioRecorder';
@@ -66,11 +66,11 @@ const RecordSentenceAudio = ({
   const handleUploadAudio = async () => {
     try {
       const payload = examples.map((example, exampleIndex) => ({
-        id: example.id,
+        id: example.id.toString(),
         pronunciation: pronunciations[exampleIndex],
       }));
       setIsLoading(true);
-      await putRandomExampleSuggestions(payload);
+      await putAudioForRandomExampleSuggestions(payload);
     } catch (err) {
       toast({
         title: 'An error occurred',

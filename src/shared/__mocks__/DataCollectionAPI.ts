@@ -44,7 +44,9 @@ export const getRandomExampleSuggestionsToReview = jest.fn(async () => ({
   })),
 }));
 
-export const putRandomExampleSuggestions = jest.fn(async () => {});
+export const putAudioForRandomExampleSuggestions = jest.fn(async () => {});
+
+export const putReviewForRandomExampleSuggestions = jest.fn(async () => {});
 
 export const getTotalRecordedExampleSuggestions = jest.fn(async () => ({
   count: 0,

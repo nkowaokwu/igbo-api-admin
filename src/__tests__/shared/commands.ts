@@ -110,12 +110,21 @@ export const postBulkUploadExamples = (data: { igbo: string }[], options = { tok
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
-export const putRandomExampleSuggestions = (
+export const putAudioForRandomExampleSuggestions = (
   data: { id: string, pronunciations?: { audio: string, speaker: string }[], review?: ReviewActions }[],
   options = { token: '' },
 ): Request => (
   chaiServer
-    .put('/exampleSuggestions/random')
+    .put('/exampleSuggestions/random/audio')
+    .send(data)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+export const putReviewForRandomExampleSuggestions = (
+  data: { id: string, pronunciations?: { audio: string, speaker: string }[], review?: ReviewActions }[],
+  options = { token: '' },
+): Request => (
+  chaiServer
+    .put('/exampleSuggestions/random/review')
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );

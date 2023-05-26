@@ -7,7 +7,8 @@ import {
   getRandomExampleSuggestionsToReview,
   getTotalVerifiedExampleSuggestions,
   getTotalRecordedExampleSuggestions,
-  putRandomExampleSuggestions,
+  putAudioForRandomExampleSuggestions,
+  putReviewForRandomExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
@@ -29,9 +30,14 @@ crowdsourcerRouter.put(
 
 crowdsourcerRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
 crowdsourcerRouter.put(
-  '/exampleSuggestions/random',
+  '/exampleSuggestions/random/audio',
   validateRandomExampleSuggestionBody,
-  putRandomExampleSuggestions,
+  putAudioForRandomExampleSuggestions,
+);
+crowdsourcerRouter.put(
+  '/exampleSuggestions/random/review',
+  validateRandomExampleSuggestionBody,
+  putReviewForRandomExampleSuggestions,
 );
 crowdsourcerRouter.post(
   '/exampleSuggestions/upload',
