@@ -124,7 +124,7 @@ Then go back to step 5 above.
 
 ### Step 6: Account Login
 
-You can login with the email `admin@example.com` and the password `password` to create a new admin account.
+You can create an account with an email that includes the term `admin` to create a new admin account.
 
 You will be asked to verify your email to be granted access.
 
@@ -136,7 +136,7 @@ There you will see a link to verify the email within the auth emulator. Click on
 
 ### Step 7: (Optional) Seeding the Database
 
-You will need local data to see how the Igbo API Editor Platform works.
+You will need local word suggestion and example suggestion data to see how the Igbo API Editor Platform works.
 
 Setup a local working version of the [Igbo API](https://github.com/nkowaokwu/igbo_api#seeding-) and follow the `Seeding 🌱` step.
 
