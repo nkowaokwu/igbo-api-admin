@@ -34,6 +34,42 @@ describe('Submit ExampleEditForm', () => {
       { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
     ));
   });
+
+  it('submits example edit form with approvals, denials, and review', async () => {
+    const mockSave = jest.fn();
+    const testExample = cloneDeep(wordRecord.examples[0]);
+    delete testExample.id;
+    testExample.associatedDefinitionsSchemas = [];
+    testExample.editorsNotes = '';
+    testExample.pronunciations[0] = {
+      audio: '',
+      speaker: '',
+      // @ts-expect-error
+      review: false,
+      approvals: [],
+      denials: [],
+    };
+
+    const { findByText } = render(
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        record={testExample}
+      >
+        <ExampleEditForm save={mockSave} />
+      </TestContext>,
+    );
+    fireEvent.submit(await findByText('Update'));
+
+    const finalExample = cloneDeep(testExample);
+    finalExample.pronunciations[0] = { audio: '', speaker: '' };
+    await waitFor(() => expect(mockSave).toBeCalledWith(
+      finalExample,
+      Views.SHOW,
+      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+    ));
+  });
+
   it('submits example edit form with multiple audio pronunciations', async () => {
     const mockSave = jest.fn();
     const testExample = cloneDeep(wordRecord.examples[0]);

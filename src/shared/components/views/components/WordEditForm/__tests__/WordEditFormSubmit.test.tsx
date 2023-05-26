@@ -59,6 +59,43 @@ describe('Submit WordEditForm', () => {
     await waitFor(() => expect(mockSave).not.toBeCalled());
   });
 
+  it('submits word edit for with audio pronunciations approvals, denials, and review', async () => {
+    const mockSave = jest.fn();
+    const testWord = cloneDeep(wordRecord);
+    delete testWord.id;
+    delete testWord.dialects[0].id;
+    testWord.examples[0].pronunciations[0] = {
+      audio: 'recording',
+      speaker: '',
+      // @ts-expect-error
+      review: false,
+      denials: [],
+      approvals: [],
+    };
+
+    const { findByText } = render(
+      <TestContext
+        view={Views.EDIT}
+        resource={Collections.WORD_SUGGESTIONS}
+        record={testWord}
+      >
+        <WordEditForm save={mockSave} />
+      </TestContext>,
+    );
+    fireEvent.submit(await findByText('Update'));
+
+    const finalWord = cloneDeep(testWord);
+    finalWord.examples[0].pronunciations[0] = {
+      audio: 'recording',
+      speaker: '',
+    };
+    await waitFor(() => expect(mockSave).toBeCalledWith(
+      finalWord,
+      Views.SHOW,
+      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+    ));
+  });
+
   it('submits word edit form with an extra example sentence', async () => {
     const mockSave = jest.fn();
     const testWord = cloneDeep(wordRecord);
