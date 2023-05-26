@@ -45,7 +45,9 @@ const removePayloadFields = (payload: RemovePayload): any => {
     cleanedPayload.examples = cleanedPayload.examples.map((example) => (
       omit({
         ...example,
-        pronunciations: (example.pronunciations || []).map((pronunciation) => omit(pronunciation, ['_id'])),
+        pronunciations: (example.pronunciations || []).map((pronunciation) => (
+          omit(pronunciation, ['_id', 'approvals', 'denials', 'review'])
+        )),
       }, ['authorId', 'archived'])
     ));
   }
