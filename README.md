@@ -36,7 +36,7 @@ git clone https://github.com/ijemmao/igbo-api-admin.git
 If you don't have Firebase globally install, run the following command:
 
 ```bash
-npm install -g firebase firebase-cli
+npm install -g firebase-tools
 ```
 
 Install the project's dependencies:
