@@ -1,7 +1,8 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { has, get } from 'lodash';
 import { Record } from 'react-admin';
-import ReactAudioPlayer from 'react-audio-player';
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 import {
   Box,
   Button,
@@ -83,12 +84,17 @@ const AudioRecorder = ({
     <Box className="text-center flex flex-row justify-center" p={2}>
       {pronunciationValue && !isRecording ? (
         <Box className="flex flex-col">
-          <ReactAudioPlayer
+          <AudioPlayer
             data-test={`${path}-audio-playback`}
-            style={{ height: '40px', width: '250px' }}
+            style={{ width: '80px', height: '50px' }}
+            className='self-center'
             id="audio"
             src={pronunciationValue}
-            controls
+            showJumpControls={false}
+            showFilledProgress={true}
+            customAdditionalControls={[null]}
+            customVolumeControls={[null]}
+            layout='horizontal'
           />
           {shouldRenderNewPronunciationLabel() && (
             <chakra.span className="text-green-500 mt-2" fontFamily="Silka">New pronunciation recorded</chakra.span>

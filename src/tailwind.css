@@ -334,6 +334,32 @@ input#word, input#igbo {
 	min-height: 100vh;
 }
 
+.rhap_container {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  flex-direction: row !important;
+  padding: 0px !important;
+  @apply items-center;
+  @apply justify-center;
+}
+
+.rhap_main {
+  @apply items-center;
+}
+
+.rhap_main .rhap_progress-section {
+  flex: 1 1 auto !important;
+}
+
+.rhap_main .rhap_current-time {
+  display: none !important;
+}
+
+.rhap_main .rhap_progress-container {
+  display: none !important;
+}
+
+
 @keyframes gradient {
 	0% {
 		background-position: 0% 50%;
