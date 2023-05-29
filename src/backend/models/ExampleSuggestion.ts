@@ -37,7 +37,7 @@ export const exampleSuggestionSchema = new Schema({
     type: [{
       audio: { type: String, default: '' },
       speaker: { type: String, default: '' },
-      review: { type: Boolean, default: false },
+      review: { type: Boolean, default: true },
       approvals: { type: [{ type: String }], default: [] },
       denials: { type: [{ type: String }], default: [] },
     }],
