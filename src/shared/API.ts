@@ -2,7 +2,7 @@ import { Record } from 'react-admin';
 import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collections';
-import request from './utils/request';
+import { request } from './utils/request';
 
 const handleSubmitConstructedTermPoll = (poll: Poll) => (
   request({

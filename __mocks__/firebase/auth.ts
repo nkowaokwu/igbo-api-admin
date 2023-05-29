@@ -1,6 +1,6 @@
 export const getAuth = jest.fn(() => ({
   currentUser: {
-    getIdToken: jest.fn(async () => ''),
+    getIdToken: jest.fn(async () => 'user-access'),
     displayName: 'Testing user',
   },
 }));

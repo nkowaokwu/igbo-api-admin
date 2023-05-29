@@ -16,13 +16,11 @@ const createHeaders = async () => ({
   Authorization: await createAuthorizationHeader(),
 });
 
-const request = async (requestObject: AxiosRequestConfig): Promise<any> => {
+export const request = async (requestObject: AxiosRequestConfig): Promise<any> => {
   const headers = await createHeaders();
-  return axios({
+  return axios.request({
     ...requestObject,
     url: `${API_ROUTE}/${requestObject.url}`,
     headers,
   });
 };
-
-export default request;

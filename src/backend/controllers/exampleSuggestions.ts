@@ -450,8 +450,8 @@ export const getTotalRecordedExampleSuggestions = async (
   }
 };
 
-/* Updates all listed example suggestions with audio pronunciations */
-export const putRandomExampleSuggestions = async (
+/* Adds a new audio recording to the example suggestion */
+export const putAudioForRandomExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
@@ -466,7 +466,7 @@ export const putRandomExampleSuggestions = async (
     );
 
     await Promise.all(
-      body.map(async ({ id, pronunciation, review }) => {
+      body.map(async ({ id, pronunciation }) => {
         const exampleSuggestion = await ExampleSuggestion.findById(id);
         if (!exampleSuggestion) {
           console.log(`No example suggestion with the id: ${id}`);
@@ -481,6 +481,37 @@ export const putRandomExampleSuggestions = async (
           userInteractions.add(user.uid);
           exampleSuggestion.userInteractions = Array.from(userInteractions);
           exampleSuggestion.crowdsourcing[CrowdsourcingType.RECORD_EXAMPLE_AUDIO] = true;
+        }
+        return exampleSuggestion.save();
+      }),
+    );
+    return res.send(body.map(({ id }) => id));
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Applies a review for each example suggestion's audio pronunciation */
+export const putReviewForRandomExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { user, body, mongooseConnection } = await handleQueries(req);
+    const ExampleSuggestion = (
+      mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      )
+    );
+
+    await Promise.all(
+      body.map(async ({ id, review }) => {
+        const exampleSuggestion = await ExampleSuggestion.findById(id);
+        if (!exampleSuggestion) {
+          console.log(`No example suggestion with the id: ${id}`);
+          return null;
         }
         if (review === ReviewActions.APPROVE) {
           const approvals = new Set(exampleSuggestion.approvals);

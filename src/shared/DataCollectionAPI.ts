@@ -1,7 +1,16 @@
 /* API for the Data Collection for IgboSpeech */
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import request from './utils/request';
+import { request } from './utils/request';
+
+interface ExampleAudioPayload {
+  id: string,
+  pronunciation: string | undefined,
+};
+interface ExampleReviewsPayload {
+  id: any,
+  review: ReviewActions,
+}
 
 export const getRandomExampleSuggestions = (
   count = 5,
@@ -23,21 +32,25 @@ export const getRandomExampleSuggestionsToReview = (
   },
 });
 
-export const putRandomExampleSuggestions = (rawData: {
-  id: any,
-  pronunciation?: string,
-  review?: ReviewActions,
-}[]): Promise<any> => {
+export const putAudioForRandomExampleSuggestions = (rawData: ExampleAudioPayload[]): Promise<any> => {
   const data = rawData.map(({ pronunciation, ...rest }) => ({
     ...rest,
     ...(pronunciation ? { pronunciation } : {}),
   }));
   return request({
     method: 'PUT',
-    url: 'exampleSuggestions/random',
+    url: 'exampleSuggestions/random/audio',
     data,
   });
 };
+
+export const putReviewForRandomExampleSuggestions = (data: ExampleReviewsPayload[]): Promise<any> => (
+  request({
+    method: 'PUT',
+    url: 'exampleSuggestions/random/review',
+    data,
+  })
+);
 
 export const bulkUploadExampleSuggestions = async (
   payload: { sentences: { igbo: string }[], isExample: boolean },

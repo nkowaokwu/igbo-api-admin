@@ -16,7 +16,10 @@ import {
   CheckIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-import { getRandomExampleSuggestionsToReview, putRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import {
+  getRandomExampleSuggestionsToReview,
+  putReviewForRandomExampleSuggestions,
+} from 'src/shared/DataCollectionAPI';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
@@ -89,7 +92,7 @@ const VerifySentenceAudio = ({
         review: reviews[exampleIndex],
       }));
       setIsLoading(true);
-      await putRandomExampleSuggestions(payload);
+      await putReviewForRandomExampleSuggestions(payload);
     } catch (err) {
       toast({
         title: 'An error occurred',
