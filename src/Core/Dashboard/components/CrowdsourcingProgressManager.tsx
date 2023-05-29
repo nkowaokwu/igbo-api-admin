@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Button, Box, Heading, Text } from '@chakra-ui/react';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 
 type CrowdsourcingOption = {
@@ -56,7 +56,7 @@ const CrowdsourcingProgressManager = (): ReactElement => (
         hash,
         state,
       }) => (
-        <Box
+        <Button
           borderColor="gray.300"
           borderWidth="1px"
           borderRadius="md"
@@ -74,7 +74,7 @@ const CrowdsourcingProgressManager = (): ReactElement => (
           >
             {title}
           </Text>
-        </Box>
+        </Button>
       ))}
     </Box>
   </Box>
