@@ -28,6 +28,7 @@ import PollList from 'src/Core/Collections/Polls/PollList';
 import PollCreate from 'src/Core/Collections/Polls/PollCreate';
 import UserList from 'src/Core/Collections/Users/UserList';
 import UserShow from 'src/Core/Collections/Users/UserShow';
+import Leaderboard from 'src/Core/Collections/Leaderboard';
 import IgboSoundbox from 'src/Core/Collections/IgboSoundbox';
 import IgboDefinitions from 'src/Core/Collections/IgboDefinitions';
 import DataDump from 'src/Core/Collections/DataDump';
@@ -127,6 +128,13 @@ const adminRoutes = (permissions) => hasAdminPermissions(permissions, [
     options: { label: 'Data Dump' },
     list: DataDump,
     icon: () => <>🏋🏾‍♂️</>,
+  },
+  {
+    name: 'leaderboard',
+    key: 'leaderboard',
+    options: { label: 'Leaderboard' },
+    list: Leaderboard,
+    icon: () => <>🥇</>,
   },
 ]) || [];
 
