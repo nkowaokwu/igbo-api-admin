@@ -236,7 +236,7 @@ describe('VerifySentenceAudio', () => {
   it('submit reviewed audio', async () => {
     // @ts-expect-error
     DataCollectionAPI.getRandomExampleSuggestionsToReview.mockImplementation(async () => ({
-      data: exampleData,
+      data: examplesData,
     }));
     const reviewSpy = jest.spyOn(DataCollectionAPI, 'putReviewForRandomExampleSuggestions');
     const { findByText, findAllByLabelText, findByLabelText } = render(
@@ -244,7 +244,7 @@ describe('VerifySentenceAudio', () => {
         <VerifySentenceAudio />
       </TestContext>,
     );
-    await findByText('1 / 1');
+    await findByText('1 / 5');
     userEvent.click(first(await findAllByLabelText('Approve')));
     userEvent.click(last(await findAllByLabelText('Deny')));
     await findByLabelText('Approve selected');
@@ -252,10 +252,38 @@ describe('VerifySentenceAudio', () => {
     userEvent.click(await findByText('Submit Batch'));
     expect(reviewSpy).toBeCalledWith([
       {
-        id: 'id',
+        id: 'first id',
         reviews: {
-          'first audio id': ReviewActions.APPROVE,
-          'second audio id': ReviewActions.DENY,
+          'first first audio id': ReviewActions.APPROVE,
+          'first second audio id': ReviewActions.DENY,
+        },
+      },
+      {
+        id: 'second id',
+        reviews: {
+          'second first audio id': ReviewActions.SKIP,
+          'second second audio id': ReviewActions.SKIP,
+        },
+      },
+      {
+        id: 'third id',
+        reviews: {
+          'third first audio id': ReviewActions.SKIP,
+          'third second audio id': ReviewActions.SKIP,
+        },
+      },
+      {
+        id: 'fourth id',
+        reviews: {
+          'fourth first audio id': ReviewActions.SKIP,
+          'fourth second audio id': ReviewActions.SKIP,
+        },
+      },
+      {
+        id: 'fifth id',
+        reviews: {
+          'fifth first audio id': ReviewActions.SKIP,
+          'fifth second audio id': ReviewActions.SKIP,
         },
       },
     ]);
