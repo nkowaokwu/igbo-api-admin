@@ -42,20 +42,11 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
         break;
       case 'pronunciation':
         if (value) {
-          allFilters.$or = [...allFilters.$or, {
-            pronunciation: {
-              $and: [
-                { $exists: true, $type: 'string' },
-                { $gt: [{ $strLenCP: '$pronunciation' }, 10] },
-              ],
-            },
-            'pronunciations.0.audio': {
-              $and: [
-                { $exists: true, $type: 'string' },
-                { $gt: [{ $strLenCP: '$pronunciations.0.audio' }, 10] },
-              ],
-            },
-          }];
+          allFilters.$or = [
+            ...allFilters.$or,
+            { pronunciation: { $exists: true, $type: 'string', $ne: '' } },
+            { 'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' } },
+          ];
         } else {
           allFilters.$or = [
             ...allFilters.$or,

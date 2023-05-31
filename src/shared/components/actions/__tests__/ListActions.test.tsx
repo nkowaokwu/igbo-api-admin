@@ -12,7 +12,7 @@ describe('Render List Actions', () => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });
   it('render the list actions menu for words', async () => {
-    const { findByTestId, findByText } = render(
+    const { findByTestId, findByText, queryByText } = render(
       <TestContext isListView>
         <ListActions resource={Collections.WORDS} />
       </TestContext>,
@@ -21,6 +21,18 @@ describe('Render List Actions', () => {
     const wordAttributesFilter = await findByTestId('word-attributes-filter');
     userEvent.click(wordAttributesFilter);
     await findByText('Word Attributes');
+    await findByText('Is Standard Igbo');
+    await findByText('Has No Pronunciation');
+    await findByText('Has Nsịbịdị');
+    await findByText('Has No Nsịbịdị');
+    await findByText('Is Constructed Term');
+    await findByText('Has Pronunciation');
+
+    expect(await queryByText('From Nkọwa okwu')).toBeNull();
+    expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('Is Currently Editing')).toBeNull();
+    expect(await queryByText('Is Author')).toBeNull();
+    expect(await queryByText('Merged By You')).toBeNull();
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
     expect(isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')))
@@ -43,6 +55,17 @@ describe('Render List Actions', () => {
     const wordAttributesFilter = await findByTestId('word-attributes-filter');
     userEvent.click(wordAttributesFilter);
     await findByText('Word Attributes');
+    await findByText('Is Standard Igbo');
+    await findByText('Has No Pronunciation');
+    await findByText('Has Nsịbịdị');
+    await findByText('Has No Nsịbịdị');
+    await findByText('Is Constructed Term');
+    await findByText('From Nkọwa okwu');
+    await findByText('From Igbo API Editor Platform');
+    await findByText('Is Currently Editing');
+    await findByText('Is Author');
+    await findByText('Merged By You');
+    await findByText('Has Pronunciation');
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
     expect(isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')))
@@ -56,7 +79,7 @@ describe('Render List Actions', () => {
   });
 
   it('render the list actions menu for examples', async () => {
-    const { findByTestId, findByText } = render(
+    const { findByTestId, findByText, queryByText } = render(
       <TestContext>
         <ListActions resource={Collections.EXAMPLES} />
       </TestContext>,
@@ -65,6 +88,17 @@ describe('Render List Actions', () => {
     const exampleAttributesFilter = await findByTestId('example-attributes-filter');
     userEvent.click(exampleAttributesFilter);
     await findByText('Example Attributes');
+    await findByText('Is Proverb');
+    await findByText('Is Data Collection');
+    await findByText('Is Biblical');
+    await findByText('Has Pronunciation');
+
+    expect(await queryByText('From Nkọwa okwu')).toBeNull();
+    expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('Is Currently Editing')).toBeNull();
+    expect(await queryByText('Is Author')).toBeNull();
+    expect(await queryByText('Merged By You')).toBeNull();
+
     const isProverb = document.querySelector('[value="isProverb"]');
     userEvent.click(isProverb);
     expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]')))
@@ -81,6 +115,15 @@ describe('Render List Actions', () => {
     const exampleAttributesFilter = await findByTestId('example-attributes-filter');
     userEvent.click(exampleAttributesFilter);
     await findByText('Example Attributes');
+    await findByText('Is Proverb');
+    await findByText('Is Data Collection');
+    await findByText('Is Biblical');
+    await findByText('From Nkọwa okwu');
+    await findByText('From Igbo API Editor Platform');
+    await findByText('Is Currently Editing');
+    await findByText('Is Author');
+    await findByText('Merged By You');
+    await findByText('Has Pronunciation');
     const isProverb = document.querySelector('[value="isProverb"]');
     userEvent.click(isProverb);
     expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]')))
