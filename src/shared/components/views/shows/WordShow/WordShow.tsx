@@ -26,10 +26,9 @@ import isVerb from 'src/backend/shared/utils/isVerb';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   Comments,
 } from '../../components';
-import { determineDate } from '../utils';
 import DialectDiff from '../diffFields/DialectDiff';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
@@ -89,7 +88,6 @@ const WordShow = (props: ShowProps): ReactElement => {
     merged,
     pronunciation,
     originalWordId,
-    updatedAt,
     wordPronunciation,
     conceptualWord,
     examples: rawExamples,
@@ -156,20 +154,13 @@ const WordShow = (props: ShowProps): ReactElement => {
         <Box className="flex flex-col lg:flex-row mb-1">
           <Box className="flex flex-col flex-auto justify-start items-start">
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
-              <Box>
-                <Heading fontSize="lg" className="text-xl text-gray-700">
-                  <>
-                    {'Last Updated: '}
-                    {determineDate(updatedAt)}
-                  </>
-                </Heading>
-                <EditDocumentIds
-                  collection={Collection.WORDS}
-                  originalId={originalWordId}
-                  id={id}
-                  title="Parent Word Id:"
-                />
-              </Box>
+              <DocumentIds
+                collection={Collection.WORDS}
+                originalId={originalWordId}
+                record={record}
+                id={id}
+                title="Parent Word Id:"
+              />
             </Box>
             <Box className="flex flex-row items-center space-x-6 mt-5">
               <Box className="flex flex-col">

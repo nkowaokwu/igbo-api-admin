@@ -1,6 +1,6 @@
 import Comments from './Comments';
 import CorpusEditForm from './CorpusEditForm';
-import EditDocumentIds from './EditDocumentIds';
+import DocumentIds from './DocumentIds';
 import EditDocumentStats from './EditDocumentStats';
 import EditDocumentTopBar from './EditDocumentTopBar';
 import ExampleEditForm from './ExampleEditForm';
@@ -10,7 +10,7 @@ import WordEditForm from './WordEditForm';
 export {
   Comments,
   CorpusEditForm,
-  EditDocumentIds,
+  DocumentIds,
   EditDocumentStats,
   EditDocumentTopBar,
   ExampleEditForm,

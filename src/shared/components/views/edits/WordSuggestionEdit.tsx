@@ -7,7 +7,7 @@ import { HistoryProps } from 'src/shared/interfaces';
 import {
   WordEditForm,
   EditDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   EditDocumentTopBar,
 } from '../components';
 
@@ -45,7 +45,13 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <EditDocumentIds collection={Collections.WORDS} originalId={originalWordId} id={id} title="Parent Word Id:" />
+        <DocumentIds
+          collection={Collections.WORDS}
+          originalId={originalWordId}
+          record={record}
+          id={id}
+          title="Parent Word Id:"
+        />
         <EditDocumentStats approvals={approvals} denials={denials} />
       </Box>
       {record ? (

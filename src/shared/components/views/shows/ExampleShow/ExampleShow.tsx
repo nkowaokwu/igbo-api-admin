@@ -21,11 +21,10 @@ import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
 import {
   ShowDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   EditDocumentTopBar,
   Comments,
 } from '../../components';
-import { determineDate } from '../utils';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +47,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     userComments,
     associatedWords,
     originalExampleId,
-    updatedAt,
   } = record || DEFAULT_EXAMPLE_RECORD;
 
   const DIFF_FILTER_KEYS = [
@@ -99,13 +97,10 @@ const ExampleShow = (props: ShowProps): ReactElement => {
         />
         <Box className="flex flex-col-reverse lg:flex-row mt-1">
           <Box className="flex flex-col flex-auto justify-between items-start">
-            <h3 className="text-xl text-gray-700">
-              {'Last Updated: '}
-              {determineDate(updatedAt)}
-            </h3>
-            <EditDocumentIds
+            <DocumentIds
               collection={Collection.EXAMPLES}
               originalId={originalExampleId}
+              record={record}
               id={id}
               title="Parent Example Id:"
             />
