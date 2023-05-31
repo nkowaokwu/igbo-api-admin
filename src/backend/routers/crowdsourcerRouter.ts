@@ -12,7 +12,9 @@ import {
 } from 'src/backend/controllers/exampleSuggestions';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
-import validateRandomExampleSuggestionBody from 'src/backend/middleware/validateRandomExampleSuggestionBody';
+import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
+import validateReviewRandomExampleSuggestionBody
+  from 'src/backend/middleware/validateReviewRandomExampleSuggestionBody';
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
@@ -31,12 +33,12 @@ crowdsourcerRouter.put(
 crowdsourcerRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
 crowdsourcerRouter.put(
   '/exampleSuggestions/random/audio',
-  validateRandomExampleSuggestionBody,
+  validateAudioRandomExampleSuggestionBody,
   putAudioForRandomExampleSuggestions,
 );
 crowdsourcerRouter.put(
   '/exampleSuggestions/random/review',
-  validateRandomExampleSuggestionBody,
+  validateReviewRandomExampleSuggestionBody,
   putReviewForRandomExampleSuggestions,
 );
 crowdsourcerRouter.post(

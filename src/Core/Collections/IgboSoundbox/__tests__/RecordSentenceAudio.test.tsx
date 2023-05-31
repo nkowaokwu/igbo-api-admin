@@ -23,7 +23,6 @@ describe('RecordSentenceAudio', () => {
         <RecordSentenceAudio />
       </TestContext>,
     );
-    userEvent.click(await findByTestId('start-recording-button'));
-    userEvent.click(await findByTestId('stop-recording-button'));
+    userEvent.click(await findByTestId('start-recording-button-pronunciation'));
   });
 });

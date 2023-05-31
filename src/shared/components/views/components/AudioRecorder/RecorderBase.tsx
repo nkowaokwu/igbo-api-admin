@@ -1,59 +1,71 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import {
   Box,
   Button,
+  IconButton,
+  Text,
   Tooltip,
   useToast,
+  chakra,
 } from '@chakra-ui/react';
+import { RepeatIcon } from '@chakra-ui/icons';
 import useRecorder from 'src/hooks/useRecorder';
+import FormHeader from '../FormHeader';
 
 const convertToTime = (seconds) => new Date(seconds * 1000).toISOString().slice(14, 19);
-const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canRecord = true }: {
-  pronunciation: string,
-  setPronunciation?: (value: string) => any,
-  canRecord?: boolean,
+
+const RecorderBase = ({
+  path,
+  formTitle,
+  formTooltip,
+  warningMessage,
+  hideTitle = false,
+  onStopRecording,
+  onResetRecording,
+  audioValue,
+} : {
+  path: string,
+  formTitle?: string,
+  formTooltip?: string,
+  warningMessage?: string,
+  hideTitle?: boolean,
+  onStopRecording: (audioBlob: string) => void,
+  onResetRecording: () => void,
+  audioValue?: string,
 }): ReactElement => {
-  const [pronunciationValue, setPronunciationValue] = useState(null);
   const [audioBlob, isRecording, startRecording, stopRecording, recordingDuration] = useRecorder();
   const toast = useToast();
+  const pronunciationValue = typeof audioValue === 'string' ? audioValue : audioBlob;
 
-  const shouldRenderNewPronunciationLabel = () => !pronunciationValue;
+  const shouldRenderNewPronunciationLabel = () => pronunciationValue && pronunciationValue.startsWith('data');
 
   const renderStatusLabel = () => (
     <Box className="text-center flex flex-row justify-center">
       {pronunciationValue && !isRecording ? (
         <Box className="flex flex-col">
           <ReactAudioPlayer
+            data-test={`${path}-audio-playback`}
             style={{ height: '40px', width: '250px' }}
             id="audio"
             src={pronunciationValue}
             controls
           />
           {shouldRenderNewPronunciationLabel() && (
-            <span className="text-green-500 mt-2">New pronunciation recorded</span>
+            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">New pronunciation recorded</chakra.span>
           )}
         </Box>
-      ) : <span className="text-gray-700 italic">No audio pronunciation</span>}
+      ) : <chakra.span className="text-gray-700 italic" fontFamily="Silka">No audio pronunciation</chakra.span>}
     </Box>
   );
 
-  /** Listen to changes to the audioBlob for the
-   * current pronunciation and saves it. If getFormValues
-   * doesn't have a pronunciation key living on the object yet,
-   * the platform will not overwrite the pronunciationValue
-   * with undefined.
-   * */
   useEffect(() => {
-    const base64data = audioBlob;
-    if (base64data) {
-      setPronunciation(base64data);
-      setPronunciationValue(base64data);
-    }
-    if (base64data) {
+    onStopRecording(audioBlob);
+
+    if (audioBlob) {
       toast({
         title: 'Recorded new audio',
-        description: 'New audio recorded',
+        description: 'A new audio pronunciation has been recorded',
         status: 'success',
         duration: 4000,
         isClosable: true,
@@ -61,12 +73,14 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
     }
   }, [audioBlob]);
 
-  useEffect(() => {
-    setPronunciationValue(pronunciation);
-  }, [pronunciation]);
-
   return (
     <Box className="flex flex-col w-full my-2">
+      {!hideTitle ? (
+        <FormHeader
+          title={formTitle}
+          tooltip={formTooltip}
+        />
+      ) : null}
       <Box
         data-test="word-pronunciation-input-container"
         width="full"
@@ -75,9 +89,7 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
         p={3}
       >
         <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">
-          {!canRecord ? (
-            renderStatusLabel()
-          ) : !isRecording ? (
+          {!isRecording ? (
             <Box className={`flex flex-row justify-center
             ${pronunciationValue ? 'items-start' : 'items-center'} space-x-3`}
             >
@@ -96,7 +108,7 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
                     backgroundColor: 'gray.100',
                   }}
                   padding="0px"
-                  data-test="start-recording-button"
+                  data-test={`start-recording-button${path === 'headword' ? '' : `-${path}`}`}
                   className="flex justify-center items-start"
                   onClick={startRecording}
                 >
@@ -104,6 +116,20 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
                 </Button>
               </Tooltip>
               {renderStatusLabel()}
+              <Tooltip label="Reset recording">
+                <IconButton
+                  aria-label="Reset recording"
+                  icon={<RepeatIcon color="gray.600" />}
+                  data-test={`reset-recording-button${path === 'headword' ? '' : `-${path}`}`}
+                  backgroundColor="gray.300"
+                  onClick={onResetRecording}
+                  borderRadius="full"
+                  _hover={{
+                    backgroundColor: 'gray.400',
+                  }}
+                  variant="ghost"
+                />
+              </Tooltip>
             </Box>
           ) : (
             <Box>
@@ -122,7 +148,7 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
                     backgroundColor: 'gray.100',
                   }}
                   padding="0px"
-                  data-test="stop-recording-button"
+                  data-test={`stop-recording-button${path === 'headword' ? '' : `-${path}`}`}
                   className="flex justify-center items-center"
                   onClick={stopRecording}
                 >
@@ -137,9 +163,20 @@ const SandboxAudioRecorder = ({ pronunciation, setPronunciation = () => {}, canR
             </Box>
           )}
         </Box>
+        {warningMessage ? (
+          <Box
+            mt={2}
+            p={2}
+            backgroundColor="yellow.100"
+            borderRadius="md"
+            data-test="audio-recording-warning-message"
+          >
+            <Text color="yellow.700">{warningMessage}</Text>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   );
 };
 
-export default SandboxAudioRecorder;
+export default RecorderBase;

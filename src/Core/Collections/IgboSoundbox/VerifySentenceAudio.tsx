@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { noop } from 'lodash';
+import { cloneDeep, noop } from 'lodash';
 import {
   Box,
   Button,
@@ -13,8 +13,6 @@ import {
 import {
   ArrowBackIcon,
   ArrowForwardIcon,
-  CheckIcon,
-  SmallCloseIcon,
 } from '@chakra-ui/icons';
 import {
   getRandomExampleSuggestionsToReview,
@@ -23,15 +21,12 @@ import {
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import SandboxAudioRecorder from './SandboxAudioRecorder';
+import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
-import ProgressCircles from './components/ProgressCircles';
-import CardMessage from './constants/CardMessage';
-import CardMessageColor from './constants/CardMessageColor';
-import InteractionButton from './components/InteractionButton';
+import { SentenceVerification } from './types/SentenceVerification';
 
-// TODO: write frontend tests for navigating between different views
+const DEFAULT_CURRENT_EXAMPLE = { igbo: '', pronunciations: [] };
 
 const VerifySentenceAudio = ({
   setIsDirty,
@@ -41,18 +36,23 @@ const VerifySentenceAudio = ({
   goHome: () => void,
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
-  const [reviews, setReviews] = useState<ReviewActions[]>([]);
+  const [reviews, setReviews] = useState<SentenceVerification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
   const isCompleteDisabled = reviews.some((review) => !review) || isUploading;
   const toast = useToast();
+  const currentExample = Array.isArray(examples)
+    ? examples[exampleIndex] || DEFAULT_CURRENT_EXAMPLE
+    : DEFAULT_CURRENT_EXAMPLE;
 
-  const updateReviews = (action: ReviewActions) => {
-    const updatedReviews = [...reviews];
-    updatedReviews[exampleIndex] = action;
-    setReviews(updatedReviews);
+  const updateReviews = (pronunciationId: string, action: ReviewActions) => {
+    const clonedReviews = cloneDeep(reviews);
+    const currentExampleReviews = clonedReviews[exampleIndex].reviews;
+    currentExampleReviews[pronunciationId] = action;
+    clonedReviews[exampleIndex].reviews = currentExampleReviews;
+    setReviews(clonedReviews);
   };
 
   const handleNext = () => {
@@ -67,30 +67,19 @@ const VerifySentenceAudio = ({
     }
   };
 
-  const handleSkip = () => {
-    updateReviews(ReviewActions.SKIP);
-    handleNext();
+  const handleOnDeny = (pronunciationId: string) => {
+    updateReviews(pronunciationId, ReviewActions.DENY);
     setIsDirty(true);
   };
 
-  const handleDeny = () => {
-    updateReviews(ReviewActions.DENY);
-    handleNext();
-    setIsDirty(true);
-  };
-
-  const handleApprove = () => {
-    updateReviews(ReviewActions.APPROVE);
-    handleNext();
+  const handleOnApprove = (pronunciationId: string) => {
+    updateReviews(pronunciationId, ReviewActions.APPROVE);
     setIsDirty(true);
   };
 
   const handleUploadReviews = async () => {
     try {
-      const payload = examples.map((example, exampleIndex) => ({
-        id: example.id,
-        review: reviews[exampleIndex],
-      }));
+      const payload: SentenceVerification[] = reviews;
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
     } catch (err) {
@@ -128,15 +117,41 @@ const VerifySentenceAudio = ({
     if (!isComplete) {
       setIsLoading(true);
       (async () => {
-        const { data: randomExamples } = await getRandomExampleSuggestionsToReview();
-        setExamples(randomExamples);
-        setExampleIndex(0);
-        setReviews(new Array(randomExamples.length).fill(''));
-        setIsLoading(false);
+        try {
+          const { data: randomExamples } = await getRandomExampleSuggestionsToReview();
+          setExamples(randomExamples);
+          setExampleIndex(0);
+
+          const defaultReviews: SentenceVerification[] = randomExamples.map(({ id, pronunciations = [] }) => ({
+            id: id.toString(),
+            reviews: pronunciations.reduce((reviews, { _id }) => ({
+              ...reviews,
+              [_id.toString()]: null,
+            }), {}),
+          }));
+          setReviews(defaultReviews);
+        } catch (err) {
+          toast({
+            title: 'An error occurred',
+            description: 'Unable to retrieve example sentences.',
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
+        } finally {
+          setIsLoading(false);
+        }
       })();
     }
   }, [isComplete]);
-  const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
+
+  const shouldRenderExamples = (
+    !isLoading
+    && Array.isArray(examples)
+    && examples?.length
+    && examples?.length === reviews?.length
+    && !isComplete
+  );
   const noExamples = !isLoading && !examples?.length && !isComplete;
 
   return shouldRenderExamples ? (
@@ -167,17 +182,15 @@ const VerifySentenceAudio = ({
         className="space-y-6"
       >
         <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
-          {examples[exampleIndex].igbo}
+          {currentExample.igbo}
         </Text>
-        <SandboxAudioRecorder pronunciation={examples[exampleIndex].pronunciations[0].audio} canRecord={false} />
+        <SandboxAudioReviewer
+          pronunciations={currentExample.pronunciations}
+          onApprove={handleOnApprove}
+          onDeny={handleOnDeny}
+          review={reviews[exampleIndex]}
+        />
       </Box>
-      <Text
-        userSelect="none"
-        color={CardMessageColor[reviews[exampleIndex]]}
-        opacity={reviews[exampleIndex] ? 1 : 0}
-      >
-        {CardMessage[reviews[exampleIndex]] || 'Nothing'}
-      </Text>
       <Box className="w-full flex flex-row justify-center items-center space-x-4">
         <Tooltip label="You will go back to the previous sentence to review. You will not lose your progress.">
           <IconButton
@@ -200,11 +213,9 @@ const VerifySentenceAudio = ({
         <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
         <IconButton
           variant="ghost"
-          onClick={!reviews[exampleIndex]
-            ? handleSkip
-            : exampleIndex === reviews.length - 1
-              ? noop
-              : handleNext}
+          onClick={exampleIndex === reviews.length - 1
+            ? noop
+            : handleNext}
           icon={<ArrowForwardIcon />}
           aria-label="Next sentence"
           disabled={exampleIndex === reviews.length - 1}
@@ -219,7 +230,6 @@ const VerifySentenceAudio = ({
           }}
         />
       </Box>
-      <ProgressCircles reviews={reviews} exampleIndex={exampleIndex} />
       <Box
         display="flex"
         flexDirection="column"
@@ -227,28 +237,6 @@ const VerifySentenceAudio = ({
         alignItems="center"
         className="space-y-3"
       >
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="center"
-          className="space-x-3"
-        >
-          <InteractionButton
-            onClick={handleDeny}
-            rightIcon={<SmallCloseIcon />}
-            ariaLabel="Deny audio"
-          >
-            Deny
-          </InteractionButton>
-          <InteractionButton
-            onClick={handleApprove}
-            rightIcon={<CheckIcon />}
-            ariaLabel="Approve audio"
-          >
-            Approve
-          </InteractionButton>
-        </Box>
         <Box
           data-test="editor-recording-options"
           display="flex"

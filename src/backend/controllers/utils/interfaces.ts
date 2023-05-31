@@ -163,7 +163,14 @@ export interface Example extends Document<any>, LeanDocument<any> {
   nsibidiCharacters: string[],
   associatedWords: string[],
   associatedDefinitionsSchemas: string[],
-  pronunciations: { audio: string, speaker: string }[],
+  pronunciations: {
+    audio: string,
+    speaker: string,
+    review: boolean,
+    approvals: string[],
+    denials: string[],
+    _id: Types.ObjectId,
+  }[],
   updatedAt: Date,
 }
 

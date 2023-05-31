@@ -393,7 +393,14 @@ export const getTotalVerifiedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
   const query = {
-    $or: [{ approvals: { $in: [uid] } }, { denials: { $in: [uid] } }],
+    pronunciations: {
+      $elemMatch: {
+        $and: [
+          { approvals: { $nin: [uid] } },
+          { denials: { $nin: [uid] } },
+        ],
+      },
+    },
   };
 
   try {
@@ -507,35 +514,48 @@ export const putReviewForRandomExampleSuggestions = async (
     );
 
     await Promise.all(
-      body.map(async ({ id, review }) => {
+      body.map(async ({ id, reviews }) => {
         const exampleSuggestion = await ExampleSuggestion.findById(id);
         if (!exampleSuggestion) {
           console.log(`No example suggestion with the id: ${id}`);
           return null;
         }
-        if (review === ReviewActions.APPROVE) {
-          const approvals = new Set(exampleSuggestion.approvals);
-          approvals.add(user.uid);
-          exampleSuggestion.approvals = Array.from(approvals);
-          exampleSuggestion.denials = exampleSuggestion.denials.filter(
-            (denial) => denial !== user.uid,
-          );
-          exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
-        }
-        if (review === ReviewActions.DENY) {
-          const denials = new Set(exampleSuggestion.denials);
-          denials.add(user.uid);
-          exampleSuggestion.denials = Array.from(denials);
-          exampleSuggestion.approvals = exampleSuggestion.approvals.filter(
-            (approval) => approval !== user.uid,
-          );
-          exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
-        }
-        if (review === ReviewActions.SKIP) {
-          console.log(
-            `The user ${user.uid} skipped reviewing the word suggestion ${id}`,
-          );
-        }
+
+        Object.entries(reviews).forEach(([pronunciationId, review]) => {
+          const pronunciationIndex = exampleSuggestion.pronunciations.findIndex((pronunciation) => (
+            pronunciation._id.toString() === pronunciationId
+          ));
+          if (pronunciationIndex === -1) {
+            return null;
+          }
+
+          const audioPronunciation = exampleSuggestion.pronunciations[pronunciationIndex];
+
+          if (review === ReviewActions.APPROVE) {
+            const approvals = new Set(audioPronunciation.approvals);
+            approvals.add(user.uid);
+            exampleSuggestion.pronunciations[pronunciationIndex].approvals = Array.from(approvals);
+            exampleSuggestion.pronunciations[pronunciationIndex].denials = audioPronunciation.denials.filter(
+              (denial) => denial !== user.uid,
+            );
+            exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
+          }
+          if (review === ReviewActions.DENY) {
+            const denials = new Set(audioPronunciation.denials);
+            denials.add(user.uid);
+            exampleSuggestion.pronunciations[pronunciationIndex].denials = Array.from(denials);
+            exampleSuggestion.pronunciations[pronunciationIndex].approvals = audioPronunciation.approvals.filter(
+              (approval) => approval !== user.uid,
+            );
+            exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
+          }
+          if (review === ReviewActions.SKIP) {
+            console.log(
+              `The user ${user.uid} skipped reviewing the word suggestion ${id}`,
+            );
+          }
+          return null;
+        });
         return exampleSuggestion.save();
       }),
     );

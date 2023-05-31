@@ -13,7 +13,7 @@ import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import SandboxAudioRecorder from './SandboxAudioRecorder';
+import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
@@ -163,9 +163,12 @@ const RecordSentenceAudio = ({
         alignItems="center"
         className="space-y-3"
       >
-        <SandboxAudioRecorder
-          pronunciation={pronunciations[exampleIndex]}
-          setPronunciation={handlePronunciation}
+        <RecorderBase
+          path="pronunciation"
+          hideTitle
+          onStopRecording={handlePronunciation}
+          onResetRecording={noop}
+          audioValue={pronunciations[exampleIndex]}
         />
         <Box
           data-test="editor-recording-options"

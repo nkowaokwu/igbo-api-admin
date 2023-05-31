@@ -33,7 +33,6 @@ describe('AudioRecorder', () => {
     );
     await findByText('Word Pronunciation');
     fireEvent.click(await findByTestId('start-recording-button-examples'));
-    fireEvent.click(await findByTestId('stop-recording-button-examples'));
     await findByTestId('reset-recording-button-examples');
   });
 });

@@ -45,6 +45,7 @@ jest.mock('react-admin');
 jest.mock('mic-recorder-to-mp3');
 jest.mock('src/shared/API');
 jest.mock('src/shared/DataCollectionAPI');
+jest.mock('src/hooks/useRecorder');
 
 const TestContext = ({
   children,

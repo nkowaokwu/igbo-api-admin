@@ -204,26 +204,24 @@ export const searchRandomExampleSuggestionsRegexQuery = (uid: string) : {
     { userInteractions: { $nin: [uid] } },
   ],
 });
-// TODO: will need to extend functionality to review individual audio sentences
 export const searchRandomExampleSuggestionsToReviewRegexQuery = (uid: string) : {
   merged: null,
   exampleForSuggestion: { $ne: true },
   'pronunciations.0.audio': { $exists: boolean, $type: string, $ne: string },
-  'approvals.1': { $exists: boolean },
-  'denials.1': { $exists: boolean },
-  $and: { [key: string]: { $nin: [string] } }[]
+  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } },
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
   'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
-  'approvals.1': { $exists: false },
-  'denials.1': { $exists: false },
-  $and: [
-    { 'pronunciations.speaker': { $nin: [uid] } },
-    { userInteractions: { $nin: [uid] } },
-    { approvals: { $nin: [uid] } },
-    { denials: { $nin: [uid] } },
-  ],
+  // Returns an example where the user hasn't approved or denied an audio pronunciation
+  pronunciations: {
+    $elemMatch: {
+      $and: [
+        { approvals: { $nin: [uid] } },
+        { denials: { $nin: [uid] } },
+      ],
+    },
+  },
 });
 export const searchPreExistingExampleSuggestionsRegexQuery = (
   { igbo, english, associatedWordId }: { igbo: string, english: string, associatedWordId: string },

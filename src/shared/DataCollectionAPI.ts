@@ -9,7 +9,7 @@ interface ExampleAudioPayload {
 };
 interface ExampleReviewsPayload {
   id: any,
-  review: ReviewActions,
+  reviews: { [pronunciationId: string]: ReviewActions },
 }
 
 export const getRandomExampleSuggestions = (
