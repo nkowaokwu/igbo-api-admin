@@ -7,7 +7,7 @@ import Collection from 'src/shared/constants/Collections';
 import {
   ExampleEditForm,
   EditDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   EditDocumentTopBar,
 } from '../components';
 
@@ -45,9 +45,10 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <EditDocumentIds
+        <DocumentIds
           collection={Collection.EXAMPLES}
           originalId={originalExampleId}
+          record={record}
           id={id}
           title="Parent Example Id:"
         />

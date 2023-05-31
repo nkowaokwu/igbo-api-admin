@@ -7,7 +7,7 @@ import Collection from 'src/shared/constants/Collections';
 import {
   CorpusEditForm,
   EditDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   EditDocumentTopBar,
 } from '../components';
 
@@ -21,12 +21,12 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
   } = useEditController(props);
   const {
     id,
-    originalExampleId,
+    originalCorpusId,
     approvals,
     denials,
   } = record || {
     id: null,
-    originalExampleId: null,
+    originalCorpusId: null,
     approvals: [],
     denials: [],
   };
@@ -45,9 +45,10 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
         id={id}
       />
       <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <EditDocumentIds
+        <DocumentIds
           collection={Collection.CORPORA}
-          originalId={originalExampleId}
+          originalId={originalCorpusId}
+          record={record}
           id={id}
           title="Parent Corpus Id:"
         />

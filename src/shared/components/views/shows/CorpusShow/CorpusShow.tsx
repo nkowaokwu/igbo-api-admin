@@ -11,10 +11,9 @@ import SourceField from 'src/shared/components/SourceField';
 import {
   EditDocumentTopBar,
   ShowDocumentStats,
-  EditDocumentIds,
+  DocumentIds,
   Comments,
 } from '../../components';
-import { determineDate } from '../utils';
 import DiffField from '../diffFields/DiffField';
 
 const DIFF_FILTER_KEYS = [
@@ -56,7 +55,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
     approvals,
     denials,
     originalWordId,
-    updatedAt,
   } = record;
 
   const resourceTitle = {
@@ -96,20 +94,13 @@ const CorpusShow = (props: ShowProps): ReactElement => {
         <Box className="flex flex-col lg:flex-row mb-1">
           <Box className="flex flex-col flex-auto justify-between items-start space-y-4 mr-4">
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
-              <Box>
-                <Heading fontSize="lg" className="text-xl text-gray-700">
-                  <>
-                    {'Last Updated: '}
-                    {determineDate(updatedAt)}
-                  </>
-                </Heading>
-                <EditDocumentIds
-                  collection={Collection.WORDS}
-                  originalId={originalWordId}
-                  id={id}
-                  title="Parent Word Id:"
-                />
-              </Box>
+              <DocumentIds
+                collection={Collection.WORDS}
+                originalId={originalWordId}
+                record={record}
+                id={id}
+                title="Parent Word Id:"
+              />
             </Box>
             <Box className="flex flex-col mt-5">
               <Heading fontSize="lg" className="text-xl text-gray-600">Title</Heading>
