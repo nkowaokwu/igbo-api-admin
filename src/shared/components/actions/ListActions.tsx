@@ -244,9 +244,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         >
                           Is Standard Igbo
                         </MenuItemOption>,
-                        <MenuItemOption value="pronunciation" key="pronunciation">
-                          Has Pronunciation
-                        </MenuItemOption>,
                         <MenuItemOption value="noPronunciation" key="noPronunciation">
                           Has No Pronunciation
                         </MenuItemOption>,
@@ -290,6 +287,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                         </MenuItemOption>,
                       ]
                       : null}
+                    <MenuItemOption value="pronunciation" key="pronunciation">
+                      Has Pronunciation
+                    </MenuItemOption>
                   </MenuOptionGroup>
                 </MenuList>
               </Menu>
