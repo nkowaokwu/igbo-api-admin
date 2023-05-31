@@ -395,9 +395,9 @@ export const getTotalVerifiedExampleSuggestions = async (
   const query = {
     pronunciations: {
       $elemMatch: {
-        $and: [
-          { approvals: { $nin: [uid] } },
-          { denials: { $nin: [uid] } },
+        $or: [
+          { approvals: { $in: [uid] } },
+          { denials: { $in: [uid] } },
         ],
       },
     },
