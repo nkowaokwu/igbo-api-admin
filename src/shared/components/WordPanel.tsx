@@ -162,7 +162,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
                   <Text className={nsibidi ? 'akagu' : 'italic text-gray-600'}>{nsibidi || 'No Nsịbịdị'}</Text>
                 </Box>
               </Box>
-              <AudioRecordingPreview record={example} />
+              <AudioRecordingPreview record={example} audioPath="pronunciations.0.audio" />
             </>
           );
         }) : <Text className="text-gray-500 italic">No examples</Text>}

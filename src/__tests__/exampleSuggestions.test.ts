@@ -496,27 +496,28 @@ describe('MongoDB Example Suggestions', () => {
       const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
         expect(Array.isArray(pronunciations)).toBeTruthy();
         expect(pronunciations.length).toBeGreaterThanOrEqual(1);
-        if (index === 0) {
-          return { id, review: ReviewActions.APPROVE };
-        }
-        if (index === 1) {
-          return { id, review: ReviewActions.DENY };
-        }
-        return { id, review: ReviewActions.SKIP };
+        const reviews = pronunciations.reduce((reviewObject, { _id }) => ({
+          ...reviewObject,
+          [_id.toString()]: index === 0 ? ReviewActions.APPROVE : index === 1 ? ReviewActions.DENY : ReviewActions.SKIP,
+        }), {});
+        return { id, reviews };
       });
       const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(reviewedExampleSuggestions.map(async ({ id: randomExampleSuggestionId }, index) => {
         const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);
         if (index === 0) {
-          expect(randomExampleSuggestion.body.approvals).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.pronunciations.some(({ approvals }) => (
+            approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)))).toBeTruthy();
           expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         } else if (index === 1) {
-          expect(randomExampleSuggestion.body.denials).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.pronunciations.some(({ denials }) => (
+            denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)))).toBeTruthy();
           expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         } else {
-          expect(randomExampleSuggestion.body.approvals).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-          expect(randomExampleSuggestion.body.denials).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          expect(randomExampleSuggestion.body.pronunciations.some(({ approvals, denials }) => (
+            !approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN) && !denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)
+          ))).toBeTruthy();
           expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         }
       }));
