@@ -126,7 +126,7 @@ const VerifySentenceAudio = ({
             id: id.toString(),
             reviews: pronunciations.reduce((reviews, { _id }) => ({
               ...reviews,
-              [_id.toString()]: null,
+              [_id.toString()]: ReviewActions.SKIP,
             }), {}),
           }));
           setReviews(defaultReviews);
