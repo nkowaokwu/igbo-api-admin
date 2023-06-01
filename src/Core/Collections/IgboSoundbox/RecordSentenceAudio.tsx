@@ -124,8 +124,7 @@ const RecordSentenceAudio = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      className="space-y-4 p-6 h-full lg:h-auto"
-      width={{ base: '100vw', md: 'auto' }}
+      className="space-y-4 p-6"
     >
       <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
         Record sentence audio
