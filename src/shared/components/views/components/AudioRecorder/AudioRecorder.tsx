@@ -92,6 +92,7 @@ const AudioRecorder = ({
       hideTitle={hideTitle}
       onStopRecording={stopRecording}
       onResetRecording={resetRecording}
+      audioValue={pronunciationValue}
     />
   );
 };
