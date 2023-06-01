@@ -24,12 +24,15 @@ const GoogleLogin = ({
   const signInWithGoogle = () => {
     setErrorMessage('');
     return signInWithPopup(auth, googleProvider)
-      .then(() => {
+    // @ts-expect-error
+      .then((({ _tokenResponse } = { _tokenResponse: { isNewUser: false } }) => {
+        const { isNewUser } = _tokenResponse;
         handleUserResult({
           toast,
           setErrorMessage,
+          isNewUser,
         });
-      }).catch((error) => {
+      })).catch((error) => {
         console.log(error);
         setErrorMessage(error.message);
       });

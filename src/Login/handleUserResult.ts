@@ -13,9 +13,11 @@ const auth = getAuth();
 export const handleUserResult = async ({
   toast,
   setErrorMessage,
+  isNewUser = false,
 } : {
   toast: any,
   setErrorMessage: (err: string) => void,
+  isNewUser?: boolean,
 }): Promise<any> => {
   const { currentUser } = auth;
   if (!currentUser) {
@@ -48,11 +50,22 @@ export const handleUserResult = async ({
 
   setErrorMessage('');
 
-  const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-  const hash = (
-    hasTranscriberPermissions(permissions, '#/igboSoundbox')
-    || hasCrowdsourcerPermission(permissions, '#/')
-    || (rawRedirectUrl || '#/') || '#/'
-  );
-  window.location.href = `${window.location.origin}/${hash}`;
+  if (isNewUser) {
+    authProvider.logout();
+    toast({
+      title: 'Account created',
+      description: 'Please refresh the page and log in to access the platform',
+      status: 'success',
+      duration: 4000,
+      isClosable: true,
+    });
+  } else {
+    const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
+    const hash = (
+      hasTranscriberPermissions(permissions, '#/igboSoundbox')
+      || hasCrowdsourcerPermission(permissions, '#/')
+      || (rawRedirectUrl || '#/') || '#/'
+    );
+    window.location.href = `${window.location.origin}/${hash}`;
+  }
 };
