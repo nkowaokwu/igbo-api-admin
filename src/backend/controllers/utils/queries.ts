@@ -323,3 +323,31 @@ export const searchWordsWithoutIgboDefinitions = (): {
 } => ({
   'definitions.0.igboDefinitions.0': { $exists: false },
 });
+
+// Stats
+export const searchExampleAudioPronunciationsReviewedByUser = (uid: string): {
+  pronunciations: {
+    $elemMatch: {
+      $or: { [key: string]: { $in: [string] } }[],
+    }
+  }
+} => ({
+  pronunciations: {
+    $elemMatch: {
+      $or: [
+        { approvals: { $in: [uid] } },
+        { denials: { $in: [uid] } },
+      ],
+    },
+  },
+});
+
+export const searchExampleAudioPronunciationsRecordedByUser = (uid: string): {
+  pronunciations: {
+    $elemMatch: { [key: string]: { $eq: string } }
+  }
+} => ({
+  pronunciations: {
+    $elemMatch: { speaker: { $eq: uid } },
+  },
+});

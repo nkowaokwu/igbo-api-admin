@@ -6,6 +6,7 @@ import { wordSchema } from '../models/Word';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import {
+  searchExampleAudioPronunciationsReviewedByUser,
   searchExampleSuggestionsRegexQuery,
   searchForLastWeekQuery,
   searchPreExistingExampleSuggestionsRegexQuery,
@@ -392,16 +393,7 @@ export const getTotalVerifiedExampleSuggestions = async (
 ): Promise<any | void> => {
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
-  const query = {
-    pronunciations: {
-      $elemMatch: {
-        $or: [
-          { approvals: { $in: [uid] } },
-          { denials: { $in: [uid] } },
-        ],
-      },
-    },
-  };
+  const query = searchExampleAudioPronunciationsReviewedByUser(uid);
 
   try {
     return await findExampleSuggestions({
@@ -481,7 +473,14 @@ export const putAudioForRandomExampleSuggestions = async (
         }
         const userInteractions = new Set(exampleSuggestion.userInteractions);
         if (pronunciation) {
-          exampleSuggestion.pronunciations.push({ audio: pronunciation, speaker: user.uid });
+          // @ts-expect-error _id is missing
+          exampleSuggestion.pronunciations.push({
+            audio: pronunciation,
+            speaker: user.uid,
+            review: true,
+            approvals: [],
+            denials: [],
+          });
           console.log(`Pushed new pronunciation object to example suggestion ${id}`);
 
           // Only add uid to userInteractions for recording audio
@@ -492,8 +491,10 @@ export const putAudioForRandomExampleSuggestions = async (
         return exampleSuggestion.save();
       }),
     );
-    return res.send(body.map(({ id }) => id));
+    req.response = body.map(({ id }) => id);
+    return next();
   } catch (err) {
+    req.error = err;
     return next(err);
   }
 };
@@ -559,8 +560,10 @@ export const putReviewForRandomExampleSuggestions = async (
         return exampleSuggestion.save();
       }),
     );
-    return res.send(body.map(({ id }) => id));
+    req.response = body.map(({ id }) => id);
+    return next();
   } catch (err) {
+    req.error = err;
     return next(err);
   }
 };
