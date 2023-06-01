@@ -10,6 +10,7 @@ import Collections from 'src/shared/constants/Collections';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
+import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 
 export interface HandleQueries {
   searchWord: string,
@@ -23,6 +24,7 @@ export interface HandleQueries {
   strict: boolean,
   body: EditorRequest['body'],
   mongooseConnection: EditorRequest['mongooseConnection'],
+  leaderboard: undefined | Leaderboard,
   uidQuery?: string,
 };
 
@@ -40,10 +42,13 @@ export interface EditorRequest extends Request {
     filter?: string,
     strict?: string,
     uid?: string,
+    leaderboard?: LeaderboardType,
   },
   suggestionDoc?: Suggestion,
   body: any,
   word?: Word,
+  response?: any,
+  error?: Error,
   mongooseConnection: Connection,
 };
 
@@ -207,6 +212,14 @@ export interface NsibidiCharacter {
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {
   cachedAt: Date,
+}
+
+export interface Leaderboard extends Document<any>, LeanDocument<any> {
+  id: Types.ObjectId,
+  rankings: { uid: string, count: number, position: number }[],
+  type: LeaderboardType,
+  page: number,
+  updatedAt: Date,
 }
 
 export interface MergedOrRejectedEmailData {

@@ -10,6 +10,10 @@ import {
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
+import {
+  calculateReviewingExampleLeaderboard,
+  calculateRecordingExampleLeaderboard,
+} from 'src/backend/controllers/leaderboard';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
@@ -31,15 +35,20 @@ crowdsourcerRouter.put(
 );
 
 crowdsourcerRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
+
+// Records audio for example suggestion
 crowdsourcerRouter.put(
   '/exampleSuggestions/random/audio',
   validateAudioRandomExampleSuggestionBody,
   putAudioForRandomExampleSuggestions,
+  calculateRecordingExampleLeaderboard,
 );
+// Reviews audio for example suggestion
 crowdsourcerRouter.put(
   '/exampleSuggestions/random/review',
   validateReviewRandomExampleSuggestionBody,
   putReviewForRandomExampleSuggestions,
+  calculateReviewingExampleLeaderboard,
 );
 crowdsourcerRouter.post(
   '/exampleSuggestions/upload',
