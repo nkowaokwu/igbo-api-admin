@@ -15,6 +15,7 @@ import {
   assignRankings,
   sortLeaderboards,
 } from './utils';
+import { findUser } from '../users';
 
 const updateUserLeaderboardStat = async ({
   leaderboardType,
@@ -86,10 +87,10 @@ export const getLeaderboard = async (
   const {
     skip,
     limit,
-    user,
+    user: { uid },
     leaderboard,
     mongooseConnection,
-  } = await handleQueries(req);
+  } = handleQueries(req);
   const Leaderboard = (
     mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema)
   );
@@ -97,6 +98,7 @@ export const getLeaderboard = async (
     throw new Error('Please provide a leaderboard to view');
   }
 
+  const user = (await findUser(uid)) as Interfaces.FormattedUser;
   try {
     let leaderboards = await Leaderboard.find({ type: leaderboard });
     if (!leaderboards || !leaderboards.length) {
@@ -130,17 +132,18 @@ export const calculateRecordingExampleLeaderboard = async (
   next: NextFunction,
 ): Promise<any> => {
   const {
-    user,
+    user: { uid },
     error,
     response,
     mongooseConnection,
-  } = await handleQueries(req);
+  } = req;
 
   if (error) {
     return next(error);
   }
 
   try {
+    const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
       query: searchExampleAudioPronunciationsRecordedByUser(user.uid),
@@ -160,17 +163,18 @@ export const calculateReviewingExampleLeaderboard = async (
   next: NextFunction,
 ): Promise<any> => {
   const {
-    user,
+    user: { uid },
     error,
     response,
     mongooseConnection,
-  } = await handleQueries(req);
+  } = req;
 
   if (error) {
     return next(error);
   }
 
   try {
+    const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
       query: searchExampleAudioPronunciationsReviewedByUser(user.uid),
