@@ -5,22 +5,22 @@ import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 
 export const sortRankings = ({
   leaderboardRankings,
-  uid,
+  user,
   count,
 } : {
   leaderboardRankings: Interfaces.Leaderboard['rankings'],
-  uid: string,
+  user: { displayName: string, email: string, photoURL: string, uid: string },
   count: number,
 }): Interfaces.Leaderboard['rankings'] => {
-  if (!Array.isArray(leaderboardRankings) || !uid || typeof count !== 'number') {
+  if (!Array.isArray(leaderboardRankings) || !user.uid || typeof count !== 'number') {
     return leaderboardRankings || [];
   }
   let rankings = cloneDeep(leaderboardRankings);
-  const userRankingIndex = rankings.findIndex((ranking) => ranking.uid === uid);
+  const userRankingIndex = rankings.findIndex((ranking) => ranking.uid === user.uid);
   if (userRankingIndex === -1) {
-    rankings.push({ count, uid, position: -1 });
+    rankings.push({ count, position: -1, ...user });
   } else {
-    rankings[userRankingIndex] = { count, uid, position: -1 };
+    rankings[userRankingIndex] = { count, position: -1, ...user };
   }
   rankings.sort((firstRanking, secondRanking) => {
     if (firstRanking.count > secondRanking.count) {

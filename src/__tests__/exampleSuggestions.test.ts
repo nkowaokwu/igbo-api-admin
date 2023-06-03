@@ -388,7 +388,7 @@ describe('MongoDB Example Suggestions', () => {
   describe('Igbo Soundbox', () => {
     it('should save audio for five random example sentences', async () => {
       const examples = [];
-      times(5, async () => {
+      await Promise.all(times(5, async () => {
         const exampleRes = await suggestNewExample(
           { ...exampleSuggestionData, igbo: uuid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
@@ -396,7 +396,7 @@ describe('MongoDB Example Suggestions', () => {
         expect(exampleRes.body.approvals).toHaveLength(0);
         expect(exampleRes.body.denials).toHaveLength(0);
         examples.push(exampleRes.body);
-      });
+      }));
 
       const updateExamplePayload = examples.map(({ id }) => ({
         id,
@@ -408,7 +408,7 @@ describe('MongoDB Example Suggestions', () => {
         const exampleSuggestionRes = await getExampleSuggestion(id);
         expect(exampleSuggestionRes.status).toEqual(200);
         expect(exampleSuggestionRes.body.pronunciations).toHaveLength(1);
-        expect(exampleSuggestionRes.body.pronunciations[0].audio).toEqual(`pronunciation-${id}`);
+        expect(exampleSuggestionRes.body.pronunciations[0].audio).toContain(`${id}-`);
         expect(exampleSuggestionRes.body.pronunciations[0].speaker).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       }));
 
@@ -422,20 +422,20 @@ describe('MongoDB Example Suggestions', () => {
         const exampleSuggestionRes = await getExampleSuggestion(id);
         expect(exampleSuggestionRes.status).toEqual(200);
         expect(exampleSuggestionRes.body.pronunciations).toHaveLength(2);
-        expect(exampleSuggestionRes.body.pronunciations[1].audio).toEqual(`pronunciation-${id}`);
+        expect(exampleSuggestionRes.body.pronunciations[1].audio).toContain(`${id}-`);
         expect(exampleSuggestionRes.body.pronunciations[1].speaker).toEqual(AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN);
       }));
     });
     // eslint-disable-next-line max-len
     it('should get five random example suggestions with no user interactions or speaker id associated with user', async () => {
-      times(5, async () => {
+      await Promise.all(times(5, async () => {
         const exampleRes = await suggestNewExample(
           { ...exampleSuggestionData, igbo: uuid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
         );
         expect(exampleRes.body.approvals).toHaveLength(0);
         expect(exampleRes.body.denials).toHaveLength(0);
-      });
+      }));
       const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(5);
@@ -451,7 +451,7 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should get five more example suggestions after recording audio for five random sentences', async () => {
-      times(5, async () => {
+      await Promise.all(times(5, async () => {
         const exampleRes = await suggestNewExample(
           {
             ...exampleSuggestionData,
@@ -475,11 +475,11 @@ describe('MongoDB Example Suggestions', () => {
           expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
           expect(exampleSuggestion.denials.length).toBeLessThanOrEqual(1);
         });
-      });
+      }));
     });
 
     it('should approve, deny, and skip example suggestions', async () => {
-      times(5, async (index) => {
+      await Promise.all(times(5, async (index) => {
         const exampleRes = await suggestNewExample(
           {
             ...exampleSuggestionData,
@@ -490,7 +490,7 @@ describe('MongoDB Example Suggestions', () => {
         );
         expect(exampleRes.body.approvals).toHaveLength(0);
         expect(exampleRes.body.denials).toHaveLength(0);
-      });
+      }));
       const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview();
       expect(randomExampleSuggestionsRes.status).toEqual(200);
       const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {

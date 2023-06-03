@@ -13,6 +13,7 @@ import {
 import {
   calculateReviewingExampleLeaderboard,
   calculateRecordingExampleLeaderboard,
+  getLeaderboard,
 } from 'src/backend/controllers/leaderboard';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
@@ -67,5 +68,8 @@ crowdsourcerRouter.get(
   resourcePermission,
   getTotalRecordedExampleSuggestions,
 );
+
+// Leaderboard
+crowdsourcerRouter.get('/leaderboard', getLeaderboard);
 
 export default crowdsourcerRouter;

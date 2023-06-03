@@ -656,14 +656,14 @@ describe('MongoDB Word Suggestions', () => {
 
   describe('Igbo Definitions', () => {
     it('should get five random word suggestions with no user interactions associated with user', async () => {
-      times(5, async () => {
+      await Promise.all(times(5, async () => {
         const wordRes = await suggestNewWord(
           { ...wordSuggestionData, word: uuid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
         );
         expect(wordRes.body.approvals).toHaveLength(0);
         expect(wordRes.body.denials).toHaveLength(0);
-      });
+      }));
       const res = await getRandomWordSuggestions({});
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeLessThanOrEqual(5);
@@ -673,14 +673,14 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should save the Igbo definitions for each word suggestion with no duplicates', async () => {
-      times(5, async () => {
+      await Promise.all(times(5, async () => {
         const wordRes = await suggestNewWord(
           { ...wordSuggestionData, word: uuid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
         );
         expect(wordRes.body.approvals).toHaveLength(0);
         expect(wordRes.body.denials).toHaveLength(0);
-      });
+      }));
       const randomRes = await getRandomWordSuggestions({});
       expect(randomRes.status).toEqual(200);
       expect(randomRes.body.length).toBeLessThanOrEqual(5);

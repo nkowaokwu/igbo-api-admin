@@ -230,6 +230,8 @@ export const handleQueries = (
     query = {},
     body = {},
     user = {},
+    error,
+    response,
     mongooseConnection,
   }:
   Interfaces.EditorRequest,
@@ -242,6 +244,7 @@ export const handleQueries = (
     filter: filterQuery,
     strict: strictQuery,
     uid: uidQuery,
+    leaderboard,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -263,6 +266,9 @@ export const handleQueries = (
     strict,
     body,
     uidQuery,
+    leaderboard,
+    error,
+    response,
     mongooseConnection,
   };
 };

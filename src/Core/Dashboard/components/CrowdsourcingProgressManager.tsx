@@ -59,8 +59,8 @@ const CrowdsourcingProgressManager = (): ReactElement => (
         <Box
           cursor="pointer"
           _hover={{
-            background: "white",
-            color: "teal.500",
+            background: 'white',
+            color: 'teal.500',
           }}
           borderColor="gray.300"
           borderWidth="1px"

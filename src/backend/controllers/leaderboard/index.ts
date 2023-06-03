@@ -20,12 +20,12 @@ const updateUserLeaderboardStat = async ({
   leaderboardType,
   query,
   mongooseConnection,
-  uid,
+  user,
 } : {
   leaderboardType: LeaderboardType,
   query: any,
   mongooseConnection: Connection,
-  uid: string,
+  user: { displayName: string, email: string, photoURL: string, uid: string },
 }) => {
   const ExampleSuggestion = (
     mongooseConnection.model<Interfaces.ExampleSuggestion>('ExampleSuggestion', exampleSuggestionSchema)
@@ -49,11 +49,23 @@ const updateUserLeaderboardStat = async ({
   if (!exampleSuggestionsByUser) {
     throw new Error('No example suggestion associated with the user.');
   }
+  const totalCount = leaderboardType === LeaderboardType.VERIFY_EXAMPLE_AUDIO
+    // Count all individual audio pronunciation reviews
+    ? exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
+      let currentCount = 0;
+      pronunciations.forEach(({ approvals, denials }) => {
+        if (approvals.includes(user.uid) || denials.includes(user.uid)) {
+          currentCount += 1;
+        }
+      });
+      return finalCount + currentCount;
+    }, 0)
+    : exampleSuggestionsByUser.length;
 
   const updatedRankings = sortRankings({
     leaderboardRankings: allRankings,
-    uid,
-    count: exampleSuggestionsByUser.length,
+    user,
+    count: totalCount,
   });
 
   const rankingsGroups = splitRankings(updatedRankings);
@@ -77,7 +89,7 @@ export const getLeaderboard = async (
     user,
     leaderboard,
     mongooseConnection,
-  } = handleQueries(req);
+  } = await handleQueries(req);
   const Leaderboard = (
     mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema)
   );
@@ -86,7 +98,6 @@ export const getLeaderboard = async (
   }
 
   try {
-    // @ts-expect-error
     let leaderboards = await Leaderboard.find({ type: leaderboard });
     if (!leaderboards || !leaderboards.length) {
       leaderboards = [];
@@ -98,10 +109,11 @@ export const getLeaderboard = async (
     let userRanking = {};
     if (userIndex === -1) {
       // If the user hasn't contributed anything yet, they don't have a position;
-      userRanking = { uid: user.uid, position: null, count: -1 };
+      userRanking = { position: null, count: -1, ...user };
     } else {
       userRanking = allRankings[userIndex];
     }
+
     res.setHeader('Content-Range', allRankings.length);
     return res.send({
       userRanking,
@@ -122,8 +134,7 @@ export const calculateRecordingExampleLeaderboard = async (
     error,
     response,
     mongooseConnection,
-  } = req;
-  const { uid } = user;
+  } = await handleQueries(req);
 
   if (error) {
     return next(error);
@@ -132,9 +143,9 @@ export const calculateRecordingExampleLeaderboard = async (
   try {
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsRecordedByUser(uid),
+      query: searchExampleAudioPronunciationsRecordedByUser(user.uid),
       mongooseConnection,
-      uid,
+      user,
     });
 
     return res.send(response);
@@ -153,8 +164,7 @@ export const calculateReviewingExampleLeaderboard = async (
     error,
     response,
     mongooseConnection,
-  } = req;
-  const { uid } = user;
+  } = await handleQueries(req);
 
   if (error) {
     return next(error);
@@ -163,9 +173,9 @@ export const calculateReviewingExampleLeaderboard = async (
   try {
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsReviewedByUser(uid),
+      query: searchExampleAudioPronunciationsReviewedByUser(user.uid),
       mongooseConnection,
-      uid,
+      user,
     });
 
     return res.send(response);

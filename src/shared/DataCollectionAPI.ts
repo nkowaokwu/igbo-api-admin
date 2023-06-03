@@ -1,6 +1,8 @@
 /* API for the Data Collection for IgboSpeech */
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -95,4 +97,13 @@ export const getTotalVerifiedExampleSuggestions = async (uid?: string | null): P
   method: 'GET',
   url: 'exampleSuggestions/random/stats/verified',
   params: uid ? { uid } : {},
+})).data;
+
+export const getLeaderboardStats = async (leaderboard: LeaderboardType): Promise<{
+  userRanking: UserRanking,
+  rankings: UserRanking[],
+}> => (await request({
+  method: 'GET',
+  url: 'leaderboard',
+  params: { leaderboard },
 })).data;

@@ -8,7 +8,8 @@ import * as Interfaces from './utils/interfaces';
 
 const cachedUsers = {};
 
-const formatUser = (user = { customClaims: {}, metadata: {} }): Interfaces.FormattedUser => {
+// @ts-expect-error
+const formatUser = (user: Interfaces.FirebaseUser = { customClaims: {}, metadata: {} }): Interfaces.FormattedUser => {
   const { customClaims, metadata } = user;
   return {
     uid: user.uid,
@@ -75,7 +76,7 @@ export const getUsers = async (
   next: NextFunction,
 ): Promise<Response<any> | void> => {
   try {
-    const { skip, limit, filters } = handleQueries(req);
+    const { skip, limit, filters } = await handleQueries(req);
     const users = (await findUsers()).filter((user) => (
       // eslint-disable-next-line
       Object.values(filters).every((value: string = '') => {
