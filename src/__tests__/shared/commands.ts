@@ -389,6 +389,13 @@ export const getUsers = (options = { token: '' }): Request => (
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
 
+export const getLeaderboard = (query = {}, options = { token: '' }): Request => (
+  chaiServer
+    .get('/leaderboard')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
 /* Hits the POST /populate route to seed the local MongoDB database */
 export const populateAPI = (): Request => (
   chaiServer

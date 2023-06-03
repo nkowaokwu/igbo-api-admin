@@ -1,6 +1,8 @@
 import ActivityButton from './ActivityButton';
 import Card from './Card';
 import CreateButton from './CreateButton';
+import FilePicker from './FilePicker';
+import Spinner from './Spinner';
 import Input from './Input';
 import PrimaryButton from './PrimaryButton';
 import Textarea from './Textarea';
@@ -10,6 +12,8 @@ export {
   ActivityButton,
   Card,
   CreateButton,
+  FilePicker,
+  Spinner,
   Input,
   PrimaryButton,
   Textarea,

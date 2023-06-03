@@ -3,7 +3,6 @@ import { noop } from 'lodash';
 import {
   Box,
   Heading,
-  Spinner,
   Text,
   Tooltip,
   useToast,
@@ -11,7 +10,12 @@ import {
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
-import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
+import {
+  ActivityButton,
+  Card,
+  PrimaryButton,
+  Spinner,
+} from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import Completed from '../components/Completed';
@@ -201,17 +205,7 @@ const RecordSentenceAudio = ({
       setIsDirty={setIsDirty}
       goHome={goHome}
     />
-  ) : (
-    <Box
-      width="full"
-      height="full"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Spinner color="green" />
-    </Box>
-  );
+  ) : <Spinner />;
 };
 
 export default RecordSentenceAudio;

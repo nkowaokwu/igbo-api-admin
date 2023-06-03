@@ -24,12 +24,16 @@ export interface HandleQueries {
   strict: boolean,
   body: EditorRequest['body'],
   mongooseConnection: EditorRequest['mongooseConnection'],
-  leaderboard: undefined | Leaderboard,
+  leaderboard: undefined | LeaderboardType,
   uidQuery?: string,
+  error?: any,
+  response?: any,
 };
 
 export interface FirebaseUser extends User {
   editingGroup?: number | undefined,
+  customClaims?: any,
+  metadata?: any,
 };
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
@@ -214,9 +218,18 @@ export interface CachedDocument extends WordSuggestion, ExampleSuggestion {
   cachedAt: Date,
 }
 
+export interface UserRanking {
+  uid: string,
+  displayName: string,
+  photoURL: string,
+  email: string,
+  count: number,
+  position: number,
+}
+
 export interface Leaderboard extends Document<any>, LeanDocument<any> {
   id: Types.ObjectId,
-  rankings: { uid: string, count: number, position: number }[],
+  rankings: UserRanking[],
   type: LeaderboardType,
   page: number,
   updatedAt: Date,
@@ -294,6 +307,7 @@ export interface FormattedUser {
   id: string,
   email: string,
   displayName: string,
+  photoURL: string,
   role: string,
   editingGroup: string,
   lastSignInTime: string,

@@ -5,7 +5,6 @@ import {
   Button,
   Heading,
   IconButton,
-  Spinner,
   Text,
   Tooltip,
   useToast,
@@ -18,6 +17,7 @@ import {
   getRandomExampleSuggestionsToReview,
   putReviewForRandomExampleSuggestions,
 } from 'src/shared/DataCollectionAPI';
+import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
@@ -274,17 +274,7 @@ const VerifySentenceAudio = ({
       setIsDirty={setIsDirty}
       goHome={goHome}
     />
-  ) : (
-    <Box
-      width="full"
-      height="full"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Spinner color="green" />
-    </Box>
-  );
+  ) : <Spinner />;
 };
 
 export default VerifySentenceAudio;

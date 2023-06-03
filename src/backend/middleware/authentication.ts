@@ -33,7 +33,13 @@ const authentication = async (
       if (process.env.NODE_ENV === 'test') {
         forIn(AUTH_TOKEN, (value) => {
           if (token === value) {
-            req.user = { role: value.split('-')[0], uid: token, editingGroup: 1 };
+            req.user = {
+              role: value.split('-')[0],
+              uid: token,
+              editingGroup: 1,
+              email: 'user@example.com',
+              displayName: 'User name',
+            };
           }
         });
       }

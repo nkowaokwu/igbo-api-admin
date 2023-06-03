@@ -2,12 +2,40 @@ import { cloneDeep, times } from 'lodash';
 import { sortLeaderboards, sortRankings, splitRankings } from '../utils';
 
 const rankings = [
-  { uid: 'second user', count: 45, position: 0 },
-  { uid: 'first user', count: 123, position: 2 },
-  { uid: 'third user', count: 3, position: 1 },
+  {
+    id: 'second user',
+    uid: 'second user',
+    email: 'user@example.com',
+    displayName: 'User name',
+    photoURL: '',
+    count: 45,
+    position: 0,
+  },
+  {
+    id: 'first user',
+    uid: 'first user',
+    email: 'user@example.com',
+    displayName: 'User name',
+    photoURL: '',
+    count: 123,
+    position: 2,
+  },
+  {
+    id: 'third user',
+    uid: 'third user',
+    email: 'user@example.com',
+    displayName: 'User name',
+    photoURL: '',
+    count: 3,
+    position: 1,
+  },
 ];
 const manyRankings = times(434, (index) => ({
   uid: `${index} user`,
+  id: `${index} user`,
+  email: 'user@example.com',
+  displayName: 'User name',
+  photoURL: '',
   count: Math.floor(Math.random() * 1000),
   position: Math.floor(Math.random() * 434),
 }));
@@ -16,42 +44,173 @@ describe('leaderboard utils', () => {
   describe('sortRankings', () => {
     it('sorts the rankings in the correct order with the same user count', () => {
       const clonedRankings = cloneDeep(rankings);
-      const updatedRankings = sortRankings({ leaderboardRankings: clonedRankings, uid: 'second user', count: 45 });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: clonedRankings,
+        user: {
+          uid: 'second user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+        },
+        count: 45,
+      });
       expect(updatedRankings).toEqual([
-        { uid: 'first user', count: 123, position: 1 },
-        { uid: 'second user', count: 45, position: 2 },
-        { uid: 'third user', count: 3, position: 3 },
+        {
+          uid: 'first user',
+          id: 'first user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 123,
+          position: 1,
+        },
+        {
+          uid: 'second user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 45,
+          position: 2,
+        },
+        {
+          uid: 'third user',
+          id: 'third user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 3,
+          position: 3,
+        },
       ]);
     });
     it('sorts the rankings in the correct order with a different user count', () => {
       const clonedRankings = cloneDeep(rankings);
-      const updatedRankings = sortRankings({ leaderboardRankings: clonedRankings, uid: 'second user', count: 300 });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: clonedRankings,
+        user: {
+          uid: 'second user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+        },
+        count: 300,
+      });
       expect(updatedRankings).toEqual([
-        { uid: 'second user', count: 300, position: 1 },
-        { uid: 'first user', count: 123, position: 2 },
-        { uid: 'third user', count: 3, position: 3 },
+        {
+          uid: 'second user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 300,
+          position: 1,
+        },
+        {
+          uid: 'first user',
+          id: 'first user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 123,
+          position: 2,
+        },
+        {
+          uid: 'third user',
+          id: 'third user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 3,
+          position: 3,
+        },
       ]);
     });
     it('sorts the rankings in the correct order with new user', () => {
       const clonedRankings = cloneDeep(rankings);
-      const updatedRankings = sortRankings({ leaderboardRankings: clonedRankings, uid: 'fourth user', count: 50 });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: clonedRankings,
+        user: {
+          uid: 'fourth user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+        },
+        count: 50,
+      });
       expect(updatedRankings).toEqual([
-        { uid: 'first user', count: 123, position: 1 },
-        { uid: 'fourth user', count: 50, position: 2 },
-        { uid: 'second user', count: 45, position: 3 },
-        { uid: 'third user', count: 3, position: 4 },
+        {
+          uid: 'first user',
+          id: 'first user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 123,
+          position: 1,
+        },
+        {
+          uid: 'fourth user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 50,
+          position: 2,
+        },
+        {
+          uid: 'second user',
+          id: 'second user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 45,
+          position: 3,
+        },
+        {
+          uid: 'third user',
+          id: 'third user',
+          displayName: 'User name',
+          email: 'user@example.com',
+          photoURL: '',
+          count: 3,
+          position: 4,
+        },
       ]);
     });
     it('returns an empty array with no leaderboard rankings', () => {
-      const updatedRankings = sortRankings({ leaderboardRankings: null, uid: 'fourth user', count: 50 });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: null,
+        user: {
+          uid: 'fourth user',
+          displayName: 'User',
+          email: 'email@example.com',
+          photoURL: '',
+        },
+        count: 50,
+      });
       expect(updatedRankings).toEqual([]);
     });
     it('returns an empty array with no uid', () => {
-      const updatedRankings = sortRankings({ leaderboardRankings: [], uid: '', count: 50 });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: [],
+        user: {
+          uid: '',
+          displayName: 'User',
+          email: 'email@example.com',
+          photoURL: '',
+        },
+        count: 50,
+      });
       expect(updatedRankings).toEqual([]);
     });
     it('returns an empty array with no count', () => {
-      const updatedRankings = sortRankings({ leaderboardRankings: [], uid: 'fourth user', count: null });
+      const updatedRankings = sortRankings({
+        leaderboardRankings: [],
+        user: {
+          uid: 'fourth user',
+          displayName: 'User',
+          email: 'email@example.com',
+          photoURL: '',
+        },
+        count: null,
+      });
       expect(updatedRankings).toEqual([]);
     });
   });
@@ -64,7 +223,12 @@ describe('leaderboard utils', () => {
     it('splits 434 organized rankings', () => {
       const rankingGroups = splitRankings(sortRankings({
         leaderboardRankings: manyRankings,
-        uid: '0 user',
+        user: {
+          uid: '0 user',
+          displayName: 'User',
+          email: 'email@example.com',
+          photoURL: '',
+        },
         count: 10,
       }));
       rankingGroups.forEach((rankingGroup) => {
