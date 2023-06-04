@@ -44,8 +44,8 @@
   pointer-events: none;
 }
 
-html {
-  width: 100%;
+html, main, .main-content {
+  width: 100vw;
 }
 
 ::selection {
