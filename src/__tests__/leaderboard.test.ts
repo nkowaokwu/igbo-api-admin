@@ -66,7 +66,7 @@ describe('MongoDB Leaderboards', () => {
         uid,
         id: uid,
         editingGroup: '1',
-        role: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN,
+        role: AUTH_TOKEN.TRANSCRIBER_AUTH_TOKEN,
         displayName: 'User name',
         email: 'user@example.com',
         photoURL: '',
@@ -75,16 +75,16 @@ describe('MongoDB Leaderboards', () => {
       }));
       const res = await getLeaderboard(
         { leaderboard: LeaderboardType.RECORD_EXAMPLE_AUDIO },
-        { token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN },
+        { token: AUTH_TOKEN.TRANSCRIBER_AUTH_TOKEN },
       );
 
       expect(res.status).toEqual(200);
       expect(res.body).toHaveProperty('userRanking');
-      expect(res.body.userRanking.count).toEqual(5);
-      expect(res.body.userRanking.position).toEqual(2);
+      expect(res.body.userRanking.count).toEqual(-1);
+      expect(res.body.userRanking.position).toEqual(null);
       expect(res.body.userRanking.email).toEqual('user@example.com');
       expect(res.body.userRanking.displayName).toEqual('User name');
-      expect(res.body.userRanking.uid).toEqual(AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN);
+      expect(res.body.userRanking.uid).toEqual(AUTH_TOKEN.TRANSCRIBER_AUTH_TOKEN);
       expect(res.body).toHaveProperty('rankings');
       expect(res.body.rankings.length).toBeGreaterThanOrEqual(0);
     });
