@@ -34,7 +34,7 @@ const definitionSchema = new Schema({
 }, { toObject: toObjectPlugin });
 
 const dialectSchema = new Schema({
-  word: { type: String, required: true },
+  word: { type: String, required: true, trim: true },
   variations: { type: [{ type: String }], default: [] },
   dialects: { type: [{ type: String }], validate: (v) => every(v, (dialect) => Dialects[dialect].value), default: [] },
   pronunciation: { type: String, default: '' },
@@ -44,9 +44,14 @@ const dialectSchema = new Schema({
 export const wordSuggestionSchema = new Schema(
   {
     originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
-    word: { type: String, required: true, index: true },
-    wordPronunciation: { type: String, default: '' },
-    conceptualWord: { type: String, default: '' },
+    word: {
+      type: String,
+      required: true,
+      trim: true,
+      index: true,
+    },
+    wordPronunciation: { type: String, default: '', trim: true },
+    conceptualWord: { type: String, default: '', trim: true },
     definitions: [{
       type: definitionSchema,
       validate: (definitions) => (
@@ -62,20 +67,14 @@ export const wordSuggestionSchema = new Schema(
         v.every((tag) => Object.values(WordTags).map(({ value }) => value).includes(tag))
       ),
     },
-    tenses: {
-      type: Object,
-      validate: (v) => {
-        const tenseValues = Object.values(Tense);
-        Object.keys(v).every((key) => (
-          tenseValues.find(({ value: tenseValue }) => key === tenseValue)
-        ));
-      },
-      required: false,
-      default: {},
-    },
+    tenses: Object.values(Tense)
+      .reduce((tenses, { value }) => ({
+        ...tenses,
+        [value]: { type: String, default: '', trim: true },
+      }), {}),
     pronunciation: { type: String, default: '' },
-    attributes: Object.entries(WordAttributes)
-      .reduce((finalAttributes, [, { value }]) => ({
+    attributes: Object.values(WordAttributes)
+      .reduce((finalAttributes, { value }) => ({
         ...finalAttributes,
         [value]: { type: Boolean, default: false },
       }), {}),
