@@ -11,6 +11,11 @@ import {
   Box,
   Button,
   Heading,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
   Text,
   useToast,
 } from '@chakra-ui/react';
@@ -81,7 +86,6 @@ const WordEditForm = ({
     ...WordEditFormResolver(),
   });
   watch('definitions');
-
   const [originalRecord, setOriginalRecord] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialects, setDialects] = useState(record.dialects);
@@ -230,16 +234,6 @@ const WordEditForm = ({
               watch={watch}
               onChange={handleWarningMessage}
             />
-            <TagsForm
-              errors={errors}
-              control={control}
-              record={record}
-            />
-            <FrequencyForm
-              errors={errors}
-              control={control}
-              record={record}
-            />
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
             <Controller
@@ -257,6 +251,39 @@ const WordEditForm = ({
               name="pronunciation"
               control={control}
             />
+            <TagsForm
+              errors={errors}
+              control={control}
+              record={record}
+            />
+            <FrequencyForm
+              errors={errors}
+              control={control}
+              record={record}
+            />
+          </Box>
+        </Box>
+      </Box>
+
+      <Box className="mb-10">
+        <DefinitionsForm errors={errors} control={control} record={record} />
+        {isAnyDefinitionGroupAVerb ? (
+          <TensesForm
+            record={record}
+            errors={errors}
+            control={control}
+          />
+        ) : null}
+      </Box>
+
+      <Tabs variant="enclosed" colorScheme="green">
+        <TabList>
+          <Tab>Dialects</Tab>
+          <Tab>Examples</Tab>
+          <Tab>Connected Terms</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
             <CurrentDialectsForms
               errors={errors}
               record={record}
@@ -265,38 +292,29 @@ const WordEditForm = ({
               setDialects={setDialects}
               dialects={dialects}
             />
-            <Box className="flex flex-col w-full">
+          </TabPanel>
+          <TabPanel>
+            <ExamplesForm control={control} />
+          </TabPanel>
+          <TabPanel>
+            <Box className="grid grid-flow-row grid-cols-1 lg:grid-cols-2 gap-4">
               <StemsForm
                 errors={errors}
                 control={control}
                 record={record}
               />
+              <VariationsForm control={control} />
+              {!areAllWordClassesInvalidForRelatedTerms.length || !areAllWordClassesInvalidForRelatedTerms ? (
+                <RelatedTermsForm
+                  errors={errors}
+                  control={control}
+                  record={record}
+                />
+              ) : null}
             </Box>
-          </Box>
-        </Box>
-      </Box>
-      <DefinitionsForm errors={errors} control={control} record={record} />
-      {isAnyDefinitionGroupAVerb ? (
-        <TensesForm
-          record={record}
-          errors={errors}
-          control={control}
-        />
-      ) : null}
-      <ExamplesForm control={control} />
-      <Box className={'flex '
-        + `${!areAllWordClassesInvalidForRelatedTerms ? 'xl:flex-row xl:space-x-3 lg:justify-between' : ''} `
-        + 'flex-col'}
-      >
-        <VariationsForm control={control} />
-        {!areAllWordClassesInvalidForRelatedTerms.length || !areAllWordClassesInvalidForRelatedTerms ? (
-          <RelatedTermsForm
-            errors={errors}
-            control={control}
-            record={record}
-          />
-        ) : null}
-      </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
       {/*
         * Must use record.dialects in order for all dialects to render on first pain
         * in order for react-hook-form to initialize all their values in the form.

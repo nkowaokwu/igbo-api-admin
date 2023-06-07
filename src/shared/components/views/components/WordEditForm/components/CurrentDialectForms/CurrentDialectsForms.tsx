@@ -17,9 +17,25 @@ const CurrentDialectsForms = ({
     <Box className="flex flex-row justify-between items-center">
       <FormHeader
         title="Dialectal Variations"
-        subtitle="Scroll to the bottom of this section to add a new dialectal variation 👇🏾"
         tooltip="These are the dialectal (sound) variations with the current word."
       />
+      <Button
+        onClick={() => {
+          setDialects([
+            ...dialects,
+            {
+              word: 'New dialectal variation',
+              dialects: [],
+              variations: [],
+              pronunciation: '',
+            },
+          ]);
+        }}
+        colorScheme="green"
+        leftIcon={<AddIcon color="white" boxSize={5} />}
+      >
+        Add Dialectal Variation
+      </Button>
     </Box>
     <Box className="my-4">
       <Box
@@ -44,24 +60,6 @@ const CurrentDialectsForms = ({
           <p className="error">{errors.dialects.message}</p>
         ) : null}
       </Box>
-      <Button
-        onClick={() => {
-          setDialects([
-            ...dialects,
-            {
-              word: 'New dialectal variation',
-              dialects: [],
-              variations: [],
-              pronunciation: '',
-            },
-          ]);
-        }}
-        width="full"
-        colorScheme="green"
-        leftIcon={<AddIcon color="white" boxSize={5} />}
-      >
-        Add Dialectal Variation
-      </Button>
     </Box>
   </Box>
 );

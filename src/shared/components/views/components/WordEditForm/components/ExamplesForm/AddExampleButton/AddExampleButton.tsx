@@ -10,7 +10,6 @@ const AddExampleButton = (
 ): ReactElement => (
   <Box className="w-full flex flex-row justify-end" my={6}>
     <Button
-      width="full"
       colorScheme="green"
       aria-label="Add Example"
       onClick={append}

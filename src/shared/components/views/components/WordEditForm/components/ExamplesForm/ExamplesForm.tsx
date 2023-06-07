@@ -23,11 +23,12 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
 
   return (
     <>
-      <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
+      <Box className="flex flex-row justify-between items-center">
         <FormHeader
           title="Examples"
           tooltip="Example sentences should ideally in Standard Igbo."
         />
+        <AddExampleButton append={append} />
       </Box>
       <Box className="flex items-center my-5 w-full justify-between">
         <Accordion defaultIndex={[0]} allowMultiple className="w-full">
@@ -59,7 +60,6 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
           </AccordionItem>
         </Accordion>
       </Box>
-      <AddExampleButton append={append} />
     </>
   );
 };
