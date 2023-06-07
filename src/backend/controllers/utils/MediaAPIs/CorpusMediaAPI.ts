@@ -1,6 +1,8 @@
 import removeAccents from 'src/backend/utils/removeAccents';
 import { isAWSProduction, isCypress } from 'src/backend/config';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
+import { CopyObjectCommand, DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import initializeAPI from './initializeAPI';
 
 const {
@@ -31,10 +33,14 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
     ACL: 'public-read',
     ContentEncoding: 'base64',
     ContentType: `${mediaPrefix}/${extension}`,
+    Bucket: bucket,
   };
 
-  const { Location } = await s3.upload(params).promise();
-  return Location;
+  const command = new PutObjectCommand(params);
+  await s3.send(command);
+
+  const createdMediaUri = `${uriPath}/${mediaId}.mp3`;
+  return createdMediaUri;
 };
 
 /* Takes an old and new media id and copies it (copies) */
@@ -55,9 +61,12 @@ export const copyMedia = async (
       ACL: 'public-read',
       CopySource: `${bucket}/${mediaPath}/${oldMediaId}`,
       MetadataDirective: 'REPLACE',
+      Bucket: bucket,
     };
 
-    await s3.copyObject(copyParams).promise();
+    const command = new CopyObjectCommand(copyParams);
+    await s3.send(command);
+
     const copiedMediaUri = `${uriPath}/${newMediaId}`;
     return copiedMediaUri;
   } catch (err) {
@@ -82,9 +91,11 @@ export const deleteMedia = async (id: string): Promise<any> => {
     const params = {
       ...baseParams,
       Key: `${mediaPath}/${mediaId}`,
+      Bucket: bucket,
     };
 
-    return await s3.deleteObject(params).promise();
+    const command = new DeleteObjectCommand(params);
+    return await s3.send(command);
   } catch (err) {
     throw new Error(`Error occurred while deleting media: ${err.message} with id ${id}`);
   }
@@ -138,8 +149,9 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
     ContentType: fileType,
     ACL: 'public-read',
   };
-  const signedRequest = s3.getSignedUrl('putObject', params);
+
+  const signedUrl = await getSignedUrl(s3, new PutObjectCommand(params));
   const mediaUrl = `${uriPath}/${id}`;
-  const response = { signedRequest, mediaUrl };
+  const response = { signedRequest: signedUrl, mediaUrl };
   return response;
 };

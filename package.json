@@ -70,6 +70,8 @@
     ]
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.338.0",
+    "@aws-sdk/s3-request-presigner": "^3.338.0",
     "@chakra-ui/icons": "^1.0.13",
     "@chakra-ui/react": "^1.6.1",
     "@emotion/react": "^11",
