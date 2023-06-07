@@ -129,16 +129,16 @@ const adminRoutes = (permissions) => hasAdminPermissions(permissions, [
     list: DataDump,
     icon: () => <>🏋🏾‍♂️</>,
   },
+]) || [];
+
+const transcriberRoutes = (permissions) => hasAtLeastTranscriberPermissions(permissions, [
   {
     name: 'leaderboard',
     key: 'leaderboard',
     options: { label: 'Leaderboard' },
     list: Leaderboard,
-    icon: () => <>🥇</>,
+    icon: () => <>🏆</>,
   },
-]) || [];
-
-const transcriberRoutes = (permissions) => hasAtLeastTranscriberPermissions(permissions, [
   {
     name: 'igboSoundbox',
     key: 'igboSoundbox',

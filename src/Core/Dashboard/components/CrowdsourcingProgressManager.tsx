@@ -1,5 +1,12 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { getAuth } from 'firebase/auth';
+import { first } from 'lodash';
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+} from '@chakra-ui/react';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 
 type CrowdsourcingOption = {
@@ -36,53 +43,102 @@ const handleNavigation = ({
   hash: string,
   state?: IgboSoundboxViews,
 }) => {
-  window.location.href = `${window.location.origin}/?igboSoundboxView=${state}${hash}`;
+  const handledState = state ? `?igboSoundboxView=${state}` : '';
+  window.location.href = `${window.location.origin}/${handledState}${hash}`;
 };
 
-const CrowdsourcingProgressManager = (): ReactElement => (
-  <Box className="flex flex-col justify-start items-center p-3 space-y-4">
-    <Box className="flex flex-col justify-center items-center space-y-2">
-      <Heading fontFamily="sans-serif" textAlign="center" fontSize="xl">
-        Kedụ ụdị enyemaaka ị chọrọ inye anyị?
-      </Heading>
-      <Text fontSize="xs" fontFamily="Silka" fontStyle="italic">
-        What would you like to help with?
-      </Text>
-    </Box>
-    <Box className="w-full lg:w-10/12 grid grid-flow-row grid-cols-2 gap-1">
-      {crowdsourcingOptions.map(({
-        icon,
-        title,
-        hash,
-        state,
-      }) => (
-        <Box
-          cursor="pointer"
-          _hover={{
-            background: 'white',
-            color: 'teal.500',
-          }}
-          borderColor="gray.300"
-          borderWidth="1px"
-          borderRadius="md"
-          className="flex flex-col justify-center"
-          minHeight="175px"
-          textAlign="center"
-          onClick={() => handleNavigation({ hash, state })}
-        >
-          <Text fontSize="6xl">{icon}</Text>
-          <Text
-            color="gray.800"
-            fontSize="md"
-            fontWeight="bold"
-            fontFamily="Silka"
+const auth = getAuth();
+const CrowdsourcingProgressManager = (): ReactElement => {
+  const { currentUser } = auth;
+  return (
+    <Box
+      className="flex flex-col justify-start items-center p-3 space-y-4 relative gradient-background"
+      borderTopLeftRadius="lg"
+    >
+      <Box className="flex flex-col items-center space-y-2">
+        <Text fontFamily="heading" fontWeight="bold" color="gray.700">
+          {`Ndeewo, ${first((currentUser?.displayName || '').split(' '))}`}
+        </Text>
+        <Heading as="h1" fontFamily="sans-serif" textAlign="center" fontSize="xl">
+          Kedụ ụdị enyemaaka ị chọrọ inye anyị?
+        </Heading>
+      </Box>
+      <Box className="w-full flex flex-col justify-start items-start space-y-4">
+        <Box className="w-full flex flex-row justify-start items-center">
+          <Button
+            className="flex flex-row justify-start items-center relative l-0 b-0 space-x-2"
+            borderRadius="full"
+            textAlign="center"
+            height="16"
+            onClick={() => handleNavigation({ hash: '#/leaderboard' })}
+            backgroundColor="white"
+            boxShadow="sm"
+            _hover={{
+              backgroundColor: 'green.100',
+            }}
+            _active={{
+              backgroundColor: 'green.100',
+            }}
+            _focus={{
+              backgroundColor: 'green.100',
+            }}
+
           >
-            {title}
-          </Text>
+            <Text fontSize="3xl">🏆</Text>
+            <Text
+              color="gray.800"
+              fontSize="md"
+              fontWeight="bold"
+              fontFamily="Silka"
+            >
+              Leaderboard
+            </Text>
+          </Button>
         </Box>
-      ))}
+        <Heading as="h2" fontSize="xl">Data Entry Options</Heading>
+        <Box className="w-full flex flex-row flex-wrap justify-center items-center gap-4">
+          {crowdsourcingOptions.map(({
+            icon,
+            title,
+            hash,
+            state,
+          }) => (
+            <Button
+              cursor="pointer"
+              borderRadius="xl"
+              backgroundColor="white"
+              className="flex flex-col justify-center"
+              boxShadow="lg"
+              height={['200px', '225px']}
+              width={['170px', '200px']}
+              textAlign="center"
+              onClick={() => handleNavigation({ hash, state })}
+              _hover={{
+                background: 'green.100',
+              }}
+              _active={{
+                background: 'green.100',
+              }}
+              _focus={{
+                background: 'green.100',
+              }}
+            >
+              <Text fontSize={['3xl', '6xl']}>{icon}</Text>
+              <Text
+                color="gray.800"
+                fontSize="md"
+                fontWeight="bold"
+                fontFamily="Silka"
+                whiteSpace="break-spaces"
+              >
+                {title}
+              </Text>
+            </Button>
+          ))}
+        </Box>
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};
 
 export default CrowdsourcingProgressManager;

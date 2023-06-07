@@ -325,7 +325,7 @@ input#word, input#igbo {
 }
 
 .gradient-background {
-	background: linear-gradient(-45deg, #E5AEFF35, #FFFFFF35, #FFF7AE35, #FFFFFF35, #FFB3AE35, #FFFFFF35, #AEF5FF35);
+	background: linear-gradient(-45deg, #bcf5e435, #ddf9ff35, #ffeaae35, #71ffd535, #8fff004a, #4af2ac8f, #6ceeff35);
 	background-size: 400% 400%;
 	animation: gradient 15s ease infinite;
 	min-height: 100vh;
