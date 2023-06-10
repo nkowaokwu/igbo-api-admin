@@ -218,7 +218,7 @@ const Select = ({
       label: 'Combine Word Into...',
       onSelect: () => withConfirm(setAction(actionsMap.Combine)),
     }] : null),
-    {
+    resource !== Collection.NSIBIDI_CHARACTERS ? {
       value: 'requestDelete',
       label: (() => (
         <span className="text-red-500">
@@ -231,7 +231,7 @@ const Select = ({
         </span>
       ))(),
       onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
-    },
+    } : null,
   ]));
 
   const pollCollectionOptions = [

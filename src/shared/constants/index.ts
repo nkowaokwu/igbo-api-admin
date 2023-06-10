@@ -1,10 +1,11 @@
+import { Example, NsibidiCharacter, Word } from 'src/backend/controllers/utils/interfaces';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 
 export const API_ROUTE = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3030'
   : `https://${window.location.host}`;
 
-export const DEFAULT_WORD_RECORD = {
+export const DEFAULT_WORD_RECORD: Word = {
   id: '',
   author: '',
   word: '',
@@ -12,6 +13,9 @@ export const DEFAULT_WORD_RECORD = {
     wordClass: '',
     definitions: [],
     label: '',
+    igboDefinitions: [],
+    nsibidi: '',
+    nsibidiCharacters: [],
   }],
   dialects: [],
   examples: [],
@@ -20,20 +24,21 @@ export const DEFAULT_WORD_RECORD = {
   denials: [],
   details: '',
   merged: '',
+  // @ts-expect-error
   attributes: Object.values(WordAttributes).reduce((finalSchema, { value }) => ({
     ...finalSchema,
     [value]: false,
   }), {}),
   accented: '',
   pronunciation: '',
-  stems: '',
+  stems: [],
   originalWordId: '',
   editorsNotes: '',
   userComments: '',
-  updatedAt: '',
+  updatedAt: new Date(),
 };
 
-export const DEFAULT_EXAMPLE_RECORD = {
+export const DEFAULT_EXAMPLE_RECORD: Example = {
   id: '',
   author: '',
   igbo: '',
@@ -51,5 +56,13 @@ export const DEFAULT_EXAMPLE_RECORD = {
   originalExampleId: '',
   editorsNotes: '',
   userComments: '',
-  updatedAt: '',
+  updatedAt: new Date(),
+};
+
+export const DEFAULT_NSIBIDI_CHARACTER_RECORD: NsibidiCharacter = {
+  id: '',
+  nsibidi: '',
+  pronunciation: '',
+  definitions: [],
+  wordClass: '',
 };

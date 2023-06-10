@@ -27,14 +27,18 @@ export const determineCreateSuggestionRedirection = async (
       ? Collection.POLLS
       : resource === Collection.CORPORA
         ? Collection.CORPUS_SUGGESTIONS
-        : Collection.EXAMPLE_SUGGESTIONS;
+        : resource === Collection.NSIBIDI_CHARACTERS
+          ? Collection.NSIBIDI_CHARACTERS
+          : Collection.EXAMPLE_SUGGESTIONS;
   const prePopulateRecord = {
     ...record,
     ...(resource === Collection.WORDS
       ? { originalWordId: record.id }
       : resource === Collection.EXAMPLES
         ? { originalExampleId: record.id }
-        : { originalCorpusId: record.id }),
+        : resource === Collection.NSIBIDI_CHARACTERS
+          ? { id: record.id }
+          : { originalCorpusId: record.id }),
   };
 
   /**
@@ -58,15 +62,19 @@ export const determineCreateSuggestionRedirection = async (
     ? getAssociatedWordSuggestions(record.id)
     : suggestionType === Collection.POLLS
       ? getAssociatedWordSuggestionByTwitterId(record?.twitterPollId)
-      : getAssociatedExampleSuggestions(record.id)
+      : suggestionType === Collection.NSIBIDI_CHARACTERS
+        ? []
+        : getAssociatedExampleSuggestions(record.id)
   );
   const finalResource = suggestionType === Collection.WORD_SUGGESTIONS || suggestionType === Collection.POLLS
     ? Collection.WORD_SUGGESTIONS
     : suggestionType === Collection.CORPUS_SUGGESTIONS
       ? Collection.CORPUS_SUGGESTIONS
-      : Collection.EXAMPLE_SUGGESTIONS;
-  const suggestionId = associatedSuggestions[0]?.id;
-  const isPreExistingSuggestion = !!suggestionId;
+      : suggestionType === Collection.NSIBIDI_CHARACTERS
+        ? Collection.NSIBIDI_CHARACTERS
+        : Collection.EXAMPLE_SUGGESTIONS;
+  const suggestionId = associatedSuggestions[0]?.id || (resource === Collection.NSIBIDI_CHARACTERS && record.id);
+  const isPreExistingSuggestion = !!suggestionId || (record.id && resource === Collection.NSIBIDI_CHARACTERS);
 
   const redirectLink = isPreExistingSuggestion
     ? `/${finalResource}/${suggestionId}/edit`

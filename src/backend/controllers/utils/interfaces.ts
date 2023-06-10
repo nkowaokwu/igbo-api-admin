@@ -78,6 +78,7 @@ export interface WordDialect {
 export interface DefinitionSchema {
   wordClass: string | WordDialect,
   definitions: string[],
+  label: string,
   igboDefinitions: { igbo: string, nsibidi: string }[],
   nsibidi: string,
   nsibidiCharacters: (Types.ObjectId | string)[],
@@ -211,7 +212,8 @@ export interface NsibidiCharacter {
   id: Types.ObjectId | string,
   nsibidi: string,
   definitions: { text: string }[],
-  pronunciations: { text: string }[],
+  pronunciation: string,
+  wordClass: string,
 };
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {

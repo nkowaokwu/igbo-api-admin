@@ -37,7 +37,7 @@ describe('Corpus Show', () => {
         initialState={{ admin: { resources: { corpora: { data: {} } } } }}
         dataProvider={dataProvider}
       >
-        <CorpusShow basePath="/" resource={Collections.CORPORA} id={record.id} />
+        <CorpusShow resource={Collections.CORPORA} id={record.id} />
       </TestContext>,
     );
 
@@ -54,7 +54,7 @@ describe('Corpus Show', () => {
         initialState={{ admin: { resources: { corpusSuggestions: { data: {} } } } }}
         dataProvider={dataProvider}
       >
-        <CorpusShow basePath="/" resource={Collections.CORPUS_SUGGESTIONS} id={record.id} />
+        <CorpusShow resource={Collections.CORPUS_SUGGESTIONS} id={record.id} />
       </TestContext>,
     );
 

@@ -19,7 +19,7 @@ const populateList = (items = [], source) => {
       ) : isDefinitions ? (
         <>
           <Text className="italic text-gray-700">
-            {get(WordClass[item.wordClass], 'label') || '[UPDATE PART OF SPEECH]'}
+            {get(item, 'text') || get(WordClass[item.wordClass], 'label') || '[UPDATE PART OF SPEECH]'}
             {get(item, 'nsibidi') ? (
               <Tooltip label={get(item, 'nsibidi')}>
                 <chakra.span className="akagu not-italic cursor-default" ml={3}>{get(item, 'nsibidi')}</chakra.span>
@@ -31,7 +31,7 @@ const populateList = (items = [], source) => {
           ))}
         </>
       ) : (
-        truncate(item, { length: 120 })
+        truncate(item?.text || item, { length: 120 })
       )}
     </li>
   ));
