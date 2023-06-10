@@ -1,4 +1,5 @@
 import { Response, NextFunction } from 'express';
+import { assign } from 'lodash';
 import { packageResponse, handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 import { nsibidiCharacterSchema } from '../models/NsibidiCharacter';
@@ -14,6 +15,8 @@ export const getNsibidiCharacters = (
     const {
       searchWord,
       mongooseConnection,
+      skip,
+      limit,
       ...rest
     } = handleQueries(req);
 
@@ -27,18 +30,23 @@ export const getNsibidiCharacters = (
     };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
-    return NsibidiCharacter.find(query).then((nsibidiCharacters: Interfaces.NsibidiCharacter[]) => (
-      packageResponse({
-        res,
-        docs: nsibidiCharacters,
-        model: NsibidiCharacter,
-        query,
-        ...rest,
-      })
-    )).catch((err) => {
-      console.log(err);
-      throw new Error('An error has occurred while returning nsibidi characters, double check your provided data');
-    });
+    return NsibidiCharacter
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .then((nsibidiCharacters: Interfaces.NsibidiCharacter[]) => (
+        packageResponse({
+          res,
+          docs: nsibidiCharacters,
+          model: NsibidiCharacter,
+          query,
+          ...rest,
+        })
+      ))
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning Nsịbịdị characters, double check your provided data');
+      });
   } catch (err) {
     return next(err);
   }
@@ -59,4 +67,42 @@ export const getNsibidiCharacter = async (
   } catch (err) {
     return next(err);
   }
+};
+
+/* Creates a new Nsibidi character */
+export const postNsibidiCharacter = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { mongooseConnection, body } = req;
+    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+    const nsibidiCharacter = new NsibidiCharacter(body);
+    const savedNsibidiCharacter = await nsibidiCharacter.save();
+    return res.send(savedNsibidiCharacter);
+  } catch (err) {
+    return next(err);
+  };
+};
+
+/* Updates a single Nsibidi character */
+export const putNsibidiCharacter = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { mongooseConnection, params: { id }, body } = req;
+    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+    const nsibidiCharacter = await NsibidiCharacter.findById(id);
+    const updatedNsibidiCharacter = assign(nsibidiCharacter, body);
+    Object.entries(body).forEach(([key, value]) => {
+      updatedNsibidiCharacter[key] = value;
+    });
+    const savedNsibidiCharacter = await updatedNsibidiCharacter.save();
+    return res.send(savedNsibidiCharacter);
+  } catch (err) {
+    return next(err);
+  };
 };
