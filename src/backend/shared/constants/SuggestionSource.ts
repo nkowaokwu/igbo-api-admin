@@ -1,4 +1,7 @@
-export default {
-  INTERNAL: 'internal',
-  COMMUNITY: 'community',
+enum SuggestionSource {
+  INTERNAL = 'internal',
+  COMMUNITY = 'community',
+  IGBO_SPEECH = 'igbo_speech',
 };
+
+export default SuggestionSource;
