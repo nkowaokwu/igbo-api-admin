@@ -28,7 +28,12 @@ import {
   approveExampleSuggestion,
   denyExampleSuggestion,
 } from 'src/backend/controllers/exampleSuggestions';
-import { getNsibidiCharacters, getNsibidiCharacter } from 'src/backend/controllers/nsibidiCharacters';
+import {
+  getNsibidiCharacters,
+  getNsibidiCharacter,
+  postNsibidiCharacter,
+  putNsibidiCharacter,
+} from 'src/backend/controllers/nsibidiCharacters';
 import {
   getStats,
   getUserStats,
@@ -46,6 +51,7 @@ import validateWordMerge from 'src/backend/middleware/validateWordMerge';
 import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
 import validateCorpusMerge from 'src/backend/middleware/validateCorpusMerge';
 import validateApprovals from 'src/backend/middleware/validateApprovals';
+import validateNsibidiCharacterBody from 'src/backend/middleware/validateNsibidiCharacterBody';
 import cacheControl from 'src/backend/middleware/cacheControl';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
 import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
@@ -129,6 +135,19 @@ editorRouter.delete(
 
 editorRouter.get('/nsibidiCharacters', getNsibidiCharacters);
 editorRouter.get('/nsibidiCharacters/:id', validId, getNsibidiCharacter);
+editorRouter.post(
+  '/nsibidiCharacters',
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validateNsibidiCharacterBody,
+  postNsibidiCharacter,
+);
+editorRouter.put(
+  '/nsibidiCharacters/:id',
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
+  validateNsibidiCharacterBody,
+  putNsibidiCharacter,
+);
 
 editorRouter.delete(
   '/corpusSuggestions/:id',

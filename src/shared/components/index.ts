@@ -11,9 +11,15 @@ import {
   CorpusSuggestionCreate,
   ExampleSuggestionCreate,
   WordSuggestionCreate,
+  NsibidiCharacterCreate,
   PollsCreate,
 } from './views/creates';
-import { CorpusSuggestionEdit, ExampleSuggestionEdit, WordSuggestionEdit } from './views/edits';
+import {
+  CorpusSuggestionEdit,
+  ExampleSuggestionEdit,
+  NsibidiCharacterEdit,
+  WordSuggestionEdit,
+} from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
 import IdField from './IdField';
@@ -27,6 +33,7 @@ import LabelStudioReact from './LabelStudioReact';
 import {
   CorpusShow,
   ExampleShow,
+  NsibidiCharacterShow,
   UserShow,
   WordShow,
 } from './views/shows';
@@ -48,10 +55,12 @@ export {
   StandardIgboPreview,
   CorpusSuggestionCreate,
   ExampleSuggestionCreate,
+  NsibidiCharacterCreate,
   WordSuggestionCreate,
   PollsCreate,
   CorpusSuggestionEdit,
   ExampleSuggestionEdit,
+  NsibidiCharacterEdit,
   WordSuggestionEdit,
   Filter,
   ArrayPreview,
@@ -63,6 +72,7 @@ export {
   LabelStudioReact,
   CorpusShow,
   ExampleShow,
+  NsibidiCharacterShow,
   UserShow,
   WordShow,
   NewLineText,

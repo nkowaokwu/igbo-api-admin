@@ -53,9 +53,11 @@ const TestContext = ({
   isListView,
   record,
   index,
+  basePath = '/',
   ...rest
 } : {
   view?: Views,
+  basePath?: string,
   resource?: Collections,
   save?: () => void,
   children: JSX.Element | JSX.Element[],
@@ -103,6 +105,7 @@ const TestContext = ({
               // TODO: useFieldArray for dialects
               index,
               setIsDirty,
+              basePath,
               ...rest,
               ...child.props,
             },

@@ -8,7 +8,6 @@ const withLastRoute = (Component: (value: any) => ReactElement) => (props: any):
   const permissions = usePermissions();
   /* Skips saving the last route if the user is a transcriber */
   /* This helps prevents transcribers getting stuck on unauthed routes */
-  // @ts-expect-error permissions
   const skipSavingLastRoute = hasTranscriberPermissions(permissions, true) || false;
   useEffect(() => {
     if (window.location.hash !== LOGIN_HASH && !skipSavingLastRoute) {

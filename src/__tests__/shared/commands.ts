@@ -258,6 +258,15 @@ export const suggestNewCorpus = (data: any, options = { token: '', cleanData: tr
     .send(options?.cleanData ? removePayloadFields(data) : data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );
+export const suggestNewNsibidiCharacter = (
+  data: any,
+  options: { token: string, cleanData?: boolean } = { token: '', cleanData: true },
+): Request => (
+  chaiServer
+    .post('/nsibidiCharacters')
+    .send(options?.cleanData ? removePayloadFields(data) : data)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
 
 export const updateWordSuggestion = (
   data: any,
@@ -279,6 +288,13 @@ export const updateExampleSuggestion = (data: any, options = { token: '' }): Req
 export const updateCorpusSuggestion = (data: any, options = { token: '' }): Request => (
   chaiServer
     .put(`/corpusSuggestions/${data.id}`)
+    .send(removePayloadFields(data))
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+);
+
+export const updateNsibidiCharacter = (data: any, options = { token: '' }): Request => (
+  chaiServer
+    .put(`/nsibidiCharacters/${data.id}`)
     .send(removePayloadFields(data))
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
 );

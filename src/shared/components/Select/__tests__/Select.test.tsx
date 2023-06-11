@@ -240,5 +240,20 @@ describe('Editor\'s Actions', () => {
       await findByText('Delete');
       await findByText('Copy Document URL');
     });
+
+    it('hide delete option for nsibidi characters', async () => {
+      const { queryByText, findByText } = render(
+        <TestContext>
+          <Select
+            permissions={{ role: UserRoles.MERGER }}
+            resource={Collections.NSIBIDI_CHARACTERS}
+          />
+        </TestContext>,
+      );
+      await findByText('View');
+      await findByText('Suggest New Edit');
+      expect(await queryByText(/Request to Delete/)).toBeNull();
+      await findByText('Copy Document URL');
+    });
   });
 });

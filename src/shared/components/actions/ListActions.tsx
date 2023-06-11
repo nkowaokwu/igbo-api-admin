@@ -337,9 +337,14 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           ) : null}
         </Box>
-        {isSuggestionResource || (isPollResource && hasAdminOrMergerPermissions(permissions, true)) ? (
+        {
+        (isSuggestionResource
+        || (isPollResource && hasAdminOrMergerPermissions(permissions, true))
+        || resource === Collections.NSIBIDI_CHARACTERS
+        ) ? (
           <CreateButton basePath={basePath} />
-        ) : null}
+          ) : null
+        }
       </Box>
     </TopToolbar>
   );

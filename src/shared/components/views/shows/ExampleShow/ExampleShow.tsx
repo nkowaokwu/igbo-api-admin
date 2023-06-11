@@ -60,7 +60,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     'userComments',
     'editorsNotes',
     'originalWordId',
-    'id',
     'updatedAt',
     'stems',
     'normalized',

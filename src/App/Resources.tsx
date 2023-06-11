@@ -19,6 +19,10 @@ import ExampleSuggestionList from 'src/Core/Collections/ExampleSuggestions/Examp
 import ExampleSuggestionEdit from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionEdit';
 import ExampleSuggestionCreate from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionCreate';
 import ExampleSuggestionShow from 'src/Core/Collections/ExampleSuggestions/ExampleSuggestionShow';
+import NsibidiCharacterList from 'src/Core/Collections/NsibidiCharacters/NsibidiCharacterList';
+import NsibidiCharacterEdit from 'src/Core/Collections/NsibidiCharacters/NsibidiCharacterEdit';
+import NsibidiCharacterCreate from 'src/Core/Collections/NsibidiCharacters/NsibidiCharacterCreate';
+import NsibidiCharacterShow from 'src/Core/Collections/NsibidiCharacters/NsibidiCharacterShow';
 import CorpusSuggestionList from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionList';
 import CorpusSuggestionEdit from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionEdit';
 import CorpusSuggestionCreate from 'src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate';
@@ -57,6 +61,16 @@ const editorRoutes = (permissions) => hasEditorPermissions(permissions, [
     list: ExampleList,
     show: ExampleShow,
     icon: () => <>📘</>,
+  },
+  {
+    name: 'nsibidiCharacters',
+    key: 'nsibidiCharacters',
+    options: { label: 'Nsịbịdị Characters' },
+    list: withLastRoute(NsibidiCharacterList),
+    edit: withLastRoute(NsibidiCharacterEdit),
+    create: withLastRoute(NsibidiCharacterCreate),
+    show: withLastRoute(NsibidiCharacterShow),
+    icon: () => <>〒</>,
   },
   {
     name: 'corpora',

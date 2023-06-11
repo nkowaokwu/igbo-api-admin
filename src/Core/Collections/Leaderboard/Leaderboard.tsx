@@ -73,7 +73,7 @@ const BottomCardRanking = ({
     position="fixed"
     bottom={0}
     left={0}
-    className="w-full h-18 p-2"
+    className="w-full h-18 p-2 bg-white"
     boxShadow="0px -2px 5px var(--chakra-colors-gray-300)"
   >
     <Box className="flex flex-row space-x-3 items-center">

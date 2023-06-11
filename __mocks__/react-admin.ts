@@ -27,6 +27,7 @@ export const {
   useRedirect,
   useRefresh,
   useShowController,
+  useCreateController,
   useGetOne,
   usePermissions,
 } = ReactAdmin;

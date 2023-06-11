@@ -139,6 +139,13 @@ export const bulkUploadExampleSuggestionData = {
   type: SentenceType.DATA_COLLECTION,
 };
 
+export const nsibidiCharacterData = {
+  nsibidi: 'nsibidi',
+  pronunciation: 'pronunciation',
+  wordClass: WordClass.ADJ.nsibidiValue,
+  definitions: [{ text: 'first definition' }],
+};
+
 export const exampleId = new ObjectId('5f864d7401203866b6546dd3');
 export const updatedExampleSuggestionData = {
   igbo: 'updated igbo',
