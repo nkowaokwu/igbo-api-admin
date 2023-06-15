@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { UserMenu } from 'react-admin';
+import { UserMenu as ReactAdminUserMenu } from 'react-admin';
 import { Box, Button, ButtonProps } from '@chakra-ui/react';
 import { BUG_REPORT_URL, CROWDSOURCING_SLACK_CHANNEL, FEATURE_REQUEST_FORM_URL } from 'src/Core/constants';
 
@@ -24,12 +24,12 @@ const ConfigurationMenu = React.forwardRef(
   )
 );
 
-const MyUserMenu = (props: any): ReactElement => (
-  <UserMenu {...props}>
+const UserMenu = (props: any): ReactElement => (
+  <ReactAdminUserMenu {...props}>
     <Box className="flex flex-col space-y-1">
       <ConfigurationMenu
         href={CROWDSOURCING_SLACK_CHANNEL}
-        primaryText="Contact us"
+        primaryText="Contact the team"
         leftIcon={(() => (
           <>📨</>
         ))()}
@@ -49,7 +49,7 @@ const MyUserMenu = (props: any): ReactElement => (
         ))()}
       />
     </Box>
-  </UserMenu>
+  </ReactAdminUserMenu>
 );
 
-export default MyUserMenu;
+export default UserMenu;

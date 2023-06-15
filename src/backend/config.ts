@@ -11,14 +11,12 @@ export const isDevelopment = config?.runtime?.env === 'development' || isTesting
 export const isAWSProduction = isProduction;
 
 // Igbo API
-export const IGBO_API_ROOT = !isTesting && isProduction
-  ? 'https://www.igboapi.com/api/v1'
-  : 'http://localhost:8080/api/v1';
+export const IGBO_API_ROOT =
+  !isTesting && isProduction ? 'https://www.igboapi.com/api/v1' : 'http://localhost:8080/api/v1';
 
 // Igbo API Editor Platform
-export const IGBO_API_EDITOR_PLATFORM_ROOT = !isTesting && isProduction
-  ? 'https://editor.igboapi.com'
-  : 'http://127.0.0.1:3030';
+export const IGBO_API_EDITOR_PLATFORM_ROOT =
+  !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://127.0.0.1:3030';
 
 // SendGrid API
 export const SENDGRID_API_KEY = config?.sendgrid?.api_key;
@@ -46,7 +44,7 @@ export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
 // Database
 const DB_NAME = 'igbo_api';
 const TEST_DB_NAME = 'test_igbo_api';
-export const MONGO_HOST = 'localhost'; // Connects to MongoDB Docker container
+export const MONGO_HOST = '127.0.0.1'; // Connects to MongoDB Docker container
 export const MONGO_ROOT = `mongodb://${MONGO_HOST}:27017`;
 export const TEST_MONGO_URI = `${MONGO_ROOT}/${TEST_DB_NAME}`;
 export const LOCAL_MONGO_URI = `${MONGO_ROOT}/${DB_NAME}`;
@@ -66,9 +64,8 @@ export const CORS_CONFIG = {
 };
 
 /* Editor guides */
-export const IGBO_API_VOLUNTEER_HOME_BASE = (
-  'https://www.notion.so/Igbo-API-Volunteer-Home-Base-7e54a6f2603c402bbd3ed109eaf4ff58'
-);
+export const IGBO_API_VOLUNTEER_HOME_BASE =
+  'https://www.notion.so/Igbo-API-Volunteer-Home-Base-7e54a6f2603c402bbd3ed109eaf4ff58';
 export const WORD_CHECKLIST_URL = 'https://www.notion.so/Word-Edit-Checklist-6786e201c6ef4a1ca5f46fa9b1516552';
 
 /* This is the MAIN_KEY that grants the platform unlimited access to using the Igbo API */
@@ -76,9 +73,7 @@ export const GET_MAIN_KEY = (): string => {
   if (config?.runtime?.env === 'production') {
     return config?.env?.main_key;
   }
-  return CI || config?.runtime?.env === 'cypress' || NODE_ENV !== 'production'
-    ? 'main_key'
-    : config?.env?.main_key;
+  return CI || config?.runtime?.env === 'cypress' || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
 };
 
 // Twitter API

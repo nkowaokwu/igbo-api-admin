@@ -2,7 +2,7 @@ import React from 'react';
 import {
   hasAdminPermissions,
   hasEditorPermissions,
-  hasAtLeastTranscriberPermissions,
+  hasAtLeastCrowdsourcerPermissions,
   hasAccessToPlatformPermissions,
 } from 'src/shared/utils/permissions';
 import withLastRoute from './withLastRoute';
@@ -155,8 +155,8 @@ const adminRoutes = (permissions) =>
     },
   ]) || [];
 
-const transcriberRoutes = (permissions) =>
-  hasAtLeastTranscriberPermissions(permissions, [
+const crowdsourcerRoutes = (permissions) =>
+  hasAtLeastCrowdsourcerPermissions(permissions, [
     {
       name: 'leaderboard',
       key: 'leaderboard',
@@ -184,5 +184,5 @@ export const getResourceObjects = (permissions: any): any => [
   ...defaultRoutes(permissions),
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
-  ...transcriberRoutes(permissions),
+  ...crowdsourcerRoutes(permissions),
 ];

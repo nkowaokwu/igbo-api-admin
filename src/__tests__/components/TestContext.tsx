@@ -13,9 +13,7 @@ import Views from 'src/shared/constants/Views';
 
 configure({ testIdAttribute: 'data-test' });
 
-const mockGetUserMedia = jest.fn(async () => (
-  new Promise<void>((resolve) => resolve())
-));
+const mockGetUserMedia = jest.fn(async () => new Promise<void>((resolve) => resolve()));
 
 export const mocks = {
   Audio: {
@@ -55,23 +53,24 @@ const TestContext = ({
   index,
   basePath = '/',
   ...rest
-} : {
-  view?: Views,
-  basePath?: string,
-  resource?: Collections,
-  save?: () => void,
-  children: JSX.Element | JSX.Element[],
-  dataProvider?: any,
-  isListView?: boolean,
-  record?: Record,
-  groupIndex?: number,
-  index?: number,
-  dialects?: any[],
-  setDialects?: (value: any) => void,
+}: {
+  view?: Views;
+  basePath?: string;
+  resource?: Collections;
+  save?: () => void;
+  children: JSX.Element | JSX.Element[];
+  dataProvider?: any;
+  isListView?: boolean;
+  record?: Record;
+  groupIndex?: number;
+  index?: number;
+  dialects?: any[];
+  setDialects?: (value: any) => void;
 }): ReactElement => {
-  const nativeDataProvider = () => Promise.resolve({
-    data: {},
-  });
+  const nativeDataProvider = () =>
+    Promise.resolve({
+      data: {},
+    });
   const history = jest.fn(() => ({
     listen: jest.fn(),
   }));
@@ -86,31 +85,28 @@ const TestContext = ({
   return (
     <ReactAdminTestContext {...rest}>
       <DataProviderContext.Provider value={dataProvider || nativeDataProvider}>
-        {React.Children.map(children, (child) => (
-          React.cloneElement(
-            child,
-            {
-              control,
-              errors: {},
-              record: staticWordRecord,
-              originalWordRecord: staticWordRecord,
-              getValues: jest.fn(),
-              setValue: jest.fn(),
-              setDialects: jest.fn(),
-              // TODO: useFieldArray for dialects
-              dialects: staticWordRecord.dialects,
-              options: Object.entries(WordClass),
-              history,
-              watch,
-              // TODO: useFieldArray for dialects
-              index,
-              setIsDirty,
-              basePath,
-              ...rest,
-              ...child.props,
-            },
-          )
-        ))}
+        {React.Children.map(children, (child) =>
+          React.cloneElement(child, {
+            control,
+            errors: {},
+            record: staticWordRecord,
+            originalWordRecord: staticWordRecord,
+            getValues: jest.fn(),
+            setValue: jest.fn(),
+            setDialects: jest.fn(),
+            // TODO: useFieldArray for dialects
+            dialects: staticWordRecord.dialects,
+            options: Object.entries(WordClass),
+            history,
+            watch,
+            // TODO: useFieldArray for dialects
+            index,
+            setIsDirty,
+            basePath,
+            ...rest,
+            ...child.props,
+          })
+        )}
       </DataProviderContext.Provider>
     </ReactAdminTestContext>
   );
