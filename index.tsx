@@ -67,11 +67,13 @@ export const updateDocument = onUpdateDocument;
 export const generateMediaSignedRequest = onMediaSignedRequest;
 
 /* Runs every Monday at 6AM PST */
-export const sendEditorStatsEmail = functions.pubsub.schedule('0 6 * * 1')
+export const sendEditorStatsEmail = functions.pubsub
+  .schedule('0 6 * * 1')
   .timeZone('America/Los_Angeles')
   .onRun(sendWeeklyStats);
 
-export const sendEditorReminderEmail = functions.pubsub.schedule('0 6 */4 * *')
+export const sendEditorReminderEmail = functions.pubsub
+  .schedule('0 6 */4 * *')
   .timeZone('America/Los_Angeles')
   .onRun(onSendEditorReminderEmail);
 
@@ -79,8 +81,7 @@ export const sendEditorReminderEmail = functions.pubsub.schedule('0 6 */4 * *')
 export const calculateDashboardStats = functions
   .region('us-central1', 'europe-west3')
   .runWith({ timeoutSeconds: 540 })
-  .pubsub
-  .schedule('0,10,20,30,40,50 8-22 * * *')
+  .pubsub.schedule('0,10,20,30,40,50 8-22 * * *')
   .timeZone('Africa/Lagos')
   .onRun(onUpdateDashboardStats);
 
@@ -94,26 +95,23 @@ export const calculateDashboardStats = functions
  * If in a frontend testing or development environment, then app will
  * be assigned to the Firebase wrapped server.
  */
-export const app = process.env.NODE_ENV === 'test' ? (() => {
-  /* Export just the Express app while testing the backend */
-  const expressServer = server.listen(EXPRESS_PORT, () => {
-    // @ts-ignore
-    console.blue(`\nExpress app listening on port ${EXPRESS_PORT}`);
-  });
+export const app =
+  process.env.NODE_ENV === 'test'
+    ? (() => {
+        /* Export just the Express app while testing the backend */
+        const expressServer = server.listen(EXPRESS_PORT, () => {
+          // @ts-ignore
+          console.blue(`\nExpress app listening on port ${EXPRESS_PORT}`);
+        });
 
-  expressServer.on('error', (err) => {
-    if (err.message.startsWith('listen EADDRINUSE: address already in use')) {
-      // Tests will attempt to open new servers, this conditional handles that case
-    }
-  });
+        expressServer.on('error', (err) => {
+          if (err.message.startsWith('listen EADDRINUSE: address already in use')) {
+            // Tests will attempt to open new servers, this conditional handles that case
+          }
+        });
 
-  // @ts-expect-error
-  expressServer.clearDatabase = mongoose.connection.dropDatabase;
-  return expressServer;
-})() : (
-  functions
-    .region('us-central1', 'europe-west3')
-    .runWith({ timeoutSeconds: 540 })
-    .https
-    .onRequest(server)
-);
+        // @ts-expect-error
+        expressServer.clearDatabase = mongoose.connection.dropDatabase;
+        return expressServer;
+      })()
+    : functions.region('us-central1', 'europe-west3').runWith({ timeoutSeconds: 540 }).https.onRequest(server);

@@ -6,11 +6,9 @@ The Igbo API Editor Platform is the admin platform used by our Igbo lexicographe
 
 The platform is deployed at [https://editor.igboapi.com](https://editor.igboapi.com/)
 
-
 ### Contributing
 
-Contributions are always welcome. Please first join the Nkọwa okwu volunteer community before jumping in: [join here](https://nkowaokwu.com/volunteer) 
-
+Contributions are always welcome. Please first join the Nkọwa okwu volunteer community before jumping in: [join here](https://nkowaokwu.com/volunteer)
 
 ## Get Started
 
@@ -20,10 +18,10 @@ This is an open-source project that requires that you create your own Firebase a
 
 To run this project locally, the following tools need to be installed:
 
-* [Node.js](https://nodejs.org/en/download/)
-* [Yarn](https://classic.yarnpkg.com/en/docs/install)
-* [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
-* [Firebase](https://console.firebase.google.com/)
+- [Node.js](https://nodejs.org/en/download/)
+- [Yarn](https://classic.yarnpkg.com/en/docs/install)
+- [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
+- [Firebase](https://console.firebase.google.com/)
 
 ### Step 1: Set up the Igbo API Editor Platform
 
@@ -60,17 +58,17 @@ For local development, you will need to create your **own single** Firebase proj
 
 Navigate to [Firebase](https://console.firebase.google.com) and create a new Firebase project.
 
-Once you've created your two new projects, copy your new Firebase Project ID that can be found at  **Project Settings > General > Project ID**:
+Once you've created your two new projects, copy your new Firebase Project ID that can be found at **Project Settings > General > Project ID**:
 ![](./docs/firebase_project_id.png)
 
 Go to your [`.firebaserc`]('./.firebaserc) file in the root directory of the project,
-and replace the `igbo-api-admin` and `igbo-api-admin-staging` with  your Project ID:
+and replace the `igbo-api-admin` and `igbo-api-admin-staging` with your Project ID:
 
 ```json
 {
   "projects": {
     "default": "<project_id>",
-    "staging": "<project_id>",
+    "staging": "<project_id>"
   }
 }
 ```
@@ -80,7 +78,6 @@ and replace the `igbo-api-admin` and `igbo-api-admin-staging` with  your Project
 ### Step 3: Copy your Service Account Files
 
 Now that you have your project aliased in `.firebaserc`, we want the project to start using those projects.
-
 
 Download the service account for your Firebase project by going to **Project Settings > Service accounts > Generate new private key**
 
@@ -94,8 +91,8 @@ Once you save those files in `/functions`, you're own Igbo API Editor Platform i
 
 The backend server responsible for data business logic relies on the Igbo API to be running locally.
 
-Follow the instructions in the [Igbo API](https://github.com/ijemmao/igbo_api) and start 
-the local development server. You should be able to interact with the API at 
+Follow the instructions in the [Igbo API](https://github.com/ijemmao/igbo_api) and start
+the local development server. You should be able to interact with the API at
 [http://localhost:8080](http://localhost:8080)
 
 ### Step 5: Start the Platform's Dev Server
@@ -108,13 +105,13 @@ yarn dev
 
 You should now be able to access the editor platform at [http://localhost:3030](http://localhost:3030) 🎉
 
-**Note**: This will spin up a local version of the Firebase project `igbo-api-admin-staging` which 
+**Note**: This will spin up a local version of the Firebase project `igbo-api-admin-staging` which
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
 that any users that create accounts and log in are stored in the project real Authentication.
 
 ### Common Error
 
-If you encounter this error - ```Error: Cannot find module '/root-path/igbo-api-admin/functions/index.js'. Please verify that the package.json has a valid "main" entry``` - build the project by running:
+If you encounter this error - `Error: Cannot find module '/root-path/igbo-api-admin/functions/index.js'. Please verify that the package.json has a valid "main" entry` - build the project by running:
 
 ```bash
 yarn build:dev
@@ -163,8 +160,8 @@ cd igbo_api
 yarn dev
 ```
 
-**Note** This will spin up a local, production-style version of your Firebase project 
-which can be used for production. It's not recommended to develop in this environment, but it 
+**Note** This will spin up a local, production-style version of your Firebase project
+which can be used for production. It's not recommended to develop in this environment, but it
 is helpful to use for local testing purposes.
 
 You should now be able to access the editor platform at [http://localhost:3030](http://localhost:3030)
@@ -189,6 +186,7 @@ yarn dev
 ```
 
 ### Option 1: Cypress Open Mode
+
 If you would like to watch your Cypress tests run in browser, run:
 
 ```
@@ -196,6 +194,7 @@ yarn cypress:open
 ```
 
 ### Option 2: Cypress Headless Mode
+
 If you want your Cypress tests to run in the terminal, run:
 
 ```bash
@@ -204,7 +203,6 @@ yarn cypress:run
 
 [`http://localhost:8081`](http://localhost:8081) - The test result **Dashboard** to show all passing and failing tests
 
-
 **All tests run against a built development project, make sure that you've built your project with `yarn build:dev` when testing.**
 
 ## Jest Testing
@@ -212,16 +210,25 @@ yarn cypress:run
 This project uses [Jest](https://jestjs.io) for unit frontend and backend tests.
 
 To run both the frontend and backend tests, run:
+
 ```bash
 yarn jest
 ```
 
 To run just the frontend Jest tests, run:
+
 ```bash
 yarn jest:frontend
 ```
 
-To run jest the backend Jest tests, run:
+To run jest the backend Jest tests, first start the connection to the database:
+
+```bash
+yarn start:database
+```
+
+Then run the backend Jest tests:
+
 ```bash
 yarn jest:backend
 ```

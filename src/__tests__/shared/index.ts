@@ -12,15 +12,15 @@ import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import firebaseConfig from '../../../firebase.json'; // eslint-disable-line
 
 type AuthType = {
-  uid: string,
-  email: string,
-  displayName: string,
+  uid: string;
+  email: string;
+  displayName: string;
 };
 
 type OptionsType = {
-  isAdmin?: boolean,
-  isMerger?: boolean,
-  isEditor?: boolean,
+  isAdmin?: boolean;
+  isMerger?: boolean;
+  isEditor?: boolean;
 };
 
 export const dropMongoDBCollections = async (): Promise<void> => {
@@ -61,10 +61,10 @@ export const generateUserAuth = (options: OptionsType): AuthType => {
   const userEmail = options?.isAdmin
     ? `admin_${baseEmail}`
     : options?.isMerger
-      ? `merger_${baseEmail}`
-      : options?.isEditor
-        ? `editor_${baseEmail}`
-        : `user_${baseEmail}`;
+    ? `merger_${baseEmail}`
+    : options?.isEditor
+    ? `editor_${baseEmail}`
+    : `user_${baseEmail}`;
   const newUserAuth: AuthType = {
     uid,
     email: userEmail,

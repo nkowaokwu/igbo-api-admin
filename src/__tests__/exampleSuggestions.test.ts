@@ -1,9 +1,4 @@
-import {
-  forEach,
-  every,
-  isEqual,
-  times,
-} from 'lodash';
+import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
@@ -44,10 +39,8 @@ describe('MongoDB Example Suggestions', () => {
   /* Create a base word and exampleSuggestion document */
   beforeAll(async () => {
     await Promise.all([
-      suggestNewWord(wordSuggestionData)
-        .then((res) => createWord(res.body.id)),
-      suggestNewExample(exampleSuggestionData)
-        .then(() => {}),
+      suggestNewWord(wordSuggestionData).then((res) => createWord(res.body.id)),
+      suggestNewExample(exampleSuggestionData).then(() => {}),
     ]);
   });
   describe('/POST mongodb exampleSuggestions', () => {
@@ -87,9 +80,11 @@ describe('MongoDB Example Suggestions', () => {
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style, type }) => (
-        type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value
-      )));
+      expect(
+        res.body.every(
+          ({ style, type }) => type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value,
+        ),
+      );
     });
 
     it('should bulk upload at most 500 example suggestions with biblical type', async () => {
@@ -193,7 +188,7 @@ describe('MongoDB Example Suggestions', () => {
       expect(result.status).toEqual(400);
     });
 
-    it('should return an error because document doesn\'t exist', async () => {
+    it("should return an error because document doesn't exist", async () => {
       const res = await getExampleSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
@@ -213,6 +208,96 @@ describe('MongoDB Example Suggestions', () => {
         associatedDefinitionsSchemas: [null],
       });
       expect(res.status).toEqual(400);
+    });
+
+    it('should automatically merge exampleSuggestion', async () => {
+      const exampleSuggestionsRes = await suggestNewExample({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            audio: 'first audio',
+            speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+          },
+        ],
+      });
+      await approveExampleSuggestion(exampleSuggestionsRes.body);
+      await approveExampleSuggestion(exampleSuggestionsRes.body, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+
+      await putReviewForRandomExampleSuggestions([
+        {
+          id: exampleSuggestionsRes.body.id,
+          reviews: { [exampleSuggestionsRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
+        },
+      ]);
+      await putReviewForRandomExampleSuggestions(
+        [
+          {
+            id: exampleSuggestionsRes.body.id,
+            reviews: { [exampleSuggestionsRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
+          },
+        ],
+        { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+      );
+
+      const res = await getExampleSuggestion(exampleSuggestionsRes.body.id);
+      expect(res.status).toEqual(200);
+      expect(res.body.merged).toBeTruthy();
+      expect(res.body.mergedBy).toEqual('SYSTEM');
+    });
+
+    it('should automatically merge exampleSuggestion', async () => {
+      const data = cloneDeep(wordSuggestionWithNestedExampleSuggestionData);
+      data.examples[0].pronunciations = [
+        {
+          audio: 'first audio',
+          speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+          approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.MERGER_AUTH_TOKEN],
+          denials: [],
+          review: true,
+        },
+      ];
+      const wordSuggestionRes = await suggestNewWord(data);
+      expect(wordSuggestionRes.status).toEqual(200);
+
+      const exampleSuggestionRes = await suggestNewExample({
+        ...exampleSuggestionData,
+        igbo: 'updated igbo for test',
+        pronunciations: [{ audio: 'first audio' }],
+      });
+      await approveExampleSuggestion(exampleSuggestionRes.body);
+      await approveExampleSuggestion(exampleSuggestionRes.body, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+
+      await putReviewForRandomExampleSuggestions([
+        {
+          id: exampleSuggestionRes.body.id,
+          reviews: {
+            [exampleSuggestionRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
+          },
+        },
+      ]);
+      // Confirming the example suggestion hasn't been merged yet without enough approvals
+      const tempRes = await getExampleSuggestion(exampleSuggestionRes.body.id);
+      expect(tempRes.status).toEqual(200);
+      expect(tempRes.body.merged).toBeFalsy();
+      expect(tempRes.body.mergedBy).toBeFalsy();
+
+      await putReviewForRandomExampleSuggestions(
+        [
+          {
+            id: exampleSuggestionRes.body.id,
+            reviews: {
+              [exampleSuggestionRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
+            },
+          },
+        ],
+        { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+      );
+
+      // Confirming the example suggestion has been merged with enough approvals
+      const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
+      expect(res.status).toEqual(200);
+      expect(res.body.merged).toBeTruthy();
+      expect(res.body.mergedBy).toEqual('SYSTEM');
     });
   });
 
@@ -373,9 +458,9 @@ describe('MongoDB Example Suggestions', () => {
       expect(result.body.exampleForSuggestion).toEqual(true);
       const exampleSuggestionsRes = await getExampleSuggestions({ keyword: wordSuggestionWord });
       expect(exampleSuggestionsRes.status).toEqual(200);
-      expect(every(exampleSuggestionsRes.body, (exampleSuggestion) => (
-        exampleSuggestion.id !== nestedExampleSuggestionId
-      )));
+      expect(
+        every(exampleSuggestionsRes.body, (exampleSuggestion) => exampleSuggestion.id !== nestedExampleSuggestionId),
+      );
     });
 
     it('should throw an error for providing an invalid id', async () => {
@@ -388,15 +473,17 @@ describe('MongoDB Example Suggestions', () => {
   describe('Igbo Soundbox', () => {
     it('should save audio for five random example sentences', async () => {
       const examples = [];
-      await Promise.all(times(5, async () => {
-        const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-        examples.push(exampleRes.body);
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const exampleRes = await suggestNewExample(
+            { ...exampleSuggestionData, igbo: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+          examples.push(exampleRes.body);
+        }),
+      );
 
       const updateExamplePayload = examples.map(({ id }) => ({
         id,
@@ -404,45 +491,51 @@ describe('MongoDB Example Suggestions', () => {
       }));
       const updatedExamplesRes = await putAudioForRandomExampleSuggestions(updateExamplePayload);
       expect(updatedExamplesRes.status).toEqual(200);
-      await Promise.all(updatedExamplesRes.body.map(async (id) => {
-        const exampleSuggestionRes = await getExampleSuggestion(id);
-        expect(exampleSuggestionRes.status).toEqual(200);
-        expect(exampleSuggestionRes.body.pronunciations).toHaveLength(1);
-        expect(exampleSuggestionRes.body.pronunciations[0].audio).toContain(`${id}-`);
-        expect(exampleSuggestionRes.body.pronunciations[0].speaker).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-      }));
+      await Promise.all(
+        updatedExamplesRes.body.map(async (id) => {
+          const exampleSuggestionRes = await getExampleSuggestion(id);
+          expect(exampleSuggestionRes.status).toEqual(200);
+          expect(exampleSuggestionRes.body.pronunciations).toHaveLength(1);
+          expect(exampleSuggestionRes.body.pronunciations[0].audio).toContain(`${id}-`);
+          expect(exampleSuggestionRes.body.pronunciations[0].speaker).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+        }),
+      );
 
       // Save again but with crowdsourcer permissions
-      const crowdsourcerUpdatedExamplesRes = await putAudioForRandomExampleSuggestions(
-        updateExamplePayload,
-        { token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN },
-      );
+      const crowdsourcerUpdatedExamplesRes = await putAudioForRandomExampleSuggestions(updateExamplePayload, {
+        token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN,
+      });
       expect(crowdsourcerUpdatedExamplesRes.status).toEqual(200);
-      await Promise.all(updatedExamplesRes.body.map(async (id) => {
-        const exampleSuggestionRes = await getExampleSuggestion(id);
-        expect(exampleSuggestionRes.status).toEqual(200);
-        expect(exampleSuggestionRes.body.pronunciations).toHaveLength(2);
-        expect(exampleSuggestionRes.body.pronunciations[1].audio).toContain(`${id}-`);
-        expect(exampleSuggestionRes.body.pronunciations[1].speaker).toEqual(AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN);
-      }));
+      await Promise.all(
+        updatedExamplesRes.body.map(async (id) => {
+          const exampleSuggestionRes = await getExampleSuggestion(id);
+          expect(exampleSuggestionRes.status).toEqual(200);
+          expect(exampleSuggestionRes.body.pronunciations).toHaveLength(2);
+          expect(exampleSuggestionRes.body.pronunciations[1].audio).toContain(`${id}-`);
+          expect(exampleSuggestionRes.body.pronunciations[1].speaker).toEqual(AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN);
+        }),
+      );
     });
     // eslint-disable-next-line max-len
     it('should get five random example suggestions with no user interactions or speaker id associated with user', async () => {
-      await Promise.all(times(5, async () => {
-        const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const exampleRes = await suggestNewExample(
+            { ...exampleSuggestionData, igbo: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+        }),
+      );
       const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(5);
       res.body.forEach((exampleSuggestion) => {
         expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-        expect(exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.ADMIN_AUTH_TOKEN))
-          .toBeTruthy();
+        expect(
+          exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.ADMIN_AUTH_TOKEN),
+        ).toBeTruthy();
         expect(exampleSuggestion.approvals).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         expect(exampleSuggestion.denials).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
@@ -451,76 +544,99 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should get five more example suggestions after recording audio for five random sentences', async () => {
-      await Promise.all(times(5, async () => {
-        const exampleRes = await suggestNewExample(
-          {
-            ...exampleSuggestionData,
-            pronunciations: [
-              { audio: 'audio-id', speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
-              { audio: 'audio-id', speaker: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
-            ],
-            igbo: uuid(),
-          },
-          { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-        const res = await getRandomExampleSuggestions({ range: '[0, 4]' }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
-        expect(res.status).toEqual(200);
-        expect(res.body.length).toBeLessThanOrEqual(5);
-        res.body.forEach((exampleSuggestion) => {
-          expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.MERGER_AUTH_TOKEN);
-          expect(exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.MERGER_AUTH_TOKEN))
-            .toBeTruthy();
-          expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
-          expect(exampleSuggestion.denials.length).toBeLessThanOrEqual(1);
-        });
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const exampleRes = await suggestNewExample(
+            {
+              ...exampleSuggestionData,
+              pronunciations: [
+                { audio: 'audio-id', speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+                { audio: 'audio-id', speaker: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
+              ],
+              igbo: uuid(),
+            },
+            { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+          const res = await getRandomExampleSuggestions({ range: '[0, 4]' }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+          expect(res.status).toEqual(200);
+          expect(res.body.length).toBeLessThanOrEqual(5);
+          res.body.forEach((exampleSuggestion) => {
+            expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+            expect(
+              exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.MERGER_AUTH_TOKEN),
+            ).toBeTruthy();
+            expect(exampleSuggestion.approvals.length).toBeLessThanOrEqual(1);
+            expect(exampleSuggestion.denials.length).toBeLessThanOrEqual(1);
+          });
+        }),
+      );
     });
 
     it('should approve, deny, and skip example suggestions', async () => {
-      await Promise.all(times(5, async (index) => {
-        const exampleRes = await suggestNewExample(
-          {
-            ...exampleSuggestionData,
-            igbo: index === 0 ? 'approve' : index === 1 ? 'deny' : 'skip',
-            pronunciations: [{ audio: 'pronunciation', speaker: '' }],
-          },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-      }));
+      await Promise.all(
+        times(5, async (index) => {
+          const exampleRes = await suggestNewExample(
+            {
+              ...exampleSuggestionData,
+              igbo: index === 0 ? 'approve' : index === 1 ? 'deny' : 'skip',
+              pronunciations: [{ audio: 'pronunciation', speaker: '' }],
+            },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+        }),
+      );
       const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview();
       expect(randomExampleSuggestionsRes.status).toEqual(200);
-      const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
+      const reviewedExampleSuggestions: {
+        id: string;
+        reviews: { [key: string]: ReviewActions };
+      }[] = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
         expect(Array.isArray(pronunciations)).toBeTruthy();
         expect(pronunciations.length).toBeGreaterThanOrEqual(1);
-        const reviews = pronunciations.reduce((reviewObject, { _id }) => ({
-          ...reviewObject,
-          [_id.toString()]: index === 0 ? ReviewActions.APPROVE : index === 1 ? ReviewActions.DENY : ReviewActions.SKIP,
-        }), {});
+        const reviews = pronunciations.reduce(
+          (reviewObject, { _id }) => ({
+            ...reviewObject,
+            [_id.toString()]:
+              index === 0 ? ReviewActions.APPROVE : index === 1 ? ReviewActions.DENY : ReviewActions.SKIP,
+          }),
+          {},
+        );
         return { id, reviews };
       });
       const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
-      await Promise.all(reviewedExampleSuggestions.map(async ({ id: randomExampleSuggestionId }, index) => {
-        const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);
-        if (index === 0) {
-          expect(randomExampleSuggestion.body.pronunciations.some(({ approvals }) => (
-            approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)))).toBeTruthy();
-          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-        } else if (index === 1) {
-          expect(randomExampleSuggestion.body.pronunciations.some(({ denials }) => (
-            denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)))).toBeTruthy();
-          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-        } else {
-          expect(randomExampleSuggestion.body.pronunciations.some(({ approvals, denials }) => (
-            !approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN) && !denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN)
-          ))).toBeTruthy();
-          expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-        }
-      }));
+      await Promise.all(
+        reviewedExampleSuggestions.map(async ({ id: randomExampleSuggestionId }, index) => {
+          const randomExampleSuggestion = await getExampleSuggestion(randomExampleSuggestionId);
+          if (index === 0) {
+            expect(
+              randomExampleSuggestion.body.pronunciations.some(({ approvals }) =>
+                approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN),
+              ),
+            ).toBeTruthy();
+            expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          } else if (index === 1) {
+            expect(
+              randomExampleSuggestion.body.pronunciations.some(({ denials }) =>
+                denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN),
+              ),
+            ).toBeTruthy();
+            expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          } else {
+            expect(
+              randomExampleSuggestion.body.pronunciations.some(
+                ({ approvals, denials }) =>
+                  !approvals.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN) && !denials.includes(AUTH_TOKEN.ADMIN_AUTH_TOKEN),
+              ),
+            ).toBeTruthy();
+            expect(randomExampleSuggestion.body.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+          }
+        }),
+      );
       const newRandomExampleSuggestionsRes = await getRandomExampleSuggestions();
       expect(newRandomExampleSuggestionsRes.status).toEqual(200);
       newRandomExampleSuggestionsRes.body.forEach((newRandomExampleSuggestion) => {
