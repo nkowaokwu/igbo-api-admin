@@ -1,12 +1,6 @@
 import mongoose, { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import {
-  assign,
-  some,
-  map,
-  trim,
-  uniq,
-} from 'lodash';
+import { assign, some, map, trim, uniq } from 'lodash';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { exampleSchema } from 'src/backend/models/Example';
 import { wordSchema } from 'src/backend/models/Word';
@@ -38,18 +32,13 @@ const searchExamples = ({
   limit,
   mongooseConnection,
 }: {
-  query: RegExp | any,
-  skip: number,
-  limit: number,
-  mongooseConnection: Connection,
+  query: RegExp | any;
+  skip: number;
+  limit: number;
+  mongooseConnection: Connection;
 }) => {
   const Example = mongooseConnection.model('Example', exampleSchema);
-  return (
-    Example
-      .find(query)
-      .skip(skip)
-      .limit(limit)
-  );
+  return Example.find(query).skip(skip).limit(limit);
 };
 
 /* Returns examples from MongoDB */
@@ -59,15 +48,7 @@ export const getExamples = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const {
-      regexKeyword,
-      skip,
-      limit,
-      filters,
-      user,
-      mongooseConnection,
-      ...rest
-    } = handleQueries(req);
+    const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
     const Example = mongooseConnection.model('Example', exampleSchema);
     const regexMatch = searchExamplesRegexQuery(user.uid, regexKeyword, filters);
     const examples = await searchExamples({
@@ -89,14 +70,18 @@ export const getExamples = async (
   }
 };
 
-export const findExampleById = (id: string, mongooseConnection: Connection)
-: Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
+export const findExampleById = (
+  id: string,
+  mongooseConnection: Connection,
+): Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return Example.findById(id);
 };
 
-export const findExampleByAssociatedWordId = (id: string, mongooseConnection: Connection)
-: Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
+export const findExampleByAssociatedWordId = (
+  id: string,
+  mongooseConnection: Connection,
+): Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return Example.find({ associatedWords: { $in: [id] } });
 };
@@ -110,13 +95,12 @@ export const getExample = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
-    const foundExample = await findExampleById(id, mongooseConnection)
-      .then((example) => {
-        if (!example) {
-          throw new Error('No example exists with the provided id.');
-        }
-        return example;
-      });
+    const foundExample = await findExampleById(id, mongooseConnection).then((example) => {
+      if (!example) {
+        throw new Error('No example exists with the provided id.');
+      }
+      return example;
+    });
     return res.send(foundExample);
   } catch (err) {
     return next(err);
@@ -130,20 +114,19 @@ const mergeIntoExample = (
   mongooseConnection: Connection,
 ): Promise<Interfaces.Example> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
-  return (
-    Example.findOneAndUpdate({ _id: exampleSuggestion.originalExampleId }, exampleSuggestion.toObject())
-      .then(async (example: Interfaces.Example) => {
-        if (!example) {
-          throw new Error('Example doesn\'t exist');
-        }
-        await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
-        return example;
-      })
+  return Example.findOneAndUpdate({ _id: exampleSuggestion.originalExampleId }, exampleSuggestion.toObject()).then(
+    async (example: Interfaces.Example) => {
+      if (!example) {
+        throw new Error("Example doesn't exist");
+      }
+      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      return example;
+    },
   );
 };
 
 /* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> => (
+const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> =>
   createExample(exampleSuggestion.toObject(), mongooseConnection)
     .then(async (example: Interfaces.Example) => {
       await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
@@ -151,8 +134,7 @@ const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnec
     })
     .catch((error) => {
       throw new Error(`An error occurred while saving the new example: ${error.message}`);
-    })
-);
+    });
 
 /* Executes the logic describe the mergeExample function description */
 export const executeMergeExample = async (
@@ -225,12 +207,15 @@ export const mergeExample = async (
 
     const exampleSuggestion = await findExampleSuggestionById(data.id, mongooseConnection);
     const result: Interfaces.Example = await executeMergeExample(exampleSuggestion, user.uid, mongooseConnection);
-    await handleSendingMergedEmail({
-      ...(result.toObject ? result.toObject() : result),
-      authorEmail: exampleSuggestion.authorEmail,
-      authorId: exampleSuggestion.authorId,
-      editorsNotes: exampleSuggestion.editorsNotes,
-    }, mongooseConnection);
+    await handleSendingMergedEmail(
+      {
+        ...(result.toObject ? result.toObject() : result),
+        authorEmail: exampleSuggestion.authorEmail,
+        authorId: exampleSuggestion.authorId,
+        editorsNotes: exampleSuggestion.editorsNotes,
+      },
+      mongooseConnection,
+    );
     return res.send(result);
   } catch (err) {
     return next(err);
@@ -244,7 +229,11 @@ export const putExample = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data, params: { id }, mongooseConnection } = req;
+    const {
+      body: data,
+      params: { id },
+      mongooseConnection,
+    } = req;
 
     if (!data.igbo && !data.english) {
       return next(new Error('Required information is missing, double check your provided data'));
@@ -262,14 +251,13 @@ export const putExample = async (
       return next(new Error('Duplicates are not allows in associated words'));
     }
 
-    const savedExample = await findExampleById(id, mongooseConnection)
-      .then(async (example: Interfaces.Example) => {
-        if (!example) {
-          throw new Error('Example doesn\'t exist');
-        }
-        const updatedExample = assign(example, data);
-        return updatedExample.save();
-      });
+    const savedExample = await findExampleById(id, mongooseConnection).then(async (example: Interfaces.Example) => {
+      if (!example) {
+        throw new Error("Example doesn't exist");
+      }
+      const updatedExample = assign(example, data);
+      return updatedExample.save();
+    });
     return res.send(savedExample);
   } catch (err) {
     return next(err);
@@ -303,12 +291,14 @@ export const deleteExample = async (
     const { mongooseConnection } = req;
     const { id: exampleId } = req.params;
     const Example = mongooseConnection.model('Example', exampleSchema);
-    const example = await Example.findById(exampleId) as Interfaces.Example;
-    await Promise.all(example.pronunciations.map(async (pronunciation) => {
-      const isAudioMp3 = isPronunciationMp3(pronunciation.audio);
-      const pronunciationId = getPronunciationId(pronunciation.audio);
-      await deleteAudioPronunciation(pronunciationId, isAudioMp3);
-    }));
+    const example = (await Example.findById(exampleId)) as Interfaces.Example;
+    await Promise.all(
+      example.pronunciations.map(async (pronunciation) => {
+        const isAudioMp3 = isPronunciationMp3(pronunciation.audio);
+        const pronunciationId = getPronunciationId(pronunciation.audio);
+        await deleteAudioPronunciation(pronunciationId, isAudioMp3);
+      }),
+    );
     return res.send(true);
   } catch (err) {
     return next(err);
@@ -326,26 +316,28 @@ export const postBulkUploadExamples = async (
 
     const Example = mongooseConnection.model('Example', exampleSchema);
 
-    const result = await Promise.all(data.map(async (sentenceData: Interfaces.ExampleClientData) => {
-      const existingExample = await Example.findOne({ igbo: sentenceData.igbo });
-      if (existingExample) {
+    const result = await Promise.all(
+      data.map(async (sentenceData: Interfaces.ExampleClientData) => {
+        const existingExample = await Example.findOne({ igbo: sentenceData.igbo });
+        if (existingExample) {
+          return {
+            success: false,
+            message: 'There is an example with identical Igbo text',
+            meta: { sentenceData },
+          };
+        }
+        const example = new Example({
+          ...sentenceData,
+          type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+        });
+        const savedExample = await example.save();
         return {
-          success: false,
-          message: 'There is an example with identical Igbo text',
-          meta: { sentenceData },
+          success: true,
+          message: 'Success',
+          meta: { sentenceData, id: savedExample._id },
         };
-      }
-      const example = new Example({
-        ...sentenceData,
-        type: sentenceData?.type || SentenceType.DATA_COLLECTION,
-      });
-      const savedExample = await example.save();
-      return {
-        success: true,
-        message: 'Success',
-        meta: { sentenceData, id: savedExample._id },
-      };
-    }));
+      }),
+    );
 
     return res.send(result);
   } catch (err) {

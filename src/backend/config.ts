@@ -44,7 +44,7 @@ export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
 // Database
 const DB_NAME = 'igbo_api';
 const TEST_DB_NAME = 'test_igbo_api';
-export const MONGO_HOST = '127.0.0.1'; // Connects to MongoDB Docker container
+export const MONGO_HOST = '127.0.0.1';
 export const MONGO_ROOT = `mongodb://${MONGO_HOST}:27017`;
 export const TEST_MONGO_URI = `${MONGO_ROOT}/${TEST_DB_NAME}`;
 export const LOCAL_MONGO_URI = `${MONGO_ROOT}/${DB_NAME}`;
