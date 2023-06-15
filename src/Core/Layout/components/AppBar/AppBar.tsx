@@ -3,8 +3,14 @@ import { AppBar as DefaultAppBar } from 'react-admin';
 import { Heading } from '@chakra-ui/react';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import Notifications from '../Notifications';
+import UserMenu from './UserMenu';
 
-const AppBar = ({ notifications, ...props } : { notifications: Interfaces.Notification[] }): ReactElement => (
+const AppBar = ({
+  notifications,
+  ...props
+}: {
+  notifications: Interfaces.Notification[];
+}): ReactElement => (
   <DefaultAppBar
     sx={{
       '& .RaAppBar-title': {
@@ -15,6 +21,7 @@ const AppBar = ({ notifications, ...props } : { notifications: Interfaces.Notifi
       },
     }}
     {...props}
+    userMenu={<UserMenu />}
   >
     <Heading
       fontFamily="Silka"
