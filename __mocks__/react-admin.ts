@@ -22,6 +22,7 @@ export const {
   Title,
   MenuItemLink,
   MenuProps,
+  UserMenu,
   useNotify,
   useListFilterContext,
   useRedirect,

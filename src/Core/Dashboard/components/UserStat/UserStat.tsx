@@ -12,21 +12,10 @@ import {
 } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 import moment from 'moment';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
-import {
-  getTotalRecordedExampleSuggestions,
-  getTotalVerifiedExampleSuggestions,
-} from 'src/shared/DataCollectionAPI';
+import { getTotalRecordedExampleSuggestions, getTotalVerifiedExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { getAuth } from 'firebase/auth';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
@@ -34,14 +23,7 @@ import LacunaProgress from '../LacunaProgress';
 import IgboSoundboxStats from '../IgboSoundboxStats';
 import Support from '../Support';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const baseOptions = {
   responsive: true,
@@ -68,17 +50,21 @@ const createChartOptions = (title) => ({
 
 const mergedWorkChartOptions = createChartOptions('Merged Work');
 const THREE_MONTH_WEEKS_COUNT = 12;
-const sortDates = (a, b) => a < b ? 1 : -1;
-const sortMerges = (merges) => Object.entries(merges).sort(sortDates).map(([, value]) => value).reverse();
+const sortDates = (a, b) => (a < b ? 1 : -1);
+const sortMerges = (merges) =>
+  Object.entries(merges)
+    .sort(sortDates)
+    .map(([, value]) => value)
+    .reverse();
 
 const UserStat = ({
   uid,
   dialectalVariations,
   completeExamples,
-} : {
-  uid?: string,
-  dialectalVariations: number,
-  completeExamples: number,
+}: {
+  uid?: string;
+  dialectalVariations: number;
+  completeExamples: number;
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
@@ -91,17 +77,13 @@ const UserStat = ({
     (async () => {
       const { currentUser } = getAuth();
       const userUid = uid || currentUser?.uid;
-      network(`/stats/users/${userUid}`)
-        .then((res) => setUserStats(res.json));
-      const { json: merges } = await network(`/stats/users/${userUid}/merge`);
-      const {
-        exampleSuggestionMerges,
-        dialectalVariationMerges,
-        currentMonthMerges,
-      } = merges;
-      const labels = times(THREE_MONTH_WEEKS_COUNT, (index) => (
-        `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
-      )).reverse();
+      network(`/stats/users/${userUid}`).then((res) => setUserStats(res.json));
+      const { json: merges = {} } = await network(`/stats/users/${userUid}/merge`);
+      const { exampleSuggestionMerges = {}, dialectalVariationMerges = {}, currentMonthMerges = {} } = merges;
+      const labels = times(
+        THREE_MONTH_WEEKS_COUNT,
+        (index) => `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`
+      ).reverse();
       const updatedMergeStats = {
         labels,
         datasets: [
@@ -165,9 +147,7 @@ const UserStat = ({
               </AccordionButton>
             </ChakraTooltip>
             <AccordionPanel>
-              {mergeStats ? (
-                <Bar options={mergedWorkChartOptions} data={mergeStats} />
-              ) : null}
+              {mergeStats ? <Bar options={mergedWorkChartOptions} data={mergeStats} /> : null}
             </AccordionPanel>
           </AccordionItem>
         </Accordion>

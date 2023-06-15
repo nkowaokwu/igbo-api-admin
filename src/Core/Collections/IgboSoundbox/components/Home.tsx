@@ -9,8 +9,8 @@ const GOAL_STAT = 6000;
 
 const IgboSoundboxHome = ({
   setCurrentView,
-} : {
-  setCurrentView: React.Dispatch<React.SetStateAction<IgboSoundboxViews>>,
+}: {
+  setCurrentView: React.Dispatch<React.SetStateAction<IgboSoundboxViews>>;
 }): ReactElement => {
   const [totalVerifiedExampleSuggestions, setTotalVerifiedExampleSuggestions] = useState(null);
   const [totalRecordedExampleSuggestions, setTotalRecordedExampleSuggestions] = useState(null);

@@ -1,24 +1,8 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import pluralize from 'pluralize';
 import { getAuth } from 'firebase/auth';
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  onSnapshot,
-} from 'firebase/firestore';
-import {
-  Avatar,
-  Box,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
+import { Avatar, Box, Button, Menu, MenuButton, MenuList, MenuItem, Text, useToast } from '@chakra-ui/react';
 import moment from 'moment';
 import Collections from 'src/shared/constants/Collections';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -37,10 +21,10 @@ const Notifications = (props): ReactElement => {
       return null;
     }
     const { uid } = auth.currentUser;
-    const q = query(collection(
-      db,
-      `${Collections.USERS}/${uid}/${Collections.NOTIFICATIONS}`,
-    ), where('recipient', '==', uid));
+    const q = query(
+      collection(db, `${Collections.USERS}/${uid}/${Collections.NOTIFICATIONS}`),
+      where('recipient', '==', uid)
+    );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allNotifications = [];
       querySnapshot.forEach((doc) => {
@@ -61,7 +45,9 @@ const Notifications = (props): ReactElement => {
         as={Button}
         cursor="pointer"
         variant="ghost"
-        leftIcon={(() => <>🔔</>)()}
+        leftIcon={(() => (
+          <>🔔</>
+        ))()}
         color="gray.800"
         _hover={{
           backgroundColor: 'transparent',
@@ -100,15 +86,7 @@ const Notifications = (props): ReactElement => {
           {pluralize('new notification', notifications.length, true)}
         </Text>
         {notifications.length ? (
-          notifications.map(({
-            initiator,
-            recipient,
-            title,
-            message,
-            link,
-            opened,
-            created_at,
-          }) => (
+          notifications.map(({ initiator, recipient, title, message, link, opened, created_at }) => (
             <MenuItem
               key={`notification-${created_at}`}
               display="flex"
@@ -125,41 +103,35 @@ const Notifications = (props): ReactElement => {
               }}
               p={3}
               my={2}
-              onClick={() => openNotification({
-                id: `${created_at}`,
-                recipient,
-                link,
-                toast,
-              })}
+              onClick={() =>
+                openNotification({
+                  id: `${created_at}`,
+                  recipient,
+                  link,
+                  toast,
+                })
+              }
               transition="all 200ms"
               style={{ outline: 'none' }}
             >
               <Avatar src={initiator.photoURL} name={initiator.displayName} />
               <Box width="90%">
-                <Text
-                  color="blue.700"
-                  fontWeight="bold"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                >
+                <Text color="blue.700" fontWeight="bold" textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
                   {title || 'Notification'}
                 </Text>
-                <Text
-                  color="gray"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                  overflow="hidden"
-                  maxHeight="60px"
-                >
+                <Text color="gray" textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden" maxHeight="60px">
                   {message}
                 </Text>
-                <Text fontSize="sm" color="gray.400">{moment.unix(created_at).fromNow()}</Text>
+                <Text fontSize="sm" color="gray.400">
+                  {moment.unix(created_at).fromNow()}
+                </Text>
               </Box>
             </MenuItem>
           ))
         ) : (
-          <Text fontStyle="italic" color="gray.400" textAlign="center" mb="2">No new notficiations</Text>
+          <Text fontStyle="italic" color="gray.400" textAlign="center" mb="2">
+            No new notifications
+          </Text>
         )}
         <MenuItem
           _hover={{ backgroundColor: 'transparent' }}

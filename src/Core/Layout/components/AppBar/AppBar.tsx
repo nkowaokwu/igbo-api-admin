@@ -5,12 +5,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import Notifications from '../Notifications';
 import UserMenu from './UserMenu';
 
-const AppBar = ({
-  notifications,
-  ...props
-}: {
-  notifications: Interfaces.Notification[];
-}): ReactElement => (
+const AppBar = ({ notifications, ...props }: { notifications: Interfaces.Notification[] }): ReactElement => (
   <DefaultAppBar
     sx={{
       '& .RaAppBar-title': {
@@ -23,13 +18,7 @@ const AppBar = ({
     {...props}
     userMenu={<UserMenu />}
   >
-    <Heading
-      fontFamily="Silka"
-      fontSize="lg"
-      flex={1}
-      id="react-admin-title"
-      color="white"
-    />
+    <Heading fontFamily="Silka" fontSize="lg" flex={1} id="react-admin-title" color="white" />
     <Notifications notifications={notifications} />
   </DefaultAppBar>
 );

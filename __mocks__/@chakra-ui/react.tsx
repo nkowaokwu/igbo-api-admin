@@ -117,6 +117,7 @@ export const {
   VisuallyHidden,
   useBreakpoint,
   usePopover,
+  usePrevious,
   useStyleConfig,
   useTheme,
   useToast,
