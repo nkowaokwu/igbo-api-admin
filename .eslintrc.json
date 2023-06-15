@@ -11,7 +11,8 @@
     "airbnb",
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
-    "plugin:cypress/recommended"
+    "plugin:cypress/recommended",
+    "prettier"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
