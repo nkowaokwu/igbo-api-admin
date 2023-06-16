@@ -1,18 +1,7 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { cloneDeep, noop } from 'lodash';
-import {
-  Box,
-  Button,
-  Heading,
-  IconButton,
-  Text,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
-import {
-  ArrowBackIcon,
-  ArrowForwardIcon,
-} from '@chakra-ui/icons';
+import { Box, Button, Heading, IconButton, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   getRandomExampleSuggestionsToReview,
   putReviewForRandomExampleSuggestions,
@@ -21,6 +10,7 @@ import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
 import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
@@ -31,9 +21,9 @@ const DEFAULT_CURRENT_EXAMPLE = { igbo: '', pronunciations: [] };
 const VerifySentenceAudio = ({
   setIsDirty,
   goHome,
-} : {
-  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>
-  goHome: () => void,
+}: {
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
+  goHome: () => void;
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [reviews, setReviews] = useState<SentenceVerification[]>([]);
@@ -124,10 +114,13 @@ const VerifySentenceAudio = ({
 
           const defaultReviews: SentenceVerification[] = randomExamples.map(({ id, pronunciations = [] }) => ({
             id: id.toString(),
-            reviews: pronunciations.reduce((reviews, { _id }) => ({
-              ...reviews,
-              [_id.toString()]: ReviewActions.SKIP,
-            }), {}),
+            reviews: pronunciations.reduce(
+              (reviews, { _id }) => ({
+                ...reviews,
+                [_id.toString()]: ReviewActions.SKIP,
+              }),
+              {}
+            ),
           }));
           setReviews(defaultReviews);
         } catch (err) {
@@ -145,27 +138,23 @@ const VerifySentenceAudio = ({
     }
   }, [isComplete]);
 
-  const shouldRenderExamples = (
-    !isLoading
-    && Array.isArray(examples)
-    && examples?.length
-    && examples?.length === reviews?.length
-    && !isComplete
-  );
+  const shouldRenderExamples =
+    !isLoading && Array.isArray(examples) && examples?.length && examples?.length === reviews?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
 
   return shouldRenderExamples ? (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      className="space-y-4 p-6"
-    >
+    <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" className="space-y-4 p-6">
       <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
         Listen to know if this sentence matches the audio
       </Heading>
-      <Text fontFamily="Silka">The audio should be understandable Igbo</Text>
+      <Text fontFamily="Silka">
+        Each audio should follow our{' '}
+        <Link textDecoration="underline" href={RECORDING_AUDIO_STANDARDS_DOC} target="_blank">
+          Recording Audio Standards
+          <ExternalLinkIcon boxSize="3" ml={1} />
+        </Link>{' '}
+        document.
+      </Text>
       <Box
         backgroundColor="gray.100"
         borderRadius="md"
@@ -213,9 +202,7 @@ const VerifySentenceAudio = ({
         <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
         <IconButton
           variant="ghost"
-          onClick={exampleIndex === reviews.length - 1
-            ? noop
-            : handleNext}
+          onClick={exampleIndex === reviews.length - 1 ? noop : handleNext}
           icon={<ArrowForwardIcon />}
           aria-label="Next sentence"
           disabled={exampleIndex === reviews.length - 1}
@@ -230,13 +217,7 @@ const VerifySentenceAudio = ({
           }}
         />
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        className="space-y-3"
-      >
+      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" className="space-y-3">
         <Box
           data-test="editor-recording-options"
           display="flex"
@@ -250,7 +231,9 @@ const VerifySentenceAudio = ({
               <Button
                 colorScheme="green"
                 onClick={!isCompleteDisabled ? handleComplete : noop}
-                rightIcon={(() => <>💾</>)()}
+                rightIcon={(() => (
+                  <>💾</>
+                ))()}
                 aria-label="Complete recordings"
                 disabled={isCompleteDisabled}
                 borderRadius="full"
@@ -274,7 +257,9 @@ const VerifySentenceAudio = ({
       setIsDirty={setIsDirty}
       goHome={goHome}
     />
-  ) : <Spinner />;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default VerifySentenceAudio;

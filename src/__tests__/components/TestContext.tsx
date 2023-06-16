@@ -10,6 +10,8 @@ import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
+import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -43,6 +45,7 @@ jest.mock('react-admin');
 jest.mock('mic-recorder-to-mp3');
 jest.mock('src/shared/API');
 jest.mock('src/shared/DataCollectionAPI');
+jest.mock('src/shared/UserAPI');
 jest.mock('src/hooks/useRecorder');
 
 const TestContext = ({
@@ -66,6 +69,8 @@ const TestContext = ({
   index?: number;
   dialects?: any[];
   setDialects?: (value: any) => void;
+  pronunciations?: ExampleSuggestion['pronunciations'];
+  review: SentenceVerification;
 }): ReactElement => {
   const nativeDataProvider = () =>
     Promise.resolve({
