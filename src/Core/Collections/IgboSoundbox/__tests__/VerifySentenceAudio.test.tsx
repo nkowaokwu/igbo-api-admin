@@ -5,126 +5,153 @@ import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import * as DataCollectionAPI from 'src/shared/DataCollectionAPI';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
 import VerifySentenceAudio from '../VerifySentenceAudio';
 
-const exampleData = [{
-  igbo: 'igbo',
-  id: 'id',
-  pronunciations: [{
-    audio: 'first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'first audio id',
-  }, {
-    audio: 'second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'second audio id',
-  }],
-}];
+const exampleData = [
+  {
+    igbo: 'igbo',
+    id: 'id',
+    pronunciations: [
+      {
+        audio: 'first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'first audio id',
+      },
+      {
+        audio: 'second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'second audio id',
+      },
+    ],
+  },
+];
 
-const examplesData = [{
-  igbo: 'igbo',
-  id: 'first id',
-  pronunciations: [{
-    audio: 'first first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'first first audio id',
-  }, {
-    audio: 'first second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'first second audio id',
-  }],
-}, {
-  igbo: 'igbo',
-  id: 'second id',
-  pronunciations: [{
-    audio: 'second first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'second first audio id',
-  }, {
-    audio: 'second second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'second second audio id',
-  }],
-}, {
-  igbo: 'igbo',
-  id: 'third id',
-  pronunciations: [{
-    audio: 'third first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'third first audio id',
-  }, {
-    audio: 'third second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'third second audio id',
-  }],
-}, {
-  igbo: 'igbo',
-  id: 'fourth id',
-  pronunciations: [{
-    audio: 'fourth first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'fourth first audio id',
-  }, {
-    audio: 'fourth second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'fourth second audio id',
-  }],
-}, {
-  igbo: 'igbo',
-  id: 'fifth id',
-  pronunciations: [{
-    audio: 'fifth first audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'fifth first audio id',
-  }, {
-    audio: 'fifth second audio',
-    speaker: '',
-    approvals: [],
-    denials: [],
-    review: true,
-    _id: 'fifth second audio id',
-  }],
-}];
+const examplesData = [
+  {
+    igbo: 'igbo',
+    id: 'first id',
+    pronunciations: [
+      {
+        audio: 'first first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'first first audio id',
+      },
+      {
+        audio: 'first second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'first second audio id',
+      },
+    ],
+  },
+  {
+    igbo: 'igbo',
+    id: 'second id',
+    pronunciations: [
+      {
+        audio: 'second first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'second first audio id',
+      },
+      {
+        audio: 'second second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'second second audio id',
+      },
+    ],
+  },
+  {
+    igbo: 'igbo',
+    id: 'third id',
+    pronunciations: [
+      {
+        audio: 'third first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'third first audio id',
+      },
+      {
+        audio: 'third second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'third second audio id',
+      },
+    ],
+  },
+  {
+    igbo: 'igbo',
+    id: 'fourth id',
+    pronunciations: [
+      {
+        audio: 'fourth first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'fourth first audio id',
+      },
+      {
+        audio: 'fourth second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'fourth second audio id',
+      },
+    ],
+  },
+  {
+    igbo: 'igbo',
+    id: 'fifth id',
+    pronunciations: [
+      {
+        audio: 'fifth first audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'fifth first audio id',
+      },
+      {
+        audio: 'fifth second audio',
+        speaker: '',
+        approvals: [],
+        denials: [],
+        review: true,
+        _id: 'fifth second audio id',
+      },
+    ],
+  },
+];
 
 describe('VerifySentenceAudio', () => {
   it('render page to show five example sentences', async () => {
     const { findByText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>,
+      </TestContext>
     );
     await findByText('Listen to know if this sentence matches the audio');
     await findByText('Submit Batch');
@@ -138,7 +165,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>,
+      </TestContext>
     );
     await findByText('1 / 1');
     const approveButtons = await findAllByLabelText('Approve');
@@ -152,15 +179,10 @@ describe('VerifySentenceAudio', () => {
     DataCollectionAPI.getRandomExampleSuggestionsToReview.mockImplementation(async () => ({
       data: examplesData,
     }));
-    const {
-      container,
-      findByText,
-      findAllByLabelText,
-      findByLabelText,
-    } = render(
+    const { container, findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>,
+      </TestContext>
     );
     await findByText('1 / 5');
     const approveButtons = await findAllByLabelText('Approve');
@@ -224,7 +246,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>,
+      </TestContext>
     );
     await findByText('1 / 1');
     userEvent.click(first(await findAllByLabelText('Approve')));
@@ -242,7 +264,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>,
+      </TestContext>
     );
     await findByText('1 / 5');
     userEvent.click(first(await findAllByLabelText('Approve')));
@@ -287,5 +309,16 @@ describe('VerifySentenceAudio', () => {
         },
       },
     ]);
+  });
+
+  it('should link to recording audio standards doc', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <VerifySentenceAudio />
+      </TestContext>
+    );
+    await findByText(/^Each audio should follow our/);
+    const recordingAudioStandardsDocLink = document.querySelector(`[href="${RECORDING_AUDIO_STANDARDS_DOC}"`);
+    expect(recordingAudioStandardsDocLink).toBeTruthy();
   });
 });
