@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { noop } from 'lodash';
 import { usePermissions } from 'react-admin';
-import { Box, Text, Link, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Link, Tooltip, chakra } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { ExampleSuggestion, FormattedUser } from 'src/backend/controllers/utils/interfaces';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
@@ -63,19 +63,22 @@ const SandboxAudioReviewer = ({
                       reviewAction={exampleReview.reviews[_id.toString()]}
                     />
                     {!isLoadingSpeakers && currentSpeaker ? (
-                      <Tooltip label="Click to view user profile">
-                        <Link
-                          fontSize="xs"
-                          color="gray.500"
-                          fontStyle="italic"
-                          target="_blank"
-                          textDecoration="underline"
-                          href={`#/${Collections.USERS}/${currentSpeaker?.uid}/${Views.SHOW}`}
-                        >
-                          {currentSpeaker?.displayName || 'N/A'}
-                          <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
-                        </Link>
-                      </Tooltip>
+                      <chakra.span fontSize="xs" color="gray.500">
+                        <chakra.span mr={1}>Speaker:</chakra.span>
+                        <Tooltip label="Click to view user profile">
+                          <Link
+                            fontSize="xs"
+                            color="gray.500"
+                            fontStyle="italic"
+                            target="_blank"
+                            textDecoration="underline"
+                            href={`#/${Collections.USERS}/${currentSpeaker?.uid}/${Views.SHOW}`}
+                          >
+                            {currentSpeaker?.displayName || 'N/A'}
+                            <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
+                          </Link>
+                        </Tooltip>
+                      </chakra.span>
                     ) : (
                       <Text fontSize="xs" color="gray.500" fontStyle="italic">
                         Loading speaker name...
