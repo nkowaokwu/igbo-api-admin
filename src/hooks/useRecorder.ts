@@ -17,7 +17,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
   const toast = useToast();
 
   useEffect(() => {
-    window.navigator.mediaDevices.getUserMedia({ audio: true })
+    window.navigator.mediaDevices
+      .getUserMedia({ audio: true })
       .then(() => setIsBlocked(false))
       .catch(() => setIsBlocked(true));
   }, []);
@@ -27,7 +28,15 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
       setRecorder(new MicRecorder({ bitRate: 30000 }));
 
       (async () => {
-        const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {
+          toast({
+            title: 'Microphone access denied',
+            description: 'You must grant microphone permission to record',
+            status: 'error',
+            duration: 30000,
+            isClosable: true,
+          });
+        });
         try {
           wave.fromStream(stream, 'canvas', {
             colors: ['#777777'],
@@ -49,46 +58,62 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
           setRecordingDuration((prevRecordingDuration) => prevRecordingDuration + 1);
         }, 1000);
       });
+    } else if (isBlocked) {
+      toast({
+        title: 'Microphone access denied',
+        description: 'You must grant microphone permission to record',
+        status: 'error',
+        duration: 30000,
+        isClosable: true,
+      });
     }
   };
 
   const stopRecording = () => {
     if (!isBlocked && recorder) {
-      recorder.stop().getMp3().then(([buffer, blob]) => {
-        const file = new File(buffer, 'me-at-thevoice.mp3', {
-          type: blob.type,
-          lastModified: Date.now(),
+      recorder
+        .stop()
+        .getMp3()
+        .then(([buffer, blob]) => {
+          const file = new File(buffer, 'me-at-thevoice.mp3', {
+            type: blob.type,
+            lastModified: Date.now(),
+          });
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onloadend = (e): void | React.ReactText => {
+            if (typeof e.target.result !== 'string' || !e.target.result.includes('data:audio/mp3')) {
+              return toast({
+                title: 'Unable to record',
+                description: 'Invalid file type. Must be .mp3',
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+              });
+            }
+            if (e.target.result?.length > MAX_AUDIO_SIZE) {
+              return toast({
+                title: 'Unable to record',
+                description: 'Audio is too large - 100Kb maximum. Shorten your recording.',
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+              });
+            }
+            return setAudioBlob(reader.result);
+          };
+          setIsRecording(false);
+          if (durationRef.current) {
+            clearInterval(durationRef.current);
+          }
         });
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = (e): void | React.ReactText => {
-          if (
-            typeof e.target.result !== 'string'
-            || !e.target.result.includes('data:audio/mp3')
-          ) {
-            return toast({
-              title: 'Unable to record',
-              description: 'Invalid file type. Must be .mp3',
-              status: 'warning',
-              duration: 9000,
-              isClosable: true,
-            });
-          }
-          if (e.target.result?.length > MAX_AUDIO_SIZE) {
-            return toast({
-              title: 'Unable to record',
-              description: 'Audio is too large - 100Kb maximum. Shorten your recording.',
-              status: 'warning',
-              duration: 9000,
-              isClosable: true,
-            });
-          }
-          return setAudioBlob(reader.result);
-        };
-        setIsRecording(false);
-        if (durationRef.current) {
-          clearInterval(durationRef.current);
-        }
+    } else if (!isBlocked) {
+      toast({
+        title: 'Microphone access denied',
+        description: 'Unable to stop recording. You must grant microphone permission to record',
+        status: 'error',
+        duration: 30000,
+        isClosable: true,
       });
     }
   };
