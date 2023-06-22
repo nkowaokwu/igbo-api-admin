@@ -4,6 +4,7 @@ import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import Author from 'src/backend/shared/constants/Author';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -16,6 +17,7 @@ import {
   postBulkUploadExampleSuggestions,
   suggestNewWord,
   createWord,
+  createExample,
   getWords,
   getTotalVerifiedExampleSuggestions,
   getTotalRecordedExampleSuggestions,
@@ -31,6 +33,7 @@ import {
   wordSuggestionWithNestedExampleSuggestionData,
   bulkUploadExampleSuggestionData,
 } from './__mocks__/documentData';
+import { dropMongoDBCollections } from './shared';
 import { AUTH_TOKEN, EXAMPLE_SUGGESTION_KEYS, INVALID_ID } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
@@ -242,7 +245,7 @@ describe('MongoDB Example Suggestions', () => {
       const res = await getExampleSuggestion(exampleSuggestionsRes.body.id);
       expect(res.status).toEqual(200);
       expect(res.body.merged).toBeTruthy();
-      expect(res.body.mergedBy).toEqual('SYSTEM');
+      expect(res.body.mergedBy).toEqual(Author.SYSTEM);
     });
 
     it('should automatically merge exampleSuggestion', async () => {
@@ -297,7 +300,7 @@ describe('MongoDB Example Suggestions', () => {
       const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
       expect(res.status).toEqual(200);
       expect(res.body.merged).toBeTruthy();
-      expect(res.body.mergedBy).toEqual('SYSTEM');
+      expect(res.body.mergedBy).toEqual(Author.SYSTEM);
     });
   });
 
@@ -471,6 +474,61 @@ describe('MongoDB Example Suggestions', () => {
   });
 
   describe('Igbo Soundbox', () => {
+    beforeEach(async () => {
+      // Clear out database to start with a clean slate
+      await dropMongoDBCollections();
+    });
+    it('should return no example suggestions if they are nested within a word suggestion', async () => {
+      const wordSuggestionRes = await suggestNewWord({
+        ...wordSuggestionData,
+        examples: [
+          { igbo: 'igbo', english: 'english', pronunciations: [{ audio: 'first audio', speaker: 'first speaker' }] },
+        ],
+      });
+      expect(wordSuggestionRes.status).toEqual(200);
+      expect(wordSuggestionRes.body.examples[0].exampleForSuggestion).toEqual(true);
+      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      expect(res.status).toEqual(200);
+      expect(res.body).toHaveLength(0);
+    });
+
+    it('should create up to five example suggestions if no example suggestions to record audio', async () => {
+      await Promise.all(
+        times(5, async (index) => {
+          await suggestNewWord({
+            ...wordSuggestionData,
+            examples: [
+              {
+                igbo: 'igbo',
+                english: 'english',
+                pronunciations: [{ audio: `${index} audio`, speaker: 'first speaker' }],
+              },
+            ],
+          });
+        }),
+      );
+      const randomExampleSuggestionRes = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      expect(randomExampleSuggestionRes.status).toEqual(200);
+      expect(randomExampleSuggestionRes.body).toHaveLength(0);
+      await Promise.all(
+        times(5, async (index) => {
+          const exampleSuggestionRes = await suggestNewExample({
+            ...exampleSuggestionData,
+            igbo: `${index} creating brand new igbo`,
+            english: `${index} creating brand new english`,
+            pronunciations: [{ audio: `${index} audio`, speaker: 'first speaker' }],
+          });
+          await createExample(exampleSuggestionRes.body.id);
+        }),
+      );
+      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      expect(res.status).toEqual(200);
+      expect(res.body).toHaveLength(5);
+      res.body.forEach(({ exampleForSuggestion, authorId }) => {
+        expect(exampleForSuggestion).toEqual(false);
+        expect(authorId).toEqual(Author.SYSTEM);
+      });
+    });
     it('should save audio for five random example sentences', async () => {
       const examples = [];
       await Promise.all(
@@ -532,6 +590,7 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(5);
       res.body.forEach((exampleSuggestion) => {
+        expect(exampleSuggestion.exampleForSuggestion).not.toEqual(true);
         expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
         expect(
           exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.ADMIN_AUTH_TOKEN),
@@ -563,6 +622,7 @@ describe('MongoDB Example Suggestions', () => {
           expect(res.status).toEqual(200);
           expect(res.body.length).toBeLessThanOrEqual(5);
           res.body.forEach((exampleSuggestion) => {
+            expect(exampleSuggestion.exampleForSuggestion).not.toEqual(true);
             expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.MERGER_AUTH_TOKEN);
             expect(
               exampleSuggestion.pronunciations.every(({ speaker }) => speaker !== AUTH_TOKEN.MERGER_AUTH_TOKEN),
@@ -594,7 +654,8 @@ describe('MongoDB Example Suggestions', () => {
       const reviewedExampleSuggestions: {
         id: string;
         reviews: { [key: string]: ReviewActions };
-      }[] = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
+      }[] = randomExampleSuggestionsRes.body.map(({ id, pronunciations, exampleForSuggestion }, index) => {
+        expect(exampleForSuggestion).not.toEqual(true);
         expect(Array.isArray(pronunciations)).toBeTruthy();
         expect(pronunciations.length).toBeGreaterThanOrEqual(1);
         const reviews = pronunciations.reduce(
@@ -640,6 +701,7 @@ describe('MongoDB Example Suggestions', () => {
       const newRandomExampleSuggestionsRes = await getRandomExampleSuggestions();
       expect(newRandomExampleSuggestionsRes.status).toEqual(200);
       newRandomExampleSuggestionsRes.body.forEach((newRandomExampleSuggestion) => {
+        expect(newRandomExampleSuggestion.exampleForSuggestion).not.toEqual(true);
         expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       });
       const verifiedRes = await getTotalVerifiedExampleSuggestions();
@@ -658,6 +720,7 @@ describe('MongoDB Example Suggestions', () => {
 
   describe('/DELETE mongodb exampleSuggestions', () => {
     it('should delete an existing example suggestion', async () => {
+      await suggestNewExample(exampleSuggestionData);
       const res = await getExampleSuggestions();
       expect(res.status).toEqual(200);
       const firstExample = res.body[0];

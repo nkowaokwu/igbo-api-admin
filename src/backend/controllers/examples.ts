@@ -26,7 +26,7 @@ export const createExample = (
 };
 
 /* Uses regex to search for examples with both Igbo and English */
-const searchExamples = ({
+export const searchExamples = ({
   query,
   skip,
   limit,
@@ -36,7 +36,7 @@ const searchExamples = ({
   skip: number;
   limit: number;
   mongooseConnection: Connection;
-}) => {
+}): Promise<Interfaces.Example[]> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   return Example.find(query).skip(skip).limit(limit);
 };

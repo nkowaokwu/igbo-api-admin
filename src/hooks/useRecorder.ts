@@ -94,7 +94,7 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
             if (e.target.result?.length > MAX_AUDIO_SIZE) {
               return toast({
                 title: 'Unable to record',
-                description: 'Audio is too large - 100Kb maximum. Shorten your recording.',
+                description: 'Audio is too large - 500Kb maximum. Shorten your recording.',
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,

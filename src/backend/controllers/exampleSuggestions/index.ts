@@ -1,10 +1,11 @@
 import { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, map } from 'lodash';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
-import { wordSchema } from '../models/Word';
-import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
-import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
+import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
+import { wordSchema } from 'src/backend/models/Word';
+import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { packageResponse, handleQueries, populateFirebaseUsers } from 'src/backend/controllers/utils';
 import {
   searchExampleAudioPronunciationsReviewedByUser,
   searchExampleSuggestionsRegexQuery,
@@ -12,16 +13,18 @@ import {
   searchPreExistingExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
-} from './utils/queries';
-import * as Interfaces from './utils/interfaces';
-import { sendRejectedEmail } from './email';
-import { findUser } from './users';
-import ReviewActions from '../shared/constants/ReviewActions';
-import SentenceType from '../shared/constants/SentenceType';
-import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
-import handleExampleSuggestionAudioPronunciations from './utils/handleExampleSuggestionAudioPronunciations';
-import { wordSuggestionSchema } from '../models/WordSuggestion';
-import automaticallyMergeExampleSuggestion from './utils/automaticallyMergeExampleSuggestion';
+  searchExamplesWithoutEnoughAudioRegexQuery,
+} from 'src/backend/controllers/utils/queries';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { sendRejectedEmail } from 'src/backend/controllers/email';
+import { findUser } from 'src/backend/controllers/users';
+import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import SentenceType from 'src/backend/shared/constants/SentenceType';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import handleCreatingNewExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/handleCreatingNewExampleSuggestions';
+import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
+import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
+import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
 
 const NO_LIMIT = 20000;
 /**
@@ -189,30 +192,6 @@ export const findExampleSuggestionById = (
   return ExampleSuggestion.findById(id);
 };
 
-/**
- * Finds Example Suggestion documents
- * @param ({ query: Object, skip: number, limit: number, mongooseConnection: Connection })
- * @returns Found Example Suggestion documents
- */
-const findExampleSuggestions = ({
-  query,
-  skip = 0,
-  limit = 10,
-  mongooseConnection,
-}: {
-  query: any;
-  skip?: number;
-  limit?: number;
-  mongooseConnection: Connection;
-}): Query<any, Document<Interfaces.ExampleSuggestion>> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-
-  return ExampleSuggestion.find(query).skip(skip).limit(limit).sort({ updatedAt: -1 });
-};
-
 /* Returns all existing ExampleSuggestion objects */
 /**
  * Returns specified Example Suggestion objects from the database
@@ -259,11 +238,11 @@ export const getExampleSuggestions = (
 };
 
 /**
- * Returns at least five random Example Suggestions to be reviewed
+ * Returns at least five random Example Suggestions to have audio recorded
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns At least five random Example Suggestions to be reviewed
+ * @returns At least five random Example Suggestions to have audio recorded
  */
 export const getRandomExampleSuggestions = async (
   req: Interfaces.EditorRequest,
@@ -271,30 +250,46 @@ export const getRandomExampleSuggestions = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { limit, user, mongooseConnection } = await handleQueries(req);
-
-    const query = searchRandomExampleSuggestionsRegexQuery(user.uid);
+    const { skip, limit, user, mongooseConnection } = await handleQueries(req);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
 
-    return await findExampleSuggestions({
+    let query = {};
+    let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
+
+    // First searches for ExampleSuggestions that should be returned
+    query = searchRandomExampleSuggestionsRegexQuery(user.uid);
+    exampleSuggestions = await findExampleSuggestions({
       query,
       limit,
       mongooseConnection,
-    })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) =>
-        packageResponse({
-          res,
-          docs: exampleSuggestions,
-          model: ExampleSuggestion,
-          query,
-        }),
-      )
-      .catch(() => {
-        throw new Error('An error has occurred while returning random example suggestions to edit');
+    }).catch(() => {
+      throw new Error('An error has occurred while returning random example suggestions to edit');
+    });
+
+    // If none are found, then new ExampleSuggestions are created, up to the provided limit
+    if (!exampleSuggestions || !exampleSuggestions.length) {
+      query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
+      exampleSuggestions = await handleCreatingNewExampleSuggestions({
+        query,
+        skip,
+        limit,
+        mongooseConnection,
       });
+
+      console.log(
+        `Created ${exampleSuggestions.length} new example suggestions`,
+        exampleSuggestions.map((id) => id),
+      );
+    }
+    return await packageResponse({
+      res,
+      docs: exampleSuggestions,
+      model: ExampleSuggestion,
+      query,
+    });
   } catch (err) {
     return next(err);
   }

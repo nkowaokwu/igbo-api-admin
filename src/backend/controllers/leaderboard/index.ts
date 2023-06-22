@@ -9,12 +9,7 @@ import {
   searchExampleAudioPronunciationsReviewedByUser,
 } from '../utils/queries';
 import { handleQueries } from '../utils';
-import {
-  sortRankings,
-  splitRankings,
-  assignRankings,
-  sortLeaderboards,
-} from './utils';
+import { sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
 import { findUser } from '../users';
 
 const updateUserLeaderboardStat = async ({
@@ -22,14 +17,15 @@ const updateUserLeaderboardStat = async ({
   query,
   mongooseConnection,
   user,
-} : {
-  leaderboardType: LeaderboardType,
-  query: any,
-  mongooseConnection: Connection,
-  user: { displayName: string, email: string, photoURL: string, uid: string },
+}: {
+  leaderboardType: LeaderboardType;
+  query: any;
+  mongooseConnection: Connection;
+  user: { displayName: string; email: string; photoURL: string; uid: string };
 }) => {
-  const ExampleSuggestion = (
-    mongooseConnection.model<Interfaces.ExampleSuggestion>('ExampleSuggestion', exampleSuggestionSchema)
+  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+    'ExampleSuggestion',
+    exampleSuggestionSchema,
   );
   const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
 
@@ -50,18 +46,19 @@ const updateUserLeaderboardStat = async ({
   if (!exampleSuggestionsByUser) {
     throw new Error('No example suggestion associated with the user.');
   }
-  const totalCount = leaderboardType === LeaderboardType.VERIFY_EXAMPLE_AUDIO
-    // Count all individual audio pronunciation reviews
-    ? exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
-      let currentCount = 0;
-      pronunciations.forEach(({ approvals, denials }) => {
-        if (approvals.includes(user.uid) || denials.includes(user.uid)) {
-          currentCount += 1;
-        }
-      });
-      return finalCount + currentCount;
-    }, 0)
-    : exampleSuggestionsByUser.length;
+  const totalCount =
+    leaderboardType === LeaderboardType.VERIFY_EXAMPLE_AUDIO
+      ? // Count all individual audio pronunciation reviews
+        exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
+          let currentCount = 0;
+          pronunciations.forEach(({ approvals, denials }) => {
+            if (approvals.includes(user.uid) || denials.includes(user.uid)) {
+              currentCount += 1;
+            }
+          });
+          return finalCount + currentCount;
+        }, 0)
+      : exampleSuggestionsByUser.length;
 
   const updatedRankings = sortRankings({
     leaderboardRankings: allRankings,
@@ -91,9 +88,7 @@ export const getLeaderboard = async (
     leaderboard,
     mongooseConnection,
   } = handleQueries(req);
-  const Leaderboard = (
-    mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema)
-  );
+  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
   if (!leaderboard) {
     throw new Error('Please provide a leaderboard to view');
   }
@@ -119,7 +114,7 @@ export const getLeaderboard = async (
     res.setHeader('Content-Range', allRankings.length);
     return res.send({
       userRanking,
-      rankings: allRankings.slice(skip, skip + limit - 1),
+      rankings: allRankings.slice(skip, skip + limit),
     });
   } catch (err) {
     return next(err);

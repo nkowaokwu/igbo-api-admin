@@ -2,13 +2,7 @@ import { Document, Query, Model } from 'mongoose';
 import { Response } from 'express';
 import stringSimilarity from 'string-similarity';
 import diacriticless from 'diacriticless';
-import {
-  assign,
-  isNaN,
-  get,
-  map,
-  compact,
-} from 'lodash';
+import { assign, isNaN, get, map, compact } from 'lodash';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removePrefix from 'src/backend/shared/utils/removePrefix';
 import createQueryRegex from 'src/backend/shared/utils/createQueryRegex';
@@ -26,22 +20,22 @@ const SECONDARY_KEY = 'definitions[0].definitions[0]';
 /* Determines if an empty response should be returned
  * if the request comes from an unauthed user in production
  */
-const constructRegexQuery = (
-  { user, searchWord, example }
-  : { user: Interfaces.FormattedUser, searchWord: string, example: string },
-) => {
+const constructRegexQuery = ({
+  user,
+  searchWord,
+  example,
+}: {
+  user: Interfaces.FormattedUser;
+  searchWord: string;
+  example: string;
+}) => {
   const queryValue = example || searchWord;
-  return (
-    user.role && (
-      user.role === UserRoles.EDITOR
-      || user.role === UserRoles.MERGER
-      || user.role === UserRoles.ADMIN
-    )
-      ? createQueryRegex(queryValue)
-      : queryValue
-        ? createQueryRegex(queryValue)
-        : { wordReg: /^[.{0,}\n{0,}]/, definitionsReg: /^[.{0,}\n{0,}]/ }
-  );
+  return user.role &&
+    (user.role === UserRoles.EDITOR || user.role === UserRoles.MERGER || user.role === UserRoles.ADMIN)
+    ? createQueryRegex(queryValue)
+    : queryValue
+    ? createQueryRegex(queryValue)
+    : { wordReg: /^[.{0,}\n{0,}]/, definitionsReg: /^[.{0,}\n{0,}]/ };
 };
 
 const fallbackUser = {
@@ -59,51 +53,45 @@ export const populateFirebaseUsers = async (
   keys: string[],
 ): Promise<{ [key: string]: string | number | { [key: string]: string } }> => {
   const docWithPopulateFirebaseUsers = assign(doc);
-  await Promise.all(map(keys, async (key) => {
-    docWithPopulateFirebaseUsers[key] = await Promise.all(map(compact(docWithPopulateFirebaseUsers[key]), (id) => (
-      findUser(id)
-        .catch(() => {
-          console.warn(`The user with the id ${id} doesn't exist in this database`);
-          return fallbackUser;
-        })
-    )));
-  }));
-  const authorRes = await findUser(docWithPopulateFirebaseUsers.authorId)
-    .catch(() => {
+  await Promise.all(
+    map(keys, async (key) => {
+      docWithPopulateFirebaseUsers[key] = await Promise.all(
+        map(compact(docWithPopulateFirebaseUsers[key]), (id) =>
+          findUser(id).catch(() => {
+            console.warn(`The user with the id ${id} doesn't exist in this database`);
+            return fallbackUser;
+          }),
+        ),
+      );
+    }),
+  );
+  const authorRes =
+    (await findUser(docWithPopulateFirebaseUsers.authorId).catch(() => {
       console.warn(`The user with the id ${docWithPopulateFirebaseUsers.authorId} doesn't exist in this database`);
       return fallbackUser;
-    }) || {};
+    })) || {};
   return assign(doc, { author: authorRes });
 };
 
 /* Sorts all the docs based on the provided searchWord */
-export const sortDocsBy = (
-  searchWord: string,
-  docs: Interfaces.Word[],
-  key: string,
-): Interfaces.Word[] => (
+export const sortDocsBy = (searchWord: string, docs: Interfaces.Word[], key: string): Interfaces.Word[] =>
   docs.sort((prevDoc, nextDoc) => {
     const normalizedSearchWord = searchWord.normalize('NFD');
     const prevDocValue = get(prevDoc, key);
     const nextDocValue = get(nextDoc, key);
-    const prevDocDifference = stringSimilarity.compareTwoStrings(
-      normalizedSearchWord,
-      diacriticless(prevDocValue.normalize('NFD')),
-    ) * SIMILARITY_FACTOR + ((get(prevDoc, SECONDARY_KEY) || '').includes(normalizedSearchWord)
-      ? MATCHING_DEFINITION
-      : NO_FACTOR);
-    const nextDocDifference = stringSimilarity.compareTwoStrings(
-      normalizedSearchWord,
-      diacriticless(nextDocValue.normalize('NFD')),
-    ) * SIMILARITY_FACTOR + ((get(nextDoc, SECONDARY_KEY) || '').includes(normalizedSearchWord)
-      ? MATCHING_DEFINITION
-      : NO_FACTOR);
+    const prevDocDifference =
+      stringSimilarity.compareTwoStrings(normalizedSearchWord, diacriticless(prevDocValue.normalize('NFD'))) *
+        SIMILARITY_FACTOR +
+      ((get(prevDoc, SECONDARY_KEY) || '').includes(normalizedSearchWord) ? MATCHING_DEFINITION : NO_FACTOR);
+    const nextDocDifference =
+      stringSimilarity.compareTwoStrings(normalizedSearchWord, diacriticless(nextDocValue.normalize('NFD'))) *
+        SIMILARITY_FACTOR +
+      ((get(nextDoc, SECONDARY_KEY) || '').includes(normalizedSearchWord) ? MATCHING_DEFINITION : NO_FACTOR);
     if (prevDocDifference === nextDocDifference) {
       return NO_FACTOR;
     }
     return prevDocDifference > nextDocDifference ? -1 : 1;
-  })
-);
+  });
 /* Validates the provided range */
 export const isValidRange = (range: number[]): boolean => {
   if (!Array.isArray(range)) {
@@ -121,10 +109,13 @@ export const isValidRange = (range: number[]): boolean => {
 };
 
 /* Takes both page and range and converts them into appropriate skip and limit */
-export const convertToSkipAndLimit = (
-  { page, range }:
-  { page: number, range: number[] },
-): { skip: number, limit: number } => {
+export const convertToSkipAndLimit = ({
+  page,
+  range,
+}: {
+  page: number;
+  range: number[];
+}): { skip: number; limit: number } => {
   let skip = 0;
   let limit = 10;
   if (isValidRange(range)) {
@@ -150,11 +141,11 @@ export const packageResponse = async ({
   model,
   query,
 }: {
-  res: Response,
-  docs: Document<any>,
-  model: Model<Document<any>>,
-  query: Query<Document<any> | Document<any>[], Document<any>>
-  sort: { key: string, direction: boolean | 'asc' | 'desc' }
+  res: Response;
+  docs: any[];
+  model: Model<Document<any>>;
+  query: Query<Document<any> | Document<any>[], Document<any>>;
+  sort: { key: string; direction: boolean | 'asc' | 'desc' };
 }): Promise<Response> => {
   // Not handling sorting to preserve alphabetical order
   const sendDocs = docs;
@@ -202,15 +193,17 @@ const parseRange = (range: string | any): null | any => {
 };
 
 /* Parses out the key and the direction of sorting out into an object */
-const parseSortKeys = (sort: string): { key: string, direction: string } | null => {
+const parseSortKeys = (sort: string): { key: string; direction: string } | null => {
   try {
     if (sort) {
       const parsedSort = JSON.parse(sort);
-      const [key] = parsedSort[0] === 'approvals' || parsedSort[0] === 'denials'
-        ? [`${parsedSort[0]}.length`] : parsedSort;
+      const [key] =
+        parsedSort[0] === 'approvals' || parsedSort[0] === 'denials' ? [`${parsedSort[0]}.length`] : parsedSort;
       const direction = parsedSort[1].toLowerCase();
-      if (direction.toLowerCase() !== SortingDirections.ASCENDING
-        && direction.toLowerCase() !== SortingDirections.DESCENDING) {
+      if (
+        direction.toLowerCase() !== SortingDirections.ASCENDING &&
+        direction.toLowerCase() !== SortingDirections.DESCENDING
+      ) {
         throw new Error('Invalid sorting direction. Valid sorting optons: "asc" or "desc"');
       }
       return {
@@ -225,17 +218,14 @@ const parseSortKeys = (sort: string): { key: string, direction: string } | null 
 };
 
 /* Handles all the queries for searching in the database */
-export const handleQueries = (
-  {
-    query = {},
-    body = {},
-    user = {},
-    error,
-    response,
-    mongooseConnection,
-  }:
-  Interfaces.EditorRequest,
-): Interfaces.HandleQueries => {
+export const handleQueries = ({
+  query = {},
+  body = {},
+  user = {},
+  error,
+  response,
+  mongooseConnection,
+}: Interfaces.EditorRequest): Interfaces.HandleQueries => {
   const {
     keyword = '',
     page: pageQuery = 0,
