@@ -1,10 +1,5 @@
 import AWS from 'aws-sdk';
-import {
-  AWS_ACCESS_KEY,
-  AWS_SECRET_ACCESS_KEY,
-  AWS_BUCKET,
-  AWS_REGION,
-} from 'src/backend/config';
+import { AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_BUCKET, AWS_REGION } from 'src/backend/config';
 
 const bucket = AWS_BUCKET;
 const region = AWS_REGION;
@@ -23,15 +18,18 @@ const s3 = (() => {
   return new AWS.S3();
 })();
 
-const initializeAPI = (mediaPath: string): {
-  bucket: string,
-  uriPath: string,
-  dummyUriPath: string,
+const initializeAPI = (
   mediaPath: string,
+): {
+  bucket: string;
+  uriPath: string;
+  dummyUriPath: string;
+  mediaPath: string;
   baseParams: {
-    [key: string]: string
-  },
-  s3: AWS.S3,
+    Bucket: string;
+    [key: string]: string;
+  };
+  s3: AWS.S3;
 } => {
   if (!mediaPath) {
     throw new Error('Media Path is required');

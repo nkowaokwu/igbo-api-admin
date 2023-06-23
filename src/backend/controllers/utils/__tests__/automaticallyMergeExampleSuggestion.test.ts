@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash';
-import automaticallyMergeExampleSuggestion from '../automaticallyMergeExampleSuggestion';
+import Author from 'src/backend/shared/constants/Author';
+import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
 import * as exampleModule from '../../examples';
 
 describe('automaticallyMergeExampleSuggestion', () => {
@@ -35,7 +36,7 @@ describe('automaticallyMergeExampleSuggestion', () => {
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });
-    expect(mockExecuteMergeExample).toBeCalledWith(exampleSuggestion, 'SYSTEM', mongooseConnection);
+    expect(mockExecuteMergeExample).toBeCalledWith(exampleSuggestion, Author.SYSTEM, mongooseConnection);
   });
   it('does not merge the exampleSuggestion due to being an exampleForSuggestion', async () => {
     const exampleSuggestion = cloneDeep(topLevelExampleSuggestion);

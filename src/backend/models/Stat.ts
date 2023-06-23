@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import StatTypes from '../shared/constants/StatTypes';
+import Author from '../shared/constants/Author';
 
 export const statSchema = new Schema(
   {
@@ -10,7 +11,7 @@ export const statSchema = new Schema(
       enum: Object.values(StatTypes),
       index: true.valueOf,
     },
-    authorId: { type: String, default: 'SYSTEM' },
+    authorId: { type: String, default: Author.SYSTEM },
     value: { type: Schema.Types.Mixed, default: null },
   },
   { toObject: toObjectPlugin, timestamps: true },

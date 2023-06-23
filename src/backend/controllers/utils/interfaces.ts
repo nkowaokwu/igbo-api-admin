@@ -1,9 +1,4 @@
-import {
-  Document,
-  LeanDocument,
-  Connection,
-  Types,
-} from 'mongoose';
+import { Document, LeanDocument, Connection, Types } from 'mongoose';
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
@@ -13,310 +8,329 @@ import { User } from 'firebase/auth';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 
 export interface HandleQueries {
-  searchWord: string,
-  regexKeyword: SearchRegExp,
-  page: number,
-  sort: { key: string; direction: string; },
-  skip: number,
-  limit: number,
-  filters: { [key: string]: string },
-  user: EditorRequest['user'],
-  strict: boolean,
-  body: EditorRequest['body'],
-  mongooseConnection: EditorRequest['mongooseConnection'],
-  leaderboard: undefined | LeaderboardType,
-  uidQuery?: string,
-  error?: any,
-  response?: any,
-};
+  searchWord: string;
+  regexKeyword: SearchRegExp;
+  page: number;
+  sort: { key: string; direction: string };
+  skip: number;
+  limit: number;
+  filters: { [key: string]: string };
+  user: EditorRequest['user'];
+  strict: boolean;
+  body: EditorRequest['body'];
+  mongooseConnection: EditorRequest['mongooseConnection'];
+  leaderboard: undefined | LeaderboardType;
+  uidQuery?: string;
+  error?: any;
+  response?: any;
+}
 
 export interface FirebaseUser extends User {
-  editingGroup?: number | undefined,
-  customClaims?: any,
-  metadata?: any,
-};
+  editingGroup?: number | undefined;
+  customClaims?: any;
+  metadata?: any;
+}
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
-  user: FirebaseUser,
+  user: FirebaseUser;
   query: {
-    keyword?: string,
-    page?: number | string,
-    range?: string,
-    sort?: string,
-    filter?: string,
-    strict?: string,
-    uid?: string,
-    leaderboard?: LeaderboardType,
-  },
-  suggestionDoc?: Suggestion,
-  body: any,
-  word?: Word,
-  response?: any,
-  error?: Error,
-  mongooseConnection: Connection,
-};
+    keyword?: string;
+    page?: number | string;
+    range?: string;
+    sort?: string;
+    filter?: string;
+    strict?: string;
+    uid?: string;
+    leaderboard?: LeaderboardType;
+  };
+  suggestionDoc?: Suggestion;
+  body: any;
+  word?: Word;
+  response?: any;
+  error?: Error;
+  mongooseConnection: Connection;
+}
 
 export interface WordClientData extends Word {
-  authorId?: string,
-  examples?: ExampleClientData[],
+  authorId?: string;
+  examples?: ExampleClientData[];
 }
 
 export interface CorpusClientData extends Corpus {
-  authorId?: string,
-};
+  authorId?: string;
+}
 
 export interface WordDialect {
-  dialects: string[],
-  variations: string[],
-  pronunciation: string,
-  word: string,
-  _id?: Types.ObjectId,
-  id?: string,
-  editor?: string,
+  dialects: string[];
+  variations: string[];
+  pronunciation: string;
+  word: string;
+  _id?: Types.ObjectId;
+  id?: string;
+  editor?: string;
 }
 
 export interface DefinitionSchema {
-  wordClass: string | WordDialect,
-  definitions: string[],
-  label: string,
-  igboDefinitions: { igbo: string, nsibidi: string }[],
-  nsibidi: string,
-  nsibidiCharacters: (Types.ObjectId | string)[],
-  _id?: Types.ObjectId,
-  id?: string,
+  wordClass: string | WordDialect;
+  definitions: string[];
+  label: string;
+  igboDefinitions: { igbo: string; nsibidi: string }[];
+  nsibidi: string;
+  nsibidiCharacters: (Types.ObjectId | string)[];
+  _id?: Types.ObjectId;
+  id?: string;
 }
 
-export interface Word extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  word: string,
-  wordPronunciation: string,
-  conceptualWord: string,
-  definitions: [DefinitionSchema],
-  dialects: WordDialect[],
-  pronunciation: string,
-  variations: string[],
-  normalized: string,
-  frequency: number,
-  stems: string[],
-  tags: string[],
+export interface Word extends WordData, Document<any>, LeanDocument<any> {
+  id: Types.ObjectId;
+}
+
+export interface WordData {
+  id: Types.ObjectId | string;
+  word: string;
+  wordPronunciation: string;
+  conceptualWord: string;
+  definitions: [DefinitionSchema];
+  dialects: WordDialect[];
+  pronunciation: string;
+  variations: string[];
+  normalized: string;
+  frequency: number;
+  stems: string[];
+  tags: string[];
   attributes: {
-    isStandardIgbo: boolean,
-    isAccented: boolean,
-    isComplete: boolean,
-    isSlang: boolean,
-    isConstructedTerm: boolean,
-    isBorrowedTerm: boolean,
-    isStem: boolean,
-  }
-  relatedTerms: string[],
-  hypernyms: string[],
-  hyponyms: string[],
-  updatedAt: Date,
-  examples?: (Example | ExampleSuggestion | ExampleClientData)[],
-};
+    isStandardIgbo: boolean;
+    isAccented: boolean;
+    isComplete: boolean;
+    isSlang: boolean;
+    isConstructedTerm: boolean;
+    isBorrowedTerm: boolean;
+    isStem: boolean;
+  };
+  relatedTerms: string[];
+  hypernyms: string[];
+  hyponyms: string[];
+  updatedAt: Date;
+  examples?: (Example | ExampleSuggestion | ExampleClientData)[];
+}
 
 export interface Notification {
   initiator: {
-    email: string,
-    displayName: string,
-    photoURL: string,
-    uid: string,
-  },
-  title: string,
-  message: string,
-  data: any,
-  type: string,
-  recipient: string,
-  opened: boolean,
-  link: string,
-  created_at?: number,
+    email: string;
+    displayName: string;
+    photoURL: string;
+    uid: string;
+  };
+  title: string;
+  message: string;
+  data: any;
+  type: string;
+  recipient: string;
+  opened: boolean;
+  link: string;
+  created_at?: number;
 }
 
 interface Suggestion extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  originalWordId?: Types.ObjectId,
-  userComments?: string,
-  authorEmail?: string,
-  authorId?: string,
-  approvals?: string[],
-  denials?: string[],
-  merged?: Types.ObjectId,
-  mergedBy?: string,
-  userInteractions?: string[],
-};
+  id: Types.ObjectId;
+  originalWordId?: Types.ObjectId;
+  userComments?: string;
+  authorEmail?: string;
+  authorId?: string;
+  approvals?: string[];
+  denials?: string[];
+  merged?: Types.ObjectId;
+  mergedBy?: string;
+  userInteractions?: string[];
+}
 
 export interface Corpus extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  title: string,
-  body: string,
-  media: string,
-  tags: string[],
-};
+  id: Types.ObjectId;
+  title: string;
+  body: string;
+  media: string;
+  tags: string[];
+}
 
 export interface CorpusSuggestion extends Corpus, Suggestion {}
 
 export interface WordSuggestion extends Word, Suggestion {
-  originalWordId?: Types.ObjectId,
-  examples?: ExampleSuggestion[],
-  twitterPollUrl?: string,
+  originalWordId?: Types.ObjectId;
+  examples?: ExampleSuggestion[];
+  twitterPollUrl?: string;
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
-  },
-};
-
-export interface Example extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  igbo?: string,
-  english?: string,
-  meaning?: string,
-  nsibidi?: string,
-  nsibidiCharacters: string[],
-  associatedWords: string[],
-  associatedDefinitionsSchemas: string[],
-  pronunciations: {
-    audio: string,
-    speaker: string,
-    review: boolean,
-    approvals: string[],
-    denials: string[],
-    _id: Types.ObjectId,
-  }[],
-  updatedAt: Date,
+  };
 }
 
-export interface ExampleSuggestion extends Example, Suggestion {
-  exampleForSuggestion: boolean,
+export interface Example extends ExampleData, Document<any>, LeanDocument<any> {
+  id: Types.ObjectId;
+}
+
+export interface ExampleData {
+  id: Types.ObjectId | string;
+  igbo?: string;
+  english?: string;
+  meaning?: string;
+  nsibidi?: string;
+  nsibidiCharacters: string[];
+  associatedWords: string[];
+  associatedDefinitionsSchemas: string[];
+  pronunciations: {
+    audio: string;
+    speaker: string;
+    review: boolean;
+    approvals: string[];
+    denials: string[];
+    _id: Types.ObjectId;
+  }[];
+  updatedAt: Date;
+}
+
+export interface ExampleSuggestion extends ExampleSuggestionData, Suggestion {
+  id: Types.ObjectId;
+  exampleForSuggestion: boolean;
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
-  }
-};
+  };
+}
+
+export interface ExampleSuggestionData extends ExampleData {
+  id: Types.ObjectId | string;
+  exampleForSuggestion: boolean;
+  crowdsourcing: {
+    [key in CrowdsourcingType]: boolean;
+  };
+}
 
 export interface ExampleClientData {
-  id?: string,
-  igbo?: string,
-  english?: string,
-  meaning?: string,
-  nsibidi?: string,
-  nsibidiCharacters?: string[],
-  type?: SentenceType,
-  style?: string,
-  pronunciations?: { audio: string, speaker: string }[],
-  associatedWords: string[],
-  associatedDefinitionsSchemas?: string[],
-  exampleForSuggestion?: boolean,
-  authorId?: string,
-  originalExampleId?: string,
-};
+  id?: string;
+  igbo?: string;
+  english?: string;
+  meaning?: string;
+  nsibidi?: string;
+  nsibidiCharacters?: string[];
+  type?: SentenceType;
+  style?: string;
+  pronunciations?: { audio: string; speaker: string }[];
+  associatedWords: string[];
+  associatedDefinitionsSchemas?: string[];
+  exampleForSuggestion?: boolean;
+  authorId?: string;
+  originalExampleId?: string;
+}
 
 export interface NsibidiCharacter {
-  id: Types.ObjectId | string,
-  nsibidi: string,
-  definitions: { text: string }[],
-  pronunciation: string,
-  wordClass: string,
-};
+  id: Types.ObjectId | string;
+  nsibidi: string;
+  definitions: { text: string }[];
+  pronunciation: string;
+  wordClass: string;
+}
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {
-  cachedAt: Date,
+  cachedAt: Date;
 }
 
 export interface UserRanking {
-  uid: string,
-  displayName: string,
-  photoURL: string,
-  email: string,
-  count: number,
-  position: number,
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  email: string;
+  count: number;
+  position: number;
 }
 
 export interface Leaderboard extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId,
-  rankings: UserRanking[],
-  type: LeaderboardType,
-  page: number,
-  updatedAt: Date,
+  id: Types.ObjectId;
+  rankings: UserRanking[];
+  type: LeaderboardType;
+  page: number;
+  updatedAt: Date;
 }
 
 export interface MergedOrRejectedEmailData {
-  to: [string],
-  suggestionType: string,
-  submissionLink?: string,
-  [key: string]: any,
-};
+  to: [string];
+  suggestionType: string;
+  submissionLink?: string;
+  [key: string]: any;
+}
 
 export interface SuggestionsReminderData {
-  to: [string],
-  totalSuggestionsCount: number,
-  wordSuggestionsCount: number,
-  exampleSuggestionsCount: number,
-};
+  to: [string];
+  totalSuggestionsCount: number;
+  wordSuggestionsCount: number;
+  exampleSuggestionsCount: number;
+}
 
 export interface NewUserData {
-  newUserEmail: string,
-};
+  newUserEmail: string;
+}
 
 export interface UpdatedRoleNotificationData {
-  to: [string],
-  displayName: string,
-  role: UserRoles,
-};
+  to: [string];
+  displayName: string;
+  role: UserRoles;
+}
 
 export interface DocumentDeletionRequestNotification {
-  translator: string,
-  translatorEmail: string,
-  note: string
-  resource: string,
-  id: string,
-  word: string,
-  definition: string,
-};
+  translator: string;
+  translatorEmail: string;
+  note: string;
+  resource: string;
+  id: string;
+  word: string;
+  definition: string;
+}
 
 export interface DocumentUpdateNotification {
-  author: string,
-  to: string,
-  translator: string,
-  translatorEmail: string,
-  type: string,
-  resource: Collections,
-  id: string,
-  word: string,
-};
+  author: string;
+  to: string;
+  translator: string;
+  translatorEmail: string;
+  type: string;
+  resource: Collections;
+  id: string;
+  word: string;
+}
 
 export interface EmailMessage {
   from?: {
-    email: string,
-    name: string,
-  },
-  to: string[],
-  templateId: string,
-  dynamic_template_data: any,
-};
+    email: string;
+    name: string;
+  };
+  to: string[];
+  templateId: string;
+  dynamic_template_data: any;
+}
 
 export interface ConstructedMessage extends EmailMessage {
   reply_to: {
-    email: string,
-    name: string,
-  },
+    email: string;
+    name: string;
+  };
   personalizations: {
-    to: [{
-      email: string,
-    }],
-  }[],
+    to: [
+      {
+        email: string;
+      },
+    ];
+  }[];
 }
 
 export interface FormattedUser {
-  uid: string,
-  id: string,
-  email: string,
-  displayName: string,
-  photoURL: string,
-  role: string,
-  editingGroup: string,
-  lastSignInTime: string,
-  creationTime: string,
-};
+  uid: string;
+  id: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  role: string;
+  editingGroup: string;
+  lastSignInTime: string;
+  creationTime: string;
+}
 
 export interface SearchRegExp {
-  wordReg: RegExp,
-  definitionsReg: RegExp,
-};
+  wordReg: RegExp;
+  definitionsReg: RegExp;
+}

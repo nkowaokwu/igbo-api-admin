@@ -1,5 +1,6 @@
 import { Connection } from 'mongoose';
 import { Example, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import Author from 'src/backend/shared/constants/Author';
 import { executeMergeExample } from '../examples';
 
 const MINIMUM_APPROVALS = 2;
@@ -28,7 +29,7 @@ const automaticallyMergeExampleSuggestion = async ({
       return review && audio && approvals.length >= MINIMUM_APPROVALS;
     })
   ) {
-    const example = await executeMergeExample(exampleSuggestion, 'SYSTEM', mongooseConnection);
+    const example = await executeMergeExample(exampleSuggestion, Author.SYSTEM, mongooseConnection);
     return example;
   }
   return null;
