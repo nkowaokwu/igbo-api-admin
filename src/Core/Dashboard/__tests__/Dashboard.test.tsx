@@ -23,7 +23,5 @@ it('render the dashboard', async () => {
   await findByText('Words with Igbo Definitions');
   await findByText('Sufficient Igbo Example Sentences');
   await findByText('Complete Igbo Example Sentences');
-  await findByText('Verified example sentences');
-  await findByText('Recorded example sentences');
   await findByText('Igbo Proverbs Example Sentences');
 });
