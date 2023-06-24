@@ -23,7 +23,7 @@ const Notifications = (props): ReactElement => {
     const { uid } = auth.currentUser;
     const q = query(
       collection(db, `${Collections.USERS}/${uid}/${Collections.NOTIFICATIONS}`),
-      where('recipient', '==', uid)
+      where('recipient', '==', uid),
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allNotifications = [];
@@ -68,8 +68,6 @@ const Notifications = (props): ReactElement => {
             width={5}
             right={4}
             top="2px"
-            borderColor="white"
-            borderWidth="3px"
             borderRadius="full"
             display="flex"
             justifyContent="center"
