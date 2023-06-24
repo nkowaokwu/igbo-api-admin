@@ -1,28 +1,19 @@
 import React, { memo, ReactElement, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { AdminContext, AdminUI, Resource, usePermissions } from 'react-admin';
+import { Route } from 'react-router-dom';
 import { Dashboard, Layout, Error, NotFound, Loading } from 'src/Core';
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
-import { getResourceObjects } from './Resources';
+import { getResourceObjects, getCustomRouteObjects } from './Resources';
 import Theme from './Theme';
 
 const Resources = memo(
   () => {
     const [permissions, setPermissions] = useState(usePermissions());
-    const resources = getResourceObjects(permissions).map((resource) => (
-      <Resource
-        name={resource.name}
-        options={resource.options}
-        key={resource.key}
-        list={resource.list}
-        show={resource.show}
-        edit={resource.edit}
-        create={resource.create}
-        icon={resource.icon}
-      />
-    ));
+    const resources = getResourceObjects(permissions).map((resource) => <Resource {...resource} />);
+    const customRoutes = getCustomRouteObjects().map((customRoute) => <Route {...customRoute} />);
 
     return (
       <AdminUI
@@ -31,12 +22,13 @@ const Resources = memo(
         loginPage={Login}
         loading={() => <Loading setPermissions={setPermissions} />}
         theme={Theme}
+        customRoutes={customRoutes}
       >
         {resources}
       </AdminUI>
     );
   },
-  () => true
+  () => true,
 );
 
 const IgboAPIAdmin = (): ReactElement => (

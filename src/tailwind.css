@@ -4,38 +4,36 @@
 
 @font-face {
   font-family: 'Akagu';
-  src:  url("./assets/fonts/Akagu2020.ttf");
+  src: url('./assets/fonts/Akagu2020.ttf');
 }
 
 @font-face {
   font-family: 'Silka';
   src: url('./assets/fonts/silka-regular-webfont.eot');
   src: url('./assets/fonts/silka-regular-webfont.eot?#iefix') format('embedded-opentype'),
-       url('./assets/fonts/silka-regular-webfont.woff2') format('woff2'),
-       url('./assets/fonts/silka-regular-webfont.woff') format('woff'),
-       url('./assets/fonts/silka-regular-webfont.ttf') format('truetype');
+    url('./assets/fonts/silka-regular-webfont.woff2') format('woff2'),
+    url('./assets/fonts/silka-regular-webfont.woff') format('woff'),
+    url('./assets/fonts/silka-regular-webfont.ttf') format('truetype');
   font-weight: normal;
-
 }
 
 @font-face {
   font-family: 'Silka';
   src: url('./assets/fonts/silka-bold-webfont.eot');
   src: url('./assets/fonts/silka-bold-webfont.eot?#iefix') format('embedded-opentype'),
-       url('./assets/fonts/silka-bold-webfont.woff2') format('woff2'),
-       url('./assets/fonts/silka-bold-webfont.woff') format('woff'),
-       url('./assets/fonts/silka-bold-webfont.ttf') format('truetype');
+    url('./assets/fonts/silka-bold-webfont.woff2') format('woff2'),
+    url('./assets/fonts/silka-bold-webfont.woff') format('woff'),
+    url('./assets/fonts/silka-bold-webfont.ttf') format('truetype');
   font-weight: 700;
-
 }
 
 @font-face {
   font-family: 'Silka';
   src: url('./assets/fonts/silka-black-webfont.eot');
   src: url('./assets/fonts/silka-black-webfont.eot?#iefix') format('embedded-opentype'),
-       url('./assets/fonts/silka-black-webfont.woff2') format('woff2'),
-       url('./assets/fonts/silka-black-webfont.woff') format('woff'),
-       url('./assets/fonts/silka-black-webfont.ttf') format('truetype');
+    url('./assets/fonts/silka-black-webfont.woff2') format('woff2'),
+    url('./assets/fonts/silka-black-webfont.woff') format('woff'),
+    url('./assets/fonts/silka-black-webfont.ttf') format('truetype');
   font-weight: 900;
 }
 
@@ -44,7 +42,9 @@
   pointer-events: none;
 }
 
-html, main, .main-content {
+html,
+main,
+.main-content {
   width: 100vw;
 }
 
@@ -70,7 +70,10 @@ body {
   font-size: 16px !important;
 }
 
-input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"] {
+input,
+textarea,
+[data-test='accented-letter-popup'],
+[data-test*='-diff-field'] {
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -83,23 +86,23 @@ input, textarea, [data-test="accented-letter-popup"], [data-test*="-diff-field"]
   @apply bg-white !important;
 }
 
-[class*="RaLayout-appFrame"] {
+[class*='RaLayout-appFrame'] {
   width: 100vw;
 }
 
-[class*="RaList-bulkActionsDisplayed-"] {
+[class*='RaList-bulkActionsDisplayed-'] {
   @apply mt-0 !important;
 }
 
-[class*="RaBulkActionsToolbar-collapsed-"] {
+[class*='RaBulkActionsToolbar-collapsed-'] {
   @apply h-0 !important;
 }
 
-[class*="RaList-content-"] {
+[class*='RaList-content-'] {
   z-index: 0;
 }
 
-#label-studio div[class*="editor--"] {
+#label-studio div[class*='editor--'] {
   width: auto !important;
 }
 
@@ -162,36 +165,43 @@ span.MuiTableSortLabel-root {
   @apply mx-0 !important;
 }
 
-.MuiButtonBase-text, .MuiButton-text {
+.MuiButtonBase-text,
+.MuiButton-text {
   @apply border !important;
   @apply border-blue-600 !important;
   @apply border-solid !important;
   @apply font-normal !important;
 }
 
-.MuiButton-textPrimary, [class*="button-add-"] {
+.MuiButton-textPrimary,
+[class*='button-add-'] {
   @apply bg-blue-600 !important;
   @apply text-white !important;
 }
 
-.MuiButton-textPrimary:disabled, [class*="button-add-"]:disabled, button.MuiButton-root.Mui-disabled {
+.MuiButton-textPrimary:disabled,
+[class*='button-add-']:disabled,
+button.MuiButton-root.Mui-disabled {
   @apply bg-gray-300 !important;
   @apply text-gray-700 !important;
   @apply cursor-not-allowed !important;
 }
 
-.MuiButton-textPrimary:hover, [class*="button-add-"]:hover {
+.MuiButton-textPrimary:hover,
+[class*='button-add-']:hover {
   @apply bg-blue-100 !important;
 }
 
-button.MuiButton-textSecondary, button[class*="button-remove-"] {
+button.MuiButton-textSecondary,
+button[class*='button-remove-'] {
   @apply border !important;
   @apply border-blue-600 !important;
   @apply border-solid !important;
   @apply text-blue-600 !important;
 }
 
-button.MuiButton-textSecondary:hover, button[class*="button-remove-"]:hover{
+button.MuiButton-textSecondary:hover,
+button[class*='button-remove-']:hover {
   @apply border-blue-100 !important;
   @apply bg-blue-100 !important;
 }
@@ -200,7 +210,7 @@ button.MuiButton-textSecondary:hover, button[class*="button-remove-"]:hover{
   @apply text-blue-600 !important;
 }
 
-button[class*="button-remove-definitions"] svg[class*="RaSimpleFormIterator-leftIcon"] {
+button[class*='button-remove-definitions'] svg[class*='RaSimpleFormIterator-leftIcon'] {
   fill: #3182ce !important;
 }
 
@@ -212,23 +222,24 @@ button[class*="button-remove-definitions"] svg[class*="RaSimpleFormIterator-left
   @apply absolute !important;
 }
 
-.testing-app [class*="RaDatagrid-headerCell"] {
+.testing-app [class*='RaDatagrid-headerCell'] {
   @apply relative !important;
 }
 
-button[class*="RaPaginationActions-button"] {
+button[class*='RaPaginationActions-button'] {
   @apply text-blue-600 !important;
   @apply border-none !important;
   @apply bg-transparent !important;
 }
 
-button[class*="RaPaginationActions-currentPageButton"] {
+button[class*='RaPaginationActions-currentPageButton'] {
   @apply border !important;
   @apply border-blue-600 !important;
   @apply border-solid !important;
 }
 
-input#word, input#igbo {
+input#word,
+input#igbo {
   @apply h-8 !important;
   @apply w-64 !important;
   @apply rounded-lg !important;
@@ -294,7 +305,7 @@ input#word, input#igbo {
   @apply fixed;
   @apply space-y-2;
   z-index: 1000;
-  bottom: .5em;
+  bottom: 0.5em;
   left: 0;
 }
 
@@ -316,33 +327,31 @@ input#word, input#igbo {
   @apply bg-gray-200;
 }
 
-
 .ant-checkbox-wrapper span {
-  @apply text-xl
+  @apply text-xl;
 }
 .ant-checkbox-inner {
   transform: scale(1.25);
 }
 
 .gradient-background {
-	background: linear-gradient(-45deg, #bcf5e435, #ddf9ff35, #ffeaae35, #71ffd535, #8fff004a, #4af2ac8f, #6ceeff35);
-	background-size: 400% 400%;
-	animation: gradient 15s ease infinite;
-	min-height: 100vh;
+  background: linear-gradient(-45deg, #bcf5e435, #ddf9ff35, #ffeaae35, #71ffd535, #8fff004a, #4af2ac8f, #6ceeff35);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  min-height: 100vh;
 }
 
 @keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
-
 
 @media (min-width: 1024px) {
   html {

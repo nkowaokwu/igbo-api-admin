@@ -5,8 +5,8 @@ import LinearProgressCard from '../LinearProgressCard';
 const GOAL = 6000;
 const IgboSoundboxStats = ({
   recordingStats,
-} : {
-  recordingStats: { recorded: number, verified: number },
+}: {
+  recordingStats: { recorded: number; verified: number };
 }): ReactElement => {
   const stats = [
     {
@@ -27,9 +27,10 @@ const IgboSoundboxStats = ({
     <Box className="mb-6 space-y-3 w-full">
       <LinearProgressCard
         heading="Igbo Soundbox Contributions"
-        description="Your personalized Lacuna Fund statistics"
+        description="Your personalized Igbo Soundbox statistics"
         stats={stats}
         isLoaded
+        isGeneric
       />
     </Box>
   );

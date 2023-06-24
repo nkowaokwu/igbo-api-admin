@@ -27,18 +27,18 @@ const MilestoneProgress = ({
   nsibidiWords,
   nsibidiWordSuggestions,
 }: {
-  sufficientWords: number,
-  completeWords: number,
-  sufficientExamples: number,
-  proverbExamples: number,
-  completeExamples: number,
-  dialectalVariations: number,
-  headwordAudioPronunciations: number,
-  standardIgbo: number,
-  igboDefinitions: number,
-  wordsWithIgboDefinitions: number,
-  nsibidiWords: number,
-  nsibidiWordSuggestions: number,
+  sufficientWords: number;
+  completeWords: number;
+  sufficientExamples: number;
+  proverbExamples: number;
+  completeExamples: number;
+  dialectalVariations: number;
+  headwordAudioPronunciations: number;
+  standardIgbo: number;
+  igboDefinitions: number;
+  wordsWithIgboDefinitions: number;
+  nsibidiWords: number;
+  nsibidiWordSuggestions: number;
 }): ReactElement => {
   const wordStats = [
     {
@@ -47,32 +47,37 @@ const MilestoneProgress = ({
       heading: '"Sufficient" Words',
       description: `There are currently ${sufficientWords} "sufficient" words on the platform.
       Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`,
-    }, {
+    },
+    {
       totalCount: completeWords,
       goal: COMPLETE_WORDS_GOAL,
       heading: '"Complete" Words',
       description: `There are currently ${completeWords} "complete" words on the platform.
       Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`,
-    }, {
+    },
+    {
       totalCount: dialectalVariations,
       goal: DIALECTAL_VARIATIONS_GOAL,
       heading: 'Dialectal Variations',
       description: `There are currently ${dialectalVariations} dialectal word variations on the platform.
       Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`,
-    }, {
+    },
+    {
       totalCount: headwordAudioPronunciations,
       goal: HEADWORD_AUDIO_PRONUNCIATION_GOAL,
       heading: 'Headwords with Audio Pronunciations',
       description: `There are currently ${headwordAudioPronunciations} headwords 
       with audio pronunciations on the platform.
       Our next goal is to record a total of ${HEADWORD_AUDIO_PRONUNCIATION_GOAL} headwords.`,
-    }, {
+    },
+    {
       totalCount: standardIgbo,
       goal: IS_STANDARD_IGBO_GOAL,
       heading: 'Standard Igbo Words',
       description: `There are currently ${standardIgbo} words marked as Standard Igbo 
       on the platform. Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`,
-    }, {
+    },
+    {
       totalCount: igboDefinitions,
       goal: IGBO_DEFINITIONS_GOAL,
       heading: 'Words with Igbo Definitions',
@@ -124,52 +129,29 @@ const MilestoneProgress = ({
     },
   ];
 
-  const isWordStatsLoaded = (
-    sufficientWords !== null
-    && completeWords !== null
-    && dialectalVariations !== null
-    && headwordAudioPronunciations !== null
-    && standardIgbo !== null
-    && igboDefinitions !== null
-  );
+  const isWordStatsLoaded =
+    sufficientWords !== null &&
+    completeWords !== null &&
+    dialectalVariations !== null &&
+    headwordAudioPronunciations !== null &&
+    standardIgbo !== null &&
+    igboDefinitions !== null;
   const isNsibidiStatsLoaded = nsibidiWords !== null && nsibidiWordSuggestions !== null;
-  const isExampleStatsLoaded = (
-    sufficientExamples !== null
-    && completeExamples !== null
-    && proverbExamples !== null
-  );
+  const isExampleStatsLoaded = sufficientExamples !== null && completeExamples !== null && proverbExamples !== null;
 
   return (
-    <Box className="space-y-3">
-      <Box
-        borderRadius="md"
-        borderWidth="1"
-        borderColor="gray.200"
-        backgroundColor="white"
-        p={3}
-      >
+    <Box className="space-y-3 w-full">
+      <Box borderRadius="md" borderWidth="1" borderColor="gray.200" backgroundColor="white" p={3}>
         <Box className="my-5">
-          <Text fontSize="xl" fontWeight="bold" fontFamily="Silka">Community Milestone Statistics</Text>
-          <Text fontFamily="Silka">
-            Track the total progress of the Igbo API.
+          <Text fontSize="xl" fontWeight="bold" fontFamily="Silka">
+            Community Milestone Statistics
           </Text>
+          <Text fontFamily="Silka">Track the total progress of the Igbo API.</Text>
         </Box>
         <Box className="space-y-3">
-          <LinearProgressCard
-            heading="Word Stats"
-            stats={wordStats}
-            isLoaded={isWordStatsLoaded}
-          />
-          <LinearProgressCard
-            stats={nsibidiStats}
-            heading="Nsịbịdị Stats"
-            isLoaded={isNsibidiStatsLoaded}
-          />
-          <LinearProgressCard
-            heading="Example Stats"
-            stats={exampleStats}
-            isLoaded={isExampleStatsLoaded}
-          />
+          <LinearProgressCard heading="Word Stats" stats={wordStats} isLoaded={isWordStatsLoaded} />
+          <LinearProgressCard stats={nsibidiStats} heading="Nsịbịdị Stats" isLoaded={isNsibidiStatsLoaded} />
+          <LinearProgressCard heading="Example Stats" stats={exampleStats} isLoaded={isExampleStatsLoaded} />
         </Box>
       </Box>
     </Box>

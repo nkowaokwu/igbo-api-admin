@@ -16,6 +16,7 @@ describe('App', () => {
   it('render the profile user menu', async () => {
     const { findByLabelText, findByText } = render(<App />);
     userEvent.click(await findByLabelText('Profile'));
+    await findByText('Profile');
     await findByText('Contact the team');
     await findByText('Report a bug');
     await findByText('Request a feature');
@@ -28,9 +29,9 @@ describe('App', () => {
     await findByText('No new notifications');
   });
   it('render the Igbo API Editor Platform with admin role', async () => {
-    const { queryByText, findByText } = render(<App />);
+    const { queryByText, findByText, findAllByText } = render(<App />);
 
-    await findByText('Dashboard');
+    await findAllByText('Dashboard');
     await findByText('Words');
     await findByText('Examples');
     await findByText('Nsịbịdị Characters');
@@ -45,14 +46,15 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
   it('render the Igbo API Editor Platform with merger role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: 'merger' });
-    const { queryByText, findByText } = render(<App />);
+    const { queryByText, findByText, findAllByText } = render(<App />);
 
-    await findByText('Dashboard');
+    await findAllByText('Dashboard');
     await findByText('Words');
     await findByText('Examples');
     await findByText('Nsịbịdị Characters');
@@ -67,15 +69,16 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
 
   it('render the Igbo API Editor Platform with editor role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: 'editor' });
-    const { queryByText, findByText } = render(<App />);
+    const { queryByText, findByText, findAllByText } = render(<App />);
 
-    await findByText('Dashboard');
+    await findAllByText('Dashboard');
     await findByText('Words');
     await findByText('Examples');
     await findByText('Nsịbịdị Characters');
@@ -90,15 +93,16 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
 
   it('render the Igbo API Editor Platform with editor role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: 'transcriber' });
-    const { queryByText, findByText } = render(<App />);
+    const { queryByText, findByText, findAllByText } = render(<App />);
 
-    await findByText('Dashboard');
+    await findAllByText('Dashboard');
     expect(await queryByText('Words')).toBeNull();
     expect(await queryByText('Examples')).toBeNull();
     expect(await queryByText('Nsịbịdị Characters')).toBeNull();
@@ -113,14 +117,15 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
   it('render the Igbo API Editor Platform with editor crowdsourcer', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: 'crowdsourcer' });
-    const { queryByText, findByText } = render(<App />);
+    const { queryByText, findByText, findAllByText } = render(<App />);
 
-    await findByText('Dashboard');
+    await findAllByText('Dashboard');
     expect(await queryByText('Words')).toBeNull();
     expect(await queryByText('Examples')).toBeNull();
     expect(await queryByText('Nsịbịdị Characters')).toBeNull();
@@ -135,6 +140,7 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
