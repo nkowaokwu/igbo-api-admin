@@ -1,12 +1,12 @@
 import React, { useState, useEffect, ReactElement } from 'react';
 import { camelCase } from 'lodash';
-import { Box } from '@chakra-ui/react';
+import { Box, Heading } from '@chakra-ui/react';
 import network from 'src/Core/Dashboard/network';
+import Support from 'src/Core/Dashboard/components/Support';
 import MilestoneProgress from './MilestoneProgress';
-import UserStat from './UserStat';
 
 const NO_PERMISSION_STATUS = 403;
-const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => {
+const ProgressManager = (): ReactElement => {
   const [stats, setStats] = useState({});
 
   const handleNoPermissionStatus = ({ status }) => {
@@ -19,13 +19,13 @@ const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => 
     network('/stats/full')
       .then(({ body }) => {
         const parsedBody = JSON.parse(body);
-        const updatedStats = Object.entries(parsedBody).reduce((
-          finalStats,
-          [key, value]: [string, { value: number }],
-        ) => ({
-          ...finalStats,
-          [camelCase(key)]: value.value,
-        }), {});
+        const updatedStats = Object.entries(parsedBody).reduce(
+          (finalStats, [key, value]: [string, { value: number }]) => ({
+            ...finalStats,
+            [camelCase(key)]: value.value,
+          }),
+          {},
+        );
         setStats(updatedStats);
       })
       .catch(handleNoPermissionStatus);
@@ -33,11 +33,14 @@ const ProgressManager = ({ user } : { user: { uid: string } }): ReactElement => 
 
   return (
     <Box p={3}>
-      <Box className="mb-24">
-        <UserStat uid={user?.uid} {...stats} />
+      <Heading as="h1" className="mb-3">
+        Dashboard
+      </Heading>
+      <Box className="flex flex-col-reverse lg:flex-row justify-between space-x-0 lg:space-x-4 w-full">
+        {/* @ts-expect-error props */}
+        <MilestoneProgress {...stats} />
+        <Support />
       </Box>
-      {/* @ts-expect-error props */}
-      <MilestoneProgress {...stats} />
     </Box>
   );
 };

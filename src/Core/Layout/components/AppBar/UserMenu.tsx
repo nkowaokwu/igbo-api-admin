@@ -5,10 +5,16 @@ import { BUG_REPORT_URL, CROWDSOURCING_SLACK_CHANNEL, FEATURE_REQUEST_FORM_URL }
 
 const ConfigurationMenu = React.forwardRef(
   (
-    { leftIcon, primaryText, href, ...rest }: { primaryText: string; href: string } & ButtonProps,
-    ref
+    {
+      leftIcon,
+      primaryText,
+      href,
+      newTab = true,
+      ...rest
+    }: { primaryText: string; href: string; newTab?: boolean } & ButtonProps,
+    ref,
   ): ReactElement => (
-    <a href={href} target="_blank" rel="noreferrer">
+    <a href={href} target={newTab ? '_blank' : ''} rel="noreferrer">
       <Button
         ref={ref}
         leftIcon={leftIcon}
@@ -21,12 +27,20 @@ const ConfigurationMenu = React.forwardRef(
         {primaryText}
       </Button>
     </a>
-  )
+  ),
 );
 
 const UserMenu = (props: any): ReactElement => (
   <ReactAdminUserMenu {...props}>
     <Box className="flex flex-col space-y-1">
+      <ConfigurationMenu
+        href="#/profile"
+        primaryText="Profile"
+        leftIcon={(() => (
+          <>🧑🏾</>
+        ))()}
+        newTab={false}
+      />
       <ConfigurationMenu
         href={CROWDSOURCING_SLACK_CHANNEL}
         primaryText="Contact the team"

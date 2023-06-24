@@ -34,11 +34,7 @@ import {
   postNsibidiCharacter,
   putNsibidiCharacter,
 } from 'src/backend/controllers/nsibidiCharacters';
-import {
-  getStats,
-  getUserStats,
-  getUserMergeStats,
-} from 'src/backend/controllers/stats';
+
 import { getPolls } from 'src/backend/controllers/polls';
 import { getNotifications, getNotification, deleteNotification } from 'src/backend/controllers/notifications';
 import validId from 'src/backend/middleware/validId';
@@ -52,7 +48,6 @@ import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
 import validateCorpusMerge from 'src/backend/middleware/validateCorpusMerge';
 import validateApprovals from 'src/backend/middleware/validateApprovals';
 import validateNsibidiCharacterBody from 'src/backend/middleware/validateNsibidiCharacterBody';
-import cacheControl from 'src/backend/middleware/cacheControl';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
 import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
 
@@ -78,13 +73,7 @@ editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADM
 editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
 
 editorRouter.post('/corpora', authorization([UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
-editorRouter.put(
-  '/corpora/:id',
-  authorization([UserRoles.ADMIN]),
-  validId,
-  validateCorpusBody,
-  putCorpus,
-);
+editorRouter.put('/corpora/:id', authorization([UserRoles.ADMIN]), validId, validateCorpusBody, putCorpus);
 
 editorRouter.get('/wordSuggestions', getWordSuggestions);
 editorRouter.post(
@@ -155,13 +144,6 @@ editorRouter.delete(
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   deleteCorpusSuggestion,
 );
-
-// TODO: use the new resourcePermission middleware to only grant
-// access to stats to the user who owns the stats or the admin
-editorRouter.get('/stats/full', getStats);
-editorRouter.get('/stats/user', cacheControl, getUserStats);
-editorRouter.get('/stats/users/:uid/merge', getUserMergeStats);
-editorRouter.get('/stats/users/:uid', cacheControl, getUserStats);
 
 editorRouter.get('/polls', getPolls);
 

@@ -1,11 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-  Box,
-  Divider,
-  Progress,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Divider, Progress, Text, Tooltip } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
 
 const calculatePercentage = (numerator, denominator) => Math.floor((numerator / denominator) * 100);
@@ -15,11 +9,13 @@ const StatBody = ({
   goal: rawGoal,
   description,
   heading,
-} : {
-  totalCount: number,
-  goal: number,
-  description: string,
-  heading: string,
+  isGeneric = false,
+}: {
+  totalCount: number;
+  goal: number;
+  description: string;
+  heading: string;
+  isGeneric: boolean;
 }): ReactElement => {
   const totalCount = (rawTotalCount || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
   const goal = (rawGoal || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
@@ -34,18 +30,16 @@ const StatBody = ({
             <Tooltip label={description}>
               <InfoIcon color="gray.500" boxSize={4} />
             </Tooltip>
-            <Text className="text-gray-800" fontFamily="Silka">{heading}</Text>
+            <Text className="text-gray-800" fontFamily="Silka">
+              {heading}
+            </Text>
           </Box>
-          <Text
-            fontSize="xl"
-            fontFamily="Silka"
-            color="gray.600"
-          >
-            {`${totalCount} / ${goal}`}
+          <Text fontSize="xl" fontFamily="Silka" color="gray.600">
+            {isGeneric ? totalCount : `${totalCount} / ${goal}`}
           </Text>
         </Box>
-        <Box className="w-full flex flex-row justify-end">
-          <Box className="flex flex-col justify-center items-center w-full mt-4">
+        {!isGeneric ? (
+          <Box data-test="linear-progress-bar" className="w-full flex flex-row justify-end w-full mt-4">
             <Tooltip label={`${`${calculatedPercentage}% has been completed`}`}>
               <Box width="full">
                 <Progress
@@ -59,7 +53,7 @@ const StatBody = ({
               </Box>
             </Tooltip>
           </Box>
-        </Box>
+        ) : null}
       </Box>
       <Box>
         <Divider backgroundColor="gray.100" />

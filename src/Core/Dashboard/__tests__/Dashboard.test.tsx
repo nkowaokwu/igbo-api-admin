@@ -7,7 +7,12 @@ jest.mock('src/shared/DataCollectionAPI');
 jest.mock('src/Core/Dashboard/network');
 
 it('render the dashboard', async () => {
-  const { findByText, findAllByText } = render(<TestContext><Dashboard /></TestContext>);
+  const { findByText, findAllByText } = render(
+    <TestContext>
+      <Dashboard />
+    </TestContext>,
+  );
+  await findByText('Dashboard');
   await findByText('"Complete" Words');
   await findByText('"Sufficient" Words');
   await findAllByText('Dialectal Variations');
@@ -18,7 +23,5 @@ it('render the dashboard', async () => {
   await findByText('Words with Igbo Definitions');
   await findByText('Sufficient Igbo Example Sentences');
   await findByText('Complete Igbo Example Sentences');
-  await findByText('Verified example sentences');
-  await findByText('Recorded example sentences');
   await findByText('Igbo Proverbs Example Sentences');
 });

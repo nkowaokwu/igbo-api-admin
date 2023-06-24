@@ -20,19 +20,19 @@ const WordSuggestionShow = React.lazy(() => import('src/Core/Collections/WordSug
 const ExampleSuggestionList = React.lazy(() => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionList'));
 const ExampleSuggestionEdit = React.lazy(() => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionEdit'));
 const ExampleSuggestionCreate = React.lazy(
-  () => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionCreate')
+  () => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionCreate'),
 );
 const ExampleSuggestionShow = React.lazy(() => import('src/Core/Collections/ExampleSuggestions/ExampleSuggestionShow'));
 const NsibidiCharacterList = React.lazy(() => import('src/Core/Collections/NsibidiCharacters/NsibidiCharacterList'));
 const NsibidiCharacterEdit = React.lazy(() => import('src/Core/Collections/NsibidiCharacters/NsibidiCharacterEdit'));
 const NsibidiCharacterCreate = React.lazy(
-  () => import('src/Core/Collections/NsibidiCharacters/NsibidiCharacterCreate')
+  () => import('src/Core/Collections/NsibidiCharacters/NsibidiCharacterCreate'),
 );
 const NsibidiCharacterShow = React.lazy(() => import('src/Core/Collections/NsibidiCharacters/NsibidiCharacterShow'));
 const CorpusSuggestionList = React.lazy(() => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionList'));
 const CorpusSuggestionEdit = React.lazy(() => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionEdit'));
 const CorpusSuggestionCreate = React.lazy(
-  () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate')
+  () => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionCreate'),
 );
 const CorpusSuggestionShow = React.lazy(() => import('src/Core/Collections/CorpusSuggestions/CorpusSuggestionShow'));
 const NotificationList = React.lazy(() => import('src/Core/Collections/Notifications/NotificationList'));
@@ -44,6 +44,7 @@ const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'))
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
+const Profile = React.lazy(() => import('src/Core/Profile'));
 
 const defaultRoutes = (permissions) =>
   hasAccessToPlatformPermissions(permissions, [
@@ -185,4 +186,12 @@ export const getResourceObjects = (permissions: any): any => [
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
   ...crowdsourcerRoutes(permissions),
+];
+
+export const getCustomRouteObjects = (): any => [
+  {
+    exact: true,
+    path: '/profile',
+    component: withLastRoute(Profile),
+  },
 ];
