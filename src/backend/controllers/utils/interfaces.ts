@@ -6,6 +6,7 @@ import SentenceType from 'src/backend/shared/constants/SentenceType';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import StatTypes from 'src/backend/shared/constants/StatTypes';
 
 export interface HandleQueries {
   searchWord: string;
@@ -185,6 +186,30 @@ export interface ExampleData {
     _id: Types.ObjectId;
   }[];
   updatedAt: Date;
+}
+
+export interface AudioPronunciation extends AudioPronunciationData, Document<any>, LeanDocument<any> {
+  id: Types.ObjectId;
+}
+
+export interface AudioPronunciationData {
+  id: Types.ObjectId | string;
+  objectId: string;
+  size: number;
+  prevSize?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Stat extends StatData, Document<any>, LeanDocument<any> {
+  id: Types.ObjectId;
+}
+
+export interface StatData {
+  id: Types.ObjectId | string;
+  type: StatTypes;
+  authorId: string;
+  value: number;
 }
 
 export interface ExampleSuggestion extends ExampleSuggestionData, Suggestion {

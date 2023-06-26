@@ -11,6 +11,7 @@ import {
   IGBO_DEFINITIONS_GOAL,
   EXAMPLE_SENTENCES_GOAL,
   PROVERBS_GOAL,
+  TOTAL_EXAMPLE_AUDIO_GOAL,
 } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
@@ -26,6 +27,7 @@ const MilestoneProgress = ({
   igboDefinitions,
   nsibidiWords,
   nsibidiWordSuggestions,
+  totalExampleAudio,
 }: {
   sufficientWords: number;
   completeWords: number;
@@ -39,6 +41,7 @@ const MilestoneProgress = ({
   wordsWithIgboDefinitions: number;
   nsibidiWords: number;
   nsibidiWordSuggestions: number;
+  totalExampleAudio: number;
 }): ReactElement => {
   const wordStats = [
     {
@@ -129,6 +132,16 @@ const MilestoneProgress = ({
     },
   ];
 
+  const audioStats = [
+    {
+      totalCount: totalExampleAudio,
+      goal: TOTAL_EXAMPLE_AUDIO_GOAL,
+      heading: 'Hours of example audio',
+      description: `There are currently ${totalExampleAudio} hours of recorded Igbo audio for examples on the platform.
+      Our next goal is to mark a total of ${TOTAL_EXAMPLE_AUDIO_GOAL} hours of Igbo audio for examples.`,
+    },
+  ];
+
   const isWordStatsLoaded =
     sufficientWords !== null &&
     completeWords !== null &&
@@ -138,6 +151,7 @@ const MilestoneProgress = ({
     igboDefinitions !== null;
   const isNsibidiStatsLoaded = nsibidiWords !== null && nsibidiWordSuggestions !== null;
   const isExampleStatsLoaded = sufficientExamples !== null && completeExamples !== null && proverbExamples !== null;
+  const isAudioStatsLoaded = totalExampleAudio !== null;
 
   return (
     <Box className="space-y-3 w-full">
@@ -150,8 +164,9 @@ const MilestoneProgress = ({
         </Box>
         <Box className="space-y-3">
           <LinearProgressCard heading="Word Stats" stats={wordStats} isLoaded={isWordStatsLoaded} />
-          <LinearProgressCard stats={nsibidiStats} heading="Nsịbịdị Stats" isLoaded={isNsibidiStatsLoaded} />
+          <LinearProgressCard heading="Nsịbịdị Stats" stats={nsibidiStats} isLoaded={isNsibidiStatsLoaded} />
           <LinearProgressCard heading="Example Stats" stats={exampleStats} isLoaded={isExampleStatsLoaded} />
+          <LinearProgressCard heading="Audio Stats" stats={audioStats} isLoaded={isAudioStatsLoaded} />
         </Box>
       </Box>
     </Box>
