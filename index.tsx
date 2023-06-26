@@ -86,7 +86,7 @@ export const calculateDashboardStats = functions
   .onRun(onUpdateDashboardStats);
 /* Runs everyday at 6AM PST */
 export const calculateTotalAudioHours = functions
-  .region('us-central-1', 'europe-west3')
+  .region('us-central1', 'europe-west3')
   .runWith({ timeoutSeconds: 540 })
   .pubsub.schedule('0 6 * * *')
   .timeZone('America/Los_Angeles')
