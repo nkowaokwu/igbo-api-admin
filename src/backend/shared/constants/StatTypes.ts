@@ -13,6 +13,7 @@ enum StatTypes {
   NSIBIDI_WORD_SUGGESTIONS = 'nsibidi_word_suggestions',
   USER = 'user',
   TOTAL_EXAMPLE_AUDIO = 'total_example_audio',
+  TOTAL_EXAMPLE_SUGGESTION_AUDIO = 'total_example_suggestion_audio',
 }
 
 export default StatTypes;

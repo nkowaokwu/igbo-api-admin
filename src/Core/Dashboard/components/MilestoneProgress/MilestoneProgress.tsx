@@ -12,6 +12,7 @@ import {
   EXAMPLE_SENTENCES_GOAL,
   PROVERBS_GOAL,
   TOTAL_EXAMPLE_AUDIO_GOAL,
+  TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL,
 } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
@@ -28,6 +29,7 @@ const MilestoneProgress = ({
   nsibidiWords,
   nsibidiWordSuggestions,
   totalExampleAudio,
+  totalExampleSuggestionAudio,
 }: {
   sufficientWords: number;
   completeWords: number;
@@ -42,6 +44,7 @@ const MilestoneProgress = ({
   nsibidiWords: number;
   nsibidiWordSuggestions: number;
   totalExampleAudio: number;
+  totalExampleSuggestionAudio: number;
 }): ReactElement => {
   const wordStats = [
     {
@@ -134,11 +137,22 @@ const MilestoneProgress = ({
 
   const audioStats = [
     {
-      totalCount: totalExampleAudio,
+      totalCount: Math.floor(totalExampleAudio),
       goal: TOTAL_EXAMPLE_AUDIO_GOAL,
       heading: 'Hours of example audio',
-      description: `There are currently ${totalExampleAudio} hours of recorded Igbo audio for examples on the platform.
+      description: `There are currently ${Math.floor(
+        totalExampleAudio,
+      )} hours of recorded Igbo audio for examples on the platform.
       Our next goal is to mark a total of ${TOTAL_EXAMPLE_AUDIO_GOAL} hours of Igbo audio for examples.`,
+    },
+    {
+      totalCount: Math.floor(totalExampleSuggestionAudio),
+      goal: TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL,
+      heading: 'Hours of example audio',
+      description: `There are currently ${Math.floor(
+        totalExampleSuggestionAudio,
+      )} hours of recorded Igbo audio for example suggestions on the platform. 
+      The limit is ${TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL} hours of Igbo audio for example suggestions.`,
     },
   ];
 

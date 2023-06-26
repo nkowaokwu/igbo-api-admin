@@ -3,15 +3,13 @@ import determineDocumentCompleteness from '../determineDocumentCompleteness';
 
 const word = {
   word: 'word',
-  definitions: [
-    { wordClass: 'NNC', definitions: ['first definition'] },
-  ],
-  pronunciation: 'https://igbo-api-test-local/audio-file',
+  definitions: [{ wordClass: 'NNC', definitions: ['first definition'] }],
+  pronunciation: 'https://igbo-api-test-local.com/audio-file',
   examples: [
     {
       igbo: 'igbo',
       english: 'english',
-      pronunciations: [{ audio: 'https://igbo-api-test-local/audio-file-example', speaker: '' }],
+      pronunciations: [{ audio: 'https://igbo-api-test-local.com/audio-file-example', speaker: '' }],
     },
   ],
   attributes: {
@@ -22,9 +20,7 @@ const word = {
   },
   stems: [],
   relatedTerms: [],
-  dialects: [
-    { dialects: ['ABI'], pronunciation: 'https://igbo-api-test-local/audio-file-ABI' },
-  ],
+  dialects: [{ dialects: ['ABI'], pronunciation: 'https://igbo-api-test-local.com/audio-file-ABI' }],
   tenses: {},
 };
 

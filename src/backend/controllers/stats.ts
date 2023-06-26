@@ -160,12 +160,12 @@ const calculateWordStats = async (
 };
 
 /**
- * Calculates the total amount of audio hours
+ * Calculates the total amount of example audio hours
  * @param Example
  * @param AudioPronunciation
  * @param Stat
  */
-const calculateTotalAudioState = async (
+const calculateTotalExampleAudioState = async (
   Example: Model<Interfaces.Example, any, any>,
   AudioPronunciation: Model<Interfaces.AudioPronunciation, any, any>,
   Stat: Model<Interfaces.Stat, any, any>,
@@ -185,6 +185,37 @@ const calculateTotalAudioState = async (
   const durationInHours = totalBytes / BYTES_TO_SECONDS / 3600;
   await updateStat({ type: StatTypes.TOTAL_EXAMPLE_AUDIO, value: durationInHours, Stat });
   return { totalExampleAudio: durationInHours };
+};
+
+/**
+ * Calculates the total amount of example suggestion audio hours
+ * @param Example
+ * @param AudioPronunciation
+ * @param Stat
+ */
+const calculateTotalExampleSuggestionAudioState = async (
+  ExampleSuggestion: Model<Interfaces.ExampleSuggestion, any, any>,
+  AudioPronunciation: Model<Interfaces.AudioPronunciation, any, any>,
+  Stat: Model<Interfaces.Stat, any, any>,
+): Promise<{ totalExampleSuggestionAudio: number }> => {
+  const exampleSuggestions = await ExampleSuggestion.find({ 'pronunciations.review': { $eq: true } });
+
+  const audioPronunciationPaths = exampleSuggestions.reduce((finalAudioPronunciations, example) => {
+    // Get audio-pronunciations/id from the URI that are still under review
+    const pronunciations = compact(
+      example.pronunciations.map(({ audio, review }) => review && audio.split(/.com\//)[1]),
+    );
+    return finalAudioPronunciations.concat(pronunciations);
+  }, [] as string[]);
+
+  const audioPronunciations = await AudioPronunciation.find({ objectId: { $in: audioPronunciationPaths } });
+  const totalBytes = audioPronunciations.reduce(
+    (finalTotalBytes, audioPronunciation) => finalTotalBytes + audioPronunciation.size,
+    0,
+  );
+  const durationInHours = totalBytes / BYTES_TO_SECONDS / 3600;
+  await updateStat({ type: StatTypes.TOTAL_EXAMPLE_SUGGESTION_AUDIO, value: durationInHours, Stat });
+  return { totalExampleSuggestionAudio: durationInHours };
 };
 
 const countExampleStats = async (examples: Interfaces.Example[]) => {
@@ -490,16 +521,25 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
 /**
  * Calculates the total number of audio hours
  */
-export const onUpdateTotalAudioDashboardStats = async (): Promise<{ totalExampleAudio: number }> => {
+export const onUpdateTotalAudioDashboardStats = async (): Promise<
+  [{ totalExampleAudio: number }, { totalExampleSuggestionAudio: number }]
+> => {
   const connection = await connectDatabase();
   try {
     const Example = connection.model<Interfaces.Example>('Example', exampleSchema);
+    const ExampleSuggestion = connection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
     const AudioPronunciation = connection.model<Interfaces.AudioPronunciation>(
       'AudioPronunciation',
       audioPronunciationSchema,
     );
     const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
-    const result = await calculateTotalAudioState(Example, AudioPronunciation, Stat);
+    const result = await Promise.all([
+      calculateTotalExampleAudioState(Example, AudioPronunciation, Stat),
+      calculateTotalExampleSuggestionAudioState(ExampleSuggestion, AudioPronunciation, Stat),
+    ]);
     await disconnectDatabase();
     return result;
   } catch (err) {

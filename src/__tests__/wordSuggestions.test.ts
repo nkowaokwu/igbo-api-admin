@@ -1,10 +1,4 @@
-import {
-  forEach,
-  forIn,
-  isEqual,
-  pick,
-  times,
-} from 'lodash';
+import { forEach, forIn, isEqual, pick, times } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
@@ -83,12 +77,14 @@ describe('MongoDB Word Suggestions', () => {
     it('should persist author id to the dialects object', async () => {
       const res = await suggestNewWord({
         ...wordSuggestionData,
-        dialects: [{
-          word: 'dialect',
-          variations: [],
-          dialects: ['AFI'],
-          pronunciation: '',
-        }],
+        dialects: [
+          {
+            word: 'dialect',
+            variations: [],
+            dialects: ['AFI'],
+            pronunciation: '',
+          },
+        ],
       });
       expect(res.status).toEqual(200);
       expect(res.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
@@ -97,12 +93,14 @@ describe('MongoDB Word Suggestions', () => {
     it('should persist author id to the dialects object after adding and deleting dialect objects', async () => {
       const wordRes = await suggestNewWord({
         ...wordSuggestionData,
-        dialects: [{
-          word: 'dialect',
-          variations: [],
-          dialects: [Dialects.AFI.value],
-          pronunciation: '',
-        }],
+        dialects: [
+          {
+            word: 'dialect',
+            variations: [],
+            dialects: [Dialects.AFI.value],
+            pronunciation: '',
+          },
+        ],
       });
       const secondWordRes = await updateWordSuggestion({
         ...wordRes.body,
@@ -116,33 +114,39 @@ describe('MongoDB Word Suggestions', () => {
           },
         ],
       });
-      const thirdWordRes = await updateWordSuggestion({
-        ...secondWordRes.body,
-        dialects: [
-          ...secondWordRes.body.dialects,
-          {
-            word: 'dialect 3',
-            variations: [],
-            dialects: [Dialects.BON.value],
-            pronunciation: '',
-          },
-        ],
-      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      const thirdWordRes = await updateWordSuggestion(
+        {
+          ...secondWordRes.body,
+          dialects: [
+            ...secondWordRes.body.dialects,
+            {
+              word: 'dialect 3',
+              variations: [],
+              dialects: [Dialects.BON.value],
+              pronunciation: '',
+            },
+          ],
+        },
+        { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true },
+      );
       expect(thirdWordRes.status).toEqual(200);
       expect(thirdWordRes.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(thirdWordRes.body.dialects[1].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(thirdWordRes.body.dialects[2].editor).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
-      const res = await updateWordSuggestion({
-        ...thirdWordRes.body,
-        dialects: [
-          ...thirdWordRes.body.dialects.map((dialect, index) => {
-            if (!index) {
-              dialect.word = 'updated first dialect';
-            }
-            return dialect;
-          }),
-        ],
-      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+      const res = await updateWordSuggestion(
+        {
+          ...thirdWordRes.body,
+          dialects: [
+            ...thirdWordRes.body.dialects.map((dialect, index) => {
+              if (!index) {
+                dialect.word = 'updated first dialect';
+              }
+              return dialect;
+            }),
+          ],
+        },
+        { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true },
+      );
       expect(res.status).toEqual(200);
       expect(res.body.dialects[0].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(res.body.dialects[1].editor).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
@@ -150,16 +154,21 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should throw an error by providing the editor id in payload', async () => {
-      const res = await suggestNewWord({
-        ...wordSuggestionData,
-        dialects: [{
-          word: 'dialect',
-          variations: [],
-          dialects: ['AFI'],
-          pronunciation: '',
-          editor: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
-        }],
-      }, { cleanData: false });
+      const res = await suggestNewWord(
+        {
+          ...wordSuggestionData,
+          dialects: [
+            {
+              word: 'dialect',
+              variations: [],
+              dialects: ['AFI'],
+              pronunciation: '',
+              editor: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+            },
+          ],
+        },
+        { cleanData: false },
+      );
       expect(res.status).toEqual(400);
     });
   });
@@ -172,8 +181,9 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.status).toEqual(200);
       forIn(updatedWordSuggestionData, (value, key) => {
         if (key === 'definitions') {
-          const cleanedDefinitions = result.body[key]
-            .map((definitionGroup) => pick(definitionGroup, ['wordClass', 'definitions']));
+          const cleanedDefinitions = result.body[key].map((definitionGroup) =>
+            pick(definitionGroup, ['wordClass', 'definitions']),
+          );
           expect(isEqual(cleanedDefinitions, value)).toEqual(true);
         } else {
           expect(isEqual(result.body[key], value)).toEqual(true);
@@ -220,37 +230,47 @@ describe('MongoDB Word Suggestions', () => {
     it('should update a wordSuggestion without changing the nested exampleSuggestion audio data', async () => {
       const wordRes = await suggestNewWord({
         ...wordSuggestionWithNestedExampleSuggestionData,
-        examples: [{
-          ...wordSuggestionWithNestedExampleSuggestionData.examples[0],
-          pronunciations: [{ audio: 'data:audio/mp3recording audio', speaker: '' }],
-        }],
+        examples: [
+          {
+            ...wordSuggestionWithNestedExampleSuggestionData.examples[0],
+            pronunciations: [{ audio: 'data:audio/mp3recording audio', speaker: '' }],
+          },
+        ],
       });
       expect(wordRes.status).toEqual(200);
       const nestedExampleId = wordRes.body.examples[0].id;
-      expect(wordRes.body.examples[0].pronunciations[0].audio
-        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
-        .toBeTruthy();
+      expect(
+        wordRes.body.examples[0].pronunciations[0].audio.startsWith(
+          `https://igbo-api-test-local.com/audio-pronunciations/${nestedExampleId}-`,
+        ),
+      ).toBeTruthy();
       const secondWordRes = await updateWordSuggestion({
         ...wordRes.body,
         word: 'changed',
       });
       expect(secondWordRes.status).toEqual(200);
-      expect(secondWordRes.body.examples[0].pronunciations[0].audio
-        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
-        .toBeTruthy();
+      expect(
+        secondWordRes.body.examples[0].pronunciations[0].audio.startsWith(
+          `https://igbo-api-test-local.com/audio-pronunciations/${nestedExampleId}-`,
+        ),
+      ).toBeTruthy();
       const res = await updateWordSuggestion({
         ...secondWordRes.body,
-        examples: [{
-          ...secondWordRes.body.examples[0],
-          igbo: 'changed igbo',
-        }],
+        examples: [
+          {
+            ...secondWordRes.body.examples[0],
+            igbo: 'changed igbo',
+          },
+        ],
       });
       expect(res.status).toEqual(200);
       expect(res.body.word).toEqual('changed');
       expect(res.body.examples[0].igbo).toEqual('changed igbo');
-      expect(res.body.examples[0].pronunciations[0].audio
-        .startsWith(`https://igbo-api-test-local/audio-pronunciations/${nestedExampleId}-`))
-        .toBeTruthy();
+      expect(
+        res.body.examples[0].pronunciations[0].audio.startsWith(
+          `https://igbo-api-test-local.com/audio-pronunciations/${nestedExampleId}-`,
+        ),
+      ).toBeTruthy();
     });
 
     it('should fail to update nested exampleSuggestion inside wordSuggestion for invalid associatedWords', async () => {
@@ -283,11 +303,10 @@ describe('MongoDB Word Suggestions', () => {
       const result = await updateWordSuggestion({ id: res.body.id, ...updatedWordSuggestion });
       expect(result.status).toEqual(200);
       expect(result.body.examples).toHaveLength(0);
-      getExampleSuggestion(exampleSuggestionToDeleteId)
-        .end((_, noExampleSuggestionRes) => {
-          expect(noExampleSuggestionRes.status).toEqual(404);
-          expect(noExampleSuggestionRes.body.error).not.toEqual(undefined);
-        });
+      getExampleSuggestion(exampleSuggestionToDeleteId).end((_, noExampleSuggestionRes) => {
+        expect(noExampleSuggestionRes.status).toEqual(404);
+        expect(noExampleSuggestionRes.body.error).not.toEqual(undefined);
+      });
     });
 
     it('should throw an error because the nested example suggestion has an invalid id', async () => {
@@ -321,7 +340,7 @@ describe('MongoDB Word Suggestions', () => {
       expect(result.status).toEqual(400);
     });
 
-    it('should return an error because document doesn\'t exist', async () => {
+    it("should return an error because document doesn't exist", async () => {
       const res = await getWordSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);
@@ -357,19 +376,21 @@ describe('MongoDB Word Suggestions', () => {
       const wordSuggestionRes = await suggestNewWord(wordSuggestionData);
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
-        definitions: wordSuggestionRes.body.definitions
-          .concat({
-            wordClass: WordClass.AV.value,
-            definitions: ['first verb'],
-            igboDefinitions: [{ igbo: 'akwa', nsibidi: '' }],
-          }),
+        definitions: wordSuggestionRes.body.definitions.concat({
+          wordClass: WordClass.AV.value,
+          definitions: ['first verb'],
+          igboDefinitions: [{ igbo: 'akwa', nsibidi: '' }],
+        }),
       });
-      expect(updatedWordSuggestionRes.body.definitions[0].wordClass)
-        .toEqual(wordSuggestionData.definitions[0].wordClass);
-      expect(isEqual(
-        updatedWordSuggestionRes.body.definitions[0].definitions,
-        wordSuggestionData.definitions[0].definitions,
-      )).toEqual(true);
+      expect(updatedWordSuggestionRes.body.definitions[0].wordClass).toEqual(
+        wordSuggestionData.definitions[0].wordClass,
+      );
+      expect(
+        isEqual(
+          updatedWordSuggestionRes.body.definitions[0].definitions,
+          wordSuggestionData.definitions[0].definitions,
+        ),
+      ).toEqual(true);
       expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClass.AV.value);
       expect(isEqual(updatedWordSuggestionRes.body.definitions[1].definitions, ['first verb'])).toEqual(true);
       const updatedDefinitions = [...updatedWordSuggestionRes.body.definitions];
@@ -383,17 +404,21 @@ describe('MongoDB Word Suggestions', () => {
     it('should create a word suggestion with tenses', async () => {
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
-        tenses: Object.values(Tense).reduce((finalTenses, { value }) => ({
-          ...finalTenses,
-          [value]: '',
-        }), {}),
+        tenses: Object.values(Tense).reduce(
+          (finalTenses, { value }) => ({
+            ...finalTenses,
+            [value]: '',
+          }),
+          {},
+        ),
       });
       expect(wordSuggestionRes.status).toEqual(200);
       expect(wordSuggestionRes.body.tenses[Tense.INFINITIVE.value]).toEqual('');
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
-        definitions: wordSuggestionRes.body.definitions
-          .map((definitionGroup) => pick(definitionGroup, ['wordClass', 'definitions'])),
+        definitions: wordSuggestionRes.body.definitions.map((definitionGroup) =>
+          pick(definitionGroup, ['wordClass', 'definitions']),
+        ),
         tenses: {
           ...wordSuggestionRes.body.tenses,
           [Tense.IMPERATIVE.value]: 'testing',
@@ -406,38 +431,51 @@ describe('MongoDB Word Suggestions', () => {
     it('should update a word suggestion with two different authors', async () => {
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
-        tenses: Object.values(Tense).reduce((finalTenses, { value }) => ({
-          ...finalTenses,
-          [value]: '',
-        }), {}),
+        tenses: Object.values(Tense).reduce(
+          (finalTenses, { value }) => ({
+            ...finalTenses,
+            [value]: '',
+          }),
+          {},
+        ),
       });
       expect(wordSuggestionRes.status).toEqual(200);
-      const updatedWordSuggestionRes = await updateWordSuggestion({
-        ...wordSuggestionRes.body,
-        tenses: {
-          ...wordSuggestionRes.body.tenses,
-          [Tense.IMPERATIVE.value]: 'testing',
+      const updatedWordSuggestionRes = await updateWordSuggestion(
+        {
+          ...wordSuggestionRes.body,
+          tenses: {
+            ...wordSuggestionRes.body.tenses,
+            [Tense.IMPERATIVE.value]: 'testing',
+          },
+          examples: [
+            {
+              igbo: 'testing with igbo',
+              english: 'testing with english',
+              pronunciations: [{ audio: 'data://', speaker: '' }],
+            },
+          ],
         },
-        examples: [{
-          igbo: 'testing with igbo',
-          english: 'testing with english',
-          pronunciations: [{ audio: 'data://', speaker: '' }],
-        }],
-      }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true });
+        { token: AUTH_TOKEN.MERGER_AUTH_TOKEN, cleanData: true },
+      );
       expect(updatedWordSuggestionRes.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       expect(updatedWordSuggestionRes.body.authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-      const res = await updateWordSuggestion({
-        ...updatedWordSuggestionRes.body,
-        tenses: {
-          ...wordSuggestionRes.body.tenses,
-          [Tense.IMPERATIVE.value]: 'testing',
+      const res = await updateWordSuggestion(
+        {
+          ...updatedWordSuggestionRes.body,
+          tenses: {
+            ...wordSuggestionRes.body.tenses,
+            [Tense.IMPERATIVE.value]: 'testing',
+          },
+          examples: [
+            {
+              igbo: 'testing with igbo updated',
+              english: 'testing with english updated',
+              id: updatedWordSuggestionRes.body.examples[0].id,
+            },
+          ],
         },
-        examples: [{
-          igbo: 'testing with igbo updated',
-          english: 'testing with english updated',
-          id: updatedWordSuggestionRes.body.examples[0].id,
-        }],
-      }, { token: AUTH_TOKEN.ADMIN_AUTH_TOKEN, cleanData: true });
+        { token: AUTH_TOKEN.ADMIN_AUTH_TOKEN, cleanData: true },
+      );
       expect(res.body.examples[0].authorId).toEqual(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       expect(res.body.authorId).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       await createWord(res.body.id);
@@ -451,8 +489,9 @@ describe('MongoDB Word Suggestions', () => {
     it('should update a word suggestion with an nsibidi character', async () => {
       const wordSuggestionRes = await suggestNewWord(wordSuggestionData);
       expect(wordSuggestionRes.status).toEqual(200);
-      expect(wordSuggestionRes.body.definitions[0].nsibidiCharacters[0])
-        .toEqual(wordSuggestionData.definitions[0].nsibidiCharacters[0].toString());
+      expect(wordSuggestionRes.body.definitions[0].nsibidiCharacters[0]).toEqual(
+        wordSuggestionData.definitions[0].nsibidiCharacters[0].toString(),
+      );
     });
   });
 
@@ -656,14 +695,16 @@ describe('MongoDB Word Suggestions', () => {
 
   describe('Igbo Definitions', () => {
     it('should get five random word suggestions with no user interactions associated with user', async () => {
-      await Promise.all(times(5, async () => {
-        const wordRes = await suggestNewWord(
-          { ...wordSuggestionData, word: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(wordRes.body.approvals).toHaveLength(0);
-        expect(wordRes.body.denials).toHaveLength(0);
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const wordRes = await suggestNewWord(
+            { ...wordSuggestionData, word: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(wordRes.body.approvals).toHaveLength(0);
+          expect(wordRes.body.denials).toHaveLength(0);
+        }),
+      );
       const res = await getRandomWordSuggestions({});
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeLessThanOrEqual(5);
@@ -673,14 +714,16 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should save the Igbo definitions for each word suggestion with no duplicates', async () => {
-      await Promise.all(times(5, async () => {
-        const wordRes = await suggestNewWord(
-          { ...wordSuggestionData, word: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(wordRes.body.approvals).toHaveLength(0);
-        expect(wordRes.body.denials).toHaveLength(0);
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const wordRes = await suggestNewWord(
+            { ...wordSuggestionData, word: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(wordRes.body.approvals).toHaveLength(0);
+          expect(wordRes.body.denials).toHaveLength(0);
+        }),
+      );
       const randomRes = await getRandomWordSuggestions({});
       expect(randomRes.status).toEqual(200);
       expect(randomRes.body.length).toBeLessThanOrEqual(5);
@@ -690,15 +733,16 @@ describe('MongoDB Word Suggestions', () => {
       }));
       const res = await putRandomWordSuggestions(igboDefinitions);
       expect(res.status).toEqual(200);
-      await Promise.all(res.body.map(async (wordSuggestionId) => {
-        const updatedWordRes = await getWordSuggestion(wordSuggestionId);
-        const currentIgboDefinition = igboDefinitions.find(({ id }) => id === wordSuggestionId).igboDefinition;
-        expect(updatedWordRes.body.definitions[0].igboDefinitions[0].igbo)
-          .toEqual(currentIgboDefinition);
-        const singleWordRes = await getWordSuggestions({ keyword: currentIgboDefinition });
-        expect(singleWordRes.status).toEqual(200);
-        expect(singleWordRes.body).toHaveLength(1);
-      }));
+      await Promise.all(
+        res.body.map(async (wordSuggestionId) => {
+          const updatedWordRes = await getWordSuggestion(wordSuggestionId);
+          const currentIgboDefinition = igboDefinitions.find(({ id }) => id === wordSuggestionId).igboDefinition;
+          expect(updatedWordRes.body.definitions[0].igboDefinitions[0].igbo).toEqual(currentIgboDefinition);
+          const singleWordRes = await getWordSuggestions({ keyword: currentIgboDefinition });
+          expect(singleWordRes.status).toEqual(200);
+          expect(singleWordRes.body).toHaveLength(1);
+        }),
+      );
     });
   });
 });
