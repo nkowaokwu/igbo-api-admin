@@ -34,7 +34,7 @@ import {
   postNsibidiCharacter,
   putNsibidiCharacter,
 } from 'src/backend/controllers/nsibidiCharacters';
-
+import { getStats } from 'src/backend/controllers/stats';
 import { getPolls } from 'src/backend/controllers/polls';
 import { getNotifications, getNotification, deleteNotification } from 'src/backend/controllers/notifications';
 import validId from 'src/backend/middleware/validId';
@@ -150,5 +150,7 @@ editorRouter.get('/polls', getPolls);
 editorRouter.get('/notifications', getNotifications);
 editorRouter.get('/notifications/:id', getNotification);
 editorRouter.delete('/notifications/:id', deleteNotification);
+
+editorRouter.get('/stats/full', getStats);
 
 export default editorRouter;

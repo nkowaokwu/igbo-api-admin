@@ -1,6 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { times } from 'lodash';
+import { Model } from 'mongoose';
+import { compact, times } from 'lodash';
 import moment from 'moment';
+import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -23,6 +25,7 @@ import SentenceType from '../shared/constants/SentenceType';
 import { countAllAudio } from './utils/MediaAPIs/AudioAPI';
 import Author from '../shared/constants/Author';
 
+const BYTES_TO_SECONDS = 43800;
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
 const findStat = async ({ type, authorId = Author.SYSTEM, Stat }) => {
@@ -156,6 +159,34 @@ const calculateWordStats = async (
   };
 };
 
+/**
+ * Calculates the total amount of audio hours
+ * @param Example
+ * @param AudioPronunciation
+ * @param Stat
+ */
+const calculateTotalAudioState = async (
+  Example: Model<Interfaces.Example, any, any>,
+  AudioPronunciation: Model<Interfaces.AudioPronunciation, any, any>,
+  Stat: Model<Interfaces.Stat, any, any>,
+): Promise<{ totalExampleAudio: number }> => {
+  const examples = await Example.find({ 'pronunciations.audio': { $exists: true } });
+  const audioPronunciationPaths = examples.reduce((finalAudioPronunciations, example) => {
+    // Get audio-pronunciations/id from the URI
+    const pronunciations = compact(example.pronunciations.map(({ audio }) => audio.split(/.com\//)[1]));
+    return finalAudioPronunciations.concat(pronunciations);
+  }, [] as string[]);
+
+  const audioPronunciations = await AudioPronunciation.find({ objectId: { $in: audioPronunciationPaths } });
+  const totalBytes = audioPronunciations.reduce(
+    (finalTotalBytes, audioPronunciation) => finalTotalBytes + audioPronunciation.size,
+    0,
+  );
+  const durationInHours = totalBytes / BYTES_TO_SECONDS / 3600;
+  await updateStat({ type: StatTypes.TOTAL_EXAMPLE_AUDIO, value: durationInHours, Stat });
+  return { totalExampleAudio: durationInHours };
+};
+
 const countExampleStats = async (examples: Interfaces.Example[]) => {
   let sufficientExamplesCount = 0;
   let completedExamplesCount = 0;
@@ -212,8 +243,11 @@ export const getUserStats = async (
       mongooseConnection,
     } = req;
     const userId = uid || user.uid;
-    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
     const [wordSuggestions, exampleSuggestions] = await Promise.all([
       WordSuggestion.find({
         $or: [
@@ -305,8 +339,11 @@ export const getUserMergeStats = async (
         .startOf('week')
         .toISOString(),
     );
-    const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
-    const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
+    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
     console.time(`Querying user merge stat example suggestions for ${uid}`);
     const exampleSuggestions = (await ExampleSuggestion.find({
       authorId: uid,
@@ -407,7 +444,7 @@ export const getStats = async (
 ): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
-    const Stat = mongooseConnection.model('Stat', statSchema);
+    const Stat = mongooseConnection.model<Interfaces.Stat>('Stat', statSchema);
 
     const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } }).hint({ type: 1 });
     return res.send(
@@ -424,13 +461,16 @@ export const getStats = async (
   }
 };
 
+/**
+ * Calculates all relevant stats on the dashboard page
+ */
 export const onUpdateDashboardStats = async (): Promise<void> => {
   const connection = await connectDatabase();
   try {
-    const Word = connection.model('Word', wordSchema);
-    const Example = connection.model('Example', exampleSchema);
-    const WordSuggestion = connection.model('WordSuggestion', wordSuggestionSchema);
-    const Stat = connection.model('Stat', statSchema);
+    const Word = connection.model<Interfaces.Word>('Word', wordSchema);
+    const Example = connection.model<Interfaces.Example>('Example', exampleSchema);
+    const WordSuggestion = connection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+    const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
 
     await Promise.all([
       calculateExampleStats(Example, Stat),
@@ -444,6 +484,28 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
   } catch (err) {
     await disconnectDatabase();
     console.log(err);
+  }
+};
+
+/**
+ * Calculates the total number of audio hours
+ */
+export const onUpdateTotalAudioDashboardStats = async (): Promise<{ totalExampleAudio: number }> => {
+  const connection = await connectDatabase();
+  try {
+    const Example = connection.model<Interfaces.Example>('Example', exampleSchema);
+    const AudioPronunciation = connection.model<Interfaces.AudioPronunciation>(
+      'AudioPronunciation',
+      audioPronunciationSchema,
+    );
+    const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
+    const result = await calculateTotalAudioState(Example, AudioPronunciation, Stat);
+    await disconnectDatabase();
+    return result;
+  } catch (err) {
+    await disconnectDatabase();
+    console.log(err);
+    return null;
   }
 };
 

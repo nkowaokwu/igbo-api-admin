@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import './src/backend/shared/utils/wrapConsole';
 import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/services/emailJobs';
-import { onUpdateDashboardStats } from './src/backend/controllers/stats';
+import { onUpdateDashboardStats, onUpdateTotalAudioDashboardStats } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import apiRouter from './src/backend/routers/apiRouter';
 import editorRouter from './src/backend/routers/editorRouter';
@@ -84,6 +84,13 @@ export const calculateDashboardStats = functions
   .pubsub.schedule('0,10,20,30,40,50 8-22 * * *')
   .timeZone('Africa/Lagos')
   .onRun(onUpdateDashboardStats);
+/* Runs everyday at 6AM PST */
+export const calculateTotalAudioHours = functions
+  .region('us-central-1', 'europe-west3')
+  .runWith({ timeoutSeconds: 540 })
+  .pubsub.schedule('0 6 * * *')
+  .timeZone('America/Los_Angeles')
+  .onRun(onUpdateTotalAudioDashboardStats);
 
 /**
  * Determines whether or not in a backend testing environment or in a

@@ -30,5 +30,6 @@ export const IS_STANDARD_IGBO_GOAL = 8100;
 export const IGBO_DEFINITIONS_GOAL = 500;
 export const EXAMPLE_SENTENCES_GOAL = 25000;
 export const PROVERBS_GOAL = 4000;
+export const TOTAL_EXAMPLE_AUDIO_GOAL = 2000;
 
 export const BULK_UPLOAD_LIMIT = 500;

@@ -22,7 +22,7 @@ import validateReviewRandomExampleSuggestionBody from 'src/backend/middleware/va
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
-import { getStats, getUserStats, getUserMergeStats } from 'src/backend/controllers/stats';
+import { getUserStats, getUserMergeStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
 
 const crowdsourcerRouter = express.Router();
@@ -68,7 +68,6 @@ crowdsourcerRouter.get(
 
 // TODO: use the new resourcePermission middleware to only grant
 // access to stats to the user who owns the stats or the admin
-crowdsourcerRouter.get('/stats/full', getStats);
 crowdsourcerRouter.get('/stats/user', cacheControl, getUserStats);
 crowdsourcerRouter.get('/stats/users/:uid/merge', getUserMergeStats);
 crowdsourcerRouter.get('/stats/users/:uid', cacheControl, getUserStats);
