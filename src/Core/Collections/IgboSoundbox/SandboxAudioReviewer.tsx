@@ -38,8 +38,9 @@ const SandboxAudioReviewer = ({
             pronunciations.map(({ speaker: speakerId }) => getUserProfile(speakerId)),
           );
           setSpeakers(speakerProfiles);
-        } finally {
+        } catch (err) {
           setSpeakers([]);
+        } finally {
           setIsLoadingSpeakers(false);
         }
       }

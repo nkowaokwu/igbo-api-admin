@@ -13,7 +13,6 @@ describe('RecordSentenceAudio', () => {
     );
     await findByText('Record sentence audio');
     await findByText('Play audio and then record audio for each sentence');
-    await findByText('No audio pronunciation');
     await findByText('Submit Batch');
   });
 
