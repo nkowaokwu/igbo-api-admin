@@ -1,9 +1,4 @@
-import React, {
-  ReactElement,
-  useState,
-  useEffect,
-  FormEvent,
-} from 'react';
+import React, { ReactElement, useState, useEffect, FormEvent } from 'react';
 import { assign, map, omit } from 'lodash';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -31,15 +26,8 @@ const CorpusEditForm = ({
   resource = '',
   history,
   isPreExistingSuggestion,
-}: EditFormProps) : ReactElement => {
-  const {
-    getValues,
-    setValue,
-    control,
-    errors,
-    register,
-    watch,
-  } = useForm({
+}: EditFormProps): ReactElement => {
+  const { getValues, setValue, control, errors, register, watch } = useForm({
     defaultValues: {
       ...record,
     },
@@ -71,7 +59,7 @@ const CorpusEditForm = ({
     })();
   }, []);
 
-  const handleFileSelect = ({ file, duration } : { file?: File, duration: number }) => {
+  const handleFileSelect = ({ file, duration }: { file?: File; duration: number }) => {
     if (file?.name) {
       setValue('title', file.name);
       setMediaFile(file);
@@ -96,46 +84,40 @@ const CorpusEditForm = ({
   const onSubmit = (data) => {
     setIsSubmitting(true);
     try {
-      const preparedData = omit(assign(
-        createCacheCorpusData(data, record),
-        {
+      const preparedData = omit(
+        assign(createCacheCorpusData(data, record), {
           approvals: map(record.approvals, (approval) => approval.uid),
           denials: map(record.denials, (denial) => denial.uid),
-        },
-      ), [view === View.CREATE ? 'id' : '']);
+        }),
+        [view === View.CREATE ? 'id' : ''],
+      );
       const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: async ({ data }) => {
           if (mediaFile) {
-            await uploadToS3({ id: data.id, file: mediaFile })
-              .catch(async (err) => {
-                toast({
-                  title: 'Error',
-                  description: err.message,
-                  status: 'error',
-                  duration: 4000,
-                  isClosable: true,
-                });
-                if (view === View.CREATE) {
-                  // Deleting the corpus suggestion if unable to upload media
-                  await actionsMap.Delete.executeAction({ record: data, resource: Collection.CORPUS_SUGGESTIONS });
-                  redirect(
-                    View.LIST,
-                    `/${Collection.CORPUS_SUGGESTIONS}`,
-                  );
-                }
+            await uploadToS3({ id: data.id, file: mediaFile }).catch(async (err) => {
+              toast({
+                title: 'Error',
+                description: err.message,
+                status: 'error',
+                duration: 4000,
+                isClosable: true,
               });
+              if (view === View.CREATE) {
+                // Deleting the corpus suggestion if unable to upload media
+                await actionsMap.Delete.executeAction({ record: data, resource: Collection.CORPUS_SUGGESTIONS });
+                redirect(View.LIST, `/${Collection.CORPUS_SUGGESTIONS}`);
+              }
+            });
           }
           handleUpdateDocument({ type: ActionTypes.NOTIFY, resource, record: data });
           setIsSubmitting(false);
           notify(`Document successfully ${view === View.CREATE ? 'created' : 'updated'}`, 'info');
-          redirect(
-            View.SHOW,
-            `/${Collection.CORPUS_SUGGESTIONS}`,
-            data.id || record.id,
-            { ...data, id: data.id || record.id },
-          );
+          redirect(View.SHOW, `/${Collection.CORPUS_SUGGESTIONS}`, data.id || record.id, {
+            ...data,
+            id: data.id || record.id,
+          });
         },
         onFailure: (error: any) => {
           const { body, message } = error;
@@ -179,33 +161,19 @@ const CorpusEditForm = ({
         {record.originalCorpusId || (view === View.CREATE && record.id) ? (
           <>
             <h2 className="form-header">Parent Corpus Id:</h2>
-            <Input
-              data-test="original-id"
-              value={record.originalCorpusId || record.id}
-              isDisabled
-            />
+            <Input data-test="original-id" value={record.originalCorpusId || record.id} isDisabled />
           </>
-        ) : null }
-        <FormHeader
-          title="Title"
-          tooltip="The name of this corpus"
-        />
+        ) : null}
+        <FormHeader title="Title" tooltip="The name of this corpus" />
         <Controller
           render={(props) => (
-            <Input
-              {...props}
-              placeholder="Title of corpus"
-              data-test="title-input"
-              className="mb-2"
-            />
+            <Input {...props} placeholder="Title of corpus" data-test="title-input" className="mb-2" />
           )}
           name="title"
           control={control}
           defaultValue={record.title || getValues().title || ''}
         />
-        {errors.title ? (
-          <p className="error">Title is required</p>
-        ) : null}
+        {errors.title ? <p className="error">Title is required</p> : null}
         <FilePicker
           url={watchedMedia}
           title={watchedTitle}
@@ -236,14 +204,7 @@ const CorpusEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => (
-            <Textarea
-              {...props}
-              className="form-textarea"
-              placeholder="Comments"
-              rows={8}
-            />
-          )}
+          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={8} />}
           name="editorsNotes"
           defaultValue={record.editorsNotes || ''}
           control={control}
@@ -254,7 +215,7 @@ const CorpusEditForm = ({
           className="mt-3 lg:my-0"
           backgroundColor="gray.300"
           onClick={() => onCancel({ view, resource, history })}
-          disabled={isSubmitting}
+          isDisabled={isSubmitting}
           width="full"
         >
           Cancel

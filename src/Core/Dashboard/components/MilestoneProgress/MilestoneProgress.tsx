@@ -177,10 +177,10 @@ const MilestoneProgress = ({
           <Text fontFamily="Silka">Track the total progress of the Igbo API.</Text>
         </Box>
         <Box className="space-y-3">
+          <LinearProgressCard heading="Audio Stats" stats={audioStats} isLoaded={isAudioStatsLoaded} />
           <LinearProgressCard heading="Word Stats" stats={wordStats} isLoaded={isWordStatsLoaded} />
           <LinearProgressCard heading="Nsịbịdị Stats" stats={nsibidiStats} isLoaded={isNsibidiStatsLoaded} />
           <LinearProgressCard heading="Example Stats" stats={exampleStats} isLoaded={isExampleStatsLoaded} />
-          <LinearProgressCard heading="Audio Stats" stats={audioStats} isLoaded={isAudioStatsLoaded} />
         </Box>
       </Box>
     </Box>

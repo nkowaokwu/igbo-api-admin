@@ -7,13 +7,7 @@ const CustomUpdateButton = ({ resource, ...rest }: ButtonProps): ReactElement =>
   <Button redirect={`/${resource}`} label="Update Document" {...rest} />
 );
 
-const UpdateButton = ({
-  handleSubmit,
-  onSave,
-  invalid,
-  pristine,
-  ...rest
-}: ButtonProps): ReactElement => {
+const UpdateButton = ({ handleSubmit, onSave, invalid, pristine, ...rest }: ButtonProps): ReactElement => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   return (
     <>

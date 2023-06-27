@@ -1,7 +1,8 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { cloneDeep, noop } from 'lodash';
-import { Box, Button, Heading, IconButton, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
-import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Button, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import {
   getRandomExampleSuggestionsToReview,
   putReviewForRandomExampleSuggestions,
@@ -119,7 +120,7 @@ const VerifySentenceAudio = ({
                 ...reviews,
                 [_id.toString()]: ReviewActions.SKIP,
               }),
-              {}
+              {},
             ),
           }));
           setReviews(defaultReviews);
@@ -181,40 +182,12 @@ const VerifySentenceAudio = ({
         />
       </Box>
       <Box className="w-full flex flex-row justify-center items-center space-x-4">
-        <Tooltip label="You will go back to the previous sentence to review. You will not lose your progress.">
-          <IconButton
-            variant="ghost"
-            onClick={exampleIndex !== 0 ? handleBack : noop}
-            icon={<ArrowBackIcon />}
-            aria-label="Previous sentence"
-            disabled={exampleIndex === 0}
-            _hover={{
-              backgroundColor: 'white',
-            }}
-            _active={{
-              backgroundColor: 'white',
-            }}
-            _focus={{
-              backgroundColor: 'white',
-            }}
-          />
-        </Tooltip>
-        <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
-        <IconButton
-          variant="ghost"
-          onClick={exampleIndex === reviews.length - 1 ? noop : handleNext}
-          icon={<ArrowForwardIcon />}
-          aria-label="Next sentence"
-          disabled={exampleIndex === reviews.length - 1}
-          _hover={{
-            backgroundColor: 'white',
-          }}
-          _active={{
-            backgroundColor: 'white',
-          }}
-          _focus={{
-            backgroundColor: 'white',
-          }}
+        <ResourceNavigationController
+          index={exampleIndex}
+          resources={reviews}
+          onBack={handleBack}
+          onNext={handleNext}
+          onSkip={noop}
         />
       </Box>
       <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" className="space-y-3">
@@ -235,7 +208,7 @@ const VerifySentenceAudio = ({
                   <>💾</>
                 ))()}
                 aria-label="Complete recordings"
-                disabled={isCompleteDisabled}
+                isDisabled={isCompleteDisabled}
                 borderRadius="full"
                 fontFamily="Silka"
                 fontWeight="bold"

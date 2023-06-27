@@ -1,12 +1,6 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { assign, get, omit } from 'lodash';
-import {
-  Box,
-  Button,
-  IconButton,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, IconButton, Tooltip, useToast } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { useNotify } from 'react-admin';
@@ -24,25 +18,13 @@ import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
 
-const NsibidiCharacterEditForm = ({
-  view,
-  record,
-  save,
-  resource = '',
-  history,
-} : EditFormProps) : ReactElement => {
-  const {
-    handleSubmit,
-    control,
-    getValues,
-    errors,
-    formState,
-  } = useForm({
+const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }: EditFormProps): ReactElement => {
+  const { handleSubmit, control, getValues, errors, formState } = useForm({
     defaultValues: {
       ...(record || {}),
       wordClass: {
-        label: (record.wordClass || ''),
-        value: (record.wordClass || ''),
+        label: record.wordClass || '',
+        value: record.wordClass || '',
       },
     },
     ...NsibidiCharacterEditFormResolver(),
@@ -50,7 +32,11 @@ const NsibidiCharacterEditForm = ({
   const { isDirty } = formState;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { fields: definitions, append, remove } = useFieldArray({
+  const {
+    fields: definitions,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'definitions',
   });
@@ -115,94 +101,66 @@ const NsibidiCharacterEditForm = ({
         tooltip="This field uses the Chinese Unicode to represent its corresponding Nsịbịdị"
       />
       <Controller
-        render={(props) => (
-          <Input
-            {...props}
-            placeholder="Input in Nsịbịdị"
-            data-test="nsibidi-input"
-          />
-        )}
+        render={(props) => <Input {...props} placeholder="Input in Nsịbịdị" data-test="nsibidi-input" />}
         name="nsibidi"
         control={control}
         defaultValue={get(record, 'nsibidi') || getValues().nsibidi || ''}
       />
-      <FormHeader
-        title="Pronunciation"
-        tooltip="Text representation of the Nsịbịdị pronunciation"
-      />
+      <FormHeader title="Pronunciation" tooltip="Text representation of the Nsịbịdị pronunciation" />
       <Controller
-        render={(props) => (
-          <Input
-            {...props}
-            placeholder="Nsịbịdị pronunciation"
-            data-test="pronunciation-input"
-          />
-        )}
+        render={(props) => <Input {...props} placeholder="Nsịbịdị pronunciation" data-test="pronunciation-input" />}
         name="pronunciation"
         control={control}
         defaultValue={get(record, 'pronunciation') || getValues().pronunciation || ''}
       />
-      <FormHeader
-        title="Part of Speech"
-        tooltip="Part of speech in Nsịbịdị"
-      />
+      <FormHeader title="Part of Speech" tooltip="Part of speech in Nsịbịdị" />
       <Box data-test="nsibidi-word-class-input-container">
         <Controller
           render={(props) => (
-            <Select
-              {...props}
-              options={options}
-              className="akagu"
-              data-test="nsibidi-pronunciation"
-            />
+            <Select {...props} options={options} className="akagu" data-test="nsibidi-pronunciation" />
           )}
           name="wordClass"
           control={control}
           defaultValue={get(record, 'wordClass') || getValues().wordClass || ''}
         />
       </Box>
-      <FormHeader
-        title="Definitions"
-        tooltip="Nsịbịdị definitions"
-      />
-      {definitions?.length ? definitions.map((definition, index) => (
-        <Box className="flex flex-row justify-between items-center space-x-2 my-2">
-          <Controller
-            render={(props) => (
-              <Input
-                {...props}
-                defaultValue={definition.text}
-                placeholder="Nsịbịdị definition"
-                data-test={`definitions-${index}-input`}
+      <FormHeader title="Definitions" tooltip="Nsịbịdị definitions" />
+      {definitions?.length
+        ? definitions.map((definition, index) => (
+            <Box className="flex flex-row justify-between items-center space-x-2 my-2">
+              <Controller
+                render={(props) => (
+                  <Input
+                    {...props}
+                    defaultValue={definition.text}
+                    placeholder="Nsịbịdị definition"
+                    data-test={`definitions-${index}-input`}
+                  />
+                )}
+                name={`definitions.${index}.text`}
+                control={control}
+                defaultValue={get(record, `definitions[${index}].text`) || getValues().definitions?.[index]?.text || ''}
               />
-            )}
-            name={`definitions.${index}.text`}
-            control={control}
-            defaultValue={get(record, `definitions[${index}].text`) || getValues().definitions?.[index]?.text || ''}
-          />
-          {definitions.length > 1 ? (
-            <Tooltip label="Deletes the current definition">
-              <IconButton
-                backgroundColor="red.100"
-                _hover={{
-                  backgroundColor: 'red.200',
-                }}
-                aria-label="Delete definition"
-                onClick={() => remove(index)}
-                className="ml-3"
-                icon={(() => <>🗑</>)()}
-              />
-            </Tooltip>
-          ) : null}
-        </Box>
-      )) : null}
-      <Button
-        width="full"
-        colorScheme="green"
-        aria-label="Add Definition"
-        onClick={append}
-        leftIcon={<AddIcon />}
-      >
+              {definitions.length > 1 ? (
+                <Tooltip label="Deletes the current definition">
+                  <IconButton
+                    backgroundColor="red.100"
+                    _hover={{
+                      backgroundColor: 'red.200',
+                    }}
+                    aria-label="Delete definition"
+                    onClick={() => remove(index)}
+                    className="ml-3"
+                    icon={(() => (
+                      <>🗑</>
+                    ))()}
+                  />
+                </Tooltip>
+              ) : null}
+            </Box>
+          ))
+        : null}
+      <Button width="full" colorScheme="green" aria-label="Add Definition" onClick={append} leftIcon={<AddIcon />}>
         Add definition
       </Button>
       <Box className="form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
@@ -210,7 +168,7 @@ const NsibidiCharacterEditForm = ({
           className="mt-3 lg:my-0"
           backgroundColor="gray.300"
           onClick={() => onCancel({ view, resource, history })}
-          disabled={isSubmitting}
+          isDisabled={isSubmitting}
           width="full"
         >
           Cancel
@@ -219,7 +177,7 @@ const NsibidiCharacterEditForm = ({
           type="submit"
           colorScheme="green"
           variant="solid"
-          disabled={!isDirty}
+          isDisabled={!isDirty}
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
           width="full"
