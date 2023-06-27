@@ -1,22 +1,7 @@
 import React, { ReactElement, useState } from 'react';
-import {
-  compact,
-  flatten,
-  get,
-  omit,
-} from 'lodash';
+import { compact, flatten, get, omit } from 'lodash';
 import pluralize from 'pluralize';
-import {
-  Box,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Spinner,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, Menu, MenuButton, MenuList, MenuItem, Spinner, Tooltip, useToast } from '@chakra-ui/react';
 import {
   AddIcon,
   AtSignIcon,
@@ -63,10 +48,10 @@ const Select = ({
   const redirect = useRedirect();
   const toast = useToast();
   useFirebaseUid(setUid);
-  const hasEnoughApprovals = !!window.Cypress || (
-    resource !== Collection.WORD_SUGGESTIONS
-    || (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS
-  );
+  const hasEnoughApprovals =
+    !!window.Cypress ||
+    resource !== Collection.WORD_SUGGESTIONS ||
+    (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
 
   const clearConfirmOpen = () => {
     setIsConfirmOpen(false);
@@ -104,37 +89,110 @@ const Select = ({
     }),
   ];
 
-  const suggestionCollectionOptions = compact(flatten([
-    hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
-      {
-        value: 'merge',
-        label: (() => (
-          <span>
-            <MergeType className="-ml-1 mr-0" />
-            Merge
-          </span>
-        ))(),
-        onSelect: () => withConfirm(setAction(actionsMap.Merge)),
-        props: {
-          isDisabled: !hasEnoughApprovals,
-          tooltipMessage: !hasEnoughApprovals
-            ? `You are unable to merge this document until there 
+  const suggestionCollectionOptions = compact(
+    flatten([
+      hasAdminOrMergerPermissions(
+        permissions,
+        record.merged
+          ? null
+          : [
+              {
+                value: 'merge',
+                label: (() => (
+                  <span>
+                    <MergeType className="-ml-1 mr-0" />
+                    Merge
+                  </span>
+                ))(),
+                onSelect: () => withConfirm(setAction(actionsMap.Merge)),
+                props: {
+                  isDisabled: !hasEnoughApprovals,
+                  tooltipMessage: !hasEnoughApprovals
+                    ? `You are unable to merge this document until there 
             are at least ${pluralize('approval', Requirements.MINIMUM_REQUIRED_APPROVALS, true)} `
-            : '',
-        },
-      },
-    ])),
-    (record.merged ? null : [{
-      value: 'edit',
-      label: (() => (
-        <span>
-          <EditIcon className="mr-2" />
-          Edit
-        </span>
-      ))(),
-      onSelect: ({ push, resource, id }) => push(actionsMap.Edit(resource, id)),
-    },
-    view === View.SHOW ? null : (
+                    : '',
+                },
+              },
+            ],
+      ),
+      record.merged
+        ? null
+        : [
+            {
+              value: 'edit',
+              label: (() => (
+                <span>
+                  <EditIcon className="mr-2" />
+                  Edit
+                </span>
+              ))(),
+              onSelect: ({ push, resource, id }) => push(actionsMap.Edit(resource, id)),
+            },
+            view === View.SHOW
+              ? null
+              : {
+                  value: 'view',
+                  label: (() => (
+                    <span>
+                      <ViewIcon className="mr-2" />
+                      View
+                    </span>
+                  ))(),
+                  onSelect: ({ push, resource, id }) => push(actionsMap.View(resource, id)),
+                },
+            {
+              value: 'approve',
+              label: (() => (
+                <span className="text-green-500">
+                  <CheckCircleIcon className="mr-2" />
+                  {record?.approvals?.includes(uid) ? 'Approved' : 'Approve'}
+                </span>
+              ))(),
+              onSelect: () => withConfirm(setAction(actionsMap.Approve)),
+            },
+            {
+              value: 'deny',
+              label: (() => (
+                <span className="text-yellow-800">
+                  <NotAllowedIcon className="mr-2" />
+                  {record?.denials?.includes(uid) ? 'Denied' : 'Deny'}
+                </span>
+              ))(),
+              onSelect: () => withConfirm(setAction(actionsMap.Deny)),
+            },
+            {
+              value: 'notify',
+              label: (() => (
+                <span>
+                  <AtSignIcon className="mr-2" />
+                  Notify Editors
+                </span>
+              ))(),
+              onSelect: () => withConfirm(setAction(actionsMap.Notify)),
+            },
+          ],
+      hasAdminOrMergerPermissions(
+        permissions,
+        record.merged
+          ? null
+          : [
+              {
+                value: 'delete',
+                label: (() => (
+                  <span className="text-red-500">
+                    <DeleteIcon className="mr-2" />
+                    Delete
+                  </span>
+                ))(),
+                onSelect: () => withConfirm(setAction(actionsMap.Delete)),
+              },
+            ],
+      ),
+    ]),
+  );
+
+  const mergedCollectionOptions = compact(
+    flatten([
       {
         value: 'view',
         label: (() => (
@@ -144,95 +202,45 @@ const Select = ({
           </span>
         ))(),
         onSelect: ({ push, resource, id }) => push(actionsMap.View(resource, id)),
-      }
-    ),
-    {
-      value: 'approve',
-      label: (() => (
-        <span className="text-green-500">
-          <CheckCircleIcon className="mr-2" />
-          {record?.approvals?.includes(uid) ? 'Approved' : 'Approve'}
-        </span>
-      ))(),
-      onSelect: () => withConfirm(setAction(actionsMap.Approve)),
-    },
-    {
-      value: 'deny',
-      label: (() => (
-        <span className="text-yellow-800">
-          <NotAllowedIcon className="mr-2" />
-          {record?.denials?.includes(uid) ? 'Denied' : 'Deny'}
-        </span>
-      ))(),
-      onSelect: () => withConfirm(setAction(actionsMap.Deny)),
-    },
-    {
-      value: 'notify',
-      label: (() => (
-        <span>
-          <AtSignIcon className="mr-2" />
-          Notify Editors
-        </span>
-      ))(),
-      onSelect: () => withConfirm(setAction(actionsMap.Notify)),
-    }]),
-    hasAdminOrMergerPermissions(permissions, (record.merged ? null : [
+      },
       {
-        value: 'delete',
+        value: 'suggestNewEdit',
         label: (() => (
-          <span className="text-red-500">
-            <DeleteIcon className="mr-2" />
-            Delete
+          <span>
+            <AddIcon className="mr-2" />
+            Suggest New Edit
           </span>
         ))(),
-        onSelect: () => withConfirm(setAction(actionsMap.Delete)),
+        onSelect: ({ record, resource, push }) => determineCreateSuggestionRedirection({ record, resource, push }),
       },
-    ])),
-  ]));
-
-  const mergedCollectionOptions = compact(flatten([
-    {
-      value: 'view',
-      label: (() => (
-        <span>
-          <ViewIcon className="mr-2" />
-          View
-        </span>
-      ))(),
-      onSelect: ({ push, resource, id }) => push(actionsMap.View(resource, id)),
-    },
-    {
-      value: 'suggestNewEdit',
-      label: (() => (
-        <span>
-          <AddIcon className="mr-2" />
-          Suggest New Edit
-        </span>
-      ))(),
-      onSelect: ({ record, resource, push }) => (
-        determineCreateSuggestionRedirection({ record, resource, push })
+      hasAdminPermissions(
+        permissions,
+        resource === Collection.WORDS
+          ? [
+              {
+                value: 'combineWord',
+                label: 'Combine Word Into...',
+                onSelect: () => withConfirm(setAction(actionsMap.Combine)),
+              },
+            ]
+          : null,
       ),
-    },
-    hasAdminPermissions(permissions, resource === Collection.WORDS ? [{
-      value: 'combineWord',
-      label: 'Combine Word Into...',
-      onSelect: () => withConfirm(setAction(actionsMap.Combine)),
-    }] : null),
-    resource !== Collection.NSIBIDI_CHARACTERS ? {
-      value: 'requestDelete',
-      label: (() => (
-        <span className="text-red-500">
-          <DeleteIcon className="mr-2" />
-          {`Request to Delete ${resource === Collection.WORDS
-            ? 'Word'
-            : resource === Collection.EXAMPLES
-              ? 'Example'
-              : 'Corpus'}`}
-        </span>
-      ))(),
-      onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
-    } : null,
-  ]));
+      resource !== Collection.NSIBIDI_CHARACTERS
+        ? {
+            value: 'requestDelete',
+            label: (() => (
+              <span className="text-red-500">
+                <DeleteIcon className="mr-2" />
+                {`Request to Delete ${
+                  resource === Collection.WORDS ? 'Word' : resource === Collection.EXAMPLES ? 'Example' : 'Corpus'
+                }`}
+              </span>
+            ))(),
+            onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
+          }
+        : null,
+    ]),
+  );
 
   const pollCollectionOptions = [
     {
@@ -243,7 +251,7 @@ const Select = ({
           Create Constructed Term
         </span>
       ))(),
-      onSelect: ({ push }) => (
+      onSelect: ({ push }) =>
         determineCreateSuggestionRedirection({
           record: {
             id: 'default',
@@ -256,8 +264,7 @@ const Select = ({
           },
           resource: Collection.POLLS,
           push,
-        })
-      ),
+        }),
     },
     {
       value: 'viewPoll',
@@ -283,17 +290,16 @@ const Select = ({
     },
   ];
 
-  const initialOptions = resource === Collection.USERS
-    ? userCollectionOptions
-    : (
-      resource === Collection.WORD_SUGGESTIONS
-      || resource === Collection.EXAMPLE_SUGGESTIONS
-      || resource === Collection.CORPUS_SUGGESTIONS
-    )
+  const initialOptions =
+    resource === Collection.USERS
+      ? userCollectionOptions
+      : resource === Collection.WORD_SUGGESTIONS ||
+        resource === Collection.EXAMPLE_SUGGESTIONS ||
+        resource === Collection.CORPUS_SUGGESTIONS
       ? suggestionCollectionOptions
       : resource === Collection.POLLS
-        ? pollCollectionOptions
-        : mergedCollectionOptions;
+      ? pollCollectionOptions
+      : mergedCollectionOptions;
 
   const options = [
     ...initialOptions,
@@ -305,10 +311,14 @@ const Select = ({
           Copy Document URL
         </span>
       ))(),
-      onSelect: () => copyToClipboard({
-        copyText: `${window.location.origin}/#/${resource}/${record.id}/show`,
-        successMessage: 'Document URL has been copied to your clipboard',
-      }, toast),
+      onSelect: () =>
+        copyToClipboard(
+          {
+            copyText: `${window.location.origin}/#/${resource}/${record.id}/show`,
+            successMessage: 'Document URL has been copied to your clipboard',
+          },
+          toast,
+        ),
     },
   ];
 
@@ -338,7 +348,7 @@ const Select = ({
           borderWidth="1px"
           borderColor="gray.300"
           borderRadius="md"
-          disabled={isLoading}
+          isDisabled={isLoading}
           width="full"
           _hover={{
             backgroundColor: 'white',
@@ -352,12 +362,7 @@ const Select = ({
           {isLoading ? <Spinner size="xs" /> : 'Actions'}
         </MenuButton>
         <MenuList boxShadow="xl">
-          {options.map(({
-            value = '',
-            label,
-            onSelect,
-            props = {},
-          }) => (
+          {options.map(({ value = '', label, onSelect, props = {} }) => (
             <Tooltip key={value} label={props.tooltipMessage}>
               <Box px={2}>
                 <MenuItem
@@ -390,6 +395,8 @@ const Select = ({
   );
 };
 
-export default withRouter(connect(null, {
-  push,
-})(Select));
+export default withRouter(
+  connect(null, {
+    push,
+  })(Select),
+);

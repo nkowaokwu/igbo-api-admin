@@ -1,5 +1,5 @@
 import React from 'react';
-import { first, last } from 'lodash';
+import { first, last, times } from 'lodash';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
@@ -151,7 +151,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText('Listen to know if this sentence matches the audio');
     await findByText('Submit Batch');
@@ -165,7 +165,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText('1 / 1');
     const approveButtons = await findAllByLabelText('Approve');
@@ -182,7 +182,7 @@ describe('VerifySentenceAudio', () => {
     const { container, findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText('1 / 5');
     const approveButtons = await findAllByLabelText('Approve');
@@ -246,7 +246,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText('1 / 1');
     userEvent.click(first(await findAllByLabelText('Approve')));
@@ -264,13 +264,18 @@ describe('VerifySentenceAudio', () => {
     const { findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText('1 / 5');
     userEvent.click(first(await findAllByLabelText('Approve')));
     userEvent.click(last(await findAllByLabelText('Deny')));
     await findByLabelText('Approve selected');
     await findByLabelText('Deny selected');
+    await Promise.all(
+      times(4, async () => {
+        userEvent.click(await findByText('Next'));
+      }),
+    );
     userEvent.click(await findByText('Submit Batch'));
     expect(reviewSpy).toBeCalledWith([
       {
@@ -315,7 +320,7 @@ describe('VerifySentenceAudio', () => {
     const { findByText } = render(
       <TestContext>
         <VerifySentenceAudio />
-      </TestContext>
+      </TestContext>,
     );
     await findByText(/^Each audio should follow our/);
     const recordingAudioStandardsDocLink = document.querySelector(`[href="${RECORDING_AUDIO_STANDARDS_DOC}"`);

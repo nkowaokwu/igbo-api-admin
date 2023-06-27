@@ -4,9 +4,12 @@ import { Record } from 'react-admin';
 import { Example } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
-export default async (record: Example | Record, skipAudioCheck = false) : Promise<{
-  sufficientExampleRequirements: string[],
-  completeExampleRequirements: string[],
+export default async (
+  record: Example | Record,
+  skipAudioCheck = false,
+): Promise<{
+  sufficientExampleRequirements: string[];
+  completeExampleRequirements: string[];
 }> => {
   const {
     associatedWords = [],
@@ -21,10 +24,11 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
   const isAudioAvailable = await new Promise((resolve) => {
     if (!skipAudioCheck) {
       pronunciations.forEach(({ audio }) => {
-        axios.get(audio)
+        axios
+          .get(audio)
           .then(() => resolve(true))
           .catch(() => {
-            if (audio?.startsWith?.('https://igbo-api-test-local/')) {
+            if (audio?.startsWith?.('https://igbo-api-test-local.com/')) {
               return resolve(true);
             }
             return resolve(false);
@@ -43,8 +47,8 @@ export default async (record: Example | Record, skipAudioCheck = false) : Promis
 
   const completeExampleRequirements = compact([
     ...sufficientExampleRequirements,
-    (pronunciations.some((pronunciation) => (!pronunciation || !isAudioAvailable)) || !pronunciations.length)
-    && 'An audio pronunciation is needed',
+    (pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) || !pronunciations.length) &&
+      'An audio pronunciation is needed',
     style === ExampleStyle.PROVERB.value && !meaning && 'Meaning is required for proverb',
   ]);
 

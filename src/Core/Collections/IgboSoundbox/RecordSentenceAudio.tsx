@@ -1,32 +1,21 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
-import {
-  Box,
-  Heading,
-  Text,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
-import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
-import {
-  ActivityButton,
-  Card,
-  PrimaryButton,
-  Spinner,
-} from 'src/shared/primitives';
+import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
+import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
 const RecordSentenceAudio = ({
   setIsDirty,
   goHome,
-} : {
-  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>
-  goHome: () => void,
+}: {
+  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
+  goHome: () => void;
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [pronunciations, setPronunciations] = useState<string[]>([]);
@@ -34,10 +23,9 @@ const RecordSentenceAudio = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
-  const isCompleteDisabled = (
-    (pronunciations.every((pronunciation) => !pronunciation) || isUploading)
-    || exampleIndex !== (examples?.length || 0) - 1
-  );
+  const [visitedLastExampleIndex, setVisitedLastExampleIndex] = useState(false);
+  const isCompleteEnabled =
+    !isUploading && pronunciations.some((pronunciation) => pronunciation) && visitedLastExampleIndex;
   const toast = useToast();
 
   const handlePronunciation = (audioData) => {
@@ -50,6 +38,9 @@ const RecordSentenceAudio = ({
   const handleNext = () => {
     if (exampleIndex !== examples.length - 1) {
       setExampleIndex(exampleIndex + 1);
+    }
+    if (exampleIndex + 1 === examples.length - 1) {
+      setVisitedLastExampleIndex(true);
     }
   };
 
@@ -123,77 +114,48 @@ const RecordSentenceAudio = ({
   const noExamples = !isLoading && !examples?.length && !isComplete;
 
   return shouldRenderExamples ? (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      className="space-y-4 p-6"
-    >
-      <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
-        Record sentence audio
-      </Heading>
-      <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
-      <Card>
-        <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
-          {examples[exampleIndex].igbo}
-        </Text>
-      </Card>
-      <Box className="mb-12 w-full flex flex-row justify-center items-center space-x-4">
-        <ActivityButton
-          tooltipLabel="You will not lose your current progress by going back."
-          onClick={exampleIndex !== 0 ? handleBack : noop}
-          icon={<ArrowBackIcon />}
-          aria-label="Previous sentence"
-          disabled={exampleIndex === 0}
-        />
-        <Text fontFamily="Silka" fontWeight="bold">{`${exampleIndex + 1} / ${examples.length}`}</Text>
-        <ActivityButton
-          onClick={!examples[exampleIndex]
-            ? handleSkip
-            : exampleIndex === examples.length - 1
-              ? noop
-              : handleNext}
-          icon={<ArrowForwardIcon />}
-          aria-label="Next sentence"
-          disabled={exampleIndex === examples.length - 1}
-        />
+    <Box className="flex flex-col justify-between items-center p-6 h-full">
+      <Box className="flex flex-col justify-center items-center space-y-4">
+        <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
+          Record sentence audio
+        </Heading>
+        <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
+        <Card>
+          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
+            {examples[exampleIndex].igbo}
+          </Text>
+        </Card>
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        className="space-y-3"
-      >
+      <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
+        <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>
+          <Box>
+            <PrimaryButton
+              onClick={isCompleteEnabled ? handleComplete : noop}
+              rightIcon={(() => (
+                <>💾</>
+              ))()}
+              aria-label="Complete recordings"
+              isDisabled={!isCompleteEnabled}
+            >
+              Submit Batch
+            </PrimaryButton>
+          </Box>
+        </Tooltip>
         <RecorderBase
           path="pronunciation"
           hideTitle
           onStopRecording={handlePronunciation}
           onResetRecording={noop}
           audioValue={pronunciations[exampleIndex]}
+          toastEnabled={false}
         />
-        <Box
-          data-test="editor-recording-options"
-          display="flex"
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="center"
-          className="space-x-3"
-        >
-          <Tooltip label={isCompleteDisabled ? 'Please record at least one audio to complete this section' : ''}>
-            <Box>
-              <PrimaryButton
-                onClick={!isCompleteDisabled ? handleComplete : noop}
-                rightIcon={(() => <>💾</>)()}
-                aria-label="Complete recordings"
-                disabled={isCompleteDisabled}
-              >
-                Submit Batch
-              </PrimaryButton>
-            </Box>
-          </Tooltip>
-        </Box>
+        <ResourceNavigationController
+          index={exampleIndex}
+          resources={examples}
+          onBack={handleBack}
+          onNext={handleNext}
+          onSkip={handleSkip}
+        />
       </Box>
     </Box>
   ) : noExamples ? (
@@ -205,7 +167,9 @@ const RecordSentenceAudio = ({
       setIsDirty={setIsDirty}
       goHome={goHome}
     />
-  ) : <Spinner />;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default RecordSentenceAudio;

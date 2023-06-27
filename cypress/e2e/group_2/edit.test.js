@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { every } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
 
-const awsUriPrefix = 'https://igbo-api-test-local/audio-pronunciations/';
+const awsUriPrefix = 'https://igbo-api-test-local.com/audio-pronunciations/';
 describe('Edit', () => {
   before(() => {
     cy.cleanLogin();
@@ -72,7 +72,7 @@ describe('Edit', () => {
         cy.acceptConfirmation();
         cy.wait('@getWord').then(({ response: postWordResponse }) => {
           const { body } = postWordResponse;
-          expect(body.pronunciation.includes(body.id)).to.equal(true)
+          expect(body.pronunciation.includes(body.id)).to.equal(true);
           expect(body.dialects[0].pronunciation.includes(body.id)).to.equal(true);
         });
       });
@@ -136,20 +136,20 @@ describe('Edit', () => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
         cy.getWordDetails(0);
-          cy.get('@selectedId').then(([id]) => {
-            cy.selectCollection('wordSuggestions');
-            cy.searchForDocument(word);
-            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findByTestId('relatedTerms-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Related Term').click();
-            cy.findByTestId('word-pill-0');
-            cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 2);
-            cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-            cy.acceptConfirmation();
-            cy.findByText('Word Document Details');
-            cy.findAllByText(id.innerText).should('have.length', 2);
-          });
+        cy.get('@selectedId').then(([id]) => {
+          cy.selectCollection('wordSuggestions');
+          cy.searchForDocument(word);
+          cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+          cy.findByTestId('relatedTerms-search').clear().type(id.innerText);
+          cy.findByLabelText('Add Related Term').click();
+          cy.findByTestId('word-pill-0');
+          cy.get('button[type="submit"]').click();
+          cy.findAllByText(id.innerText).should('have.length', 2);
+          cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
+          cy.acceptConfirmation();
+          cy.findByText('Word Document Details');
+          cy.findAllByText(id.innerText).should('have.length', 2);
+        });
       });
     });
 
@@ -158,25 +158,25 @@ describe('Edit', () => {
         cy.selectCollection('words');
         cy.searchForDocument('onye');
         cy.getWordDetails(0);
-          cy.get('@selectedId').then(([id]) => {
-            cy.selectCollection('wordSuggestions');
-            cy.searchForDocument(word);
-            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findByTestId('relatedTerm-search').clear().type(id.innerText);
-            cy.findByLabelText('Add Related Term').click();
-            cy.findByTestId('word-pill-0');
-            cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 2);
-            cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
-            cy.findAllByLabelText('Remove').first().click();
-            cy.get('button[type="submit"]').click();
-            cy.findAllByText(id.innerText).should('have.length', 1);
-            cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
-            cy.acceptConfirmation();
-            cy.findByText('Word Document Details');
-            cy.findAllByText(id.innerText).should('have.length', 1);
-          });
+        cy.get('@selectedId').then(([id]) => {
+          cy.selectCollection('wordSuggestions');
+          cy.searchForDocument(word);
+          cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+          cy.findByTestId('relatedTerm-search').clear().type(id.innerText);
+          cy.findByLabelText('Add Related Term').click();
+          cy.findByTestId('word-pill-0');
+          cy.get('button[type="submit"]').click();
+          cy.findAllByText(id.innerText).should('have.length', 2);
+          cy.getActionsOption(SuggestionSelectOptions.EDIT).click();
+          cy.findAllByLabelText('Remove').first().click();
+          cy.get('button[type="submit"]').click();
+          cy.findAllByText(id.innerText).should('have.length', 1);
+          cy.getActionsOption(SuggestionSelectOptions.MERGE).click();
+          cy.acceptConfirmation();
+          cy.findByText('Word Document Details');
+          cy.findAllByText(id.innerText).should('have.length', 1);
         });
+      });
     });
 
     it('render the same amount of nested examples', () => {
@@ -304,7 +304,6 @@ describe('Edit', () => {
       cy.contains('Word Document Details');
       cy.findByText(`${firstIgboSentence}${extraText}`);
     });
-
   });
 
   describe('Edit Form', () => {

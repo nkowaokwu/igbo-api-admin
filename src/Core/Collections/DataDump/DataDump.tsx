@@ -1,9 +1,4 @@
-import React, {
-  FormEvent,
-  ReactElement,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FormEvent, ReactElement, useEffect, useState } from 'react';
 import compact from 'lodash/compact';
 import trim from 'lodash/trim';
 import {
@@ -35,8 +30,9 @@ import SentenceType from 'src/backend/shared/constants/SentenceType';
 import UploadStatus from './UploadStats';
 import type StatusType from './StatusType';
 
-// eslint-disable-next-line max-len
-const isDataCollectionLink = 'http://localhost:3030/#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B%22isDataCollection%22%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals';
+const isDataCollectionLink =
+  // eslint-disable-next-line max-len
+  'http://localhost:3030/#/exampleSuggestions?displayedFilters=%5B%5D&filter=%7B%22isDataCollection%22%3Atrue%7D&order=DESC&page=1&perPage=10&sort=approvals';
 const DataDump = (): ReactElement => {
   const [textareaValue, setTextareaValue] = useState('');
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -49,8 +45,9 @@ const DataDump = (): ReactElement => {
   const isDataPresent = textareaValue.length || fileData?.length;
   const action = {
     ...actionsMap.BulkUploadExamples,
-    content: `Are you sure you want to upload ${totalSentences} example suggestions at once? `
-    + 'This will take a few minutes to complete.',
+    content:
+      `Are you sure you want to upload ${totalSentences} example suggestions at once? ` +
+      'This will take a few minutes to complete.',
   };
 
   const handleExampleDocumentType = (event) => {
@@ -174,7 +171,7 @@ const DataDump = (): ReactElement => {
         <Text fontSize="sm" fontWeight="bold" fontFamily="Silka">
           {'Want to see all data dumped examples or example suggestions? Use the '}
           <Link href={isDataCollectionLink} color="green">
-            {'\'Is Data Collection\' Filter'}
+            &apos;Is Data Collection&apos; Filter
           </Link>
           .
         </Text>
@@ -198,16 +195,14 @@ const DataDump = (): ReactElement => {
               ) : null}
               <Box className="w-full flex flex-col space-y-4">
                 <Tooltip
-                  label={!textareaValue.length
-                    ? 'Each Igbo sentence will be uploaded to the Igbo API data set as an example sentence'
-                    : 'Disabled because there are not example sentences to upload'}
+                  label={
+                    !textareaValue.length
+                      ? 'Each Igbo sentence will be uploaded to the Igbo API data set as an example sentence'
+                      : 'Disabled because there are not example sentences to upload'
+                  }
                 >
                   <Box className="w-full lg:w-4/12">
-                    <Button
-                      colorScheme="green"
-                      type="submit"
-                      disabled={!isDataPresent}
-                    >
+                    <Button colorScheme="green" type="submit" isDisabled={!isDataPresent}>
                       Bulk upload sentences
                     </Button>
                   </Box>
@@ -236,18 +231,15 @@ const DataDump = (): ReactElement => {
               <details className="cursor-pointer">
                 <Tooltip label="Click here to see data uploading alternatives">
                   <summary className="lg:text-right mb-2">
-                    <chakra.span m="2" fontWeight="bold">More data upload options</chakra.span>
+                    <chakra.span m="2" fontWeight="bold">
+                      More data upload options
+                    </chakra.span>
                   </summary>
                 </Tooltip>
                 <Box className="space-y-2">
                   <Box className="space-y-2 p-4 rounded-md" backgroundColor="gray.200">
                     <Text fontWeight="bold">Select a JSON file to bulk upload example sentences.</Text>
-                    <input
-                      type="file"
-                      name="data-dump"
-                      accept=".json"
-                      onChange={handleFileUpload}
-                    />
+                    <input type="file" name="data-dump" accept=".json" onChange={handleFileUpload} />
                     {fileData.length ? (
                       <Text color="green.600" className="space-x-2">
                         <InfoIcon boxSize={3} />
@@ -260,15 +252,23 @@ const DataDump = (): ReactElement => {
                   </Box>
                   <Tooltip label="Either upload these sentences as either Examples or Example Suggestions">
                     <Box className="flex flex-row justify-start items-center space-x-2">
-                      <Text fontWeight="bold" color={!isExample ? '' : 'gray.300'}>Example Suggestion</Text>
+                      <Text fontWeight="bold" color={!isExample ? '' : 'gray.300'}>
+                        Example Suggestion
+                      </Text>
                       <Switch onChange={handleExampleDocumentType} />
-                      <Text fontWeight="bold" color={isExample ? '' : 'gray.300'}>Example</Text>
+                      <Text fontWeight="bold" color={isExample ? '' : 'gray.300'}>
+                        Example
+                      </Text>
                     </Box>
                   </Tooltip>
                   {isExample ? (
-                    <Text className="italic" fontSize="sm">These sentences will become examples.</Text>
+                    <Text className="italic" fontSize="sm">
+                      These sentences will become examples.
+                    </Text>
                   ) : (
-                    <Text className="italic" fontSize="sm">These sentences will become example suggestions.</Text>
+                    <Text className="italic" fontSize="sm">
+                      These sentences will become example suggestions.
+                    </Text>
                   )}
                 </Box>
               </details>

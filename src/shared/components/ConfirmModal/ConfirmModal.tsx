@@ -66,23 +66,17 @@ const ConfirmModal = ({
           {title}
         </ContainerHeader>
 
-        <ContainerBody>
-          {children}
-        </ContainerBody>
+        <ContainerBody>{children}</ContainerBody>
 
         <ContainerFooter>
-          <Button
-            ref={cancelRef}
-            onClick={onClose}
-            data-test="confirmation-cancel-button"
-          >
+          <Button ref={cancelRef} onClick={onClose} data-test="confirmation-cancel-button">
             {cancel}
           </Button>
           <Button
             colorScheme={confirmColorScheme}
             onClick={isDisabled ? noop : onConfirm}
             isLoading={isConfirming}
-            disabled={isDisabled}
+            isDisabled={isDisabled}
             ml={3}
             data-test="confirmation-confirm-button"
           >

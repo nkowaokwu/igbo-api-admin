@@ -1,18 +1,6 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  ReactElement,
-} from 'react';
+import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { compact, noop } from 'lodash';
-import {
-  Box,
-  Heading,
-  Input,
-  Spinner,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Heading, Input, Spinner, Text, useToast } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
 import WordClass from 'src/backend/shared/constants/WordClass';
@@ -32,18 +20,21 @@ const IgboDefinitions = (): ReactElement => {
   const igboDefinitionInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
   const currentCard = wordSuggestions[currentCardIndex];
-  const showSubmitButton = (
-    currentCardIndex === wordSuggestions.length - 1
-    && igboDefinitions.some((igboDefinition) => !!igboDefinition)
-  );
+  const showSubmitButton =
+    currentCardIndex === wordSuggestions.length - 1 && igboDefinitions.some((igboDefinition) => !!igboDefinition);
 
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const payload = compact(igboDefinitions.map((igboDefinition, index) => igboDefinition && ({
-        id: wordSuggestions[index]._id,
-        igboDefinition,
-      })));
+      const payload = compact(
+        igboDefinitions.map(
+          (igboDefinition, index) =>
+            igboDefinition && {
+              id: wordSuggestions[index]._id,
+              igboDefinition,
+            },
+        ),
+      );
       await setWordSuggestionsWithoutIgboDefinitions(payload);
       setIsComplete(true);
     } finally {
@@ -104,13 +95,19 @@ const IgboDefinitions = (): ReactElement => {
     <Box className="flex flex-col justify-start items-center py-4 h-full lg:h-auto">
       <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto">
         <NavbarWrapper>
-          <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="4xl">Igbo Definitions</Heading>
+          <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="4xl">
+            Igbo Definitions
+          </Heading>
         </NavbarWrapper>
         {currentCard ? (
           <Card>
             <Box className="flex flex-row justify-start items-center space-x-4">
-              <Text fontWeight="bold" fontFamily="Silka">{currentCard.word}</Text>
-              <Text fontStyle="italic" fontFamily="Silka">{WordClass[currentCard.definitions[0].wordClass].label}</Text>
+              <Text fontWeight="bold" fontFamily="Silka">
+                {currentCard.word}
+              </Text>
+              <Text fontStyle="italic" fontFamily="Silka">
+                {WordClass[currentCard.definitions[0].wordClass].label}
+              </Text>
             </Box>
             <Text fontFamily="Silka">{currentCard.definitions[0].definitions[0]}</Text>
           </Card>
@@ -128,9 +125,11 @@ const IgboDefinitions = (): ReactElement => {
           {showSubmitButton ? (
             <PrimaryButton
               onClick={isLoading ? noop : handleSubmit}
-              rightIcon={(() => <>💾</>)()}
+              rightIcon={(() => (
+                <>💾</>
+              ))()}
               aria-label="Complete Igbo definitions"
-              disabled={isLoading}
+              isDisabled={isLoading}
             >
               Submit Batch
             </PrimaryButton>
@@ -150,7 +149,7 @@ const IgboDefinitions = (): ReactElement => {
             icon={<ArrowBackIcon />}
             aria-label="Previous Igbo definition"
             position="absolute"
-            disabled={currentCardIndex === 0}
+            isDisabled={currentCardIndex === 0}
             left={0}
           />
           <ActivityButton
@@ -159,7 +158,7 @@ const IgboDefinitions = (): ReactElement => {
             icon={<ArrowForwardIcon />}
             aria-label="Next Igbo definition"
             position="absolute"
-            disabled={currentCardIndex === wordSuggestions.length - 1}
+            isDisabled={currentCardIndex === wordSuggestions.length - 1}
             right={0}
           />
         </Box>

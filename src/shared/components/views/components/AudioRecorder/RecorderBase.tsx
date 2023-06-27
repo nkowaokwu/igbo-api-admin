@@ -1,14 +1,6 @@
 import React, { ReactElement, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
-import {
-  Box,
-  Button,
-  IconButton,
-  Text,
-  Tooltip,
-  useToast,
-  chakra,
-} from '@chakra-ui/react';
+import { Box, Button, IconButton, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import { RepeatIcon } from '@chakra-ui/icons';
 import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
@@ -24,15 +16,17 @@ const RecorderBase = ({
   onStopRecording,
   onResetRecording,
   audioValue,
-} : {
-  path: string,
-  formTitle?: string,
-  formTooltip?: string,
-  warningMessage?: string,
-  hideTitle?: boolean,
-  onStopRecording: (audioBlob: string) => void,
-  onResetRecording: () => void,
-  audioValue?: string,
+  toastEnabled = true,
+}: {
+  path: string;
+  formTitle?: string;
+  formTooltip?: string;
+  warningMessage?: string;
+  hideTitle?: boolean;
+  onStopRecording: (audioBlob: string) => void;
+  onResetRecording: () => void;
+  audioValue?: string;
+  toastEnabled?: boolean;
 }): ReactElement => {
   const [audioBlob, isRecording, startRecording, stopRecording, recordingDuration] = useRecorder();
   const toast = useToast();
@@ -52,17 +46,23 @@ const RecorderBase = ({
             controls
           />
           {shouldRenderNewPronunciationLabel() && (
-            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">New pronunciation recorded</chakra.span>
+            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">
+              New pronunciation recorded
+            </chakra.span>
           )}
         </Box>
-      ) : <chakra.span className="text-gray-700 italic" fontFamily="Silka">No audio pronunciation</chakra.span>}
+      ) : !isRecording ? (
+        <chakra.span className="text-gray-700 italic" fontFamily="Silka">
+          No audio pronunciation
+        </chakra.span>
+      ) : null}
     </Box>
   );
 
   useEffect(() => {
     onStopRecording(audioBlob);
 
-    if (audioBlob) {
+    if (audioBlob && toastEnabled) {
       toast({
         title: 'Recorded new audio',
         description: 'A new audio pronunciation has been recorded',
@@ -75,22 +75,20 @@ const RecorderBase = ({
 
   return (
     <Box className="flex flex-col w-full my-2">
-      {!hideTitle ? (
-        <FormHeader
-          title={formTitle}
-          tooltip={formTooltip}
-        />
-      ) : null}
+      {!hideTitle ? <FormHeader title={formTitle} tooltip={formTooltip} /> : null}
       <Box
         data-test="word-pronunciation-input-container"
         width="full"
-        backgroundColor="gray.200"
+        className="flex flex-col justify-center items-center"
+        backgroundColor="gray.100"
         borderRadius="md"
+        minHeight="96px"
         p={3}
       >
         <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">
           {!isRecording ? (
-            <Box className={`flex flex-row justify-center
+            <Box
+              className={`flex flex-row justify-center
             ${pronunciationValue ? 'items-start' : 'items-center'} space-x-3`}
             >
               <Tooltip label="Start recording">
@@ -154,23 +152,17 @@ const RecorderBase = ({
                 >
                   <Box height="12px" width="12px" backgroundColor="gray.600" />
                 </Button>
-                <canvas id="canvas" height={60} width={150} className="mb-3" />
-              </Box>
-              <Box style={{ fontFamily: 'monospace' }} className="w-full flex flex-row justify-center items-center">
-                {convertToTime(recordingDuration)}
+                <canvas id="canvas" height={20} width={150} />
+                <Box style={{ fontFamily: 'monospace' }} className="w-full flex flex-row justify-center items-center">
+                  {convertToTime(recordingDuration)}
+                </Box>
               </Box>
               {renderStatusLabel()}
             </Box>
           )}
         </Box>
         {warningMessage ? (
-          <Box
-            mt={2}
-            p={2}
-            backgroundColor="yellow.100"
-            borderRadius="md"
-            data-test="audio-recording-warning-message"
-          >
+          <Box mt={2} p={2} backgroundColor="yellow.100" borderRadius="md" data-test="audio-recording-warning-message">
             <Text color="yellow.700">{warningMessage}</Text>
           </Box>
         ) : null}

@@ -7,7 +7,7 @@ const example = {
   nsibidi: 'nsibidi',
   nsibidiCharacters: [],
   associatedWords: ['associated-word'],
-  pronunciations: [{ audio: 'https://igbo-api-test-local/audio-file-example', speaker: '' }],
+  pronunciations: [{ audio: 'https://igbo-api-test-local.com/audio-file-example', speaker: '' }],
 };
 
 describe('determineExampleCompleteness', () => {

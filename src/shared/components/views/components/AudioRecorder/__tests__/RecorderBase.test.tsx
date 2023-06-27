@@ -9,10 +9,7 @@ describe('RecorderBase', () => {
     const mockStopRecording = jest.fn(() => null);
     const mockResetRecording = jest.fn(() => null);
     const { findByText } = render(
-      <TestContext
-        onStopRecording={mockStopRecording}
-        onResetRecording={mockResetRecording}
-      >
+      <TestContext onStopRecording={mockStopRecording} onResetRecording={mockResetRecording}>
         <RecorderBase />
       </TestContext>,
     );
@@ -25,15 +22,11 @@ describe('RecorderBase', () => {
     // @ts-expect-error
     useRecorder.mockImplementation(() => ['audioBlob', true, () => null, () => null, 0]);
     const { findByText, findByTestId } = render(
-      <TestContext
-        onStopRecording={mockStopRecording}
-        onResetRecording={mockResetRecording}
-        path="examples"
-      >
+      <TestContext onStopRecording={mockStopRecording} onResetRecording={mockResetRecording} path="examples">
         <RecorderBase />
       </TestContext>,
     );
-    await findByText('No audio pronunciation');
+
     fireEvent.click(await findByTestId('stop-recording-button-examples'));
     await findByText('Recorded new audio');
     await findByText('A new audio pronunciation has been recorded');
@@ -47,11 +40,7 @@ describe('RecorderBase', () => {
     // @ts-expect-error
     useRecorder.mockImplementation(() => ['', false, () => null, () => null, 0]);
     const { findByTestId } = render(
-      <TestContext
-        onStopRecording={mockStopRecording}
-        onResetRecording={mockResetRecording}
-        path="examples"
-      >
+      <TestContext onStopRecording={mockStopRecording} onResetRecording={mockResetRecording} path="examples">
         <RecorderBase />
       </TestContext>,
     );

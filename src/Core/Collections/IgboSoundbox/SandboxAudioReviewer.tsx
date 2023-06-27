@@ -35,9 +35,11 @@ const SandboxAudioReviewer = ({
         setIsLoadingSpeakers(true);
         try {
           const speakerProfiles = await Promise.all(
-            pronunciations.map(({ speaker: speakerId }) => getUserProfile(speakerId))
+            pronunciations.map(({ speaker: speakerId }) => getUserProfile(speakerId)),
           );
           setSpeakers(speakerProfiles);
+        } catch (err) {
+          setSpeakers([]);
         } finally {
           setIsLoadingSpeakers(false);
         }
@@ -62,22 +64,26 @@ const SandboxAudioReviewer = ({
                       onDeny={onDeny ? () => onDeny(_id.toString()) : noop}
                       reviewAction={exampleReview.reviews[_id.toString()]}
                     />
-                    {!isLoadingSpeakers && currentSpeaker ? (
+                    {!isLoadingSpeakers ? (
                       <chakra.span fontSize="xs" color="gray.500">
                         <chakra.span mr={1}>Speaker:</chakra.span>
-                        <Tooltip label="Click to view user profile">
-                          <Link
-                            fontSize="xs"
-                            color="gray.500"
-                            fontStyle="italic"
-                            target="_blank"
-                            textDecoration="underline"
-                            href={`#/${Collections.USERS}/${currentSpeaker?.uid}/${Views.SHOW}`}
-                          >
-                            {currentSpeaker?.displayName || 'N/A'}
-                            <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
-                          </Link>
-                        </Tooltip>
+                        {currentSpeaker ? (
+                          <Tooltip label="Click to view user profile">
+                            <Link
+                              color="gray.500"
+                              fontStyle="italic"
+                              target="_blank"
+                              textDecoration="underline"
+                              href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
+                            >
+                              {currentSpeaker?.displayName || 'N/A'}
+
+                              <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
+                            </Link>
+                          </Tooltip>
+                        ) : (
+                          <chakra.span>N/A</chakra.span>
+                        )}
                       </chakra.span>
                     ) : (
                       <Text fontSize="xs" color="gray.500" fontStyle="italic">

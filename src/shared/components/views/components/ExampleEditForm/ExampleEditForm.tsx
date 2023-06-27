@@ -1,10 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import {
-  assign,
-  map,
-  omit,
-  pick,
-} from 'lodash';
+import { assign, map, omit, pick } from 'lodash';
 import { Box, Button, useToast } from '@chakra-ui/react';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
@@ -33,16 +28,12 @@ const ExampleEditForm = ({
   resource = '',
   history,
   isPreExistingSuggestion,
-}: EditFormProps) : ReactElement => {
-  const style = pick(Object.values(ExampleStyle).find(({ value }) => value === record.style), ['value', 'label'])
-    || { value: '', label: '' };
-  const {
-    handleSubmit,
-    getValues,
-    setValue,
-    control,
-    errors,
-  } = useForm({
+}: EditFormProps): ReactElement => {
+  const style = pick(
+    Object.values(ExampleStyle).find(({ value }) => value === record.style),
+    ['value', 'label'],
+  ) || { value: '', label: '' };
+  const { handleSubmit, getValues, control, errors } = useForm({
     defaultValues: {
       ...omit(record, 'pronunciation'),
       style,
@@ -95,17 +86,20 @@ const ExampleEditForm = ({
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const preparedData = omit(assign(
-        {
-          ...record,
-          ...data,
-        },
-        createCacheExampleData(data, record),
-        {
-          approvals: map(record.approvals, (approval) => approval.uid),
-          denials: map(record.denials, (denial) => denial.uid),
-        },
-      ), [view === View.CREATE ? 'id' : '', 'type']);
+      const preparedData = omit(
+        assign(
+          {
+            ...record,
+            ...data,
+          },
+          createCacheExampleData(data, record),
+          {
+            approvals: map(record.approvals, (approval) => approval.uid),
+            denials: map(record.denials, (denial) => denial.uid),
+          },
+        ),
+        [view === View.CREATE ? 'id' : '', 'type'],
+      );
       const cleanedData = removePayloadFields(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
@@ -148,11 +142,7 @@ const ExampleEditForm = ({
         {record.originalExampleId || (view === View.CREATE && record.id) ? (
           <>
             <h2 className="form-header">Parent Example Id:</h2>
-            <Input
-              data-test="original-id"
-              value={record.originalExampleId || record.id}
-              isDisabled
-            />
+            <Input data-test="original-id" value={record.originalExampleId || record.id} isDisabled />
           </>
         ) : null}
         <Box
@@ -166,41 +156,23 @@ const ExampleEditForm = ({
             />
             <Box data-test="sentence-style-input-container">
               <Controller
-                render={(props) => (
-                  <Select
-                    {...props}
-                    options={options}
-                  />
-                )}
+                render={(props) => <Select {...props} options={options} />}
                 name="style"
                 control={control}
                 defaultValue={style}
               />
             </Box>
-            {errors.style ? (
-              <p className="error">{errors.style.message}</p>
-            ) : null}
+            {errors.style ? <p className="error">{errors.style.message}</p> : null}
           </Box>
         </Box>
-        <FormHeader
-          title="Igbo"
-          tooltip="The example sentence in Standard Igbo"
-        />
+        <FormHeader title="Igbo" tooltip="The example sentence in Standard Igbo" />
         <Controller
-          render={(props) => (
-            <Input
-              {...props}
-              placeholder="Biko"
-              data-test="igbo-input"
-            />
-          )}
+          render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
           name="igbo"
           control={control}
           defaultValue={record.igbo || getValues().igbo || ''}
         />
-        {errors.igbo ? (
-          <p className="error">Igbo is required</p>
-        ) : null}
+        {errors.igbo ? <p className="error">Igbo is required</p> : null}
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -208,20 +180,12 @@ const ExampleEditForm = ({
           tooltip="The example sentence in English. This is the the literal English translation of the Igbo sentence."
         />
         <Controller
-          render={(props) => (
-            <Input
-              {...props}
-              placeholder="Please"
-              data-test="english-input"
-            />
-          )}
+          render={(props) => <Input {...props} placeholder="Please" data-test="english-input" />}
           name="english"
           control={control}
           defaultValue={record.english || getValues().english || ''}
         />
-        {errors.english ? (
-          <p className="error">English is required</p>
-        ) : null}
+        {errors.english ? <p className="error">English is required</p> : null}
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -229,38 +193,17 @@ const ExampleEditForm = ({
           tooltip="This field showcases the meaning of the sentence - typically for proverbs"
         />
         <Controller
-          render={(props) => (
-            <Input
-              {...props}
-              placeholder="Please"
-              data-test="meaning-input"
-            />
-          )}
+          render={(props) => <Input {...props} placeholder="Please" data-test="meaning-input" />}
           name="meaning"
           control={control}
           defaultValue={record.meaning || getValues().meaning || ''}
         />
-        {errors.meaning ? (
-          <p className="error">{errors.meaning.message}</p>
-        ) : null}
+        {errors.meaning ? <p className="error">{errors.meaning.message}</p> : null}
       </Box>
-      <NsibidiForm
-        control={control}
-        errors={errors}
-        name="nsibidi"
-      />
-      <ExampleAudioPronunciationsForm
-        control={control}
-        record={record}
-        originalRecord={originalRecord}
-        uid={uid}
-      />
+      <NsibidiForm control={control} errors={errors} name="nsibidi" />
+      <ExampleAudioPronunciationsForm control={control} record={record} originalRecord={originalRecord} uid={uid} />
       <Box className="mt-2">
-        <AssociatedWordsForm
-          errors={errors}
-          control={control}
-          record={record}
-        />
+        <AssociatedWordsForm errors={errors} control={control} record={record} />
       </Box>
       <Box className="flex flex-col">
         <FormHeader
@@ -270,14 +213,7 @@ const ExampleEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => (
-            <Textarea
-              {...props}
-              className="form-textarea"
-              placeholder="Comments"
-              rows={8}
-            />
-          )}
+          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={8} />}
           name="editorsNotes"
           defaultValue={record.editorsNotes || ''}
           control={control}
@@ -288,7 +224,7 @@ const ExampleEditForm = ({
           className="mt-3 lg:my-0"
           backgroundColor="gray.300"
           onClick={() => onCancel({ view, resource, history })}
-          disabled={isSubmitting}
+          isDisabled={isSubmitting}
           width="full"
         >
           Cancel
