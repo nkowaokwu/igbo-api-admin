@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import * as functions from 'firebase-functions';
 import { MONGO_URI } from 'src/backend/services/initializeAdmin';
+import { isTesting } from 'src/backend/config';
 
 const config = functions.config();
 const DISCONNECTED = 0;
@@ -18,7 +19,7 @@ export const connectDatabase = async (): Promise<mongoose.Connection> =>
         useCreateIndex: true,
         poolSize: 20,
         bufferMaxEntries: 0,
-        useUnifiedTopology: true,
+        useUnifiedTopology: !isTesting,
       });
 
       mongooseConnection.on('error', console.error.bind(console, '❌ MongoDB connection error:'));

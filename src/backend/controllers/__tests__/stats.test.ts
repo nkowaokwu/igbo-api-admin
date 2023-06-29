@@ -56,8 +56,7 @@ describe('Stats', () => {
       size: 160000000,
     });
 
-    const audio = await audioPronunciation.save();
-    console.log(audio.toJSON());
+    await audioPronunciation.save();
     expect((await onUpdateTotalAudioDashboardStats())[0].totalExampleAudio).toBeLessThanOrEqual(0);
     expect((await onUpdateTotalAudioDashboardStats())[1].totalExampleSuggestionAudio).toBeGreaterThanOrEqual(1);
   });

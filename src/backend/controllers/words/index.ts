@@ -12,12 +12,7 @@ import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { assignExampleSuggestionToExampleData } from 'src/backend/controllers/utils/nestedExampleSuggestionUtils';
-import {
-  sortDocsBy,
-  packageResponse,
-  handleQueries,
-  updateDocumentMerge,
-} from '../utils';
+import { sortDocsBy, packageResponse, handleQueries, updateDocumentMerge } from '../utils';
 import {
   searchIgboTextSearch,
   strictSearchIgboQuery,
@@ -56,15 +51,16 @@ export const getWordData = (req: Interfaces.EditorRequest, res: Response, next: 
 };
 
 /* Searches for a word with Igbo stored in MongoDB */
-const searchWordUsingIgbo = async (
-  {
-    query,
-    searchWord,
-    mongooseConnection,
-    ...rest
-  }:
-  { query: any, searchWord: string, mongooseConnection: Connection },
-): Promise<Interfaces.Word[]> => {
+const searchWordUsingIgbo = async ({
+  query,
+  searchWord,
+  mongooseConnection,
+  ...rest
+}: {
+  query: any;
+  searchWord: string;
+  mongooseConnection: Connection;
+}): Promise<Interfaces.Word[]> => {
   const Word = mongooseConnection.model('Word', wordSchema);
   const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, Word, ...rest });
   return sortDocsBy(searchWord, words, 'word');
@@ -98,12 +94,10 @@ export const getWords = async (
       examples: true,
     };
     const query: {
-      word?: any,
-      text?: any
-      definitions?: any
-    } = !strict
-      ? searchIgboTextSearch(user.uid, searchWord, regexKeyword, filters)
-      : strictSearchIgboQuery(searchWord);
+      word?: any;
+      text?: any;
+      definitions?: any;
+    } = !strict ? searchIgboTextSearch(user.uid, searchWord, regexKeyword, filters) : strictSearchIgboQuery(searchWord);
     const words = await searchWordUsingIgbo({ query, mongooseConnection, ...searchQueries });
     const Word = mongooseConnection.model('Word', wordSchema);
     return await packageResponse({
@@ -134,13 +128,12 @@ export const getWord = async (
       examples: true,
       limit: 1,
       Word,
-    })
-      .then(async ([word]: Interfaces.Word[]) => {
-        if (!word) {
-          throw new Error('No word exists with the provided id.');
-        }
-        return word;
-      });
+    }).then(async ([word]: Interfaces.Word[]) => {
+      if (!word) {
+        throw new Error('No word exists with the provided id.');
+      }
+      return word;
+    });
     return res.send(updatedWord);
   } catch (err) {
     return next(err);
@@ -149,24 +142,13 @@ export const getWord = async (
 
 /* Creates Word documents in MongoDB database */
 export const createWord = async (
-  data: (
-    Interfaces.WordClientData
+  data:
+    | Interfaces.WordClientData
     | Interfaces.WordSuggestion
-    | LeanDocument<Document<Interfaces.WordClientData | Interfaces.WordSuggestion>>
-  ),
+    | LeanDocument<Document<Interfaces.WordClientData | Interfaces.WordSuggestion>>,
   mongooseConnection: Connection,
 ): Promise<Document<Interfaces.Word>> => {
-  const {
-    examples,
-    word,
-    wordClass,
-    definitions,
-    variations,
-    stems,
-    dialects = {},
-    isStandardIgbo,
-    ...rest
-  } = data;
+  const { examples, word, wordClass, definitions, variations, stems, dialects = {}, isStandardIgbo, ...rest } = data;
 
   const wordData = {
     word,
@@ -216,8 +198,10 @@ const updateSuggestionAfterMerge = async (
   mergedBy: string,
   mongooseConnection: Connection,
 ): Promise<Interfaces.WordSuggestion> => {
-  const updatedSuggestionDoc: Interfaces.WordSuggestion | any = (
-    await updateDocumentMerge(wordSuggestion, originalWord.id.toString(), mergedBy)
+  const updatedSuggestionDoc: Interfaces.WordSuggestion | any = await updateDocumentMerge(
+    wordSuggestion,
+    originalWord.id.toString(),
+    mergedBy,
   );
   await assignExampleSuggestionToExampleData({
     wordSuggestion,
@@ -255,38 +239,38 @@ const overwriteWordPronunciation = async (
     const suggestion = await initialSuggestion.save();
     const suggestionDialects = suggestion.dialects || [];
 
-    await Promise.all(suggestionDialects.map(async (
-      { pronunciation: suggestionPronunciation, _id: dialectalWordId },
-      index,
-    ) => {
-      const wordDocDialectalWordId = word.dialects[index]._id;
-      const wordDialectPronunciationKey = `${word.id}-${wordDocDialectalWordId}`;
-      const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWordId}`;
-      /**
-       * If the Word dialect's pronunciation doesn't include the Word's id,
-       * the dialect's pronunciation uri key will get updated
-       */
-      const suggestionDialectDocId = suggestionPronunciation ? suggestionDialectPronunciationKey : '';
-      const isMp3 = suggestionPronunciation.includes('mp3');
-      const finalDialectPronunciationUri = (
-        await renameAudioPronunciation(suggestionDialectDocId, wordDialectPronunciationKey, isMp3)
-          .catch((err) => {
-            console.log('Inside overwriteWordPronunciation dialects', err.message);
-            throw err;
-          })
-      );
+    await Promise.all(
+      suggestionDialects.map(async ({ pronunciation: suggestionPronunciation, _id: dialectalWordId }, index) => {
+        const wordDocDialectalWordId = word.dialects[index]._id;
+        const wordDialectPronunciationKey = `${word.id}-${wordDocDialectalWordId}`;
+        const suggestionDialectPronunciationKey = `${suggestion.id}-${dialectalWordId}`;
+        /**
+         * If the Word dialect's pronunciation doesn't include the Word's id,
+         * the dialect's pronunciation uri key will get updated
+         */
+        const suggestionDialectDocId = suggestionPronunciation ? suggestionDialectPronunciationKey : '';
+        const isMp3 = suggestionPronunciation.includes('mp3');
+        const finalDialectPronunciationUri = await renameAudioPronunciation(
+          suggestionDialectDocId,
+          wordDialectPronunciationKey,
+          isMp3,
+        ).catch((err) => {
+          console.log('Inside overwriteWordPronunciation dialects', err.message);
+          throw err;
+        });
 
-      suggestion.dialects[index].pronunciation = finalDialectPronunciationUri;
-      if (!word.dialects[index]) {
-        // @ts-expect-error _id
-        word.dialects[index] = {
-          dialects: [],
-          variations: [],
-          pronunciation: '',
-        };
-      }
-      word.dialects[index].pronunciation = finalDialectPronunciationUri;
-    }));
+        suggestion.dialects[index].pronunciation = finalDialectPronunciationUri;
+        if (!word.dialects[index]) {
+          // @ts-expect-error _id
+          word.dialects[index] = {
+            dialects: [],
+            variations: [],
+            pronunciation: '',
+          };
+        }
+        word.dialects[index].pronunciation = finalDialectPronunciationUri;
+      }),
+    );
 
     await suggestion.save();
     await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
@@ -319,7 +303,7 @@ const mergeIntoWord = (
   )
     .then(async (updatedWord: Interfaces.Word) => {
       if (!updatedWord) {
-        throw new Error('Word doesn\'t exist');
+        throw new Error("Word doesn't exist");
       }
 
       await overwriteWordPronunciation(suggestionDoc, updatedWord, mongooseConnection);
@@ -336,7 +320,7 @@ const createWordFromSuggestion = (
   suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
   mongooseConnection: Connection,
-): Promise<Document<Interfaces.Word> | void> => (
+): Promise<Document<Interfaces.Word> | void> =>
   createWord(suggestionDoc.toObject(), mongooseConnection)
     .then(async (word: Interfaces.Word) => {
       const updatedPronunciationsWord = await overwriteWordPronunciation(suggestionDoc, word, mongooseConnection);
@@ -345,8 +329,7 @@ const createWordFromSuggestion = (
     })
     .catch((err) => {
       throw new Error(`An error occurred while saving the new word: ${err.message}`);
-    })
-);
+    });
 
 /* Sends confirmation merged email to user if they provided an email */
 const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> => {
@@ -361,7 +344,7 @@ const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> 
     }
   } catch (err) {
     console.log(err.message);
-  };
+  }
 };
 
 /* Merges the existing WordSuggestion into either a brand
@@ -374,11 +357,10 @@ export const mergeWord = async (
   try {
     const { user, suggestionDoc: suggestion, mongooseConnection } = req;
     const suggestionDoc = suggestion as Interfaces.WordSuggestion;
-    const mergedWord: Document<Interfaces.Word> | any = (
-      suggestionDoc.originalWordId
+    const mergedWord: Document<Interfaces.Word> | any =
+      (suggestionDoc.originalWordId
         ? await mergeIntoWord(suggestionDoc, user.uid, mongooseConnection)
-        : await createWordFromSuggestion(suggestionDoc, user.uid, mongooseConnection)
-    ) || {};
+        : await createWordFromSuggestion(suggestionDoc, user.uid, mongooseConnection)) || {};
     await handleSyncingSynonyms(mergedWord, mongooseConnection);
     await handleSyncingAntonyms(mergedWord, mongooseConnection);
     await handleSendingMergedEmail({
@@ -408,13 +390,12 @@ const findAndUpdateWord = (
   }
   const Word = mongooseConnection.model('Word', wordSchema);
 
-  return Word.findById(id)
-    .then(async (word: Interfaces.Word) => {
-      if (!word) {
-        throw new Error('Word doesn\'t exist');
-      }
-      return cb(assign(word));
-    });
+  return Word.findById(id).then(async (word: Interfaces.Word) => {
+    if (!word) {
+      throw new Error("Word doesn't exist");
+    }
+    return cb(assign(word));
+  });
 };
 
 /* Updates a Word document in the database */
@@ -424,7 +405,11 @@ export const putWord = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data, params: { id }, mongooseConnection } = req;
+    const {
+      body: data,
+      params: { id },
+      mongooseConnection,
+    } = req;
     if (!data.word) {
       throw new Error('Required information is missing, double your provided data.');
     }
@@ -446,15 +431,20 @@ export const deleteWord = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-) : Promise<Response | void> => {
+): Promise<Response | void> => {
   try {
-    const { body: data, params: { id: toBeDeletedWordId }, mongooseConnection } = req;
+    const {
+      body: data,
+      params: { id: toBeDeletedWordId },
+      mongooseConnection,
+    } = req;
     const { primaryWordId }: { primaryWordId: string } = data;
     const Word = mongooseConnection.model('Word', wordSchema);
 
     const wordToDelete: Interfaces.Word = await Word.findById(toBeDeletedWordId);
-    const toBeDeletedWordExamples: Interfaces.Example[] | any = (
-      await findExampleByAssociatedWordId(toBeDeletedWordId, mongooseConnection)
+    const toBeDeletedWordExamples: Interfaces.Example[] | any = await findExampleByAssociatedWordId(
+      toBeDeletedWordId,
+      mongooseConnection,
     );
     const savedCombinedWord = await findAndUpdateWord(
       primaryWordId,
@@ -515,18 +505,12 @@ export const getAssociatedWordSuggestionsByTwitterId = async (
 /* Returns all the WordSuggestions with audio pronunciations */
 export const getTotalWordsWithAudioPronunciations = (mongooseConnection: Connection): Promise<any> => {
   const Word = mongooseConnection.model('Word', wordSchema);
-  return Word
-    .find(searchForAllWordsWithAudioPronunciations())
-    .lean()
-    .exec();
+  return Word.find(searchForAllWordsWithAudioPronunciations()).lean().exec();
 };
 
 /* Returns all the WordSuggestions that's in Standard Igbo */
 export const getTotalWordsInStandardIgbo = (mongooseConnection: Connection): Promise<any> => {
   const Word = mongooseConnection.model('Word', wordSchema);
 
-  return Word
-    .find(searchForAllWordsWithIsStandardIgbo())
-    .lean()
-    .exec();
+  return Word.find(searchForAllWordsWithIsStandardIgbo()).lean().exec();
 };
