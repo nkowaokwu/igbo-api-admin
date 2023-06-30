@@ -75,6 +75,11 @@ const Select = ({
     },
     { value: UserRoles.USER, label: 'Set as User', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
     {
+      value: UserRoles.CROWDSOURCER,
+      label: 'Set as Crowdsourcer',
+      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
+    },
+    {
       value: UserRoles.TRANSCRIBER,
       label: 'Set as Transcriber',
       onSelect: () => withConfirm(setAction(actionsMap.Convert)),

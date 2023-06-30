@@ -3,9 +3,7 @@ import WordClass from '../../src/backend/shared/constants/WordClass';
 
 export const DialectOptions = Dialects;
 
-export const API_ROUTE = process.env.NODE_ENV !== 'production'
-  ? 'http://localhost:3030'
-  : 'https://editor.igboapi.com';
+export const API_ROUTE = process.env.NODE_ENV !== 'production' ? 'http://localhost:3030' : 'https://editor.igboapi.com';
 
 export const WordClassOptions = WordClass;
 
@@ -29,6 +27,7 @@ export const SuggestionSelectOptions = {
 export const UserSelectOptions = {
   VIEW: 'View User',
   SET_AS_USER: 'Set as User',
+  SET_AS_CROWDSOURCER: 'Set as Crowdsourcer',
   SET_AS_TRANSCRIBER: 'Set as Transcriber',
   SET_AS_EDITOR: 'Set as Editor',
   SET_AS_MERGER: 'Set as Merger',
@@ -38,10 +37,12 @@ export const UserSelectOptions = {
 
 export const wordSuggestionData = {
   word: 'main_word',
-  definitions: [{
-    definitions: ['first'],
-    wordClass: 'NNC',
-  }],
+  definitions: [
+    {
+      definitions: ['first'],
+      wordClass: 'NNC',
+    },
+  ],
   variations: ['main_word_variation'],
   dialects: [
     {
