@@ -184,6 +184,8 @@ export interface ExampleData {
     approvals: string[];
     denials: string[];
     _id: Types.ObjectId;
+    createdAt?: Date;
+    updatedAt?: Date;
   }[];
   updatedAt: Date;
 }
@@ -237,7 +239,7 @@ export interface ExampleClientData {
   nsibidiCharacters?: string[];
   type?: SentenceType;
   style?: string;
-  pronunciations?: { audio: string; speaker: string }[];
+  pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];
   exampleForSuggestion?: boolean;

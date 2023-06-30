@@ -129,7 +129,7 @@ export const updateExampleSuggestion = ({
       throw new Error('Unable to edit a merged example suggestion');
     }
 
-    handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
+    await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
     const updatedExampleSuggestion = assign(exampleSuggestion, data);
     return updatedExampleSuggestion.save();

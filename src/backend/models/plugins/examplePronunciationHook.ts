@@ -16,32 +16,45 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
       if (!this.skipPronunciationHook) {
         const id = (this._id || this.id).toString();
 
-        await Promise.all(this.pronunciations.map(async (pronunciation: { audio: string, speaker: string }, index) => {
-          const newId = `${id}-${uuidv4()}`;
-          if (
-            // Going to mock creating and saving audio pronunciation while testing in Cypress
-            (isCypress && this.pronunciations[index].audio)
-            || this.pronunciations[index].audio.startsWith('data:audio/mp3')
-            || (!isCypress && !isAWSProduction && this.pronunciations[index].audio)
-          ) {
-            this.pronunciations[index].audio = await createAudioPronunciation(newId, this.pronunciations[index].audio);
-          } else if (
-            this.pronunciations[index].audio.startsWith('https://')
-            && !this.pronunciations[index].audio.includes(`${id}.`)
-          ) {
-            // If the pronunciation data for the headword is a uri, we will duplicate the uri
-            // so that the new uri will only be associated with the suggestion
-            const isMp3 = this.pronunciations[index].audio.includes('mp3');
-            const oldId: string = last(
-              compact(this.pronunciations[index].audio.split(/.mp3|.webm/).join('').split('/')),
-            );
+        await Promise.all(
+          this.pronunciations.map(async (pronunciation: { audio: string; speaker: string }, index) => {
+            const newId = `${id}-${uuidv4()}`;
+            if (
+              // Going to mock creating and saving audio pronunciation while testing in Cypress
+              (isCypress && this.pronunciations[index].audio) ||
+              this.pronunciations[index].audio.startsWith('data:audio/mp3') ||
+              (!isCypress &&
+                !isAWSProduction &&
+                this.pronunciations[index].audio &&
+                !this.pronunciations[index].audio.startsWith('https://'))
+            ) {
+              this.pronunciations[index].audio = await createAudioPronunciation(
+                newId,
+                this.pronunciations[index].audio,
+              );
+            } else if (
+              this.pronunciations[index].audio.startsWith('https://') &&
+              !this.pronunciations[index].audio.includes(`${id}`)
+            ) {
+              // If the pronunciation data for the headword is a uri, we will duplicate the uri
+              // so that the new uri will only be associated with the suggestion
+              const isMp3 = this.pronunciations[index].audio.includes('mp3');
+              const oldId: string = last(
+                compact(
+                  this.pronunciations[index].audio
+                    .split(/.mp3|.webm/)
+                    .join('')
+                    .split('/'),
+                ),
+              );
 
-            /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-            this.pronunciations[index].audio = await (this.isNew
-              ? copyAudioPronunciation(oldId, newId, isMp3)
-              : renameAudioPronunciation(oldId, newId, isMp3));
-          }
-        }));
+              /* If we are saving a new word suggestion, then we want to copy all the original audio files */
+              this.pronunciations[index].audio = await (this.isNew
+                ? copyAudioPronunciation(oldId, newId, isMp3)
+                : renameAudioPronunciation(oldId, newId, isMp3));
+            }
+          }),
+        );
       }
 
       next();
