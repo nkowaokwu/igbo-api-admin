@@ -21,10 +21,10 @@ import { hasAdminOrMergerPermissions, hasCrowdsourcerPermission } from 'src/shar
 import { getTotalRecordedExampleSuggestions, getTotalVerifiedExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import UserCard from 'src/shared/components/UserCard';
 import { FEATURE_REQUEST_FORM_URL } from 'src/Core/constants';
+import LacunaProgress from 'src/Core/Dashboard/components/LacunaProgress';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
-import LacunaProgress from 'src/Core/Dashboard/components/LacunaProgress';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -60,10 +60,21 @@ const sortMerges = (merges) =>
     .map(([, value]) => value)
     .reverse();
 
-const UserStat = ({ uid }: { uid?: string; dialectalVariations: number; completeExamples: number }): ReactElement => {
+const UserStat = ({
+  uid,
+  user = { displayName: '', email: '', photoURL: '' },
+  dialectalVariations,
+  completeExamples,
+}: {
+  uid?: string;
+  user?: { displayName: string; email: string; photoURL: string };
+  dialectalVariations: number;
+  completeExamples: number;
+}): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
+  const [currentMonthMergeStats, setCurrentMonthMergeStats] = useState(null);
   const { permissions } = usePermissions();
   const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
@@ -74,7 +85,7 @@ const UserStat = ({ uid }: { uid?: string; dialectalVariations: number; complete
       const userUid = uid || currentUser?.uid;
       network(`/stats/users/${userUid}`).then((res) => setUserStats(res.json));
       const { json: merges = {} } = await network(`/stats/users/${userUid}/merge`);
-      const { exampleSuggestionMerges = {}, dialectalVariationMerges = {} } = merges;
+      const { exampleSuggestionMerges = {}, dialectalVariationMerges = {}, currentMonthMerges = {} } = merges;
       const labels = times(
         THREE_MONTH_WEEKS_COUNT,
         (index) => `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`,
@@ -101,6 +112,7 @@ const UserStat = ({ uid }: { uid?: string; dialectalVariations: number; complete
         ],
       };
       setMergeStats(updatedMergeStats);
+      setCurrentMonthMergeStats(currentMonthMerges);
       const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(userUid);
       const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
       setRecordingStats({
@@ -112,7 +124,7 @@ const UserStat = ({ uid }: { uid?: string; dialectalVariations: number; complete
 
   return (
     <Box>
-      <UserCard {...currentUser} />
+      <UserCard {...(user?.email ? user : currentUser)} />
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0 px-6">
         <Box className="w-full">
           <Heading as="h2" mb={4}>
