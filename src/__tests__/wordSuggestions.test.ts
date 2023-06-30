@@ -30,7 +30,24 @@ import { WORD_SUGGESTION_KEYS, INVALID_ID, AUTH_TOKEN } from './shared/constants
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
 
+jest.unmock('aws-sdk');
+jest.unmock('src/backend/controllers/utils/MediaAPIs/initializeAPI');
+jest.unmock('src/backend/controllers/utils/MediaAPIs/utils');
+
 describe('MongoDB Word Suggestions', () => {
+  beforeAll(() => {
+    jest.mock('src/backend/config', () => ({
+      isAWSProduction: false,
+      isCypress: false,
+      TEST_MONGO_URI: 'mongodb://127.0.0.1:27017/test_igbo_api',
+      AWS_BUCKET: 'test_bucket',
+      AWS_REGION: 'test_region',
+      AWS_ACCESS_KEY: 'test_access_key',
+      AWS_SECRET_ACCESS_KEY: 'test_secret_access_key',
+    }));
+    jest.unmock('src/backend/controllers/utils/MediaAPIs/initializeAPI');
+    jest.unmock('aws-sdk');
+  });
   describe('/POST mongodb wordSuggestions', () => {
     it('should save submitted word suggestion', async () => {
       const res = await suggestNewWord(wordSuggestionData);
@@ -228,7 +245,7 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should update a wordSuggestion without changing the nested exampleSuggestion audio data', async () => {
-      const wordRes = await suggestNewWord({
+      const wordSuggestionBody = {
         ...wordSuggestionWithNestedExampleSuggestionData,
         examples: [
           {
@@ -236,7 +253,8 @@ describe('MongoDB Word Suggestions', () => {
             pronunciations: [{ audio: 'data:audio/mp3recording audio', speaker: '' }],
           },
         ],
-      });
+      };
+      const wordRes = await suggestNewWord(wordSuggestionBody);
       expect(wordRes.status).toEqual(200);
       const nestedExampleId = wordRes.body.examples[0].id;
       expect(

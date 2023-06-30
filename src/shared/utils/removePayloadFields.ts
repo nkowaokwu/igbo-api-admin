@@ -2,10 +2,10 @@ import omit from 'lodash/omit';
 import { Example, DefinitionSchema, WordDialect } from 'src/backend/controllers/utils/interfaces';
 
 type RemovePayload = {
-  definitions?: Partial<DefinitionSchema>[],
-  dialects?: Partial<WordDialect>[]
-  examples?: Partial<Example>,
-  pronunciations?: Partial<{ audio: string, speaker: string }>[],
+  definitions?: Partial<DefinitionSchema>[];
+  dialects?: Partial<WordDialect>[];
+  examples?: Partial<Example>;
+  pronunciations?: Partial<{ audio: string; speaker: string }>[];
 };
 
 const OMIT_KEYS = [
@@ -42,14 +42,17 @@ const removePayloadFields = (payload: RemovePayload): any => {
     cleanedPayload.dialects = cleanedPayload.dialects.map((dialect) => omit(dialect, OMIT_KEYS));
   }
   if (Array.isArray(cleanedPayload.examples)) {
-    cleanedPayload.examples = cleanedPayload.examples.map((example) => (
-      omit({
-        ...example,
-        pronunciations: (example.pronunciations || []).map((pronunciation) => (
-          omit(pronunciation, ['_id', 'approvals', 'denials', 'review'])
-        )),
-      }, ['authorId', 'archived'])
-    ));
+    cleanedPayload.examples = cleanedPayload.examples.map((example) =>
+      omit(
+        {
+          ...example,
+          pronunciations: (example.pronunciations || []).map((pronunciation) =>
+            omit(pronunciation, ['_id', 'approvals', 'denials', 'review', 'createdAt', 'updatedAt']),
+          ),
+        },
+        ['authorId', 'archived'],
+      ),
+    );
   }
   if (Array.isArray(cleanedPayload.pronunciations)) {
     cleanedPayload.pronunciations = cleanedPayload.pronunciations.map((pronunciation) => omit(pronunciation, ['_id']));
