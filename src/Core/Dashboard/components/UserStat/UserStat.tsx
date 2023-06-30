@@ -24,6 +24,7 @@ import { FEATURE_REQUEST_FORM_URL } from 'src/Core/constants';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
+import LacunaProgress from 'src/Core/Dashboard/components/LacunaProgress';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -120,12 +121,12 @@ const UserStat = ({ uid }: { uid?: string; dialectalVariations: number; complete
           <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
             <Box className="flex flex-col lg:flex-row justify-between space-x-0 lg:space-x-3">
               {/* Deprecated - the Lacuna Fund project is complete 🎉 */}
-              {/* <LacunaProgress
+              <LacunaProgress
                 mergeStats={mergeStats}
                 currentMonthMergeStats={currentMonthMergeStats}
                 dialectalVariations={dialectalVariations}
                 completeExamples={completeExamples}
-              /> */}
+              />
               <IgboSoundboxStats recordingStats={recordingStats} />
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
