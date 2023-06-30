@@ -1,27 +1,18 @@
 import React, { ReactElement } from 'react';
-import {
-  Box,
-  Heading,
-  Hide,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Heading, Hide, Text } from '@chakra-ui/react';
 import moment from 'moment';
 import UserRoles from '../backend/shared/constants/UserRoles';
 import CredentialsForm from './CredentialsForm';
 
 export interface SignupInfo {
-  email: string,
-  password: string,
-  displayName: string,
-  role: UserRoles.USER,
+  email: string;
+  password: string;
+  displayName: string;
+  role: UserRoles.USER;
 }
 
 const Login = (): ReactElement => (
-  <Box
-    display="flex"
-    flexDirection="row"
-    height="100vh"
-  >
+  <Box display="flex" flexDirection="row" height="100vh">
     <Hide below="lg">
       <Box
         display="flex"
@@ -35,7 +26,9 @@ const Login = (): ReactElement => (
         height="full"
         padding={12}
       >
-        <Heading as="h1" fontFamily="Silka" color="white" fontSize="2xl">Igbo API Editor Platform</Heading>
+        <Heading as="h1" fontFamily="Silka" color="white" fontSize="2xl">
+          Igbo API Editor Platform
+        </Heading>
         <Box className="space-y-4 w-10/12">
           <Heading as="h2" fontFamily="Silka" color="white" fontSize={{ base: '4xl', md: '6xl' }}>
             Building accessible Igbo technology for everyone.
@@ -60,18 +53,12 @@ const Login = (): ReactElement => (
       height="full"
       padding={12}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        className="space-y-4"
-      >
+      <Box display="flex" flexDirection="column" justifyContent="center" className="space-y-4">
         <Hide above="lg">
           <Heading as="h1" fontFamily="Silka" color="gray.700" fontSize="2xl" textAlign="center">
             Igbo API Editor Platform
           </Heading>
         </Hide>
-        <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center">Log in to your account</Heading>
         <CredentialsForm />
       </Box>
     </Box>
