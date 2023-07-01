@@ -151,7 +151,7 @@ const VerifySentenceAudio = ({
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
-      <Box className="flex flex-col w-full space-y-4">
+      <Box className="flex flex-col items-center w-full space-y-4">
         <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
           Listen to know if this sentence matches the audio
         </Heading>
