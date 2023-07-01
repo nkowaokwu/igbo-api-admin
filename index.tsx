@@ -6,7 +6,11 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import './src/backend/shared/utils/wrapConsole';
 import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/services/emailJobs';
-import { onUpdateDashboardStats, onUpdateTotalAudioDashboardStats } from './src/backend/controllers/stats';
+import {
+  onUpdateDashboardStats,
+  onUpdateTotalAudioDashboardStats,
+  getLoginStats,
+} from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import apiRouter from './src/backend/routers/apiRouter';
 import editorRouter from './src/backend/routers/editorRouter';
@@ -44,6 +48,7 @@ server.get('/checklist', (_, res) => res.redirect(301, WORD_CHECKLIST_URL));
 server.use('/triggers', triggersRouter);
 server.get('/twitter_auth', onTwitterAuth);
 server.get('/twitter_callback', onTwitterCallback);
+server.get('/stats/login', getLoginStats);
 server.use(apiRouter);
 server.use(crowdsourcerRouter);
 server.use(transcriberRouter);

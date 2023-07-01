@@ -107,6 +107,7 @@ export const {
   PopoverArrow,
   PopoverCloseButton,
   PopoverAnchor,
+  Show,
   Avatar,
   AvatarBadge,
   AvatarGroup,

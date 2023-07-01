@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading, Hide, Text } from '@chakra-ui/react';
 import moment from 'moment';
+import LoginStats from 'src/Login/LoginStats';
 import UserRoles from '../backend/shared/constants/UserRoles';
 import CredentialsForm from './CredentialsForm';
 
@@ -29,13 +30,18 @@ const Login = (): ReactElement => (
         <Heading as="h1" fontFamily="Silka" color="white" fontSize="2xl">
           Igbo API Editor Platform
         </Heading>
-        <Box className="space-y-4 w-10/12">
-          <Heading as="h2" fontFamily="Silka" color="white" fontSize={{ base: '4xl', md: '6xl' }}>
-            Building accessible Igbo technology for everyone.
-          </Heading>
-          <Text as="h3" fontFamily="Silka" color="white" fontSize="xl">
-            Create an account and join 200+ volunteers to build the largest Igbo dataset ever.
-          </Text>
+        <Box>
+          <Box className="space-y-4 w-10/12">
+            <Heading as="h2" fontFamily="Silka" color="white" fontSize={{ base: '4xl', md: '6xl' }}>
+              Building accessible Igbo technology for everyone.
+            </Heading>
+            <Text as="h3" fontFamily="Silka" color="white" fontSize="xl">
+              Create an account and join our volunteers to build the largest Igbo dataset ever.
+            </Text>
+          </Box>
+          <Box className="mt-12">
+            <LoginStats className="justify-start" />
+          </Box>
         </Box>
         <Text as="p" color="blue.100" fontSize="md">
           {`© ${moment().year()} Nkọwa okwu. All rights reserved.`}

@@ -22,7 +22,6 @@ import * as Interfaces from './utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import ExampleStyle from '../shared/constants/ExampleStyle';
 import SentenceType from '../shared/constants/SentenceType';
-import { countAllAudio } from './utils/MediaAPIs/AudioAPI';
 import Author from '../shared/constants/Author';
 
 const BYTES_TO_SECONDS = 43800;
@@ -549,14 +548,70 @@ export const onUpdateTotalAudioDashboardStats = async (): Promise<
   }
 };
 
+export const getLoginStats = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
+  const { mongooseConnection } = req;
+  try {
+    const Stat = mongooseConnection.model<Interfaces.Stat>('Stat', statSchema);
+    const [exampleAudioStat, exampleSuggestionAudioStat, totalUsers] = await Promise.all([
+      Stat.findOne({ type: StatTypes.TOTAL_EXAMPLE_AUDIO }),
+      Stat.findOne({ type: StatTypes.TOTAL_EXAMPLE_SUGGESTION_AUDIO }),
+      Stat.findOne({ type: StatTypes.TOTAL_USERS }),
+    ]);
+    return res.send({
+      hours: (exampleAudioStat?.value ?? 0) + (exampleSuggestionAudioStat?.value ?? 0),
+      volunteers: totalUsers?.value ?? 0,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /**
- * Counts all audio in the S3 bucket
- * @param req
- * @param res
+ * Increases the total user stat by one
  * @returns
  */
-export const getTotalAudioCount = async (req: Interfaces.EditorRequest, res: Response): Promise<Response | void> => {
-  const minutes = await countAllAudio();
-  const hours = minutes / 60;
-  return res.send({ minutes, hours });
+export const incrementTotalUserStat = async (): Promise<any> => {
+  try {
+    const connection = await connectDatabase();
+    const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
+    const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
+    if (!stat) {
+      console.log('There is no total user stat');
+      return null;
+    }
+    stat.value = (stat?.value ?? 0) + 1;
+    const savedStat = await stat.save();
+    await disconnectDatabase();
+    return savedStat;
+  } catch (err) {
+    await disconnectDatabase();
+    return null;
+  }
+};
+
+/**
+ * Decreases the total user stat by one
+ * @returns
+ */
+export const decrementTotalUserStat = async (): Promise<any> => {
+  try {
+    const connection = await connectDatabase();
+    const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
+    const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
+    if (!stat) {
+      console.log('There is no total user stat');
+      return null;
+    }
+    stat.value = stat?.value === 0 ? 0 : (stat?.value ?? 0) - 1;
+    const savedStat = await stat.save();
+    await disconnectDatabase();
+    return savedStat;
+  } catch (err) {
+    await disconnectDatabase();
+    return null;
+  }
 };
