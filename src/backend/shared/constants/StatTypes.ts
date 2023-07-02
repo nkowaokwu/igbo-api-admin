@@ -14,6 +14,7 @@ enum StatTypes {
   USER = 'user',
   TOTAL_EXAMPLE_AUDIO = 'total_example_audio',
   TOTAL_EXAMPLE_SUGGESTION_AUDIO = 'total_example_suggestion_audio',
+  TOTAL_USERS = 'total_users',
 }
 
 export default StatTypes;

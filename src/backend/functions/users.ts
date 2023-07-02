@@ -6,6 +6,7 @@ import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collections';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
+import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { assignUserRole } from './utils';
 
 const db = admin.firestore();
@@ -16,6 +17,7 @@ export const onCreateUserAccount = functions.auth.user().onCreate(async (user) =
 
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
+    await incrementTotalUserStat();
 
     return successResponse({ uid: user.uid });
   } catch (err) {
@@ -66,6 +68,8 @@ export const onDeleteUser = functions.https.onCall(async (user: UpdatePermission
     await db.collection(`${Collections.USERS}`).doc(user.uid).delete();
     // Delete user
     await admin.auth().deleteUser(user.uid);
+    // Update total user stat
+    await decrementTotalUserStat();
     return `Successfully deleted user ${user.displayName} with uid of ${user.uid}`;
   } catch (err) {
     return errorResponse(err);
@@ -74,13 +78,7 @@ export const onDeleteUser = functions.https.onCall(async (user: UpdatePermission
 
 /* Updates a users role based permissions */
 export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePermissions): Promise<string | Error> => {
-  const {
-    email,
-    uid,
-    adminUid,
-    role,
-    displayName,
-  } = data;
+  const { email, uid, adminUid, role, displayName } = data;
   const adminUser = await admin.auth().getUser(adminUid);
 
   if (adminUser.customClaims.role !== UserRoles.ADMIN && !adminEmailList.includes(adminUser.email)) {

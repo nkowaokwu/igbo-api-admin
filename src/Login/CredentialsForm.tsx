@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Box, Button, Divider, Heading, Text, VStack, chakra } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Text, VStack, chakra, Show } from '@chakra-ui/react';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
+import LoginStats from 'src/Login/LoginStats';
 import EmailLogin from './EmailLogin';
 import GoogleLogin from './GoogleLogin';
 import PasswordRecovery from './PasswordRecovery';
@@ -23,7 +24,7 @@ const CredentialsForm = (): ReactElement => {
   }, [userLoginState]);
 
   const LoginOptions = (props) => (
-    <>
+    <Box data-test="login-options">
       <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center">
         {credentialHeader}
       </Heading>
@@ -76,9 +77,14 @@ const CredentialsForm = (): ReactElement => {
               {errorMessage}
             </Text>
           ) : null}
+          <Show below="md">
+            <Box mt={8}>
+              <LoginStats theme="dark" size="sm" />
+            </Box>
+          </Show>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 
   return (

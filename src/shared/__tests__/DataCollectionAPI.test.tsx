@@ -1,11 +1,8 @@
 import * as requestModule from 'src/shared/utils/request';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import {
-  putAudioForRandomExampleSuggestions,
-  putReviewForRandomExampleSuggestions,
-} from '../DataCollectionAPI';
+import { putAudioForRandomExampleSuggestions, putReviewForRandomExampleSuggestions } from '../DataCollectionAPI';
 
-describe('Commands', () => {
+describe('DataCollectionAPI', () => {
   const response = new Promise((resolve) => resolve({ data: 'success' }));
   it('sends a PUT request with putAudioForRandomExampleSuggestions with all pronunciations present', () => {
     const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue(response);
@@ -60,13 +57,7 @@ describe('Commands', () => {
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
       url: 'exampleSuggestions/random/audio',
-      data: [
-        { id: 'first id' },
-        { id: 'second id' },
-        { id: 'third id' },
-        { id: 'fourth id' },
-        { id: 'fifth id' },
-      ],
+      data: [{ id: 'first id' }, { id: 'second id' }, { id: 'third id' }, { id: 'fourth id' }, { id: 'fifth id' }],
     });
   });
 
