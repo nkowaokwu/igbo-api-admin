@@ -1,5 +1,5 @@
 import { times } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import { ulid } from 'ulid'
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import * as userMethods from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
@@ -99,7 +99,7 @@ describe('MongoDB Leaderboards', () => {
       const examples = [];
       await Promise.all(times(5, async () => {
         const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
+          { ...exampleSuggestionData, igbo: ulid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
         );
         expect(exampleRes.body.approvals).toHaveLength(0);
@@ -129,7 +129,7 @@ describe('MongoDB Leaderboards', () => {
       const examples = [];
       await Promise.all(times(5, async () => {
         const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
+          { ...exampleSuggestionData, igbo: ulid() },
           { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
         );
         expect(exampleRes.body.approvals).toHaveLength(0);

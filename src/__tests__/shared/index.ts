@@ -6,7 +6,7 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import * as admin from 'firebase-admin';
-import { v4 as uuidv4 } from 'uuid'; // eslint-disable-line
+import { ulid } from 'ulid' // eslint-disable-line
 import { initializedAdminApp } from 'src/backend/services/initializeAdmin';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import firebaseConfig from '../../../firebase.json'; // eslint-disable-line
@@ -57,7 +57,7 @@ export const loginFirebaseUser = async (email: string, password = 'password'): P
 };
 
 export const generateUserAuth = (options: OptionsType): AuthType => {
-  const uid = `firebase_${uuidv4()}`;
+  const uid = `firebase_${ulid()}`;
   const baseEmail = `${uid}@example.com`;
   const userEmail = options?.isAdmin
     ? `admin_${baseEmail}`
