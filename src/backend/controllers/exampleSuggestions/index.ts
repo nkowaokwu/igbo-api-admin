@@ -114,7 +114,7 @@ export const updateExampleSuggestion = ({
   id: string;
   data: Interfaces.ExampleSuggestion;
   mongooseConnection: Connection;
-}): Promise<Interfaces.ExampleSuggestion | void> => {
+}): Promise<(Interfaces.ExampleSuggestion & Interfaces.ExampleClientData) | void> => {
   const data = assign(clientData) as Interfaces.ExampleClientData;
   delete data.authorId;
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
@@ -129,7 +129,7 @@ export const updateExampleSuggestion = ({
       throw new Error('Unable to edit a merged example suggestion');
     }
 
-    handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
+    await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
     const updatedExampleSuggestion = assign(exampleSuggestion, data);
     return updatedExampleSuggestion.save();

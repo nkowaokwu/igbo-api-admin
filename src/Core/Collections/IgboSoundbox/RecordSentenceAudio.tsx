@@ -102,11 +102,22 @@ const RecordSentenceAudio = ({
     if (!isComplete) {
       setIsLoading(true);
       (async () => {
-        const { data: randomExamples } = await getRandomExampleSuggestions();
-        setExamples(randomExamples);
-        setExampleIndex(0);
-        setPronunciations(new Array(randomExamples.length).fill(''));
-        setIsLoading(false);
+        try {
+          const { data: randomExamples } = await getRandomExampleSuggestions();
+          setExamples(randomExamples);
+          setExampleIndex(0);
+          setPronunciations(new Array(randomExamples.length).fill(''));
+        } catch (err) {
+          toast({
+            title: 'An error occurred',
+            description: 'Unable to retrieve example sentences.',
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
+        } finally {
+          setIsLoading(false);
+        }
       })();
     }
   }, [isComplete]);

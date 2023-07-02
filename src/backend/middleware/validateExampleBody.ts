@@ -7,18 +7,23 @@ import ExampleStyle from '../shared/constants/ExampleStyle';
 
 const { Types } = mongoose;
 export const exampleDataSchema = Joi.object().keys({
-  originalExampleId: Joi.string().external(async (value) => {
-    if (value && !Types.ObjectId.isValid(value)) {
-      throw new Error('Invalid original example id provided');
-    }
-    return true;
-  }).allow(null).optional(),
+  originalExampleId: Joi.string()
+    .external(async (value) => {
+      if (value && !Types.ObjectId.isValid(value)) {
+        throw new Error('Invalid original example id provided');
+      }
+      return true;
+    })
+    .allow(null)
+    .optional(),
   igbo: Joi.string(),
   english: Joi.string().allow(''),
   meaning: Joi.string().allow('').optional(),
   nsibidi: Joi.string().allow('').optional(),
   nsibidiCharacters: Joi.array().min(0).items(Joi.string()).optional(),
-  style: Joi.string().valid(...Object.values(ExampleStyle).map(({ value }) => value)).optional(),
+  style: Joi.string()
+    .valid(...Object.values(ExampleStyle).map(({ value }) => value))
+    .optional(),
   associatedWords: Joi.array().external((associatedWords) => {
     if (!associatedWords) {
       return true;
@@ -29,27 +34,36 @@ export const exampleDataSchema = Joi.object().keys({
     }
     return true;
   }),
-  associatedDefinitionsSchemas: Joi.array().external((associatedDefinitionsSchemas) => {
-    if (!associatedDefinitionsSchemas) {
+  associatedDefinitionsSchemas: Joi.array()
+    .external((associatedDefinitionsSchemas) => {
+      if (!associatedDefinitionsSchemas) {
+        return true;
+      }
+      const isEveryAssociatedDefinitionsSchemaIdValid = associatedDefinitionsSchemas.every((definitionsSchemaId) =>
+        Types.ObjectId.isValid(definitionsSchemaId),
+      );
+      if (!isEveryAssociatedDefinitionsSchemaIdValid) {
+        throw new Error('Invalid associated definition schema id');
+      }
       return true;
-    }
-    const isEveryAssociatedDefinitionsSchemaIdValid = (
-      associatedDefinitionsSchemas.every((definitionsSchemaId) => Types.ObjectId.isValid(definitionsSchemaId))
-    );
-    if (!isEveryAssociatedDefinitionsSchemaIdValid) {
-      throw new Error('Invalid associated definition schema id');
-    }
-    return true;
-  }).allow(null).optional(),
-  pronunciations: Joi.array().items(Joi.object().keys({
-    audio: Joi.string().allow(''),
-    speaker: Joi.string().allow('').optional(),
-  })),
+    })
+    .allow(null)
+    .optional(),
+  pronunciations: Joi.array().items(
+    Joi.object().keys({
+      audio: Joi.string().allow(''),
+      speaker: Joi.string().allow('').optional(),
+      createdAt: Joi.string().optional(),
+      updatedAt: Joi.string().optional(),
+    }),
+  ),
   exampleForSuggestion: Joi.boolean().optional(),
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),
   authorId: Joi.string().allow('').optional(),
-  source: Joi.string().valid(...Object.values(SuggestionSource)).optional(),
+  source: Joi.string()
+    .valid(...Object.values(SuggestionSource))
+    .optional(),
 });
 
 export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {
