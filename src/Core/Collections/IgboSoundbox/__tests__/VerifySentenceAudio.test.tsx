@@ -326,4 +326,17 @@ describe('VerifySentenceAudio', () => {
     const recordingAudioStandardsDocLink = document.querySelector(`[href="${RECORDING_AUDIO_STANDARDS_DOC}"`);
     expect(recordingAudioStandardsDocLink).toBeTruthy();
   });
+
+  it('renders the example sentence', async () => {
+    // @ts-expect-error
+    DataCollectionAPI.getRandomExampleSuggestionsToReview.mockImplementation(async () => ({
+      data: exampleData,
+    }));
+    const { findByText } = render(
+      <TestContext>
+        <VerifySentenceAudio />
+      </TestContext>,
+    );
+    await findByText('igbo');
+  });
 });
