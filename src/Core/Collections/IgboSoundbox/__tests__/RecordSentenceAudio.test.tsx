@@ -24,4 +24,13 @@ describe('RecordSentenceAudio', () => {
     );
     userEvent.click(await findByTestId('start-recording-button-pronunciation'));
   });
+
+  it('renders the example sentence', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <RecordSentenceAudio />
+      </TestContext>,
+    );
+    await findByText('igbo 1');
+  });
 });

@@ -13,6 +13,9 @@ import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
 import { Card } from 'src/shared/primitives';
+import { API_ROUTE } from 'src/shared/constants';
+import Collections from 'src/shared/constants/Collections';
+import Views from 'src/shared/constants/Views';
 import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
@@ -163,10 +166,10 @@ const VerifySentenceAudio = ({
           </Link>{' '}
           document.
         </Text>
-        <Card>
-          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
-            {currentExample.igbo}
-          </Text>
+        <Card
+          text={currentExample.igbo}
+          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
+        >
           <SandboxAudioReviewer
             pronunciations={currentExample.pronunciations}
             onApprove={handleOnApprove}
