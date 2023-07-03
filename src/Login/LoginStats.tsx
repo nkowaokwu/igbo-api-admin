@@ -21,7 +21,7 @@ const LoginStats = ({
       try {
         setIsLoading(true);
         const { data: stats } = await getPlatformStats();
-        setAudioHours(stats.hours ?? 0);
+        setAudioHours(Math.ceil(stats.hours ?? 0));
         setVolunteersCount(stats.volunteers ?? 0);
       } catch (err) {
         console.log('Unable to fetch platform stats');
