@@ -14,6 +14,7 @@ import ActionTypes from 'src/shared/constants/ActionTypes';
 import Collections from 'src/shared/constants/Collections';
 import { Input } from 'src/shared/primitives';
 import WordClass from 'src/backend/shared/constants/WordClass';
+import RadicalsForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/RadicalsForm/RadicalsForm';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -113,6 +114,9 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         control={control}
         defaultValue={get(record, 'pronunciation') || getValues().pronunciation || ''}
       />
+      {errors.pronunciation && (
+        <p className="error">{errors.pronunciation.message || errors.pronunciation[0]?.message}</p>
+      )}
       <FormHeader title="Part of Speech" tooltip="Part of speech in Nsịbịdị" />
       <Box data-test="nsibidi-word-class-input-container">
         <Controller
@@ -124,6 +128,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
           defaultValue={get(record, 'wordClass') || getValues().wordClass || ''}
         />
       </Box>
+      {errors.wordClass && <p className="error">{errors.wordClass.message || errors.wordClass[0]?.message}</p>}
       <FormHeader title="Definitions" tooltip="Nsịbịdị definitions" />
       {definitions?.length
         ? definitions.map((definition, index) => (
@@ -163,6 +168,10 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
       <Button width="full" colorScheme="green" aria-label="Add Definition" onClick={append} leftIcon={<AddIcon />}>
         Add definition
       </Button>
+      {errors.definitions && <p className="error">{errors.definitions.message || errors.definitions[0]?.message}</p>}
+      <Box className="w-full mt-4">
+        <RadicalsForm errors={errors} control={control} record={record} />
+      </Box>
       <Box className="form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
         <Button
           className="mt-3 lg:my-0"
