@@ -6,10 +6,23 @@ import WordClass from '../shared/constants/WordClass';
 const nsibidiCharacterDataSchema = Joi.object().keys({
   nsibidi: Joi.string().required(),
   pronunciation: Joi.string(),
-  wordClass: Joi.string().valid(...Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue)).required(),
-  definitions: Joi.array().min(0).items(Joi.object().keys({
-    text: Joi.string().required(),
-  })),
+  wordClass: Joi.string()
+    .valid(...Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue))
+    .required(),
+  definitions: Joi.array()
+    .min(0)
+    .items(
+      Joi.object().keys({
+        text: Joi.string().required(),
+      }),
+    ),
+  radicals: Joi.array()
+    .min(0)
+    .items(
+      Joi.object().keys({
+        id: Joi.string().required(),
+      }),
+    ),
 });
 
 export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {

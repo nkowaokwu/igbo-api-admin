@@ -1,22 +1,26 @@
 export const getWord = jest.fn(async () => ({
   word: 'retrieved word',
   id: '234',
-  definitions: [{
-    wordClass: 'NNC',
-    definitions: ['first definition'],
-  }],
+  definitions: [
+    {
+      wordClass: 'NNC',
+      definitions: ['first definition'],
+    },
+  ],
 }));
 
-export const getWords = jest.fn(async () => ([
+export const getWords = jest.fn(async () => [
   {
     word: 'retrieved word',
     id: '234',
-    definitions: [{
-      wordClass: 'NNC',
-      definitions: ['first definition'],
-    }],
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
   },
-]));
+]);
 
 export const getNsibidiCharacter = jest.fn(async () => ({
   nsibidi: 'nsibidi',
@@ -24,27 +28,32 @@ export const getNsibidiCharacter = jest.fn(async () => ({
   pronunciations: [{ text: 'first pronunciation' }],
 }));
 
-export const getNsibidiCharacters = jest.fn(async () => ([{
-  nsibidi: 'nsibidi',
-  definitions: [{ text: 'first definition' }],
-  pronunciations: [{ text: 'first pronunciation' }],
-}]));
+export const getNsibidiCharacters = jest.fn(async () => [
+  {
+    id: 'nsibidi-123',
+    nsibidi: 'nsibidi',
+    definitions: [{ text: 'first definition' }],
+    pronunciations: [{ text: 'first pronunciation' }],
+  },
+]);
 
-export const getWordSuggestions = jest.fn(async () => ([]));
+export const getWordSuggestions = jest.fn(async () => []);
 
 // Used by word stems test
 export const resolveWord = jest.fn(async () => ({
   word: 'resolved word',
   id: '567',
-  definitions: [{
-    wordClass: 'ADJ',
-    definitions: ['resolved word definition'],
-  }],
+  definitions: [
+    {
+      wordClass: 'ADJ',
+      definitions: ['resolved word definition'],
+    },
+  ],
 }));
 
 export const resolveNsibidiCharacter = jest.fn(async () => ({
   nsibidi: 'resolved nsibidi',
-  id: '987',
+  id: 'resolved-nsibidi-987',
   pronunciation: '',
   definitions: [{ text: 'first nsibidi definition' }],
 }));
