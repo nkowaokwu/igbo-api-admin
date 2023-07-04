@@ -1,11 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-  List,
-  Datagrid,
-  FunctionField,
-  Responsive,
-  ListProps,
-} from 'react-admin';
+import { List, Datagrid, FunctionField, Responsive, ListProps } from 'react-admin';
 import {
   ArrayPreview,
   BulkSuggestionActions,
@@ -36,16 +30,17 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Responsive
-        small={(
+        small={
           <Datagrid expand={<WordPanel />}>
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
-        medium={(
+        }
+        medium={
           <Datagrid expand={<WordPanel />}>
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
             <SourceField label="Source" source="source" />
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
@@ -55,21 +50,16 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
             {/* TODO: move these out to reusable component */}
             <FunctionField
               label="Approvals"
-              render={(record) => (
-                <span data-test="approval">{record.approvals.length}</span>
-              )}
+              render={(record) => <span data-test="approval">{record.approvals.length}</span>}
             />
             <FunctionField
               label="Denials"
-              render={(record) => (
-                <span data-test="denial">{record.denials.length}</span>
-              )}
+              render={(record) => <span data-test="denial">{record.denials.length}</span>}
             />
             <IdField label="Id" source="id" />
             <IdField label="Parent Word Id" source="originalWordId" />
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
+        }
       />
     </List>
   );

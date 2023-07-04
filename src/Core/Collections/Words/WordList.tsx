@@ -1,10 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-  List,
-  Datagrid,
-  Responsive,
-  ListProps,
-} from 'react-admin';
+import { List, Datagrid, Responsive, ListProps } from 'react-admin';
 import {
   ArrayPreview,
   CompleteWordPreview,
@@ -21,32 +16,26 @@ import Empty from '../../Empty';
 export const WordList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
-    <List
-      {...props}
-      actions={<ListActions />}
-      bulkActionButtons={false}
-      pagination={<Pagination />}
-      empty={<Empty />}
-    >
+    <List {...props} actions={<ListActions />} bulkActionButtons={false} pagination={<Pagination />} empty={<Empty />}>
       <Responsive
-        small={(
+        small={
           <Datagrid expand={<WordPanel />}>
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
             <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
-        medium={(
+        }
+        medium={
           <Datagrid expand={<WordPanel />}>
+            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
             <CompleteWordPreview label="Word Status" />
             <HeadwordField label="Headword" source="word" />
             <ArrayPreview label="Definitions" source="definitions" />
             <ArrayPreview label="Variations" source="variations" />
             <ArrayPreview label="Stems" source="stems" />
             <IdField label="Id" source="id" />
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
+        }
       />
     </List>
   );
