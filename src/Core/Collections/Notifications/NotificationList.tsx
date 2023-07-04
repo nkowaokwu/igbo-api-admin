@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  List,
-  Datagrid,
-  TextField,
-  Responsive,
-  ListProps,
-  BooleanField,
-} from 'react-admin';
-import {
-  ListActions,
-  Pagination,
-  ShowNotificationButtonField,
-} from 'src/shared/components';
+import { List, Datagrid, TextField, Responsive, ListProps, BooleanField } from 'react-admin';
+import { ListActions, Pagination, ShowNotificationButtonField } from 'src/shared/components';
 import Empty from '../../Empty';
 
 const NotificationList = (props: ListProps): React.ReactElement => (
@@ -24,22 +13,22 @@ const NotificationList = (props: ListProps): React.ReactElement => (
     sort={{ field: 'approvals', order: 'DESC' }}
   >
     <Responsive
-      small={(
+      small={
         <Datagrid>
+          <ShowNotificationButtonField source="link" />
           <TextField label="Title" source="title" />
           <TextField label="Sender" source="initiator.displayName" />
-          <ShowNotificationButtonField source="link" />
         </Datagrid>
-      )}
-      medium={(
+      }
+      medium={
         <Datagrid>
+          <ShowNotificationButtonField source="link" />
           <TextField label="Title" source="title" />
           <TextField label="Message" source="message" defaultValue="N/A" />
           <BooleanField label="Opened" source="opened" defaultValue="Platform" />
           <TextField label="Sender" source="initiator.displayName" />
-          <ShowNotificationButtonField source="link" />
         </Datagrid>
-      )}
+      }
     />
   </List>
 );

@@ -1,11 +1,5 @@
 import React, { ReactElement } from 'react';
-import {
-  List,
-  Datagrid,
-  TextField,
-  Responsive,
-  ListProps,
-} from 'react-admin';
+import { List, Datagrid, TextField, Responsive, ListProps } from 'react-admin';
 import {
   CompleteExamplePreview,
   ArrayPreview,
@@ -21,33 +15,27 @@ import Empty from '../../Empty';
 const ExampleList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
-    <List
-      {...props}
-      actions={<ListActions />}
-      bulkActionButtons={false}
-      pagination={<Pagination />}
-      empty={<Empty />}
-    >
+    <List {...props} actions={<ListActions />} bulkActionButtons={false} pagination={<Pagination />} empty={<Empty />}>
       <Responsive
-        small={(
+        small={
           <Datagrid>
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
-        medium={(
+        }
+        medium={
           <Datagrid>
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <StyleField label="Style" source="style" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
             <IdField label="Id" source="id" />
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
+        }
       />
     </List>
   );
