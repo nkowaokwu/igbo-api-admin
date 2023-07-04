@@ -10,12 +10,14 @@ const StatBody = ({
   description,
   heading,
   isGeneric = false,
+  leftIcon = null,
 }: {
   totalCount: number;
   goal: number;
   description: string;
   heading: string;
   isGeneric: boolean;
+  leftIcon: ReactElement;
 }): ReactElement => {
   const totalCount = (rawTotalCount || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
   const goal = (rawGoal || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
@@ -27,9 +29,7 @@ const StatBody = ({
       <Box width="full">
         <Box className="flex flex-row justify-between items-center">
           <Box className="flex flex-row items-center space-x-2">
-            <Tooltip label={description}>
-              <InfoIcon color="gray.500" boxSize={4} />
-            </Tooltip>
+            <Tooltip label={description}>{leftIcon || <InfoIcon color="gray.500" boxSize={4} />}</Tooltip>
             <Text className="text-gray-800" fontFamily="Silka">
               {heading}
             </Text>
