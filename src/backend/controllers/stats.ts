@@ -9,6 +9,8 @@ import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { statSchema } from '../models/Stat';
 import {
+  searchApprovedExampleSuggestionAudioPronunciations,
+  searchDeniedExampleSuggestionAudioPronunciations,
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
   searchForAllWordsWithNsibidi,
@@ -461,6 +463,58 @@ export const getUserMergeStats = async (
     console.timeEnd(`Dialectal variation merge creation for ${uid}`);
 
     return res.send({ exampleSuggestionMerges, dialectalVariationMerges, currentMonthMerges });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const MINIMUM_APPROVALS = 2;
+const MINIMUM_DENIALS = 1;
+/**
+ * Gets the audio stats related to the user
+ */
+export const getUserAudioStats = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
+  const {
+    mongooseConnection,
+    user: { uid },
+  } = req;
+  try {
+    const ExampleSuggestion = await mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+    const approvedQuery = searchApprovedExampleSuggestionAudioPronunciations(uid);
+    const deniedQuery = searchDeniedExampleSuggestionAudioPronunciations(uid);
+    const [approvedExampleSuggestionAudios, deniedExampleSuggestionAudios] = await Promise.all([
+      ExampleSuggestion.find(approvedQuery),
+      ExampleSuggestion.find(deniedQuery),
+    ]);
+    const audioApprovalsCount = approvedExampleSuggestionAudios.reduce((finalCount, exampleSuggestion) => {
+      let currentCount = finalCount;
+      exampleSuggestion.pronunciations.forEach(({ speaker, approvals }) => {
+        if (speaker === uid && approvals.length === MINIMUM_APPROVALS) {
+          currentCount += 1;
+        }
+      });
+      return currentCount;
+    }, 0);
+    const audioDenialsCount = deniedExampleSuggestionAudios.reduce((finalCount, exampleSuggestion) => {
+      let currentCount = finalCount;
+      exampleSuggestion.pronunciations.forEach(({ speaker, denials }) => {
+        if (speaker === uid && denials.length === MINIMUM_DENIALS) {
+          currentCount += 1;
+        }
+      });
+      return currentCount;
+    }, 0);
+    return res.send({
+      audioApprovalsCount,
+      audioDenialsCount,
+    });
   } catch (err) {
     return next(err);
   }

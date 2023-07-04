@@ -1,3 +1,5 @@
+import { ReactElement } from 'react';
+
 interface LinearProgressCard {
   heading: string;
   description?: string;
@@ -6,6 +8,7 @@ interface LinearProgressCard {
     goal: number;
     heading: string;
     description: string;
+    leftIcon: ReactElement;
   }[];
   isLoaded: boolean;
   isGeneric?: boolean;

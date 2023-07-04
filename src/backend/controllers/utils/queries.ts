@@ -388,3 +388,40 @@ export const searchExampleAudioPronunciationsRecordedByUser = (
     $elemMatch: { speaker: { $eq: uid } },
   },
 });
+
+/**
+ * Gets example suggestions where the user's audio has been approved
+ */
+export const searchApprovedExampleSuggestionAudioPronunciations = (
+  uid: string,
+): {
+  pronunciations: {
+    $elemMatch: {
+      $and: { [key: string]: string | { $exists: true } }[];
+    };
+  };
+} => ({
+  pronunciations: {
+    $elemMatch: {
+      $and: [{ speaker: uid }, { 'approvals.1': { $exists: true } }],
+    },
+  },
+});
+/**
+ * Gets example suggestions where the user's audio has been denied
+ */
+export const searchDeniedExampleSuggestionAudioPronunciations = (
+  uid: string,
+): {
+  pronunciations: {
+    $elemMatch: {
+      $and: { [key: string]: string | { $exists: true } }[];
+    };
+  };
+} => ({
+  pronunciations: {
+    $elemMatch: {
+      $and: [{ speaker: uid }, { 'denials.0': { $exists: true } }],
+    },
+  },
+});

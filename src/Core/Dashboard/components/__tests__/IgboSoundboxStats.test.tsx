@@ -5,10 +5,15 @@ import TestContext from 'src/__tests__/components/TestContext';
 
 it('IgboSoundboxStats', async () => {
   const { findByText } = render(
-    <TestContext recordingStats={{ recorded: 0, verified: 0 }}>
+    <TestContext
+      recordingStats={{ recorded: 0, verified: 0 }}
+      audioStats={{ audioApprovalsCount: 0, audioDenialsCount: 0 }}
+    >
       <IgboSoundboxStats />
     </TestContext>,
   );
   await findByText('Igbo Soundbox Contributions');
   await findByText('Your personalized Igbo Soundbox statistics');
+  await findByText('Approved audio recordings');
+  await findByText('Denied audio recordings');
 });
