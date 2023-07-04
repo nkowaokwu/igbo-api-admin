@@ -381,18 +381,14 @@ export const getUserMergeStats = async (
       authorId: uid,
       mergedBy: { $ne: null },
       updatedAt: { $gt: threeMonthsAgo },
-    })
-      .hint('Merged example suggestion index')
-      .limit(EXAMPLE_SUGGESTION_QUERY_LIMIT)) as Interfaces.ExampleSuggestion[];
+    }).limit(EXAMPLE_SUGGESTION_QUERY_LIMIT)) as Interfaces.ExampleSuggestion[];
     console.timeEnd(`Querying user merge stat example suggestions for ${uid}`);
     console.time(`Querying user merge stat word suggestions for ${uid}`);
     const wordSuggestions = (await WordSuggestion.find({
       mergedBy: { $ne: null },
       'dialects.editor': uid,
       updatedAt: { $gt: threeMonthsAgo },
-    })
-      .hint('Merged word suggestion index')
-      .limit(WORD_SUGGESTION_QUERY_LIMIT)) as Interfaces.WordSuggestion[];
+    }).limit(WORD_SUGGESTION_QUERY_LIMIT)) as Interfaces.WordSuggestion[];
     console.timeEnd(`Querying user merge stat word suggestions for ${uid}`);
     const defaultMerges = {};
     const isoWeekToDateMap = {};
@@ -530,7 +526,7 @@ export const getStats = async (
     const { mongooseConnection } = req;
     const Stat = mongooseConnection.model<Interfaces.Stat>('Stat', statSchema);
 
-    const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } }).hint({ type: 1 });
+    const stats = await Stat.find({ type: { $in: Object.values(StatTypes) } });
     return res.send(
       stats.reduce(
         (finalObject, stat) => ({
