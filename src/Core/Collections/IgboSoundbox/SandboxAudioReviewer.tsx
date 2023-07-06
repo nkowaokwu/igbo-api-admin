@@ -9,6 +9,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { getUserProfile } from 'src/shared/UserAPI';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
+import SpeakerOptions from 'src/Core/Collections/IgboSoundbox/components/SpeakerOptions';
 import AudioPlayback from './components/AudioPlayback';
 import { SentenceVerification } from './types/SentenceVerification';
 
@@ -65,26 +66,31 @@ const SandboxAudioReviewer = ({
                       reviewAction={exampleReview.reviews[_id.toString()]}
                     />
                     {!isLoadingSpeakers ? (
-                      <chakra.span fontSize="xs" color="gray.500">
-                        <chakra.span mr={1}>Speaker:</chakra.span>
-                        {currentSpeaker ? (
-                          <Tooltip label="Click to view user profile">
-                            <Link
-                              color="gray.500"
-                              fontStyle="italic"
-                              target="_blank"
-                              textDecoration="underline"
-                              href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
-                            >
-                              {currentSpeaker?.displayName || 'N/A'}
+                      <Box
+                        className={`w-full flex flex-row ${isAdmin ? 'justify-between' : 'justify-end'} items-center`}
+                      >
+                        <chakra.span fontSize="xs" color="gray.500">
+                          <chakra.span mr={1}>Speaker:</chakra.span>
+                          {currentSpeaker ? (
+                            <Tooltip label="Click to view user profile">
+                              <Link
+                                color="gray.500"
+                                fontStyle="italic"
+                                target="_blank"
+                                textDecoration="underline"
+                                href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
+                              >
+                                {currentSpeaker?.displayName || 'N/A'}
 
-                              <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
-                            </Link>
-                          </Tooltip>
-                        ) : (
-                          <chakra.span>N/A</chakra.span>
-                        )}
-                      </chakra.span>
+                                <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
+                              </Link>
+                            </Tooltip>
+                          ) : (
+                            <chakra.span>N/A</chakra.span>
+                          )}
+                        </chakra.span>
+                        <SpeakerOptions uid={currentSpeaker?.uid} displayName={currentSpeaker?.displayName} />
+                      </Box>
                     ) : (
                       <Text fontSize="xs" color="gray.500" fontStyle="italic">
                         Loading speaker name...
