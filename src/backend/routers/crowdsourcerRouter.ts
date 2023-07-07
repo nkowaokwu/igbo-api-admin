@@ -15,6 +15,7 @@ import {
   calculateRecordingExampleLeaderboard,
   getLeaderboard,
 } from 'src/backend/controllers/leaderboard';
+import { sendReportUserNotification } from 'src/backend/controllers/email';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
@@ -75,5 +76,8 @@ crowdsourcerRouter.get('/stats/users/:uid', cacheControl, getUserStats);
 
 // Leaderboard
 crowdsourcerRouter.get('/leaderboard', getLeaderboard);
+
+// Email
+crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 
 export default crowdsourcerRouter;
