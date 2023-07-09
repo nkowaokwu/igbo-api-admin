@@ -1,73 +1,30 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Heading,
-  Select,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { cloneDeep } from 'lodash';
+import { Avatar, Box, Heading, Select, Text, useToast } from '@chakra-ui/react';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
 import { Spinner } from 'src/shared/primitives';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
-import { cloneDeep } from 'lodash';
+import LeaderboardUser from 'src/Core/Collections/Leaderboard/LeaderboardUser';
 
 type CachedRankings = {
   [leaderboard in LeaderboardType]: {
-    userRanking: UserRanking
-    rankings: UserRanking[],
-  }
+    userRanking: UserRanking;
+    rankings: UserRanking[];
+  };
 };
-
-const LeaderboardUser = ({
-  displayName,
-  photoURL,
-  count,
-  position,
-} : {
-  displayName: string,
-  photoURL: string,
-  email: string,
-  count: number,
-  position: number,
-}) => (
-  <Box
-    className="flex flex-row space-x-3 justify-between items-center my-4 py-4"
-    borderBottomWidth="1px"
-    borderBottomColor="gray.300"
-  >
-    <Box className="flex flex-row space-x-3 items-center">
-      <Text fontWeight="bold" color="gray.700">{`${position}.`}</Text>
-      <Box>
-        <Box className="flex flex-row space-x-2 items-center">
-          <Avatar src={photoURL} name={displayName} size="sm" />
-          <Box>
-            <Text fontWeight="bold">{displayName}</Text>
-            <Text color="gray.500">{`${count} points`}</Text>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-    {position <= 3 ? (
-      <Text fontSize="2xl">
-        {position === 1 ? '🥇' : position === 2 ? '🥈' : '🥉'}
-      </Text>
-    ) : null}
-  </Box>
-);
 
 const BottomCardRanking = ({
   displayName,
   photoURL,
   count,
   position,
-} : {
-  displayName: string,
-  photoURL: string,
-  email: string,
-  count: number,
-  position: number,
+}: {
+  displayName: string;
+  photoURL: string;
+  email: string;
+  count: number;
+  position: number;
 }) => (
   <Box
     position="fixed"
@@ -77,20 +34,26 @@ const BottomCardRanking = ({
     boxShadow="0px -2px 5px var(--chakra-colors-gray-300)"
   >
     <Box className="flex flex-row space-x-3 items-center">
-      {typeof position === 'number' ? <Text fontWeight="bold" color="gray.700">{`${position}.`}</Text> : null}
+      {typeof position === 'number' ? <Text fontFamily="Silka" color="gray.500">{`${position}.`}</Text> : null}
       <Box>
         <Box className="flex flex-row space-x-2 items-center">
           <Avatar src={photoURL} name={displayName} size="sm" />
           <Box>
             {typeof position === 'number' ? (
               <>
-                <Text fontWeight="bold" fontSize="sm">{displayName}</Text>
-                <Text color="gray.500" fontSize="sm">{`${count} points`}</Text>
+                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
+                  {displayName}
+                </Text>
+                <Text color="gray.500" fontSize="sm" fontFamily="Silka">{`${count} points`}</Text>
               </>
             ) : (
               <>
-                <Text fontWeight="bold" fontSize="sm">No available rank</Text>
-                <Text color="gray.500" fontSize="sm">Please make a contribution to see your rank</Text>
+                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
+                  No available rank
+                </Text>
+                <Text color="gray.500" fontSize="sm" fontFamily="Silka">
+                  Please make a contribution to see your rank
+                </Text>
               </>
             )}
           </Box>
@@ -153,14 +116,12 @@ const Leaderboard = (): ReactElement => {
 
   return !isLoading ? (
     <Box className="p-6">
-      <Heading as="h1" fontSize="xl" mb={2}>Leaderboards</Heading>
-      <Select defaultValue={leaderboard} onChange={handleUpdateLeaderboard}>
-        <option value={LeaderboardType.RECORD_EXAMPLE_AUDIO}>
-          Recorded example audio
-        </option>
-        <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>
-          Verified example audio
-        </option>
+      <Heading as="h1" fontSize="xl" mb={2}>
+        Leaderboards
+      </Heading>
+      <Select defaultValue={leaderboard} onChange={handleUpdateLeaderboard} fontFamily="Silka">
+        <option value={LeaderboardType.RECORD_EXAMPLE_AUDIO}>Recorded example audio</option>
+        <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>Verified example audio</option>
       </Select>
       <Box>
         {rankings.map(({ uid, ...rest }) => (
@@ -169,7 +130,9 @@ const Leaderboard = (): ReactElement => {
       </Box>
       <BottomCardRanking {...userRanking} />
     </Box>
-  ) : <Spinner />;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default Leaderboard;

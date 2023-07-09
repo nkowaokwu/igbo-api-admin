@@ -61,32 +61,6 @@ const CrowdsourcingProgressManager = (): ReactElement => {
         </Text>
       </Box>
       <Box className="w-full flex flex-col justify-start items-start space-y-4">
-        <Box className="w-full flex flex-row justify-start items-center">
-          <Button
-            className="flex flex-row justify-start items-center relative l-0 b-0 space-x-2"
-            borderRadius="full"
-            textAlign="center"
-            height="16"
-            onClick={() => handleNavigation({ hash: '#/leaderboard' })}
-            backgroundColor="white"
-            boxShadow="sm"
-            _hover={{
-              backgroundColor: 'green.100',
-            }}
-            _active={{
-              backgroundColor: 'green.100',
-            }}
-            _focus={{
-              backgroundColor: 'green.100',
-            }}
-          >
-            <Text fontSize="3xl">🏆</Text>
-            <Text color="gray.800" fontSize="md" fontWeight="bold" fontFamily="Silka">
-              Leaderboard
-            </Text>
-          </Button>
-        </Box>
-
         <Box className="w-full flex flex-col md:flex-row flex-wrap justify-start items-center gap-8 lg:gap-24">
           {crowdsourcingOptions.map(({ icon, subtitle, title, hash, state, backgroundImage }) => (
             <Box
