@@ -7,6 +7,9 @@ import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
+import { API_ROUTE } from 'src/shared/constants';
+import Collections from 'src/shared/constants/Collections';
+import Views from 'src/shared/constants/Views';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
@@ -102,16 +105,28 @@ const RecordSentenceAudio = ({
     if (!isComplete) {
       setIsLoading(true);
       (async () => {
-        const { data: randomExamples } = await getRandomExampleSuggestions();
-        setExamples(randomExamples);
-        setExampleIndex(0);
-        setPronunciations(new Array(randomExamples.length).fill(''));
-        setIsLoading(false);
+        try {
+          const { data: randomExamples } = await getRandomExampleSuggestions();
+          setExamples(randomExamples);
+          setExampleIndex(0);
+          setPronunciations(new Array(randomExamples.length).fill(''));
+        } catch (err) {
+          toast({
+            title: 'An error occurred',
+            description: 'Unable to retrieve example sentences.',
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
+        } finally {
+          setIsLoading(false);
+        }
       })();
     }
   }, [isComplete]);
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
+  const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
@@ -120,11 +135,10 @@ const RecordSentenceAudio = ({
           Record sentence audio
         </Heading>
         <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
-        <Card>
-          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
-            {examples[exampleIndex].igbo}
-          </Text>
-        </Card>
+        <Card
+          text={currentExample.igbo}
+          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
+        />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
         <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>

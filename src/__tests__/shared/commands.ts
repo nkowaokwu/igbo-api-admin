@@ -343,6 +343,11 @@ export const getUserMergeStats = (uid: string, options = { apiKey: '', token: ''
     .get(`/stats/users/${uid}/merge`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .set('X-API-Key', options.apiKey || API_KEY);
+export const getUserAudioStats = (uid: string, options = { apiKey: '', token: '' }): Request =>
+  chaiServer
+    .get(`/stats/users/${uid}/audio`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+    .set('X-API-Key', options.apiKey || API_KEY);
 
 /* Mocks grabbing all users from Firebase */
 export const getUsers = (options = { token: '' }): Request =>

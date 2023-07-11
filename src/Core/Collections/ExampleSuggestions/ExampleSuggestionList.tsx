@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  List,
-  Datagrid,
-  TextField,
-  FunctionField,
-  Responsive,
-  ListProps,
-} from 'react-admin';
+import { List, Datagrid, TextField, FunctionField, Responsive, ListProps } from 'react-admin';
 import {
   CompleteExamplePreview,
   BulkSuggestionActions,
@@ -35,17 +28,18 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Responsive
-        small={(
+        small={
           <Datagrid>
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <ReviewPreview label="You Reviewed" />
             <TextField label="Igbo" source="igbo" />
             <TextField label="English" source="english" />
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
-        medium={(
+        }
+        medium={
           <Datagrid>
+            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <SourceField label="Source" source="source" />
             <ReviewPreview label="You Reviewed" />
@@ -54,20 +48,15 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
             <ArrayPreview label="Associated Words" source="associatedWords" />
             <FunctionField
               label="Approvals"
-              render={(record) => (
-                <span data-test="approval">{record.approvals.length}</span>
-              )}
+              render={(record) => <span data-test="approval">{record.approvals.length}</span>}
             />
             <FunctionField
               label="Denials"
-              render={(record) => (
-                <span data-test="denial">{record.denials.length}</span>
-              )}
+              render={(record) => <span data-test="denial">{record.denials.length}</span>}
             />
             <IdField label="Id" source="id" />
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
           </Datagrid>
-        )}
+        }
       />
     </List>
   );

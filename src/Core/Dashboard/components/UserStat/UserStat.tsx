@@ -11,7 +11,6 @@ import {
   Heading,
   Text,
   Tooltip as ChakraTooltip,
-  Link,
 } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 import moment from 'moment';
@@ -20,8 +19,6 @@ import { Bar } from 'react-chartjs-2';
 import { hasAdminOrMergerPermissions, hasCrowdsourcerPermission } from 'src/shared/utils/permissions';
 import { getTotalRecordedExampleSuggestions, getTotalVerifiedExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import UserCard from 'src/shared/components/UserCard';
-import { FEATURE_REQUEST_FORM_URL } from 'src/Core/constants';
-import LacunaProgress from 'src/Core/Dashboard/components/LacunaProgress';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
@@ -63,8 +60,6 @@ const sortMerges = (merges) =>
 const UserStat = ({
   uid,
   user = { displayName: '', email: '', photoURL: '' },
-  dialectalVariations,
-  completeExamples,
 }: {
   uid?: string;
   user?: { displayName: string; email: string; photoURL: string };
@@ -74,7 +69,7 @@ const UserStat = ({
   const [userStats, setUserStats] = useState(null);
   const [mergeStats, setMergeStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
-  const [currentMonthMergeStats, setCurrentMonthMergeStats] = useState(null);
+  const [audioStats, setAudioStats] = useState({ audioApprovalsCount: 0, audioDenialsCount: 0 });
   const { permissions } = usePermissions();
   const showMergeCharts = hasAdminOrMergerPermissions(permissions, true);
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
@@ -83,41 +78,44 @@ const UserStat = ({
   useEffect(() => {
     (async () => {
       const userUid = uid || currentUser?.uid;
-      network(`/stats/users/${userUid}`).then((res) => setUserStats(res.json));
-      const { json: merges = {} } = await network(`/stats/users/${userUid}/merge`);
-      const { exampleSuggestionMerges = {}, dialectalVariationMerges = {}, currentMonthMerges = {} } = merges;
-      const labels = times(
-        THREE_MONTH_WEEKS_COUNT,
-        (index) => `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`,
-      ).reverse();
-      const updatedMergeStats = {
-        labels,
-        datasets: [
-          {
-            label: 'Example Suggestion Merges',
-            data: sortMerges(exampleSuggestionMerges),
-            backgroundColor: '#3C83FF',
-            borderWidth: 2,
-            borderColor: '#2D62BE',
-            borderRadius: 10,
-          },
-          {
-            label: 'Dialectal Variation Merges',
-            data: sortMerges(dialectalVariationMerges),
-            backgroundColor: '#FF5733',
-            borderWidth: 2,
-            borderColor: '#CA4225',
-            borderRadius: 10,
-          },
-        ],
-      };
-      setMergeStats(updatedMergeStats);
-      setCurrentMonthMergeStats(currentMonthMerges);
-      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(userUid);
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
-      setRecordingStats({
-        recorded: recordedExampleSuggestions,
-        verified: verifiedExampleSuggestions,
+      network(`/stats/users/${userUid}`).then(({ json }) => setUserStats(json));
+      network(`/stats/users/${userUid}/merge`).then(async ({ json: merges }) => {
+        const { exampleSuggestionMerges = {}, dialectalVariationMerges = {} } = merges;
+        const labels = times(
+          THREE_MONTH_WEEKS_COUNT,
+          (index) => `Week of ${moment().startOf('week').subtract(index, 'week').format('MMMM Do')}`,
+        ).reverse();
+        const updatedMergeStats = {
+          labels,
+          datasets: [
+            {
+              label: 'Example Suggestion Merges',
+              data: sortMerges(exampleSuggestionMerges),
+              backgroundColor: '#3C83FF',
+              borderWidth: 2,
+              borderColor: '#2D62BE',
+              borderRadius: 10,
+            },
+            {
+              label: 'Dialectal Variation Merges',
+              data: sortMerges(dialectalVariationMerges),
+              backgroundColor: '#FF5733',
+              borderWidth: 2,
+              borderColor: '#CA4225',
+              borderRadius: 10,
+            },
+          ],
+        };
+        setMergeStats(updatedMergeStats);
+        const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(userUid);
+        const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
+        setRecordingStats({
+          recorded: recordedExampleSuggestions,
+          verified: verifiedExampleSuggestions,
+        });
+      });
+      network(`/stats/users/${userUid}/audio`).then(({ json }) => {
+        setAudioStats(json);
       });
     })();
   }, []);
@@ -133,13 +131,13 @@ const UserStat = ({
           <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
             <Box className="flex flex-col lg:flex-row justify-between space-x-0 lg:space-x-3">
               {/* Deprecated - the Lacuna Fund project is complete 🎉 */}
-              <LacunaProgress
+              {/* <LacunaProgress
                 mergeStats={mergeStats}
                 currentMonthMergeStats={currentMonthMergeStats}
                 dialectalVariations={dialectalVariations}
                 completeExamples={completeExamples}
-              />
-              <IgboSoundboxStats recordingStats={recordingStats} />
+              /> */}
+              <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
           </Box>
@@ -164,29 +162,6 @@ const UserStat = ({
               </AccordionItem>
             </Accordion>
           ) : null}
-        </Box>
-        <Box
-          backgroundColor="gray.100"
-          borderRadius="xl"
-          height="lg"
-          className="flex flex-col justify-center items-center w-full space-y-4"
-          padding={4}
-        >
-          <Heading as="h3" textAlign="center" color="gray.500" userSelect="none">
-            More contribution stats will be added soon...
-          </Heading>
-          <Text>
-            Request a new contribution stat by{' '}
-            <Link
-              href={FEATURE_REQUEST_FORM_URL}
-              color="green"
-              _hover={{ textDecoration: 'underline' }}
-              _focus={{ textDecoration: 'underline' }}
-              _active={{ textDecoration: 'underline' }}
-            >
-              filling out this form
-            </Link>
-          </Text>
         </Box>
       </Box>
     </Box>

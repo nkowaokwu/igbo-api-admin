@@ -1,3 +1,4 @@
+import { logger } from 'firebase-functions';
 import { isProduction } from 'src/backend/config';
 import { disconnectDatabase } from '../utils/database';
 
@@ -15,6 +16,12 @@ export default async (err, req, res, next) => {
       console.log(err?.message);
     }
   }
+
+  if (isProduction) {
+    // Send error to Cloud Logging
+    logger.error(err?.message || err?.details);
+  }
+
   await disconnectDatabase();
   return res.send({ error: err.message });
 };

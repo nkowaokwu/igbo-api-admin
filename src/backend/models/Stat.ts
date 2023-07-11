@@ -9,7 +9,7 @@ export const statSchema = new Schema(
       type: String,
       required: true,
       enum: Object.values(StatTypes),
-      index: true.valueOf,
+      index: true,
     },
     authorId: { type: String, default: Author.SYSTEM },
     value: { type: Schema.Types.Mixed, default: null },

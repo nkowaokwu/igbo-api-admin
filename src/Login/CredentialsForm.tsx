@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Box, Button, Divider, Heading, Text, VStack, chakra } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Text, VStack, chakra, Show, Link } from '@chakra-ui/react';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
+import LoginStats from 'src/Login/LoginStats';
 import EmailLogin from './EmailLogin';
 import GoogleLogin from './GoogleLogin';
 import PasswordRecovery from './PasswordRecovery';
@@ -23,8 +24,8 @@ const CredentialsForm = (): ReactElement => {
   }, [userLoginState]);
 
   const LoginOptions = (props) => (
-    <>
-      <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center">
+    <Box data-test="login-options" maxWidth="380px">
+      <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center" mb={4}>
         {credentialHeader}
       </Heading>
       <Box {...props} className="flex flex-col items-center justify-evenly w-full">
@@ -76,9 +77,25 @@ const CredentialsForm = (): ReactElement => {
               {errorMessage}
             </Text>
           ) : null}
+          <Text mt={2}>
+            By creating an account, you agree to our{' '}
+            <Link href="https://nkowaokwu.com/terms" target="_blank" color="primary">
+              Terms and Conditions
+            </Link>{' '}
+            and that you have read our{' '}
+            <Link href="https://nkowaokwu.com/privacy" target="_blank" color="primary">
+              Privacy Policy
+            </Link>
+            .
+          </Text>
+          <Show below="md">
+            <Box mt={8}>
+              <LoginStats theme="dark" size="sm" />
+            </Box>
+          </Show>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 
   return (

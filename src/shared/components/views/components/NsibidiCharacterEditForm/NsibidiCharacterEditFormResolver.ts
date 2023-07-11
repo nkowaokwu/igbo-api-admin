@@ -5,13 +5,31 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 const schema = yup.object().shape({
   nsibidi: yup.string().required(),
   pronunciation: yup.string().required(),
-  wordClass: yup.object().shape({
-    value: yup.mixed().oneOf(Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue)),
-    label: yup.mixed().oneOf(Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue)),
-  }).required(),
-  definitions: yup.array().min(1).of(yup.object().shape({
-    text: yup.string(),
-  })).required(),
+  wordClass: yup
+    .object()
+    .shape({
+      value: yup.mixed().oneOf(Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue)),
+      label: yup.mixed().oneOf(Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue)),
+    })
+    .required(),
+  definitions: yup
+    .array()
+    .min(1)
+    .of(
+      yup.object().shape({
+        text: yup.string(),
+      }),
+    )
+    .required(),
+  radicals: yup
+    .array()
+    .min(0)
+    .of(
+      yup.object().shape({
+        id: yup.string(),
+      }),
+    )
+    .required(),
 });
 
 const resolver = (): any => ({

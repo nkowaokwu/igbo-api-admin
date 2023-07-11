@@ -23,6 +23,8 @@ describe('MongoDB Stats', () => {
 
     it('should get all user merge stats', async () => {
       const res = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
+      console.log(res.status, 'res.status');
+      console.log(res.body, 'res.body');
       expect(res.body.exampleSuggestionMerges).not.toBeUndefined();
       expect(res.body.dialectalVariationMerges).not.toBeUndefined();
     });
@@ -173,15 +175,13 @@ describe('MongoDB Stats', () => {
           },
         ],
       });
-      console.log(updatedWordSuggestionRes.body);
-      const word = await createWord(updatedWordSuggestionRes.body.id);
+      await createWord(updatedWordSuggestionRes.body.id);
       const updatedMergerStatsRes = await getUserMergeStats(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       const updatedAdminStatsRes = await getUserMergeStats(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       const updatedCurrentWeekMergedExamplesForMerger: number =
         updatedMergerStatsRes.body.exampleSuggestionMerges[isoWeek];
       const updatedCurrentWeekMergedExamplesForAdmin: number =
         updatedAdminStatsRes.body.exampleSuggestionMerges[isoWeek];
-      console.log(word.body);
 
       expect(currentWeekMergedExamplesForMerger + examples.length).toEqual(updatedCurrentWeekMergedExamplesForMerger);
       expect(currentWeekMergedExamplesForAdmin + 1).toEqual(updatedCurrentWeekMergedExamplesForAdmin);

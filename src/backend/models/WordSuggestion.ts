@@ -13,33 +13,45 @@ import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
 
 const { Schema, Types } = mongoose;
 
-const definitionSchema = new Schema({
-  wordClass: {
-    type: String,
-    default: WordClass.NNC.value,
-    enum: Object.values(WordClass).map(({ value }) => value),
+const definitionSchema = new Schema(
+  {
+    wordClass: {
+      type: String,
+      default: WordClass.NNC.value,
+      enum: Object.values(WordClass).map(({ value }) => value),
+    },
+    label: { type: String, default: '', trim: true },
+    definitions: { type: [{ type: String }], default: [] },
+    nsibidi: { type: String, default: '', index: true },
+    nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
+    igboDefinitions: {
+      type: [
+        {
+          igbo: String,
+          nsibidi: String,
+          nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
+        },
+      ],
+      default: [],
+    },
   },
-  label: { type: String, default: '', trim: true },
-  definitions: { type: [{ type: String }], default: [] },
-  nsibidi: { type: String, default: '', index: true },
-  nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
-  igboDefinitions: {
-    type: [{
-      igbo: String,
-      nsibidi: String,
-      nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
-    }],
-    default: [],
-  },
-}, { toObject: toObjectPlugin });
+  { toObject: toObjectPlugin },
+);
 
-const dialectSchema = new Schema({
-  word: { type: String, required: true, trim: true },
-  variations: { type: [{ type: String }], default: [] },
-  dialects: { type: [{ type: String }], validate: (v) => every(v, (dialect) => Dialects[dialect].value), default: [] },
-  pronunciation: { type: String, default: '' },
-  editor: { type: String, default: null },
-}, { toObject: toObjectPlugin });
+const dialectSchema = new Schema(
+  {
+    word: { type: String, required: true, trim: true },
+    variations: { type: [{ type: String }], default: [] },
+    dialects: {
+      type: [{ type: String }],
+      validate: (v) => every(v, (dialect) => Dialects[dialect].value),
+      default: [],
+    },
+    pronunciation: { type: String, default: '' },
+    editor: { type: String, default: null },
+  },
+  { toObject: toObjectPlugin },
+);
 
 export const wordSuggestionSchema = new Schema(
   {
@@ -52,32 +64,38 @@ export const wordSuggestionSchema = new Schema(
     },
     wordPronunciation: { type: String, default: '', trim: true },
     conceptualWord: { type: String, default: '', trim: true },
-    definitions: [{
-      type: definitionSchema,
-      validate: (definitions) => (
-        Array.isArray(definitions)
-        && definitions.length > 0
-      ),
-    }],
+    definitions: [
+      {
+        type: definitionSchema,
+        validate: (definitions) => Array.isArray(definitions) && definitions.length > 0,
+      },
+    ],
     dialects: { type: [dialectSchema], default: [] },
     tags: {
       type: [String],
       default: [],
-      validate: (v) => (
-        v.every((tag) => Object.values(WordTags).map(({ value }) => value).includes(tag))
-      ),
+      validate: (v) =>
+        v.every((tag) =>
+          Object.values(WordTags)
+            .map(({ value }) => value)
+            .includes(tag),
+        ),
     },
-    tenses: Object.values(Tense)
-      .reduce((tenses, { value }) => ({
+    tenses: Object.values(Tense).reduce(
+      (tenses, { value }) => ({
         ...tenses,
         [value]: { type: String, default: '', trim: true },
-      }), {}),
+      }),
+      {},
+    ),
     pronunciation: { type: String, default: '' },
-    attributes: Object.values(WordAttributes)
-      .reduce((finalAttributes, { value }) => ({
+    attributes: Object.values(WordAttributes).reduce(
+      (finalAttributes, { value }) => ({
         ...finalAttributes,
         [value]: { type: Boolean, default: false },
-      }), {}),
+      }),
+      {},
+    ),
     variations: { type: [{ type: String }], default: [] },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
@@ -104,17 +122,19 @@ export const wordSuggestionSchema = new Schema(
       type: Object,
       validate: (v) => {
         const crowdsourcingKeys = Object.keys(CrowdsourcingType);
-        return Object.entries(v).map(([key, value]) => (
-          crowdsourcingKeys.includes(key) && typeof value === 'boolean'
-        ));
+        return Object.entries(v).map(([key, value]) => crowdsourcingKeys.includes(key) && typeof value === 'boolean');
       },
       required: false,
-      default: Object.keys(CrowdsourcingType).reduce((finalCrowdsourcing, key) => ({
-        ...finalCrowdsourcing,
-        [key]: false,
-      }), {}),
+      default: Object.keys(CrowdsourcingType).reduce(
+        (finalCrowdsourcing, key) => ({
+          ...finalCrowdsourcing,
+          [key]: false,
+        }),
+        {},
+      ),
     },
-  }, { toObject: toObjectPlugin, timestamps: true },
+  },
+  { toObject: toObjectPlugin, timestamps: true },
 );
 
 toJSONPlugin(wordSuggestionSchema);
@@ -122,19 +142,20 @@ uploadWordPronunciation(wordSuggestionSchema);
 normalizeHeadword(wordSuggestionSchema);
 toJSONPlugin(definitionSchema);
 
-wordSuggestionSchema.index({
-  merged: 1,
-  updatedAt: -1,
-}, {
-  name: 'Descending word suggestion index',
-});
+wordSuggestionSchema.index(
+  {
+    merged: 1,
+    updatedAt: -1,
+  },
+  {
+    name: 'Descending word suggestion index',
+  },
+);
 
 wordSuggestionSchema.index({
   mergedBy: 1,
   'dialects.editor': 1,
   updatedAt: -1,
-}, {
-  name: 'Merged word suggestion index',
 });
 
 mongoose.model('WordSuggestion', wordSuggestionSchema);
