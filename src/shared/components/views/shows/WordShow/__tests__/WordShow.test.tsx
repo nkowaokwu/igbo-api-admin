@@ -4,6 +4,7 @@ import React from 'react';
 import { render, configure } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordShow from '../WordShow';
 
@@ -12,19 +13,21 @@ configure({ testIdAttribute: 'data-test' });
 const record = {
   id: 123,
   word: 'tésting word',
-  definitions: [{
-    wordClass: WordClass.ADJ.value,
-    definitions: [
-      'first definition',
-    ],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.ADJ,
+      definitions: ['first definition'],
+    },
+  ],
   variations: [],
-  examples: [{
-    igbo: 'igbo',
-    english: 'english',
-    pronunciations: [],
-    associatedWords: [],
-  }],
+  examples: [
+    {
+      igbo: 'igbo',
+      english: 'english',
+      pronunciations: [],
+      associatedWords: [],
+    },
+  ],
   pronunciation: '1234',
   stems: [],
   relatedTerms: [],
@@ -37,40 +40,46 @@ const record = {
 
 const completeRecord = {
   ...record,
-  examples: [{
-    igbo: 'igbo',
-    english: 'english',
-    pronunciations: [{ audio: 'example-pronunciation', speaker: '' }],
-    associatedWords: ['associatedWordId'],
-  }],
+  examples: [
+    {
+      igbo: 'igbo',
+      english: 'english',
+      pronunciations: [{ audio: 'example-pronunciation', speaker: '' }],
+      associatedWords: ['associatedWordId'],
+    },
+  ],
   pronunciation: 'word-pronunciation',
   stems: ['stemId'],
   relatedTerms: ['relatedTermId'],
-  dialects: [{
-    variations: [],
-    dialects: ['NSA'],
-    pronunciation: 'dialect-pronunciation',
-    word: 'word',
-  }],
+  dialects: [
+    {
+      variations: [],
+      dialects: ['NSA'],
+      pronunciation: 'dialect-pronunciation',
+      word: 'word',
+    },
+  ],
   nsibidi: 'nsibidi',
 };
 
 const dataProvider = {
-  getOne: () => Promise.resolve({
-    data: record,
-  }),
+  getOne: () =>
+    Promise.resolve({
+      data: record,
+    }),
 };
 
 describe('Word Show', () => {
   beforeEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = '';
-    dataProvider.getOne = () => Promise.resolve({
-      data: record,
-    });
+    dataProvider.getOne = () =>
+      Promise.resolve({
+        data: record,
+      });
   });
 
   it('render all fields for words', async () => {
-    const { queryByText, findByText } = render(
+    const { queryByText, findAllByText, findByText } = render(
       <TestContext
         enableReducers
         initialState={{ admin: { resources: { words: { data: {} } } } }}
@@ -83,7 +92,7 @@ describe('Word Show', () => {
     await findByText('Word Document Details');
     await findByText('Audio Pronunciation');
     await findByText('Is Standard Igbo');
-    await findByText('Is Accented');
+    await findAllByText('Is Accented');
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
     await findByText('Nsịbịdị');
@@ -96,12 +105,12 @@ describe('Word Show', () => {
     await findByText('Word Stems');
     await findByText('Examples');
     await findByText('Dialects');
-    expect(await queryByText('Editor\'s Note')).toBeNull();
-    expect(await queryByText('User\'s comments')).toBeNull();
+    expect(await queryByText("Editor's Note")).toBeNull();
+    expect(await queryByText("User's comments")).toBeNull();
   });
 
   it('render all fields for word suggestions', async () => {
-    const { findByText } = render(
+    const { findByText, findAllByText } = render(
       <TestContext
         enableReducers
         initialState={{ admin: { resources: { wordSuggestions: { data: {} } } } }}
@@ -114,7 +123,7 @@ describe('Word Show', () => {
     await findByText('Word Suggestion Document Details');
     await findByText('Audio Pronunciation');
     await findByText('Is Standard Igbo');
-    await findByText('Is Accented');
+    await findAllByText('Is Accented');
     await findByText('Is Slang');
     await findByText('Is Constructed Term');
     await findByText(record.word);
@@ -129,8 +138,8 @@ describe('Word Show', () => {
     await findByText('Word Stems');
     await findByText('Examples');
     await findByText('Dialects');
-    await findByText('Editor\'s Note');
-    await findByText('User\'s comments');
+    await findByText("Editor's Note");
+    await findByText("User's comments");
   });
 
   // Unable to test Tooltip component
@@ -151,9 +160,10 @@ describe('Word Show', () => {
 
   // Unable to test Tooltip component
   it.skip('render as a complete word suggestion', async () => {
-    dataProvider.getOne = () => Promise.resolve({
-      data: completeRecord,
-    });
+    dataProvider.getOne = () =>
+      Promise.resolve({
+        data: completeRecord,
+      });
 
     const { findByTestId } = render(
       <TestContext

@@ -1,9 +1,9 @@
 import { forEach, forIn, isEqual, pick, times } from 'lodash';
 import { v4 as uuid } from 'uuid';
-import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
-import Dialects from 'src/backend/shared/constants/Dialect';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -18,7 +18,6 @@ import {
   putRandomWordSuggestions,
 } from './shared/commands';
 import {
-  wordSuggestionId,
   wordSuggestionData,
   wordSuggestionApprovedData,
   malformedWordSuggestionData,
@@ -26,6 +25,7 @@ import {
   wordSuggestionWithNestedExampleSuggestionData,
   wordSuggestionWithNestedMalformedExampleSuggestionData,
 } from './__mocks__/documentData';
+import { wordSuggestionId } from './__mocks__/documentIds';
 import { WORD_SUGGESTION_KEYS, INVALID_ID, AUTH_TOKEN } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
@@ -114,7 +114,7 @@ describe('MongoDB Word Suggestions', () => {
           {
             word: 'dialect',
             variations: [],
-            dialects: [Dialects.AFI.value],
+            dialects: [DialectEnum.AFI],
             pronunciation: '',
           },
         ],
@@ -126,7 +126,7 @@ describe('MongoDB Word Suggestions', () => {
           {
             word: 'dialect 2',
             variations: [],
-            dialects: [Dialects.ABI.value],
+            dialects: [DialectEnum.ABI],
             pronunciation: '',
           },
         ],
@@ -139,7 +139,7 @@ describe('MongoDB Word Suggestions', () => {
             {
               word: 'dialect 3',
               variations: [],
-              dialects: [Dialects.BON.value],
+              dialects: [DialectEnum.BON],
               pronunciation: '',
             },
           ],
@@ -218,7 +218,7 @@ describe('MongoDB Word Suggestions', () => {
         definitions: [
           {
             definitions: ['first definition'],
-            wordClass: WordClass.NNC.value,
+            wordClass: WordClassEnum.NNC,
             nsibidi: 'testing',
           },
           ...updatedWordSuggestionData.definitions,
@@ -395,7 +395,7 @@ describe('MongoDB Word Suggestions', () => {
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
         definitions: wordSuggestionRes.body.definitions.concat({
-          wordClass: WordClass.AV.value,
+          wordClass: WordClassEnum.AV,
           definitions: ['first verb'],
           igboDefinitions: [{ igbo: 'akwa', nsibidi: '' }],
         }),
@@ -409,12 +409,12 @@ describe('MongoDB Word Suggestions', () => {
           wordSuggestionData.definitions[0].definitions,
         ),
       ).toEqual(true);
-      expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClass.AV.value);
+      expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClassEnum.AV);
       expect(isEqual(updatedWordSuggestionRes.body.definitions[1].definitions, ['first verb'])).toEqual(true);
       const updatedDefinitions = [...updatedWordSuggestionRes.body.definitions];
       updatedDefinitions.splice(0, 1);
       const finalWordSuggestionRes = await updateWordSuggestion(updatedWordSuggestionRes.body);
-      expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClass.NNC.value);
+      expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClassEnum.NNC);
       expect(isEqual(finalWordSuggestionRes.body.definitions[0].definitions, ['first'])).toEqual(true);
       expect(isEqual(finalWordSuggestionRes.body.definitions[1].igboDefinitions[0].igbo, 'akwa')).toEqual(true);
     });

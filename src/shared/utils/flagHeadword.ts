@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-labels */
-import WordClass from 'src/backend/shared/constants/WordClass';
 import { flow } from 'lodash';
 import { Word } from 'src/backend/controllers/utils/interfaces';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
 /** Tone Rules
  * 1. Mid-tone/Down step ( ̄) tone marks can come after unmarked (high tones) and
@@ -13,9 +13,9 @@ import { Word } from 'src/backend/controllers/utils/interfaces';
  */
 
 type FlagsType = {
-  dashPrefix?: string,
-  accentedPair?: string,
-  highTone?: string,
+  dashPrefix?: string;
+  accentedPair?: string;
+  highTone?: string;
 };
 
 const vowels = [
@@ -48,30 +48,40 @@ const ACUTE_ACCENT = 769;
 const MACRON_ACCENT = 772;
 const accents = [GRAVE_ACCENT, ACUTE_ACCENT, MACRON_ACCENT];
 
-const invalidPrefixedDash = (
-  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
-): { word: Word, flags: FlagsType } => {
+const invalidPrefixedDash = ({
+  word: wordDocument,
+  flags,
+}: {
+  word: Word;
+  flags: FlagsType;
+}): { word: Word; flags: FlagsType } => {
   const { word, definitions = [{ wordClass: '', definitions: [] }] } = wordDocument;
   const { wordClass } = definitions[0];
-  if (word && word.startsWith('-') && wordClass !== WordClass.ESUF.value) {
-    flags.dashPrefix = 'There is an invalid prefixed dash that shouldn\'t be present for this word. '
-    + 'Only Extensional suffixes can have prefixed dashes';
-  } else if (word && word.startsWith('-') && wordClass === WordClass.ESUF.value) {
+  if (word && word.startsWith('-') && wordClass !== WordClassEnum.ESUF) {
+    flags.dashPrefix =
+      "There is an invalid prefixed dash that shouldn't be present for this word. " +
+      'Only Extensional suffixes can have prefixed dashes';
+  } else if (word && word.startsWith('-') && wordClass === WordClassEnum.ESUF) {
     delete flags.dashPrefix;
   }
   return { word: wordDocument, flags };
 };
 
-const invalidHighTonePresent = (
-  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
-): { word: Word, flags: FlagsType } => {
+const invalidHighTonePresent = ({
+  word: wordDocument,
+  flags,
+}: {
+  word: Word;
+  flags: FlagsType;
+}): { word: Word; flags: FlagsType } => {
   const { word } = wordDocument;
   if (word) {
     for (let i = 0; i < word.length; i += 1) {
       const letter = word.charCodeAt(i);
       if (letter === ACUTE_ACCENT) {
-        flags.highTone = 'There should be no high tone accent mark for this word. '
-        + 'All unmarked accent marks are automatically high toned.';
+        flags.highTone =
+          'There should be no high tone accent mark for this word. ' +
+          'All unmarked accent marks are automatically high toned.';
         break;
       }
       if (i === word.length - 1) {
@@ -82,9 +92,13 @@ const invalidHighTonePresent = (
   return { word: wordDocument, flags };
 };
 
-const invalidToneMarkPairings = (
-  { word: wordDocument, flags } : { word: Word, flags: FlagsType },
-): { word: Word, flags: FlagsType } => {
+const invalidToneMarkPairings = ({
+  word: wordDocument,
+  flags,
+}: {
+  word: Word;
+  flags: FlagsType;
+}): { word: Word; flags: FlagsType } => {
   // Get the word and remove all underdots
   const word = (wordDocument.word || '').normalize('NFD').replace(/[\u0323\s]/g, '');
 
@@ -123,11 +137,11 @@ const invalidToneMarkPairings = (
     }
     // If the current and next letter are both consonants, we have a double consonant that's unmarked (high-tone)
     if (
-      !vowels.includes(letter)
-      && MorN.includes(letter)
-      && !vowels.includes(nextLetter)
-      && !accents.includes(letter.charCodeAt(0))
-      && !accents.includes(nextLetter.charCodeAt(0))
+      !vowels.includes(letter) &&
+      MorN.includes(letter) &&
+      !vowels.includes(nextLetter) &&
+      !accents.includes(letter.charCodeAt(0)) &&
+      !accents.includes(nextLetter.charCodeAt(0))
     ) {
       hasUnmarkedDoubleConsonant = true;
       lastTone = 'highTone';
@@ -136,13 +150,13 @@ const invalidToneMarkPairings = (
     // consonant, then we have a marked double consonant
     const nextNextLetter = word[firstPointer + 2] || '';
     if (
-      !vowels.includes(letter)
-      && MorN.includes(letter)
-      && !accents.includes(letter.charCodeAt(0))
-      && accents.includes(nextLetter.charCodeAt(0))
-      && nextNextLetter
-      && !vowels.includes(nextNextLetter)
-      && !accents.includes(nextNextLetter.charCodeAt(0))
+      !vowels.includes(letter) &&
+      MorN.includes(letter) &&
+      !accents.includes(letter.charCodeAt(0)) &&
+      accents.includes(nextLetter.charCodeAt(0)) &&
+      nextNextLetter &&
+      !vowels.includes(nextNextLetter) &&
+      !accents.includes(nextNextLetter.charCodeAt(0))
     ) {
       hasMarkedDoubleConsonant = true;
 
@@ -155,11 +169,11 @@ const invalidToneMarkPairings = (
     // If the letter is a macron, and there is no preceeding low tone, high tone, unmakred double consonant, or
     // marked double consonant, then we want to flag this word
     if (
-      letter.charCodeAt(0) === MACRON_ACCENT
-      && !hasLowTone
-      && !hasHighTone
-      && !hasUnmarkedDoubleConsonant
-      && !hasMarkedDoubleConsonant
+      letter.charCodeAt(0) === MACRON_ACCENT &&
+      !hasLowTone &&
+      !hasHighTone &&
+      !hasUnmarkedDoubleConsonant &&
+      !hasMarkedDoubleConsonant
     ) {
       flags.accentedPair = 'Word is unable to start with a mid-tone/down-step diacritic mark.';
       return { word: wordDocument, flags };
@@ -169,10 +183,9 @@ const invalidToneMarkPairings = (
   return { word: wordDocument, flags };
 };
 
-const generateFlags = flow([
-  invalidPrefixedDash,
-  invalidHighTonePresent,
-  invalidToneMarkPairings,
-]) as (...any) => { word: Word, flags: FlagsType };
+const generateFlags = flow([invalidPrefixedDash, invalidHighTonePresent, invalidToneMarkPairings]) as (...any) => {
+  word: Word;
+  flags: FlagsType;
+};
 
 export default generateFlags;

@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import WordClass from 'src/backend/shared/constants/WordClass';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import DefinitionsForm from '../DefinitionsForm';
 
 describe('DefinitionsForm', () => {
@@ -29,17 +29,14 @@ describe('DefinitionsForm', () => {
   it('renders multiple definition group', async () => {
     const extendWordRecord = cloneDeep(wordRecord);
     extendWordRecord.definitions.push({
-      wordClass: WordClass.ADJ.value,
+      wordClass: WordClassEnum.ADJ,
       definitions: ['second definition'],
       nsibidi: 'second nsibidi',
       nsibidiCharacters: [],
       igboDefinitions: [],
     });
     const { findByText, findAllByText } = render(
-      <TestContext
-        record={extendWordRecord}
-        definitions={extendWordRecord.definitions}
-      >
+      <TestContext record={extendWordRecord} definitions={extendWordRecord.definitions}>
         <DefinitionsForm />
       </TestContext>,
     );
@@ -129,12 +126,7 @@ describe('DefinitionsForm', () => {
   });
 
   it('creates and deletes a definition group', async () => {
-    const {
-      findByText,
-      findAllByTestId,
-      findByTestId,
-      findAllByText,
-    } = render(
+    const { findByText, findAllByTestId, findByTestId, findAllByText } = render(
       <TestContext>
         <DefinitionsForm />
       </TestContext>,
@@ -143,10 +135,12 @@ describe('DefinitionsForm', () => {
     fireEvent.click(await findByText('Add Definition Group'));
     await findByText('Definition Groups (2)');
     userEvent.type((await findAllByTestId('definition-group-nsibidi-input'))[1], 'new first nsibidi');
-    expect((await findAllByTestId('definition-group-nsibidi-input'))[1].getAttribute('value'))
-      .toBe('new first nsibidi');
+    expect((await findAllByTestId('definition-group-nsibidi-input'))[1].getAttribute('value')).toBe(
+      'new first nsibidi',
+    );
     fireEvent.click((await findAllByText('Delete Definition Group'))[0]);
-    expect((await (await findByTestId('definition-group-nsibidi-input'))
-      .getAttribute('value'))).toBe('new first nsibidi');
+    expect(await (await findByTestId('definition-group-nsibidi-input')).getAttribute('value')).toBe(
+      'new first nsibidi',
+    );
   });
 });
