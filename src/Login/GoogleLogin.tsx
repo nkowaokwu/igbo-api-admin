@@ -1,12 +1,8 @@
 import React, { ReactElement } from 'react';
-import {
-  Button,
-  Image,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { Button, Image, Text, useToast } from '@chakra-ui/react';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import getAWSAsset from 'src/utils/getAWSAsset';
+import errorCodes from 'src/Login/errorCodes';
 import { handleUserResult } from './handleUserResult';
 
 const GoogleImage = getAWSAsset('/icons/google.svg');
@@ -16,26 +12,28 @@ const googleProvider = new GoogleAuthProvider();
 
 const GoogleLogin = ({
   setErrorMessage,
-} : {
-  setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
+}: {
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
 }): ReactElement => {
   const toast = useToast();
 
   const signInWithGoogle = () => {
     setErrorMessage('');
-    return signInWithPopup(auth, googleProvider)
-    // @ts-expect-error
-      .then((({ _tokenResponse } = { _tokenResponse: { isNewUser: false } }) => {
-        const { isNewUser } = _tokenResponse;
-        handleUserResult({
-          toast,
-          setErrorMessage,
-          isNewUser,
-        });
-      })).catch((error) => {
-        console.log(error);
-        setErrorMessage(error.message);
-      });
+    return (
+      signInWithPopup(auth, googleProvider)
+        // @ts-expect-error
+        .then(({ _tokenResponse } = { _tokenResponse: { isNewUser: false } }) => {
+          const { isNewUser } = _tokenResponse;
+          handleUserResult({
+            toast,
+            setErrorMessage,
+            isNewUser,
+          });
+        })
+        .catch((error) => {
+          setErrorMessage(errorCodes[error.code]);
+        })
+    );
   };
 
   return (
@@ -62,7 +60,9 @@ const GoogleLogin = ({
         backgroundColor: '#FFFFFF',
       }}
     >
-      <Text flex={1} fontSize="md" color="gray.500" ml={-6}>Sign in with Google</Text>
+      <Text flex={1} fontSize="md" color="gray.500" ml={-6}>
+        Sign in with Google
+      </Text>
     </Button>
   );
 };

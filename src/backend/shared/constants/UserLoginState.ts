@@ -1,6 +1,6 @@
 enum UserLoginState {
   LOGIN = 'login',
-  SIGNUP = 'signup',
+  SIGN_UP = 'signup',
   PASSWORD_RECOVERY = 'password_recovery',
 }
 

@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { Box, Button, Divider, Heading, Text, VStack, chakra, Show, Link } from '@chakra-ui/react';
+import { Box, Button, Divider, Heading, Text, VStack, chakra, Show, Link, SlideFade } from '@chakra-ui/react';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import LoginStats from 'src/Login/LoginStats';
 import EmailLogin from './EmailLogin';
@@ -12,11 +12,11 @@ const CredentialsForm = (): ReactElement => {
   const [credentialHeader, setCredentialHeader] = useState('Log in to your account');
 
   const handleAccount = () => {
-    setUserLoginState(userLoginState === UserLoginState.LOGIN ? UserLoginState.SIGNUP : UserLoginState.LOGIN);
+    setUserLoginState(userLoginState === UserLoginState.LOGIN ? UserLoginState.SIGN_UP : UserLoginState.LOGIN);
   };
 
   useEffect(() => {
-    if (userLoginState === UserLoginState.SIGNUP) {
+    if (userLoginState === UserLoginState.SIGN_UP) {
       setCredentialHeader('Sign up for an account');
     } else if (userLoginState === UserLoginState.LOGIN) {
       setCredentialHeader('Log in to your account');
@@ -72,11 +72,11 @@ const CredentialsForm = (): ReactElement => {
             ) : null}
           </VStack>
           <GoogleLogin setErrorMessage={setErrorMessage} />
-          {errorMessage ? (
+          <SlideFade in={!!errorMessage} offsetY="-20px">
             <Text mt={2} textAlign="center" className="text-red-500">
               {errorMessage}
             </Text>
-          ) : null}
+          </SlideFade>
           <Text mt={2}>
             By creating an account, you agree to our{' '}
             <Link href="https://nkowaokwu.com/terms" target="_blank" color="primary">
