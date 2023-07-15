@@ -23,16 +23,17 @@ import {
 } from '@chakra-ui/react';
 import PersonIcon from '@mui/icons-material/Person';
 import { EmailIcon, LockIcon } from '@chakra-ui/icons';
+import errorCodes from 'src/Login/errorCodes';
 import { handleUserResult } from './handleUserResult';
 
 const EmailLogin = ({
   setErrorMessage,
   userLoginState,
   setUserLoginState,
-} : {
-  setErrorMessage: (errorMessage: string) => void,
-  userLoginState: UserLoginState,
-  setUserLoginState: React.Dispatch<React.SetStateAction<string>>,
+}: {
+  setErrorMessage: (errorMessage: string) => void;
+  userLoginState: UserLoginState;
+  setUserLoginState: React.Dispatch<React.SetStateAction<string>>;
 }): ReactElement => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -51,13 +52,14 @@ const EmailLogin = ({
     await (userLoginState === UserLoginState.PASSWORD_RECOVERY
       ? sendPasswordResetEmail(auth, email)
       : userLoginState === UserLoginState.LOGIN
-        ? signInWithEmailAndPassword(auth, email, password)
-        : createUserWithEmailAndPassword(auth, email, password))
+      ? signInWithEmailAndPassword(auth, email, password)
+      : createUserWithEmailAndPassword(auth, email, password)
+    )
       .then(async (userCredential: UserCredential | void) => {
         if (userLoginState === UserLoginState.PASSWORD_RECOVERY) {
           setErrorMessage('');
           setSuccessMessage('Check your email to reset your password.');
-        } else if (userLoginState === UserLoginState.SIGNUP && userCredential) {
+        } else if (userLoginState === UserLoginState.SIGN_UP && userCredential) {
           await updateProfile(userCredential.user, {
             displayName,
           });
@@ -86,7 +88,7 @@ const EmailLogin = ({
         return null;
       })
       .catch((error) => {
-        setErrorMessage(error.message);
+        setErrorMessage(errorCodes[error.code]);
       });
   };
 
@@ -96,7 +98,7 @@ const EmailLogin = ({
 
   return (
     <form onSubmit={handleUserLogin} className="w-full space-y-3">
-      {userLoginState === UserLoginState.SIGNUP ? (
+      {userLoginState === UserLoginState.SIGN_UP ? (
         <>
           <FormLabel>Full name</FormLabel>
           <InputGroup>
@@ -118,9 +120,7 @@ const EmailLogin = ({
       ) : null}
       <FormLabel>Email address</FormLabel>
       <InputGroup>
-        <InputLeftElement
-          pointerEvents="none"
-        >
+        <InputLeftElement pointerEvents="none">
           <EmailIcon color="gray.400" />
         </InputLeftElement>
         <Input
@@ -139,14 +139,12 @@ const EmailLogin = ({
         <>
           <FormLabel>Password</FormLabel>
           <InputGroup>
-            <InputLeftElement
-              pointerEvents="none"
-            >
+            <InputLeftElement pointerEvents="none">
               <LockIcon color="gray.400" />
             </InputLeftElement>
             <Input
               placeholder="Password"
-              type={userLoginState === UserLoginState.SIGNUP && isPasswordVisible ? 'text' : 'password'}
+              type={userLoginState === UserLoginState.SIGN_UP && isPasswordVisible ? 'text' : 'password'}
               name="password"
               required
               _focus={{
@@ -155,7 +153,7 @@ const EmailLogin = ({
                 borderWidth: '2px',
               }}
             />
-            {userLoginState === UserLoginState.SIGNUP ? (
+            {userLoginState === UserLoginState.SIGN_UP ? (
               <InputRightElement width="4.5rem">
                 <Button
                   bg="transparent"
@@ -201,7 +199,9 @@ const EmailLogin = ({
         </Button>
       ) : null}
       <Fade in={!!successMessage}>
-        <Text textAlign="center" color="green.300">{successMessage}</Text>
+        <Text textAlign="center" color="green.300">
+          {successMessage}
+        </Text>
       </Fade>
       <VStack>
         <Button
@@ -222,8 +222,8 @@ const EmailLogin = ({
           {userLoginState === UserLoginState.PASSWORD_RECOVERY
             ? 'Recover password'
             : userLoginState === UserLoginState.LOGIN
-              ? 'Sign in'
-              : 'Sign up'}
+            ? 'Sign in'
+            : 'Sign up'}
         </Button>
       </VStack>
     </form>

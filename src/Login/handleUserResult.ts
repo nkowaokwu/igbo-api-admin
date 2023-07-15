@@ -14,24 +14,27 @@ export const handleUserResult = async ({
   toast,
   setErrorMessage,
   isNewUser = false,
-} : {
-  toast: any,
-  setErrorMessage: (err: string) => void,
-  isNewUser?: boolean,
+}: {
+  toast: any;
+  setErrorMessage: (err: string) => void;
+  isNewUser?: boolean;
 }): Promise<any> => {
   const { currentUser } = auth;
   if (!currentUser) {
     return;
   }
   const idTokenResult = await currentUser.getIdTokenResult(true);
-  const userRole = idTokenResult.claims.role as UserRoles || UserRoles.CROWDSOURCER;
-  const { token, claims: { user_id: userId } } = idTokenResult;
+  const userRole = (idTokenResult.claims.role as UserRoles) || UserRoles.CROWDSOURCER;
+  const {
+    token,
+    claims: { user_id: userId },
+  } = idTokenResult;
 
   const permissions = { role: userRole };
   const hasPermission = hasAccessToPlatformPermissions(permissions, true);
   if (!hasPermission) {
     authProvider.logout();
-    const errorMessage = 'You\'re account doesn\'t have the necessary permissions to access the platform.';
+    const errorMessage = "You're account doesn't have the necessary permissions to access the platform.";
     setErrorMessage(errorMessage);
     // eslint-disable-next-line
     toast({
@@ -56,16 +59,17 @@ export const handleUserResult = async ({
       title: 'Account created',
       description: 'Please refresh the page and log in to access the platform',
       status: 'success',
-      duration: 4000,
+      duration: 90000,
       isClosable: true,
     });
   } else {
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    const hash = (
-      hasTranscriberPermissions(permissions, '#/igboSoundbox')
-      || hasCrowdsourcerPermission(permissions, '#/')
-      || (rawRedirectUrl || '#/') || '#/'
-    );
+    const hash =
+      hasTranscriberPermissions(permissions, '#/igboSoundbox') ||
+      hasCrowdsourcerPermission(permissions, '#/') ||
+      rawRedirectUrl ||
+      '#/' ||
+      '#/';
     window.location.href = `${window.location.origin}/${hash}`;
   }
 };
