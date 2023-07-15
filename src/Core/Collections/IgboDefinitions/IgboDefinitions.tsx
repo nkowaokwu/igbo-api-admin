@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { compact, noop } from 'lodash';
-import { Box, Heading, Input, Spinner, Text, useToast } from '@chakra-ui/react';
-import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Heading, Input, Link, Spinner, Text, useToast } from '@chakra-ui/react';
+import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
+import { IGBO_DEFINITIONS_STANDARDS_DOC } from 'src/Core/constants';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
@@ -95,10 +96,18 @@ const IgboDefinitions = (): ReactElement => {
     <Box className="flex flex-col justify-start items-center py-4 h-full lg:h-auto">
       <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto">
         <NavbarWrapper>
-          <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="4xl">
+          <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="3xl" mb="4">
             Igbo Definitions
           </Heading>
         </NavbarWrapper>
+        <Text fontFamily="Silka" mt={4}>
+          Each Igbo definition must follow our{' '}
+          <Link textDecoration="underline" href={IGBO_DEFINITIONS_STANDARDS_DOC} target="_blank">
+            Igbo Definitions Standards
+            <ExternalLinkIcon boxSize="3" ml={1} />
+          </Link>{' '}
+          document.
+        </Text>
         {currentCard ? (
           <Card>
             <Box className="flex flex-row justify-start items-center space-x-4">
@@ -122,42 +131,40 @@ const IgboDefinitions = (): ReactElement => {
               {`${currentCardIndex + 1} / ${wordSuggestions.length}`}
             </Text>
           ) : null}
-          {showSubmitButton ? (
-            <PrimaryButton
-              onClick={isLoading ? noop : handleSubmit}
-              rightIcon={(() => (
-                <>💾</>
-              ))()}
-              aria-label="Complete Igbo definitions"
-              isDisabled={isLoading}
-            >
-              Submit Batch
-            </PrimaryButton>
-          ) : null}
+          <PrimaryButton
+            onClick={isLoading ? noop : handleSubmit}
+            rightIcon={(() => (
+              <>💾</>
+            ))()}
+            aria-label="Complete Igbo definitions"
+            isDisabled={!showSubmitButton}
+            isLoading={isLoading}
+          >
+            Submit Batch
+          </PrimaryButton>
         </Box>
-        <Box className="flex flex-row relative w-full">
+        <Box className="flex flex-row w-full">
+          <ActivityButton
+            tooltipLabel="Previous Igbo definition"
+            onClick={currentCardIndex === 0 ? noop : handlePrevious}
+            leftIcon={<ArrowBackIcon color="gray" />}
+            aria-label="Previous Igbo definition"
+            isDisabled={currentCardIndex === 0}
+            left={0}
+          />
           <Input
             placeholder="Type Igbo definition here"
             ref={igboDefinitionInputRef}
-            px={12}
+            px={2}
             value={igboDefinitions[currentCardIndex]}
             onChange={handleInputChange}
           />
           <ActivityButton
-            tooltipLabel="Previous Igbo definition"
-            onClick={currentCardIndex === 0 ? noop : handlePrevious}
-            icon={<ArrowBackIcon />}
-            aria-label="Previous Igbo definition"
-            position="absolute"
-            isDisabled={currentCardIndex === 0}
-            left={0}
-          />
-          <ActivityButton
             tooltipLabel="Next Igbo definition"
             onClick={currentCardIndex === wordSuggestions.length - 1 ? noop : handleNext}
-            icon={<ArrowForwardIcon />}
+            colorScheme="green"
+            leftIcon={<ArrowForwardIcon color="white" />}
             aria-label="Next Igbo definition"
-            position="absolute"
             isDisabled={currentCardIndex === wordSuggestions.length - 1}
             right={0}
           />

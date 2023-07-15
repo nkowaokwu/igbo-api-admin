@@ -17,6 +17,8 @@ export const CROWDSOURCING_SLACK_CHANNEL = 'https://igboapi.slack.com/archives/C
 
 export const RECORDING_AUDIO_STANDARDS_DOC =
   'https://charmed-sycamore-9e5.notion.site/Recording-Audio-Standards-399d1ba25f4648ee9682f7feaeeb796f?pvs=4';
+export const IGBO_DEFINITIONS_STANDARDS_DOC =
+  'https://nkowaokwu.notion.site/Igbo-Definitions-Standards-28a94d7c4ef948e08ef56ef61c09e3cf?pvs=4';
 export const CONSTRUCTED_TERMS_REVIEW_DOC =
   'https://charmed-sycamore-9e5.notion.site/Nk-wa-okwu-Newly-Constructed-Words-Review-Process-cccc6e79e0ee4bdab8d3a538f0cd559c?pvs=4';
 
