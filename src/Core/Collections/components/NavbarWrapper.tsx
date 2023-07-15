@@ -1,11 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box, BoxProps } from '@chakra-ui/react';
 
-const NavbarWrapper = ({
-  children,
-  className,
-  ...props
-} : BoxProps): ReactElement => (
+const NavbarWrapper = ({ children, className, ...props }: BoxProps): ReactElement => (
   <Box
     className={`bg-white w-full h-16 flex flex-row items-center ${className}`}
     borderBottomColor="gray.200"
