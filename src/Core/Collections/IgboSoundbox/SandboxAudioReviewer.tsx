@@ -70,21 +70,23 @@ const SandboxAudioReviewer = ({
                         className={`w-full flex flex-row ${isAdmin ? 'justify-between' : 'justify-end'} items-center`}
                       >
                         <chakra.span fontSize="xs" color="gray.500">
-                          <chakra.span mr={1}>Speaker:</chakra.span>
                           {currentSpeaker ? (
-                            <Tooltip label="Click to view user profile">
-                              <Link
-                                color="gray.500"
-                                fontStyle="italic"
-                                target="_blank"
-                                textDecoration="underline"
-                                href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
-                              >
-                                {currentSpeaker?.displayName || 'N/A'}
+                            <>
+                              <chakra.span mr={1}>Speaker:</chakra.span>
+                              <Tooltip label="Click to view user profile">
+                                <Link
+                                  color="gray.500"
+                                  fontStyle="italic"
+                                  target="_blank"
+                                  textDecoration="underline"
+                                  href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
+                                >
+                                  {currentSpeaker?.displayName || 'N/A'}
 
-                                <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
-                              </Link>
-                            </Tooltip>
+                                  <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
+                                </Link>
+                              </Tooltip>
+                            </>
                           ) : (
                             <chakra.span>N/A</chakra.span>
                           )}
