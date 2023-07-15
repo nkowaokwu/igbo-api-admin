@@ -76,6 +76,7 @@ export const {
   IconButton,
   Hide,
   Fade,
+  SlideFade,
   FormControl,
   FormLabel,
   AlertDialog,

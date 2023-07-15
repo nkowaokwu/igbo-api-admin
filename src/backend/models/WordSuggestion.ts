@@ -33,6 +33,7 @@ const definitionSchema = new Schema(
         },
       ],
       default: [],
+      index: true,
     },
   },
   { toObject: toObjectPlugin },
@@ -55,7 +56,7 @@ const dialectSchema = new Schema(
 
 export const wordSuggestionSchema = new Schema(
   {
-    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
+    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null, index: true },
     word: {
       type: String,
       required: true,
