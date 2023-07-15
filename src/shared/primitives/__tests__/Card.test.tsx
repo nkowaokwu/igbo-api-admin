@@ -32,7 +32,7 @@ describe('Card', () => {
     await findByTestId('card-link');
   });
 
-  it('render card with text with link as admin', async () => {
+  it('render card with text with link as crowdsourcer', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: 'crowdsourcer' } });
 
     const text = 'Testing text';
@@ -43,6 +43,7 @@ describe('Card', () => {
       </TestContext>,
     );
     await findByText(text);
-    expect(await queryByTestId('card-link')).toBeNull();
+    await findByText('Copy resource link');
+    await queryByTestId('card-link');
   });
 });
