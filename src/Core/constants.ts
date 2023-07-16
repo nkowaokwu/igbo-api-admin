@@ -15,6 +15,8 @@ export const EDITORS_TRANSLATORS_SLACK_CHANNEL = 'https://igboapi.slack.com/arch
 export const SOFTWARE_ENGINEERS_SLACK_CHANNEL = 'https://igboapi.slack.com/archives/C01UCDVSP0U';
 export const CROWDSOURCING_SLACK_CHANNEL = 'https://igboapi.slack.com/archives/C057ZCT24M7';
 
+export const PARTS_OF_SPEECH_LIST =
+  'https://www.notion.so/charmed-sycamore-9e5/Igbo-API-Parts-of-Speech-13a1aab7b7b041f6b306add21feeef02?pvs=4';
 export const RECORDING_AUDIO_STANDARDS_DOC =
   'https://charmed-sycamore-9e5.notion.site/Recording-Audio-Standards-399d1ba25f4648ee9682f7feaeeb796f?pvs=4';
 export const IGBO_DEFINITIONS_STANDARDS_DOC =

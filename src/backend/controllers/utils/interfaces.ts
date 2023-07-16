@@ -7,6 +7,7 @@ import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 
 export interface HandleQueries {
   searchWord: string;
@@ -20,7 +21,8 @@ export interface HandleQueries {
   strict: boolean;
   body: EditorRequest['body'];
   mongooseConnection: EditorRequest['mongooseConnection'];
-  leaderboard: undefined | LeaderboardType;
+  leaderboard?: LeaderboardType;
+  timeRange?: LeaderboardTimeRange;
   uidQuery?: string;
   error?: any;
   response?: any;
@@ -43,6 +45,7 @@ export interface EditorRequest extends Request {
     strict?: string;
     uid?: string;
     leaderboard?: LeaderboardType;
+    timeRange?: LeaderboardTimeRange;
   };
   suggestionDoc?: Suggestion;
   body: any;

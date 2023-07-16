@@ -4,6 +4,7 @@
     "@babel/plugin-transform-modules-commonjs",
     "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-proposal-export-default-from",
+    "@babel/plugin-transform-export-namespace-from",
     [
       "import",
       { "libraryName": "@material-ui/core", "libraryDirectory": "", "camel2DashComponentName": false },

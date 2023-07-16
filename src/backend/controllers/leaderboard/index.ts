@@ -1,39 +1,45 @@
-import { Connection } from 'mongoose';
+import { Model, Connection } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { leaderboardSchema } from 'src/backend/models/Leaderboard';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import {
   searchExampleAudioPronunciationsRecordedByUser,
   searchExampleAudioPronunciationsReviewedByUser,
-} from '../utils/queries';
+} from '../utils/queries/leaderboardQueries';
 import { handleQueries } from '../utils';
 import { sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
 import { findUser } from '../users';
 
-const updateUserLeaderboardStat = async ({
+const LeaderboardQuery = {
+  [LeaderboardType.RECORD_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsRecordedByUser,
+  [LeaderboardType.VERIFY_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsReviewedByUser,
+};
+
+const updateLeaderboardWithTimeRange = async ({
+  Leaderboard,
+  ExampleSuggestion,
   leaderboardType,
-  query,
-  mongooseConnection,
+  timeRange,
   user,
 }: {
+  Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
+  ExampleSuggestion: Model<Interfaces.ExampleSuggestion, unknown, unknown>;
   leaderboardType: LeaderboardType;
-  query: any;
-  mongooseConnection: Connection;
-  user: { displayName: string; email: string; photoURL: string; uid: string };
+  timeRange: LeaderboardTimeRange;
+  user: Interfaces.FormattedUser;
 }) => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+  const leaderboardQuery = LeaderboardQuery[leaderboardType];
+  const query = leaderboardQuery({ uid: user.uid, timeRange });
 
-  let leaderboards = await Leaderboard.find({ type: leaderboardType });
+  let leaderboards = await Leaderboard.find({ type: leaderboardType, timeRange });
   if (!leaderboards || !leaderboards.length) {
     const newLeaderboard = new Leaderboard({
       type: leaderboardType,
       page: 0,
+      timeRange,
     });
     leaderboards = [await newLeaderboard.save()];
   }
@@ -72,7 +78,30 @@ const updateUserLeaderboardStat = async ({
     rankingsGroups,
     leaderboards,
     Leaderboard,
+    timeRange,
   });
+};
+
+const updateUserLeaderboardStat = async ({
+  leaderboardType,
+  mongooseConnection,
+  user,
+}: {
+  leaderboardType: LeaderboardType;
+  mongooseConnection: Connection;
+  user: Interfaces.FormattedUser;
+}) => {
+  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+    'ExampleSuggestion',
+    exampleSuggestionSchema,
+  );
+  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+
+  await Promise.all(
+    Object.values(LeaderboardTimeRange).map(async (timeRange) =>
+      updateLeaderboardWithTimeRange({ Leaderboard, ExampleSuggestion, timeRange, user, leaderboardType }),
+    ),
+  );
 };
 
 /* Gets the specified page of users in the leaderboard */
@@ -86,6 +115,7 @@ export const getLeaderboard = async (
     limit,
     user: { uid },
     leaderboard,
+    timeRange,
     mongooseConnection,
   } = handleQueries(req);
   const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
@@ -95,7 +125,7 @@ export const getLeaderboard = async (
 
   const user = (await findUser(uid)) as Interfaces.FormattedUser;
   try {
-    let leaderboards = await Leaderboard.find({ type: leaderboard });
+    let leaderboards = await Leaderboard.find({ type: leaderboard, timeRange });
     if (!leaderboards || !leaderboards.length) {
       leaderboards = [];
     }
@@ -141,7 +171,6 @@ export const calculateRecordingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsRecordedByUser(user.uid),
       mongooseConnection,
       user,
     });
@@ -172,7 +201,6 @@ export const calculateReviewingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsReviewedByUser(user.uid),
       mongooseConnection,
       user,
     });

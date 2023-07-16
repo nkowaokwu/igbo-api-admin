@@ -18,6 +18,7 @@ export const {
   SimpleGrid,
   Link,
   Stack,
+  Select,
   Wrap,
   HStack,
   VStack,
