@@ -81,7 +81,7 @@ const SandboxAudioReviewer = ({
                                   textDecoration="underline"
                                   href={`#/${Collections.USERS}/${currentSpeaker.uid}/${Views.SHOW}`}
                                 >
-                                  {currentSpeaker?.displayName || 'N/A'}
+                                  {currentSpeaker?.displayName || ''}
 
                                   <ExternalLinkIcon boxSize="3" color="gray.500" ml={1} />
                                 </Link>

@@ -151,6 +151,8 @@ const VerifySentenceAudio = ({
   const shouldRenderExamples =
     !isLoading && Array.isArray(examples) && examples?.length && examples?.length === reviews?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
+  // eslint-disable-next-line max-len
+  const currentExampleHref = `${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${examples?.[exampleIndex]?.id}/${Views.SHOW}`;
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
@@ -166,10 +168,7 @@ const VerifySentenceAudio = ({
           </Link>{' '}
           document.
         </Text>
-        <Card
-          text={currentExample.igbo}
-          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
-        >
+        <Card text={currentExample.igbo} href={currentExampleHref}>
           <SandboxAudioReviewer
             pronunciations={currentExample.pronunciations}
             onApprove={handleOnApprove}

@@ -127,6 +127,8 @@ const RecordSentenceAudio = ({
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
   const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
+  // eslint-disable-next-line max-len
+  const currentExampleHref = `${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${examples?.[exampleIndex]?.id}/${Views.SHOW}`;
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
@@ -135,10 +137,7 @@ const RecordSentenceAudio = ({
           Record sentence audio
         </Heading>
         <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
-        <Card
-          text={currentExample.igbo}
-          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
-        />
+        <Card text={currentExample.igbo} href={currentExampleHref} />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
         <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>
