@@ -1,9 +1,6 @@
-import WordClass from '../constants/WordClass';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
-const isVerb = (wordClass: string): boolean => (
-  wordClass === WordClass.AV.value
-  || wordClass === WordClass.PV.value
-  || wordClass === WordClass.MV.value
-);
+const isVerb = (wordClass: string): boolean =>
+  wordClass === WordClassEnum.AV || wordClass === WordClassEnum.PV || wordClass === WordClassEnum.MV;
 
 export default isVerb;

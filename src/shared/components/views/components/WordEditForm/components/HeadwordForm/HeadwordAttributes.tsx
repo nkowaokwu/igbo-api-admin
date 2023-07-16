@@ -1,13 +1,9 @@
 import React, { ReactElement } from 'react';
-import {
-  Box,
-  Checkbox,
-  Tooltip,
-  chakra,
-} from '@chakra-ui/react';
+import { Box, Checkbox, Tooltip, chakra } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 
 const HeadwordAttributes = ({
   record,
@@ -16,35 +12,37 @@ const HeadwordAttributes = ({
   isHeadwordAccented,
   isAsCompleteAsPossible,
   isConstructedPollTerm,
-} : {
-  record: Interfaces.Word,
-  errors: { [key: string]: { [key: string]: string } }
-  control: any,
-  isHeadwordAccented: boolean,
-  isAsCompleteAsPossible: boolean,
-  isConstructedPollTerm: boolean,
+}: {
+  record: Interfaces.Word;
+  errors: { [key: string]: { [key: string]: string } };
+  control: any;
+  isHeadwordAccented: boolean;
+  isAsCompleteAsPossible: boolean;
+  isConstructedPollTerm: boolean;
 }): ReactElement => {
   const { getValues } = control;
   return (
-    <Box
-      className="w-full grid grid-flow-row grid-cols-2 gap-4 px-3"
-    >
+    <Box className="w-full grid grid-flow-row grid-cols-2 gap-4 px-3">
       <Controller
         render={({ onChange, value, ref }) => (
           <Checkbox
             onChange={(e) => onChange(e.target.checked)}
             isChecked={value}
-            defaultIsChecked={record.attributes?.[WordAttributes.IS_STANDARD_IGBO.value]}
+            defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_STANDARD_IGBO]}
             ref={ref}
-            data-test={`${WordAttributes.IS_STANDARD_IGBO.value}-checkbox`}
+            data-test={`${WordAttributeEnum.IS_STANDARD_IGBO}-checkbox`}
             size="lg"
           >
-            <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_STANDARD_IGBO.label}</chakra.span>
+            <chakra.span className="font-bold" fontFamily="Silka">
+              {WordAttributes[WordAttributeEnum.IS_STANDARD_IGBO].label}
+            </chakra.span>
           </Checkbox>
         )}
-        defaultValue={record.attributes?.[WordAttributes.IS_STANDARD_IGBO.value]
-          || getValues().attributes?.[WordAttributes.IS_STANDARD_IGBO.value]}
-        name={`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`}
+        defaultValue={
+          record.attributes?.[WordAttributeEnum.IS_STANDARD_IGBO] ||
+          getValues().attributes?.[WordAttributeEnum.IS_STANDARD_IGBO]
+        }
+        name={`attributes.${WordAttributeEnum.IS_STANDARD_IGBO}`}
         control={control}
       />
       <Tooltip
@@ -56,26 +54,29 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={!!value}
-                defaultIsChecked={!!(isHeadwordAccented
-                  || record.attributes?.[WordAttributes.IS_ACCENTED.value])}
+                defaultIsChecked={!!(isHeadwordAccented || record.attributes?.[WordAttributeEnum.IS_ACCENTED])}
                 ref={ref}
-                data-test={`${WordAttributes.IS_ACCENTED.value}-checkbox`}
+                data-test={`${WordAttributeEnum.IS_ACCENTED}-checkbox`}
                 size="lg"
               >
-                <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_ACCENTED.label}</chakra.span>
+                <chakra.span className="font-bold" fontFamily="Silka">
+                  {WordAttributes[WordAttributeEnum.IS_ACCENTED].label}
+                </chakra.span>
               </Checkbox>
             )}
-            defaultValue={!!(isHeadwordAccented
-              || record.attributes?.[WordAttributes.IS_ACCENTED.value]
-              || getValues().attributes?.[WordAttributes.IS_ACCENTED.value])}
-            name={`attributes.${WordAttributes.IS_ACCENTED.value}`}
+            defaultValue={
+              !!(
+                isHeadwordAccented ||
+                record.attributes?.[WordAttributeEnum.IS_ACCENTED] ||
+                getValues().attributes?.[WordAttributeEnum.IS_ACCENTED]
+              )
+            }
+            name={`attributes.${WordAttributeEnum.IS_ACCENTED}`}
             control={control}
           />
         </Box>
       </Tooltip>
-      {errors.attributes?.isAccented ? (
-        <p className="error relative">Is Accented must be selected</p>
-      ) : null}
+      {errors.attributes?.isAccented ? <p className="error relative">Is Accented must be selected</p> : null}
       <Tooltip label="Check this checkbox if this word is considered casual slang">
         <Box display="flex">
           <Controller
@@ -83,25 +84,30 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributes.IS_SLANG.value]}
+                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_SLANG]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_SLANG.value}-checkbox`}
+                data-test={`${WordAttributeEnum.IS_SLANG}-checkbox`}
                 size="lg"
               >
-                <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_SLANG.label}</chakra.span>
+                <chakra.span className="font-bold" fontFamily="Silka">
+                  {WordAttributes[WordAttributeEnum.IS_SLANG].label}
+                </chakra.span>
               </Checkbox>
             )}
-            defaultValue={record.attribute?.[WordAttributes.IS_SLANG.value]
-              || getValues().attributes?.[WordAttributes.IS_SLANG.value]}
-            name={`attributes.${WordAttributes.IS_SLANG.value}`}
+            defaultValue={
+              record.attribute?.[WordAttributeEnum.IS_SLANG] || getValues().attributes?.[WordAttributeEnum.IS_SLANG]
+            }
+            name={`attributes.${WordAttributeEnum.IS_SLANG}`}
             control={control}
           />
         </Box>
       </Tooltip>
       <Tooltip
-        label={isConstructedPollTerm
-          ? 'This checkbox is automatically checked since it\'s a constructed term that comes from a Twitter poll'
-          : 'Check this checkbox if this is a newly coined, aka constructed, Igbo word'}
+        label={
+          isConstructedPollTerm
+            ? "This checkbox is automatically checked since it's a constructed term that comes from a Twitter poll"
+            : 'Check this checkbox if this is a newly coined, aka constructed, Igbo word'
+        }
       >
         <Box display="flex">
           <Controller
@@ -109,23 +115,23 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={isConstructedPollTerm || value}
-                defaultIsChecked={
-                  isConstructedPollTerm
-                  || record.attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
-                }
+                defaultIsChecked={isConstructedPollTerm || record.attributes?.[WordAttributeEnum.IS_CONSTRUCTED_TERM]}
                 isDisabled={isConstructedPollTerm}
                 ref={ref}
-                data-test={`${WordAttributes.IS_CONSTRUCTED_TERM.value}-checkbox`}
+                data-test={`${WordAttributeEnum.IS_CONSTRUCTED_TERM}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
-                  {WordAttributes.IS_CONSTRUCTED_TERM.label}
+                  {WordAttributes[WordAttributeEnum.IS_CONSTRUCTED_TERM].label}
                 </chakra.span>
               </Checkbox>
             )}
-            defaultValue={isConstructedPollTerm || record.attribute?.[WordAttributes.IS_CONSTRUCTED_TERM.value]
-              || getValues().attributes?.[WordAttributes.IS_CONSTRUCTED_TERM.value]}
-            name={`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`}
+            defaultValue={
+              isConstructedPollTerm ||
+              record.attribute?.[WordAttributeEnum.IS_CONSTRUCTED_TERM] ||
+              getValues().attributes?.[WordAttributeEnum.IS_CONSTRUCTED_TERM]
+            }
+            name={`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`}
             control={control}
           />
         </Box>
@@ -137,19 +143,21 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
+                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_BORROWED_TERM]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_BORROWED_TERM.value}-checkbox`}
+                data-test={`${WordAttributeEnum.IS_BORROWED_TERM}-checkbox`}
                 size="lg"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
-                  {WordAttributes.IS_BORROWED_TERM.label}
+                  {WordAttributes[WordAttributeEnum.IS_BORROWED_TERM].label}
                 </chakra.span>
               </Checkbox>
             )}
-            defaultValue={record.attribute?.[WordAttributes.IS_BORROWED_TERM.value]
-              || getValues().attributes?.[WordAttributes.IS_BORROWED_TERM.value]}
-            name={`attributes.${WordAttributes.IS_BORROWED_TERM.value}`}
+            defaultValue={
+              record.attribute?.[WordAttributeEnum.IS_BORROWED_TERM] ||
+              getValues().attributes?.[WordAttributeEnum.IS_BORROWED_TERM]
+            }
+            name={`attributes.${WordAttributeEnum.IS_BORROWED_TERM}`}
             control={control}
           />
         </Box>
@@ -164,17 +172,20 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributes.IS_STEM.value]}
+                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_STEM]}
                 ref={ref}
-                data-test={`${WordAttributes.IS_STEM.value}-checkbox`}
+                data-test={`${WordAttributeEnum.IS_STEM}-checkbox`}
                 size="lg"
               >
-                <chakra.span className="font-bold" fontFamily="Silka">{WordAttributes.IS_STEM.label}</chakra.span>
+                <chakra.span className="font-bold" fontFamily="Silka">
+                  {WordAttributes[WordAttributeEnum.IS_STEM].label}
+                </chakra.span>
               </Checkbox>
             )}
-            defaultValue={record.attribute?.[WordAttributes.IS_STEM.value]
-              || getValues().attributes?.[WordAttributes.IS_STEM.value]}
-            name={`attributes.${WordAttributes.IS_STEM.value}`}
+            defaultValue={
+              record.attribute?.[WordAttributeEnum.IS_STEM] || getValues().attributes?.[WordAttributeEnum.IS_STEM]
+            }
+            name={`attributes.${WordAttributeEnum.IS_STEM}`}
             control={control}
           />
         </Box>

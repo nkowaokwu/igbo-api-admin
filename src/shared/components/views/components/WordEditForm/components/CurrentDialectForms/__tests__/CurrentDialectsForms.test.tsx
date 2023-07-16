@@ -3,6 +3,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import Dialects from 'src/backend/shared/constants/Dialect';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import CurrentDialectsForms from '../CurrentDialectsForms';
 
 describe('CurrentDialectsForms', () => {
@@ -29,9 +30,11 @@ describe('CurrentDialectsForms', () => {
 
     const dialectsSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
-    await Promise.all(Object.values(Dialects).map(async ({ label }) => {
-      await findByText(label);
-    }));
+    await Promise.all(
+      Object.values(Dialects).map(async ({ label }) => {
+        await findByText(label);
+      }),
+    );
   });
 
   it('handles adding a selected dialect', async () => {
@@ -45,12 +48,14 @@ describe('CurrentDialectsForms', () => {
     const dialectsSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
     fireEvent.click(await findByText(Dialects.AJA.label));
-    expect(mockOnChange).toBeCalledWith([{
-      dialects: [Dialects.ABI.value, Dialects.AJA.value],
-      id: 'dialect-id',
-      word: 'word',
-      pronunciation: '',
-    }]);
+    expect(mockOnChange).toBeCalledWith([
+      {
+        dialects: [DialectEnum.ABI, DialectEnum.AJA],
+        id: 'dialect-id',
+        word: 'word',
+        pronunciation: '',
+      },
+    ]);
   });
 
   it('handles removing a selected dialect', async () => {
@@ -64,12 +69,14 @@ describe('CurrentDialectsForms', () => {
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
     const dialectOption = await findByText(Dialects.ABI.label);
     fireEvent.click(dialectOption.nextSibling);
-    expect(mockOnChange).toBeCalledWith([{
-      dialects: [],
-      id: 'dialect-id',
-      word: 'word',
-      pronunciation: '',
-    }]);
+    expect(mockOnChange).toBeCalledWith([
+      {
+        dialects: [],
+        id: 'dialect-id',
+        word: 'word',
+        pronunciation: '',
+      },
+    ]);
   });
 
   it.skip('handles resetting audio for dialectal variation', async () => {

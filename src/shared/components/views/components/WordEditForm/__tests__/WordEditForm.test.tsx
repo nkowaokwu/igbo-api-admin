@@ -7,7 +7,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import Tense from 'src/backend/shared/constants/Tense';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
-import WordClass from 'src/backend/shared/constants/WordClass';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordEditForm from '../WordEditForm';
 
 jest.mock('src/Core/Dashboard/network');
@@ -18,11 +18,7 @@ describe('Word Edit Form', () => {
   });
   it('render word edit form', async () => {
     const { findByText, findAllByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -40,17 +36,13 @@ describe('Word Edit Form', () => {
     await findByText('Word Stems');
     await findByText('Examples');
     await findByText('Dialectal Variations');
-    await findByText('Editor\'s Comments');
+    await findByText("Editor's Comments");
   });
 
   it.skip('submits the word form', async () => {
     const mockSave = jest.fn();
     const { findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={mockSave}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={mockSave}>
         <WordEditForm />
       </TestContext>,
     );
@@ -61,11 +53,7 @@ describe('Word Edit Form', () => {
 
   it('render dialectal variations', async () => {
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -78,11 +66,7 @@ describe('Word Edit Form', () => {
 
   it('add a definition group to word suggestion', async () => {
     const { findByText, findAllByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -95,11 +79,7 @@ describe('Word Edit Form', () => {
 
   it('add a word stem to word suggestion', async () => {
     const { findByText, findByPlaceholderText, findAllByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -112,11 +92,7 @@ describe('Word Edit Form', () => {
 
   it('add a word relatedTerm to word suggestion', async () => {
     const { findByText, findAllByText, findByPlaceholderText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -130,13 +106,9 @@ describe('Word Edit Form', () => {
     await findByText('resolved word definition');
   });
 
-  it('doesn\'t show tenses with a non-verb', async () => {
+  it("doesn't show tenses with a non-verb", async () => {
     const { queryByText, findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -151,30 +123,24 @@ describe('Word Edit Form', () => {
 
   it('shows tenses with a verb', async () => {
     const staticWordRecord = cloneDeep(wordRecord);
-    staticWordRecord.definitions[0].wordClass = WordClass.AV.value;
+    staticWordRecord.definitions[0].wordClass = WordClassEnum.AV;
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
 
     await findByText('Tenses');
-    await Promise.all(Object.values(Tense).map(async ({ value }) => {
-      expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
-    }));
+    await Promise.all(
+      Object.values(Tense).map(async ({ value }) => {
+        expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
+      }),
+    );
   });
 
   it('switches from non-verb to verb to show tenses', async () => {
     const { findByText, findByTestId, findAllByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -186,18 +152,16 @@ describe('Word Edit Form', () => {
     userEvent.click(last(await findAllByText('Active verb')));
 
     await findByText('Tenses');
-    await Promise.all(Object.values(Tense).map(async ({ value }) => {
-      expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
-    }));
+    await Promise.all(
+      Object.values(Tense).map(async ({ value }) => {
+        expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
+      }),
+    );
   });
 
   it('show the updated headword warning message within audio recorder', async () => {
     const { findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
@@ -207,11 +171,7 @@ describe('Word Edit Form', () => {
 
   it('render nsibidi options', async () => {
     const { findByTestId, findByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        save={() => {}}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );

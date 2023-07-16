@@ -7,11 +7,11 @@ import {
   deleteCorpusSuggestion,
 } from './shared/commands';
 import {
-  corpusSuggestionId,
   corpusSuggestionData,
   malformedCorpusSuggestionData,
   updatedCorpusSuggestionData,
 } from './__mocks__/documentData';
+import { corpusSuggestionId } from './__mocks__/documentIds';
 import { AUTH_TOKEN, INVALID_ID } from './shared/constants';
 
 describe('MongoDB Corpus Suggestions', () => {
@@ -69,7 +69,7 @@ describe('MongoDB Corpus Suggestions', () => {
       expect(result.body.authorId).toEqual(res.body.authorId);
     });
 
-    it('should return an error because document doesn\'t exist', async () => {
+    it("should return an error because document doesn't exist", async () => {
       const res = await getCorpusSuggestion(INVALID_ID);
       expect(res.status).toEqual(400);
       expect(res.body.error).not.toEqual(undefined);

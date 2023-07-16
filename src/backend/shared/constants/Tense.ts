@@ -1,34 +1,35 @@
+import TenseEnum from './TenseEnum';
 /**
  * This file defines the valid tenses options for words and wordSuggestions
  */
 
 export default {
-  INFINITIVE: {
+  [TenseEnum.INFINITIVE]: {
     value: 'infinitive',
-    label: 'Infinitive',
+    label: TenseEnum.INFINITIVE,
   },
-  IMPERATIVE: {
+  [TenseEnum.IMPERATIVE]: {
     value: 'imperative',
-    label: 'Imperative',
+    label: TenseEnum.IMPERATIVE,
   },
-  SIMPLE_PAST: {
+  [TenseEnum.SIMPLE_PAST]: {
     value: 'simplePast',
-    label: 'Simple Past',
+    label: TenseEnum.SIMPLE_PAST,
   },
-  PRESENT_PASSIVE: {
+  [TenseEnum.PRESENT_PASSIVE]: {
     value: 'presentPassive',
-    label: 'Present Passive',
+    label: TenseEnum.PRESENT_PASSIVE,
   },
-  SIMPLE_PRESENT: {
+  [TenseEnum.SIMPLE_PRESENT]: {
     value: 'simplePresent',
-    label: 'Simple Present',
+    label: TenseEnum.SIMPLE_PRESENT,
   },
-  PRESENT_CONTINUOUS: {
+  [TenseEnum.PRESENT_CONTINUOUS]: {
     value: 'presentContinuous',
-    label: 'Present Continuous',
+    label: TenseEnum.PRESENT_CONTINUOUS,
   },
-  FUTURE: {
+  [TenseEnum.FUTURE]: {
     value: 'future',
-    label: 'Future',
+    label: TenseEnum.FUTURE,
   },
 };

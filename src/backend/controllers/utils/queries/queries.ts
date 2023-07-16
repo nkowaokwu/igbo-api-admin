@@ -3,10 +3,10 @@ import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 4;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
@@ -35,8 +35,8 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
     ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
         allFilters.$or = allFilters.$or || [];
         switch (key) {
-          case WordAttributes.IS_STANDARD_IGBO.value:
-            allFilters[`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`] = { $eq: !!value };
+          case WordAttributeEnum.IS_STANDARD_IGBO:
+            allFilters[`attributes.${WordAttributeEnum.IS_STANDARD_IGBO}`] = { $eq: !!value };
             break;
           case 'pronunciation':
             if (value) {
@@ -66,8 +66,8 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
               ];
             }
             break;
-          case WordAttributes.IS_CONSTRUCTED_TERM.value:
-            allFilters[`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`] = { $eq: !!value };
+          case WordAttributeEnum.IS_CONSTRUCTED_TERM:
+            allFilters[`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`] = { $eq: !!value };
             break;
           case SuggestionSource.COMMUNITY:
             allFilters.source = { $eq: SuggestionSource.COMMUNITY };

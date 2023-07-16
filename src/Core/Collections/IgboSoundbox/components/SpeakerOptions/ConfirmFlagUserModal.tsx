@@ -77,7 +77,9 @@ const ConfirmFlagUserModal = ({
                 <FormLabel>Reason</FormLabel>
                 <RadioGroup aria-required colorScheme="green" onChange={setReason}>
                   {FlagReasons.map(({ reason }) => (
-                    <Radio value={reason}>{reason}</Radio>
+                    <Radio value={reason} key={reason}>
+                      {reason}
+                    </Radio>
                   ))}
                 </RadioGroup>
                 <FormLabel>Details</FormLabel>
