@@ -1,16 +1,17 @@
 import { cloneDeep } from 'lodash';
 import { Model } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 
 export const sortRankings = ({
   leaderboardRankings,
   user,
   count,
-} : {
-  leaderboardRankings: Interfaces.Leaderboard['rankings'],
-  user: { displayName: string, email: string, photoURL: string, uid: string },
-  count: number,
+}: {
+  leaderboardRankings: Interfaces.Leaderboard['rankings'];
+  user: { displayName: string; email: string; photoURL: string; uid: string };
+  count: number;
 }): Interfaces.Leaderboard['rankings'] => {
   if (!Array.isArray(leaderboardRankings) || !user.uid || typeof count !== 'number') {
     return leaderboardRankings || [];
@@ -54,23 +55,28 @@ export const assignRankings = async ({
   rankingsGroups,
   leaderboards,
   Leaderboard,
-} : {
-  rankingsGroups: Interfaces.Leaderboard['rankings'][],
-  leaderboards: Interfaces.Leaderboard[],
-  Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>,
+  timeRange,
+}: {
+  rankingsGroups: Interfaces.Leaderboard['rankings'][];
+  leaderboards: Interfaces.Leaderboard[];
+  Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
+  timeRange: LeaderboardTimeRange;
 }): Promise<void> => {
-  await Promise.all(rankingsGroups.map(async (rankings, index) => {
-    const leaderboard = leaderboards[index];
-    if (!leaderboard) {
-      const newLeaderboard = new Leaderboard({
-        type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-        page: index,
-      });
-      await newLeaderboard.save();
-    }
-    leaderboard.rankings = rankings;
-    await leaderboard.save();
-  }));
+  await Promise.all(
+    rankingsGroups.map(async (rankings, index) => {
+      const leaderboard = leaderboards[index];
+      if (!leaderboard) {
+        const newLeaderboard = new Leaderboard({
+          type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+          page: index,
+          timeRange,
+        });
+        await newLeaderboard.save();
+      }
+      leaderboard.rankings = rankings;
+      await leaderboard.save();
+    }),
+  );
 };
 
 export const sortLeaderboards = (leaderboards: Interfaces.Leaderboard[]): void => {

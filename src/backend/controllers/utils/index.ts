@@ -235,6 +235,7 @@ export const handleQueries = ({
     strict: strictQuery,
     uid: uidQuery,
     leaderboard,
+    timeRange,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -257,6 +258,7 @@ export const handleQueries = ({
     body,
     uidQuery,
     leaderboard,
+    timeRange,
     error,
     response,
     mongooseConnection,

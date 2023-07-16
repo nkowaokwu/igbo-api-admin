@@ -183,7 +183,7 @@ export const putExampleSuggestion = async (
  */
 export const findExampleSuggestionById = (
   id: string,
-  mongooseConnection,
+  mongooseConnection: Connection,
 ): Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
@@ -403,7 +403,7 @@ export const getTotalVerifiedExampleSuggestions = async (
 ): Promise<any | void> => {
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
-  const query = searchExampleAudioPronunciationsReviewedByUser(uid);
+  const query = searchExampleAudioPronunciationsReviewedByUser({ uid });
 
   try {
     return await findExampleSuggestions({
@@ -668,7 +668,7 @@ export const deleteExampleSuggestion = async (
 };
 
 /* Returns all the ExampleSuggestions from last week */
-export const getExampleSuggestionsFromLastWeek = (mongooseConnection): Promise<any> => {
+export const getExampleSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
     exampleSuggestionSchema,

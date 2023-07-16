@@ -87,9 +87,7 @@ const SandboxAudioReviewer = ({
                                 </Link>
                               </Tooltip>
                             </>
-                          ) : (
-                            <chakra.span>N/A</chakra.span>
-                          )}
+                          ) : null}
                         </chakra.span>
                         <SpeakerOptions uid={currentSpeaker?.uid} displayName={currentSpeaker?.displayName} />
                       </Box>

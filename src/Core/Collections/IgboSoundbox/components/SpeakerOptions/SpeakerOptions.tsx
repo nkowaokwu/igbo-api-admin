@@ -8,7 +8,7 @@ import { sendReportUserEmail, ReportUserInterface } from 'src/shared/PlatformAPI
 
 const auth = getAuth();
 
-const SpeakerOptions = ({ uid, displayName = 'N/A' }: { uid: string; displayName: string }): ReactElement => {
+const SpeakerOptions = ({ uid, displayName = '' }: { uid: string; displayName: string }): ReactElement => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleReportUser = async ({ reason, details }: { reason: string; details: string }) => {
