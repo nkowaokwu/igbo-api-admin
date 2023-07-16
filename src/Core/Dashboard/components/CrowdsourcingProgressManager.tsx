@@ -38,27 +38,27 @@ const crowdsourcingOptions: CrowdsourcingOption[] = [
     hash: '#/igboDefinitions',
     backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
   },
-  {
-    icon: '🇳🇬',
-    title: 'Add Igbo sentences',
-    subtitle: 'Add Igbo sentences to contribute to the largest Igbo dictionary',
-    hash: '#/igboDefinitions',
-    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
-  },
-  {
-    icon: '➡️',
-    title: 'Translate Igbo sentences',
-    subtitle: 'Translate Igbo sentences to English to improve Igbo translation technology',
-    hash: '#/igboDefinitions',
-    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
-  },
-  {
-    icon: '📸',
-    title: 'Upload images of Igbo text',
-    subtitle: 'Upload images that contain Igbo text to be later annotated',
-    hash: '#/igboDefinitions',
-    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
-  },
+  // {
+  //   icon: '🇳🇬',
+  //   title: 'Add Igbo sentences',
+  //   subtitle: 'Add Igbo sentences to contribute to the largest Igbo dictionary',
+  //   hash: '#/igboDefinitions',
+  //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+  // },
+  // {
+  //   icon: '➡️',
+  //   title: 'Translate Igbo sentences',
+  //   subtitle: 'Translate Igbo sentences to English to improve Igbo translation technology',
+  //   hash: '#/igboDefinitions',
+  //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+  // },
+  // {
+  //   icon: '📸',
+  //   title: 'Upload images of Igbo text',
+  //   subtitle: 'Upload images that contain Igbo text to be later annotated',
+  //   hash: '#/igboDefinitions',
+  //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+  // },
 ];
 
 const handleNavigation = ({ hash, state }: { hash: string; state?: IgboSoundboxViews }) => {
