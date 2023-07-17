@@ -64,6 +64,17 @@ const updateLeaderboardWithTimeRange = async ({
           });
           return finalCount + currentCount;
         }, 0)
+      : leaderboardType === LeaderboardType.RECORD_EXAMPLE_AUDIO
+      ? // Count all individual audio pronunciation recordings
+        exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
+          let currentCount = 0;
+          pronunciations.forEach(({ speaker }) => {
+            if (speaker === user.uid) {
+              currentCount += 1;
+            }
+          });
+          return finalCount + currentCount;
+        }, 0)
       : exampleSuggestionsByUser.length;
 
   const updatedRankings = sortRankings({
