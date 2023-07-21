@@ -29,7 +29,7 @@ const schema = yup.object().shape({
         id: yup.string(),
       }),
     )
-    .required(),
+    .optional(),
 });
 
 const resolver = (): any => ({
