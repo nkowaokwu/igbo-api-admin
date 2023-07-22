@@ -116,3 +116,8 @@ export const getLeaderboardStats = jest.fn(async () => ({
   rankings: [],
   userRankings: [],
 }));
+
+export const getRandomExampleSuggestionsToTranslate = jest.fn(async () => ({
+  data: [{ id: '123', igbo: 'First Igbo', english: '' }],
+}));
+export const putRandomExampleSuggestionsToTranslate = jest.fn(async () => {});

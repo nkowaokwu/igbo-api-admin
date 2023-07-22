@@ -1,6 +1,6 @@
 const initializeAPI = {
   config: {
-    update: jest.fn(() => ({})),
+    update: jest.fn(),
   },
   S3: jest.fn(() => ({
     upload: jest.fn((params) => ({

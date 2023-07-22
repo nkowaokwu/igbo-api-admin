@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Button, ButtonProps, Tooltip } from '@chakra-ui/react';
+import { Box, Button, ButtonProps, Tooltip } from '@chakra-ui/react';
 
 const ActivityButton = ({
   tooltipLabel,
@@ -7,7 +7,9 @@ const ActivityButton = ({
   ...props
 }: ButtonProps & { label: string; tooltipLabel?: string }): ReactElement => (
   <Tooltip label={tooltipLabel}>
-    <Button {...props}>{label}</Button>
+    <Box>
+      <Button {...props}>{label}</Button>
+    </Box>
   </Tooltip>
 );
 

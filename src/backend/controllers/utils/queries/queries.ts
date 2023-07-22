@@ -246,6 +246,32 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = (
     },
   },
 });
+
+/**
+ * Returns ExampleSuggestion documents that are marked for review
+ * @param uid
+ * @returns
+ */
+export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
+  uid: string,
+): {
+  merged: null;
+  english: string;
+  exampleForSuggestion: { $ne: true };
+  'pronunciations.0.audio': { $exists: boolean; $type: string; $ne: string };
+  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
+} => ({
+  merged: null,
+  english: '',
+  exampleForSuggestion: { $ne: true },
+  'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
+  // Returns an example where the user hasn't approved or denied an audio pronunciation
+  pronunciations: {
+    $elemMatch: {
+      $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
+    },
+  },
+});
 export const searchPreExistingExampleSuggestionsRegexQuery = ({
   igbo,
   english,

@@ -5,9 +5,11 @@ import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { leaderboardSchema } from 'src/backend/models/Leaderboard';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import countingFunctions from 'src/backend/controllers/leaderboard/countingFunctions';
 import {
   searchExampleAudioPronunciationsRecordedByUser,
   searchExampleAudioPronunciationsReviewedByUser,
+  searchExampleSuggestionTranslatedByUser,
 } from '../utils/queries/leaderboardQueries';
 import { handleQueries } from '../utils';
 import { sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
@@ -16,6 +18,7 @@ import { findUser } from '../users';
 const LeaderboardQuery = {
   [LeaderboardType.RECORD_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsRecordedByUser,
   [LeaderboardType.VERIFY_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsReviewedByUser,
+  [LeaderboardType.TRANSLATE_IGBO_SENTENCE]: searchExampleSuggestionTranslatedByUser,
 };
 
 const updateLeaderboardWithTimeRange = async ({
@@ -52,30 +55,14 @@ const updateLeaderboardWithTimeRange = async ({
   if (!exampleSuggestionsByUser) {
     throw new Error('No example suggestion associated with the user.');
   }
-  const totalCount =
-    leaderboardType === LeaderboardType.VERIFY_EXAMPLE_AUDIO
-      ? // Count all individual audio pronunciation reviews
-        exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
-          let currentCount = 0;
-          pronunciations.forEach(({ approvals, denials }) => {
-            if (approvals.includes(user.uid) || denials.includes(user.uid)) {
-              currentCount += 1;
-            }
-          });
-          return finalCount + currentCount;
-        }, 0)
-      : leaderboardType === LeaderboardType.RECORD_EXAMPLE_AUDIO
-      ? // Count all individual audio pronunciation recordings
-        exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
-          let currentCount = 0;
-          pronunciations.forEach(({ speaker }) => {
-            if (speaker === user.uid) {
-              currentCount += 1;
-            }
-          });
-          return finalCount + currentCount;
-        }, 0)
-      : exampleSuggestionsByUser.length;
+
+  const fallbackCountingFunction = () => exampleSuggestionsByUser.length;
+  const countingFunction = countingFunctions[leaderboardType] || fallbackCountingFunction;
+
+  const totalCount = countingFunction({
+    exampleSuggestions: exampleSuggestionsByUser,
+    uid: user.uid,
+  });
 
   const updatedRankings = sortRankings({
     leaderboardRankings: allRankings,
@@ -182,6 +169,35 @@ export const calculateRecordingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+      mongooseConnection,
+      user,
+    });
+
+    return res.send(response);
+  } catch (err) {
+    return next(err);
+  }
+};
+export const calculateTranslatingExampleLeaderboard = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  const {
+    user: { uid },
+    error,
+    response,
+    mongooseConnection,
+  } = req;
+
+  if (error) {
+    return next(error);
+  }
+
+  try {
+    const user = (await findUser(uid)) as Interfaces.FormattedUser;
+    await updateUserLeaderboardStat({
+      leaderboardType: LeaderboardType.TRANSLATE_IGBO_SENTENCE,
       mongooseConnection,
       user,
     });

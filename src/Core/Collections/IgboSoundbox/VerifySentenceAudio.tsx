@@ -25,10 +25,8 @@ const DEFAULT_CURRENT_EXAMPLE = { igbo: '', pronunciations: [] };
 
 const VerifySentenceAudio = ({
   setIsDirty,
-  goHome,
 }: {
   setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
-  goHome: () => void;
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [reviews, setReviews] = useState<SentenceVerification[]>([]);
@@ -207,14 +205,9 @@ const VerifySentenceAudio = ({
       </Box>
     </Box>
   ) : noExamples ? (
-    <EmptyExamples setIsDirty={setIsDirty} goHome={goHome} />
+    <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed
-      type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO}
-      setIsComplete={setIsComplete}
-      setIsDirty={setIsDirty}
-      goHome={goHome}
-    />
+    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
   ) : (
     <Spinner />
   );

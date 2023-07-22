@@ -146,6 +146,7 @@ const Leaderboard = (): ReactElement => {
       <Select defaultValue={leaderboard} onChange={handleUpdateLeaderboard} fontFamily="Silka">
         <option value={LeaderboardType.RECORD_EXAMPLE_AUDIO}>Recorded example audio</option>
         <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>Verified example audio</option>
+        <option value={LeaderboardType.TRANSLATE_IGBO_SENTENCE}>Translate Igbo sentences</option>
       </Select>
       <Box className="space-x-3 my-4">
         {Object.entries(LeaderboardTimeRange).map(([key, value]) => (

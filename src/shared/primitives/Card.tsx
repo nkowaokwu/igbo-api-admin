@@ -5,7 +5,7 @@ import { usePermissions } from 'react-admin';
 import { hasAtLeastCrowdsourcerPermissions, hasEditorPermissions } from 'src/shared/utils/permissions';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
 
-const Card = ({ text, href, children }: { text?: string; href?: string; children: any }): ReactElement => {
+const Card = ({ text, href, children }: { text?: string; href?: string; children?: any }): ReactElement => {
   const permissions = usePermissions();
   const toast = useToast();
   const isCrowdsourcer = hasAtLeastCrowdsourcerPermissions(permissions?.permissions, true);

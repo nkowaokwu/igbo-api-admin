@@ -1,23 +1,19 @@
 import React, { ReactElement, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Heading,
-  Text,
-} from '@chakra-ui/react';
+import { noop } from 'lodash';
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
 
-const EmptyExamples = (
-  {
-    recording = false,
-    setIsDirty,
-    goHome,
-  }
-  : {
-    recording?: boolean,
-    setIsDirty: React.Dispatch<React.SetStateAction<boolean>>,
-    goHome: () => void,
-  },
-): ReactElement => {
+const EmptyExamples = ({
+  recording = false,
+  setIsDirty = noop,
+}: {
+  recording?: boolean;
+  setIsDirty?: React.Dispatch<React.SetStateAction<boolean>>;
+}): ReactElement => {
+  const goHome = () => {
+    window.location.search = '';
+    window.location.hash = '#/';
+  };
+
   useEffect(() => {
     setIsDirty(false);
   }, []);
@@ -32,18 +28,10 @@ const EmptyExamples = (
     >
       <Box className="space-y-4">
         <Heading textAlign="center">{`There are no examples to ${recording ? 'record' : 'review'}`}</Heading>
-        <Text textAlign="center">
-          Please check back later for more examples to be added
-        </Text>
+        <Text textAlign="center">Please check back later for more examples to be added</Text>
       </Box>
       <Box className="space-x-3">
-        <Button
-          colorScheme="gray"
-          borderRadius="full"
-          fontFamily="Silka"
-          fontWeight="bold"
-          onClick={goHome}
-        >
+        <Button colorScheme="gray" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={goHome}>
           Go back home
         </Button>
       </Box>

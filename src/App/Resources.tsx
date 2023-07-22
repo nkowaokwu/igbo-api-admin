@@ -45,6 +45,7 @@ const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
+const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
 
 const defaultRoutes = (permissions) =>
   hasAccessToPlatformPermissions(permissions, [
@@ -193,5 +194,10 @@ export const getCustomRouteObjects = (): any => [
     exact: true,
     path: '/profile',
     component: withLastRoute(Profile),
+  },
+  {
+    exact: true,
+    path: '/translate',
+    component: withLastRoute(TranslateIgboSentences),
   },
 ];

@@ -1,6 +1,11 @@
 import * as requestModule from 'src/shared/utils/request';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import { putAudioForRandomExampleSuggestions, putReviewForRandomExampleSuggestions } from '../DataCollectionAPI';
+import {
+  putAudioForRandomExampleSuggestions,
+  putReviewForRandomExampleSuggestions,
+  getRandomExampleSuggestionsToTranslate,
+  putRandomExampleSuggestionsToTranslate,
+} from '../DataCollectionAPI';
 
 describe('DataCollectionAPI', () => {
   const response = new Promise((resolve) => resolve({ data: 'success' }));
@@ -81,6 +86,28 @@ describe('DataCollectionAPI', () => {
         { id: 'fourth id', review: ReviewActions.APPROVE },
         { id: 'fifth id', review: ReviewActions.APPROVE },
       ],
+    });
+  });
+
+  it('sends a GET request with getRandomExampleSuggestionsToTranslate', async () => {
+    const requestSpy = jest.spyOn(requestModule, 'request');
+    await getRandomExampleSuggestionsToTranslate();
+    expect(requestSpy).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'exampleSuggestions/random/translate',
+      params: {
+        range: '[0, 4]',
+      },
+    });
+  });
+
+  it('sends a PUT request with putRandomExampleSuggestionsToTranslate', async () => {
+    const requestSpy = jest.spyOn(requestModule, 'request');
+    await putRandomExampleSuggestionsToTranslate([]);
+    expect(requestSpy).toHaveBeenCalledWith({
+      method: 'PUT',
+      url: 'exampleSuggestions/random/translate',
+      data: [],
     });
   });
 });

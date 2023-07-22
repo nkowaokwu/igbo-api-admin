@@ -45,13 +45,13 @@ const crowdsourcingOptions: CrowdsourcingOption[] = [
   //   hash: '#/igboDefinitions',
   //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
   // },
-  // {
-  //   icon: '➡️',
-  //   title: 'Translate Igbo sentences',
-  //   subtitle: 'Translate Igbo sentences to English to improve Igbo translation technology',
-  //   hash: '#/igboDefinitions',
-  //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
-  // },
+  {
+    icon: '➡️',
+    title: 'Translate Igbo sentences',
+    subtitle: 'Translate Igbo sentences to English to improve Igbo translation technology',
+    hash: '#/translate',
+    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+  },
   // {
   //   icon: '📸',
   //   title: 'Upload images of Igbo text',

@@ -5,25 +5,30 @@ import { deleteAudioPronunciation } from './MediaAPIs/AudioAPI';
 const handleExampleSuggestionAudioPronunciations = async ({
   exampleSuggestion,
   data,
-} : {
-  exampleSuggestion: ExampleSuggestion,
-  data: ExampleClientData
+}: {
+  exampleSuggestion: ExampleSuggestion;
+  data: ExampleClientData;
 }): Promise<void> => {
+  if (!data?.pronunciations || !data?.pronunciations?.length) {
+    return;
+  }
   // Handle deleting audio pronunciations that lived on the older version
   // of the current example suggestion
   if (exampleSuggestion.pronunciations.length > data.pronunciations.length) {
-    const deletePronunciations = exampleSuggestion.pronunciations.filter(({ audio }) => (
-      !data.pronunciations.find(({ audio: dataPronunciation }) => audio && dataPronunciation === audio)
-    ));
+    const deletePronunciations = exampleSuggestion.pronunciations.filter(
+      ({ audio }) => !data.pronunciations.find(({ audio: dataPronunciation }) => audio && dataPronunciation === audio),
+    );
 
     // Delete the old audio pronunciations
     if (deletePronunciations.length) {
       console.log('Deleting the following example suggestions audio:', deletePronunciations);
-      await Promise.all(deletePronunciations.map(async ({ audio: deleteAudio }) => {
-        const isAudioMp3 = isPronunciationMp3(deleteAudio);
-        const pronunciationId = getPronunciationId(deleteAudio);
-        await deleteAudioPronunciation(pronunciationId, isAudioMp3);
-      }));
+      await Promise.all(
+        deletePronunciations.map(async ({ audio: deleteAudio }) => {
+          const isAudioMp3 = isPronunciationMp3(deleteAudio);
+          const pronunciationId = getPronunciationId(deleteAudio);
+          await deleteAudioPronunciation(pronunciationId, isAudioMp3);
+        }),
+      );
     }
   }
 };

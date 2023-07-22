@@ -1,6 +1,6 @@
 import { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, map } from 'lodash';
+import { assign, omit, map } from 'lodash';
 import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
@@ -15,6 +15,7 @@ import {
   searchRandomExampleSuggestionsToReviewRegexQuery,
   searchExamplesWithoutEnoughAudioRegexQuery,
 } from 'src/backend/controllers/utils/queries';
+import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { sendRejectedEmail } from 'src/backend/controllers/email';
 import { findUser } from 'src/backend/controllers/users';
@@ -112,7 +113,7 @@ export const updateExampleSuggestion = ({
   mongooseConnection,
 }: {
   id: string;
-  data: Interfaces.ExampleSuggestion;
+  data: Partial<Interfaces.ExampleSuggestion>;
   mongooseConnection: Connection;
 }): Promise<(Interfaces.ExampleSuggestion & Interfaces.ExampleClientData) | void> => {
   const data = assign(clientData) as Interfaces.ExampleClientData;
@@ -121,6 +122,7 @@ export const updateExampleSuggestion = ({
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
+  // @ts-expect-error
   return ExampleSuggestion.findById(id).then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
     if (!exampleSuggestion) {
       throw new Error("Example suggestion doesn't exist");
@@ -131,7 +133,19 @@ export const updateExampleSuggestion = ({
 
     await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
-    const updatedExampleSuggestion = assign(exampleSuggestion, data);
+    // Properly handle merging
+    Object.entries(data?.crowdsourcing || {}).forEach(([key, value]) => {
+      exampleSuggestion.crowdsourcing[key] = value;
+    });
+    const updatedExampleSuggestion = assign(exampleSuggestion, omit(data, ['crowdsourcing']));
+
+    // Updates the user interactions to include the current user
+    const updatedUserInteractions = new Set(
+      updatedExampleSuggestion.userInteractions.concat(data?.userInteractions || []),
+    );
+    updatedExampleSuggestion.userInteractions = Array.from(updatedUserInteractions);
+
+    exampleSuggestion.markModified('crowdsourcing');
     return updatedExampleSuggestion.save();
   });
 };
@@ -153,7 +167,7 @@ export const putExampleSuggestion = async (
       body: data,
       params: { id },
       mongooseConnection,
-    } = req;
+    } = await handleQueries(req);
     const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     await Promise.all(
@@ -347,7 +361,7 @@ export const postBulkUploadExampleSuggestions = async (
 };
 
 /**
- * Returns at least five random Example Suggestion that need to be reviewed
+ * Returns at least five random Example Suggestions that need to be reviewed
  * @param req Request
  * @param res Response
  * @param next NextFunction
@@ -383,6 +397,86 @@ export const getRandomExampleSuggestionsToReview = async (
       .catch((err) => {
         console.log(err);
         throw new Error('An error has occurred while returning random example suggestions to review');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Updates at least five random Example Suggestions with English translations
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns
+ */
+export const putRandomExampleSuggestionsToTranslate = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { body: data, mongooseConnection, user } = await handleQueries(req);
+
+    const response = await Promise.all(
+      data.map(async ({ id, english }) => {
+        const res = await updateExampleSuggestion({
+          id,
+          data: {
+            english,
+            userInteractions: [user.uid],
+            crowdsourcing: { [CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]: true },
+          },
+          mongooseConnection,
+        });
+        console.log('how does this work?>>', res);
+        return res;
+      }),
+    );
+    req.response = response;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+/**
+ * Returns at least five random Example Suggestion that need to be translated into English
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns At least five random Example Suggestion that need to be reviewed by the current user
+ */
+export const getRandomExampleSuggestionsToTranslate = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { limit, user, mongooseConnection } = await handleQueries(req);
+
+    const query = searchRandomExampleSuggestionsToTranslateRegexQuery(user.uid);
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+
+    console.log({ limit });
+    return await findExampleSuggestions({
+      query,
+      limit,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) =>
+        packageResponse({
+          res,
+          docs: exampleSuggestions,
+          model: ExampleSuggestion,
+          query,
+        }),
+      )
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning random example suggestions to translate');
       });
   } catch (err) {
     return next(err);
