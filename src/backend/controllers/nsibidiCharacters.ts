@@ -17,7 +17,7 @@ export const getNsibidiCharacters = (
     // Loosely matches with an included Nsibidi character
     const regex = createRegExp(searchWord).wordReg;
     const query = {
-      $or: [{ nsibidi: { $regex: regex } }, { pronunciation: { $regex: regex } }, { _id: searchWord }],
+      $or: [{ nsibidi: { $regex: regex } }, { pronunciation: { $regex: regex } }],
     };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
