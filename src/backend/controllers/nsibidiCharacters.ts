@@ -12,37 +12,27 @@ export const getNsibidiCharacters = (
   next: NextFunction,
 ): Promise<any> | void => {
   try {
-    const {
-      searchWord,
-      mongooseConnection,
-      skip,
-      limit,
-      ...rest
-    } = handleQueries(req);
+    const { searchWord, regexKeyword, mongooseConnection, skip, limit, ...rest } = handleQueries(req);
 
     // Loosely matches with an included Nsibidi character
     const regex = createRegExp(searchWord).wordReg;
     const query = {
-      $or: [
-        { nsibidi: { $regex: regex } },
-        { pronunciation: { $regex: regex } },
-      ],
+      $or: [{ nsibidi: { $regex: regex } }, { pronunciation: { $regex: regex } }, { _id: searchWord }],
     };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
-    return NsibidiCharacter
-      .find(query)
+    return NsibidiCharacter.find(query)
       .skip(skip)
       .limit(limit)
-      .then((nsibidiCharacters: Interfaces.NsibidiCharacter[]) => (
+      .then((nsibidiCharacters: Interfaces.NsibidiCharacter[]) =>
         packageResponse({
           res,
           docs: nsibidiCharacters,
           model: NsibidiCharacter,
           query,
           ...rest,
-        })
-      ))
+        }),
+      )
       .catch((err) => {
         console.log(err);
         throw new Error('An error has occurred while returning Nsịbịdị characters, double check your provided data');
@@ -57,7 +47,7 @@ export const getNsibidiCharacter = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-) : Promise<any | void> => {
+): Promise<any | void> => {
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
@@ -83,7 +73,7 @@ export const postNsibidiCharacter = async (
     return res.send(savedNsibidiCharacter);
   } catch (err) {
     return next(err);
-  };
+  }
 };
 
 /* Updates a single Nsibidi character */
@@ -93,7 +83,11 @@ export const putNsibidiCharacter = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { mongooseConnection, params: { id }, body } = req;
+    const {
+      mongooseConnection,
+      params: { id },
+      body,
+    } = req;
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
     const nsibidiCharacter = await NsibidiCharacter.findById(id);
     const updatedNsibidiCharacter = assign(nsibidiCharacter, body);
@@ -104,5 +98,5 @@ export const putNsibidiCharacter = async (
     return res.send(savedNsibidiCharacter);
   } catch (err) {
     return next(err);
-  };
+  }
 };
