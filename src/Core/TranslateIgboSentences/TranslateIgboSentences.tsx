@@ -2,80 +2,72 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
 import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
-import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
+import {
+  getRandomExampleSuggestionsToTranslate,
+  putRandomExampleSuggestionsToTranslate,
+} from 'src/shared/DataCollectionAPI';
+import { Card, Input, PrimaryButton, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
-import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
-import Completed from '../components/Completed';
-import EmptyExamples from './EmptyExamples';
+import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
+import Completed from 'src/Core/Collections/components/Completed';
+import EmptyExamples from 'src/Core/Collections/IgboSoundbox/EmptyExamples';
 
-const RecordSentenceAudio = ({
-  setIsDirty,
-}: {
-  setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
-}): ReactElement => {
+type Translation = {
+  id: string;
+  english: string;
+};
+
+const TranslateIgboSentences = (): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
-  const [pronunciations, setPronunciations] = useState<string[]>([]);
+  const [translations, setTranslations] = useState<Translation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [exampleIndex, setExampleIndex] = useState(-1);
   const [visitedLastExampleIndex, setVisitedLastExampleIndex] = useState(false);
-  const isCompleteEnabled =
-    !isUploading && pronunciations.some((pronunciation) => pronunciation) && visitedLastExampleIndex;
+
+  const isCompleteEnabled = !isUploading && translations.some(({ english }) => english) && visitedLastExampleIndex;
   const toast = useToast();
 
-  const handlePronunciation = (audioData) => {
-    const updatedPronunciations = [...pronunciations];
-    updatedPronunciations[exampleIndex] = audioData;
-    setPronunciations(updatedPronunciations);
-    setIsDirty(true);
-  };
-
   const handleNext = () => {
-    if (exampleIndex !== examples.length - 1) {
-      setExampleIndex(exampleIndex + 1);
-    }
+    setExampleIndex(exampleIndex + 1);
     if (exampleIndex + 1 === examples.length - 1) {
       setVisitedLastExampleIndex(true);
     }
   };
 
   const handleBack = () => {
-    if (exampleIndex !== 0) {
-      setExampleIndex(exampleIndex - 1);
-    }
+    setExampleIndex(exampleIndex - 1);
   };
 
   const handleSkip = () => {
-    const updatedPronunciations = [...pronunciations];
-    updatedPronunciations[exampleIndex] = '';
-    setPronunciations(updatedPronunciations);
-    setIsDirty(true);
+    const updatedTranslations = [...translations];
+    updatedTranslations[exampleIndex].english = '';
+    setTranslations(updatedTranslations);
     handleNext();
   };
 
-  const handleUploadAudio = async () => {
+  const handleInputChange = (e) => {
+    const updatedTranslations = [...translations];
+    updatedTranslations[exampleIndex].english = e.target.value;
+    setTranslations(updatedTranslations);
+  };
+
+  const handleSubmitTranslations = async () => {
+    setIsLoading(true);
     try {
-      const payload = examples.map((example, exampleIndex) => ({
-        id: example.id.toString(),
-        pronunciation: pronunciations[exampleIndex],
-      }));
-      setIsLoading(true);
-      await putAudioForRandomExampleSuggestions(payload);
+      await putRandomExampleSuggestionsToTranslate(translations);
     } catch (err) {
       toast({
         title: 'An error occurred',
-        description: 'Unable to upload example sentence recordings.',
+        description: 'Unable to complete uploading Igbo sentence translations.',
         status: 'error',
         duration: 4000,
         isClosable: true,
       });
-      console.log('Unable to submit audio', err);
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +76,7 @@ const RecordSentenceAudio = ({
   const handleComplete = async () => {
     try {
       setIsUploading(true);
-      await handleUploadAudio();
+      await handleSubmitTranslations();
       setIsComplete(true);
     } catch (err) {
       toast({
@@ -104,11 +96,13 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestions();
+          const { data: randomExamples } = await getRandomExampleSuggestionsToTranslate();
           setExamples(randomExamples);
+          const emptyTranslations = randomExamples.map(({ id, english }) => ({ id, english }));
+          setTranslations(emptyTranslations);
           setExampleIndex(0);
-          setPronunciations(new Array(randomExamples.length).fill(''));
         } catch (err) {
+          console.log('the error', err);
           toast({
             title: 'An error occurred',
             description: 'Unable to retrieve example sentences.',
@@ -131,10 +125,10 @@ const RecordSentenceAudio = ({
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
       <Box className="flex flex-col justify-center items-center space-y-4">
-        <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
-          Record sentence audio
+        <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600" mb="4">
+          Translate Igbo Sentences
         </Heading>
-        <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
+        <Text fontFamily="Silka">Translate the following Igbo sentence into English</Text>
         <Card text={currentExample.igbo} href={currentExampleHref} />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
@@ -152,13 +146,12 @@ const RecordSentenceAudio = ({
             </PrimaryButton>
           </Box>
         </Tooltip>
-        <RecorderBase
-          path="pronunciation"
-          hideTitle
-          onStopRecording={handlePronunciation}
-          onResetRecording={noop}
-          audioValue={pronunciations[exampleIndex]}
-          toastEnabled={false}
+        <Input
+          placeholder="Type English translation here"
+          px={2}
+          value={translations[exampleIndex].english}
+          onChange={handleInputChange}
+          hideDiacritics
         />
         <ResourceNavigationController
           index={exampleIndex}
@@ -170,12 +163,12 @@ const RecordSentenceAudio = ({
       </Box>
     </Box>
   ) : noExamples ? (
-    <EmptyExamples recording setIsDirty={setIsDirty} />
+    <EmptyExamples recording />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed type={CrowdsourcingType.TRANSLATE_IGBO_SENTENCE} setIsComplete={setIsComplete} />
   ) : (
     <Spinner />
   );
 };
 
-export default RecordSentenceAudio;
+export default TranslateIgboSentences;

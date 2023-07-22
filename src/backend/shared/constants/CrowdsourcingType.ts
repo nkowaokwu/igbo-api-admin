@@ -4,6 +4,7 @@ enum CrowdsourcingType {
   RECORD_EXAMPLE_AUDIO = 'record_example_audio',
   VERIFY_EXAMPLE_AUDIO = 'verify_example_audio',
   VERIFY_EXAMPLE_TEXT = 'verify_example_text',
-};
+  TRANSLATE_IGBO_SENTENCE = 'translate_igbo_sentence',
+}
 
 export default CrowdsourcingType;

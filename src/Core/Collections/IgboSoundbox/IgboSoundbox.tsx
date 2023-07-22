@@ -12,11 +12,6 @@ const IgboSoundbox = (): ReactElement => {
   const [currentView, setCurrentView] = useState<IgboSoundboxViews>();
   const [isDirty, setIsDirty] = useState(false);
 
-  const goHome = () => {
-    window.location.search = '';
-    window.location.hash = '#/';
-  };
-
   useEffect(() => {
     setIsDirty(false);
   }, [currentView]);
@@ -36,19 +31,11 @@ const IgboSoundbox = (): ReactElement => {
   return currentView ? (
     <>
       <Hide below="md">
-        <IgboSoundboxNavbar
-          currentView={currentView}
-          setCurrentView={setCurrentView}
-          isDirty={isDirty}
-        />
+        <IgboSoundboxNavbar currentView={currentView} setCurrentView={setCurrentView} isDirty={isDirty} />
       </Hide>
       {currentView === IgboSoundboxViews.HOME ? <IgboSoundboxHome setCurrentView={setCurrentView} /> : null}
-      {currentView === IgboSoundboxViews.RECORD ? (
-        <RecordSentenceAudio setIsDirty={setIsDirty} goHome={goHome} />
-      ) : null}
-      {currentView === IgboSoundboxViews.VERIFY ? (
-        <VerifySentenceAudio setIsDirty={setIsDirty} goHome={goHome} />
-      ) : null}
+      {currentView === IgboSoundboxViews.RECORD ? <RecordSentenceAudio setIsDirty={setIsDirty} /> : null}
+      {currentView === IgboSoundboxViews.VERIFY ? <VerifySentenceAudio setIsDirty={setIsDirty} /> : null}
     </>
   ) : null;
 };

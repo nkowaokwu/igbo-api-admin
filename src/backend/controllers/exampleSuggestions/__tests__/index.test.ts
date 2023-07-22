@@ -1,8 +1,11 @@
-import { omit } from 'lodash';
+import { omit, times } from 'lodash';
 import {
   updateExampleSuggestion,
   putReviewForRandomExampleSuggestions,
+  putRandomExampleSuggestionsToTranslate,
+  getRandomExampleSuggestionsToTranslate,
 } from 'src/backend/controllers/exampleSuggestions';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { connectDatabase } from 'src/backend/utils/database';
 import { getExampleSuggestion, suggestNewExample } from 'src/__tests__/shared/commands';
@@ -87,9 +90,9 @@ describe('exampleSuggestions controller', () => {
       mongooseConnection,
     };
     const resMock = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const nextMock = jest.fn(() => ({}));
+    const nextMock = jest.fn();
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -130,9 +133,9 @@ describe('exampleSuggestions controller', () => {
       mongooseConnection,
     };
     const resMock = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const nextMock = jest.fn(() => ({}));
+    const nextMock = jest.fn();
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -173,9 +176,9 @@ describe('exampleSuggestions controller', () => {
       mongooseConnection,
     };
     const resMock = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const nextMock = jest.fn(() => ({}));
+    const nextMock = jest.fn();
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -216,9 +219,9 @@ describe('exampleSuggestions controller', () => {
       mongooseConnection,
     };
     const resMock = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const nextMock = jest.fn(() => ({}));
+    const nextMock = jest.fn();
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -259,17 +262,102 @@ describe('exampleSuggestions controller', () => {
       mongooseConnection,
     };
     const resMock = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const nextMock = jest.fn(() => ({}));
+    const nextMock = jest.fn();
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
     expect(res.status).toEqual(200);
 
-    console.log(res.body.pronunciations[0].updatedAt);
-
     expect(res.body.pronunciations[0].createdAt).toEqual(createdAt);
     expect(res.body.pronunciations[0].updatedAt).toEqual(updatedAt);
+  });
+
+  it('updates an example suggestion english translation', async () => {
+    const exampleSuggestionRes = await suggestNewExample({
+      ...exampleSuggestionData,
+      pronunciations: [
+        {
+          audio: 'first audio',
+          speaker: 'first speaker',
+        },
+        { audio: 'second audio', speaker: 'second speaker' },
+      ],
+    });
+    expect(exampleSuggestionRes.status).toEqual(200);
+
+    const mongooseConnection = await connectDatabase();
+    const reqMock = {
+      user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+      body: [
+        {
+          id: exampleSuggestionRes.body.id,
+          english: 'updated english',
+        },
+      ],
+      mongooseConnection,
+    };
+    const resMock = {
+      send: jest.fn(),
+    };
+    const nextMock = jest.fn();
+    await putRandomExampleSuggestionsToTranslate(reqMock, resMock, nextMock);
+    expect(reqMock.response[0].crowdsourcing[CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]).toEqual(true);
+
+    const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
+
+    expect(res.status).toEqual(200);
+    expect(res.body.english).toEqual('updated english');
+    expect(res.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
+    console.log(res.body);
+    expect(res.body.crowdsourcing[CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]).toEqual(true);
+    Object.values(CrowdsourcingType).forEach((crowdsourcingType) => {
+      if (crowdsourcingType !== CrowdsourcingType.TRANSLATE_IGBO_SENTENCE) {
+        expect(res.body.crowdsourcing[crowdsourcingType]).toEqual(false);
+      }
+    });
+  });
+
+  it('five random sentences to translate get returned', async () => {
+    await Promise.all(
+      times(5, async () =>
+        suggestNewExample({
+          ...exampleSuggestionData,
+          english: '',
+          pronunciations: [
+            {
+              audio: 'first audio',
+              speaker: 'first speaker',
+            },
+            { audio: 'second audio', speaker: 'second speaker' },
+          ],
+        }),
+      ),
+    );
+
+    const mongooseConnection = await connectDatabase();
+    const reqMock = {
+      user: { uid: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
+      query: {
+        page: 0,
+        range: '[0,4]',
+      },
+      mongooseConnection,
+    };
+    let res;
+    const resMock = {
+      send: jest.fn((data) => {
+        res = data;
+      }),
+      setHeader: jest.fn(),
+    };
+    const nextMock = jest.fn();
+    await getRandomExampleSuggestionsToTranslate(reqMock, resMock, nextMock);
+    expect(resMock.send).toBeCalled();
+    res.forEach((exampleSuggestion) => {
+      expect(exampleSuggestion.english).toBeFalsy();
+      expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.EDITOR_AUTH_TOKEN);
+    });
   });
 });

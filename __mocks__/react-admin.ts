@@ -3,7 +3,7 @@ import * as ReactAdmin from '../node_modules/react-admin';
 export const useListContext = jest.fn(() => ({
   basePath: '/',
   filterValues: {},
-  setFilters: jest.fn(() => ({})),
+  setFilters: jest.fn(),
 }));
 export const fetchUtils = {
   fetchJson: jest.fn(async () => ({})),

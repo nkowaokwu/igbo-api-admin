@@ -4,6 +4,7 @@ import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import Collections from 'src/shared/constants/Collections';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -14,11 +15,29 @@ interface ExampleReviewsPayload {
   id: any;
   reviews: { [pronunciationId: string]: ReviewActions };
 }
+interface TranslationPayload {
+  id: string;
+  english: string;
+}
 
+export const getRandomExampleSuggestionsToTranslate = (count = 5): Promise<any> =>
+  request({
+    method: 'GET',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/translate`,
+    params: {
+      range: `[0, ${count - 1}]`,
+    },
+  });
+export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPayload[]): Promise<any> =>
+  request({
+    method: 'PUT',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/translate`,
+    data: rawData,
+  });
 export const getRandomExampleSuggestions = (count = 5): Promise<any> =>
   request({
     method: 'GET',
-    url: 'exampleSuggestions/random',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random`,
     params: {
       range: `[0, ${count - 1}]`,
     },
@@ -27,7 +46,7 @@ export const getRandomExampleSuggestions = (count = 5): Promise<any> =>
 export const getRandomExampleSuggestionsToReview = (count = 5): Promise<any> =>
   request({
     method: 'GET',
-    url: 'exampleSuggestions/random/review',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
     params: {
       range: `[0, ${count - 1}]`,
     },
@@ -40,7 +59,7 @@ export const putAudioForRandomExampleSuggestions = (rawData: ExampleAudioPayload
   }));
   return request({
     method: 'PUT',
-    url: 'exampleSuggestions/random/audio',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
     data,
   });
 };
@@ -48,7 +67,7 @@ export const putAudioForRandomExampleSuggestions = (rawData: ExampleAudioPayload
 export const putReviewForRandomExampleSuggestions = (data: ExampleReviewsPayload[]): Promise<any> =>
   request({
     method: 'PUT',
-    url: 'exampleSuggestions/random/review',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
     data,
   });
 
@@ -75,7 +94,7 @@ export const bulkUploadExampleSuggestions = async (
         .then(() =>
           request({
             method: 'POST',
-            url: isExample ? 'examples/upload' : 'exampleSuggestions/upload',
+            url: isExample ? 'examples/upload' : `${Collections.EXAMPLE_SUGGESTIONS}/upload`,
             data: dataChunk,
           }),
         )
@@ -91,7 +110,7 @@ export const getTotalRecordedExampleSuggestions = async (uid?: string): Promise<
   (
     await request({
       method: 'GET',
-      url: 'exampleSuggestions/random/stats/recorded',
+      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/recorded`,
       params: { uid },
     })
   ).data;
@@ -100,7 +119,7 @@ export const getTotalVerifiedExampleSuggestions = async (uid?: string | null): P
   (
     await request({
       method: 'GET',
-      url: 'exampleSuggestions/random/stats/verified',
+      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/verified`,
       params: uid ? { uid } : {},
     })
   ).data;

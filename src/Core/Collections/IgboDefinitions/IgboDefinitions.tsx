@@ -93,91 +93,84 @@ const IgboDefinitions = (): ReactElement => {
   useBeforeWindowUnload();
 
   return !isComplete ? (
-    <Box className="flex flex-col justify-start items-center py-4 h-full lg:h-auto">
-      <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto">
-        <NavbarWrapper>
-          <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="3xl" mb="4">
-            Igbo Definitions
-          </Heading>
-        </NavbarWrapper>
-        <Text fontFamily="Silka" mt={4}>
-          Each Igbo definition must follow our{' '}
-          <Link textDecoration="underline" href={IGBO_DEFINITIONS_STANDARDS_DOC} target="_blank">
-            Igbo Definitions Standards
-            <ExternalLinkIcon boxSize="3" ml={1} />
-          </Link>{' '}
-          document.
-        </Text>
-        {currentCard ? (
-          <Card>
-            <Box className="flex flex-row justify-start items-center space-x-4">
-              <Text fontWeight="bold" fontFamily="Silka">
-                {currentCard.word}
-              </Text>
-              <Text fontStyle="italic" fontFamily="Silka">
-                {WordClass[currentCard.definitions[0].wordClass].label}
-              </Text>
-            </Box>
-            <Text fontFamily="Silka">{currentCard.definitions[0].definitions[0]}</Text>
-          </Card>
-        ) : isLoading ? (
-          <Box minHeight="md" className="flex flex-row justify-center items-center">
-            <Spinner color="green" />
-          </Box>
-        ) : null}
-        <Box className="w-full flex flex-col justify-center items-center space-y-4" mb={12}>
-          {currentCard ? (
-            <Text fontFamily="Silka" fontWeight="bold">
-              {`${currentCardIndex + 1} / ${wordSuggestions.length}`}
+    <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto">
+      <NavbarWrapper>
+        <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="3xl" mb="4">
+          Igbo Definitions
+        </Heading>
+      </NavbarWrapper>
+      <Text fontFamily="Silka" mt={4}>
+        Each Igbo definition must follow our{' '}
+        <Link textDecoration="underline" href={IGBO_DEFINITIONS_STANDARDS_DOC} target="_blank">
+          Igbo Definitions Standards
+          <ExternalLinkIcon boxSize="3" ml={1} />
+        </Link>{' '}
+        document.
+      </Text>
+      {currentCard ? (
+        <Card>
+          <Box className="flex flex-row justify-start items-center space-x-4">
+            <Text fontWeight="bold" fontFamily="Silka">
+              {currentCard.word}
             </Text>
-          ) : null}
-          <PrimaryButton
-            onClick={isLoading ? noop : handleSubmit}
-            rightIcon={(() => (
-              <>💾</>
-            ))()}
-            aria-label="Complete Igbo definitions"
-            isDisabled={!showSubmitButton}
-            isLoading={isLoading}
-          >
-            Submit Batch
-          </PrimaryButton>
+            <Text fontStyle="italic" fontFamily="Silka">
+              {WordClass[currentCard.definitions[0].wordClass].label}
+            </Text>
+          </Box>
+          <Text fontFamily="Silka">{currentCard.definitions[0].definitions[0]}</Text>
+        </Card>
+      ) : isLoading ? (
+        <Box minHeight="md" className="flex flex-row justify-center items-center">
+          <Spinner color="green" />
         </Box>
-        <Box className="flex flex-row w-full">
-          <ActivityButton
-            tooltipLabel="Previous Igbo definition"
-            onClick={currentCardIndex === 0 ? noop : handlePrevious}
-            leftIcon={<ArrowBackIcon color="gray" />}
-            aria-label="Previous Igbo definition"
-            isDisabled={currentCardIndex === 0}
-            left={0}
-          />
-          <Input
-            placeholder="Type Igbo definition here"
-            ref={igboDefinitionInputRef}
-            px={2}
-            value={igboDefinitions[currentCardIndex]}
-            onChange={handleInputChange}
-          />
-          <ActivityButton
-            tooltipLabel="Next Igbo definition"
-            onClick={currentCardIndex === wordSuggestions.length - 1 ? noop : handleNext}
-            colorScheme="green"
-            leftIcon={<ArrowForwardIcon color="white" />}
-            aria-label="Next Igbo definition"
-            isDisabled={currentCardIndex === wordSuggestions.length - 1}
-            right={0}
-          />
-        </Box>
+      ) : null}
+      <Box className="w-full flex flex-col justify-center items-center space-y-4" mb={12}>
+        {currentCard ? (
+          <Text fontFamily="Silka" fontWeight="bold">
+            {`${currentCardIndex + 1} / ${wordSuggestions.length}`}
+          </Text>
+        ) : null}
+        <PrimaryButton
+          onClick={isLoading ? noop : handleSubmit}
+          rightIcon={(() => (
+            <>💾</>
+          ))()}
+          aria-label="Complete Igbo definitions"
+          isDisabled={!showSubmitButton}
+          isLoading={isLoading}
+        >
+          Submit Batch
+        </PrimaryButton>
+      </Box>
+      <Box className="flex flex-row w-full">
+        <ActivityButton
+          tooltipLabel="Previous Igbo definition"
+          onClick={currentCardIndex === 0 ? noop : handlePrevious}
+          leftIcon={<ArrowBackIcon color="gray" />}
+          aria-label="Previous Igbo definition"
+          isDisabled={currentCardIndex === 0}
+          left={0}
+        />
+        <Input
+          placeholder="Type Igbo definition here"
+          ref={igboDefinitionInputRef}
+          px={2}
+          value={igboDefinitions[currentCardIndex]}
+          onChange={handleInputChange}
+        />
+        <ActivityButton
+          tooltipLabel="Next Igbo definition"
+          onClick={currentCardIndex === wordSuggestions.length - 1 ? noop : handleNext}
+          colorScheme="green"
+          leftIcon={<ArrowForwardIcon color="white" />}
+          aria-label="Next Igbo definition"
+          isDisabled={currentCardIndex === wordSuggestions.length - 1}
+          right={0}
+        />
       </Box>
     </Box>
   ) : (
-    <Completed
-      type={CrowdsourcingType.INPUT_IGBO_DEFINITION}
-      setIsComplete={setIsComplete}
-      setIsDirty={setIsDirty}
-      goHome={() => noop}
-    />
+    <Completed type={CrowdsourcingType.INPUT_IGBO_DEFINITION} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
   );
 };
 

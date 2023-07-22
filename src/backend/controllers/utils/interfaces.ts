@@ -251,6 +251,10 @@ export interface ExampleClientData {
   exampleForSuggestion?: boolean;
   authorId?: string;
   originalExampleId?: string;
+  crowdsourcing: {
+    [key in CrowdsourcingType]?: boolean;
+  };
+  userInteractions?: string[];
 }
 
 export interface NsibidiCharacter {

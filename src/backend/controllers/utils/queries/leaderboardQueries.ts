@@ -44,6 +44,22 @@ export const searchExampleAudioPronunciationsReviewedByUser = ({
     ...(startDate ? { updatedAt: { $gte: startDate, $lte: endDate } } : {}),
   };
 };
+export const searchExampleSuggestionTranslatedByUser = ({
+  uid,
+  timeRange,
+}: {
+  uid: string;
+  timeRange?: LeaderboardTimeRange;
+}): {
+  userInteractions: { $in: [string] };
+  updatedAt?: { $gte: number | null; $lte: number | null };
+} => {
+  const { startDate, endDate } = LeaderboardTimeRanges[timeRange] || { startDate: null, endDate: null };
+  return {
+    userInteractions: { $in: [uid] },
+    ...(startDate ? { updatedAt: { $gte: startDate, $lte: endDate } } : {}),
+  };
+};
 
 /**
  * Generates query for getting all example suggestions that has
