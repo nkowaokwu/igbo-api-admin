@@ -1,5 +1,9 @@
 import { Response, NextFunction } from 'express';
 import { assign } from 'lodash';
+import { wordSchema } from 'src/backend/models/Word';
+import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
+import { exampleSchema } from 'src/backend/models/Example';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { packageResponse, handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 import { nsibidiCharacterSchema } from '../models/NsibidiCharacter';
@@ -53,6 +57,9 @@ export const getNsibidiCharacter = async (
     const { id } = req.params;
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
     const nsibidiCharacter = await NsibidiCharacter.findById(id);
+    if (!nsibidiCharacter) {
+      throw new Error("Nsibidi character doesn't exist");
+    }
     return res.send(nsibidiCharacter.toJSON());
   } catch (err) {
     return next(err);
@@ -96,6 +103,51 @@ export const putNsibidiCharacter = async (
     });
     const savedNsibidiCharacter = await updatedNsibidiCharacter.save();
     return res.send(savedNsibidiCharacter);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Deletes NsibidiCharacters and any references to that character
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export const deleteNsibidiCharacter = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
+  try {
+    const {
+      params: { id },
+      mongooseConnection,
+    } = req;
+    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+    const models = [
+      mongooseConnection.model<Interfaces.Word>('Word', wordSchema),
+      mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema),
+      mongooseConnection.model<Interfaces.Example>('Example', exampleSchema),
+      mongooseConnection.model<Interfaces.ExampleSuggestion>('ExampleSuggestion', exampleSuggestionSchema),
+    ];
+
+    await NsibidiCharacter.deleteOne({ _id: id });
+    await Promise.all(
+      models.map(async (Model) => {
+        const docs = await Model.find({ nsibidiCharacters: { $in: [id] } });
+        await Promise.all(
+          docs.map(async (doc) => {
+            doc.nsibidiCharacters = doc.nsibidiCharacters.filter(
+              (nsibidiCharacter) => nsibidiCharacter.toString() !== id,
+            );
+            await doc.save();
+          }),
+        );
+      }),
+    );
+    return res.send({ message: `Deleted Nsibidi character: ${id}` });
   } catch (err) {
     return next(err);
   }
