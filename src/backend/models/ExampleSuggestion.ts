@@ -61,15 +61,15 @@ export const exampleSuggestionSchema = new Schema(
     userInteractions: { type: [{ type: String }], default: [] },
     crowdsourcing: {
       type: Object,
-      validate: (v: { [key in CrowdsourcingType]: boolean }) => {
-        const crowdsourcingValues = Object.values(CrowdsourcingType);
-        return Object.keys(v).every((key: CrowdsourcingType) => crowdsourcingValues.includes(key));
+      validate: (v) => {
+        const crowdsourcingKeys = Object.keys(CrowdsourcingType);
+        return Object.entries(v).map(([key, value]) => crowdsourcingKeys.includes(key) && typeof value === 'boolean');
       },
       required: false,
-      default: Object.values(CrowdsourcingType).reduce(
-        (finalCrowdsourcing, value) => ({
+      default: Object.keys(CrowdsourcingType).reduce(
+        (finalCrowdsourcing, key) => ({
           ...finalCrowdsourcing,
-          [value]: false,
+          [key]: false,
         }),
         {},
       ),
