@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Response, NextFunction } from 'express';
 import Joi from 'joi';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import SuggestionSource from '../shared/constants/SuggestionSource';
+import SuggestionSourceEnum from '../shared/constants/SuggestionSourceEnum';
 import ExampleStyle from '../shared/constants/ExampleStyle';
 
 const { Types } = mongoose;
@@ -62,7 +62,7 @@ export const exampleDataSchema = Joi.object().keys({
   userComments: Joi.string().allow('').optional(),
   authorId: Joi.string().allow('').optional(),
   source: Joi.string()
-    .valid(...Object.values(SuggestionSource))
+    .valid(...Object.values(SuggestionSourceEnum))
     .optional(),
 });
 

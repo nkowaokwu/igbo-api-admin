@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { compact, times } from 'lodash';
 import moment from 'moment';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -228,8 +229,9 @@ const countExampleStats = async (examples: Interfaces.Example[]) => {
     examples.map(async (example) => {
       const isExampleSufficient = !!example.associatedWords?.[0];
       const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
-      const isExampleProverb = example.style === ExampleStyle.PROVERB.value;
-      const isExampleBiblical = example.style === ExampleStyle.BIBLICAL.value || example.type === SentenceType.BIBLICAL;
+      const isExampleProverb = example.style === ExampleStyle[ExampleStyleEnum.PROVERB].value;
+      const isExampleBiblical =
+        example.style === ExampleStyle[ExampleStyleEnum.BIBLICAL].value || example.type === SentenceType.BIBLICAL;
       sufficientExamplesCount += isExampleSufficient ? 1 : 0;
       completedExamplesCount += isExampleComplete ? 1 : 0;
       proverbExamplesCount += isExampleProverb ? 1 : 0;

@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/examplePronunciationHook';
 import { normalizeIgbo } from './plugins/normalizationHooks';
@@ -40,7 +41,7 @@ export const exampleSuggestionSchema = new Schema(
     style: {
       type: String,
       enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle.NO_STYLE.value,
+      default: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
     },
     associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },

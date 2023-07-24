@@ -27,6 +27,7 @@ import Views from 'src/shared/constants/Views';
 import actionsMap from 'src/shared/constants/actionsMap';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import UploadStatus from './UploadStats';
 import type StatusType from './StatusType';
 
@@ -103,7 +104,7 @@ const DataDump = (): ReactElement => {
       if (Array.isArray(jsonData)) {
         const omittedData = [];
         const cleanedData = jsonData.reduce((finalData, data) => {
-          const isDataClean = trim(data.igbo) && trim(data.style) === ExampleStyle.BIBLICAL.value;
+          const isDataClean = trim(data.igbo) && trim(data.style) === ExampleStyle[ExampleStyleEnum.BIBLICAL].value;
           if (isDataClean) {
             finalData.push({
               ...data,

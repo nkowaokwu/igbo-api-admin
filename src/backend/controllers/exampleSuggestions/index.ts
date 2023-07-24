@@ -11,7 +11,7 @@ import {
   searchExampleSuggestionsRegexQuery,
   searchForLastWeekQuery,
   searchPreExistingExampleSuggestionsRegexQuery,
-  searchRandomExampleSuggestionsRegexQuery,
+  searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
   searchExamplesWithoutEnoughAudioRegexQuery,
 } from 'src/backend/controllers/utils/queries';
@@ -258,7 +258,7 @@ export const getExampleSuggestions = (
  * @param next NextFunction
  * @returns At least five random Example Suggestions to have audio recorded
  */
-export const getRandomExampleSuggestions = async (
+export const getRandomExampleSuggestionsToRecord = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
@@ -274,7 +274,7 @@ export const getRandomExampleSuggestions = async (
     let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
 
     // First searches for ExampleSuggestions that should be returned
-    query = searchRandomExampleSuggestionsRegexQuery(user.uid);
+    query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
     exampleSuggestions = await findExampleSuggestions({
       query,
       limit,

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
@@ -27,7 +28,7 @@ export const exampleSchema = new Schema(
     style: {
       type: String,
       enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle.NO_STYLE.value,
+      default: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
     },
     associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },

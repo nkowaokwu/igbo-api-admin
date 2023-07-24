@@ -34,10 +34,11 @@ export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPaylo
     url: `${Collections.EXAMPLE_SUGGESTIONS}/random/translate`,
     data: rawData,
   });
-export const getRandomExampleSuggestions = (count = 5): Promise<any> =>
+
+export const getRandomExampleSuggestionsToRecord = (count = 5): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
     params: {
       range: `[0, ${count - 1}]`,
     },

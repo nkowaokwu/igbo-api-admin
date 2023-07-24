@@ -2,7 +2,7 @@ import express from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
 import {
-  getRandomExampleSuggestions,
+  getRandomExampleSuggestionsToRecord,
   postBulkUploadExampleSuggestions,
   getRandomExampleSuggestionsToReview,
   getRandomExampleSuggestionsToTranslate,
@@ -37,7 +37,7 @@ crowdsourcerRouter.use(authentication, authorization(allRoles));
 crowdsourcerRouter.get('/wordSuggestions/random', getRandomWordSuggestions);
 crowdsourcerRouter.put('/wordSuggestions/random', validateRandomWordSuggestionBody, putRandomWordSuggestions);
 
-crowdsourcerRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
+crowdsourcerRouter.get('/exampleSuggestions/random/audio', getRandomExampleSuggestionsToRecord);
 crowdsourcerRouter.get('/exampleSuggestions/random/translate', getRandomExampleSuggestionsToTranslate);
 crowdsourcerRouter.put(
   '/exampleSuggestions/random/translate',

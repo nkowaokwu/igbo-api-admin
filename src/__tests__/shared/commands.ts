@@ -58,9 +58,9 @@ export const putRandomWordSuggestions = (
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
-export const getRandomExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
+export const getRandomExampleSuggestionsToRecord = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random')
+    .get('/exampleSuggestions/random/audio')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 

@@ -18,7 +18,7 @@ import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
@@ -228,10 +228,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                     {isSuggestionResource
                       ? [
                           <MenuDivider key="divider" />,
-                          <MenuItemOption value={SuggestionSource.COMMUNITY} key={SuggestionSource.COMMUNITY}>
+                          <MenuItemOption value={SuggestionSourceEnum.COMMUNITY} key={SuggestionSourceEnum.COMMUNITY}>
                             From Nkọwa okwu
                           </MenuItemOption>,
-                          <MenuItemOption value={SuggestionSource.INTERNAL} key={SuggestionSource.INTERNAL}>
+                          <MenuItemOption value={SuggestionSourceEnum.INTERNAL} key={SuggestionSourceEnum.INTERNAL}>
                             From Igbo API Editor Platform
                           </MenuItemOption>,
                           <MenuItemOption value="userInteractions" key="userInteractions">

@@ -1,11 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import Dialects from '../../../src/backend/shared/constants/Dialects';
-import {
-  DocumentSelectOptions,
-  SuggestionSelectOptions,
-  WordClassOptions,
-  DialectOptions,
-} from '../../constants';
+import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
 
 const errorMessage = 'An error occurred while saving';
 describe('Create', () => {
@@ -81,7 +76,7 @@ describe('Create', () => {
       cy.findByRole('button', { name: 'Add Dialectal Variation' }).click();
       cy.findByTestId('dialects-input-container-0').click();
       cy.findByText(Dialects.NSA.label).click();
-      cy.findByTestId('dialects-0-word-input').clear().type('NSA word dialect')
+      cy.findByTestId('dialects-0-word-input').clear().type('NSA word dialect');
       cy.get('button[type="submit"]').click();
       cy.findByText('Word Suggestion Document Details');
       cy.findByText('NSA word dialect');
@@ -158,7 +153,7 @@ describe('Create', () => {
       cy.contains('Example Suggestion Document Details');
     });
 
-    it('doesn\'t submit form due to incomplete exampleSuggestion', () => {
+    it("doesn't submit form due to incomplete exampleSuggestion", () => {
       cy.selectCollection('examples');
       cy.getActionsOption(DocumentSelectOptions.SUGGEST_NEW_EDIT).click();
       cy.findByTestId('igbo-input').clear();
