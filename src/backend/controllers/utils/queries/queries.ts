@@ -1,12 +1,13 @@
 import { has, omit } from 'lodash';
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 4;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
@@ -69,13 +70,13 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
           case WordAttributeEnum.IS_CONSTRUCTED_TERM:
             allFilters[`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`] = { $eq: !!value };
             break;
-          case SuggestionSource.COMMUNITY:
-            allFilters.source = { $eq: SuggestionSource.COMMUNITY };
+          case SuggestionSourceEnum.COMMUNITY:
+            allFilters.source = { $eq: SuggestionSourceEnum.COMMUNITY };
             break;
-          case SuggestionSource.INTERNAL:
+          case SuggestionSourceEnum.INTERNAL:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSource.INTERNAL } },
+              { source: { $eq: SuggestionSourceEnum.INTERNAL } },
               { source: { $exists: false } },
             ];
             break;
@@ -92,7 +93,7 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
             allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
             break;
           case 'isProverb':
-            allFilters.style = { $eq: ExampleStyle.PROVERB.value };
+            allFilters.style = { $eq: ExampleStyle[ExampleStyleEnum.PROVERB].value };
             break;
           case 'isDataCollection':
             allFilters.type = { $eq: SentenceType.DATA_COLLECTION };
@@ -204,7 +205,7 @@ export const searchExamplesWithoutEnoughAudioRegexQuery = (
  * @param uid
  * @returns
  */
-export const searchRandomExampleSuggestionsRegexQuery = (
+export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   uid: string,
 ): {
   exampleForSuggestion: { $ne: true };

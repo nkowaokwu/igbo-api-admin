@@ -21,7 +21,23 @@ const handleCreatingNewExampleSuggestions = async ({
     exampleSuggestionSchema,
   );
   const examples = await searchExamples({ query, skip, limit, mongooseConnection });
-  const exampleSuggestionData = examples.map((exampleDoc) => {
+  const existingExampleSuggestions = await ExampleSuggestion.find({
+    originalExampleId: { $in: examples.map(({ id }) => id) },
+  });
+
+  // Filters for Examples without Example Suggestions
+  const examplesWithoutSuggestions = examples.reduce((examplesWithoutSuggestions, example) => {
+    const exampleSuggestion = existingExampleSuggestions.find(
+      ({ originalExampleId }) => example.id === originalExampleId,
+    );
+    if (!exampleSuggestion) {
+      examplesWithoutSuggestions.push(example);
+    }
+    return examplesWithoutSuggestions;
+  }, [] as Interfaces.Example[]);
+
+  // Creates new Example Suggestions for Example documents that don't have existing children Suggestions
+  const exampleSuggestionData = examplesWithoutSuggestions.map((exampleDoc) => {
     const example = exampleDoc.toJSON();
     return omit(
       {
@@ -41,7 +57,8 @@ const handleCreatingNewExampleSuggestions = async ({
       return exampleSuggestion.save();
     }),
   );
-  return exampleSuggestions;
+  const finalExampleSuggestions = existingExampleSuggestions.concat(exampleSuggestions);
+  return finalExampleSuggestions;
 };
 
 export default handleCreatingNewExampleSuggestions;

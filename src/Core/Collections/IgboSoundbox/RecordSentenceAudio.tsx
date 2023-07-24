@@ -2,7 +2,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
 import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
@@ -104,7 +104,7 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestions();
+          const { data: randomExamples } = await getRandomExampleSuggestionsToRecord();
           setExamples(randomExamples);
           setExampleIndex(0);
           setPronunciations(new Array(randomExamples.length).fill(''));

@@ -1,7 +1,7 @@
 import { forEach, forIn, isEqual, pick, times } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import Tense from 'src/backend/shared/constants/Tense';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import {
@@ -373,7 +373,7 @@ describe('MongoDB Word Suggestions', () => {
     it('should throw an error for providing a source field', async () => {
       const wordRes = await suggestNewWord(wordSuggestionData);
       const res = await updateWordSuggestion(
-        { ...wordRes.body, source: SuggestionSource.COMMUNITY },
+        { ...wordRes.body, source: SuggestionSourceEnum.COMMUNITY },
         { cleanData: false },
       );
       expect(res.status).toEqual(400);

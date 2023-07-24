@@ -1,14 +1,7 @@
 {
-  "cSpell.words": [
-    "firebaseapp",
-    "firestore",
-    "personalizations",
-    "Silka"
-  ],
-  "cSpell.ignoreWords": [
-    "appspot"
-],
-"editor.tabSize": 2,
-"typescript.format.semicolons": "insert",
-"typescript.tsdk": "node_modules/typescript/lib"
+  "cSpell.words": ["firebaseapp", "firestore", "personalizations", "Silka", "wikimedians"],
+  "cSpell.ignoreWords": ["appspot"],
+  "editor.tabSize": 2,
+  "typescript.format.semicolons": "insert",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
