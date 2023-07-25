@@ -27,8 +27,8 @@ export const exampleSchema = new Schema(
     },
     style: {
       type: String,
-      enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
+      enum: Object.values(ExampleStyleEnum),
+      default: ExampleStyleEnum.NO_STYLE,
     },
     associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
