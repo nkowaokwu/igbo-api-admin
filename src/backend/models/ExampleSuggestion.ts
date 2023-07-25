@@ -40,8 +40,8 @@ export const exampleSuggestionSchema = new Schema(
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
     style: {
       type: String,
-      enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
+      enum: Object.values(ExampleStyleEnum),
+      default: ExampleStyleEnum.NO_STYLE,
     },
     associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
