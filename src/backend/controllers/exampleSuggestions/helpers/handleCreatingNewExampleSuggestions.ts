@@ -79,7 +79,7 @@ const handleCreatingNewExampleSuggestions = async ({
     ),
   );
   const finalExampleSuggestions = existingExampleSuggestions.concat(exampleSuggestions);
-  return finalExampleSuggestions;
+  return finalExampleSuggestions.slice(0, limit);
 };
 
 export default handleCreatingNewExampleSuggestions;
