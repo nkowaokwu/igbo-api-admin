@@ -32,7 +32,7 @@ export const exampleSuggestionSchema = new Schema(
       enum: Object.values(SentenceTypeEnum),
       default: SentenceTypeEnum.DEFAULT,
     },
-    igbo: { type: String, default: '', trim: true, unique: true },
+    igbo: { type: String, default: '', trim: true },
     english: { type: String, default: '', trim: true },
     meaning: { type: String, default: '', trim: true },
     nsibidi: { type: String, default: '' },
