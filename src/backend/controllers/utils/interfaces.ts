@@ -2,7 +2,7 @@ import { Document, LeanDocument, Connection, Types } from 'mongoose';
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
@@ -243,7 +243,7 @@ export interface ExampleClientData {
   meaning?: string;
   nsibidi?: string;
   nsibidiCharacters?: string[];
-  type?: SentenceType;
+  type?: SentenceTypeEnum;
   style?: string;
   pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];

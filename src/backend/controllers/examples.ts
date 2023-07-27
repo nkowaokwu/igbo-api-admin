@@ -7,8 +7,8 @@ import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { isPronunciationMp3, getPronunciationId } from 'src/backend/shared/utils/splitAudioUrl';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
-import SentenceType from '../shared/constants/SentenceType';
+import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
+import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
 import { findExampleSuggestionById } from './exampleSuggestions';
@@ -184,7 +184,7 @@ const handleSendingMergedEmail = async (result, mongooseConnection): Promise<voi
       if (result.authorEmail) {
         sendMergedEmail({
           to: [result.authorEmail],
-          suggestionType: SuggestionTypes.EXAMPLE,
+          suggestionType: SuggestionTypeEnum.EXAMPLE,
           submissionLink: `${DICTIONARY_APP_URL}/word?word=${word.word}`,
           ...result,
         });
@@ -328,7 +328,7 @@ export const postBulkUploadExamples = async (
         }
         const example = new Example({
           ...sentenceData,
-          type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+          type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
         });
         const savedExample = await example.save();
         return {

@@ -110,10 +110,10 @@ const ExampleEditForm = ({
           redirect(View.SHOW, '/exampleSuggestions', data.id || record.id, { ...data, id: data.id || record.id });
         },
         onFailure: (err: any) => {
-          const { body, message } = err;
+          const { body, message, error } = err;
           toast({
             title: 'Error',
-            description: body?.error || message || 'An error occurred while saving example suggestion',
+            description: body?.error || error || message || 'An error occurred while saving example suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,

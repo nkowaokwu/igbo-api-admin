@@ -17,7 +17,7 @@ import {
   updateNestedExampleSuggestions,
   placeExampleSuggestionsOnSuggestionDoc,
 } from './utils/nestedExampleSuggestionUtils';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
+import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteAudioPronunciation } from './utils/MediaAPIs/AudioAPI';
@@ -303,7 +303,7 @@ export const deleteWordSuggestion = async (
         if (userEmail && !wordSuggestion.merged) {
           sendRejectedEmail({
             to: [userEmail],
-            suggestionType: SuggestionTypes.WORD,
+            suggestionType: SuggestionTypeEnum.WORD,
             ...wordSuggestion.toObject(),
           });
         }

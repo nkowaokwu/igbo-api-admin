@@ -1,6 +1,6 @@
 import { WordClientData } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
@@ -144,7 +144,7 @@ export const malformedExampleSuggestionData = {
 
 export const bulkUploadExampleSuggestionData = {
   english: '',
-  type: SentenceType.DATA_COLLECTION,
+  type: SentenceTypeEnum.DATA_COLLECTION,
 };
 
 export const nsibidiCharacterData = {

@@ -1,7 +1,7 @@
 import { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, omit, map } from 'lodash';
-import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
+import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
@@ -20,7 +20,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { sendRejectedEmail } from 'src/backend/controllers/email';
 import { findUser } from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import handleCreatingNewExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/handleCreatingNewExampleSuggestions';
 import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
@@ -43,21 +43,16 @@ export const createExampleSuggestion = async (
     exampleSuggestionSchema,
   );
   try {
-    await Promise.all(
-      map(data.associatedWords, async (associatedWordId) => {
-        const query = searchPreExistingExampleSuggestionsRegexQuery({
-          ...data,
-          associatedWordId,
-        });
-        const identicalExampleSuggestions = await ExampleSuggestion.find(query);
+    const query = searchPreExistingExampleSuggestionsRegexQuery(data);
+    const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
-        if (identicalExampleSuggestions.length) {
-          const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
-          throw new Error(`There is already an existing example suggestion with the exact same information. 
-          ExampleSuggestion id(s): ${exampleSuggestionIds}`);
-        }
-      }),
-    );
+    if (identicalExampleSuggestions.length) {
+      const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
+      console.log(`Existing ExampleSuggestion id(s): ${exampleSuggestionIds}`);
+      throw new Error(
+        'There is an existing Example Suggestion with the same Igbo text. Please edit the existing Example Suggestion',
+      );
+    }
   } catch (err) {
     console.log(err.message);
     throw err;
@@ -343,7 +338,7 @@ export const postBulkUploadExampleSuggestions = async (
         }
         const exampleSuggestion = new ExampleSuggestion({
           ...sentenceData,
-          type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+          type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
         });
         const savedExampleSuggestion = await exampleSuggestion.save();
         return {
@@ -734,7 +729,7 @@ export const removeExampleSuggestion = (
       if (userEmail && !exampleSuggestion.merged) {
         sendRejectedEmail({
           to: [userEmail],
-          suggestionType: SuggestionTypes.WORD,
+          suggestionType: SuggestionTypeEnum.WORD,
           ...exampleSuggestion.toObject(),
         });
       }

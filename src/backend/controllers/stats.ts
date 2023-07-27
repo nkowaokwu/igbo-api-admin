@@ -24,7 +24,7 @@ import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import ExampleStyle from '../shared/constants/ExampleStyle';
-import SentenceType from '../shared/constants/SentenceType';
+import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import Author from '../shared/constants/Author';
 
 const BYTES_TO_SECONDS = 43800;
@@ -231,7 +231,7 @@ const countExampleStats = async (examples: Interfaces.Example[]) => {
       const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
       const isExampleProverb = example.style === ExampleStyle[ExampleStyleEnum.PROVERB].value;
       const isExampleBiblical =
-        example.style === ExampleStyle[ExampleStyleEnum.BIBLICAL].value || example.type === SentenceType.BIBLICAL;
+        example.style === ExampleStyle[ExampleStyleEnum.BIBLICAL].value || example.type === SentenceTypeEnum.BIBLICAL;
       sufficientExamplesCount += isExampleSufficient ? 1 : 0;
       completedExamplesCount += isExampleComplete ? 1 : 0;
       proverbExamplesCount += isExampleProverb ? 1 : 0;

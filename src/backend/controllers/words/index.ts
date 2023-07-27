@@ -5,7 +5,7 @@ import removePrefix from 'src/backend/shared/utils/removePrefix';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { findSearchWord } from 'src/backend/services/words';
-import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
+import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { NO_PROVIDED_TERM } from 'src/backend/shared/constants/errorMessages';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
@@ -337,7 +337,7 @@ const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> 
     if (result.authorEmail) {
       sendMergedEmail({
         to: [result.authorEmail],
-        suggestionType: SuggestionTypes.WORD,
+        suggestionType: SuggestionTypeEnum.WORD,
         submissionLink: `${DICTIONARY_APP_URL}/word?word=${result.word}`,
         ...result,
       });

@@ -7,7 +7,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { approveDocument, denyDocument, mergeDocument, deleteDocument, combineDocument } from 'src/shared/API';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import ActionTypes from './ActionTypes';
@@ -199,7 +199,7 @@ export default {
           igbo: sentenceText.trim(),
           english: '',
           style: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
-          type: SentenceType.DATA_COLLECTION,
+          type: SentenceTypeEnum.DATA_COLLECTION,
         })),
         file,
       );

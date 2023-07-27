@@ -27,7 +27,11 @@ import Views from 'src/shared/constants/Views';
 import actionsMap from 'src/shared/constants/actionsMap';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import SentenceMetaDataDropdown from 'src/Core/Collections/DataDump/SentenceMetaDataDropdown';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import UploadStatus from './UploadStats';
 import type StatusType from './StatusType';
 
@@ -41,6 +45,8 @@ const DataDump = (): ReactElement => {
   const [failures, setFailures] = useState([]);
   const [fileData, setFileData] = useState([]);
   const [isExample, setIsExample] = useState(false);
+  const [sentenceType, setSentenceType] = useState<SentenceTypeEnum>(SentenceTypeEnum.DATA_COLLECTION);
+  const [suggestionSource, setSuggestionSource] = useState<SuggestionSourceEnum>(SuggestionSourceEnum.INTERNAL);
   const [totalSentences, setTotalSentences] = useState(-1);
   const toast = useToast();
   const isDataPresent = textareaValue.length || fileData?.length;
@@ -57,6 +63,16 @@ const DataDump = (): ReactElement => {
 
   const handleChangeTextarea = (e) => {
     setTextareaValue(e.target.value);
+  };
+
+  const handleSelectSuggestionSource = (e) => {
+    const selectedSuggestionSource = e.target.value as SuggestionSourceEnum;
+    setSuggestionSource(selectedSuggestionSource);
+  };
+
+  const handleSelectSentenceType = (e) => {
+    const selectedSentenceType = e.target.value as SentenceTypeEnum;
+    setSentenceType(selectedSentenceType);
   };
 
   const onProgressSuccess = (message) => {
@@ -108,7 +124,8 @@ const DataDump = (): ReactElement => {
           if (isDataClean) {
             finalData.push({
               ...data,
-              type: SentenceType.BIBLICAL,
+              type: sentenceType,
+              source: suggestionSource,
             });
           } else {
             omittedData.push(data);
@@ -272,6 +289,22 @@ const DataDump = (): ReactElement => {
                     </Text>
                   )}
                 </Box>
+                <Text>Suggestion Source</Text>
+                <Text fontSize="sm" color="gray.400" fontStyle="italic">
+                  The digital source the text originated from
+                </Text>
+                <SentenceMetaDataDropdown
+                  values={Object.values(SuggestionSource).filter(({ isSelectable }) => isSelectable)}
+                  onChange={handleSelectSuggestionSource}
+                />
+                <Text>Sentence Type</Text>
+                <Text fontSize="sm" color="gray.400" fontStyle="italic">
+                  The type of sentence
+                </Text>
+                <SentenceMetaDataDropdown
+                  values={Object.values(SentenceType).filter(({ isSelectable }) => isSelectable)}
+                  onChange={handleSelectSentenceType}
+                />
               </details>
             </Box>
           </Box>

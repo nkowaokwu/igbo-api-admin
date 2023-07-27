@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
@@ -22,8 +21,8 @@ export const exampleSchema = new Schema(
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
     type: {
       type: String,
-      enum: Object.values(SentenceType),
-      default: SentenceType.DEFAULT,
+      enum: Object.values(SentenceTypeEnum),
+      default: SentenceTypeEnum.DEFAULT,
     },
     style: {
       type: String,
