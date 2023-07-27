@@ -70,7 +70,7 @@ const handleCreatingNewExampleSuggestions = async ({
       exampleSuggestionData.map(async (data) => {
         try {
           const exampleSuggestion = new ExampleSuggestion(data);
-          return exampleSuggestion.save();
+          return await exampleSuggestion.save();
         } catch (err) {
           console.log(`Unable to create new Example Suggestion: ${err.message}`);
           return null;
