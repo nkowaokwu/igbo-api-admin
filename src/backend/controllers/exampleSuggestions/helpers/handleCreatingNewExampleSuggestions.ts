@@ -1,5 +1,6 @@
 import { Connection } from 'mongoose';
-import { assign, omit } from 'lodash';
+import { assign, compact, omit } from 'lodash';
+import { searchPreExistingExampleSuggestionsRegexQuery } from 'src/backend/controllers/utils/queries';
 import { exampleSuggestionSchema } from '../../../models/ExampleSuggestion';
 import * as Interfaces from '../../utils/interfaces';
 import { searchExamples } from '../../examples';
@@ -22,7 +23,7 @@ const handleCreatingNewExampleSuggestions = async ({
   );
   const examples = await searchExamples({ query, skip, limit, mongooseConnection });
   const existingExampleSuggestions = await ExampleSuggestion.find({
-    originalExampleId: { $in: examples.map(({ id }) => id) },
+    originalExampleId: { $in: examples.map(({ id }) => id.toString()) },
   });
 
   // Filters for Examples without Example Suggestions
@@ -37,18 +38,31 @@ const handleCreatingNewExampleSuggestions = async ({
   }, [] as Interfaces.Example[]);
 
   // Creates new Example Suggestions for Example documents that don't have existing children Suggestions
-  const exampleSuggestionData = examplesWithoutSuggestions.map((exampleDoc) => {
-    const example = exampleDoc.toJSON();
-    return omit(
-      {
-        ...assign(example),
-        exampleForSuggestion: false,
-        authorId: Author.SYSTEM, // Tells up the ExampleSuggestion has been automatically generated
-        originalExampleId: example.id || example._id,
-      },
-      ['id'],
-    );
-  }) as Interfaces.ExampleClientData[];
+  const exampleSuggestionData = compact(
+    await Promise.all(
+      examplesWithoutSuggestions.map(async (exampleDoc) => {
+        const example = exampleDoc.toJSON();
+        const query = searchPreExistingExampleSuggestionsRegexQuery(example);
+        const identicalExampleSuggestions = await ExampleSuggestion.find(query);
+
+        if (identicalExampleSuggestions.length) {
+          console.log(`Not automatically creating Example Suggestion from Example: ${example.id}`);
+          return null;
+        }
+
+        console.log(`Creating a new Example Suggestion with text: ${example.igbo}`);
+        return omit(
+          {
+            ...assign(example),
+            exampleForSuggestion: false,
+            authorId: Author.SYSTEM, // Tells up the ExampleSuggestion has been automatically generated
+            originalExampleId: example.id || example._id,
+          },
+          ['id'],
+        );
+      }),
+    ),
+  ) as Interfaces.ExampleClientData[];
 
   // Creates new ExampleSuggestions
   const exampleSuggestions = await Promise.all(

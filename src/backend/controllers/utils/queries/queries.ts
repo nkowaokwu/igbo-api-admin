@@ -3,7 +3,7 @@ import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
@@ -96,10 +96,10 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
             allFilters.style = { $eq: ExampleStyle[ExampleStyleEnum.PROVERB].value };
             break;
           case 'isDataCollection':
-            allFilters.type = { $eq: SentenceType.DATA_COLLECTION };
+            allFilters.type = { $eq: SentenceTypeEnum.DATA_COLLECTION };
             break;
           case 'isBiblical':
-            allFilters.type = { $eq: SentenceType.BIBLICAL };
+            allFilters.type = { $eq: SentenceTypeEnum.BIBLICAL };
             break;
           case 'wordClass':
             allFilters['definitions.wordClass'] = { $in: value };
@@ -275,17 +275,10 @@ export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
 });
 export const searchPreExistingExampleSuggestionsRegexQuery = ({
   igbo,
-  english,
-  associatedWordId,
 }: {
   igbo: string;
-  english: string;
-  associatedWordId: string;
-}): any => ({
+}): { igbo: string; merged: null } => ({
   igbo,
-  english,
-  associatedWords: associatedWordId,
-  originalExampleId: null,
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (

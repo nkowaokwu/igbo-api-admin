@@ -2,7 +2,7 @@ import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import Author from 'src/backend/shared/constants/Author';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
@@ -87,7 +87,7 @@ describe('MongoDB Example Suggestions', () => {
       expect(
         res.body.every(
           ({ style, type }) =>
-            type === SentenceType.DATA_COLLECTION && style === ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
+            type === SentenceTypeEnum.DATA_COLLECTION && style === ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
         ),
       );
     });
@@ -95,12 +95,12 @@ describe('MongoDB Example Suggestions', () => {
     it('should bulk upload at most 500 example suggestions with biblical type', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
         const igbo = uuid();
-        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceType.BIBLICAL };
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceTypeEnum.BIBLICAL };
         return exampleSuggestionData;
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ type }) => type === SentenceType.BIBLICAL));
+      expect(res.body.every(({ type }) => type === SentenceTypeEnum.BIBLICAL));
     });
 
     it('should bulk upload at most 500 example suggestions with proverb style', async () => {
