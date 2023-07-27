@@ -33,7 +33,7 @@ export const exampleSuggestionSchema = new Schema(
       enum: Object.values(SentenceType),
       default: SentenceType.DEFAULT,
     },
-    igbo: { type: String, default: '', trim: true },
+    igbo: { type: String, default: '', trim: true, unique: true },
     english: { type: String, default: '', trim: true },
     meaning: { type: String, default: '', trim: true },
     nsibidi: { type: String, default: '' },
