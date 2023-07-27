@@ -9,7 +9,7 @@ import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
-const EXAMPLE_PRONUNCIATION_LIMIT = 4;
+const EXAMPLE_PRONUNCIATION_LIMIT = 5;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
 
 type Filters = {
