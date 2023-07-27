@@ -29,7 +29,7 @@ const handleCreatingNewExampleSuggestions = async ({
   // Filters for Examples without Example Suggestions
   const examplesWithoutSuggestions = examples.reduce((examplesWithoutSuggestions, example) => {
     const exampleSuggestion = existingExampleSuggestions.find(
-      ({ originalExampleId }) => example.id === originalExampleId,
+      ({ originalExampleId }) => example.id?.toString() === originalExampleId?.toString(),
     );
     if (!exampleSuggestion) {
       examplesWithoutSuggestions.push(example);
