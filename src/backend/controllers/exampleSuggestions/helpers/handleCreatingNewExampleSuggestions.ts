@@ -23,7 +23,7 @@ const handleCreatingNewExampleSuggestions = async ({
   );
   const examples = await searchExamples({ query, skip, limit, mongooseConnection });
   const existingExampleSuggestions = await ExampleSuggestion.find({
-    originalExampleId: { $in: examples.map(({ id }) => id.toString()) },
+    originalExampleId: { $in: examples.map(({ id }) => id.toString()), exampleForSuggestion: false, merged: null },
   });
 
   // Filters for Examples without Example Suggestions
