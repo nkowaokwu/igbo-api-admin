@@ -65,11 +65,18 @@ const handleCreatingNewExampleSuggestions = async ({
   ) as Interfaces.ExampleClientData[];
 
   // Creates new ExampleSuggestions
-  const exampleSuggestions = await Promise.all(
-    exampleSuggestionData.map(async (data) => {
-      const exampleSuggestion = new ExampleSuggestion(data);
-      return exampleSuggestion.save();
-    }),
+  const exampleSuggestions = compact(
+    await Promise.all(
+      exampleSuggestionData.map(async (data) => {
+        try {
+          const exampleSuggestion = new ExampleSuggestion(data);
+          return exampleSuggestion.save();
+        } catch (err) {
+          console.log(`Unable to create new Example Suggestion: ${err.message}`);
+          return null;
+        }
+      }),
+    ),
   );
   const finalExampleSuggestions = existingExampleSuggestions.concat(exampleSuggestions);
   return finalExampleSuggestions;
