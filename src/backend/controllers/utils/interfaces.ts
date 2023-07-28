@@ -29,6 +29,7 @@ export interface HandleQueries {
   uidQuery?: string;
   error?: any;
   response?: any;
+  params: Request['params'];
 }
 
 export interface FirebaseUser extends User {
