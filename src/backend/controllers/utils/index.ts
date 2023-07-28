@@ -222,6 +222,7 @@ export const handleQueries = ({
   query = {},
   body = {},
   user = {},
+  params,
   error,
   response,
   mongooseConnection,
@@ -260,6 +261,7 @@ export const handleQueries = ({
     leaderboard,
     timeRange,
     error,
+    params,
     response,
     mongooseConnection,
   };
