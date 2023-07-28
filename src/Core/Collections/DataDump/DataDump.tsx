@@ -289,21 +289,19 @@ const DataDump = (): ReactElement => {
                     </Text>
                   )}
                 </Box>
-                <Text>Suggestion Source</Text>
-                <Text fontSize="sm" color="gray.400" fontStyle="italic">
-                  The digital source the text originated from
-                </Text>
                 <SentenceMetaDataDropdown
                   values={Object.values(SuggestionSource).filter(({ isSelectable }) => isSelectable)}
                   onChange={handleSelectSuggestionSource}
+                  defaultValue={suggestionSource}
+                  title="Suggestion Source"
+                  description="The digital source the text originated from"
                 />
-                <Text>Sentence Type</Text>
-                <Text fontSize="sm" color="gray.400" fontStyle="italic">
-                  The type of sentence
-                </Text>
                 <SentenceMetaDataDropdown
                   values={Object.values(SentenceType).filter(({ isSelectable }) => isSelectable)}
                   onChange={handleSelectSentenceType}
+                  defaultValue={sentenceType}
+                  title="Sentence Type"
+                  description="The type of sentence"
                 />
               </details>
             </Box>
