@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState, useRef, ReactElement } from 'react';
 import { act } from 'react-dom/test-utils';
-import { debounce, get, noop } from 'lodash';
-import { Box, Input as ChakraInput, InputProps, Spinner, Text, chakra } from '@chakra-ui/react';
+import { debounce, noop } from 'lodash';
+import { Box, Input as ChakraInput, InputProps } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
 import useEventListener from 'src/hooks/useEventListener';
+import WordResults from 'src/shared/primitives/WordResults';
 import { getNsibidiCharacters, getWords } from '../API';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
 import { handlePosition, handleIsEditing } from './utils/positions';
@@ -48,6 +49,7 @@ const Input = React.forwardRef(
     const [isAutoCompleteVisible, setIsAutoCompleteVisible] = useState(false);
     const accentedLetterPopupRef = useRef(null);
     const inputRef = useRef(ref);
+
     const setIsVisible = hideDiacritics ? noop : _setIsVisible;
 
     const eventListenerData = {
@@ -132,65 +134,12 @@ const Input = React.forwardRef(
           {...rest}
         />
         {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteResults) ? (
-          <Box
-            data-test="auto-complete-container"
-            position="absolute"
-            top={`calc(${inputRef.current.clientHeight}px + 1rem)`}
-            left="0"
-            boxShadow="lg"
-            borderRadius="md"
-            backgroundColor="white"
-            width="full"
-            borderColor="gray.200"
-            borderWidth="1px"
-            zIndex={1}
-            maxHeight="500px"
-            overflowY="scroll"
-          >
-            {isSearchingAutoCompleteResults ? (
-              <Box width="full" display="flex" justifyContent="center" py={4}>
-                <Spinner color="primary" />
-              </Box>
-            ) : (
-              autoCompleteResults.map((result, index) => (
-                <Box
-                  key={result.id}
-                  py={3}
-                  px={2}
-                  _hover={{ backgroundColor: 'selected' }}
-                  _active={{ backgroundColor: 'selected' }}
-                  cursor="pointer"
-                  userSelect="none"
-                  className="transition-all duration-100"
-                  onClick={() => handleSelectAutocomplete(result)}
-                  {...(!index ? { borderTopRadius: 'md' } : {})}
-                  {...(index === autoCompleteResults.length - 1 ? { borderBottomRadius: 'md' } : {})}
-                >
-                  {result.word ? (
-                    <>
-                      <Text fontWeight="bold">
-                        {result.word}
-                        <chakra.span fontStyle="italic" color="gray.400" fontSize="sm" fontWeight="normal" ml={3}>
-                          {get(result, 'definitions.0.wordClass')}
-                        </chakra.span>
-                      </Text>
-                      <Text color="gray.600">{get(result, 'definitions[0].definitions[0]')}</Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text fontWeight="bold" className="akagu">
-                        {result.nsibidi}
-                        <chakra.span fontStyle="italic" color="gray.400" fontSize="sm" fontWeight="normal" ml={3}>
-                          {get(result, 'pronunciations[0].text')}
-                        </chakra.span>
-                      </Text>
-                      <Text color="gray.600">{get(result, 'definitions[0].text')}</Text>
-                    </>
-                  )}
-                </Box>
-              ))
-            )}
-          </Box>
+          <WordResults
+            inputRef={inputRef}
+            isSearchingAutoCompleteResults={isSearchingAutoCompleteResults}
+            autoCompleteResults={autoCompleteResults}
+            onClick={handleSelectAutocomplete}
+          />
         ) : null}
         <DiacriticsBankPopup
           ref={accentedLetterPopupRef}
