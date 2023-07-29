@@ -1,13 +1,14 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { cloneDeep, get } from 'lodash';
 import moment from 'moment';
-import { Avatar, Box, Button, Heading, Select, Text, useToast, chakra } from '@chakra-ui/react';
+import { Box, Button, Heading, Select, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
 import { Spinner } from 'src/shared/primitives';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardUser from 'src/Core/Collections/Leaderboard/LeaderboardUser';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import BottomCardRanking from 'src/Core/Collections/Leaderboard/BottomCardRanking';
 
 type CachedRankings = {
   [timeRange in LeaderboardTimeRange]: {
@@ -19,60 +20,23 @@ type CachedRankings = {
 };
 
 const LeaderboardTimeRangesMap = {
-  [LeaderboardTimeRange.ALL_TIME]: 'All time',
-  [LeaderboardTimeRange.WEEK]: 'Weekly',
-  [LeaderboardTimeRange.MONTH]: 'Monthly',
-  [LeaderboardTimeRange.IGBO_VOICE_ATHON]: 'Igbo Voice-athon',
+  [LeaderboardTimeRange.ALL_TIME]: {
+    label: 'All time',
+    tooltip: 'Points collected for all time',
+  },
+  [LeaderboardTimeRange.WEEK]: {
+    label: 'Weekly',
+    tooltip: 'Points collected for the current week',
+  },
+  [LeaderboardTimeRange.MONTH]: {
+    label: 'Monthly',
+    tooltip: 'Points collected for the current month',
+  },
+  [LeaderboardTimeRange.IGBO_VOICE_ATHON]: {
+    label: 'Igbo Voice-athon',
+    tooltip: 'Points collected for the Igbo Voice-athon - July 24 - October 24',
+  },
 };
-
-const BottomCardRanking = ({
-  displayName,
-  photoURL,
-  count,
-  position,
-}: {
-  displayName: string;
-  photoURL: string;
-  email: string;
-  count: number;
-  position: number;
-}) => (
-  <Box
-    position="fixed"
-    bottom={0}
-    left={0}
-    className="w-full h-18 p-2 bg-white"
-    boxShadow="0px -2px 5px var(--chakra-colors-gray-300)"
-  >
-    <Box className="flex flex-row space-x-3 items-center">
-      {typeof position === 'number' ? <Text fontFamily="Silka" color="gray.500">{`${position}.`}</Text> : null}
-      <Box>
-        <Box className="flex flex-row space-x-2 items-center">
-          <Avatar src={photoURL} name={displayName} size="sm" />
-          <Box>
-            {typeof position === 'number' ? (
-              <>
-                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
-                  {displayName}
-                </Text>
-                <Text color="gray.500" fontSize="sm" fontFamily="Silka">{`${count} points`}</Text>
-              </>
-            ) : (
-              <>
-                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
-                  No available rank
-                </Text>
-                <Text color="gray.500" fontSize="sm" fontFamily="Silka">
-                  Please make a contribution to see your rank
-                </Text>
-              </>
-            )}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  </Box>
-);
 
 const Leaderboard = (): ReactElement => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardType>(LeaderboardType.RECORD_EXAMPLE_AUDIO);
@@ -150,13 +114,15 @@ const Leaderboard = (): ReactElement => {
       </Select>
       <Box className="space-x-3 my-4">
         {Object.entries(LeaderboardTimeRange).map(([key, value]) => (
-          <Button
-            key={key}
-            colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
-            onClick={() => handleSelectTimeRange(value)}
-          >
-            {LeaderboardTimeRangesMap[value]}
-          </Button>
+          <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
+            <Button
+              key={key}
+              colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
+              onClick={() => handleSelectTimeRange(value)}
+            >
+              {LeaderboardTimeRangesMap[value].label}
+            </Button>
+          </Tooltip>
         ))}
       </Box>
       {showIgboVoiceathonMessage ? (
