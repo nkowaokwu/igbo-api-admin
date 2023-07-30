@@ -4,6 +4,7 @@ import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -48,6 +49,16 @@ describe('MongoDB Word Suggestions', () => {
     jest.unmock('src/backend/controllers/utils/MediaAPIs/initializeAPI');
     jest.unmock('aws-sdk');
   });
+
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+    await Promise.all(
+      times(5, async () => {
+        await suggestNewWord({ ...wordSuggestionData, word: uuid() });
+      }),
+    );
+  });
+
   describe('/POST mongodb wordSuggestions', () => {
     it('should save submitted word suggestion', async () => {
       const res = await suggestNewWord(wordSuggestionData);
@@ -533,7 +544,7 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should return all word suggestions', async () => {
-      await Promise.all([suggestNewWord(wordSuggestionData), suggestNewWord(wordSuggestionData)]);
+      await Promise.all(times(5, async () => suggestNewWord(wordSuggestionData)));
       const res = await getWordSuggestions({ dialects: true, examples: true });
       expect(res.status).toEqual(200);
       expect(res.body.length).toBe(10);
@@ -618,7 +629,7 @@ describe('MongoDB Word Suggestions', () => {
 
     it('should return prioritize range over page', async () => {
       const res = await Promise.all([
-        getWordSuggestions({ page: '1' }),
+        getWordSuggestions({ page: '0' }),
         getWordSuggestions({ page: '1', range: '[100,109]' }),
       ]);
       expect(isEqual(res[0].body, res[1].body)).toEqual(false);

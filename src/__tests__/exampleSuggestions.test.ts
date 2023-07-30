@@ -41,10 +41,11 @@ import SortingDirections from '../backend/shared/constants/sortingDirections';
 
 describe('MongoDB Example Suggestions', () => {
   /* Create a base word and exampleSuggestion document */
-  beforeAll(async () => {
+  beforeEach(async () => {
+    await dropMongoDBCollections();
     await Promise.all([
       suggestNewWord(wordSuggestionData).then((res) => createWord(res.body.id)),
-      suggestNewExample(exampleSuggestionData).then(() => {}),
+      suggestNewExample({ ...exampleSuggestionData, igbo: uuid() }).then(() => {}),
     ]);
   });
   describe('/POST mongodb exampleSuggestions', () => {

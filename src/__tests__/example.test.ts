@@ -1,10 +1,10 @@
 import { isEqual, forIn, some, times } from 'lodash';
 import { v4 as uuid } from 'uuid';
-
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import {
   createExample,
   getExamples,
@@ -25,9 +25,11 @@ import {
 } from './__mocks__/documentData';
 
 describe('MongoDB Examples', () => {
-  /* Create a base Example Suggestion document */
-  beforeAll(async () => {
-    await suggestNewExample(exampleSuggestionData);
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+    /* Create a base Example Suggestion document */
+    const exampleSuggestionRes = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
+    await createExample(exampleSuggestionRes.body.id);
   });
   describe('/POST mongodb examples', () => {
     it('should create a new example in the database', async () => {
@@ -49,6 +51,7 @@ describe('MongoDB Examples', () => {
     });
 
     it('should create a new example from existing exampleSuggestion in the database', async () => {
+      await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
       const res = await getExampleSuggestions();
       expect(res.status).toEqual(200);
       const firstExample = res.body[0];

@@ -72,7 +72,7 @@ const updateLeaderboardWithTimeRange = async ({
 
   const rankingsGroups = splitRankings(updatedRankings);
 
-  await assignRankings({
+  return assignRankings({
     rankingsGroups,
     leaderboards,
     Leaderboard,
@@ -95,7 +95,7 @@ const updateUserLeaderboardStat = async ({
   );
   const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
 
-  await Promise.all(
+  return Promise.all(
     Object.values(LeaderboardTimeRange).map(async (timeRange) =>
       updateLeaderboardWithTimeRange({ Leaderboard, ExampleSuggestion, timeRange, user, leaderboardType }),
     ),
@@ -140,9 +140,11 @@ export const getLeaderboard = async (
     }
 
     res.setHeader('Content-Range', allRankings.length);
+
+    const rankings = allRankings.slice(skip, skip + limit);
     return res.send({
       userRanking,
-      rankings: allRankings.slice(skip, skip + limit),
+      rankings,
     });
   } catch (err) {
     return next(err);
@@ -178,6 +180,7 @@ export const calculateRecordingExampleLeaderboard = async (
     return next(err);
   }
 };
+
 export const calculateTranslatingExampleLeaderboard = async (
   req: Interfaces.EditorRequest,
   res: Response,
