@@ -112,7 +112,10 @@ const Leaderboard = (): ReactElement => {
         <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>Verified example audio</option>
         <option value={LeaderboardType.TRANSLATE_IGBO_SENTENCE}>Translate Igbo sentences</option>
       </Select>
-      <Box className="space-x-3 my-4">
+      <Heading as="h2" fontSize="lg" my={2}>
+        Time frames
+      </Heading>
+      <Box className="grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-4 my-4">
         {Object.entries(LeaderboardTimeRange).map(([key, value]) => (
           <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
             <Button
