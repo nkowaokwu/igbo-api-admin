@@ -93,13 +93,13 @@ const IgboDefinitions = (): ReactElement => {
   useBeforeWindowUnload();
 
   return !isComplete ? (
-    <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto">
+    <Box className="w-11/12 lg:w-full flex flex-col justify-between items-center h-full lg:h-auto" my={0} mx="auto">
       <NavbarWrapper>
-        <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="3xl" mb="4">
+        <Heading fontFamily="Silka" textAlign="center" width="full" fontSize="3xl" my="4">
           Igbo Definitions
         </Heading>
       </NavbarWrapper>
-      <Text fontFamily="Silka" mt={4}>
+      <Text fontFamily="Silka" mt={4} textAlign="center">
         Each Igbo definition must follow our{' '}
         <Link textDecoration="underline" href={IGBO_DEFINITIONS_STANDARDS_DOC} target="_blank">
           Igbo Definitions Standards
