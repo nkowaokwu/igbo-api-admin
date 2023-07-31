@@ -12,6 +12,7 @@ enum DialectEnum {
   EGB = 'EGB',
   EZA = 'EZA',
   EZE = 'EZE',
+  EZM = 'EZM',
   IHU = 'IHU',
   IQW = 'IQW',
   ISU = 'ISU',
