@@ -279,20 +279,20 @@ export const getRandomExampleSuggestionsToRecord = async (
     });
 
     // If none are found, then new ExampleSuggestions are created, up to the provided limit
-    if (!exampleSuggestions || !exampleSuggestions.length) {
-      query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
-      exampleSuggestions = await handleCreatingNewExampleSuggestions({
-        query,
-        skip,
-        limit,
-        mongooseConnection,
-      });
+    // if (!exampleSuggestions || !exampleSuggestions.length) {
+    //   query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
+    //   exampleSuggestions = await handleCreatingNewExampleSuggestions({
+    //     query,
+    //     skip,
+    //     limit,
+    //     mongooseConnection,
+    //   });
 
-      console.log(
-        `Created ${exampleSuggestions.length} new example suggestions`,
-        exampleSuggestions.map((id) => id),
-      );
-    }
+    //   console.log(
+    //     `Created ${exampleSuggestions.length} new example suggestions`,
+    //     exampleSuggestions.map((id) => id),
+    //   );
+    // }
     return await packageResponse({
       res,
       docs: exampleSuggestions,
@@ -455,7 +455,6 @@ export const getRandomExampleSuggestionsToTranslate = async (
       exampleSuggestionSchema,
     );
 
-    console.log({ limit });
     return await findExampleSuggestions({
       query,
       limit,
