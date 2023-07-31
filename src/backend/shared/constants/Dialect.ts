@@ -66,6 +66,11 @@ export default {
     value: DialectEnum.EZE,
     label: 'Ezeagu',
   },
+  [DialectEnum.EZM]: {
+    code: 'ibo-ezm',
+    value: DialectEnum.EZM,
+    label: 'Ezzamgbo',
+  },
   [DialectEnum.IHU]: {
     code: 'ibo-ihu',
     value: DialectEnum.IHU,
