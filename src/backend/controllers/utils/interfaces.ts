@@ -11,6 +11,8 @@ import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRa
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
 export interface HandleQueries {
   searchWord: string;
@@ -245,7 +247,8 @@ export interface ExampleClientData {
   nsibidi?: string;
   nsibidiCharacters?: string[];
   type?: SentenceTypeEnum;
-  style?: string;
+  style?: ExampleStyleEnum;
+  source?: SuggestionSourceEnum;
   pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];

@@ -1,6 +1,5 @@
 import React, { FormEvent, ReactElement, useEffect, useState } from 'react';
-import compact from 'lodash/compact';
-import trim from 'lodash/trim';
+import { compact, has, trim } from 'lodash';
 import {
   Accordion,
   AccordionItem,
@@ -25,15 +24,32 @@ import { Confirmation } from 'src/shared/components';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import actionsMap from 'src/shared/constants/actionsMap';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SentenceMetaDataDropdown from 'src/Core/Collections/DataDump/SentenceMetaDataDropdown';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
 import UploadStatus from './UploadStats';
 import type StatusType from './StatusType';
+
+const isValidJSON = (data) => {
+  try {
+    return JSON.parse(data).every((line) => has(line, 'igbo'));
+  } catch {
+    return false;
+  }
+};
+const isValidCSV = (data) => {
+  const lines = data.split('\n');
+  const columns = lines[0].split(',');
+  return columns.includes('igbo') && lines.every((line) => line.split(',').length >= columns.length);
+};
+
+type SentenceData = {
+  igbo: string;
+  source?: SuggestionSourceEnum;
+  type?: SentenceTypeEnum;
+};
 
 const isDataCollectionLink =
   // eslint-disable-next-line max-len
@@ -43,7 +59,7 @@ const DataDump = (): ReactElement => {
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [successes, setSuccesses] = useState<StatusType[][]>([]);
   const [failures, setFailures] = useState([]);
-  const [fileData, setFileData] = useState([]);
+  const [fileData, setFileData] = useState<SentenceData[]>([]);
   const [isExample, setIsExample] = useState(false);
   const [sentenceType, setSentenceType] = useState<SentenceTypeEnum>(SentenceTypeEnum.DATA_COLLECTION);
   const [suggestionSource, setSuggestionSource] = useState<SuggestionSourceEnum>(SuggestionSourceEnum.INTERNAL);
@@ -116,23 +132,44 @@ const DataDump = (): ReactElement => {
   const omitNonCleanExamples = (event) => {
     const { result } = event.target;
     if (typeof result === 'string') {
-      const jsonData = JSON.parse(result) || [];
-      if (Array.isArray(jsonData)) {
-        const omittedData = [];
-        const cleanedData = jsonData.reduce((finalData, data) => {
-          const isDataClean = trim(data.igbo) && trim(data.style) === ExampleStyle[ExampleStyleEnum.BIBLICAL].value;
-          if (isDataClean) {
-            finalData.push({
-              ...data,
-              type: sentenceType,
-              source: suggestionSource,
-            });
-          } else {
-            omittedData.push(data);
-          }
-          return finalData;
+      if (isValidJSON(result)) {
+        const jsonData = JSON.parse(result) || [];
+        if (Array.isArray(jsonData)) {
+          const omittedData = [];
+          const cleanedData = jsonData.reduce((finalData, data) => {
+            const isDataClean = trim(data.igbo);
+            if (isDataClean) {
+              finalData.push({
+                ...data,
+                type: sentenceType,
+                source: suggestionSource,
+              });
+            } else {
+              omittedData.push(data);
+            }
+            return finalData;
+          }, []);
+          setFileData(cleanedData);
+        }
+      } else if (isValidCSV(result)) {
+        const lines = result.split('\n');
+        const columns = lines[0].split(',');
+        const finalFinalData = lines.reduce((finalLines, line) => {
+          const values = line.split(',');
+          finalLines.push(
+            columns.reduce(
+              (finalObject, column, index) => ({
+                ...finalObject,
+                [column]: values[index],
+              }),
+              {},
+            ),
+          );
+          return finalLines;
         }, []);
-        setFileData(cleanedData);
+        setFileData(finalFinalData);
+      } else {
+        console.log('Invalid file uploaded');
       }
     }
   };
@@ -160,6 +197,15 @@ const DataDump = (): ReactElement => {
       });
     }
   };
+
+  useEffect(() => {
+    const updatedFileData = [...fileData].map((sentence) => ({
+      ...sentence,
+      source: suggestionSource,
+      type: sentenceType,
+    }));
+    setFileData(updatedFileData);
+  }, [suggestionSource, sentenceType]);
 
   useEffect(() => {
     handleCalculateSentenceCount();
@@ -256,14 +302,14 @@ const DataDump = (): ReactElement => {
                 </Tooltip>
                 <Box className="space-y-2">
                   <Box className="space-y-2 p-4 rounded-md" backgroundColor="gray.200">
-                    <Text fontWeight="bold">Select a JSON file to bulk upload example sentences.</Text>
-                    <input type="file" name="data-dump" accept=".json" onChange={handleFileUpload} />
+                    <Text fontWeight="bold">Select a JSON or CSV file to bulk upload example sentences.</Text>
+                    <input type="file" name="data-dump" accept=".json,.csv" onChange={handleFileUpload} />
                     {fileData.length ? (
                       <Text color="green.600" className="space-x-2">
                         <InfoIcon boxSize={3} />
                         <chakra.span fontStyle="italic">
                           {`${pluralize('example sentence', fileData.length, true)} 
-                          from this JSON file will be uploaded`}
+                          from this file will be uploaded`}
                         </chakra.span>
                       </Text>
                     ) : null}
@@ -295,6 +341,7 @@ const DataDump = (): ReactElement => {
                   defaultValue={suggestionSource}
                   title="Suggestion Source"
                   description="The digital source the text originated from"
+                  data-test="suggestion-source-dropdown"
                 />
                 <SentenceMetaDataDropdown
                   values={Object.values(SentenceType).filter(({ isSelectable }) => isSelectable)}
@@ -302,6 +349,7 @@ const DataDump = (): ReactElement => {
                   defaultValue={sentenceType}
                   title="Sentence Type"
                   description="The type of sentence"
+                  data-test="sentence-type-dropdown"
                 />
               </details>
             </Box>
