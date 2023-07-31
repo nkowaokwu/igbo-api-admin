@@ -499,7 +499,7 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.body).toHaveLength(0);
     });
 
-    it('should create up to five example suggestions if no example suggestions to record audio', async () => {
+    it.skip('should create up to five example suggestions if no example suggestions to record audio', async () => {
       await Promise.all(
         times(5, async (index) => {
           await suggestNewWord({

@@ -110,7 +110,7 @@ const TestContext = ({
             basePath,
             ...rest,
             ...child.props,
-          })
+          }),
         )}
       </DataProviderContext.Provider>
     </ReactAdminTestContext>
