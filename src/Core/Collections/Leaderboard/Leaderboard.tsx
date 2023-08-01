@@ -26,15 +26,19 @@ const LeaderboardTimeRangesMap = {
   },
   [LeaderboardTimeRange.WEEK]: {
     label: 'Weekly',
-    tooltip: 'Points collected for the current week',
+    tooltip: `Points collected for the current week - ${moment().startOf('week').format('MMMM D')} to ${moment()
+      .endOf('week')
+      .format('MMMM D')}`,
   },
   [LeaderboardTimeRange.MONTH]: {
     label: 'Monthly',
-    tooltip: 'Points collected for the current month',
+    tooltip: `Points collected for the current month - ${moment().startOf('month').format('MMMM D')} to ${moment()
+      .endOf('month')
+      .format('MMMM D')}`,
   },
   [LeaderboardTimeRange.IGBO_VOICE_ATHON]: {
     label: 'Igbo Voice-athon',
-    tooltip: 'Points collected for the Igbo Voice-athon - July 24 - October 24',
+    tooltip: 'Points collected for the Igbo Voice-athon - July 24 to October 24',
   },
 };
 
@@ -116,17 +120,24 @@ const Leaderboard = (): ReactElement => {
         Time frames
       </Heading>
       <Box className="grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-4 my-4">
-        {Object.entries(LeaderboardTimeRange).map(([key, value]) => (
-          <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
-            <Button
-              key={key}
-              colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
-              onClick={() => handleSelectTimeRange(value)}
-            >
-              {LeaderboardTimeRangesMap[value].label}
-            </Button>
-          </Tooltip>
-        ))}
+        {Object.entries(LeaderboardTimeRange)
+          // Only shows Igbo Voice-athon for recording audio
+          .filter(([, timeRange]) =>
+            leaderboard === LeaderboardType.RECORD_EXAMPLE_AUDIO
+              ? true
+              : timeRange !== LeaderboardTimeRange.IGBO_VOICE_ATHON,
+          )
+          .map(([key, value]) => (
+            <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
+              <Button
+                key={key}
+                colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
+                onClick={() => handleSelectTimeRange(value)}
+              >
+                {LeaderboardTimeRangesMap[value].label}
+              </Button>
+            </Tooltip>
+          ))}
       </Box>
       {showIgboVoiceathonMessage ? (
         <Text fontSize="sm" color="gray.500" fontStyle="italic">

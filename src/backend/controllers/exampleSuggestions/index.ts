@@ -13,7 +13,6 @@ import {
   searchPreExistingExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
-  searchExamplesWithoutEnoughAudioRegexQuery,
 } from 'src/backend/controllers/utils/queries';
 import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -22,7 +21,6 @@ import { findUser } from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import handleCreatingNewExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/handleCreatingNewExampleSuggestions';
 import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
@@ -259,7 +257,7 @@ export const getRandomExampleSuggestionsToRecord = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { skip, limit, user, mongooseConnection } = await handleQueries(req);
+    const { limit, user, mongooseConnection } = await handleQueries(req);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
