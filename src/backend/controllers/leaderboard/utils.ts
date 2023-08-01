@@ -61,8 +61,8 @@ export const assignRankings = async ({
   leaderboards: Interfaces.Leaderboard[];
   Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
   timeRange: LeaderboardTimeRange;
-}): Promise<void> => {
-  await Promise.all(
+}): Promise<Interfaces.Leaderboard[]> =>
+  Promise.all(
     rankingsGroups.map(async (rankings, index) => {
       const leaderboard = leaderboards[index];
       if (!leaderboard) {
@@ -74,10 +74,10 @@ export const assignRankings = async ({
         await newLeaderboard.save();
       }
       leaderboard.rankings = rankings;
-      await leaderboard.save();
+      leaderboard.markModified('rankings');
+      return leaderboard.save();
     }),
   );
-};
 
 export const sortLeaderboards = (leaderboards: Interfaces.Leaderboard[]): void => {
   leaderboards.sort((firstLeaderboard, secondLeaderboard) => {

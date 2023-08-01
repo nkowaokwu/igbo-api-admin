@@ -3,9 +3,8 @@ import { v4 as uuid } from 'uuid';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import * as userMethods from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import {
-  exampleSuggestionData,
-} from './__mocks__/documentData';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import { exampleSuggestionData } from './__mocks__/documentData';
 import { AUTH_TOKEN } from './shared/constants';
 import {
   suggestNewExample,
@@ -32,7 +31,7 @@ describe('MongoDB Leaderboards', () => {
   });
 
   describe('/GET mongodb leaderboards', () => {
-    it('return an empty verify example audio leader that doesn\'t exist', async () => {
+    it("return an empty verify example audio leader that doesn't exist", async () => {
       const findUserSpy = jest.spyOn(userMethods, 'findUser');
       findUserSpy.mockImplementation(async (uid) => ({
         uid,
@@ -60,7 +59,7 @@ describe('MongoDB Leaderboards', () => {
       expect(res.body.rankings.length).toBeGreaterThanOrEqual(0);
     });
 
-    it('return an empty record example audio leader that doesn\'t exist', async () => {
+    it("return an empty record example audio leader that doesn't exist", async () => {
       const findUserSpy = jest.spyOn(userMethods, 'findUser');
       findUserSpy.mockImplementation(async (uid) => ({
         uid,
@@ -97,15 +96,21 @@ describe('MongoDB Leaderboards', () => {
 
     it('return accurate user stats after recording audio for a sentence', async () => {
       const examples = [];
-      await Promise.all(times(5, async () => {
-        const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-        examples.push(exampleRes.body);
-      }));
+      await Promise.all(
+        times(5, async () => {
+          const exampleRes = await suggestNewExample(
+            {
+              ...exampleSuggestionData,
+              igbo: uuid(),
+              pronunciations: [{ audio: 'first-audio', speaker: AUTH_TOKEN.MERGER_AUTH_TOKEN }],
+            },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+          examples.push(exampleRes.body);
+        }),
+      );
       const updateExamplePayload = examples.map(({ id }) => ({
         id,
         pronunciation: `pronunciation-${id}`,
@@ -113,7 +118,10 @@ describe('MongoDB Leaderboards', () => {
       const updatedExamplesRes = await putAudioForRandomExampleSuggestions(updateExamplePayload);
       expect(updatedExamplesRes.status).toEqual(200);
 
-      const res = await getLeaderboard({ leaderboard: LeaderboardType.RECORD_EXAMPLE_AUDIO });
+      const res = await getLeaderboard({
+        leaderboard: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+        timeRange: LeaderboardTimeRange.ALL_TIME,
+      });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveProperty('userRanking');
       expect(res.body.userRanking.count).toBeGreaterThanOrEqual(5);
@@ -127,30 +135,44 @@ describe('MongoDB Leaderboards', () => {
 
     it('return accurate user stats after reviewing audio for a sentence', async () => {
       const examples = [];
-      await Promise.all(times(5, async () => {
-        const exampleRes = await suggestNewExample(
-          { ...exampleSuggestionData, igbo: uuid() },
-          { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-        );
-        expect(exampleRes.body.approvals).toHaveLength(0);
-        expect(exampleRes.body.denials).toHaveLength(0);
-        examples.push(exampleRes.body);
-      }));
-      const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview();
+      await Promise.all(
+        times(5, async () => {
+          const exampleRes = await suggestNewExample(
+            {
+              ...exampleSuggestionData,
+              igbo: uuid(),
+              pronunciations: [{ audio: 'first-audio', speaker: AUTH_TOKEN.MERGER_AUTH_TOKEN }],
+            },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(exampleRes.body.approvals).toHaveLength(0);
+          expect(exampleRes.body.denials).toHaveLength(0);
+          examples.push(exampleRes.body);
+        }),
+      );
+      const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview({ range: '[0, 4]' });
       expect(randomExampleSuggestionsRes.status).toEqual(200);
+      expect(randomExampleSuggestionsRes.body.length).toEqual(5);
       const reviewedExampleSuggestions = randomExampleSuggestionsRes.body.map(({ id, pronunciations }, index) => {
         expect(Array.isArray(pronunciations)).toBeTruthy();
         expect(pronunciations.length).toBeGreaterThanOrEqual(1);
-        const reviews = pronunciations.reduce((reviewObject, { _id }) => ({
-          ...reviewObject,
-          [_id.toString()]: index === 0 ? ReviewActions.APPROVE : index === 1 ? ReviewActions.DENY : ReviewActions.SKIP,
-        }), {});
+        const reviews = pronunciations.reduce(
+          (reviewObject, { _id }) => ({
+            ...reviewObject,
+            [_id.toString()]:
+              index === 0 ? ReviewActions.APPROVE : index === 1 ? ReviewActions.DENY : ReviewActions.SKIP,
+          }),
+          {},
+        );
         return { id, reviews };
       });
       const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
 
-      const res = await getLeaderboard({ leaderboard: LeaderboardType.VERIFY_EXAMPLE_AUDIO });
+      const res = await getLeaderboard({
+        leaderboard: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
+        timeRange: LeaderboardTimeRange.ALL_TIME,
+      });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveProperty('userRanking');
       expect(res.body.userRanking.count).toBeGreaterThanOrEqual(2);

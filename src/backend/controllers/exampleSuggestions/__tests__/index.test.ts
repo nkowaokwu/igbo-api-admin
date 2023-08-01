@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { omit, times } from 'lodash';
 import {
   updateExampleSuggestion,
@@ -8,6 +9,7 @@ import {
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { connectDatabase } from 'src/backend/utils/database';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import { getExampleSuggestion, suggestNewExample } from 'src/__tests__/shared/commands';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
@@ -24,6 +26,9 @@ const omitTimestamps = (pronunciation) => {
 // Example Suggestions to calculate a user's contributions.
 
 describe('exampleSuggestions controller', () => {
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+  });
   // Passing locally, failing in GitHub
   it.skip('updates an example suggestion', async () => {
     const mongooseConnection = await connectDatabase();
@@ -277,6 +282,7 @@ describe('exampleSuggestions controller', () => {
   it('updates an example suggestion english translation', async () => {
     const exampleSuggestionRes = await suggestNewExample({
       ...exampleSuggestionData,
+      igbo: uuidv4(),
       pronunciations: [
         {
           audio: 'first audio',
@@ -310,7 +316,6 @@ describe('exampleSuggestions controller', () => {
     expect(res.status).toEqual(200);
     expect(res.body.english).toEqual('updated english');
     expect(res.body.userInteractions).toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
-    console.log(res.body);
     expect(res.body.crowdsourcing[CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]).toEqual(true);
     Object.values(CrowdsourcingType).forEach((crowdsourcingType) => {
       if (crowdsourcingType !== CrowdsourcingType.TRANSLATE_IGBO_SENTENCE) {

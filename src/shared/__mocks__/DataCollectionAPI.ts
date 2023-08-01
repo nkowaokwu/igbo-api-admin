@@ -121,3 +121,5 @@ export const getRandomExampleSuggestionsToTranslate = jest.fn(async () => ({
   data: [{ id: '123', igbo: 'First Igbo', english: '' }],
 }));
 export const putRandomExampleSuggestionsToTranslate = jest.fn(async () => {});
+
+export const getRandomExampleSuggestionsToRecord = jest.fn(async () => ({ data: exampleSuggestions }));

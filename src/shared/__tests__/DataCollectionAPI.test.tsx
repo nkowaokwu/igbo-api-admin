@@ -1,10 +1,14 @@
+import { noop } from 'lodash';
 import * as requestModule from 'src/shared/utils/request';
+import { v4 as uuidv4 } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import {
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
   getRandomExampleSuggestionsToTranslate,
   putRandomExampleSuggestionsToTranslate,
+  bulkUploadExampleSuggestions,
 } from '../DataCollectionAPI';
 
 describe('DataCollectionAPI', () => {
@@ -108,6 +112,25 @@ describe('DataCollectionAPI', () => {
       method: 'PUT',
       url: 'exampleSuggestions/random/translate',
       data: [],
+    });
+  });
+
+  it('sends a POST request to dump example suggestions', async () => {
+    const requestSpy = jest.spyOn(requestModule, 'request');
+    const payload = {
+      sentences: [
+        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
+      ],
+    };
+    // @ts-expect-error
+    await bulkUploadExampleSuggestions(payload, noop, noop);
+    expect(requestSpy).toHaveBeenCalledWith({
+      method: 'POST',
+      url: 'exampleSuggestions/upload',
+      data: payload.sentences,
     });
   });
 });

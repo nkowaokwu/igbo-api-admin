@@ -95,7 +95,7 @@ export const bulkUploadExampleSuggestions = async (
         .then(() =>
           request({
             method: 'POST',
-            url: isExample ? 'examples/upload' : `${Collections.EXAMPLE_SUGGESTIONS}/upload`,
+            url: `${isExample ? Collections.EXAMPLES : Collections.EXAMPLE_SUGGESTIONS}/upload`,
             data: dataChunk,
           }),
         )
