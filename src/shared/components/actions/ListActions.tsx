@@ -235,7 +235,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                             From Igbo API Editor Platform
                           </MenuItemOption>,
                           <MenuItemOption value="userInteractions" key="userInteractions">
-                            Is Currently Editing
+                            Has Edited
                           </MenuItemOption>,
                           <MenuItemOption value="authorId" key="authorId">
                             Is Author

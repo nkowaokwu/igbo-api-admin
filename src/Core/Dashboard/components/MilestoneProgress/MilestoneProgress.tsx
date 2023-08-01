@@ -148,7 +148,7 @@ const MilestoneProgress = ({
     {
       totalCount: Math.floor(totalExampleSuggestionAudio),
       goal: TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL,
-      heading: 'Hours of example audio',
+      heading: 'Hours of example suggestion audio',
       description: `There are currently ${Math.floor(
         totalExampleSuggestionAudio,
       )} hours of recorded Igbo audio for example suggestions on the platform. 

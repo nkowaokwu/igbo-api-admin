@@ -29,6 +29,7 @@ type Filters = {
   approvals?: any;
   denials?: any;
   pronunciation?: any;
+  merged?: boolean;
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
@@ -106,6 +107,7 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
             break;
           case 'userInteractions':
             allFilters.userInteractions = { $in: value };
+            delete allFilters.merged;
             break;
           case 'approvals':
             allFilters.approvals = { $in: value };
