@@ -30,19 +30,19 @@ describe('Render List Actions', () => {
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
-    expect(await queryByText('Is Currently Editing')).toBeNull();
+    expect(await queryByText('Has Edited')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
     expect(await queryByText('Merged By You')).toBeNull();
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
-    expect(isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')))
-      .toBe(true);
+    expect(
+      isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')),
+    ).toBe(true);
     const partOfSpeechFilter = await findByTestId('part-of-speech-filter');
     userEvent.click(partOfSpeechFilter);
     const activeVerbOption = document.querySelector('[value="AV"]');
     userEvent.click(activeVerbOption);
-    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]')))
-      .toBe(true);
+    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]'))).toBe(true);
   });
 
   it('render the list actions menu for word suggestions', async () => {
@@ -62,20 +62,20 @@ describe('Render List Actions', () => {
     await findByText('Is Constructed Term');
     await findByText('From Nkọwa okwu');
     await findByText('From Igbo API Editor Platform');
-    await findByText('Is Currently Editing');
+    await findByText('Has Edited');
     await findByText('Is Author');
     await findByText('Merged By You');
     await findByText('Has Pronunciation');
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
-    expect(isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')))
-      .toBe(true);
+    expect(
+      isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')),
+    ).toBe(true);
     const partOfSpeechFilter = await findByTestId('part-of-speech-filter');
     userEvent.click(partOfSpeechFilter);
     const activeVerbOption = document.querySelector('[value="AV"]');
     userEvent.click(activeVerbOption);
-    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]')))
-      .toBe(true);
+    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]'))).toBe(true);
   });
 
   it('render the list actions menu for examples', async () => {
@@ -95,14 +95,13 @@ describe('Render List Actions', () => {
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
-    expect(await queryByText('Is Currently Editing')).toBeNull();
+    expect(await queryByText('Has Edited')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
     expect(await queryByText('Merged By You')).toBeNull();
 
     const isProverb = document.querySelector('[value="isProverb"]');
     userEvent.click(isProverb);
-    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]')))
-      .toBe(true);
+    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]'))).toBe(true);
   });
 
   it('render the list actions menu for example suggestions', async () => {
@@ -120,13 +119,12 @@ describe('Render List Actions', () => {
     await findByText('Is Biblical');
     await findByText('From Nkọwa okwu');
     await findByText('From Igbo API Editor Platform');
-    await findByText('Is Currently Editing');
+    await findByText('Has Edited');
     await findByText('Is Author');
     await findByText('Merged By You');
     await findByText('Has Pronunciation');
     const isProverb = document.querySelector('[value="isProverb"]');
     userEvent.click(isProverb);
-    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]')))
-      .toBe(true);
+    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="isProverb"]'))).toBe(true);
   });
 });
