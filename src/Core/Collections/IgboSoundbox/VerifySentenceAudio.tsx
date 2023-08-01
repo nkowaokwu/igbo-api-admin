@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { compact, cloneDeep, noop } from 'lodash';
 import { Box, Button, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import pluralize from 'pluralize';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import {
   getRandomExampleSuggestionsToReview,
@@ -54,9 +55,6 @@ const VerifySentenceAudio = ({
     if (exampleIndex !== examples.length - 1) {
       setExampleIndex(exampleIndex + 1);
     }
-    if (exampleIndex + 1 === examples.length - 1) {
-      setVisitedLastReviewIndex(true);
-    }
   };
 
   const handleBack = () => {
@@ -78,8 +76,20 @@ const VerifySentenceAudio = ({
   const handleUploadReviews = async () => {
     try {
       const payload: SentenceVerification[] = reviews;
+      const totalReviewCount = reviews.reduce(
+        (finalCount, { reviews }) =>
+          finalCount + Object.values(reviews).filter((review) => review !== ReviewActions.SKIP).length,
+        0,
+      );
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
+      toast({
+        title: 'Successfully submitted 🎉',
+        description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (err) {
       toast({
         title: 'An error occurred',
@@ -145,6 +155,12 @@ const VerifySentenceAudio = ({
       })();
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    if (exampleIndex + 1 === examples?.length - 1) {
+      setVisitedLastReviewIndex(true);
+    }
+  }, [exampleIndex, examples]);
 
   const shouldRenderExamples =
     !isLoading && Array.isArray(examples) && examples?.length && examples?.length === reviews?.length && !isComplete;

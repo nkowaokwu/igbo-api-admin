@@ -34,9 +34,6 @@ const TranslateIgboSentences = (): ReactElement => {
 
   const handleNext = () => {
     setExampleIndex(exampleIndex + 1);
-    if (exampleIndex + 1 === examples.length - 1) {
-      setVisitedLastExampleIndex(true);
-    }
   };
 
   const handleBack = () => {
@@ -116,6 +113,13 @@ const TranslateIgboSentences = (): ReactElement => {
       })();
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    if (exampleIndex + 1 === examples?.length - 1) {
+      setVisitedLastExampleIndex(true);
+    }
+  }, [exampleIndex, examples]);
+
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
   const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };

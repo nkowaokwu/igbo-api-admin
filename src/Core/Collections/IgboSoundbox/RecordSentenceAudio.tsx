@@ -1,6 +1,7 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
 import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
+import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
@@ -40,9 +41,6 @@ const RecordSentenceAudio = ({
     if (exampleIndex !== examples.length - 1) {
       setExampleIndex(exampleIndex + 1);
     }
-    if (exampleIndex + 1 === examples.length - 1) {
-      setVisitedLastExampleIndex(true);
-    }
   };
 
   const handleBack = () => {
@@ -67,6 +65,17 @@ const RecordSentenceAudio = ({
       }));
       setIsLoading(true);
       await putAudioForRandomExampleSuggestions(payload);
+      toast({
+        title: 'Successfully submitted 🎉',
+        description: `You have gained ${pluralize(
+          'point',
+          payload.filter(({ pronunciation }) => pronunciation).length,
+          true,
+        )}`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (err) {
       toast({
         title: 'An error occurred',
@@ -122,6 +131,13 @@ const RecordSentenceAudio = ({
       })();
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    if (exampleIndex + 1 === examples?.length - 1) {
+      setVisitedLastExampleIndex(true);
+    }
+  }, [exampleIndex, examples]);
+
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
   const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
