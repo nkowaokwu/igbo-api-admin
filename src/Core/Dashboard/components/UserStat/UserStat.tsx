@@ -53,7 +53,7 @@ const UserStat = ({
             Contributions
           </Heading>
           <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
-            <Box className="flex flex-col lg:flex-row justify-between space-x-0 lg:space-x-3">
+            <Box className="space-y-3 w-full">
               <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
