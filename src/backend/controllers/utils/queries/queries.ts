@@ -1,4 +1,5 @@
 import { has, omit } from 'lodash';
+import moment from 'moment';
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
@@ -380,6 +381,13 @@ export const searchWordsWithoutIgboDefinitions = (): {
   [key: string]: { $exists: boolean };
 } => ({
   'definitions.0.igboDefinitions.0': { $exists: false },
+});
+export const searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth = (): {
+  [key: string]: { $exists: boolean } | { $gte: number } | null;
+} => ({
+  'definitions.0.igboDefinitions.0': { $exists: false },
+  updatedAt: { $gte: moment().subtract(1, 'months').startOf('month').valueOf() },
+  merged: null,
 });
 
 /**
