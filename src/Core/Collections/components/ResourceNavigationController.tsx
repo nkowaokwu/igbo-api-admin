@@ -23,7 +23,7 @@ const ResourceNavigationController = ({
     <ActivityButton
       tooltipLabel="You will not lose your current progress by going back."
       onClick={index !== 0 ? onBack : noop}
-      leftIcon={<ArrowBackIcon />}
+      icon={<ArrowBackIcon />}
       label="Previous"
       aria-label="Previous sentence"
       isDisabled={index === 0}
@@ -31,7 +31,7 @@ const ResourceNavigationController = ({
     <Text fontFamily="Silka" fontWeight="bold">{`${index + 1} / ${resources.length}`}</Text>
     <ActivityButton
       onClick={!resources[index] ? onSkip : index === resources.length - 1 ? noop : onNext}
-      rightIcon={<ArrowForwardIcon />}
+      icon={<ArrowForwardIcon />}
       colorScheme="green"
       label="Next"
       aria-label="Next sentence"

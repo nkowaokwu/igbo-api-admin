@@ -1,14 +1,13 @@
 import { Connection, Document, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, compact, map, omit } from 'lodash';
+import { assign, map, omit } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
-import { wordSchema } from '../models/Word';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import {
   searchForLastWeekQuery,
   searchPreExistingWordSuggestionsRegexQuery,
-  searchWordsWithoutIgboDefinitions,
+  searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth,
 } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
 import {
@@ -388,74 +387,21 @@ export const denyWordSuggestion = async (
   }
 };
 
-/* Gets five random word suggestions to be updated via crowdsourcing */
+/**
+ * Gets five random Word Suggestions to be updated via crowdsourcing for Igbo Definitions
+ */
 export const getRandomWordSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion[]> | void> => {
-  const { user, mongooseConnection } = req;
-  const query = searchWordsWithoutIgboDefinitions();
-  const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
+  const { mongooseConnection } = req;
+  const query = searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth();
+  const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
-    // Gets words that don't have Igbo definitions and don't
-    // have an open word suggestion
-    const words = await Word.aggregate().match(query).lookup({
-      from: 'wordsuggestions',
-      localField: '_id',
-      foreignField: 'originalWordId',
-      as: 'wordSuggestions',
-    });
-
-    const allWordSuggestions = compact(
-      await Promise.all(
-        words.map(async (word) => {
-          // If the word document has a word suggestion that has no Igbo definitions
-          // then the word suggestion will be returned to the client.
-          if (word.wordSuggestions.length) {
-            let existingWordSuggestion = null;
-            for (let i = 0; i < word.wordSuggestions.length; i += 1) {
-              const wordSuggestion = word.wordSuggestions[i];
-              if (wordSuggestion.definitions[0]?.igboDefinitions && !wordSuggestion.definitions[0].igboDefinitions[0]) {
-                existingWordSuggestion = wordSuggestion;
-                break;
-              }
-            }
-            if (existingWordSuggestion) {
-              return existingWordSuggestion;
-            }
-            return null;
-          }
-
-          // If the word doesn't have any word suggestions without Igbo definitions
-          // then a new word suggestion will be created.
-          const rawWord = word;
-          rawWord.originalWordId = rawWord._id;
-          delete rawWord.id;
-          delete rawWord._id;
-
-          req.body = rawWord;
-          let wordSuggestion;
-          try {
-            wordSuggestion = await createWordSuggestion({
-              data: rawWord,
-              word,
-              user,
-              mongooseConnection,
-            });
-          } catch (err) {
-            console.log('Unable to create word suggestion for Igbo definitions.');
-            console.log(err.message);
-          }
-          return wordSuggestion;
-        }),
-      ),
-    );
-
-    const wordSuggestions = allWordSuggestions.slice(0, RANDOM_WORDS_LIMIT);
-
-    return res.send(wordSuggestions);
+    const wordSuggestions = await WordSuggestion.find(query);
+    return res.send(wordSuggestions.slice(0, RANDOM_WORDS_LIMIT));
   } catch (err) {
     return next(err);
   }
