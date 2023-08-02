@@ -1,6 +1,6 @@
 import { Connection, Document, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, map, omit } from 'lodash';
+import { assign, compact, map, omit } from 'lodash';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
@@ -417,24 +417,27 @@ export const putRandomWordSuggestions = async (
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
-    const savedWordSuggestionIds = await Promise.all(
-      igboDefinitions.map(async ({ id, igboDefinition }) => {
-        const wordSuggestion = await WordSuggestion.findById(id);
-        if (!wordSuggestion) {
-          throw new Error('Word suggestion does not exist. Unable to update Igbo definition.');
-        } else if (!Array.isArray(wordSuggestion.definitions[0].igboDefinitions)) {
-          console.warn(`Word suggestion does not have an igboDefinitions array in the first definition group. 
+    const savedWordSuggestionIds = compact(
+      await Promise.all(
+        igboDefinitions.map(async ({ id, igboDefinition }) => {
+          const wordSuggestion = await WordSuggestion.findById(id);
+          if (!wordSuggestion) {
+            console.error('Silent failure: Word suggestion does not exist. Unable to update Igbo definition.');
+            return null;
+          }
+          if (!Array.isArray(wordSuggestion.definitions[0].igboDefinitions)) {
+            console.warn(`Word suggestion does not have an igboDefinitions array in the first definition group. 
         Unable to update ${wordSuggestion._id} word suggestion`);
-        }
-        wordSuggestion.definitions[0].igboDefinitions.push({
-          igbo: igboDefinition,
-          nsibidi: '',
-          nsibidiCharacters: [],
-        });
-        wordSuggestion.crowdsourcing[CrowdsourcingType.INPUT_IGBO_DEFINITION] = true;
-        const savedWordSuggestion = await wordSuggestion.save();
-        return savedWordSuggestion._id.toString();
-      }),
+          }
+          wordSuggestion.definitions[0].igboDefinitions.push({
+            igbo: igboDefinition,
+            nsibidi: '',
+          });
+          wordSuggestion.crowdsourcing[CrowdsourcingType.INPUT_IGBO_DEFINITION] = true;
+          const savedWordSuggestion = await wordSuggestion.save();
+          return savedWordSuggestion._id.toString();
+        }),
+      ),
     );
 
     return res.send(savedWordSuggestionIds);

@@ -30,7 +30,8 @@ const IgboDefinitions = (): ReactElement => {
       const payload = compact(
         igboDefinitions.map(
           (igboDefinition, index) =>
-            igboDefinition && {
+            igboDefinition &&
+            wordSuggestions[index].id && {
               id: wordSuggestions[index].id,
               igboDefinition,
             },
