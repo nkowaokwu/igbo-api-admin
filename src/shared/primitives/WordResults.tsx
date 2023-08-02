@@ -16,8 +16,6 @@ const WordResults = ({
 }): ReactElement => {
   const wordResultsRef = useRef(null);
   const isWordResultsClipped = useOnScreen(wordResultsRef);
-
-  console.log({ isWordResultsClipped });
   return (
     <Box
       ref={wordResultsRef}
