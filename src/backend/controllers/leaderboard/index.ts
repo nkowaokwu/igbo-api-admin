@@ -1,5 +1,6 @@
 import { Model, Connection } from 'mongoose';
 import { Response, NextFunction } from 'express';
+import { assign } from 'lodash';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { leaderboardSchema } from 'src/backend/models/Leaderboard';
@@ -21,30 +22,32 @@ const LeaderboardQuery = {
   [LeaderboardType.TRANSLATE_IGBO_SENTENCE]: searchExampleSuggestionTranslatedByUser,
 };
 
-const updateLeaderboardWithTimeRange = async ({
+export const updateLeaderboardWithTimeRange = async ({
   Leaderboard,
   ExampleSuggestion,
   leaderboardType,
   timeRange,
   user,
+  leaderboards: externalLeaderboards,
 }: {
   Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
   ExampleSuggestion: Model<Interfaces.ExampleSuggestion, unknown, unknown>;
   leaderboardType: LeaderboardType;
   timeRange: LeaderboardTimeRange;
   user: Interfaces.FormattedUser;
-}) => {
+  leaderboards: Interfaces.Leaderboard[];
+}): Promise<Interfaces.Leaderboard[]> => {
+  let leaderboards = assign(externalLeaderboards);
   const leaderboardQuery = LeaderboardQuery[leaderboardType];
   const query = leaderboardQuery({ uid: user.uid, timeRange });
 
-  let leaderboards = await Leaderboard.find({ type: leaderboardType, timeRange });
   if (!leaderboards || !leaderboards.length) {
     const newLeaderboard = new Leaderboard({
       type: leaderboardType,
       page: 0,
       timeRange,
     });
-    leaderboards = [await newLeaderboard.save()];
+    leaderboards = [newLeaderboard];
   }
   sortLeaderboards(leaderboards);
 
@@ -72,15 +75,16 @@ const updateLeaderboardWithTimeRange = async ({
 
   const rankingsGroups = splitRankings(updatedRankings);
 
-  return assignRankings({
+  const saveableLeaderboards = assignRankings({
     rankingsGroups,
     leaderboards,
     Leaderboard,
     timeRange,
   });
+  return saveableLeaderboards;
 };
 
-const updateUserLeaderboardStat = async ({
+export const updateUserLeaderboardStat = async ({
   leaderboardType,
   mongooseConnection,
   user,
@@ -88,7 +92,7 @@ const updateUserLeaderboardStat = async ({
   leaderboardType: LeaderboardType;
   mongooseConnection: Connection;
   user: Interfaces.FormattedUser;
-}) => {
+}): Promise<Interfaces.Leaderboard[][]> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
     exampleSuggestionSchema,
@@ -96,9 +100,18 @@ const updateUserLeaderboardStat = async ({
   const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
 
   return Promise.all(
-    Object.values(LeaderboardTimeRange).map(async (timeRange) =>
-      updateLeaderboardWithTimeRange({ Leaderboard, ExampleSuggestion, timeRange, user, leaderboardType }),
-    ),
+    Object.values(LeaderboardTimeRange).map(async (timeRange) => {
+      const leaderboards = await Leaderboard.find({ type: leaderboardType, timeRange });
+      const saveableLeaderboards = await updateLeaderboardWithTimeRange({
+        Leaderboard,
+        ExampleSuggestion,
+        timeRange,
+        user,
+        leaderboardType,
+        leaderboards,
+      });
+      return Promise.all(saveableLeaderboards.map((leaderboard) => leaderboard.save()));
+    }),
   );
 };
 
