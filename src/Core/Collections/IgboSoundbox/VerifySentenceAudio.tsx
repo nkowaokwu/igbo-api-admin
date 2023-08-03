@@ -84,7 +84,9 @@ const VerifySentenceAudio = ({
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
       toast({
-        title: 'Successfully submitted 🎉',
+        title: 'Gained points 🎉',
+        position: 'top-right',
+        variant: 'left-accent',
         description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
         status: 'success',
         duration: 4000,
