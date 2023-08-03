@@ -19,7 +19,7 @@ import * as Interfaces from './utils/interfaces';
 export const createExample = (
   data: Interfaces.ExampleClientData,
   mongooseConnection: Connection,
-): Promise<Document<any>> => {
+): Promise<Interfaces.Example> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   const example = new Example(data);
   return example.save();
@@ -119,17 +119,22 @@ const mergeIntoExample = (
       if (!example) {
         throw new Error("Example doesn't exist");
       }
-      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
-      return example;
+      const updatedExample = updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      return updatedExample.save();
     },
   );
 };
 
 /* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> =>
-  createExample(exampleSuggestion.toObject(), mongooseConnection)
+const createExampleFromSuggestion = (
+  exampleSuggestion: Interfaces.ExampleSuggestion,
+  mergedBy: string,
+  mongooseConnection: Connection,
+): Promise<Interfaces.Example> =>
+  createExample((exampleSuggestion as Interfaces.ExampleSuggestion).toObject(), mongooseConnection)
     .then(async (example: Interfaces.Example) => {
-      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      const updatedExample = await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      await updatedExample.save();
       return example;
     })
     .catch((error) => {
