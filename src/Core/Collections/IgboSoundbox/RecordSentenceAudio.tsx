@@ -66,7 +66,9 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       await putAudioForRandomExampleSuggestions(payload);
       toast({
-        title: 'Successfully submitted 🎉',
+        title: 'Gained points 🎉',
+        position: 'top-right',
+        variant: 'left-accent',
         description: `You have gained ${pluralize(
           'point',
           payload.filter(({ pronunciation }) => pronunciation).length,
