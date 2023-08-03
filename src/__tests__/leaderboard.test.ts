@@ -4,6 +4,7 @@ import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import * as userMethods from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import { exampleSuggestionData } from './__mocks__/documentData';
 import { AUTH_TOKEN } from './shared/constants';
 import {
@@ -15,7 +16,7 @@ import {
 } from './shared/commands';
 
 describe('MongoDB Leaderboards', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     const findUserSpy = jest.spyOn(userMethods, 'findUser');
     findUserSpy.mockImplementation(async (uid) => ({
       uid,
@@ -28,6 +29,7 @@ describe('MongoDB Leaderboards', () => {
       lastSignInTime: 'date',
       creationTime: 'date',
     }));
+    await dropMongoDBCollections();
   });
 
   describe('/GET mongodb leaderboards', () => {

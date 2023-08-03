@@ -65,6 +65,8 @@ const RecorderBase = ({
     if (audioBlob && toastEnabled) {
       toast({
         title: 'Recorded new audio',
+        position: 'top-right',
+        variant: 'left-accent',
         description: 'A new audio pronunciation has been recorded',
         status: 'success',
         duration: 4000,

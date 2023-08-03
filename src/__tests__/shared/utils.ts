@@ -1,20 +1,8 @@
 // eslint-disable-next-line
-import {
-  difference,
-  forEach,
-  map,
-  every,
-  isEqual,
-} from 'lodash';
+import { difference, forEach, map, every, isEqual } from 'lodash';
 import SortingDirections from 'src/backend/shared/constants/sortingDirections';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import {
-  suggestNewWord,
-  suggestNewExample,
-  createWord,
-  createExample,
-  getWord,
-} from './commands';
+import { suggestNewWord, suggestNewExample, createWord, createExample, getWord } from './commands';
 
 const expectUniqSetsOfResponses = (res: any, responseLength = 10): void => {
   forEach(res, (docsRes, index) => {
@@ -29,16 +17,17 @@ const expectUniqSetsOfResponses = (res: any, responseLength = 10): void => {
 };
 
 const expectArrayIsInOrder = (array: [], key: string, direction = SortingDirections.ASCENDING): void => {
-  const isOrdered = every(map(array, (item) => item[key]), (value, index) => {
-    if (index === 0) {
-      return true;
-    }
-    return (
-      direction === SortingDirections.ASCENDING
+  const isOrdered = every(
+    map(array, (item) => item[key]),
+    (value, index) => {
+      if (index === 0) {
+        return true;
+      }
+      return direction === SortingDirections.ASCENDING
         ? String(array[index - 1][key] <= String(value))
-        : String(array[index - 1][key] >= String(value))
-    );
-  });
+        : String(array[index - 1][key] >= String(value));
+    },
+  );
   expect(isOrdered).toEqual(true);
 };
 
@@ -59,16 +48,8 @@ const createExampleFromSuggestion = async (exampleSuggestionData: any): Promise<
   const exampleSuggestionRes = await suggestNewExample(exampleSuggestionData);
   expect(exampleSuggestionRes.status).toEqual(200);
   const finalRes = await createExample(exampleSuggestionRes.body.id);
-  expect(isEqual(
-    exampleSuggestionRes.body.associatedWords,
-    finalRes.body.associatedWords,
-  )).toEqual(true);
+  expect(isEqual(exampleSuggestionRes.body.associatedWords, finalRes.body.associatedWords)).toEqual(true);
   return finalRes.body;
 };
 
-export {
-  expectUniqSetsOfResponses,
-  expectArrayIsInOrder,
-  createWordFromSuggestion,
-  createExampleFromSuggestion,
-};
+export { expectUniqSetsOfResponses, expectArrayIsInOrder, createWordFromSuggestion, createExampleFromSuggestion };

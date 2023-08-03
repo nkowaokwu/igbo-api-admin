@@ -173,7 +173,7 @@ export const assignExampleSuggestionToExampleData = async ({
   originalWord: Interfaces.Word;
   mergedBy: string;
   mongooseConnection: Connection;
-}): Promise<void> => {
+}): Promise<Interfaces.Example[]> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
   const Example = mongooseConnection.model('Example', exampleSchema);
 
@@ -184,6 +184,13 @@ export const assignExampleSuggestionToExampleData = async ({
   });
   // 2. Get all word's nested examples
   const examples: Interfaces.Example[] = await Example.find({ associatedWords: originalWord.id.toString() });
+
+  if (examples.filter((example) => !example.archived).length > exampleSuggestions.length) {
+    throw new Error(
+      'There are less Example sentences than Example Suggestions. ' +
+        'Please provide either equal to or more than the number of Example sentences.',
+    );
+  }
   // 3. Determine which word examples are not going to be updated
   const uneditedExamples = examples.filter(
     ({ id }) => !exampleSuggestions.find(({ originalExampleId }) => originalExampleId?.toString?.() === id.toString()),
@@ -197,7 +204,7 @@ export const assignExampleSuggestionToExampleData = async ({
     await archiveExamples({ exampleIds: archivingExampleIds, mongooseConnection });
   }
 
-  await Promise.all(
+  return Promise.all(
     map(exampleSuggestions, async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
       const removeSuggestionAssociatedIds: Interfaces.ExampleSuggestion = assign(exampleSuggestion);
       /* Before creating new Example from ExampleSuggestion,
@@ -210,8 +217,7 @@ export const assignExampleSuggestionToExampleData = async ({
       if (!removeSuggestionAssociatedIds.associatedWords.includes(originalWord.id.toString())) {
         removeSuggestionAssociatedIds.associatedWords.push(originalWord.id.toString());
       }
-      const updatedExampleSuggestion = await removeSuggestionAssociatedIds.save();
-      return executeMergeExample(updatedExampleSuggestion, mergedBy, mongooseConnection);
+      return executeMergeExample(removeSuggestionAssociatedIds, mergedBy, mongooseConnection);
     }),
   );
 };
