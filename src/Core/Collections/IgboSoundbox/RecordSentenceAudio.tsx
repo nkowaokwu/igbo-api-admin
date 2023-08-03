@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
-import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { Box, Heading, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
@@ -153,6 +153,13 @@ const RecordSentenceAudio = ({
           Record sentence audio
         </Heading>
         <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
+        <Text fontFamily="Silka" fontSize="sm" className="w-full lg:w-10/12">
+          <chakra.span fontWeight="bold" mr="2">
+            Note:
+          </chakra.span>
+          Sentence may contain grammatical and spelling errors. Record audio to match the intended pronunciation of each
+          word.
+        </Text>
         <Card text={currentExample.igbo} href={currentExampleHref} />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
