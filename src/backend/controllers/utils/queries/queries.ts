@@ -73,12 +73,37 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
             allFilters[`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`] = { $eq: !!value };
             break;
           case SuggestionSourceEnum.COMMUNITY:
-            allFilters.source = { $eq: SuggestionSourceEnum.COMMUNITY };
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.COMMUNITY } },
+              { source: { $exists: false } },
+            ];
             break;
           case SuggestionSourceEnum.INTERNAL:
             allFilters.$or = [
               ...allFilters.$or,
               { source: { $eq: SuggestionSourceEnum.INTERNAL } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.IGBO_SPEECH:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.IGBO_SPEECH } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.IGBO_WIKIMEDIANS:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.IGBO_WIKIMEDIANS } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.BBC:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.BBC } },
               { source: { $exists: false } },
             ];
             break;
@@ -94,13 +119,13 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
           case 'example':
             allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
             break;
-          case 'isProverb':
+          case ExampleStyleEnum.PROVERB:
             allFilters.style = { $eq: ExampleStyle[ExampleStyleEnum.PROVERB].value };
             break;
-          case 'isDataCollection':
+          case SentenceTypeEnum.DATA_COLLECTION:
             allFilters.type = { $eq: SentenceTypeEnum.DATA_COLLECTION };
             break;
-          case 'isBiblical':
+          case SentenceTypeEnum.BIBLICAL:
             allFilters.type = { $eq: SentenceTypeEnum.BIBLICAL };
             break;
           case 'wordClass':
