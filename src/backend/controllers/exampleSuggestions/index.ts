@@ -1,7 +1,7 @@
 import { Connection, Document, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, map } from 'lodash';
-import SuggestionTypes from 'src/backend/shared/constants/SuggestionTypes';
+import { assign, omit, map } from 'lodash';
+import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
@@ -11,17 +11,16 @@ import {
   searchExampleSuggestionsRegexQuery,
   searchForLastWeekQuery,
   searchPreExistingExampleSuggestionsRegexQuery,
-  searchRandomExampleSuggestionsRegexQuery,
+  searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
-  searchExamplesWithoutEnoughAudioRegexQuery,
 } from 'src/backend/controllers/utils/queries';
+import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { sendRejectedEmail } from 'src/backend/controllers/email';
 import { findUser } from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import handleCreatingNewExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/handleCreatingNewExampleSuggestions';
 import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
@@ -42,21 +41,16 @@ export const createExampleSuggestion = async (
     exampleSuggestionSchema,
   );
   try {
-    await Promise.all(
-      map(data.associatedWords, async (associatedWordId) => {
-        const query = searchPreExistingExampleSuggestionsRegexQuery({
-          ...data,
-          associatedWordId,
-        });
-        const identicalExampleSuggestions = await ExampleSuggestion.find(query);
+    const query = searchPreExistingExampleSuggestionsRegexQuery(data);
+    const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
-        if (identicalExampleSuggestions.length) {
-          const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
-          throw new Error(`There is already an existing example suggestion with the exact same information. 
-          ExampleSuggestion id(s): ${exampleSuggestionIds}`);
-        }
-      }),
-    );
+    if (identicalExampleSuggestions.length) {
+      const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
+      console.log(`Existing ExampleSuggestion id(s): ${exampleSuggestionIds}`);
+      throw new Error(
+        'There is an existing Example Suggestion with the same Igbo text. Please edit the existing Example Suggestion',
+      );
+    }
   } catch (err) {
     console.log(err.message);
     throw err;
@@ -112,7 +106,7 @@ export const updateExampleSuggestion = ({
   mongooseConnection,
 }: {
   id: string;
-  data: Interfaces.ExampleSuggestion;
+  data: Partial<Interfaces.ExampleSuggestion>;
   mongooseConnection: Connection;
 }): Promise<(Interfaces.ExampleSuggestion & Interfaces.ExampleClientData) | void> => {
   const data = assign(clientData) as Interfaces.ExampleClientData;
@@ -121,6 +115,7 @@ export const updateExampleSuggestion = ({
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
+  // @ts-expect-error
   return ExampleSuggestion.findById(id).then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
     if (!exampleSuggestion) {
       throw new Error("Example suggestion doesn't exist");
@@ -131,7 +126,19 @@ export const updateExampleSuggestion = ({
 
     await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
-    const updatedExampleSuggestion = assign(exampleSuggestion, data);
+    // Properly handle merging
+    Object.entries(data?.crowdsourcing || {}).forEach(([key, value]) => {
+      exampleSuggestion.crowdsourcing[key] = value;
+    });
+    const updatedExampleSuggestion = assign(exampleSuggestion, omit(data, ['crowdsourcing']));
+
+    // Updates the user interactions to include the current user
+    const updatedUserInteractions = new Set(
+      updatedExampleSuggestion.userInteractions.concat(data?.userInteractions || []),
+    );
+    updatedExampleSuggestion.userInteractions = Array.from(updatedUserInteractions);
+
+    exampleSuggestion.markModified('crowdsourcing');
     return updatedExampleSuggestion.save();
   });
 };
@@ -153,7 +160,7 @@ export const putExampleSuggestion = async (
       body: data,
       params: { id },
       mongooseConnection,
-    } = req;
+    } = await handleQueries(req);
     const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
     const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
     await Promise.all(
@@ -183,7 +190,7 @@ export const putExampleSuggestion = async (
  */
 export const findExampleSuggestionById = (
   id: string,
-  mongooseConnection,
+  mongooseConnection: Connection,
 ): Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
@@ -244,13 +251,13 @@ export const getExampleSuggestions = (
  * @param next NextFunction
  * @returns At least five random Example Suggestions to have audio recorded
  */
-export const getRandomExampleSuggestions = async (
+export const getRandomExampleSuggestionsToRecord = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { skip, limit, user, mongooseConnection } = await handleQueries(req);
+    const { limit, user, mongooseConnection } = await handleQueries(req);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
@@ -260,7 +267,7 @@ export const getRandomExampleSuggestions = async (
     let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
 
     // First searches for ExampleSuggestions that should be returned
-    query = searchRandomExampleSuggestionsRegexQuery(user.uid);
+    query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
     exampleSuggestions = await findExampleSuggestions({
       query,
       limit,
@@ -270,20 +277,20 @@ export const getRandomExampleSuggestions = async (
     });
 
     // If none are found, then new ExampleSuggestions are created, up to the provided limit
-    if (!exampleSuggestions || !exampleSuggestions.length) {
-      query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
-      exampleSuggestions = await handleCreatingNewExampleSuggestions({
-        query,
-        skip,
-        limit,
-        mongooseConnection,
-      });
+    // if (!exampleSuggestions || !exampleSuggestions.length) {
+    //   query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
+    //   exampleSuggestions = await handleCreatingNewExampleSuggestions({
+    //     query,
+    //     skip,
+    //     limit,
+    //     mongooseConnection,
+    //   });
 
-      console.log(
-        `Created ${exampleSuggestions.length} new example suggestions`,
-        exampleSuggestions.map((id) => id),
-      );
-    }
+    //   console.log(
+    //     `Created ${exampleSuggestions.length} new example suggestions`,
+    //     exampleSuggestions.map((id) => id),
+    //   );
+    // }
     return await packageResponse({
       res,
       docs: exampleSuggestions,
@@ -329,7 +336,7 @@ export const postBulkUploadExampleSuggestions = async (
         }
         const exampleSuggestion = new ExampleSuggestion({
           ...sentenceData,
-          type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+          type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
         });
         const savedExampleSuggestion = await exampleSuggestion.save();
         return {
@@ -347,7 +354,7 @@ export const postBulkUploadExampleSuggestions = async (
 };
 
 /**
- * Returns at least five random Example Suggestion that need to be reviewed
+ * Returns at least five random Example Suggestions that need to be reviewed
  * @param req Request
  * @param res Response
  * @param next NextFunction
@@ -390,6 +397,85 @@ export const getRandomExampleSuggestionsToReview = async (
 };
 
 /**
+ * Updates at least five random Example Suggestions with English translations
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns
+ */
+export const putRandomExampleSuggestionsToTranslate = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { body: data, mongooseConnection, user } = await handleQueries(req);
+
+    const response = await Promise.all(
+      data.map(async ({ id, english }) => {
+        const res = await updateExampleSuggestion({
+          id,
+          data: {
+            english,
+            userInteractions: [user.uid],
+            crowdsourcing: { [CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]: true },
+          },
+          mongooseConnection,
+        });
+        console.log('how does this work?>>', res);
+        return res;
+      }),
+    );
+    req.response = response;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+/**
+ * Returns at least five random Example Suggestion that need to be translated into English
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns At least five random Example Suggestion that need to be reviewed by the current user
+ */
+export const getRandomExampleSuggestionsToTranslate = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { limit, user, mongooseConnection } = await handleQueries(req);
+
+    const query = searchRandomExampleSuggestionsToTranslateRegexQuery(user.uid);
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+
+    return await findExampleSuggestions({
+      query,
+      limit,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) =>
+        packageResponse({
+          res,
+          docs: exampleSuggestions,
+          model: ExampleSuggestion,
+          query,
+        }),
+      )
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning random example suggestions to translate');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
  * Returns total number of Example Suggestions the user has approved or denied
  * @param req Request
  * @param res Response
@@ -403,7 +489,7 @@ export const getTotalVerifiedExampleSuggestions = async (
 ): Promise<any | void> => {
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
-  const query = searchExampleAudioPronunciationsReviewedByUser(uid);
+  const query = searchExampleAudioPronunciationsReviewedByUser({ uid });
 
   try {
     return await findExampleSuggestions({
@@ -640,7 +726,7 @@ export const removeExampleSuggestion = (
       if (userEmail && !exampleSuggestion.merged) {
         sendRejectedEmail({
           to: [userEmail],
-          suggestionType: SuggestionTypes.WORD,
+          suggestionType: SuggestionTypeEnum.WORD,
           ...exampleSuggestion.toObject(),
         });
       }
@@ -668,7 +754,7 @@ export const deleteExampleSuggestion = async (
 };
 
 /* Returns all the ExampleSuggestions from last week */
-export const getExampleSuggestionsFromLastWeek = (mongooseConnection): Promise<any> => {
+export const getExampleSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
     exampleSuggestionSchema,

@@ -1,9 +1,4 @@
-import {
-  Connection,
-  Document,
-  Query,
-  Types,
-} from 'mongoose';
+import { Connection, Document, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign } from 'lodash';
 import { corpusSchema } from '../models/Corpus';
@@ -11,7 +6,7 @@ import { corpusSuggestionSchema } from '../models/CorpusSuggestion';
 import { packageResponse, handleQueries } from './utils';
 import { searchPreExistingCorpusSuggestionsRegexQuery } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
+import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
 import { sendRejectedEmail } from './email';
 import { findUser } from './users';
 import { deleteMedia } from './utils/MediaAPIs/CorpusMediaAPI';
@@ -40,32 +35,37 @@ export const postCorpusSuggestion = async (
   }
 };
 
-export const findCorpusSuggestionById = (id: string | Types.ObjectId, mongooseConnection)
-: Query<any, Document<Interfaces.CorpusSuggestion>> => {
+export const findCorpusSuggestionById = (
+  id: string | Types.ObjectId,
+  mongooseConnection,
+): Query<any, Document<Interfaces.CorpusSuggestion>> => {
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
   return CorpusSuggestion.findById(id);
 };
 
-export const deleteCorpusSuggestionByOriginalCorpusId = (id: string | Types.ObjectId, mongooseConnection)
-: Query<any, Document<Interfaces.CorpusSuggestion>> => {
+export const deleteCorpusSuggestionByOriginalCorpusId = (
+  id: string | Types.ObjectId,
+  mongooseConnection,
+): Query<any, Document<Interfaces.CorpusSuggestion>> => {
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
   return CorpusSuggestion.deleteMany({ originalWordId: id });
 };
 
 /* Grabs CorpusSuggestions */
-const findCorpusSuggestions = async (
-  {
-    regexMatch,
-    skip,
-    limit,
-    mongooseConnection,
-  }:
-  { regexMatch: RegExp, skip: number, limit: number, mongooseConnection: Connection },
-): Promise<Interfaces.CorpusSuggestion[] | any> => {
+const findCorpusSuggestions = async ({
+  regexMatch,
+  skip,
+  limit,
+  mongooseConnection,
+}: {
+  regexMatch: RegExp;
+  skip: number;
+  limit: number;
+  mongooseConnection: Connection;
+}): Promise<Interfaces.CorpusSuggestion[] | any> => {
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
-  return CorpusSuggestion
-    .find(regexMatch, null, { sort: { updatedAt: -1 } })
+  return CorpusSuggestion.find(regexMatch, null, { sort: { updatedAt: -1 } })
     .skip(skip)
     .limit(limit);
 };
@@ -85,7 +85,7 @@ export const putCorpusSuggestion = (
     return findCorpusSuggestionById(id, mongooseConnection)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
-          throw new Error('Corpus suggestion doesn\'t exist');
+          throw new Error("Corpus suggestion doesn't exist");
         }
 
         delete data.authorId;
@@ -109,15 +109,7 @@ export const getCorpusSuggestions = (
   next: NextFunction,
 ): Promise<Response | void> | void => {
   try {
-    const {
-      regexKeyword,
-      skip,
-      limit,
-      filters,
-      user,
-      mongooseConnection,
-      ...rest
-    } = handleQueries(req);
+    const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
     const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(user.uid, regexKeyword, filters);
     return findCorpusSuggestions({
@@ -125,16 +117,15 @@ export const getCorpusSuggestions = (
       skip,
       limit,
       mongooseConnection,
-    })
-      .then(async (corpusSuggestions: [Interfaces.CorpusSuggestion]) => (
-        packageResponse({
-          res,
-          docs: corpusSuggestions,
-          model: CorpusSuggestion,
-          query: regexMatch,
-          ...rest,
-        })
-      ));
+    }).then(async (corpusSuggestions: [Interfaces.CorpusSuggestion]) =>
+      packageResponse({
+        res,
+        docs: corpusSuggestions,
+        model: CorpusSuggestion,
+        query: regexMatch,
+        ...rest,
+      }),
+    );
   } catch (err) {
     return next(err);
   }
@@ -150,14 +141,14 @@ export const getCorpusSuggestion = async (
     const { mongooseConnection } = req;
     const { id } = req.params;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-    const populatedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await CorpusSuggestion
-      .findById(id)
-      .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
+    const populatedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await CorpusSuggestion.findById(id).then(
+      async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
           throw new Error('No corpus suggestion exists with the provided id.');
         }
         return corpusSuggestion;
-      });
+      },
+    );
     return res.send(populatedCorpusSuggestion);
   } catch (err) {
     return next(err);
@@ -182,13 +173,13 @@ export const deleteCorpusSuggestion = (
         }
         await deleteMedia(id);
 
-        const { email: userEmail } = await findUser(corpusSuggestion.authorId) as Interfaces.FormattedUser;
+        const { email: userEmail } = (await findUser(corpusSuggestion.authorId)) as Interfaces.FormattedUser;
         /* Sends rejection email to user if they provided an email and the corpusSuggestion isn't merged */
         if (userEmail && !corpusSuggestion.merged) {
           sendRejectedEmail({
             to: [userEmail],
-            suggestionType: SuggestionTypes.WORD,
-            ...(corpusSuggestion.toObject()),
+            suggestionType: SuggestionTypeEnum.WORD,
+            ...corpusSuggestion.toObject(),
           });
         }
         return res.send(corpusSuggestion);
@@ -206,13 +197,17 @@ export const approveCorpusSuggestion = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
-  const { params: { id }, user, mongooseConnection } = req;
+  const {
+    params: { id },
+    user,
+    mongooseConnection,
+  } = req;
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
   try {
     const corpusSuggestion = await CorpusSuggestion.findById(id);
     if (!corpusSuggestion) {
-      throw new Error('Corpus suggestion doesn\'t exist');
+      throw new Error("Corpus suggestion doesn't exist");
     }
     const updatedApprovals = new Set(corpusSuggestion.approvals);
     const updatedDenials = corpusSuggestion.denials.filter((uid) => uid !== user.uid);
@@ -231,13 +226,17 @@ export const denyCorpusSuggestion = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
-  const { params: { id }, user, mongooseConnection } = req;
+  const {
+    params: { id },
+    user,
+    mongooseConnection,
+  } = req;
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
   try {
     const corpusSuggestion = await CorpusSuggestion.findById(id);
     if (!corpusSuggestion) {
-      throw new Error('Corpus suggestion doesn\'t exist');
+      throw new Error("Corpus suggestion doesn't exist");
     }
     const updatedDenials = new Set(corpusSuggestion.denials);
     const updatedApprovals = corpusSuggestion.approvals.filter((uid) => uid !== user.uid);

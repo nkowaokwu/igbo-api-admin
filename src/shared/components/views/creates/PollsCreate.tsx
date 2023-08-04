@@ -53,7 +53,7 @@ const PollsCreate = (): ReactElement => {
       if (!word) {
         throw new Error('Please enter the newly constructed Igbo word');
       }
-      const initialTweet = `${ConstructedPollThread[0].text} ${tweetBody}`;
+      const initialTweet = `${ConstructedPollThread[0].text}${tweetBody}`;
       const poll = {
         text: initialTweet,
         igboWord: word,
@@ -146,17 +146,16 @@ const PollsCreate = (): ReactElement => {
           {` document. This page allow translators to directly poll the Twitter Igbo community on whether 
           this is a word that they can see themselves using.`}
         </Text>
-        <Box
-          className="flex flex-col lg:flex-row lg:justify-center items-start space-y-10 lg:space-y-0 lg:space-x-24 my-6"
-        >
+        <Box className="flex flex-col lg:flex-row lg:justify-center items-start space-y-10 lg:space-y-0 lg:space-x-24 my-6">
           <Box flex={2} className="w-full space-y-4">
             <Box>
-              <Heading as="h3" fontSize="md" mb={4}>Igbo Words</Heading>
-              <Input
-                value={word}
-                onChange={(e) => setWord(e.target.value)}
-              />
-              <Heading as="h3" fontSize="md" mb={4}>Tweet Body</Heading>
+              <Heading as="h3" fontSize="md" mb={4}>
+                Igbo Words
+              </Heading>
+              <Input value={word} onChange={(e) => setWord(e.target.value)} />
+              <Heading as="h3" fontSize="md" mb={4}>
+                Tweet Body
+              </Heading>
               <Textarea
                 required
                 name="tweetBody"
@@ -167,7 +166,9 @@ const PollsCreate = (): ReactElement => {
             </Box>
             <Box>
               <Box className="flex flex-row justify-between items-center" mb={4}>
-                <Heading as="h3" fontSize="md">Poll Options</Heading>
+                <Heading as="h3" fontSize="md">
+                  Poll Options
+                </Heading>
                 {pollOptions.length < MAXIMUM_POLL_OPTIONS ? (
                   <IconButton
                     colorScheme="green"
@@ -200,17 +201,14 @@ const PollsCreate = (): ReactElement => {
                   </Box>
                 </Box>
               ))}
-
             </Box>
           </Box>
           <Box flex={3} className="w-full">
-            <Heading as="h3" fontSize="md" mb={4}>Final Twitter thread</Heading>
+            <Heading as="h3" fontSize="md" mb={4}>
+              Final Twitter thread
+            </Heading>
             {ConstructedPollThread.map(({ text }, index) => (
-              <Tweet
-                text={text}
-                {...(index === 0 ? { tweetBody } : {})}
-                {...(index === 0 ? { pollOptions } : {})}
-              />
+              <Tweet text={text} {...(index === 0 ? { tweetBody } : {})} {...(index === 0 ? { pollOptions } : {})} />
             ))}
           </Box>
         </Box>

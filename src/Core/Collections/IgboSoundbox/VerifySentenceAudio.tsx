@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { compact, cloneDeep, noop } from 'lodash';
 import { Box, Button, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import pluralize from 'pluralize';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import {
   getRandomExampleSuggestionsToReview,
@@ -25,10 +26,8 @@ const DEFAULT_CURRENT_EXAMPLE = { igbo: '', pronunciations: [] };
 
 const VerifySentenceAudio = ({
   setIsDirty,
-  goHome,
 }: {
   setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
-  goHome: () => void;
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [reviews, setReviews] = useState<SentenceVerification[]>([]);
@@ -56,9 +55,6 @@ const VerifySentenceAudio = ({
     if (exampleIndex !== examples.length - 1) {
       setExampleIndex(exampleIndex + 1);
     }
-    if (exampleIndex + 1 === examples.length - 1) {
-      setVisitedLastReviewIndex(true);
-    }
   };
 
   const handleBack = () => {
@@ -80,8 +76,22 @@ const VerifySentenceAudio = ({
   const handleUploadReviews = async () => {
     try {
       const payload: SentenceVerification[] = reviews;
+      const totalReviewCount = reviews.reduce(
+        (finalCount, { reviews }) =>
+          finalCount + Object.values(reviews).filter((review) => review !== ReviewActions.SKIP).length,
+        0,
+      );
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
+      toast({
+        title: 'Gained points 🎉',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (err) {
       toast({
         title: 'An error occurred',
@@ -148,9 +158,17 @@ const VerifySentenceAudio = ({
     }
   }, [isComplete]);
 
+  useEffect(() => {
+    if (exampleIndex + 1 === examples?.length - 1) {
+      setVisitedLastReviewIndex(true);
+    }
+  }, [exampleIndex, examples]);
+
   const shouldRenderExamples =
     !isLoading && Array.isArray(examples) && examples?.length && examples?.length === reviews?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
+  // eslint-disable-next-line max-len
+  const currentExampleHref = `${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${examples?.[exampleIndex]?.id}/${Views.SHOW}`;
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
@@ -166,10 +184,7 @@ const VerifySentenceAudio = ({
           </Link>{' '}
           document.
         </Text>
-        <Card
-          text={currentExample.igbo}
-          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
-        >
+        <Card text={currentExample.igbo} href={currentExampleHref}>
           <SandboxAudioReviewer
             pronunciations={currentExample.pronunciations}
             onApprove={handleOnApprove}
@@ -208,14 +223,9 @@ const VerifySentenceAudio = ({
       </Box>
     </Box>
   ) : noExamples ? (
-    <EmptyExamples setIsDirty={setIsDirty} goHome={goHome} />
+    <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed
-      type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO}
-      setIsComplete={setIsComplete}
-      setIsDirty={setIsDirty}
-      goHome={goHome}
-    />
+    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
   ) : (
     <Spinner />
   );

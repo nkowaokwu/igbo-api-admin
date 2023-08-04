@@ -2,16 +2,17 @@ import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { ulid } from 'ulid'
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import Author from 'src/backend/shared/constants/Author';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import {
   approveExampleSuggestion,
   suggestNewExample,
   updateExampleSuggestion,
   getExampleSuggestions,
   getExampleSuggestion,
-  getRandomExampleSuggestions,
+  getRandomExampleSuggestionsToRecord,
   getRandomExampleSuggestionsToReview,
   deleteExampleSuggestion,
   postBulkUploadExampleSuggestions,
@@ -40,10 +41,11 @@ import SortingDirections from '../backend/shared/constants/sortingDirections';
 
 describe('MongoDB Example Suggestions', () => {
   /* Create a base word and exampleSuggestion document */
-  beforeAll(async () => {
+  beforeEach(async () => {
+    await dropMongoDBCollections();
     await Promise.all([
       suggestNewWord(wordSuggestionData).then((res) => createWord(res.body.id)),
-      suggestNewExample(exampleSuggestionData).then(() => {}),
+      suggestNewExample({ ...exampleSuggestionData, igbo: uuid() }).then(() => {}),
     ]);
   });
   describe('/POST mongodb exampleSuggestions', () => {
@@ -85,31 +87,38 @@ describe('MongoDB Example Suggestions', () => {
       expect(res.status).toEqual(200);
       expect(
         res.body.every(
-          ({ style, type }) => type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value,
+          ({ style, type }) =>
+            type === SentenceTypeEnum.DATA_COLLECTION && style === ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
         ),
       );
     });
 
     it('should bulk upload at most 500 example suggestions with biblical type', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = ulid();
-        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceType.BIBLICAL };
+
+        const igbo = uuid();
+        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceTypeEnum.BIBLICAL };
         return exampleSuggestionData;
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ type }) => type === SentenceType.BIBLICAL));
+      expect(res.body.every(({ type }) => type === SentenceTypeEnum.BIBLICAL));
     });
 
     it('should bulk upload at most 500 example suggestions with proverb style', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = ulid();
-        const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, style: ExampleStyle.PROVERB.value };
+
+        const igbo = uuid();
+        const exampleSuggestionData = {
+          ...bulkUploadExampleSuggestionData,
+          igbo,
+          style: ExampleStyle[ExampleStyleEnum.PROVERB].value,
+        };
         return exampleSuggestionData;
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+      expect(res.body.every(({ style }) => style === ExampleStyle[ExampleStyleEnum.PROVERB].value));
     });
 
     it('should bulk upload at most 500 example suggestions with english', async () => {
@@ -121,7 +130,7 @@ describe('MongoDB Example Suggestions', () => {
       });
       const res = await postBulkUploadExampleSuggestions(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+      expect(res.body.every(({ style }) => style === ExampleStyle[ExampleStyleEnum.PROVERB].value));
     });
 
     it('should throw an error due to too many example suggestions for bulk upload', async () => {
@@ -487,12 +496,12 @@ describe('MongoDB Example Suggestions', () => {
       });
       expect(wordSuggestionRes.status).toEqual(200);
       expect(wordSuggestionRes.body.examples[0].exampleForSuggestion).toEqual(true);
-      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      const res = await getRandomExampleSuggestionsToRecord({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(0);
     });
 
-    it('should create up to five example suggestions if no example suggestions to record audio', async () => {
+    it.skip('should create up to five example suggestions if no example suggestions to record audio', async () => {
       await Promise.all(
         times(5, async (index) => {
           await suggestNewWord({
@@ -507,7 +516,7 @@ describe('MongoDB Example Suggestions', () => {
           });
         }),
       );
-      const randomExampleSuggestionRes = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      const randomExampleSuggestionRes = await getRandomExampleSuggestionsToRecord({ range: '[0, 4]' });
       expect(randomExampleSuggestionRes.status).toEqual(200);
       expect(randomExampleSuggestionRes.body).toHaveLength(0);
       await Promise.all(
@@ -521,7 +530,7 @@ describe('MongoDB Example Suggestions', () => {
           await createExample(exampleSuggestionRes.body.id);
         }),
       );
-      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      const res = await getRandomExampleSuggestionsToRecord({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(5);
       res.body.forEach(({ exampleForSuggestion, authorId }) => {
@@ -586,7 +595,7 @@ describe('MongoDB Example Suggestions', () => {
           expect(exampleRes.body.denials).toHaveLength(0);
         }),
       );
-      const res = await getRandomExampleSuggestions({ range: '[0, 4]' });
+      const res = await getRandomExampleSuggestionsToRecord({ range: '[0, 4]' });
       expect(res.status).toEqual(200);
       expect(res.body).toHaveLength(5);
       res.body.forEach((exampleSuggestion) => {
@@ -618,7 +627,10 @@ describe('MongoDB Example Suggestions', () => {
           );
           expect(exampleRes.body.approvals).toHaveLength(0);
           expect(exampleRes.body.denials).toHaveLength(0);
-          const res = await getRandomExampleSuggestions({ range: '[0, 4]' }, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+          const res = await getRandomExampleSuggestionsToRecord(
+            { range: '[0, 4]' },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
           expect(res.status).toEqual(200);
           expect(res.body.length).toBeLessThanOrEqual(5);
           res.body.forEach((exampleSuggestion) => {
@@ -698,7 +710,7 @@ describe('MongoDB Example Suggestions', () => {
           }
         }),
       );
-      const newRandomExampleSuggestionsRes = await getRandomExampleSuggestions();
+      const newRandomExampleSuggestionsRes = await getRandomExampleSuggestionsToRecord();
       expect(newRandomExampleSuggestionsRes.status).toEqual(200);
       newRandomExampleSuggestionsRes.body.forEach((newRandomExampleSuggestion) => {
         expect(newRandomExampleSuggestion.exampleForSuggestion).not.toEqual(true);

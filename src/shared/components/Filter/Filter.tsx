@@ -9,14 +9,18 @@ import FilterInterface from './FilterInterface';
 const CustomFilter = (props: FilterInterface): ReactElement => {
   const { setFilters, filterValues } = useListFilterContext(props);
   const { resource } = props;
-  const filterKey = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
-    ? 'example'
-    : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
+  const filterKey =
+    resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
+      ? 'example'
+      : resource === Collection.WORDS ||
+        resource === Collection.WORD_SUGGESTIONS ||
+        resource === Collection.NSIBIDI_CHARACTERS
       ? 'word'
       : 'displayName';
-  const placeholderText = resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
-    ? 'example'
-    : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
+  const placeholderText =
+    resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
+      ? 'example'
+      : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
       ? 'word'
       : 'name or email';
   const [searchValue, setSearchValue] = useState(
@@ -26,9 +30,7 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
   return (
     <Box className="flex items-end">
       <InputGroup>
-        <InputLeftElement
-          pointerEvents="none"
-        >
+        <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
         <Input
@@ -51,8 +53,6 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
   );
 };
 
-const Filter = (props: any): ReactElement => (
-  <CustomFilter {...props} />
-);
+const Filter = (props: any): ReactElement => <CustomFilter {...props} />;
 
 export default Filter;

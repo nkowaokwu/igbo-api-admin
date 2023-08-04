@@ -33,6 +33,7 @@ import {
   getNsibidiCharacter,
   postNsibidiCharacter,
   putNsibidiCharacter,
+  deleteNsibidiCharacter,
 } from 'src/backend/controllers/nsibidiCharacters';
 import { getStats } from 'src/backend/controllers/stats';
 import { getPolls } from 'src/backend/controllers/polls';
@@ -136,6 +137,12 @@ editorRouter.put(
   validId,
   validateNsibidiCharacterBody,
   putNsibidiCharacter,
+);
+editorRouter.delete(
+  '/nsibidiCharacters/:id',
+  validId,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  deleteNsibidiCharacter,
 );
 
 editorRouter.delete(

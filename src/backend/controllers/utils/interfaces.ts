@@ -2,11 +2,17 @@ import { Document, LeanDocument, Connection, Types } from 'mongoose';
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collections';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
 export interface HandleQueries {
   searchWord: string;
@@ -20,10 +26,12 @@ export interface HandleQueries {
   strict: boolean;
   body: EditorRequest['body'];
   mongooseConnection: EditorRequest['mongooseConnection'];
-  leaderboard: undefined | LeaderboardType;
+  leaderboard?: LeaderboardType;
+  timeRange?: LeaderboardTimeRange;
   uidQuery?: string;
   error?: any;
   response?: any;
+  params: Request['params'];
 }
 
 export interface FirebaseUser extends User {
@@ -43,6 +51,7 @@ export interface EditorRequest extends Request {
     strict?: string;
     uid?: string;
     leaderboard?: LeaderboardType;
+    timeRange?: LeaderboardTimeRange;
   };
   suggestionDoc?: Suggestion;
   body: any;
@@ -62,7 +71,7 @@ export interface CorpusClientData extends Corpus {
 }
 
 export interface WordDialect {
-  dialects: string[];
+  dialects: DialectEnum[];
   variations: string[];
   pronunciation: string;
   word: string;
@@ -72,7 +81,7 @@ export interface WordDialect {
 }
 
 export interface DefinitionSchema {
-  wordClass: string | WordDialect;
+  wordClass: WordClassEnum | WordDialect;
   definitions: string[];
   label: string;
   igboDefinitions: { igbo: string; nsibidi: string }[];
@@ -100,13 +109,13 @@ export interface WordData {
   stems: string[];
   tags: string[];
   attributes: {
-    isStandardIgbo: boolean;
-    isAccented: boolean;
-    isComplete: boolean;
-    isSlang: boolean;
-    isConstructedTerm: boolean;
-    isBorrowedTerm: boolean;
-    isStem: boolean;
+    [WordAttributeEnum.IS_STANDARD_IGBO]: boolean;
+    [WordAttributeEnum.IS_ACCENTED]: boolean;
+    [WordAttributeEnum.IS_COMPLETE]: boolean;
+    [WordAttributeEnum.IS_SLANG]: boolean;
+    [WordAttributeEnum.IS_CONSTRUCTED_TERM]: boolean;
+    [WordAttributeEnum.IS_BORROWED_TERM]: boolean;
+    [WordAttributeEnum.IS_STEM]: boolean;
   };
   relatedTerms: string[];
   hypernyms: string[];
@@ -237,14 +246,19 @@ export interface ExampleClientData {
   meaning?: string;
   nsibidi?: string;
   nsibidiCharacters?: string[];
-  type?: SentenceType;
-  style?: string;
+  type?: SentenceTypeEnum;
+  style?: ExampleStyleEnum;
+  source?: SuggestionSourceEnum;
   pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];
   exampleForSuggestion?: boolean;
   authorId?: string;
   originalExampleId?: string;
+  crowdsourcing: {
+    [key in CrowdsourcingType]?: boolean;
+  };
+  userInteractions?: string[];
 }
 
 export interface NsibidiCharacter {

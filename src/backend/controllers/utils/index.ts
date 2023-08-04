@@ -222,6 +222,7 @@ export const handleQueries = ({
   query = {},
   body = {},
   user = {},
+  params,
   error,
   response,
   mongooseConnection,
@@ -235,6 +236,7 @@ export const handleQueries = ({
     strict: strictQuery,
     uid: uidQuery,
     leaderboard,
+    timeRange,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -257,7 +259,9 @@ export const handleQueries = ({
     body,
     uidQuery,
     leaderboard,
+    timeRange,
     error,
+    params,
     response,
     mongooseConnection,
   };
@@ -265,10 +269,10 @@ export const handleQueries = ({
 
 /* Updates a document's merge property with a document id */
 export const updateDocumentMerge = (
-  suggestionDoc: Document<Interfaces.WordSuggestion | Interfaces.ExampleSuggestion>,
+  suggestionDoc: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
   originalDocId: string,
   mergedBy = null,
-): Promise<Document<Interfaces.WordSuggestion | Interfaces.ExampleSuggestion>> => {
+): Interfaces.WordSuggestion | Interfaces.ExampleSuggestion => {
   const updatedSuggestion = assign(suggestionDoc, { merged: originalDocId, mergedBy });
-  return updatedSuggestion.save();
+  return updatedSuggestion;
 };

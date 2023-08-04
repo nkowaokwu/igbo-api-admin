@@ -1,8 +1,9 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { noop } from 'lodash';
-import { Box, Heading, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { Box, Heading, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
+import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { getRandomExampleSuggestions, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
@@ -15,10 +16,8 @@ import EmptyExamples from './EmptyExamples';
 
 const RecordSentenceAudio = ({
   setIsDirty,
-  goHome,
 }: {
   setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
-  goHome: () => void;
 }): ReactElement => {
   const [examples, setExamples] = useState<ExampleSuggestion[] | null>(null);
   const [pronunciations, setPronunciations] = useState<string[]>([]);
@@ -41,9 +40,6 @@ const RecordSentenceAudio = ({
   const handleNext = () => {
     if (exampleIndex !== examples.length - 1) {
       setExampleIndex(exampleIndex + 1);
-    }
-    if (exampleIndex + 1 === examples.length - 1) {
-      setVisitedLastExampleIndex(true);
     }
   };
 
@@ -69,6 +65,19 @@ const RecordSentenceAudio = ({
       }));
       setIsLoading(true);
       await putAudioForRandomExampleSuggestions(payload);
+      toast({
+        title: 'Gained points 🎉',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: `You have gained ${pluralize(
+          'point',
+          payload.filter(({ pronunciation }) => pronunciation).length,
+          true,
+        )}`,
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
     } catch (err) {
       toast({
         title: 'An error occurred',
@@ -106,7 +115,7 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestions();
+          const { data: randomExamples } = await getRandomExampleSuggestionsToRecord();
           setExamples(randomExamples);
           setExampleIndex(0);
           setPronunciations(new Array(randomExamples.length).fill(''));
@@ -124,9 +133,18 @@ const RecordSentenceAudio = ({
       })();
     }
   }, [isComplete]);
+
+  useEffect(() => {
+    if (exampleIndex + 1 === examples?.length - 1) {
+      setVisitedLastExampleIndex(true);
+    }
+  }, [exampleIndex, examples]);
+
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
   const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
+  // eslint-disable-next-line max-len
+  const currentExampleHref = `${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${examples?.[exampleIndex]?.id}/${Views.SHOW}`;
 
   return shouldRenderExamples ? (
     <Box className="flex flex-col justify-between items-center p-6 h-full">
@@ -135,10 +153,14 @@ const RecordSentenceAudio = ({
           Record sentence audio
         </Heading>
         <Text fontFamily="Silka">Play audio and then record audio for each sentence</Text>
-        <Card
-          text={currentExample.igbo}
-          href={`${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${currentExample.id}/${Views.SHOW}`}
-        />
+        <Text fontFamily="Silka" fontSize="sm" className="w-full lg:w-10/12">
+          <chakra.span fontWeight="bold" mr="2">
+            Note:
+          </chakra.span>
+          Sentence may contain grammatical and spelling errors. Record audio to match the intended pronunciation of each
+          word.
+        </Text>
+        <Card text={currentExample.igbo} href={currentExampleHref} />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
         <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>
@@ -173,14 +195,9 @@ const RecordSentenceAudio = ({
       </Box>
     </Box>
   ) : noExamples ? (
-    <EmptyExamples recording goHome={goHome} setIsDirty={setIsDirty} />
+    <EmptyExamples recording setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed
-      type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO}
-      setIsComplete={setIsComplete}
-      setIsDirty={setIsDirty}
-      goHome={goHome}
-    />
+    <Completed type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
   ) : (
     <Spinner />
   );

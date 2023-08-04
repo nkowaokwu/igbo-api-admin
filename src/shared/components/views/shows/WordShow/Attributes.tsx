@@ -1,28 +1,14 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading } from '@chakra-ui/react';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import DiffField from '../diffFields/DiffField';
 import FormHeader from '../../components/FormHeader';
 
-const Attributes = (
-  {
-    record,
-    diffRecord,
-  } : {
-    record: Interfaces.Word,
-    diffRecord: any,
-  },
-): ReactElement => {
+const Attributes = ({ record, diffRecord }: { record: Interfaces.Word; diffRecord: any }): ReactElement => {
   const {
-    attributes: {
-      isStandardIgbo,
-      isAccented,
-      isSlang,
-      isConstructedTerm,
-      isBorrowedTerm,
-      isStem,
-    } = {
+    attributes: { isStandardIgbo, isAccented, isSlang, isConstructedTerm, isBorrowedTerm, isStem } = {
       isStandardIgbo: false,
       isAccented: false,
       isSlang: false,
@@ -38,10 +24,10 @@ const Attributes = (
       <Box className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_STANDARD_IGBO.label}
+            {WordAttributes[WordAttributeEnum.IS_STANDARD_IGBO].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`}
+            path={`attributes.${WordAttributeEnum.IS_STANDARD_IGBO}`}
             diffRecord={diffRecord}
             fallbackValue={isStandardIgbo}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
@@ -49,10 +35,10 @@ const Attributes = (
         </Box>
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_ACCENTED.label}
+            {WordAttributes[WordAttributeEnum.IS_ACCENTED].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_ACCENTED.value}`}
+            path={`attributes.${WordAttributeEnum.IS_ACCENTED}`}
             diffRecord={diffRecord}
             fallbackValue={isAccented}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
@@ -60,10 +46,10 @@ const Attributes = (
         </Box>
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_SLANG.label}
+            {WordAttributes[WordAttributeEnum.IS_SLANG].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_SLANG.value}`}
+            path={`attributes.${WordAttributeEnum.IS_SLANG}`}
             diffRecord={diffRecord}
             fallbackValue={isSlang}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
@@ -71,10 +57,10 @@ const Attributes = (
         </Box>
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_CONSTRUCTED_TERM.label}
+            {WordAttributes[WordAttributeEnum.IS_CONSTRUCTED_TERM].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`}
+            path={`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`}
             diffRecord={diffRecord}
             fallbackValue={isConstructedTerm}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
@@ -82,10 +68,10 @@ const Attributes = (
         </Box>
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_BORROWED_TERM.label}
+            {WordAttributes[WordAttributeEnum.IS_BORROWED_TERM].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_BORROWED_TERM.value}`}
+            path={`attributes.${WordAttributeEnum.IS_BORROWED_TERM}`}
             diffRecord={diffRecord}
             fallbackValue={isBorrowedTerm}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}
@@ -93,10 +79,10 @@ const Attributes = (
         </Box>
         <Box>
           <Heading fontSize="lg" className="text-xl text-gray-600">
-            {WordAttributes.IS_STEM.label}
+            {WordAttributes[WordAttributeEnum.IS_STEM].label}
           </Heading>
           <DiffField
-            path={`attributes.${WordAttributes.IS_STEM.value}`}
+            path={`attributes.${WordAttributeEnum.IS_STEM}`}
             diffRecord={diffRecord}
             fallbackValue={isStem}
             renderNestedObject={(value) => <span>{String(value || false)}</span>}

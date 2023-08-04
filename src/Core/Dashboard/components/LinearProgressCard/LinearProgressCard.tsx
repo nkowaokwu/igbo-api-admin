@@ -22,7 +22,7 @@ const LinearProgressCard = ({
         <Divider backgroundColor="gray.100" />
       </Box>
       {stats.map((stat) => (
-        <StatBody isGeneric={isGeneric} {...stat} />
+        <StatBody key={stat.heading} isGeneric={isGeneric} {...stat} />
       ))}
     </Box>
   </Skeleton>

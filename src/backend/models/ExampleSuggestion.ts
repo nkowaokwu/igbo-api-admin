@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
 import { uploadExamplePronunciation } from './plugins/examplePronunciationHook';
 import { normalizeIgbo } from './plugins/normalizationHooks';
@@ -29,8 +29,8 @@ export const exampleSuggestionSchema = new Schema(
     },
     type: {
       type: String,
-      enum: Object.values(SentenceType),
-      default: SentenceType.DEFAULT,
+      enum: Object.values(SentenceTypeEnum),
+      default: SentenceTypeEnum.DEFAULT,
     },
     igbo: { type: String, default: '', trim: true },
     english: { type: String, default: '', trim: true },
@@ -39,8 +39,8 @@ export const exampleSuggestionSchema = new Schema(
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
     style: {
       type: String,
-      enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle.NO_STYLE.value,
+      enum: Object.values(ExampleStyleEnum),
+      default: ExampleStyleEnum.NO_STYLE,
     },
     associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },

@@ -15,6 +15,7 @@ import Collections from 'src/shared/constants/Collections';
 import { Input } from 'src/shared/primitives';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import RadicalsForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/RadicalsForm/RadicalsForm';
+import NsibidiInput from 'src/shared/components/views/components/WordEditForm/components/NsibidiForm/NsibidiInput';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -102,14 +103,32 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         tooltip="This field uses the Chinese Unicode to represent its corresponding Nsịbịdị"
       />
       <Controller
-        render={(props) => <Input {...props} placeholder="Input in Nsịbịdị" data-test="nsibidi-input" />}
+        render={(props) => (
+          <NsibidiInput
+            {...props}
+            control={control}
+            nsibidiFormName="nsibidi"
+            placeholder="Input in Nsịbịdị"
+            data-test="nsibidi-input"
+            enableSearch={false}
+          />
+        )}
         name="nsibidi"
         control={control}
         defaultValue={get(record, 'nsibidi') || getValues().nsibidi || ''}
       />
       <FormHeader title="Pronunciation" tooltip="Text representation of the Nsịbịdị pronunciation" />
       <Controller
-        render={(props) => <Input {...props} placeholder="Nsịbịdị pronunciation" data-test="pronunciation-input" />}
+        render={(props) => (
+          <NsibidiInput
+            {...props}
+            control={control}
+            nsibidiFormName="pronunciation"
+            placeholder="Nsịbịdị pronunciation"
+            data-test="pronunciation-input"
+            enableSearch={false}
+          />
+        )}
         name="pronunciation"
         control={control}
         defaultValue={get(record, 'pronunciation') || getValues().pronunciation || ''}

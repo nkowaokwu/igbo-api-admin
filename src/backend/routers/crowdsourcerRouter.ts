@@ -2,9 +2,11 @@ import express from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
 import {
-  getRandomExampleSuggestions,
+  getRandomExampleSuggestionsToRecord,
   postBulkUploadExampleSuggestions,
   getRandomExampleSuggestionsToReview,
+  getRandomExampleSuggestionsToTranslate,
+  putRandomExampleSuggestionsToTranslate,
   getTotalVerifiedExampleSuggestions,
   getTotalRecordedExampleSuggestions,
   putAudioForRandomExampleSuggestions,
@@ -13,6 +15,7 @@ import {
 import {
   calculateReviewingExampleLeaderboard,
   calculateRecordingExampleLeaderboard,
+  calculateTranslatingExampleLeaderboard,
   getLeaderboard,
 } from 'src/backend/controllers/leaderboard';
 import { sendReportUserNotification } from 'src/backend/controllers/email';
@@ -22,6 +25,7 @@ import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/val
 import validateReviewRandomExampleSuggestionBody from 'src/backend/middleware/validateReviewRandomExampleSuggestionBody';
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
+import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
@@ -33,7 +37,14 @@ crowdsourcerRouter.use(authentication, authorization(allRoles));
 crowdsourcerRouter.get('/wordSuggestions/random', getRandomWordSuggestions);
 crowdsourcerRouter.put('/wordSuggestions/random', validateRandomWordSuggestionBody, putRandomWordSuggestions);
 
-crowdsourcerRouter.get('/exampleSuggestions/random', getRandomExampleSuggestions);
+crowdsourcerRouter.get('/exampleSuggestions/random/audio', getRandomExampleSuggestionsToRecord);
+crowdsourcerRouter.get('/exampleSuggestions/random/translate', getRandomExampleSuggestionsToTranslate);
+crowdsourcerRouter.put(
+  '/exampleSuggestions/random/translate',
+  validateRandomExampleSuggestionTranslationBody,
+  putRandomExampleSuggestionsToTranslate,
+  calculateTranslatingExampleLeaderboard,
+);
 
 // Records audio for example suggestion
 crowdsourcerRouter.put(

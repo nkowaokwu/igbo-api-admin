@@ -74,7 +74,7 @@ describe('Stats', () => {
 
   it('returns all the login stats', async () => {
     const mongooseConnection = await connectDatabase();
-    const sendMock = jest.fn(() => ({}));
+    const sendMock = jest.fn();
     const Stat = mongooseConnection.model<Interfaces.Stat>('Stat', statSchema);
     const userStat = new Stat({ type: StatTypes.TOTAL_USERS, value: 0 });
     const exampleAudioStat = new Stat({ type: StatTypes.TOTAL_EXAMPLE_AUDIO, value: 50 });
@@ -161,9 +161,9 @@ describe('Stats', () => {
     expect(editorRes.status).toEqual(200);
 
     const mockRes = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const mockNext = jest.fn(() => ({}));
+    const mockNext = jest.fn();
     await getUserAudioStats(
       // @ts-expect-error
       { mongooseConnection, user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } },
@@ -203,9 +203,9 @@ describe('Stats', () => {
     expect(mergerRes.status).toEqual(200);
 
     const mockRes = {
-      send: jest.fn(() => ({})),
+      send: jest.fn(),
     };
-    const mockNext = jest.fn(() => ({}));
+    const mockNext = jest.fn();
     await getUserAudioStats(
       // @ts-expect-error
       { mongooseConnection, user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } },

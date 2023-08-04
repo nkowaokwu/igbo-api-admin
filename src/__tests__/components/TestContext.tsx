@@ -35,6 +35,15 @@ Object.defineProperty(global.navigator, 'mediaDevices', {
   },
 });
 
+// IntersectionObserver mock
+const mockIntersectionObserver = jest.fn();
+mockIntersectionObserver.mockReturnValue({
+  observe: () => null,
+  unobserve: () => null,
+  disconnect: () => null,
+});
+window.IntersectionObserver = mockIntersectionObserver;
+
 window.scrollTo = noop;
 
 jest.mock('firebase');
@@ -110,7 +119,7 @@ const TestContext = ({
             basePath,
             ...rest,
             ...child.props,
-          })
+          }),
         )}
       </DataProviderContext.Provider>
     </ReactAdminTestContext>

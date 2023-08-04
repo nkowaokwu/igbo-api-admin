@@ -12,61 +12,50 @@ import {
   Tooltip,
   MenuDivider,
 } from '@chakra-ui/react';
+import { compact } from 'lodash';
 import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
-import {
-  sanitizeListRestProps,
-  TopToolbar,
-  useListContext,
-  usePermissions,
-} from 'react-admin';
+import { sanitizeListRestProps, TopToolbar, useListContext, usePermissions } from 'react-admin';
 import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collections';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Filter from '../Filter';
 
 /**
  * The filter props comes from parsing the URL
  * we want to set the default filters on first load
  * */
-const getDefaultFilters = (filters): string[] => (
+const getDefaultFilters = (filters): string[] =>
   Object.entries(filters).reduce((allFilters, [key, value]) => {
     if (value) {
       allFilters.push(key);
     }
     return allFilters;
-  }, [])
-);
+  }, []);
 
 /**
  * The filter props comes from parsing the URL for parts of speech
  * we want to set the default filters on first load
  * */
-const getDefaultPartOfSpeechFilters = (filters): string[] => (
+const getDefaultPartOfSpeechFilters = (filters): string[] =>
   Object.keys(filters).reduce((allFilters, key) => {
     if (key === 'wordClass') {
       allFilters.push(key);
     }
     return allFilters;
-  }, [])
-);
+  }, []);
 
 const ListActions = (props: CustomListActionProps): ReactElement => {
-  const {
-    className,
-    exporter,
-    resource,
-    ...rest
-  } = props;
+  const { className, exporter, resource, ...rest } = props;
   const { basePath, filterValues, setFilters } = useListContext();
   const [jumpToPage, setJumpToPage] = useState('');
-  const [currentFilters, setCurrentFilters] = useState(
-    getDefaultFilters(filterValues),
-  );
+  const [currentFilters, setCurrentFilters] = useState(getDefaultFilters(filterValues));
   const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
     getDefaultPartOfSpeechFilters(filterValues),
   );
@@ -74,12 +63,12 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
 
   const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
-  const isSuggestionResource = (
-    resource === Collections.WORD_SUGGESTIONS
-    || resource === Collections.EXAMPLE_SUGGESTIONS
-    || resource === Collections.CORPUS_SUGGESTIONS
-  );
+  const isSuggestionResource =
+    resource === Collections.WORD_SUGGESTIONS ||
+    resource === Collections.EXAMPLE_SUGGESTIONS ||
+    resource === Collections.CORPUS_SUGGESTIONS;
   const isWordResource = resource === Collections.WORD_SUGGESTIONS || resource === Collections.WORDS;
+  const isExampleResource = resource === Collections.EXAMPLE_SUGGESTIONS || resource === Collections.EXAMPLES;
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
@@ -101,29 +90,22 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   };
 
   /* Handles input from user */
-  const handleOnJumpToPageChange = ({
-    target,
-  }: {
-    target: { value: string };
-  }) => {
+  const handleOnJumpToPageChange = ({ target }: { target: { value: string } }) => {
     setJumpToPage(target.value);
   };
   useEffect(() => {
-    const updatedFilters: { wordClass?: string[] } = currentFilters.reduce(
-      (allFilters, filter) => {
-        if (filter === 'noNsibidi') {
-          // @ts-expect-error nsibidi
-          allFilters.nsibidi = false;
-        } else if (filter === 'noPronunciation') {
-          // @ts-expect-error pronunciation
-          allFilters.pronunciation = false;
-        } else if (filter !== 'word' && filter !== 'example') {
-          allFilters[filter] = true;
-        }
-        return allFilters;
-      },
-      {},
-    );
+    const updatedFilters: { wordClass?: string[] } = currentFilters.reduce((allFilters, filter) => {
+      if (filter === 'noNsibidi') {
+        // @ts-expect-error nsibidi
+        allFilters.nsibidi = false;
+      } else if (filter === 'noPronunciation') {
+        // @ts-expect-error pronunciation
+        allFilters.pronunciation = false;
+      } else if (filter !== 'word' && filter !== 'example') {
+        allFilters[filter] = true;
+      }
+      return allFilters;
+    }, {});
     if (currentPartOfSpeechFilter.length) {
       updatedFilters.wordClass = currentPartOfSpeechFilter;
     }
@@ -141,9 +123,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
 
   return (
     <TopToolbar
-      className={`${className} ${
-        isSuggestionResource ? 'space-x-2' : ''
-      } TopToolbar w-full flex-row`}
+      className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
       {isPollResource || isNotificationResource ? null : <Filter {...props} />}
@@ -152,10 +132,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
       >
         {isPollResource ? null : (
-          <form
-            onSubmit={handleJumpToPage}
-            className="flex flex-col lg:flex-row"
-          >
+          <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
             <Box className="flex flex-row space-x-2">
               <Input
                 width={16}
@@ -166,12 +143,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                 placeholder="Page #"
                 name="page"
               />
-              <Button
-                type="submit"
-                className="px-3"
-                minWidth={24}
-                colorScheme="green"
-              >
+              <Button type="submit" className="px-3" minWidth={24} colorScheme="green">
                 Jump to page
               </Button>
             </Box>
@@ -180,11 +152,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         <Box className="flex flex-row items-center space-x-3">
           {isPollResource || isUserResource ? null : (
             <Box
-              data-test={
-                isWordResource
-                  ? 'word-attributes-filter'
-                  : 'example-attributes-filter'
-              }
+              data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
               display="flex"
               justifyContent="flex-end"
               className="lg:space-x-3"
@@ -210,113 +178,106 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   </Tooltip>
                 ) : null}
                 <MenuList minWidth="240px" zIndex={10}>
-                  <MenuOptionGroup
-                    defaultValue={currentFilters}
-                    onChange={(value) => {
-                      const cleanedValue = Array.isArray(value)
-                        ? value.filter((v) => v !== 'wordClass')
-                        : value === 'wordClass'
+                  {isWordResource || isExampleResource ? (
+                    <MenuOptionGroup
+                      defaultValue={currentFilters}
+                      onChange={(value) => {
+                        const cleanedValue = Array.isArray(value)
+                          ? value.filter((v) => v !== 'wordClass')
+                          : value === 'wordClass'
                           ? ['']
                           : [value];
-                      setCurrentFilters(cleanedValue);
-                    }}
-                    title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
-                    type="checkbox"
-                  >
-                    {!isWordResource
-                      ? [
-                        <MenuItemOption value="isProverb" key="isProverb">
-                          Is Proverb
-                        </MenuItemOption>,
-                        <MenuItemOption value="isDataCollection" key="isDataCollection">
-                          Is Data Collection
-                        </MenuItemOption>,
-                        <MenuItemOption value="isBiblical" key="isBiblical">
-                          Is Biblical
-                        </MenuItemOption>,
-                      ]
-                      : null}
-                    {isWordResource
-                      ? [
-                        <MenuItemOption
-                          value={WordAttributes.IS_STANDARD_IGBO.value}
-                          key={WordAttributes.IS_STANDARD_IGBO.value}
-                        >
-                          Is Standard Igbo
-                        </MenuItemOption>,
-                        <MenuItemOption value="noPronunciation" key="noPronunciation">
-                          Has No Pronunciation
-                        </MenuItemOption>,
-                        <MenuItemOption value="nsibidi" key="nsibidi">
-                          Has Nsịbịdị
-                        </MenuItemOption>,
-                        <MenuItemOption value="noNsibidi" key="noNsibidi">
-                          Has No Nsịbịdị
-                        </MenuItemOption>,
-                        <MenuItemOption
-                          value={WordAttributes.IS_CONSTRUCTED_TERM.value}
-                          key={WordAttributes.IS_CONSTRUCTED_TERM.value}
-                        >
-                          Is Constructed Term
-                        </MenuItemOption>,
-                      ]
-                      : null}
-                    {isSuggestionResource
-                      ? [
-                        <MenuDivider key="divider" />,
-                        <MenuItemOption
-                          value={SuggestionSource.COMMUNITY}
-                          key={SuggestionSource.COMMUNITY}
-                        >
-                          From Nkọwa okwu
-                        </MenuItemOption>,
-                        <MenuItemOption
-                          value={SuggestionSource.INTERNAL}
-                          key={SuggestionSource.INTERNAL}
-                        >
-                          From Igbo API Editor Platform
-                        </MenuItemOption>,
-                        <MenuItemOption value="userInteractions" key="userInteractions">
-                          Is Currently Editing
-                        </MenuItemOption>,
-                        <MenuItemOption value="authorId" key="authorId">
-                          Is Author
-                        </MenuItemOption>,
-                        <MenuItemOption value="mergedBy" key="mergedBy">
-                          Merged By You
-                        </MenuItemOption>,
-                      ]
-                      : null}
-                    <MenuItemOption value="pronunciation" key="pronunciation">
-                      Has Pronunciation
-                    </MenuItemOption>
-                  </MenuOptionGroup>
+                        setCurrentFilters(cleanedValue);
+                      }}
+                      title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
+                      type="checkbox"
+                    >
+                      {isExampleResource
+                        ? [
+                            <MenuItemOption value={ExampleStyleEnum.PROVERB} key={ExampleStyleEnum.PROVERB}>
+                              Is Proverb
+                            </MenuItemOption>,
+                            <MenuItemOption
+                              value={SentenceTypeEnum.DATA_COLLECTION}
+                              key={SentenceTypeEnum.DATA_COLLECTION}
+                            >
+                              Is Data Collection
+                            </MenuItemOption>,
+                            <MenuItemOption value={SentenceTypeEnum.BIBLICAL} key={SentenceTypeEnum.BIBLICAL}>
+                              Is Biblical
+                            </MenuItemOption>,
+                          ]
+                        : null}
+                      {isWordResource
+                        ? [
+                            <MenuItemOption
+                              value={WordAttributeEnum.IS_STANDARD_IGBO}
+                              key={WordAttributeEnum.IS_STANDARD_IGBO}
+                            >
+                              Is Standard Igbo
+                            </MenuItemOption>,
+                            <MenuItemOption value="noPronunciation" key="noPronunciation">
+                              Has No Pronunciation
+                            </MenuItemOption>,
+                            <MenuItemOption value="nsibidi" key="nsibidi">
+                              Has Nsịbịdị
+                            </MenuItemOption>,
+                            <MenuItemOption value="noNsibidi" key="noNsibidi">
+                              Has No Nsịbịdị
+                            </MenuItemOption>,
+                            <MenuItemOption
+                              value={WordAttributeEnum.IS_CONSTRUCTED_TERM}
+                              key={WordAttributeEnum.IS_CONSTRUCTED_TERM}
+                            >
+                              Is Constructed Term
+                            </MenuItemOption>,
+                          ]
+                        : null}
+                      {isSuggestionResource
+                        ? compact([
+                            <MenuDivider key="divider" />,
+                            <MenuItemOption value={SuggestionSourceEnum.COMMUNITY} key={SuggestionSourceEnum.COMMUNITY}>
+                              From Nkọwa okwu
+                            </MenuItemOption>,
+                            <MenuItemOption value={SuggestionSourceEnum.INTERNAL} key={SuggestionSourceEnum.INTERNAL}>
+                              From Igbo API Editor Platform
+                            </MenuItemOption>,
+                            isExampleResource ? (
+                              <MenuItemOption value={SuggestionSourceEnum.BBC} key={SuggestionSourceEnum.BBC}>
+                                From BBC
+                              </MenuItemOption>
+                            ) : null,
+                            <MenuItemOption value="userInteractions" key="userInteractions">
+                              Has Edited
+                            </MenuItemOption>,
+                            <MenuItemOption value="authorId" key="authorId">
+                              Is Author
+                            </MenuItemOption>,
+                            <MenuItemOption value="mergedBy" key="mergedBy">
+                              Merged By You
+                            </MenuItemOption>,
+                          ])
+                        : null}
+                      <MenuItemOption value="pronunciation" key="pronunciation">
+                        Has Pronunciation
+                      </MenuItemOption>
+                    </MenuOptionGroup>
+                  ) : null}
                 </MenuList>
               </Menu>
             </Box>
           )}
           {isWordResource && !isPollResource && !isUserResource ? (
-            <Box
-              data-test="part-of-speech-filter"
-              display="flex"
-              justifyContent="flex-end"
-              className="lg:space-x-3"
-            >
+            <Box data-test="part-of-speech-filter" display="flex" justifyContent="flex-end" className="lg:space-x-3">
               <Menu closeOnSelect={false} placement="bottom-end">
                 <MenuButton
                   as={Button}
-                  colorScheme={
-                    !currentPartOfSpeechFilter.length ? 'blue' : 'yellow'
-                  }
-                  backgroundColor={
-                    currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'
-                  }
+                  colorScheme={!currentPartOfSpeechFilter.length ? 'blue' : 'yellow'}
+                  backgroundColor={currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'}
                   variant="outline"
                   rightIcon={<ChevronDownIcon />}
                 >
-                  {!currentPartOfSpeechFilter.length
-                    ? 'Part of Speech'
-                    : 'Part of Speech selected'}
+                  {!currentPartOfSpeechFilter.length ? 'Part of Speech' : 'Part of Speech selected'}
                 </MenuButton>
                 <MenuList minWidth="240px" zIndex={10}>
                   <MenuOptionGroup
@@ -337,14 +298,11 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           ) : null}
         </Box>
-        {
-        (isSuggestionResource
-        || (isPollResource && hasAdminOrMergerPermissions(permissions, true))
-        || resource === Collections.NSIBIDI_CHARACTERS
-        ) ? (
+        {isSuggestionResource ||
+        (isPollResource && hasAdminOrMergerPermissions(permissions, true)) ||
+        resource === Collections.NSIBIDI_CHARACTERS ? (
           <CreateButton basePath={basePath} />
-          ) : null
-        }
+        ) : null}
       </Box>
     </TopToolbar>
   );

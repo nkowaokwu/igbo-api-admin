@@ -1,4 +1,5 @@
 import { omit } from 'lodash';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import {
   createWord,
   deleteWordSuggestion,
@@ -19,6 +20,9 @@ import { AUTH_TOKEN, SAVE_DOC_DELAY } from './shared/constants';
 import { createExampleFromSuggestion } from './shared/utils';
 
 describe('Editing Flow', () => {
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+  });
   it('should create a new wordSuggestion and then merge', async () => {
     const wordSuggestionRes = await suggestNewWord(wordSuggestionData);
     expect(wordSuggestionRes.status).toEqual(200);
@@ -66,10 +70,13 @@ describe('Editing Flow', () => {
     const wordRes = await getWord(mergedWordRes.body.id);
     expect(wordRes.status).toEqual(200);
     const example = wordRes.body.examples[0];
-    const newExampleSuggestion = omit({
-      ...example,
-      associatedWords: [...example.associatedWords, firstWordRes.body.id],
-    }, ['id']);
+    const newExampleSuggestion = omit(
+      {
+        ...example,
+        associatedWords: [...example.associatedWords, firstWordRes.body.id],
+      },
+      ['id'],
+    );
     await createExampleFromSuggestion(newExampleSuggestion);
   });
 

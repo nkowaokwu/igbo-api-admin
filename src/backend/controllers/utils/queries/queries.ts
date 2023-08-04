@@ -1,14 +1,16 @@
 import { has, omit } from 'lodash';
+import moment from 'moment';
 import { LOOK_BACK_DATE } from 'src/backend/shared/constants/emailDates';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
-const EXAMPLE_PRONUNCIATION_LIMIT = 4;
+const EXAMPLE_PRONUNCIATION_LIMIT = 5;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
 
 type Filters = {
@@ -28,6 +30,7 @@ type Filters = {
   approvals?: any;
   denials?: any;
   pronunciation?: any;
+  merged?: boolean;
 };
 
 const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
@@ -35,8 +38,8 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
     ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
         allFilters.$or = allFilters.$or || [];
         switch (key) {
-          case WordAttributes.IS_STANDARD_IGBO.value:
-            allFilters[`attributes.${WordAttributes.IS_STANDARD_IGBO.value}`] = { $eq: !!value };
+          case WordAttributeEnum.IS_STANDARD_IGBO:
+            allFilters[`attributes.${WordAttributeEnum.IS_STANDARD_IGBO}`] = { $eq: !!value };
             break;
           case 'pronunciation':
             if (value) {
@@ -66,16 +69,41 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
               ];
             }
             break;
-          case WordAttributes.IS_CONSTRUCTED_TERM.value:
-            allFilters[`attributes.${WordAttributes.IS_CONSTRUCTED_TERM.value}`] = { $eq: !!value };
+          case WordAttributeEnum.IS_CONSTRUCTED_TERM:
+            allFilters[`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`] = { $eq: !!value };
             break;
-          case SuggestionSource.COMMUNITY:
-            allFilters.source = { $eq: SuggestionSource.COMMUNITY };
-            break;
-          case SuggestionSource.INTERNAL:
+          case SuggestionSourceEnum.COMMUNITY:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSource.INTERNAL } },
+              { source: { $eq: SuggestionSourceEnum.COMMUNITY } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.INTERNAL:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.INTERNAL } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.IGBO_SPEECH:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.IGBO_SPEECH } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.IGBO_WIKIMEDIANS:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.IGBO_WIKIMEDIANS } },
+              { source: { $exists: false } },
+            ];
+            break;
+          case SuggestionSourceEnum.BBC:
+            allFilters.$or = [
+              ...allFilters.$or,
+              { source: { $eq: SuggestionSourceEnum.BBC } },
               { source: { $exists: false } },
             ];
             break;
@@ -91,20 +119,21 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
           case 'example':
             allFilters.$or = [...allFilters.$or, { igbo: new RegExp(value) }, { english: new RegExp(value) }];
             break;
-          case 'isProverb':
-            allFilters.style = { $eq: ExampleStyle.PROVERB.value };
+          case ExampleStyleEnum.PROVERB:
+            allFilters.style = { $eq: ExampleStyle[ExampleStyleEnum.PROVERB].value };
             break;
-          case 'isDataCollection':
-            allFilters.type = { $eq: SentenceType.DATA_COLLECTION };
+          case SentenceTypeEnum.DATA_COLLECTION:
+            allFilters.type = { $eq: SentenceTypeEnum.DATA_COLLECTION };
             break;
-          case 'isBiblical':
-            allFilters.type = { $eq: SentenceType.BIBLICAL };
+          case SentenceTypeEnum.BIBLICAL:
+            allFilters.type = { $eq: SentenceTypeEnum.BIBLICAL };
             break;
           case 'wordClass':
             allFilters['definitions.wordClass'] = { $in: value };
             break;
           case 'userInteractions':
             allFilters.userInteractions = { $in: value };
+            delete allFilters.merged;
             break;
           case 'approvals':
             allFilters.approvals = { $in: value };
@@ -204,7 +233,7 @@ export const searchExamplesWithoutEnoughAudioRegexQuery = (
  * @param uid
  * @returns
  */
-export const searchRandomExampleSuggestionsRegexQuery = (
+export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   uid: string,
 ): {
   exampleForSuggestion: { $ne: true };
@@ -246,19 +275,38 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = (
     },
   },
 });
+
+/**
+ * Returns ExampleSuggestion documents that are marked for review
+ * @param uid
+ * @returns
+ */
+export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
+  uid: string,
+): {
+  merged: null;
+  english: string;
+  exampleForSuggestion: { $ne: true };
+  'pronunciations.0.audio': { $exists: boolean; $type: string; $ne: string };
+  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
+} => ({
+  merged: null,
+  english: '',
+  exampleForSuggestion: { $ne: true },
+  'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
+  // Returns an example where the user hasn't approved or denied an audio pronunciation
+  pronunciations: {
+    $elemMatch: {
+      $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
+    },
+  },
+});
 export const searchPreExistingExampleSuggestionsRegexQuery = ({
   igbo,
-  english,
-  associatedWordId,
 }: {
   igbo: string;
-  english: string;
-  associatedWordId: string;
-}): any => ({
+}): { igbo: string; merged: null } => ({
   igbo,
-  english,
-  associatedWords: associatedWordId,
-  originalExampleId: null,
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (
@@ -359,34 +407,12 @@ export const searchWordsWithoutIgboDefinitions = (): {
 } => ({
   'definitions.0.igboDefinitions.0': { $exists: false },
 });
-
-// Stats
-export const searchExampleAudioPronunciationsReviewedByUser = (
-  uid: string,
-): {
-  pronunciations: {
-    $elemMatch: {
-      $or: { [key: string]: { $in: [string] } }[];
-    };
-  };
+export const searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth = (): {
+  [key: string]: { $exists: boolean } | { $gte: number } | null;
 } => ({
-  pronunciations: {
-    $elemMatch: {
-      $or: [{ approvals: { $in: [uid] } }, { denials: { $in: [uid] } }],
-    },
-  },
-});
-
-export const searchExampleAudioPronunciationsRecordedByUser = (
-  uid: string,
-): {
-  pronunciations: {
-    $elemMatch: { [key: string]: { $eq: string } };
-  };
-} => ({
-  pronunciations: {
-    $elemMatch: { speaker: { $eq: uid } },
-  },
+  'definitions.0.igboDefinitions.0': { $exists: false },
+  updatedAt: { $gte: moment().subtract(1, 'months').startOf('month').valueOf() },
+  merged: null,
 });
 
 /**

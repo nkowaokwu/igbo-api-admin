@@ -3,6 +3,7 @@ import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Example } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
 export default async (
   record: Example | Record,
@@ -49,7 +50,7 @@ export default async (
     ...sufficientExampleRequirements,
     (pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) || !pronunciations.length) &&
       'An audio pronunciation is needed',
-    style === ExampleStyle.PROVERB.value && !meaning && 'Meaning is required for proverb',
+    style === ExampleStyle[ExampleStyleEnum.PROVERB].value && !meaning && 'Meaning is required for proverb',
   ]);
 
   return {

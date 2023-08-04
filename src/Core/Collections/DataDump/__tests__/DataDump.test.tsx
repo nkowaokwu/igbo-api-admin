@@ -38,4 +38,19 @@ describe('Data Dump', () => {
     await findByTestId('confirmation-cancel-button');
     await findByTestId('confirmation-confirm-button');
   });
+
+  it('render more data dump options', async () => {
+    const { findByText, findByTestId } = render(
+      <TestContext>
+        <DataDump />
+      </TestContext>,
+    );
+    userEvent.click(await findByText('More data upload options'));
+    await findByText('Select a JSON or CSV file to bulk upload example sentences.');
+    await findByText('These sentences will become example suggestions.');
+    await findByText('The digital source the text originated from');
+    await findByText('The type of sentence');
+    await findByTestId('suggestion-source-dropdown');
+    await findByTestId('sentence-type-dropdown');
+  });
 });

@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import mongoose from 'mongoose';
 import { every } from 'lodash';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import Dialects from '../shared/constants/Dialect';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import { uploadWordPronunciation } from './plugins/wordPronunciationHook';
@@ -17,7 +18,7 @@ const definitionSchema = new Schema(
   {
     wordClass: {
       type: String,
-      default: WordClass.NNC.value,
+      default: WordClassEnum.NNC,
       enum: Object.values(WordClass).map(({ value }) => value),
     },
     label: { type: String, default: '', trim: true },
@@ -33,6 +34,7 @@ const definitionSchema = new Schema(
         },
       ],
       default: [],
+      index: true,
     },
   },
   { toObject: toObjectPlugin },
@@ -55,7 +57,7 @@ const dialectSchema = new Schema(
 
 export const wordSuggestionSchema = new Schema(
   {
-    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null },
+    originalWordId: { type: Types.ObjectId, ref: 'Word', default: null, index: true },
     word: {
       type: String,
       required: true,

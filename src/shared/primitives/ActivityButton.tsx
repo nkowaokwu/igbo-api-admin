@@ -1,13 +1,11 @@
 import React, { ReactElement } from 'react';
-import { Button, ButtonProps, Tooltip } from '@chakra-ui/react';
+import { Box, IconButton, Tooltip, IconButtonProps } from '@chakra-ui/react';
 
-const ActivityButton = ({
-  tooltipLabel,
-  label,
-  ...props
-}: ButtonProps & { label: string; tooltipLabel?: string }): ReactElement => (
+const ActivityButton = ({ tooltipLabel, ...props }: IconButtonProps & { tooltipLabel?: string }): ReactElement => (
   <Tooltip label={tooltipLabel}>
-    <Button {...props}>{label}</Button>
+    <Box>
+      <IconButton {...props} />
+    </Box>
   </Tooltip>
 );
 

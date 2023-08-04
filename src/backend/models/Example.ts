@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
@@ -21,13 +21,13 @@ export const exampleSchema = new Schema(
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
     type: {
       type: String,
-      enum: Object.values(SentenceType),
-      default: SentenceType.DEFAULT,
+      enum: Object.values(SentenceTypeEnum),
+      default: SentenceTypeEnum.DEFAULT,
     },
     style: {
       type: String,
-      enum: Object.values(ExampleStyle).map(({ value }) => value),
-      default: ExampleStyle.NO_STYLE.value,
+      enum: Object.values(ExampleStyleEnum),
+      default: ExampleStyleEnum.NO_STYLE,
     },
     associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },

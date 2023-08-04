@@ -1,75 +1,60 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { cloneDeep } from 'lodash';
-import { Avatar, Box, Heading, Select, Text, useToast } from '@chakra-ui/react';
+import { cloneDeep, get } from 'lodash';
+import moment from 'moment';
+import { Box, Button, Heading, Select, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
 import { Spinner } from 'src/shared/primitives';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardUser from 'src/Core/Collections/Leaderboard/LeaderboardUser';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import BottomCardRanking from 'src/Core/Collections/Leaderboard/BottomCardRanking';
 
 type CachedRankings = {
-  [leaderboard in LeaderboardType]: {
-    userRanking: UserRanking;
-    rankings: UserRanking[];
+  [timeRange in LeaderboardTimeRange]: {
+    [leaderboard in LeaderboardType]: {
+      userRanking: UserRanking;
+      rankings: UserRanking[];
+    };
   };
 };
 
-const BottomCardRanking = ({
-  displayName,
-  photoURL,
-  count,
-  position,
-}: {
-  displayName: string;
-  photoURL: string;
-  email: string;
-  count: number;
-  position: number;
-}) => (
-  <Box
-    position="fixed"
-    bottom={0}
-    left={0}
-    className="w-full h-18 p-2 bg-white"
-    boxShadow="0px -2px 5px var(--chakra-colors-gray-300)"
-  >
-    <Box className="flex flex-row space-x-3 items-center">
-      {typeof position === 'number' ? <Text fontFamily="Silka" color="gray.500">{`${position}.`}</Text> : null}
-      <Box>
-        <Box className="flex flex-row space-x-2 items-center">
-          <Avatar src={photoURL} name={displayName} size="sm" />
-          <Box>
-            {typeof position === 'number' ? (
-              <>
-                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
-                  {displayName}
-                </Text>
-                <Text color="gray.500" fontSize="sm" fontFamily="Silka">{`${count} points`}</Text>
-              </>
-            ) : (
-              <>
-                <Text fontWeight="bold" fontSize="sm" fontFamily="Silka">
-                  No available rank
-                </Text>
-                <Text color="gray.500" fontSize="sm" fontFamily="Silka">
-                  Please make a contribution to see your rank
-                </Text>
-              </>
-            )}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  </Box>
-);
+const LeaderboardTimeRangesMap = {
+  [LeaderboardTimeRange.ALL_TIME]: {
+    label: 'All time',
+    tooltip: 'Points collected for all time',
+  },
+  [LeaderboardTimeRange.WEEK]: {
+    label: 'Weekly',
+    tooltip: `Points collected for the current week - ${moment().startOf('week').format('MMMM D')} to ${moment()
+      .endOf('week')
+      .format('MMMM D')}`,
+  },
+  [LeaderboardTimeRange.MONTH]: {
+    label: 'Monthly',
+    tooltip: `Points collected for the current month - ${moment().startOf('month').format('MMMM D')} to ${moment()
+      .endOf('month')
+      .format('MMMM D')}`,
+  },
+  [LeaderboardTimeRange.IGBO_VOICE_ATHON]: {
+    label: 'Igbo Voice-athon',
+    tooltip: 'Points collected for the Igbo Voice-athon - July 24 to October 24',
+  },
+};
 
 const Leaderboard = (): ReactElement => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardType>(LeaderboardType.RECORD_EXAMPLE_AUDIO);
+  const [leaderboardTimeRange, setLeaderboardTimeRange] = useState<LeaderboardTimeRange>(LeaderboardTimeRange.ALL_TIME);
   const [isLoading, setIsLoading] = useState(false);
   const [userRanking, setUserRanking] = useState<UserRanking>({} as UserRanking);
   const [rankings, setRankings] = useState([]);
   const [cachedFetchedData, setCachedFetchedData] = useState<CachedRankings>({} as CachedRankings);
   const toast = useToast();
+  const igboVoiceathonStartDate = moment('2023-07-24');
+  const igboVoiceathonEndDate = moment('2023-10-24');
+  const showIgboVoiceathonMessage =
+    leaderboardTimeRange === LeaderboardTimeRange.IGBO_VOICE_ATHON &&
+    !moment().isBetween(igboVoiceathonStartDate, igboVoiceathonEndDate);
 
   const handleUpdateLeaderboard = (event) => {
     const updatedLeaderboard = event.target.value as LeaderboardType;
@@ -80,20 +65,23 @@ const Leaderboard = (): ReactElement => {
   const handleRequestingLeaderboard = async () => {
     setIsLoading(true);
     try {
-      if (cachedFetchedData[leaderboard]) {
-        setUserRanking(cachedFetchedData[leaderboard].userRanking);
-        setRankings(cachedFetchedData[leaderboard].rankings);
+      if (get(cachedFetchedData, `${leaderboardTimeRange}.${leaderboard}`)) {
+        setUserRanking(cachedFetchedData[leaderboardTimeRange][leaderboard].userRanking);
+        setRankings(cachedFetchedData[leaderboardTimeRange][leaderboard].rankings);
         return;
       }
 
-      const result = await getLeaderboardStats(leaderboard);
+      const result = await getLeaderboardStats({ leaderboard, timeRange: leaderboardTimeRange });
       if (!cachedFetchedData[leaderboard]) {
         const filteredRankings = (result.rankings || []).filter(({ position }) => typeof position === 'number');
         setUserRanking(result.userRanking);
         setRankings(filteredRankings);
         const updatedCachedData = {
           ...cloneDeep(cachedFetchedData),
-          [leaderboard]: { userRanking: result.userRanking, rankings: filteredRankings },
+          [leaderboardTimeRange]: {
+            ...cloneDeep(get(cachedFetchedData, leaderboardTimeRange)),
+            [leaderboard]: { userRanking: result.userRanking, rankings: filteredRankings },
+          },
         };
         setCachedFetchedData(updatedCachedData);
       }
@@ -110,9 +98,13 @@ const Leaderboard = (): ReactElement => {
     }
   };
 
+  const handleSelectTimeRange = (timeRange: LeaderboardTimeRange) => {
+    setLeaderboardTimeRange(timeRange);
+  };
+
   useEffect(() => {
     handleRequestingLeaderboard();
-  }, [leaderboard]);
+  }, [leaderboard, leaderboardTimeRange]);
 
   return !isLoading ? (
     <Box className="p-6">
@@ -122,7 +114,39 @@ const Leaderboard = (): ReactElement => {
       <Select defaultValue={leaderboard} onChange={handleUpdateLeaderboard} fontFamily="Silka">
         <option value={LeaderboardType.RECORD_EXAMPLE_AUDIO}>Recorded example audio</option>
         <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>Verified example audio</option>
+        <option value={LeaderboardType.TRANSLATE_IGBO_SENTENCE}>Translate Igbo sentences</option>
       </Select>
+      <Heading as="h2" fontSize="lg" my={2}>
+        Time frames
+      </Heading>
+      <Box className="grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-4 my-4">
+        {Object.entries(LeaderboardTimeRange)
+          // Only shows Igbo Voice-athon for recording audio
+          .filter(([, timeRange]) =>
+            leaderboard === LeaderboardType.RECORD_EXAMPLE_AUDIO
+              ? true
+              : timeRange !== LeaderboardTimeRange.IGBO_VOICE_ATHON,
+          )
+          .map(([key, value]) => (
+            <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
+              <Button
+                key={key}
+                colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
+                onClick={() => handleSelectTimeRange(value)}
+              >
+                {LeaderboardTimeRangesMap[value].label}
+              </Button>
+            </Tooltip>
+          ))}
+      </Box>
+      {showIgboVoiceathonMessage ? (
+        <Text fontSize="sm" color="gray.500" fontStyle="italic">
+          <chakra.span fontWeight="bold" mr="1">
+            Note:
+          </chakra.span>
+          Rankings are not accurate for the Igbo Voice-athon because the competition is not active
+        </Text>
+      ) : null}
       <Box>
         {rankings.map(({ uid, ...rest }) => (
           <LeaderboardUser key={uid} {...rest} />

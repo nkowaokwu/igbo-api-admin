@@ -5,15 +5,11 @@
     "module": "esnext",
     "jsx": "react",
     "baseUrl": "./",
-		"paths": {
-			"src": ["./src"]
+    "paths": {
+      "src": ["./src"]
     },
     "lib": ["esnext", "DOM"],
-    "types": [
-      "cypress",
-      "@testing-library/cypress",
-      "jest"
-    ],
+    "types": ["cypress", "@testing-library/cypress", "jest"],
     "allowJs": true,
     "noImplicitAny": false,
     "moduleResolution": "node",
@@ -23,5 +19,5 @@
     "downlevelIteration": true
   },
   "include": ["./src"],
-  "exclude": ["**/node_modules", "**/.*/"],
+  "exclude": ["**/node_modules", "**/.*/"]
 }

@@ -9,6 +9,8 @@ import { ulid } from 'ulid'
 import SentenceType from 'src/backend/shared/constants/SentenceType';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import {
   createExample,
   getExamples,
@@ -29,9 +31,11 @@ import {
 } from './__mocks__/documentData';
 
 describe('MongoDB Examples', () => {
-  /* Create a base Example Suggestion document */
-  beforeAll(async () => {
-    await suggestNewExample(exampleSuggestionData);
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+    /* Create a base Example Suggestion document */
+    const exampleSuggestionRes = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
+    await createExample(exampleSuggestionRes.body.id);
   });
   describe('/POST mongodb examples', () => {
     it('should create a new example in the database', async () => {
@@ -53,6 +57,7 @@ describe('MongoDB Examples', () => {
     });
 
     it('should create a new example from existing exampleSuggestion in the database', async () => {
+      await suggestNewExample({ ...exampleSuggestionData, igbo: uuid() });
       const res = await getExampleSuggestions();
       expect(res.status).toEqual(200);
       const firstExample = res.body[0];
@@ -117,31 +122,40 @@ describe('MongoDB Examples', () => {
       });
       const res = await postBulkUploadExamples(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style, type }) => (
-        type === SentenceType.DATA_COLLECTION && style === ExampleStyle.NO_STYLE.value
-      )));
+      expect(
+        res.body.every(
+          ({ style, type }) =>
+            type === SentenceTypeEnum.DATA_COLLECTION && style === ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
+        ),
+      );
     });
 
     it('should bulk upload at most 500 examples with biblical type', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = ulid();
-        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceType.BIBLICAL };
+
+        const igbo = uuid();
+        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceTypeEnum.BIBLICAL };
         return exampleData;
       });
       const res = await postBulkUploadExamples(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ type }) => type === SentenceType.BIBLICAL));
+      expect(res.body.every(({ type }) => type === SentenceTypeEnum.BIBLICAL));
     });
 
     it('should bulk upload at most 500 examples with proverb style', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = ulid();
-        const exampleData = { ...bulkUploadExampleSuggestionData, igbo, style: ExampleStyle.PROVERB.value };
+
+        const igbo = uuid();
+        const exampleData = {
+          ...bulkUploadExampleSuggestionData,
+          igbo,
+          style: ExampleStyle[ExampleStyleEnum.PROVERB].value,
+        };
         return exampleData;
       });
       const res = await postBulkUploadExamples(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+      expect(res.body.every(({ style }) => style === ExampleStyle[ExampleStyleEnum.PROVERB].value));
     });
 
     it('should bulk upload at most 500 examples with english', async () => {
@@ -153,7 +167,7 @@ describe('MongoDB Examples', () => {
       });
       const res = await postBulkUploadExamples(payload);
       expect(res.status).toEqual(200);
-      expect(res.body.every(({ style }) => style === ExampleStyle.PROVERB.value));
+      expect(res.body.every(({ style }) => style === ExampleStyle[ExampleStyleEnum.PROVERB].value));
     });
 
     it('should throw an error due to too many examples for bulk upload', async () => {

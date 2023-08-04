@@ -12,6 +12,8 @@ import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordTags from 'src/backend/shared/constants/WordTags';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordEditForm from '../WordEditForm';
 
 describe('Submit WordEditForm', () => {
@@ -22,20 +24,18 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      testWord,
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(testWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
+    );
   });
 
   it('fails to submit word edit form', async () => {
@@ -45,10 +45,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -74,11 +71,7 @@ describe('Submit WordEditForm', () => {
     };
 
     const { findByText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        record={testWord}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testWord}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -89,11 +82,12 @@ describe('Submit WordEditForm', () => {
       audio: 'recording',
       speaker: '',
     };
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      finalWord,
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
+    );
   });
 
   it('submits word edit form with an extra example sentence', async () => {
@@ -113,10 +107,7 @@ describe('Submit WordEditForm', () => {
     });
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -127,11 +118,12 @@ describe('Submit WordEditForm', () => {
     userEvent.type(await findByTestId('examples-1-nsibidi-input'), 'second nsibidi example');
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      testWord,
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(testWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
+    );
   });
 
   it('submits word edit form with example without omitting its id', async () => {
@@ -146,10 +138,7 @@ describe('Submit WordEditForm', () => {
     };
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -162,25 +151,27 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        examples: [
-          ...testWord.examples,
-          {
-            igbo: 'second igbo example',
-            english: 'second english example',
-            nsibidi: 'second nsibidi example',
-            meaning: 'second meaning example',
-            associatedWords: [],
-            nsibidiCharacters: [],
-            pronunciations: [],
-          },
-        ],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          examples: [
+            ...testWord.examples,
+            {
+              igbo: 'second igbo example',
+              english: 'second english example',
+              nsibidi: 'second nsibidi example',
+              meaning: 'second meaning example',
+              associatedWords: [],
+              nsibidiCharacters: [],
+              pronunciations: [],
+            },
+          ],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with example without overwriting first audio', async () => {
@@ -199,11 +190,7 @@ describe('Submit WordEditForm', () => {
     };
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-        record={testWord}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testWord}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -217,26 +204,28 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        examples: [
-          {
-            ...testWord.examples[0],
-            igbo: 'first igbo example',
-            english: 'first english example',
-            nsibidi: 'first nsibidi example',
-            meaning: 'first meaning example',
-            pronunciations: [
-              { audio: 'first-audio-pronunciation', speaker: '' },
-              { audio: 'second-audio-pronunciation', speaker: '' },
-            ],
-          },
-        ],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          examples: [
+            {
+              ...testWord.examples[0],
+              igbo: 'first igbo example',
+              english: 'first english example',
+              nsibidi: 'first nsibidi example',
+              meaning: 'first meaning example',
+              pronunciations: [
+                { audio: 'first-audio-pronunciation', speaker: '' },
+                { audio: 'second-audio-pronunciation', speaker: '' },
+              ],
+            },
+          ],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with adding a dialectal variation', async () => {
@@ -246,10 +235,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -261,17 +247,16 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        dialects: [
-          ...testWord.dialects,
-          { dialects: ['AJA'], pronunciation: '', word: 'New dialectal variation' },
-        ],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          dialects: [...testWord.dialects, { dialects: ['AJA'], pronunciation: '', word: 'New dialectal variation' }],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with all headword attributes selected', async () => {
@@ -281,36 +266,36 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
 
-    await Promise.all(Object.values(WordAttributes).map(async ({ value }) => {
-      if (value !== WordAttributes.IS_COMPLETE.value && value !== WordAttributes.IS_COMMON.value) {
-        fireEvent.click((await findByTestId(`${value}-checkbox`)).firstChild);
-      }
-    }));
+    await Promise.all(
+      Object.values(WordAttributes).map(async ({ value }) => {
+        if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
+          fireEvent.click((await findByTestId(`${value}-checkbox`)).firstChild);
+        }
+      }),
+    );
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        attributes: Object.values(WordAttributes)
-          .reduce((attributes, { value }) => {
-            if (value !== WordAttributes.IS_COMPLETE.value && value !== WordAttributes.IS_COMMON.value) {
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          attributes: Object.values(WordAttributes).reduce((attributes, { value }) => {
+            if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
               attributes[value] = true;
             }
             return attributes;
           }, {}),
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with a selected tag', async () => {
@@ -320,10 +305,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -333,14 +315,16 @@ describe('Submit WordEditForm', () => {
     fireEvent.click(await findByText(WordTags.BOTANY.label));
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        tags: [WordTags.BOTANY.value],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          tags: [WordTags.BOTANY.value],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with an updated headword', async () => {
@@ -350,10 +334,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -362,14 +343,16 @@ describe('Submit WordEditForm', () => {
     userEvent.type(await findByTestId('word-input'), 'updated word');
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        word: 'updated word',
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          word: 'updated word',
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with an updated definition group', async () => {
@@ -379,10 +362,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId, findAllByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -404,23 +384,25 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        definitions: [
-          {
-            ...testWord.definitions[0],
-            definitions: ['first definition'],
-            igboDefinitions: [{ igbo: 'first igbo definition', nsibidi: 'igbo definition nsibidi' }],
-            wordClass: WordClass.CJN.value,
-            nsibidi: 'nsibidi input',
-          },
-        ],
-        tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          definitions: [
+            {
+              ...testWord.definitions[0],
+              definitions: ['first definition'],
+              igboDefinitions: [{ igbo: 'first igbo definition', nsibidi: 'igbo definition nsibidi' }],
+              wordClass: WordClassEnum.CJN,
+              nsibidi: 'nsibidi input',
+            },
+          ],
+          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with deleting first definition group and updating the only one left', async () => {
@@ -429,16 +411,8 @@ describe('Submit WordEditForm', () => {
     delete testWord.id;
     delete testWord.dialects[0].id;
 
-    const {
-      findByText,
-      findByTestId,
-      findAllByText,
-      findAllByTestId,
-    } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+    const { findByText, findByTestId, findAllByText, findAllByTestId } = render(
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -459,23 +433,25 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        definitions: [
-          {
-            ...testWord.definitions[0],
-            definitions: ['second english definition'],
-            igboDefinitions: [{ igbo: 'second igbo definition', nsibidi: '' }],
-            wordClass: WordClass.ADV.value,
-            nsibidi: 'second nsibidi input',
-          },
-        ],
-        tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          definitions: [
+            {
+              ...testWord.definitions[0],
+              definitions: ['second english definition'],
+              igboDefinitions: [{ igbo: 'second igbo definition', nsibidi: '' }],
+              wordClass: WordClassEnum.ADV,
+              nsibidi: 'second nsibidi input',
+            },
+          ],
+          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with filled in verb tenses', async () => {
@@ -485,10 +461,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -503,17 +476,17 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        definitions: [
-          { ...testWord.definitions[0], wordClass: WordClass.PV.value },
-        ],
-        tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: value }), {}),
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          definitions: [{ ...testWord.definitions[0], wordClass: WordClassEnum.PV }],
+          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: value }), {}),
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with adding variations', async () => {
@@ -523,10 +496,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findByTestId } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -537,14 +507,16 @@ describe('Submit WordEditForm', () => {
     userEvent.type(await findByTestId('variation-1-input'), 'second spelling variation');
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        variations: ['first spelling variation', 'second spelling variation'],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          variations: ['first spelling variation', 'second spelling variation'],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with adding related terms', async () => {
@@ -554,10 +526,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findAllByText, findByPlaceholderText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -569,14 +538,16 @@ describe('Submit WordEditForm', () => {
     userEvent.click(last(await findAllByText('retrieved word')));
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        relatedTerms: ['567'],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          relatedTerms: ['567'],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 
   it('submits word edit form with adding related terms', async () => {
@@ -586,10 +557,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.dialects[0].id;
 
     const { findByText, findAllByText, findByPlaceholderText } = render(
-      <TestContext
-        view={Views.EDIT}
-        resource={Collections.WORD_SUGGESTIONS}
-      >
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
@@ -601,13 +569,15 @@ describe('Submit WordEditForm', () => {
     userEvent.click(last(await findAllByText('retrieved word')));
     fireEvent.submit(await findByText('Update'));
 
-    await waitFor(() => expect(mockSave).toBeCalledWith(
-      {
-        ...testWord,
-        stems: ['567'],
-      },
-      Views.SHOW,
-      { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-    ));
+    await waitFor(() =>
+      expect(mockSave).toBeCalledWith(
+        {
+          ...testWord,
+          stems: ['567'],
+        },
+        Views.SHOW,
+        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
+      ),
+    );
   });
 });

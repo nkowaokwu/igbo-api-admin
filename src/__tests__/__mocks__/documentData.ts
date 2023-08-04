@@ -1,32 +1,49 @@
-import mongoose from 'mongoose';
 import { WordClientData } from 'src/backend/controllers/utils/interfaces';
-import Dialects from 'src/backend/shared/constants/Dialect';
-import SentenceType from 'src/backend/shared/constants/SentenceType';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClass from 'src/backend/shared/constants/WordClass';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
-const { ObjectId } = mongoose.Types;
+const mockDialects = [
+  {
+    word: 'word',
+    dialects: [DialectEnum.ABI],
+    id: 'dialect-id',
+    pronunciation: '',
+  },
+];
 
-const mockDialects = [{
-  word: 'word',
-  dialects: [Dialects.ABI.value],
-  id: 'dialect-id',
-  pronunciation: '',
-}];
-
-export const wordId = new ObjectId('5f864d7401203866b6546dd3');
-export const nsibidiCharacterId = new ObjectId('5f864d7401203866b6546dd4');
-export const wordSuggestionId = new ObjectId();
 export const wordSuggestionData = {
   word: 'word',
-  definitions: [{
-    wordClass: WordClass.NNC.value,
-    definitions: ['first'],
-    nsibidi: 'nsibidi',
-    nsibidiCharacters: [nsibidiCharacterId],
-    igboDefinitions: [{ igbo: 'igbo', nsibidi: 'nsibidi' }],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.NNC,
+      definitions: ['first'],
+      nsibidi: 'nsibidi',
+      nsibidiCharacters: ['5f864d7401203866b6546dd4'],
+      igboDefinitions: [{ igbo: 'igbo', nsibidi: 'nsibidi' }],
+    },
+  ],
+  dialects: [],
+  wordPronunciation: '',
+  conceptualWord: '',
+  frequency: 2,
+};
+
+export const wordSuggestionWithoutIgboDefinitionsData = {
+  word: 'word without igbo definition',
+  definitions: [
+    {
+      wordClass: WordClassEnum.NNC,
+      definitions: ['first'],
+      nsibidi: 'nsibidi',
+      nsibidiCharacters: ['5f864d7401203866b6546dd4'],
+      igboDefinitions: [],
+    },
+  ],
   dialects: [],
   wordPronunciation: '',
   conceptualWord: '',
@@ -34,12 +51,14 @@ export const wordSuggestionData = {
 };
 
 export const wordSuggestionApprovedData = {
-  originalWordId: wordId,
+  originalWordId: '5f864d7401203866b6546dd3',
   word: 'word',
-  definitions: [{
-    wordClass: WordClass.NNC.value,
-    definitions: ['first'],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.NNC,
+      definitions: ['first'],
+    },
+  ],
   wordPronunciation: '',
   conceptualWord: '',
   approvals: ['first user', 'second user'],
@@ -53,10 +72,12 @@ export const malformedWordSuggestionData = {
 
 export const updatedWordSuggestionData = {
   word: 'newWord',
-  definitions: [{
-    wordClass: WordClass.ADJ.value,
-    definitions: ['first', 'second'],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.ADJ,
+      definitions: ['first', 'second'],
+    },
+  ],
   frequency: 3,
 };
 
@@ -67,23 +88,27 @@ export const malformedWordData = {
 
 export const updatedWordData = {
   word: 'newWord',
-  definitions: [{
-    wordClass: WordClass.AV.value,
-    definitions: [],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.AV,
+      definitions: [],
+    },
+  ],
 };
 
 export const wordRecord: WordClientData = {
   word: 'word',
-  id: new ObjectId(),
+  id: '5f864d7401203866b6546dd0',
   dialects: mockDialects,
-  definitions: [{
-    wordClass: WordClass.AV.value,
-    definitions: ['first definition'],
-    nsibidi: 'first nsibidi',
-    nsibidiCharacters: [],
-    igboDefinitions: [],
-  }],
+  definitions: [
+    {
+      wordClass: WordClassEnum.AV,
+      definitions: ['first definition'],
+      nsibidi: 'first nsibidi',
+      nsibidiCharacters: [],
+      igboDefinitions: [],
+    },
+  ],
   examples: [
     {
       id: 'example-id',
@@ -102,7 +127,7 @@ export const wordRecord: WordClientData = {
   pronunciation: '',
   relatedTerms: [],
   attributes: Object.values(WordAttributes).reduce((attributes, { value }) => {
-    if (value !== WordAttributes.IS_COMMON.value && value !== WordAttributes.IS_COMPLETE.value) {
+    if (value !== WordAttributeEnum.IS_COMMON && value !== WordAttributeEnum.IS_COMPLETE) {
       attributes[value] = false;
     }
     return attributes;
@@ -136,7 +161,7 @@ export const malformedExampleSuggestionData = {
 
 export const bulkUploadExampleSuggestionData = {
   english: '',
-  type: SentenceType.DATA_COLLECTION,
+  type: SentenceTypeEnum.DATA_COLLECTION,
 };
 
 export const nsibidiCharacterData = {
@@ -146,11 +171,10 @@ export const nsibidiCharacterData = {
   definitions: [{ text: 'first definition' }],
 };
 
-export const exampleId = new ObjectId('5f864d7401203866b6546dd3');
 export const updatedExampleSuggestionData = {
   igbo: 'updated igbo',
   english: 'updated english',
-  associatedWords: [exampleId],
+  associatedWords: ['5f864d7401203866b6546dd3'],
 };
 
 export const exampleData = {
@@ -163,8 +187,6 @@ export const updatedExampleData = {
   english: 'updated english text',
   associatedWords: ['5f864d7401203866b6546dd3'],
 };
-export const corpusId = new ObjectId('5f864d7401203866b6546dd5');
-export const corpusSuggestionId = new ObjectId();
 export const corpusSuggestionData = {
   title: 'corpus title',
   body: 'corpus body',

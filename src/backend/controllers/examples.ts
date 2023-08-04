@@ -7,8 +7,8 @@ import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { isPronunciationMp3, getPronunciationId } from 'src/backend/shared/utils/splitAudioUrl';
-import SuggestionTypes from '../shared/constants/SuggestionTypes';
-import SentenceType from '../shared/constants/SentenceType';
+import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
+import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
 import { findExampleSuggestionById } from './exampleSuggestions';
@@ -19,7 +19,7 @@ import * as Interfaces from './utils/interfaces';
 export const createExample = (
   data: Interfaces.ExampleClientData,
   mongooseConnection: Connection,
-): Promise<Document<any>> => {
+): Promise<Interfaces.Example> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
   const example = new Example(data);
   return example.save();
@@ -119,17 +119,22 @@ const mergeIntoExample = (
       if (!example) {
         throw new Error("Example doesn't exist");
       }
-      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
-      return example;
+      const updatedExample = updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      return updatedExample.save();
     },
   );
 };
 
 /* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = (exampleSuggestion, mergedBy, mongooseConnection): Promise<Interfaces.Example> =>
-  createExample(exampleSuggestion.toObject(), mongooseConnection)
+const createExampleFromSuggestion = (
+  exampleSuggestion: Interfaces.ExampleSuggestion,
+  mergedBy: string,
+  mongooseConnection: Connection,
+): Promise<Interfaces.Example> =>
+  createExample((exampleSuggestion as Interfaces.ExampleSuggestion).toObject(), mongooseConnection)
     .then(async (example: Interfaces.Example) => {
-      await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      const updatedExample = await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      await updatedExample.save();
       return example;
     })
     .catch((error) => {
@@ -184,7 +189,7 @@ const handleSendingMergedEmail = async (result, mongooseConnection): Promise<voi
       if (result.authorEmail) {
         sendMergedEmail({
           to: [result.authorEmail],
-          suggestionType: SuggestionTypes.EXAMPLE,
+          suggestionType: SuggestionTypeEnum.EXAMPLE,
           submissionLink: `${DICTIONARY_APP_URL}/word?word=${word.word}`,
           ...result,
         });
@@ -328,7 +333,7 @@ export const postBulkUploadExamples = async (
         }
         const example = new Example({
           ...sentenceData,
-          type: sentenceData?.type || SentenceType.DATA_COLLECTION,
+          type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
         });
         const savedExample = await example.save();
         return {

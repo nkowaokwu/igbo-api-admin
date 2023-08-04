@@ -3,6 +3,7 @@ import { Model } from 'mongoose';
 import { compact, times } from 'lodash';
 import moment from 'moment';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -23,7 +24,7 @@ import StatTypes from '../shared/constants/StatTypes';
 import * as Interfaces from './utils/interfaces';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import ExampleStyle from '../shared/constants/ExampleStyle';
-import SentenceType from '../shared/constants/SentenceType';
+import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import Author from '../shared/constants/Author';
 
 const BYTES_TO_SECONDS = 43800;
@@ -228,8 +229,9 @@ const countExampleStats = async (examples: Interfaces.Example[]) => {
     examples.map(async (example) => {
       const isExampleSufficient = !!example.associatedWords?.[0];
       const isExampleComplete = !(await determineExampleCompleteness(example, true)).completeExampleRequirements.length;
-      const isExampleProverb = example.style === ExampleStyle.PROVERB.value;
-      const isExampleBiblical = example.style === ExampleStyle.BIBLICAL.value || example.type === SentenceType.BIBLICAL;
+      const isExampleProverb = example.style === ExampleStyle[ExampleStyleEnum.PROVERB].value;
+      const isExampleBiblical =
+        example.style === ExampleStyle[ExampleStyleEnum.BIBLICAL].value || example.type === SentenceTypeEnum.BIBLICAL;
       sufficientExamplesCount += isExampleSufficient ? 1 : 0;
       completedExamplesCount += isExampleComplete ? 1 : 0;
       proverbExamplesCount += isExampleProverb ? 1 : 0;

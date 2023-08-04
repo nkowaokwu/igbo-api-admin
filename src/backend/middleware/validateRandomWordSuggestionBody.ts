@@ -4,15 +4,19 @@ import Joi from 'joi';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 const { Types } = mongoose;
-export const randomWordSuggestionSchema = Joi.array().items(Joi.object().keys({
-  id: Joi.string().external(async (value) => {
-    if (value && !Types.ObjectId.isValid(value)) {
-      throw new Error('Invalid id provided');
-    }
-    return true;
-  }).allow(null).optional(),
-  igboDefinition: Joi.string(),
-}));
+export const randomWordSuggestionSchema = Joi.array().items(
+  Joi.object().keys({
+    id: Joi.string()
+      .external(async (value) => {
+        if (value && !Types.ObjectId.isValid(value)) {
+          throw new Error('Invalid id provided');
+        }
+        return true;
+      })
+      .required(),
+    igboDefinition: Joi.string(),
+  }),
+);
 
 export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {
   const { body: finalData } = req;

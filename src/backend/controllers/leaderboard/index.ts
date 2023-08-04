@@ -1,39 +1,48 @@
-import { Connection } from 'mongoose';
+import { Model, Connection } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { leaderboardSchema } from 'src/backend/models/Leaderboard';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import countingFunctions from 'src/backend/controllers/leaderboard/countingFunctions';
 import {
   searchExampleAudioPronunciationsRecordedByUser,
   searchExampleAudioPronunciationsReviewedByUser,
-} from '../utils/queries';
+  searchExampleSuggestionTranslatedByUser,
+} from '../utils/queries/leaderboardQueries';
 import { handleQueries } from '../utils';
 import { sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
 import { findUser } from '../users';
 
-const updateUserLeaderboardStat = async ({
+const LeaderboardQuery = {
+  [LeaderboardType.RECORD_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsRecordedByUser,
+  [LeaderboardType.VERIFY_EXAMPLE_AUDIO]: searchExampleAudioPronunciationsReviewedByUser,
+  [LeaderboardType.TRANSLATE_IGBO_SENTENCE]: searchExampleSuggestionTranslatedByUser,
+};
+
+const updateLeaderboardWithTimeRange = async ({
+  Leaderboard,
+  ExampleSuggestion,
   leaderboardType,
-  query,
-  mongooseConnection,
+  timeRange,
   user,
 }: {
+  Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
+  ExampleSuggestion: Model<Interfaces.ExampleSuggestion, unknown, unknown>;
   leaderboardType: LeaderboardType;
-  query: any;
-  mongooseConnection: Connection;
-  user: { displayName: string; email: string; photoURL: string; uid: string };
+  timeRange: LeaderboardTimeRange;
+  user: Interfaces.FormattedUser;
 }) => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+  const leaderboardQuery = LeaderboardQuery[leaderboardType];
+  const query = leaderboardQuery({ uid: user.uid, timeRange });
 
-  let leaderboards = await Leaderboard.find({ type: leaderboardType });
+  let leaderboards = await Leaderboard.find({ type: leaderboardType, timeRange });
   if (!leaderboards || !leaderboards.length) {
     const newLeaderboard = new Leaderboard({
       type: leaderboardType,
       page: 0,
+      timeRange,
     });
     leaderboards = [await newLeaderboard.save()];
   }
@@ -46,19 +55,14 @@ const updateUserLeaderboardStat = async ({
   if (!exampleSuggestionsByUser) {
     throw new Error('No example suggestion associated with the user.');
   }
-  const totalCount =
-    leaderboardType === LeaderboardType.VERIFY_EXAMPLE_AUDIO
-      ? // Count all individual audio pronunciation reviews
-        exampleSuggestionsByUser.reduce((finalCount, { pronunciations }) => {
-          let currentCount = 0;
-          pronunciations.forEach(({ approvals, denials }) => {
-            if (approvals.includes(user.uid) || denials.includes(user.uid)) {
-              currentCount += 1;
-            }
-          });
-          return finalCount + currentCount;
-        }, 0)
-      : exampleSuggestionsByUser.length;
+
+  const fallbackCountingFunction = () => exampleSuggestionsByUser.length;
+  const countingFunction = countingFunctions[leaderboardType] || fallbackCountingFunction;
+
+  const totalCount = countingFunction({
+    exampleSuggestions: exampleSuggestionsByUser,
+    uid: user.uid,
+  });
 
   const updatedRankings = sortRankings({
     leaderboardRankings: allRankings,
@@ -68,11 +72,34 @@ const updateUserLeaderboardStat = async ({
 
   const rankingsGroups = splitRankings(updatedRankings);
 
-  await assignRankings({
+  return assignRankings({
     rankingsGroups,
     leaderboards,
     Leaderboard,
+    timeRange,
   });
+};
+
+const updateUserLeaderboardStat = async ({
+  leaderboardType,
+  mongooseConnection,
+  user,
+}: {
+  leaderboardType: LeaderboardType;
+  mongooseConnection: Connection;
+  user: Interfaces.FormattedUser;
+}) => {
+  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+    'ExampleSuggestion',
+    exampleSuggestionSchema,
+  );
+  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+
+  return Promise.all(
+    Object.values(LeaderboardTimeRange).map(async (timeRange) =>
+      updateLeaderboardWithTimeRange({ Leaderboard, ExampleSuggestion, timeRange, user, leaderboardType }),
+    ),
+  );
 };
 
 /* Gets the specified page of users in the leaderboard */
@@ -86,6 +113,7 @@ export const getLeaderboard = async (
     limit,
     user: { uid },
     leaderboard,
+    timeRange,
     mongooseConnection,
   } = handleQueries(req);
   const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
@@ -95,7 +123,7 @@ export const getLeaderboard = async (
 
   const user = (await findUser(uid)) as Interfaces.FormattedUser;
   try {
-    let leaderboards = await Leaderboard.find({ type: leaderboard });
+    let leaderboards = await Leaderboard.find({ type: leaderboard, timeRange });
     if (!leaderboards || !leaderboards.length) {
       leaderboards = [];
     }
@@ -112,9 +140,11 @@ export const getLeaderboard = async (
     }
 
     res.setHeader('Content-Range', allRankings.length);
+
+    const rankings = allRankings.slice(skip, skip + limit);
     return res.send({
       userRanking,
-      rankings: allRankings.slice(skip, skip + limit),
+      rankings,
     });
   } catch (err) {
     return next(err);
@@ -141,7 +171,36 @@ export const calculateRecordingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsRecordedByUser(user.uid),
+      mongooseConnection,
+      user,
+    });
+
+    return res.send(response);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const calculateTranslatingExampleLeaderboard = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  const {
+    user: { uid },
+    error,
+    response,
+    mongooseConnection,
+  } = req;
+
+  if (error) {
+    return next(error);
+  }
+
+  try {
+    const user = (await findUser(uid)) as Interfaces.FormattedUser;
+    await updateUserLeaderboardStat({
+      leaderboardType: LeaderboardType.TRANSLATE_IGBO_SENTENCE,
       mongooseConnection,
       user,
     });
@@ -172,7 +231,6 @@ export const calculateReviewingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
-      query: searchExampleAudioPronunciationsReviewedByUser(user.uid),
       mongooseConnection,
       user,
     });

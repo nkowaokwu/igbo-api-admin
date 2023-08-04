@@ -2,8 +2,10 @@ import { forEach, forIn, isEqual, pick, times } from 'lodash';
 import { ulid } from 'ulid'
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
-import Dialects from 'src/backend/shared/constants/Dialect';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
 import {
   approveWordSuggestion,
   deleteWordSuggestion,
@@ -18,14 +20,15 @@ import {
   putRandomWordSuggestions,
 } from './shared/commands';
 import {
-  wordSuggestionId,
   wordSuggestionData,
+  wordSuggestionWithoutIgboDefinitionsData,
   wordSuggestionApprovedData,
   malformedWordSuggestionData,
   updatedWordSuggestionData,
   wordSuggestionWithNestedExampleSuggestionData,
   wordSuggestionWithNestedMalformedExampleSuggestionData,
 } from './__mocks__/documentData';
+import { wordSuggestionId } from './__mocks__/documentIds';
 import { WORD_SUGGESTION_KEYS, INVALID_ID, AUTH_TOKEN } from './shared/constants';
 import { expectUniqSetsOfResponses, expectArrayIsInOrder } from './shared/utils';
 import SortingDirections from '../backend/shared/constants/sortingDirections';
@@ -48,6 +51,16 @@ describe('MongoDB Word Suggestions', () => {
     jest.unmock('src/backend/controllers/utils/MediaAPIs/initializeAPI');
     jest.unmock('aws-sdk');
   });
+
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+    await Promise.all(
+      times(5, async () => {
+        await suggestNewWord({ ...wordSuggestionData, word: uuid() });
+      }),
+    );
+  });
+
   describe('/POST mongodb wordSuggestions', () => {
     it('should save submitted word suggestion', async () => {
       const res = await suggestNewWord(wordSuggestionData);
@@ -114,7 +127,7 @@ describe('MongoDB Word Suggestions', () => {
           {
             word: 'dialect',
             variations: [],
-            dialects: [Dialects.AFI.value],
+            dialects: [DialectEnum.AFI],
             pronunciation: '',
           },
         ],
@@ -126,7 +139,7 @@ describe('MongoDB Word Suggestions', () => {
           {
             word: 'dialect 2',
             variations: [],
-            dialects: [Dialects.ABI.value],
+            dialects: [DialectEnum.ABI],
             pronunciation: '',
           },
         ],
@@ -139,7 +152,7 @@ describe('MongoDB Word Suggestions', () => {
             {
               word: 'dialect 3',
               variations: [],
-              dialects: [Dialects.BON.value],
+              dialects: [DialectEnum.BON],
               pronunciation: '',
             },
           ],
@@ -218,7 +231,7 @@ describe('MongoDB Word Suggestions', () => {
         definitions: [
           {
             definitions: ['first definition'],
-            wordClass: WordClass.NNC.value,
+            wordClass: WordClassEnum.NNC,
             nsibidi: 'testing',
           },
           ...updatedWordSuggestionData.definitions,
@@ -373,7 +386,7 @@ describe('MongoDB Word Suggestions', () => {
     it('should throw an error for providing a source field', async () => {
       const wordRes = await suggestNewWord(wordSuggestionData);
       const res = await updateWordSuggestion(
-        { ...wordRes.body, source: SuggestionSource.COMMUNITY },
+        { ...wordRes.body, source: SuggestionSourceEnum.COMMUNITY },
         { cleanData: false },
       );
       expect(res.status).toEqual(400);
@@ -395,7 +408,7 @@ describe('MongoDB Word Suggestions', () => {
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
         definitions: wordSuggestionRes.body.definitions.concat({
-          wordClass: WordClass.AV.value,
+          wordClass: WordClassEnum.AV,
           definitions: ['first verb'],
           igboDefinitions: [{ igbo: 'akwa', nsibidi: '' }],
         }),
@@ -409,12 +422,12 @@ describe('MongoDB Word Suggestions', () => {
           wordSuggestionData.definitions[0].definitions,
         ),
       ).toEqual(true);
-      expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClass.AV.value);
+      expect(updatedWordSuggestionRes.body.definitions[1].wordClass).toEqual(WordClassEnum.AV);
       expect(isEqual(updatedWordSuggestionRes.body.definitions[1].definitions, ['first verb'])).toEqual(true);
       const updatedDefinitions = [...updatedWordSuggestionRes.body.definitions];
       updatedDefinitions.splice(0, 1);
       const finalWordSuggestionRes = await updateWordSuggestion(updatedWordSuggestionRes.body);
-      expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClass.NNC.value);
+      expect(finalWordSuggestionRes.body.definitions[0].wordClass).toEqual(WordClassEnum.NNC);
       expect(isEqual(finalWordSuggestionRes.body.definitions[0].definitions, ['first'])).toEqual(true);
       expect(isEqual(finalWordSuggestionRes.body.definitions[1].igboDefinitions[0].igbo, 'akwa')).toEqual(true);
     });
@@ -533,7 +546,7 @@ describe('MongoDB Word Suggestions', () => {
     });
 
     it('should return all word suggestions', async () => {
-      await Promise.all([suggestNewWord(wordSuggestionData), suggestNewWord(wordSuggestionData)]);
+      await Promise.all(times(5, async () => suggestNewWord(wordSuggestionData)));
       const res = await getWordSuggestions({ dialects: true, examples: true });
       expect(res.status).toEqual(200);
       expect(res.body.length).toBe(10);
@@ -618,7 +631,7 @@ describe('MongoDB Word Suggestions', () => {
 
     it('should return prioritize range over page', async () => {
       const res = await Promise.all([
-        getWordSuggestions({ page: '1' }),
+        getWordSuggestions({ page: '0' }),
         getWordSuggestions({ page: '1', range: '[100,109]' }),
       ]);
       expect(isEqual(res[0].body, res[1].body)).toEqual(false);
@@ -735,7 +748,8 @@ describe('MongoDB Word Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const wordRes = await suggestNewWord(
-            { ...wordSuggestionData, word: ulid() },
+
+            { ...wordSuggestionWithoutIgboDefinitionsData, word: uuid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
           expect(wordRes.body.approvals).toHaveLength(0);
@@ -744,9 +758,9 @@ describe('MongoDB Word Suggestions', () => {
       );
       const randomRes = await getRandomWordSuggestions({});
       expect(randomRes.status).toEqual(200);
-      expect(randomRes.body.length).toBeLessThanOrEqual(5);
+      expect(randomRes.body.length).toBeGreaterThanOrEqual(5);
       const igboDefinitions = randomRes.body.map((wordSuggestion) => ({
-        id: wordSuggestion._id,
+        id: wordSuggestion.id,
         igboDefinition: wordSuggestion.word,
       }));
       const res = await putRandomWordSuggestions(igboDefinitions);
@@ -761,6 +775,58 @@ describe('MongoDB Word Suggestions', () => {
           expect(singleWordRes.body).toHaveLength(1);
         }),
       );
+    });
+
+    it('should silently fail if an invalid word suggestion id is provided', async () => {
+      await Promise.all(
+        times(5, async () => {
+          const wordRes = await suggestNewWord(
+            { ...wordSuggestionWithoutIgboDefinitionsData, word: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(wordRes.body.approvals).toHaveLength(0);
+          expect(wordRes.body.denials).toHaveLength(0);
+        }),
+      );
+      const randomRes = await getRandomWordSuggestions();
+      expect(randomRes.status).toEqual(200);
+      expect(randomRes.body.length).toBeGreaterThanOrEqual(5);
+      const igboDefinitions = randomRes.body.map((wordSuggestion, index) => ({
+        id: !index ? wordSuggestionId : wordSuggestion.id,
+        igboDefinition: wordSuggestion.word,
+      }));
+      const res = await putRandomWordSuggestions(igboDefinitions);
+      expect(res.status).toEqual(200);
+      console.log(res.body);
+      expect(res.body.length).toEqual(4);
+      await Promise.all(
+        res.body.map(async (id, index) => {
+          if (!index) {
+            expect(res.body.find((id) => id === wordSuggestionId)).toBeFalsy();
+            const nonExistentRes = await getWordSuggestion(wordSuggestionId);
+            expect(nonExistentRes.status).toEqual(404);
+            return;
+          }
+          const updatedWordRes = await getWordSuggestion(id);
+          const currentIgboDefinition = igboDefinitions.find(
+            ({ id: igboDefinitionId }) => igboDefinitionId === id,
+          ).igboDefinition;
+          expect(updatedWordRes.body.definitions[0].igboDefinitions[0].igbo).toEqual(currentIgboDefinition);
+          const singleWordRes = await getWordSuggestions({ keyword: currentIgboDefinition });
+          expect(singleWordRes.status).toEqual(200);
+          expect(singleWordRes.body).toHaveLength(1);
+        }),
+      );
+    });
+
+    it('should fail because of invalid igbo definitions payload shape', async () => {
+      const res = await putRandomWordSuggestions([
+        // @ts-expect-error
+        { igboDefinition: 'invalid without id' },
+        { id: wordSuggestionId.toString(), igboDefinition: 'valid with id' },
+      ]);
+      expect(res.status).toEqual(400);
+      expect(res.body).toEqual({ error: '"[0].id" is required' });
     });
   });
 });

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import LeaderboardType from '../shared/constants/LeaderboardType';
 
@@ -17,6 +18,12 @@ export const leaderboardSchema = new Schema(
     type: {
       type: String,
       enum: Object.values(LeaderboardType),
+      required: true,
+      index: true,
+    },
+    timeRange: {
+      type: String,
+      enum: Object.values(LeaderboardTimeRange),
       required: true,
       index: true,
     },

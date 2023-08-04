@@ -4,7 +4,7 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import LinearProgressCard from '../LinearProgressCard';
 
-const GOAL = 6000;
+const GOAL = 4000;
 const IgboSoundboxStats = ({
   recordingStats,
   audioStats,

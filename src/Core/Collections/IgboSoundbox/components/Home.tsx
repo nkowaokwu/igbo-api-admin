@@ -5,7 +5,7 @@ import { getTotalVerifiedExampleSuggestions, getTotalRecordedExampleSuggestions 
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import OptionCard from './OptionCard';
 
-const GOAL_STAT = 6000;
+const GOAL_STAT = 4000;
 
 const IgboSoundboxHome = ({
   setCurrentView,
