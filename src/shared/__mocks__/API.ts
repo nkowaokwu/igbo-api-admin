@@ -66,3 +66,58 @@ export const getExample = jest.fn(async () => ({
   associatedWords: [],
   associatedDefinitionsSchemas: [],
 }));
+
+export const getWordSuggestionsWithoutIgboDefinitions = jest.fn(async () => [
+  {
+    word: 'first retrieved word',
+    id: '123',
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
+  },
+  {
+    word: 'second retrieved word',
+    id: '234',
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
+  },
+  {
+    word: 'third retrieved word',
+    id: '345',
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
+  },
+  {
+    word: 'fourth retrieved word',
+    id: '456',
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
+  },
+  {
+    word: 'fifth retrieved word',
+    id: '567',
+    definitions: [
+      {
+        wordClass: 'NNC',
+        definitions: ['first definition'],
+      },
+    ],
+  },
+]);
+
+export const putWordSuggestionsWithoutIgboDefinitions = jest.fn();

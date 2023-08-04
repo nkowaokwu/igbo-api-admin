@@ -10,12 +10,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import ConfirmModal from '../ConfirmModal';
 import { ConfirmationButtonInterface } from './ConfirmationInterface';
-import {
-  approveRecord,
-  convertUser,
-  denyRecord,
-  mergeRecord,
-} from '../UpdateRecord';
+import { approveRecord, convertUser, denyRecord, mergeRecord } from '../UpdateRecord';
 import InputIdForm from './InputIdForm';
 import InputNoteForm from './InputNoteForm';
 
@@ -70,15 +65,15 @@ const Confirmation = ({
       // If a merger merged within the show view, then they will be redirected to the new document show view
       push(`/${Collections.WORDS}/${collectionId}/show`);
     } else if (
-      resource === Collections.EXAMPLE_SUGGESTIONS
-      && action.type === ActionTypes.MERGE
-      && view === Views.LIST
+      resource === Collections.EXAMPLE_SUGGESTIONS &&
+      action.type === ActionTypes.MERGE &&
+      view === Views.LIST
     ) {
       // If a merger merged within the list view, then they will not be redirected to the show view
     } else if (
-      resource === Collections.EXAMPLE_SUGGESTIONS
-      && action.type === ActionTypes.MERGE
-      && view === Views.SHOW
+      resource === Collections.EXAMPLE_SUGGESTIONS &&
+      action.type === ActionTypes.MERGE &&
+      view === Views.SHOW
     ) {
       // If a merger merged within the show view, then they will be redirected to the new document show view
       push(`/${Collections.EXAMPLES}/${collectionId}/show`);
@@ -89,10 +84,10 @@ const Confirmation = ({
 
   /* Reconstructs the toast success message to handle including links to documents */
   const createSuccessDescription = (id) => {
-    const newResource = (
-      resource === Collections.WORD_SUGGESTIONS
-      || resource === Collections.WORDS
-    ) ? Collections.WORDS : Collections.EXAMPLES;
+    const newResource =
+      resource === Collections.WORD_SUGGESTIONS || resource === Collections.WORDS
+        ? Collections.WORDS
+        : Collections.EXAMPLES;
     const successDescription = action.hasLink ? (
       <span>
         {`${action.successMessage} `}
@@ -100,20 +95,23 @@ const Confirmation = ({
           View the updated document here
         </Link>
       </span>
-    ) : action.successMessage;
+    ) : (
+      action.successMessage
+    );
     return successDescription;
   };
 
   const handleClick = (): void => {
     const updatedRecord = buildUpdatedRecord();
     setIsLoading(true);
-    action.executeAction({
-      record: updatedRecord,
-      resource,
-      collection,
-      value: selectionValue,
-      ...actionHelpers,
-    })
+    action
+      .executeAction({
+        record: updatedRecord,
+        resource,
+        collection,
+        value: selectionValue,
+        ...actionHelpers,
+      })
       .then((res = { data: { id: '' } }) => {
         const { data } = res;
         const successDescription = createSuccessDescription(data.id);
@@ -129,7 +127,7 @@ const Confirmation = ({
         refresh();
       })
       .catch((error) => {
-        setIsLoading(true);
+        setIsLoading(false);
         toast({
           title: 'Error',
           description: `Error: ${error?.response?.data?.error || error.message}`,
@@ -142,17 +140,18 @@ const Confirmation = ({
 
   const provideInputValueUponSubmit = (): void => {
     setIsLoading(true);
-    action.executeAction({
-      ...(action?.type === ActionTypes.COMBINE
-        ? { primaryWordId: idValue }
-        : action?.type === ActionTypes.REQUEST_DELETE
+    action
+      .executeAction({
+        ...(action?.type === ActionTypes.COMBINE
+          ? { primaryWordId: idValue }
+          : action?.type === ActionTypes.REQUEST_DELETE
           ? { note: idValue }
           : action?.type === ActionTypes.NOTIFY
-            ? { editorsNotes: `${record?.editorsNotes || ''}\n\n${idValue}` }
-            : {}),
-      resource,
-      record,
-    })
+          ? { editorsNotes: `${record?.editorsNotes || ''}\n\n${idValue}` }
+          : {}),
+        resource,
+        record,
+      })
       .then((response) => {
         const { data } = response || {};
         if (data?.httpErrorCode?.status === 400) {
@@ -194,9 +193,9 @@ const Confirmation = ({
 
   const handleConfirm = (): any => {
     if (
-      action?.type === ActionTypes.COMBINE
-      || action?.type === ActionTypes.REQUEST_DELETE
-      || action?.type === ActionTypes.NOTIFY
+      action?.type === ActionTypes.COMBINE ||
+      action?.type === ActionTypes.REQUEST_DELETE ||
+      action?.type === ActionTypes.NOTIFY
     ) {
       provideInputValueUponSubmit();
     } else {
@@ -209,9 +208,7 @@ const Confirmation = ({
     setIdValue('');
   };
 
-  const determineConfirmColorScheme = () => (
-    action?.type === 'Delete' ? 'red' : 'blue'
-  );
+  const determineConfirmColorScheme = () => (action?.type === 'Delete' ? 'red' : 'blue');
 
   useEffect(() => {
     setIsConfirmOpen(isOpen);

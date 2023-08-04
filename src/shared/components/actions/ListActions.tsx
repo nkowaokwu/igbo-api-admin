@@ -12,6 +12,7 @@ import {
   Tooltip,
   MenuDivider,
 } from '@chakra-ui/react';
+import { compact } from 'lodash';
 import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { sanitizeListRestProps, TopToolbar, useListContext, usePermissions } from 'react-admin';
 import queryString from 'query-string';
@@ -22,6 +23,8 @@ import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceE
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Filter from '../Filter';
 
 /**
@@ -65,6 +68,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     resource === Collections.EXAMPLE_SUGGESTIONS ||
     resource === Collections.CORPUS_SUGGESTIONS;
   const isWordResource = resource === Collections.WORD_SUGGESTIONS || resource === Collections.WORDS;
+  const isExampleResource = resource === Collections.EXAMPLE_SUGGESTIONS || resource === Collections.EXAMPLES;
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
@@ -174,81 +178,91 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   </Tooltip>
                 ) : null}
                 <MenuList minWidth="240px" zIndex={10}>
-                  <MenuOptionGroup
-                    defaultValue={currentFilters}
-                    onChange={(value) => {
-                      const cleanedValue = Array.isArray(value)
-                        ? value.filter((v) => v !== 'wordClass')
-                        : value === 'wordClass'
-                        ? ['']
-                        : [value];
-                      setCurrentFilters(cleanedValue);
-                    }}
-                    title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
-                    type="checkbox"
-                  >
-                    {!isWordResource
-                      ? [
-                          <MenuItemOption value="isProverb" key="isProverb">
-                            Is Proverb
-                          </MenuItemOption>,
-                          <MenuItemOption value="isDataCollection" key="isDataCollection">
-                            Is Data Collection
-                          </MenuItemOption>,
-                          <MenuItemOption value="isBiblical" key="isBiblical">
-                            Is Biblical
-                          </MenuItemOption>,
-                        ]
-                      : null}
-                    {isWordResource
-                      ? [
-                          <MenuItemOption
-                            value={WordAttributeEnum.IS_STANDARD_IGBO}
-                            key={WordAttributeEnum.IS_STANDARD_IGBO}
-                          >
-                            Is Standard Igbo
-                          </MenuItemOption>,
-                          <MenuItemOption value="noPronunciation" key="noPronunciation">
-                            Has No Pronunciation
-                          </MenuItemOption>,
-                          <MenuItemOption value="nsibidi" key="nsibidi">
-                            Has Nsịbịdị
-                          </MenuItemOption>,
-                          <MenuItemOption value="noNsibidi" key="noNsibidi">
-                            Has No Nsịbịdị
-                          </MenuItemOption>,
-                          <MenuItemOption
-                            value={WordAttributeEnum.IS_CONSTRUCTED_TERM}
-                            key={WordAttributeEnum.IS_CONSTRUCTED_TERM}
-                          >
-                            Is Constructed Term
-                          </MenuItemOption>,
-                        ]
-                      : null}
-                    {isSuggestionResource
-                      ? [
-                          <MenuDivider key="divider" />,
-                          <MenuItemOption value={SuggestionSourceEnum.COMMUNITY} key={SuggestionSourceEnum.COMMUNITY}>
-                            From Nkọwa okwu
-                          </MenuItemOption>,
-                          <MenuItemOption value={SuggestionSourceEnum.INTERNAL} key={SuggestionSourceEnum.INTERNAL}>
-                            From Igbo API Editor Platform
-                          </MenuItemOption>,
-                          <MenuItemOption value="userInteractions" key="userInteractions">
-                            Has Edited
-                          </MenuItemOption>,
-                          <MenuItemOption value="authorId" key="authorId">
-                            Is Author
-                          </MenuItemOption>,
-                          <MenuItemOption value="mergedBy" key="mergedBy">
-                            Merged By You
-                          </MenuItemOption>,
-                        ]
-                      : null}
-                    <MenuItemOption value="pronunciation" key="pronunciation">
-                      Has Pronunciation
-                    </MenuItemOption>
-                  </MenuOptionGroup>
+                  {isWordResource || isExampleResource ? (
+                    <MenuOptionGroup
+                      defaultValue={currentFilters}
+                      onChange={(value) => {
+                        const cleanedValue = Array.isArray(value)
+                          ? value.filter((v) => v !== 'wordClass')
+                          : value === 'wordClass'
+                          ? ['']
+                          : [value];
+                        setCurrentFilters(cleanedValue);
+                      }}
+                      title={isWordResource ? 'Word Attributes' : 'Example Attributes'}
+                      type="checkbox"
+                    >
+                      {isExampleResource
+                        ? [
+                            <MenuItemOption value={ExampleStyleEnum.PROVERB} key={ExampleStyleEnum.PROVERB}>
+                              Is Proverb
+                            </MenuItemOption>,
+                            <MenuItemOption
+                              value={SentenceTypeEnum.DATA_COLLECTION}
+                              key={SentenceTypeEnum.DATA_COLLECTION}
+                            >
+                              Is Data Collection
+                            </MenuItemOption>,
+                            <MenuItemOption value={SentenceTypeEnum.BIBLICAL} key={SentenceTypeEnum.BIBLICAL}>
+                              Is Biblical
+                            </MenuItemOption>,
+                          ]
+                        : null}
+                      {isWordResource
+                        ? [
+                            <MenuItemOption
+                              value={WordAttributeEnum.IS_STANDARD_IGBO}
+                              key={WordAttributeEnum.IS_STANDARD_IGBO}
+                            >
+                              Is Standard Igbo
+                            </MenuItemOption>,
+                            <MenuItemOption value="noPronunciation" key="noPronunciation">
+                              Has No Pronunciation
+                            </MenuItemOption>,
+                            <MenuItemOption value="nsibidi" key="nsibidi">
+                              Has Nsịbịdị
+                            </MenuItemOption>,
+                            <MenuItemOption value="noNsibidi" key="noNsibidi">
+                              Has No Nsịbịdị
+                            </MenuItemOption>,
+                            <MenuItemOption
+                              value={WordAttributeEnum.IS_CONSTRUCTED_TERM}
+                              key={WordAttributeEnum.IS_CONSTRUCTED_TERM}
+                            >
+                              Is Constructed Term
+                            </MenuItemOption>,
+                          ]
+                        : null}
+                      {isSuggestionResource
+                        ? compact([
+                            <MenuDivider key="divider" />,
+                            <MenuItemOption value={SuggestionSourceEnum.COMMUNITY} key={SuggestionSourceEnum.COMMUNITY}>
+                              From Nkọwa okwu
+                            </MenuItemOption>,
+                            <MenuItemOption value={SuggestionSourceEnum.INTERNAL} key={SuggestionSourceEnum.INTERNAL}>
+                              From Igbo API Editor Platform
+                            </MenuItemOption>,
+                            isExampleResource ? (
+                              <MenuItemOption value={SuggestionSourceEnum.BBC} key={SuggestionSourceEnum.BBC}>
+                                From BBC
+                              </MenuItemOption>
+                            ) : null,
+                            <MenuItemOption value="userInteractions" key="userInteractions">
+                              Has Edited
+                            </MenuItemOption>,
+                            <MenuItemOption value="authorId" key="authorId">
+                              Is Author
+                            </MenuItemOption>,
+                            <MenuItemOption value="mergedBy" key="mergedBy">
+                              Merged By You
+                            </MenuItemOption>,
+                          ])
+                        : null}
+                      <MenuItemOption value="pronunciation" key="pronunciation">
+                        Has Pronunciation
+                      </MenuItemOption>
+                    </MenuOptionGroup>
+                  ) : null}
                 </MenuList>
               </Menu>
             </Box>

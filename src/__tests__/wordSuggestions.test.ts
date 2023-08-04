@@ -20,6 +20,7 @@ import {
 } from './shared/commands';
 import {
   wordSuggestionData,
+  wordSuggestionWithoutIgboDefinitionsData,
   wordSuggestionApprovedData,
   malformedWordSuggestionData,
   updatedWordSuggestionData,
@@ -746,7 +747,7 @@ describe('MongoDB Word Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const wordRes = await suggestNewWord(
-            { ...wordSuggestionData, word: uuid() },
+            { ...wordSuggestionWithoutIgboDefinitionsData, word: uuid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
           expect(wordRes.body.approvals).toHaveLength(0);
@@ -755,9 +756,9 @@ describe('MongoDB Word Suggestions', () => {
       );
       const randomRes = await getRandomWordSuggestions({});
       expect(randomRes.status).toEqual(200);
-      expect(randomRes.body.length).toBeLessThanOrEqual(5);
+      expect(randomRes.body.length).toBeGreaterThanOrEqual(5);
       const igboDefinitions = randomRes.body.map((wordSuggestion) => ({
-        id: wordSuggestion._id,
+        id: wordSuggestion.id,
         igboDefinition: wordSuggestion.word,
       }));
       const res = await putRandomWordSuggestions(igboDefinitions);
@@ -772,6 +773,58 @@ describe('MongoDB Word Suggestions', () => {
           expect(singleWordRes.body).toHaveLength(1);
         }),
       );
+    });
+
+    it('should silently fail if an invalid word suggestion id is provided', async () => {
+      await Promise.all(
+        times(5, async () => {
+          const wordRes = await suggestNewWord(
+            { ...wordSuggestionWithoutIgboDefinitionsData, word: uuid() },
+            { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
+          );
+          expect(wordRes.body.approvals).toHaveLength(0);
+          expect(wordRes.body.denials).toHaveLength(0);
+        }),
+      );
+      const randomRes = await getRandomWordSuggestions();
+      expect(randomRes.status).toEqual(200);
+      expect(randomRes.body.length).toBeGreaterThanOrEqual(5);
+      const igboDefinitions = randomRes.body.map((wordSuggestion, index) => ({
+        id: !index ? wordSuggestionId : wordSuggestion.id,
+        igboDefinition: wordSuggestion.word,
+      }));
+      const res = await putRandomWordSuggestions(igboDefinitions);
+      expect(res.status).toEqual(200);
+      console.log(res.body);
+      expect(res.body.length).toEqual(4);
+      await Promise.all(
+        res.body.map(async (id, index) => {
+          if (!index) {
+            expect(res.body.find((id) => id === wordSuggestionId)).toBeFalsy();
+            const nonExistentRes = await getWordSuggestion(wordSuggestionId);
+            expect(nonExistentRes.status).toEqual(404);
+            return;
+          }
+          const updatedWordRes = await getWordSuggestion(id);
+          const currentIgboDefinition = igboDefinitions.find(
+            ({ id: igboDefinitionId }) => igboDefinitionId === id,
+          ).igboDefinition;
+          expect(updatedWordRes.body.definitions[0].igboDefinitions[0].igbo).toEqual(currentIgboDefinition);
+          const singleWordRes = await getWordSuggestions({ keyword: currentIgboDefinition });
+          expect(singleWordRes.status).toEqual(200);
+          expect(singleWordRes.body).toHaveLength(1);
+        }),
+      );
+    });
+
+    it('should fail because of invalid igbo definitions payload shape', async () => {
+      const res = await putRandomWordSuggestions([
+        // @ts-expect-error
+        { igboDefinition: 'invalid without id' },
+        { id: wordSuggestionId.toString(), igboDefinition: 'valid with id' },
+      ]);
+      expect(res.status).toEqual(400);
+      expect(res.body).toEqual({ error: '"[0].id" is required' });
     });
   });
 });

@@ -269,10 +269,10 @@ export const handleQueries = ({
 
 /* Updates a document's merge property with a document id */
 export const updateDocumentMerge = (
-  suggestionDoc: Document<Interfaces.WordSuggestion | Interfaces.ExampleSuggestion>,
+  suggestionDoc: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
   originalDocId: string,
   mergedBy = null,
-): Promise<Document<Interfaces.WordSuggestion | Interfaces.ExampleSuggestion>> => {
+): Interfaces.WordSuggestion | Interfaces.ExampleSuggestion => {
   const updatedSuggestion = assign(suggestionDoc, { merged: originalDocId, mergedBy });
-  return updatedSuggestion.save();
+  return updatedSuggestion;
 };

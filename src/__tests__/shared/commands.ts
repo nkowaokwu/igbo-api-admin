@@ -50,7 +50,7 @@ export const deleteWordSuggestion = (id: string, options: OptionsType = { token:
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
 export const putRandomWordSuggestions = (
-  data: { id: string; pronunciation?: string; review?: ReviewActions }[],
+  data: { id: string; pronunciation?: string; review?: ReviewActions }[] | { id: string; igboDefinition: string }[],
   options: OptionsType = { token: '' },
 ): Request =>
   chaiServer

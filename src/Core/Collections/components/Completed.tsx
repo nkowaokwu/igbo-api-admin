@@ -46,20 +46,23 @@ const Completed = ({
             : 'Your Igbo definition reviews have been submitted.'}
         </Text>
       </Box>
-      <Box className="space-x-3 w-full flex flex-row justify-center items-center flex-wrap">
+      <Box
+        className="space-x-3 w-full flex flex-col lg:flex-row 
+      justify-center items-center flex-wrap space-y-4 lg:space-y-4"
+      >
         <Button colorScheme="green" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={handleMore}>
           {type === CrowdsourcingType.RECORD_EXAMPLE_AUDIO
-            ? 'Record more sentences'
+            ? 'Record more sentences 🎙'
             : type === CrowdsourcingType.VERIFY_EXAMPLE_AUDIO
-            ? 'Review more sentences'
+            ? 'Review more sentences ✅'
             : type === CrowdsourcingType.INPUT_IGBO_DEFINITION
-            ? 'Add more Igbo definitions'
+            ? 'Add more Igbo definitions ✍🏾'
             : type === CrowdsourcingType.TRANSLATE_IGBO_SENTENCE
-            ? 'Add more English translations'
-            : 'Review more Igbo definitions'}
+            ? 'Add more English translations ➡️'
+            : 'Review more Igbo definitions ✅'}
         </Button>
         <Button colorScheme="gray" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={goHome}>
-          Go back home
+          Go back home 🏡
         </Button>
       </Box>
     </Box>

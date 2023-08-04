@@ -142,12 +142,9 @@ export const getWord = async (
 
 /* Creates Word documents in MongoDB database */
 export const createWord = async (
-  data:
-    | Interfaces.WordClientData
-    | Interfaces.WordSuggestion
-    | LeanDocument<Document<Interfaces.WordClientData | Interfaces.WordSuggestion>>,
+  data: Interfaces.WordClientData | Interfaces.WordSuggestion | LeanDocument<Document<Interfaces.WordClientData>>,
   mongooseConnection: Connection,
-): Promise<Document<Interfaces.Word>> => {
+): Promise<Interfaces.Word> => {
   const { examples, word, wordClass, definitions, variations, stems, dialects = {}, isStandardIgbo, ...rest } = data;
 
   const wordData = {
@@ -164,7 +161,7 @@ export const createWord = async (
   };
 
   const Word = mongooseConnection.model('Word', wordSchema);
-  const newWord: Document<Interfaces.Word> | any = new Word(wordData);
+  const newWord: Interfaces.Word | any = new Word(wordData);
   await newWord.save();
 
   /* Go through each word's example and create an Example document */
@@ -198,28 +195,25 @@ const updateSuggestionAfterMerge = async (
   mergedBy: string,
   mongooseConnection: Connection,
 ): Promise<Interfaces.WordSuggestion> => {
-  const updatedSuggestionDoc: Interfaces.WordSuggestion | any = await updateDocumentMerge(
-    wordSuggestion,
-    originalWord.id.toString(),
-    mergedBy,
-  );
   await assignExampleSuggestionToExampleData({
     wordSuggestion,
     originalWord,
     mergedBy,
     mongooseConnection,
   });
-  return updatedSuggestionDoc.save();
+  const updatedSuggestionDoc: Interfaces.WordSuggestion | any = await updateDocumentMerge(
+    wordSuggestion,
+    originalWord.id.toString(),
+    mergedBy,
+  );
+  return updatedSuggestionDoc;
 };
 
 /* Takes the suggestion word pronunciation and overwrites the existing Word document's pronunciation file */
 const overwriteWordPronunciation = async (
-  initialSuggestion: Interfaces.WordSuggestion,
+  suggestion: Interfaces.WordSuggestion,
   word: Interfaces.Word,
-  mongooseConnection: Connection,
-): Promise<Document<Interfaces.Word>> => {
-  const Word = mongooseConnection.model('Word', wordSchema);
-  const WordSuggestion = mongooseConnection.model('WordSuggestion', wordSuggestionSchema);
+): Promise<{ suggestion: Interfaces.WordSuggestion; word: Interfaces.Word }> => {
   try {
     /**
      * Creating AWS URI for word pronunciation
@@ -227,16 +221,15 @@ const overwriteWordPronunciation = async (
      * will be passed in to tell AWS to delete the audio record for the associated
      * Word document
      */
-    const suggestionDocId = initialSuggestion.pronunciation ? initialSuggestion.id.toString() : '';
-    const isMp3 = initialSuggestion.pronunciation.includes('mp3');
+    const suggestionDocId = suggestion.pronunciation ? suggestion.id.toString() : '';
+    const isMp3 = suggestion.pronunciation.includes('mp3');
     const finalPronunciationUri = await renameAudioPronunciation(suggestionDocId, word.id.toString(), isMp3);
 
-    initialSuggestion.pronunciation = finalPronunciationUri;
+    suggestion.pronunciation = finalPronunciationUri;
     word.pronunciation = finalPronunciationUri;
 
     // Since the word suggestion is no longer needed, we don't need to trigger any AudioAPI.ts functions
-    initialSuggestion.skipPronunciationHook = true;
-    const suggestion = await initialSuggestion.save();
+    suggestion.skipPronunciationHook = true;
     const suggestionDialects = suggestion.dialects || [];
 
     await Promise.all(
@@ -272,11 +265,8 @@ const overwriteWordPronunciation = async (
       }),
     );
 
-    await suggestion.save();
-    await WordSuggestion.findOneAndUpdate({ _id: suggestion.id }, suggestion.toObject());
-    await Word.findOneAndUpdate({ _id: word.id }, word.toObject());
     // TODO: audio ids for dialects will use a different schema id since they change on each save
-    return await word.save();
+    return { suggestion, word };
   } catch (err) {
     console.log('An error occurred while merging audio pronunciations failed:', err.message);
     console.log('Deleting the associated word document to avoid producing duplicates');
@@ -306,8 +296,12 @@ const mergeIntoWord = (
         throw new Error("Word doesn't exist");
       }
 
-      await overwriteWordPronunciation(suggestionDoc, updatedWord, mongooseConnection);
-      await updateSuggestionAfterMerge(suggestionDoc, updatedWord, mergedBy, mongooseConnection);
+      // eslint-disable-next-line prefer-const
+      let { suggestion, word } = await overwriteWordPronunciation(suggestionDoc, updatedWord);
+      suggestion = await updateSuggestionAfterMerge(suggestion, word, mergedBy, mongooseConnection);
+
+      // Save updates on Word Suggestion and Word
+      await Promise.all([suggestion.save(), word.save()]);
       return (await findWordsWithMatch({ match: { _id: suggestionDocObject.originalWordId }, limit: 1, Word }))[0];
     })
     .catch((error) => {
@@ -320,12 +314,15 @@ const createWordFromSuggestion = (
   suggestionDoc: Interfaces.WordSuggestion,
   mergedBy: string,
   mongooseConnection: Connection,
-): Promise<Document<Interfaces.Word> | void> =>
+): Promise<Interfaces.Word> =>
   createWord(suggestionDoc.toObject(), mongooseConnection)
-    .then(async (word: Interfaces.Word) => {
-      const updatedPronunciationsWord = await overwriteWordPronunciation(suggestionDoc, word, mongooseConnection);
-      await updateSuggestionAfterMerge(suggestionDoc, word, mergedBy, mongooseConnection);
-      return updatedPronunciationsWord;
+    .then(async (savedWord: Interfaces.Word) => {
+      // eslint-disable-next-line prefer-const
+      let { suggestion, word } = await overwriteWordPronunciation(suggestionDoc, savedWord);
+      suggestion = await updateSuggestionAfterMerge(suggestion, word, mergedBy, mongooseConnection);
+
+      const [, updatedWord] = await Promise.all([suggestion.save(), word.save()]);
+      return updatedWord;
     })
     .catch((err) => {
       throw new Error(`An error occurred while saving the new word: ${err.message}`);

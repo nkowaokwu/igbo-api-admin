@@ -33,6 +33,23 @@ export const wordSuggestionData = {
   frequency: 2,
 };
 
+export const wordSuggestionWithoutIgboDefinitionsData = {
+  word: 'word without igbo definition',
+  definitions: [
+    {
+      wordClass: WordClassEnum.NNC,
+      definitions: ['first'],
+      nsibidi: 'nsibidi',
+      nsibidiCharacters: ['5f864d7401203866b6546dd4'],
+      igboDefinitions: [],
+    },
+  ],
+  dialects: [],
+  wordPronunciation: '',
+  conceptualWord: '',
+  frequency: 2,
+};
+
 export const wordSuggestionApprovedData = {
   originalWordId: '5f864d7401203866b6546dd3',
   word: 'word',
