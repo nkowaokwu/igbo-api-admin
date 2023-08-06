@@ -4,6 +4,7 @@ import moment from 'moment';
 import LoginStats from 'src/Login/components/LoginStats';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import GoogleLogin from 'src/Login/components/GoogleLogin';
+import FacebookLogin from 'src/Login/components/FacebookLogin';
 import TermsAndPrivacyMessage from 'src/Login/components/TermsAndPrivacyMessage';
 import OrDivider from 'src/Login/components/OrDivider';
 import AlreadyHaveAnAccount from 'src/Login/components/AlreadyHaveAnAccount';
@@ -80,6 +81,7 @@ const Login = (): ReactElement => {
           justifyContent={{ base: 'space-between', md: 'center' }}
           alignItems="center"
           className="space-y-4 h-full"
+          maxWidth="400px"
         >
           <Hide above="lg">
             <Box className="space-y-4">
@@ -93,6 +95,7 @@ const Login = (): ReactElement => {
           </Hide>
           <Box className="w-full space-y-2">
             <GoogleLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
+            <FacebookLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
             <OrDivider />
             <Button
               width="full"
@@ -100,6 +103,7 @@ const Login = (): ReactElement => {
               backgroundColor="primary"
               color="white"
               data-test="open-login-modal"
+              height="48px"
               onClick={handleAccount(UserLoginState.SIGN_UP)}
               mt={2}
             >

@@ -61,6 +61,8 @@ export const handleUserResult = async ({
       status: 'success',
       duration: 90000,
       isClosable: true,
+      position: 'top-right',
+      variant: 'left-accent',
     });
   } else {
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
