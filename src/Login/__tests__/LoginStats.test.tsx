@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import * as PlatformAPI from 'src/shared/PlatformAPI';
-import LoginStats from '../LoginStats';
+import LoginStats from '../components/LoginStats';
 
 describe('LoginStat', () => {
   it('renders the login stats', async () => {

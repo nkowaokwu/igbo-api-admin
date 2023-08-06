@@ -12,4 +12,7 @@ export default {
   'auth/expired-action-code': 'Session timeout. Please try again',
   'auth/weak-password': 'Weak password',
   'auth/email-already-in-use': 'Email is already in use',
+  'auth/invalid-phone-number': 'Invalid phone. Please try again',
+  'auth/invalid-verification-code': 'Incorrect code. Please try again',
+  'auth/missing-verification-code': 'No code provided. Please try again',
 };
