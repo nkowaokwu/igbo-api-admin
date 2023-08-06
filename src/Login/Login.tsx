@@ -95,7 +95,7 @@ const Login = (): ReactElement => {
           </Hide>
           <Box className="w-full space-y-2">
             <GoogleLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
-            <FacebookLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
+            {/* <FacebookLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} /> */}
             <OrDivider />
             <Button
               width="full"
