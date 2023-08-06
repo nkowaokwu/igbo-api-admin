@@ -22,7 +22,6 @@ const Card = ({ text, href, children }: { text?: string; href?: string; children
       borderColor="gray.300"
       borderWidth="1px"
       minHeight="72"
-      height="96"
       width={['full', 'lg']}
       my="8"
       display="flex"
