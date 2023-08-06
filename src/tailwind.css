@@ -353,6 +353,13 @@ input#igbo {
   }
 }
 
+.phone-input {
+  width: var(--chakra-sizes-full) !important;
+  background-color: var(--chakra-colors-gray-200) !important;
+  border: none !important;
+  height: 40px !important;
+}
+
 @media (min-width: 1024px) {
   html {
     width: 100vw;

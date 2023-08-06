@@ -1,9 +1,10 @@
 import React, { ReactElement } from 'react';
 import { Button, Image, Text, useToast } from '@chakra-ui/react';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import getAWSAsset from 'src/utils/getAWSAsset';
-import errorCodes from 'src/Login/errorCodes';
-import { handleUserResult } from './handleUserResult';
+import errorCodes from 'src/Login/constants/errorCodes';
+import { handleUserResult } from '../utils/handleUserResult';
 
 const GoogleImage = getAWSAsset('/icons/google.svg');
 
@@ -12,8 +13,10 @@ const googleProvider = new GoogleAuthProvider();
 
 const GoogleLogin = ({
   setErrorMessage,
+  userLoginState,
 }: {
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  userLoginState: UserLoginState;
 }): ReactElement => {
   const toast = useToast();
 
@@ -61,7 +64,7 @@ const GoogleLogin = ({
       }}
     >
       <Text flex={1} fontSize="md" color="gray.500" ml={-6}>
-        Sign in with Google
+        {userLoginState === UserLoginState.SIGN_UP ? 'Sign up with Google' : 'Sign in with Google'}
       </Text>
     </Button>
   );
