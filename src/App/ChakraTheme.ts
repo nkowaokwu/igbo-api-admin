@@ -153,15 +153,18 @@ export default extendTheme({
     },
     Heading: {
       sizes: {
-        '2xl': { // h1
+        '2xl': {
+          // h1
           fontSize: '5xl',
           fontWeight: 'bold',
         },
-        xl: { // h2
+        xl: {
+          // h2
           fontSize: '3xl',
           fontWeight: 'bold',
         },
-        lg: { // h3
+        lg: {
+          // h3
           fontSize: '2xl',
           heading: 'Noto Sans',
           fontWeight: 'normal',
@@ -229,6 +232,7 @@ export default extendTheme({
         variant: '',
       },
     },
+    Toast: {},
     Icon: {
       baseStyle: {
         ':hover': {

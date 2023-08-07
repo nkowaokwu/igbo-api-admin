@@ -4,7 +4,7 @@ import moment from 'moment';
 import LoginStats from 'src/Login/components/LoginStats';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import GoogleLogin from 'src/Login/components/GoogleLogin';
-import FacebookLogin from 'src/Login/components/FacebookLogin';
+// import FacebookLogin from 'src/Login/components/FacebookLogin';
 import TermsAndPrivacyMessage from 'src/Login/components/TermsAndPrivacyMessage';
 import OrDivider from 'src/Login/components/OrDivider';
 import AlreadyHaveAnAccount from 'src/Login/components/AlreadyHaveAnAccount';

@@ -360,6 +360,10 @@ input#igbo {
   height: 40px !important;
 }
 
+#slider-thumb-slider {
+  z-index: 0 !important;
+}
+
 @media (min-width: 1024px) {
   html {
     width: 100vw;

@@ -13,21 +13,19 @@ const IgboDefinitions = ({
   errors,
   handleDeleteGroupIgboDefinition,
   handleAddGroupIgboDefinition,
-} : {
-  definitions: { id: string, igbo: string, nsibidi: string, nsibidiCharacters: [] }[],
-  groupIndex: number,
-  control: Control,
-  handleDeleteGroupIgboDefinition: (index: number) => void,
-  handleAddGroupIgboDefinition: () => void,
-  errors: any,
+}: {
+  definitions: { id: string; igbo: string; nsibidi: string; nsibidiCharacters: [] }[];
+  groupIndex: number;
+  control: Control;
+  handleDeleteGroupIgboDefinition: (index: number) => void;
+  handleAddGroupIgboDefinition: () => void;
+  errors: any;
 }): ReactElement => (
   <Box className="w-full">
     {definitions.map((igboDefinition, igboDefinitionIndex) => (
-      <Box key={igboDefinition}>
+      <Box key={igboDefinition?.id} data-igbo-definition={igboDefinition?.id}>
         <Box className="list-container">
-          <h3 className="text-xl text-gray-600 mr-2">
-            {`${igboDefinitionIndex + 1}.`}
-          </h3>
+          <h3 className="text-xl text-gray-600 mr-2">{`${igboDefinitionIndex + 1}.`}</h3>
           <Box className="flex flex-col space-y-2 w-full">
             <Controller
               render={(props) => (
@@ -41,7 +39,7 @@ const IgboDefinitions = ({
                 />
               )}
               name={`definitions.${groupIndex}.igboDefinitions.${igboDefinitionIndex}.igbo`}
-              defaultValue={igboDefinition?.igbo || ''}
+              value={igboDefinition?.igbo || ''}
               control={control}
             />
             <NsibidiForm
@@ -63,10 +61,7 @@ const IgboDefinitions = ({
         </Box>
       </Box>
     ))}
-    <AddSection
-      label="Add Igbo Definition"
-      onClick={handleAddGroupIgboDefinition}
-    />
+    <AddSection label="Add Igbo Definition" onClick={handleAddGroupIgboDefinition} />
   </Box>
 );
 export default IgboDefinitions;
