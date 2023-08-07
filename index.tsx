@@ -9,6 +9,7 @@ import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/servic
 import {
   onUpdateDashboardStats,
   onUpdateTotalAudioDashboardStats,
+  onUpdateLeaderboards,
   getLoginStats,
 } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
@@ -96,6 +97,13 @@ export const calculateTotalAudioHours = functions
   .pubsub.schedule('0 6 * * *')
   .timeZone('America/Los_Angeles')
   .onRun(onUpdateTotalAudioDashboardStats);
+/* Runs everyday at 6AM PST */
+export const calculateLeaderboards = functions
+  .region('us-central1', 'europe-west3')
+  .runWith({ timeoutSeconds: 540 })
+  .pubsub.schedule('0 6 * * *')
+  .timeZone('America/Los_Angeles')
+  .onRun(onUpdateLeaderboards);
 
 /**
  * Determines whether or not in a backend testing environment or in a

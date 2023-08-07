@@ -1,35 +1,12 @@
 import { cloneDeep, times } from 'lodash';
-import { sortLeaderboards, sortRankings, splitRankings } from '../utils';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
+import { connectDatabase } from 'src/backend/utils/database';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import { leaderboardSchema } from 'src/backend/models/Leaderboard';
+import { sortLeaderboards, sortRankings, splitRankings, assignRankings } from '../utils';
+import { rankings } from './data';
 
-const rankings = [
-  {
-    id: 'second user',
-    uid: 'second user',
-    email: 'user@example.com',
-    displayName: 'User name',
-    photoURL: '',
-    count: 45,
-    position: 0,
-  },
-  {
-    id: 'first user',
-    uid: 'first user',
-    email: 'user@example.com',
-    displayName: 'User name',
-    photoURL: '',
-    count: 123,
-    position: 2,
-  },
-  {
-    id: 'third user',
-    uid: 'third user',
-    email: 'user@example.com',
-    displayName: 'User name',
-    photoURL: '',
-    count: 3,
-    position: 1,
-  },
-];
 const manyRankings = times(434, (index) => ({
   uid: `${index} user`,
   id: `${index} user`,
@@ -221,16 +198,18 @@ describe('leaderboard utils', () => {
       expect(rankingGroups).toHaveLength(3);
     });
     it('splits 434 organized rankings', () => {
-      const rankingGroups = splitRankings(sortRankings({
-        leaderboardRankings: manyRankings,
-        user: {
-          uid: '0 user',
-          displayName: 'User',
-          email: 'email@example.com',
-          photoURL: '',
-        },
-        count: 10,
-      }));
+      const rankingGroups = splitRankings(
+        sortRankings({
+          leaderboardRankings: manyRankings,
+          user: {
+            uid: '0 user',
+            displayName: 'User',
+            email: 'email@example.com',
+            photoURL: '',
+          },
+          count: 10,
+        }),
+      );
       rankingGroups.forEach((rankingGroup) => {
         rankingGroup.forEach((ranking, index) => {
           if (index + 1 < rankingGroup.length) {
@@ -249,6 +228,34 @@ describe('leaderboard utils', () => {
       // @ts-expect-error
       sortLeaderboards(leaderboards);
       expect(leaderboards).toEqual([{ page: 0 }, { page: 1 }, { page: 2 }]);
+    });
+  });
+
+  describe('assignRankings', () => {
+    it('assigns the expected rankings to leaderboards', async () => {
+      const mongooseConnection = await connectDatabase();
+      const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+      const leaderboards = await Promise.all(
+        times(2, (index) => {
+          const leaderboard = new Leaderboard({
+            type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+            timeRange: LeaderboardTimeRange.ALL_TIME,
+            page: index,
+          });
+          return leaderboard.save();
+        }),
+      );
+      const finalLeaderboards = assignRankings({
+        rankingsGroups: [rankings, []],
+        leaderboards,
+        Leaderboard,
+        timeRange: LeaderboardTimeRange.ALL_TIME,
+      });
+      finalLeaderboards[0].rankings.forEach((ranking, index) => {
+        expect(ranking.count).toEqual(rankings[index].count);
+        expect(ranking.position).toEqual(rankings[index].position);
+      });
+      expect(finalLeaderboards[1].rankings.length).toEqual(0);
     });
   });
 });

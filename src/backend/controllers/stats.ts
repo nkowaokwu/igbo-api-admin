@@ -1,14 +1,18 @@
 import { Response, NextFunction } from 'express';
-import { Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { compact, times } from 'lodash';
 import moment from 'moment';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
-import { exampleSchema } from '../models/Example';
-import { wordSchema } from '../models/Word';
-import { wordSuggestionSchema } from '../models/WordSuggestion';
-import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
-import { statSchema } from '../models/Stat';
+import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import { leaderboardSchema } from 'src/backend/models/Leaderboard';
+import { exampleSchema } from 'src/backend/models/Example';
+import { wordSchema } from 'src/backend/models/Word';
+import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { statSchema } from 'src/backend/models/Stat';
+import { updateLeaderboardWithTimeRange } from 'src/backend/controllers/leaderboard';
+import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import {
   searchApprovedExampleSuggestionAudioPronunciations,
   searchDeniedExampleSuggestionAudioPronunciations,
@@ -663,6 +667,73 @@ export const decrementTotalUserStat = async (): Promise<any> => {
     await disconnectDatabase();
     return savedStat;
   } catch (err) {
+    await disconnectDatabase();
+    return null;
+  }
+};
+
+/**
+ * Helper function that updates specified Leaderboard
+ * @param param0
+ * @returns
+ */
+const updateLeaderboard = async ({
+  leaderboardType,
+  mongooseConnection,
+}: {
+  leaderboardType: LeaderboardType;
+  mongooseConnection: Connection;
+}) => {
+  const Leaderboard = mongooseConnection.model<Interfaces.Leaderboard>('Leaderboard', leaderboardSchema);
+  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+    'ExampleSuggestion',
+    exampleSuggestionSchema,
+  );
+  const leaderboards = (await Leaderboard.find({ type: leaderboardType })) || [];
+  const firstLeaderboard = leaderboards.reduce(
+    (finalLeaderboard, currentLeaderboard) => {
+      if (currentLeaderboard.rankings >= finalLeaderboard.rankings) {
+        return currentLeaderboard;
+      }
+      return finalLeaderboard;
+    },
+    { rankings: [] },
+  );
+
+  await Promise.all(
+    Object.values(LeaderboardTimeRange).map(async (timeRange) => {
+      const saveableLeaderboards = await Promise.all(
+        firstLeaderboard.rankings.reduce(async (finalLeaderboards, ranking) => {
+          const updatedLeaderboards = await updateLeaderboardWithTimeRange({
+            Leaderboard,
+            ExampleSuggestion,
+            timeRange,
+            leaderboardType,
+            user: ranking,
+            leaderboards: finalLeaderboards,
+          });
+          return updatedLeaderboards;
+        }, leaderboards),
+      );
+      await Promise.all(saveableLeaderboards.map((leaderboard) => leaderboard.save()));
+    }),
+  );
+};
+
+/**
+ * Updates all the stats within every leaderboard
+ */
+export const onUpdateLeaderboards = async (): Promise<{ message: boolean } | null> => {
+  const mongooseConnection = await connectDatabase();
+  try {
+    await Promise.all(
+      Object.values(LeaderboardType).map((leaderboardType) =>
+        updateLeaderboard({ leaderboardType, mongooseConnection }),
+      ),
+    );
+    await disconnectDatabase();
+    return { message: true };
+  } catch {
     await disconnectDatabase();
     return null;
   }

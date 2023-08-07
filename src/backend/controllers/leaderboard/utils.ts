@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { assign, cloneDeep } from 'lodash';
 import { Model } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
@@ -51,9 +51,9 @@ export const splitRankings = (rankings: Interfaces.Leaderboard['rankings']): Int
   return rankingsGroups;
 };
 
-export const assignRankings = async ({
+export const assignRankings = ({
   rankingsGroups,
-  leaderboards,
+  leaderboards: externalLeaderboards,
   Leaderboard,
   timeRange,
 }: {
@@ -61,23 +61,26 @@ export const assignRankings = async ({
   leaderboards: Interfaces.Leaderboard[];
   Leaderboard: Model<Interfaces.Leaderboard, unknown, unknown>;
   timeRange: LeaderboardTimeRange;
-}): Promise<Interfaces.Leaderboard[]> =>
-  Promise.all(
-    rankingsGroups.map(async (rankings, index) => {
-      const leaderboard = leaderboards[index];
-      if (!leaderboard) {
-        const newLeaderboard = new Leaderboard({
-          type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-          page: index,
-          timeRange,
-        });
-        await newLeaderboard.save();
-      }
-      leaderboard.rankings = rankings;
-      leaderboard.markModified('rankings');
-      return leaderboard.save();
-    }),
-  );
+}): Interfaces.Leaderboard[] => {
+  const leaderboards = assign(externalLeaderboards);
+  if (rankingsGroups.length !== leaderboards.length) {
+    console.error('The number of ranking groups and leaderboards do not match.');
+  }
+  return rankingsGroups.map((rankings, index) => {
+    const leaderboard = leaderboards[index];
+    if (!leaderboard) {
+      const newLeaderboard = new Leaderboard({
+        type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+        page: index,
+        timeRange,
+      });
+      return newLeaderboard;
+    }
+    leaderboard.rankings = rankings;
+    leaderboard.markModified('rankings');
+    return leaderboard;
+  });
+};
 
 export const sortLeaderboards = (leaderboards: Interfaces.Leaderboard[]): void => {
   leaderboards.sort((firstLeaderboard, secondLeaderboard) => {

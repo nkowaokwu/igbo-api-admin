@@ -4,8 +4,14 @@ import * as admin from 'firebase-admin';
 import { TEST_MONGO_URI, LOCAL_MONGO_URI, PROD_MONGO_URI } from 'src/backend/config';
 
 const config = functions.config();
-const productionServiceAccount = config?.runtime?.production;
-const stagingServiceAccount = config?.runtime?.staging;
+const productionServiceAccountRaw = config?.runtime?.production;
+const productionServiceAccount =
+  typeof productionServiceAccountRaw === 'string'
+    ? JSON.parse(productionServiceAccountRaw)
+    : productionServiceAccountRaw;
+const stagingServiceAccountRaw = config?.runtime?.staging;
+const stagingServiceAccount =
+  typeof stagingServiceAccountRaw === 'string' ? JSON.parse(stagingServiceAccountRaw) : stagingServiceAccountRaw;
 export const MONGO_URI =
   config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test'
     ? TEST_MONGO_URI
