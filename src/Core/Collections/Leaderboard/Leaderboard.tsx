@@ -3,7 +3,6 @@ import { cloneDeep, get } from 'lodash';
 import moment from 'moment';
 import { act } from 'react-dom/test-utils';
 import { Box, IconButton, Grid, Heading, Text, useToast, chakra } from '@chakra-ui/react';
-// import { Box, IconButton, Grid, Heading, Select, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
 import { Spinner } from 'src/shared/primitives';
@@ -25,36 +24,9 @@ type CachedRankings = {
   };
 };
 
-// const LeaderboardTimeRangesMap = {
-//   [LeaderboardTimeRange.ALL_TIME]: {
-//     label: 'All time',
-//     tooltip: 'Points collected for all time',
-//   },
-//   [LeaderboardTimeRange.WEEK]: {
-//     label: 'Weekly',
-//     tooltip: `Points collected for the current week - ${moment().startOf('week').format('MMMM D')} to ${moment()
-//       .endOf('week')
-//       .format('MMMM D')}`,
-//   },
-//   [LeaderboardTimeRange.MONTH]: {
-//     label: 'Monthly',
-//     tooltip: `Points collected for the current month - ${moment().startOf('month').format('MMMM D')} to ${moment()
-//       .endOf('month')
-//       .format('MMMM D')}`,
-//   },
-//   [LeaderboardTimeRange.IGBO_VOICE_ATHON]: {
-//     label: 'Igbo Voice-athon',
-//     tooltip: 'Points collected for the Igbo Voice-athon - July 24 to October 24',
-//   },
-// };
-
 const Leaderboard = (): ReactElement => {
-  // const [leaderboard, setLeaderboard] = useState<LeaderboardType>(LeaderboardType.RECORD_EXAMPLE_AUDIO);
   const [leaderboardIndex, setLeaderboardIndex] = useState<number | null>();
   const [leaderboardTimeRange] = useState<LeaderboardTimeRange>(LeaderboardTimeRange.ALL_TIME);
-  // const [leaderboardTimeRange, setLeaderboardTimeRange] = useState<LeaderboardTimeRange>(
-  //   LeaderboardTimeRange.ALL_TIME,
-  // );
   const [isLoading, setIsLoading] = useState(false);
   const [userRanking, setUserRanking] = useState<UserRanking>({} as UserRanking);
   const [rankings, setRankings] = useState([]);
@@ -66,12 +38,6 @@ const Leaderboard = (): ReactElement => {
     leaderboardTimeRange === LeaderboardTimeRange.IGBO_VOICE_ATHON &&
     !moment().isBetween(igboVoiceathonStartDate, igboVoiceathonEndDate);
 
-  // const handleUpdateLeaderboard = (event) => {
-  //   const updatedLeaderboard = event.target.value as LeaderboardType;
-  //   if (leaderboard !== updatedLeaderboard) {
-  //     setLeaderboard(updatedLeaderboard);
-  //   }
-  // };
   const handleLeaderboardClick = (index: number) => () => {
     const leaderboardItem = leaderboardItems[index];
     if (leaderboardItem.uid !== leaderboardItems[leaderboardIndex]?.uid) {
@@ -131,11 +97,7 @@ const Leaderboard = (): ReactElement => {
     if (Number.isFinite(leaderboardIndex)) {
       handleRequestingLeaderboard();
     }
-  }, [leaderboardIndex /* leaderboardTimeRange */]);
-
-  // const handleSelectTimeRange = (timeRange: LeaderboardTimeRange) => {
-  //   setLeaderboardTimeRange(timeRange);
-  // };
+  }, [leaderboardIndex]);
 
   const leaderboardItem = leaderboardItems[leaderboardIndex];
   return !isLoading ? (
@@ -172,34 +134,6 @@ const Leaderboard = (): ReactElement => {
           ))}
         </Grid>
       )}
-      {/* <Select defaultValue={leaderboard} onChange={handleUpdateLeaderboard} fontFamily="Silka">
-        <option value={LeaderboardType.RECORD_EXAMPLE_AUDIO}>Recorded example audio</option>
-        <option value={LeaderboardType.VERIFY_EXAMPLE_AUDIO}>Verified example audio</option>
-        <option value={LeaderboardType.TRANSLATE_IGBO_SENTENCE}>Translate Igbo sentences</option>
-      </Select> */}
-      {/* <Heading as="h2" fontSize="lg" my={2}>
-        Time frames
-      </Heading>
-      <Box className="grid grid-flow-row grid-cols-2 lg:grid-cols-4 gap-4 my-4">
-        {Object.entries(LeaderboardTimeRange)
-          // Only shows Igbo Voice-athon for recording audio
-          .filter(([, timeRange]) =>
-            leaderboard === LeaderboardType.RECORD_EXAMPLE_AUDIO
-              ? true
-              : timeRange !== LeaderboardTimeRange.IGBO_VOICE_ATHON,
-          )
-          .map(([key, value]) => (
-            <Tooltip label={LeaderboardTimeRangesMap[value].tooltip} key={value}>
-              <Button
-                key={key}
-                colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}
-                onClick={() => handleSelectTimeRange(value)}
-              >
-                {LeaderboardTimeRangesMap[value].label}
-              </Button>
-            </Tooltip>
-          ))}
-      </Box> */}
       {showIgboVoiceathonMessage ? (
         <Text fontSize="sm" color="gray.500" fontStyle="italic">
           <chakra.span fontWeight="bold" mr="1">
