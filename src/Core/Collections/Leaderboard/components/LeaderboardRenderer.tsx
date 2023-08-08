@@ -19,8 +19,8 @@ export const LeaderboardRenderer: React.FC<Props> = ({ children, className, onCl
     padding: 2,
   };
   const buttonStyles: ChakraProps['sx'] = {
-    ...styles,
     alignItems: 'flex-start',
+    bgColor: 'inherit',
     display: 'flex',
     height: '100%',
     justifyContent: 'flex-start',

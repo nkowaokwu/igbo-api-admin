@@ -11,7 +11,6 @@ import LeaderboardUser from 'src/Core/Collections/Leaderboard/LeaderboardUser';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import BottomCardRanking from 'src/Core/Collections/Leaderboard/BottomCardRanking';
 import { LeaderboardRenderer } from './components/LeaderboardRenderer';
-import { SearchBar } from './components/SearchBar';
 import { leaderboardItems } from './config/leaderboardItems';
 import * as Icons from '../iconography';
 
@@ -25,7 +24,7 @@ type CachedRankings = {
 };
 
 const Leaderboard = (): ReactElement => {
-  const [leaderboardIndex, setLeaderboardIndex] = useState<number | null>();
+  const [selectedLeaderboardType, setSelectedLeaderboardType] = useState<LeaderboardType>();
   const [leaderboardTimeRange] = useState<LeaderboardTimeRange>(LeaderboardTimeRange.ALL_TIME);
   const [isLoading, setIsLoading] = useState(false);
   const [userRanking, setUserRanking] = useState<UserRanking>({} as UserRanking);
@@ -39,29 +38,28 @@ const Leaderboard = (): ReactElement => {
     !moment().isBetween(igboVoiceathonStartDate, igboVoiceathonEndDate);
 
   const handleLeaderboardClick = (index: number) => () => {
-    const leaderboardItem = leaderboardItems[index];
-    if (leaderboardItem.uid !== leaderboardItems[leaderboardIndex]?.uid) {
-      setLeaderboardIndex(index);
-    }
+    setSelectedLeaderboardType(leaderboardItems[index].uid);
   };
 
   const handleBackButton = () => {
-    setLeaderboardIndex(null);
+    setSelectedLeaderboardType(null);
     setRankings([]);
   };
 
   const handleRequestingLeaderboard = async () => {
     setIsLoading(true);
-    const { uid: leaderboard } = leaderboardItems[leaderboardIndex];
     try {
-      if (get(cachedFetchedData, `${leaderboardTimeRange}.${leaderboard}`)) {
-        setUserRanking(cachedFetchedData[leaderboardTimeRange][leaderboard].userRanking);
-        setRankings(cachedFetchedData[leaderboardTimeRange][leaderboard].rankings);
+      if (get(cachedFetchedData, `${leaderboardTimeRange}.${selectedLeaderboardType}`)) {
+        setUserRanking(cachedFetchedData[leaderboardTimeRange][selectedLeaderboardType].userRanking);
+        setRankings(cachedFetchedData[leaderboardTimeRange][selectedLeaderboardType].rankings);
         return;
       }
 
-      const result = await getLeaderboardStats({ leaderboard, timeRange: leaderboardTimeRange });
-      if (!cachedFetchedData[leaderboard]) {
+      const result = await getLeaderboardStats({
+        leaderboard: selectedLeaderboardType,
+        timeRange: leaderboardTimeRange,
+      });
+      if (!cachedFetchedData[selectedLeaderboardType]) {
         const filteredRankings = (result.rankings || []).filter(({ position }) => typeof position === 'number');
         act(() => {
           setUserRanking(result.userRanking);
@@ -71,7 +69,7 @@ const Leaderboard = (): ReactElement => {
           ...cloneDeep(cachedFetchedData),
           [leaderboardTimeRange]: {
             ...cloneDeep(get(cachedFetchedData, leaderboardTimeRange)),
-            [leaderboard]: { userRanking: result.userRanking, rankings: filteredRankings },
+            [selectedLeaderboardType]: { userRanking: result.userRanking, rankings: filteredRankings },
           },
         };
         act(() => {
@@ -93,39 +91,39 @@ const Leaderboard = (): ReactElement => {
     }
   };
 
+  const selectedLeaderboard = leaderboardItems.find(({ uid }) => uid === selectedLeaderboardType);
+
   useEffect(() => {
-    if (Number.isFinite(leaderboardIndex)) {
+    if (selectedLeaderboard) {
       handleRequestingLeaderboard();
     }
-  }, [leaderboardIndex]);
+  }, [selectedLeaderboard?.uid]);
 
-  const leaderboardItem = leaderboardItems[leaderboardIndex];
   return !isLoading ? (
     <Box className="p-6">
-      <Heading as="h1" fontSize="xl" mb={2}>
-        {leaderboardItem && (
+      <Heading as="h1" fontSize="xl" display="flex" alignItems="center" minHeight={10} mb={2}>
+        {selectedLeaderboard ? (
           <IconButton
             variant="ghost"
             aria-label="reset leaderboard option"
             marginRight={2}
             onClick={handleBackButton}
-            icon={<Icons.ArrowBack width={6} height={6} stroke="rgba(39, 39, 39, 1)" />}
+            icon={<Icons.ArrowBack width={6} height={6} stroke="gray.700" />}
           />
-        )}
+        ) : null}
         Leaderboards
       </Heading>
-      <SearchBar />
-      {leaderboardItem && (
-        <Box bg={leaderboardItem?.styles?.bgColor} w="100%" p={2} fontFamily="Silka">
-          <Text fontSize={14} color={leaderboardItem?.styles?.color} fontWeight="semibold">
-            {leaderboardItem?.title}
+      {selectedLeaderboard ? (
+        <Box bg={selectedLeaderboard.styles?.bgColor} w="100%" p={2} fontFamily="Silka">
+          <Text fontSize={14} color={selectedLeaderboard.styles?.color} fontWeight="semibold">
+            {selectedLeaderboard.title}
           </Text>
-          <Text fontSize={12} color={leaderboardItem?.styles?.color}>
+          <Text fontSize={12} color={selectedLeaderboard.styles?.color}>
             Total of all your contributions
           </Text>
         </Box>
-      )}
-      {!leaderboardItem && (
+      ) : null}
+      {!selectedLeaderboard ? (
         <Grid templateColumns="repeat(2, 1fr)" marginTop={4} gap={4}>
           {leaderboardItems.map(({ children, styles, uid }, index) => (
             <LeaderboardRenderer key={uid} onClick={handleLeaderboardClick(index)} styles={styles}>
@@ -133,7 +131,7 @@ const Leaderboard = (): ReactElement => {
             </LeaderboardRenderer>
           ))}
         </Grid>
-      )}
+      ) : null}
       {showIgboVoiceathonMessage ? (
         <Text fontSize="sm" color="gray.500" fontStyle="italic">
           <chakra.span fontWeight="bold" mr="1">
@@ -142,13 +140,13 @@ const Leaderboard = (): ReactElement => {
           Rankings are not accurate for the Igbo Voice-athon because the competition is not active
         </Text>
       ) : null}
-      {leaderboardItem && (
+      {selectedLeaderboard ? (
         <Box>
           {rankings.map(({ uid, ...rest }) => (
             <LeaderboardUser key={uid} {...rest} />
           ))}
         </Box>
-      )}
+      ) : null}
       <BottomCardRanking {...userRanking} />
     </Box>
   ) : (

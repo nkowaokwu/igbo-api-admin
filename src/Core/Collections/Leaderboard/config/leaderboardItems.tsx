@@ -14,38 +14,22 @@ const titleMap = {
 export const leaderboardItems = [
   {
     children: (
-      <LeaderboardItem Icon={<Icons.Done stroke="rgba(189, 0, 255, 1)" />} title={titleMap[VERIFY_EXAMPLE_AUDIO]} />
+      <LeaderboardItem Icon={<Icons.Microphone stroke="orange.500" />} title={titleMap[RECORD_EXAMPLE_AUDIO]} />
     ),
     styles: {
-      bgColor: 'rgba(248, 229, 255, 1)',
-      color: 'rgba(39, 39, 39, 1)',
-    },
-    title: titleMap[VERIFY_EXAMPLE_AUDIO],
-    uid: VERIFY_EXAMPLE_AUDIO,
-  },
-  {
-    children: (
-      <LeaderboardItem
-        Icon={<Icons.Microphone stroke="rgba(255, 121, 0, 1)" />}
-        title={titleMap[RECORD_EXAMPLE_AUDIO]}
-      />
-    ),
-    styles: {
-      bgColor: 'rgba(255, 235, 217, 1)',
-      color: 'rgba(39, 39, 39, 1)',
+      bgColor: 'orange.100',
+      color: 'gray.700',
     },
     title: titleMap[RECORD_EXAMPLE_AUDIO],
     uid: RECORD_EXAMPLE_AUDIO,
   },
   {
-    children: (
-      <LeaderboardItem Icon={<Icons.Conflict stroke="rgba(31, 204, 48, 1)" />} title={titleMap[IGBO_DEFINITION]} />
-    ),
+    children: <LeaderboardItem Icon={<Icons.Done stroke="magenta.900" />} title={titleMap[VERIFY_EXAMPLE_AUDIO]} />,
     styles: {
-      bgColor: 'rgba(39, 39, 39, 1)',
-      color: 'rgba(250, 250, 250, 1)',
+      bgColor: 'magenta.50',
+      color: 'gray.700',
     },
-    title: titleMap[IGBO_DEFINITION],
-    uid: IGBO_DEFINITION,
+    title: titleMap[VERIFY_EXAMPLE_AUDIO],
+    uid: VERIFY_EXAMPLE_AUDIO,
   },
 ];

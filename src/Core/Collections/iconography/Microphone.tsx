@@ -5,14 +5,19 @@ import { IconProps } from './types';
 export const Microphone: React.FC<IconProps> = ({
   className,
   height = 8,
-  stroke = 'grey',
+  stroke = 'gray.500',
   strokeWidth = 2,
   styles,
   width = 8,
 }) => (
   <chakra.svg
     className={className}
-    sx={styles}
+    sx={{
+      ...styles,
+      '& path': {
+        stroke,
+      },
+    }}
     width={width}
     height={height}
     viewBox="0 0 32 32"

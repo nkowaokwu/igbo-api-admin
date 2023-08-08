@@ -2,10 +2,15 @@ import { chakra } from '@chakra-ui/react';
 import React from 'react';
 import { IconProps } from './types';
 
-export const Conflict: React.FC<IconProps> = ({ className, height = 8, stroke = 'grey', styles, width = 8 }) => (
+export const Conflict: React.FC<IconProps> = ({ className, height = 8, stroke = 'gray.500', styles, width = 8 }) => (
   <chakra.svg
     className={className}
-    sx={styles}
+    sx={{
+      ...styles,
+      '& path': {
+        stroke,
+      },
+    }}
     width={width}
     height={height}
     viewBox="0 0 32 32"

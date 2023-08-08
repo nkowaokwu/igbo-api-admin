@@ -4,14 +4,14 @@ import * as Icons from '../../iconography';
 
 type Props = {
   className?: string;
-  onChange?: (p: { value: string }) => void;
+  onChange: (p: { value: string }) => void;
   styles?: ChakraProps['sx'];
   value?: string;
 };
 
 export const SearchBar: React.FC<Props> = ({ className, onChange, styles }) => {
   const handleChange = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-    onChange && onChange({ value: target.value });
+    onChange({ value: target.value });
   };
 
   return (
@@ -20,13 +20,13 @@ export const SearchBar: React.FC<Props> = ({ className, onChange, styles }) => {
         className={className}
         sx={styles}
         backgroundColor="transparent"
-        border="1px solid rgba(192, 192, 192, 1)"
+        border="1px solid gray.400"
         type="text"
         placeholder="Search"
         onChange={handleChange}
       />
       <InputRightElement>
-        <Icons.Maginifier stroke="rgba(79, 79, 79, 1)" />
+        <Icons.Maginifier stroke="gray.600" />
       </InputRightElement>
     </InputGroup>
   );
