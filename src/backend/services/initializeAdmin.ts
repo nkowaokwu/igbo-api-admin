@@ -6,6 +6,7 @@ import { TEST_MONGO_URI, LOCAL_MONGO_URI, PROD_MONGO_URI } from 'src/backend/con
 const config = functions.config();
 const productionServiceAccount = config?.runtime?.production;
 const stagingServiceAccount = config?.runtime?.staging;
+
 export const MONGO_URI =
   config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test'
     ? TEST_MONGO_URI

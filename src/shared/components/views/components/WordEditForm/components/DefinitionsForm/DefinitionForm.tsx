@@ -14,17 +14,25 @@ const DefinitionForm = ({
   control,
   groupIndex,
   record,
-} : {
-  errors: any,
-  control: Control,
-  groupIndex: number,
-  record: Record,
-}) : ReactElement => {
-  const { fields: definitions, append: appendDefinition, remove: removeDefinition } = useFieldArray({
+}: {
+  errors: any;
+  control: Control;
+  groupIndex: number;
+  record: Record;
+}): ReactElement => {
+  const {
+    fields: definitions,
+    append: appendDefinition,
+    remove: removeDefinition,
+  } = useFieldArray({
     control,
     name: `definitions.${groupIndex}.definitions`,
   });
-  const { fields: igboDefinitions, append: appendIgboDefinition, remove: removeIgboDefinition } = useFieldArray({
+  const {
+    fields: igboDefinitions,
+    append: appendIgboDefinition,
+    remove: removeIgboDefinition,
+  } = useFieldArray({
     control,
     name: `definitions.${groupIndex}.igboDefinitions`,
   });
@@ -43,11 +51,7 @@ const DefinitionForm = ({
   return (
     <>
       <Box className="flex flex-col lg:flex-row lg:space-x-3 items-start">
-        <PartOfSpeechForm
-          errors={errors}
-          control={control}
-          groupIndex={groupIndex}
-        />
+        <PartOfSpeechForm errors={errors} control={control} groupIndex={groupIndex} />
         <NsibidiForm
           control={control}
           name={`definitions[${groupIndex}].nsibidi`}
