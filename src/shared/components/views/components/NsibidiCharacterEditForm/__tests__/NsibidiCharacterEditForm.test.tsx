@@ -12,8 +12,8 @@ describe('NsibidiCharacterEditForm', () => {
     const mockSave = jest.fn(() => null);
 
     const { findByText, findByTestId, findByPlaceholderText } = render(
-      <TestContext resource={Collections.NSIBIDI_CHARACTERS} record={{}} save={mockSave}>
-        <NsibidiCharacterEditForm />
+      <TestContext resource={Collections.NSIBIDI_CHARACTERS} record={{}}>
+        <NsibidiCharacterEditForm save={mockSave} />
       </TestContext>,
     );
 

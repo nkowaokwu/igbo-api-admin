@@ -6,10 +6,12 @@ import { Input } from 'src/shared/primitives';
 import FormHeader from '../../../FormHeader';
 import VariationsFormInterface from './VariationsFormInterface';
 
-const VariationsForm = (
-  { control }: VariationsFormInterface,
-): ReactElement => {
-  const { fields: variations, append, remove } = useFieldArray({
+const VariationsForm = ({ control }: VariationsFormInterface): ReactElement => {
+  const {
+    fields: variations,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'variations',
   });
@@ -30,25 +32,25 @@ const VariationsForm = (
           Add Variation
         </Button>
       </Box>
-      {variations.length ? variations.map(({ text, id }, index) => (
-        <Box className="list-container" key={id}>
-          <Controller
-            render={(props) => (
-              <Input {...props} data-test={`variation-${index}-input`} />
-            )}
-            name={`variations[${index}].text`}
-            control={control}
-            defaultValue={text}
-          />
-          <IconButton
-            colorScheme="red"
-            aria-label="Delete Variation"
-            icon={<DeleteIcon />}
-            onClick={() => remove(index)}
-            className="ml-3"
-          />
-        </Box>
-      )) : (
+      {variations.length ? (
+        variations.map(({ text, id }, index) => (
+          <Box className="list-container" key={id}>
+            <Controller
+              render={(props) => <Input {...props} data-test={`variation-${index}-input`} />}
+              name={`variations[${index}].text`}
+              control={control}
+              defaultValue={text}
+            />
+            <IconButton
+              colorScheme="red"
+              aria-label="Delete Variation"
+              icon={<DeleteIcon />}
+              onClick={() => remove(index)}
+              className="ml-3"
+            />
+          </Box>
+        ))
+      ) : (
         <Box className="flex w-full justify-center">
           <p className="text-gray-600 mb-4 italic">No spelling variations</p>
         </Box>

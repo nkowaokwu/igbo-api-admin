@@ -78,7 +78,7 @@ describe('Word Edit Form', () => {
   });
 
   it('add a word stem to word suggestion', async () => {
-    const { findByText, findByPlaceholderText, findAllByText } = render(
+    const { findByPlaceholderText, findAllByText } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
@@ -86,8 +86,7 @@ describe('Word Edit Form', () => {
 
     userEvent.type(await findByPlaceholderText('Search for stem or use word id'), 'cat');
     userEvent.click(last(await findAllByText('retrieved word')));
-    await findByText('NNC');
-    await findAllByText('first definition');
+    await findAllByText('resolved word definition');
   });
 
   it('add a word relatedTerm to word suggestion', async () => {
@@ -124,22 +123,20 @@ describe('Word Edit Form', () => {
   it('shows tenses with a verb', async () => {
     const staticWordRecord = cloneDeep(wordRecord);
     staticWordRecord.definitions[0].wordClass = WordClassEnum.AV;
-    const { findByText, findByTestId } = render(
+    const { findByText, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );
 
     await findByText('Tenses');
-    await Promise.all(
-      Object.values(Tense).map(async ({ value }) => {
-        expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
-      }),
-    );
+    Object.values(Tense).forEach(({ value }) => {
+      expect(getByTestId(`tenses-${value}-input`).getAttribute('value')).toEqual('');
+    });
   });
 
   it('switches from non-verb to verb to show tenses', async () => {
-    const { findByText, findByTestId, findAllByText } = render(
+    const { findByText, findByTestId, findAllByText, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
         <WordEditForm />
       </TestContext>,
@@ -152,11 +149,9 @@ describe('Word Edit Form', () => {
     userEvent.click(last(await findAllByText('Active verb')));
 
     await findByText('Tenses');
-    await Promise.all(
-      Object.values(Tense).map(async ({ value }) => {
-        expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
-      }),
-    );
+    Object.values(Tense).forEach(({ value }) => {
+      expect(getByTestId(`tenses-${value}-input`).getAttribute('value')).toEqual('');
+    });
   });
 
   it('show the updated headword warning message within audio recorder', async () => {

@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { noop } from 'lodash';
-import * as FirebaseAuth from 'firebase/auth';
 import TestContext from 'src/__tests__/components/TestContext';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import LoginModal from '../components/LoginModal';
@@ -32,7 +31,6 @@ describe('LoginModal', () => {
   it('fill out create account form for phone number', async () => {
     const setUserLoginStateMock = jest.fn();
     const setErrorMessageMock = jest.fn();
-    console.log(FirebaseAuth.signInWithPhoneNumber);
     const { findByText, findByPlaceholderText } = render(
       <TestContext>
         <LoginModal

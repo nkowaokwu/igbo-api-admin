@@ -147,7 +147,7 @@ describe('Submit ExampleEditForm', () => {
     );
     const dialectsSelect = await findByTestId('sentence-style-input-container');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
-    fireEvent.click(await findByText(ExampleStyle[ExampleStyleEnum.PROVERB].value));
+    fireEvent.click(await findByText(ExampleStyle[ExampleStyleEnum.PROVERB].label));
     fireEvent.submit(await findByText('Update'));
 
     await waitFor(() =>

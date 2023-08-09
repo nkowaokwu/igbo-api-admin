@@ -6,14 +6,14 @@ import TensesForm from '../TensesForm';
 
 describe('TensesForm', () => {
   it('renders all tense inputs', async () => {
-    const { findByText, findByTestId } = render(
+    const { findByText, getByTestId } = render(
       <TestContext groupIndex={0}>
         <TensesForm />
       </TestContext>,
     );
     await findByText('Tenses');
-    await Promise.all(Object.values(Tense).map(async ({ value }) => {
-      expect((await findByTestId(`tenses-${value}-input`)).getAttribute('value')).toEqual('');
-    }));
+    Object.values(Tense).forEach(({ value }) => {
+      expect(getByTestId(`tenses-${value}-input`).getAttribute('value')).toEqual('');
+    });
   });
 });

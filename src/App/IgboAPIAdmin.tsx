@@ -12,7 +12,7 @@ import Theme from './Theme';
 const Resources = memo(
   () => {
     const [permissions, setPermissions] = useState(usePermissions());
-    const resources = getResourceObjects(permissions).map((resource) => <Resource {...resource} />);
+    const resources = getResourceObjects(permissions).map((resource) => <Resource key={resource.name} {...resource} />);
     const customRoutes = getCustomRouteObjects().map((customRoute) => <Route {...customRoute} />);
 
     return (

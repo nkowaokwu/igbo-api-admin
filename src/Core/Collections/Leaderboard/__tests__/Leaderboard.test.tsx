@@ -8,6 +8,10 @@ import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRa
 import Leaderboard from '..';
 
 describe('Leaderboard', () => {
+  beforeEach(() => {
+    // @ts-expect-error
+    getLeaderboardStats.mockClear();
+  });
   it('render all leaderboard time frames', async () => {
     const { findByText } = render(
       <TestContext groupIndex={0}>
@@ -27,12 +31,13 @@ describe('Leaderboard', () => {
       </TestContext>,
     );
     userEvent.click(await findByText('All time'));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     userEvent.click(await findByText('Weekly'));
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     userEvent.click(await findByText('Monthly'));
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     userEvent.click(await findByText('Igbo Voice-athon'));
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     expect(getLeaderboardStats.mock.calls).toEqual([
       [

@@ -41,6 +41,7 @@ const ExampleEditForm = ({
       associatedWords: (record?.associatedWords || []).map((associatedWordId) => ({ id: associatedWordId })),
     },
     ...ExampleEditFormResolver,
+    mode: 'onChange',
   });
   const [originalRecord, setOriginalRecord] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

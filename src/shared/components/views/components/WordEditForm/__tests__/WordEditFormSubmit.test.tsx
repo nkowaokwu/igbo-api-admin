@@ -265,19 +265,17 @@ describe('Submit WordEditForm', () => {
     delete testWord.id;
     delete testWord.dialects[0].id;
 
-    const { findByText, findByTestId } = render(
+    const { findByText, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
 
-    await Promise.all(
-      Object.values(WordAttributes).map(async ({ value }) => {
-        if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
-          fireEvent.click((await findByTestId(`${value}-checkbox`)).firstChild);
-        }
-      }),
-    );
+    Object.values(WordAttributes).forEach(({ value }) => {
+      if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
+        fireEvent.click(getByTestId(`${value}-checkbox`).firstChild);
+      }
+    });
 
     fireEvent.submit(await findByText('Update'));
 
@@ -460,7 +458,7 @@ describe('Submit WordEditForm', () => {
     delete testWord.id;
     delete testWord.dialects[0].id;
 
-    const { findByText, findByTestId } = render(
+    const { findByText, findByTestId, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
         <WordEditForm save={mockSave} />
       </TestContext>,
@@ -470,8 +468,8 @@ describe('Submit WordEditForm', () => {
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
     fireEvent.click(await findByText(WordClass.PV.label));
 
-    Object.values(Tense).map(async ({ value }) => {
-      userEvent.type(await findByTestId(`tenses-${value}-input`), value);
+    Object.values(Tense).forEach(({ value }) => {
+      userEvent.type(getByTestId(`tenses-${value}-input`), value);
     });
 
     fireEvent.submit(await findByText('Update'));

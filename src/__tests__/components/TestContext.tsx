@@ -92,6 +92,7 @@ const TestContext = ({
   const { control, watch } = useForm({
     // @ts-expect-error
     defaultValues: createDefaultWordFormValues(staticWordRecord),
+    mode: 'onChange',
   });
 
   const [, setIsDirty] = useState(false);

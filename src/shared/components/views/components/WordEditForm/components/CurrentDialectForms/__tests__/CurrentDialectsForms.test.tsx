@@ -22,7 +22,7 @@ describe('CurrentDialectsForms', () => {
   });
 
   it('adds another dialectal variation', async () => {
-    const { findByText, findByTestId } = render(
+    const { getByText, findByTestId } = render(
       <TestContext>
         <CurrentDialectsForms />
       </TestContext>,
@@ -30,11 +30,10 @@ describe('CurrentDialectsForms', () => {
 
     const dialectsSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
-    await Promise.all(
-      Object.values(Dialects).map(async ({ label }) => {
-        await findByText(label);
-      }),
-    );
+
+    Object.values(Dialects).forEach(({ label }) => {
+      getByText(label);
+    });
   });
 
   it('handles adding a selected dialect', async () => {

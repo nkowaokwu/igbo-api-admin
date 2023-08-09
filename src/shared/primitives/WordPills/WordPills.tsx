@@ -9,28 +9,23 @@ const WordPills = ({
   onDelete,
   formName,
   control,
-} : {
-  pills: (Word | NsibidiCharacter)[],
-  onDelete: (index: number) => void,
-  formName: string,
-  control: Control
+}: {
+  pills: (Word | NsibidiCharacter)[];
+  onDelete: (index: number) => void;
+  formName: string;
+  control: Control;
 }): ReactElement => (
   <Box className="w-full space-x-2 flex flex-row flex-wrap items-center justify-start">
     {pills.map((pill, index) => (
-      <>
+      <Box key={pill.id}>
         <input
           style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
           name={`${formName}.${index}.id`}
           ref={control.register}
           defaultValue={pill.id}
         />
-        <WordPill
-          {...pill}
-          key={pill.id.toString()}
-          index={index}
-          onDelete={onDelete}
-        />
-      </>
+        <WordPill {...pill} key={pill.id.toString()} index={index} onDelete={onDelete} />
+      </Box>
     ))}
   </Box>
 );

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef, ReactElement } from 'react';
 import { act } from 'react-dom/test-utils';
-import { debounce, noop } from 'lodash';
+import { debounce, omit, noop } from 'lodash';
 import { Box, Input as ChakraInput, InputProps } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
 import useEventListener from 'src/hooks/useEventListener';
@@ -131,7 +131,7 @@ const Input = React.forwardRef(
               debounceInput(e.target.value);
             }
           }}
-          {...rest}
+          {...omit(rest, ['enableSearch', 'nsibidiFormName'])}
         />
         {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteResults) ? (
           <WordResults

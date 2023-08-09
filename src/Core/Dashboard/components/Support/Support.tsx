@@ -25,7 +25,7 @@ const Support = (): ReactElement => (
     </Box>
     <Box className="space-y-2" backgroundColor="white" p={3}>
       {supportOptions.map(({ title, linkText, link }, index) => (
-        <>
+        <Box key={title}>
           <Box key={title}>
             <Text fontFamily="Silka" fontWeight="bold">
               {title}
@@ -42,7 +42,7 @@ const Support = (): ReactElement => (
               <Divider backgroundColor="gray.100" />
             </Box>
           ) : null}
-        </>
+        </Box>
       ))}
     </Box>
   </Box>
