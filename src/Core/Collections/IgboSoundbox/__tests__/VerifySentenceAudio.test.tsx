@@ -1,5 +1,5 @@
 import React from 'react';
-import { first, last, times } from 'lodash';
+import { first, last } from 'lodash';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
@@ -261,7 +261,7 @@ describe('VerifySentenceAudio', () => {
       data: examplesData,
     }));
     const reviewSpy = jest.spyOn(DataCollectionAPI, 'putReviewForRandomExampleSuggestions');
-    const { findByText, findAllByLabelText, findByLabelText } = render(
+    const { getByLabelText, findByText, findAllByLabelText, findByLabelText } = render(
       <TestContext>
         <VerifySentenceAudio />
       </TestContext>,
@@ -271,11 +271,10 @@ describe('VerifySentenceAudio', () => {
     userEvent.click(last(await findAllByLabelText('Deny')));
     await findByLabelText('Approve selected');
     await findByLabelText('Deny selected');
-    await Promise.all(
-      times(4, async () => {
-        userEvent.click(await findByText('Next'));
-      }),
-    );
+    userEvent.click(getByLabelText('Next sentence'));
+    userEvent.click(getByLabelText('Next sentence'));
+    userEvent.click(getByLabelText('Next sentence'));
+    userEvent.click(getByLabelText('Next sentence'));
     userEvent.click(await findByText('Submit Batch'));
     expect(reviewSpy).toBeCalledWith([
       {

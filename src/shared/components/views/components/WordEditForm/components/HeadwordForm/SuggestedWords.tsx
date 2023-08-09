@@ -1,37 +1,29 @@
-import React, {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { debounce } from 'lodash';
-import {
-  Box,
-  Link,
-  Text,
-  Tooltip,
-  Popover,
-  PopoverContent,
-  chakra,
-} from '@chakra-ui/react';
+import { Box, Link, Text, Tooltip, Popover, PopoverContent, chakra } from '@chakra-ui/react';
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import View from 'src/shared/constants/Views';
 import { getWords, getWordSuggestions } from 'src/shared/API';
+import { WordSuggestion } from 'src/backend/controllers/utils/interfaces';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
-const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Record['id'] }): ReactElement => {
+const SuggestedWords = ({ word, id: wordId }: { word: string; id: string | Record['id'] }): ReactElement => {
   const [openWordPopover, setOpenWordPopover] = useState(null);
   const [suggestedWords, setSuggestedWords] = useState([]);
-  const [suggestedWordSuggestions, setSuggestedWordSuggestions] = useState([]);
+  const [suggestedWordSuggestions, setSuggestedWordSuggestions] = useState<WordSuggestion[]>([]);
 
-  const searchWordsAndWordSuggestions = useCallback(debounce(async (inputtedWord: string) => {
-    if (inputtedWord) {
-      const words = await getWords((inputtedWord).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-      const suggestedWords = await getWordSuggestions((inputtedWord).normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-      setSuggestedWords(words);
-      setSuggestedWordSuggestions(suggestedWords);
-    }
-  }, 400), []);
+  const searchWordsAndWordSuggestions = useCallback(
+    debounce(async (inputtedWord: string) => {
+      if (inputtedWord) {
+        const words = await getWords(inputtedWord.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+        const suggestedWords = await getWordSuggestions(inputtedWord.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+        setSuggestedWords(words);
+        setSuggestedWordSuggestions(suggestedWords);
+      }
+    }, 400),
+    [],
+  );
 
   useEffect(() => {
     searchWordsAndWordSuggestions(word);
@@ -62,17 +54,9 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Reco
             </Box>
           </Tooltip>
           <Box className="flex flex-row flex-wrap relative">
-            {filteredWords.map(({
-              word,
-              nsibidi,
-              definitions,
-              id,
-            }) => (
-              <Box key={`suggested-word-${id} relative`}>
-                <Box
-                  className="flex flex-row items-center"
-                  mr={3}
-                >
+            {filteredWords.map(({ word, nsibidi, definitions, id }) => (
+              <Box key={`suggested-word-${id}`} className="relative">
+                <Box className="flex flex-row items-center" mr={3}>
                   <Link
                     color="blue.400"
                     href={`#/words/${id}/${View.SHOW}`}
@@ -84,19 +68,24 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Reco
                   </Link>
                   <ExternalLinkIcon color="blue.400" boxSize={3} />
                 </Box>
-                <Popover
-                  isOpen={id === openWordPopover}
-                  placement="bottom-start"
-                >
+                <Popover isOpen={id === openWordPopover} placement="bottom-start">
                   <PopoverContent top={7} p={5}>
                     <Box className="flex flex-row items-center">
-                      <Text fontWeight="bold" mr={2}>{word}</Text>
-                      {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}
+                      <Text fontWeight="bold" mr={2}>
+                        {word}
+                      </Text>
+                      {nsibidi ? (
+                        <Text color="green.500" fontWeight="bold" className="akagu">
+                          {nsibidi}
+                        </Text>
+                      ) : null}
                     </Box>
                     <Box>
-                      {definitions.map(({ definitions: nestedDefinitions, wordClass, _id }, index) => (
-                        <Text key={_id}>
-                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${nestedDefinitions[0]}`}
+                      {definitions.map(({ definitions: nestedDefinitions, wordClass, id }, index) => (
+                        <Text key={`${nestedDefinitions[0]}-${id}`}>
+                          {`${index + 1}. (${WordClass[wordClass as WordClassEnum]?.label || wordClass}) ${
+                            nestedDefinitions[0]
+                          }`}
                         </Text>
                       ))}
                     </Box>
@@ -120,17 +109,9 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Reco
             </Box>
           </Tooltip>
           <Box className="flex flex-row flex-wrap relative">
-            {filteredWordSuggestions.map(({
-              word,
-              nsibidi,
-              definitions,
-              id,
-            }) => (
-              <Box key={`suggested-word-${id} relative`}>
-                <Box
-                  className="flex flex-row items-center"
-                  mr={3}
-                >
+            {filteredWordSuggestions.map(({ word, nsibidi, definitions, id }) => (
+              <Box key={`suggested-word-${id}`} className="relative">
+                <Box className="flex flex-row items-center" mr={3}>
                   <Link
                     color="blue.400"
                     href={`#/wordSuggestions/${id}/${View.SHOW}`}
@@ -142,19 +123,24 @@ const SuggestedWords = ({ word, id: wordId } : { word: string, id: string | Reco
                   </Link>
                   <ExternalLinkIcon color="blue.400" boxSize={3} />
                 </Box>
-                <Popover
-                  isOpen={id === openWordPopover}
-                  placement="bottom-start"
-                >
+                <Popover isOpen={id === openWordPopover} placement="bottom-start">
                   <PopoverContent top={7} p={5}>
                     <Box className="flex flex-row items-center">
-                      <Text fontWeight="bold" mr={2}>{word}</Text>
-                      {nsibidi ? <Text color="green.500" fontWeight="bold" className="akagu">{nsibidi}</Text> : null}
+                      <Text fontWeight="bold" mr={2}>
+                        {word}
+                      </Text>
+                      {nsibidi ? (
+                        <Text color="green.500" fontWeight="bold" className="akagu">
+                          {nsibidi}
+                        </Text>
+                      ) : null}
                     </Box>
                     <Box>
-                      {definitions.map(({ definitions: nestedDefinitions, wordClass, _id }, index) => (
-                        <Text key={_id}>
-                          {`${index + 1}. (${WordClass[wordClass]?.label || wordClass}) ${nestedDefinitions[0]}`}
+                      {definitions.map(({ definitions: nestedDefinitions, wordClass, id }, index) => (
+                        <Text key={`${nestedDefinitions[0]}-${id}`}>
+                          {`${index + 1}. (${WordClass[wordClass as WordClassEnum]?.label || wordClass}) ${
+                            nestedDefinitions[0]
+                          }`}
                         </Text>
                       ))}
                     </Box>

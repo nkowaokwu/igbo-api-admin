@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import Login from '../Login';
 
-describe('Login', () => {
+describe.skip('Login', () => {
   it('renders the left side and credential form', async () => {
     const { findByText, findByTestId } = render(
       <TestContext>

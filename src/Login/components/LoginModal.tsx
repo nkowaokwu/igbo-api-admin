@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { act } from 'react-dom/test-utils';
 import {
   Box,
   Button,
@@ -82,7 +83,9 @@ const LoginModal = ({
     setIsLoading(true);
     await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
       .then((confirmationResult) => {
-        setIsLoading(false);
+        act(() => {
+          setIsLoading(false);
+        });
         if (userLoginState === UserLoginState.SIGN_UP) {
           setUserLoginState(UserLoginState.CONFIRM_NUMBER);
           window.confirmationResult = confirmationResult;

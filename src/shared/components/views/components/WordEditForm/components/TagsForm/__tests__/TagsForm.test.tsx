@@ -7,7 +7,7 @@ import TagsForm from '../TagsForm';
 
 describe('TagsForm', () => {
   it('renders the tags', async () => {
-    const { findByText, findByTestId } = render(
+    const { findByText, findByTestId, getByText } = render(
       <TestContext groupIndex={0}>
         <TagsForm />
       </TestContext>,
@@ -15,13 +15,13 @@ describe('TagsForm', () => {
     await findByText('Tags');
     const tagsSelect = await findByTestId('tags-input-container');
     fireEvent.keyDown(tagsSelect.firstChild, { key: 'ArrowDown' });
-    await Promise.all(Object.values(WordTags).map(async ({ label }) => {
-      await findByText(label);
-    }));
+    Object.values(WordTags).forEach(({ label }) => {
+      getByText(label);
+    });
   });
 
   it('selects a tag', async () => {
-    const { findByText, queryByText, findByTestId } = render(
+    const { findByText, queryByText, findByTestId, getByText } = render(
       <TestContext groupIndex={0}>
         <TagsForm />
       </TestContext>,
@@ -29,17 +29,17 @@ describe('TagsForm', () => {
     await findByText('Tags');
     const tagsSelect = await findByTestId('tags-input-container');
     fireEvent.keyDown(tagsSelect.firstChild, { key: 'ArrowDown' });
-    await Promise.all(Object.values(WordTags).map(async ({ label }) => {
-      await findByText(label);
-    }));
+    Object.values(WordTags).forEach(({ label }) => {
+      getByText(label);
+    });
     userEvent.click(await findByText('Commerce'));
     await findByText('Commerce');
-    await Promise.all(Object.values(WordTags).map(async ({ label }) => {
+    Object.values(WordTags).forEach(({ label }) => {
       if (label !== WordTags.COMMERCE.label) {
-        expect(await queryByText(label)).toBeNull();
+        expect(queryByText(label)).toBeNull();
       } else {
-        await findByText(label);
+        getByText(label);
       }
-    }));
+    });
   });
 });

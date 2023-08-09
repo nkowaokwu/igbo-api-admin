@@ -7,7 +7,7 @@ import DialectForm from '../DialectForm';
 
 describe('DialectForm', () => {
   it('renders the dialect', async () => {
-    const { findByText, findByTestId } = render(
+    const { findByText, findByTestId, getByText } = render(
       <TestContext index={0}>
         <DialectForm />
       </TestContext>,
@@ -19,13 +19,13 @@ describe('DialectForm', () => {
     const dialectSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectSelect.firstChild, { key: 'ArrowDown' });
 
-    await Promise.all(Object.values(Dialects).map(async ({ label }) => {
-      await findByText(label);
-    }));
+    Object.values(Dialects).forEach(({ label }) => {
+      getByText(label);
+    });
   });
 
   it('selects a dialect', async () => {
-    const { findByText, queryByText, findByTestId } = render(
+    const { findByText, queryByText, findByTestId, getByText } = render(
       <TestContext index={0}>
         <DialectForm />
       </TestContext>,
@@ -38,12 +38,12 @@ describe('DialectForm', () => {
     fireEvent.keyDown(dialectSelect.firstChild, { key: 'ArrowDown' });
 
     userEvent.click(await findByText(Dialects.AJA.label));
-    await Promise.all(Object.values(Dialects).map(async ({ label }) => {
+    Object.values(Dialects).forEach(({ label }) => {
       if (label !== Dialects.AJA.label && label !== Dialects.ABI.label) {
-        expect(await queryByText(label)).toBeNull();
+        expect(queryByText(label)).toBeNull();
       } else {
-        expect(await findByText(label));
+        expect(getByText(label));
       }
-    }));
+    });
   });
 });

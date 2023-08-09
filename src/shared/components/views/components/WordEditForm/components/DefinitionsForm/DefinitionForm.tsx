@@ -56,7 +56,7 @@ const DefinitionForm = ({
           control={control}
           name={`definitions[${groupIndex}].nsibidi`}
           errors={errors}
-          defaultValue={get(record, `definitions.${groupIndex}.nsibidi`)}
+          defaultValue={get(record, `definitions[${groupIndex}].nsibidi`)}
         />
       </Box>
       <Box className="flex flex-row items-center my-5 w-full justify-between">

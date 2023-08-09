@@ -1,11 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { get } from 'lodash';
-import {
-  Box,
-  IconButton,
-  Spinner,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, IconButton, Spinner, Tooltip } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
@@ -15,13 +10,7 @@ import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
 
-const Example = ({
-  example,
-  index,
-  remove,
-  control,
-  setValue,
-}: ExamplesInterface): ReactElement => {
+const Example = ({ example, index, remove, control, setValue }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
   const uid = useFirebaseUid();
   const {
@@ -47,9 +36,7 @@ const Example = ({
   useEffect(() => {
     (async () => {
       setOriginalRecord(
-        originalExampleId
-          ? await network.getOne(Collection.EXAMPLES, { id: originalExampleId })
-          : example,
+        originalExampleId ? await network.getOne(Collection.EXAMPLES, { id: originalExampleId }) : example,
       );
     })();
   }, []);
@@ -77,13 +64,9 @@ const Example = ({
         <h3 className="text-gray-700">Igbo:</h3>
         <Controller
           render={(props) => (
-            <Input
-              {...props}
-              placeholder="Example in Igbo"
-              data-test={`examples-${index}-igbo-input`}
-            />
+            <Input {...props} placeholder="Example in Igbo" data-test={`examples-${index}-igbo-input`} />
           )}
-          name={`examples.${index}.igbo`}
+          name={`examples[${index}].igbo`}
           defaultValue={igbo}
           control={control}
         />
@@ -96,7 +79,7 @@ const Example = ({
               data-test={`examples-${index}-english-input`}
             />
           )}
-          name={`examples.${index}.english`}
+          name={`examples[${index}].english`}
           defaultValue={english}
           control={control}
         />
@@ -109,7 +92,7 @@ const Example = ({
               data-test={`examples-${index}-meaning-input`}
             />
           )}
-          name={`examples.${index}.meaning`}
+          name={`examples[${index}].meaning`}
           defaultValue={meaning}
           control={control}
         />
@@ -120,40 +103,42 @@ const Example = ({
               {...props}
               placeholder="Example in Nsịbịdị"
               data-test={`examples-${index}-nsibidi-input`}
-              nsibidiFormName={`examples.${index}.nsibidiCharacters`}
+              nsibidiFormName={`examples[${index}].nsibidiCharacters`}
               control={control}
             />
           )}
-          name={`examples.${index}.nsibidi`}
+          name={`examples[${index}].nsibidi`}
           defaultValue={nsibidi}
           control={control}
         />
-        {pronunciations?.length ? pronunciations.map((_, pronunciationIndex) => (
+        {pronunciations?.length ? (
+          pronunciations.map((_, pronunciationIndex) => (
+            <>
+              <input
+                style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+                name={`examples[${index}].pronunciations[${pronunciationIndex}].audio`}
+                ref={control.register}
+                defaultValue={pronunciations[pronunciationIndex]?.audio}
+              />
+              <input
+                style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+                name={`examples[${index}].pronunciations[${pronunciationIndex}].speaker`}
+                ref={control.register}
+                defaultValue={pronunciations[pronunciationIndex]?.speaker}
+              />
+            </>
+          ))
+        ) : (
           <>
             <input
               style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-              name={`examples.${index}.pronunciations.${pronunciationIndex}.audio`}
-              ref={control.register}
-              defaultValue={pronunciations[pronunciationIndex]?.audio}
-            />
-            <input
-              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-              name={`examples.${index}.pronunciations.${pronunciationIndex}.speaker`}
-              ref={control.register}
-              defaultValue={pronunciations[pronunciationIndex]?.speaker}
-            />
-          </>
-        )) : (
-          <>
-            <input
-              style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-              name={`examples.${index}.pronunciations.0.audio`}
+              name={`examples[${index}].pronunciations[0].audio`}
               ref={control.register}
               defaultValue={pronunciations[0]?.audio}
             />
             <input
               style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-              name={`examples.${index}.pronunciations.0.speaker`}
+              name={`examples[${index}].pronunciations[0].speaker`}
               ref={control.register}
               defaultValue={pronunciations[0]?.speaker}
             />
@@ -161,14 +146,14 @@ const Example = ({
         )}
         {/* Only updates the first audio in the example's pronunciation array */}
         <AudioRecorder
-          path="pronunciations.0.audio"
-          getFormValues={() => get(control.getValues(), `examples.${index}.pronunciations.0.audio`)}
+          path="pronunciations[0].audio"
+          getFormValues={() => get(control.getValues(), `examples[${index}].pronunciations[0].audio`)}
           setPronunciation={(_, value) => {
-            if (!get(control.getValues(), `examples.${index}.pronunciations.0`)) {
-              setValue(`examples.${index}.pronunciations`, [{ audio: value, speaker: uid }]);
+            if (!get(control.getValues(), `examples[${index}].pronunciations[0]`)) {
+              setValue(`examples[${index}].pronunciations`, [{ audio: value, speaker: uid }]);
             } else {
-              setValue(`examples.${index}.pronunciations.0.audio`, value);
-              setValue(`examples.${index}.pronunciations.0.speaker`, uid);
+              setValue(`examples[${index}].pronunciations[0].audio`, value);
+              setValue(`examples[${index}].pronunciations[0].speaker`, uid);
             }
           }}
           record={example}
@@ -191,7 +176,9 @@ const Example = ({
         />
       </Tooltip>
     </Box>
-  ) : <Spinner />;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default Example;

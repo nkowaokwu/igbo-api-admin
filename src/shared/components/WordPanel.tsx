@@ -1,13 +1,7 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Record } from 'react-admin';
-import {
-  Box,
-  Text,
-  Heading,
-  Tooltip,
-  Link,
-} from '@chakra-ui/react';
+import { Box, Text, Heading, Tooltip, Link } from '@chakra-ui/react';
 import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Dialects from 'src/backend/shared/constants/Dialect';
@@ -49,86 +43,117 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
     </Box>
     <Box className="flex flex-row space-x-3">
       <Box>
-        <Text fontSize="xl" className="font-bold">Word</Text>
+        <Text fontSize="xl" className="font-bold">
+          Word
+        </Text>
         <Text>{get(record, 'word')}</Text>
       </Box>
     </Box>
     <Box className="flex flex-row items-start space-x-8">
       <Box className="space-y-2">
         <Box>
-          <Text fontSize="xl" className="font-bold">Definition Groups</Text>
+          <Text fontSize="xl" className="font-bold">
+            Definition Groups
+          </Text>
           <Box>
-            {(get(record, 'definitions') || []).map(({
-              wordClass,
-              definitions,
-              nsibidi,
-              id,
-            }) => (
+            {(get(record, 'definitions') || []).map(({ wordClass, definitions, nsibidi, id }) => (
               <Box key={id}>
                 <Box className="flex flex-row space-x-3 items-start">
                   <Box>
-                    <Text fontSize="lg" className="font-bold">Part of Speech</Text>
+                    <Text fontSize="lg" className="font-bold">
+                      Part of Speech
+                    </Text>
                     <Text>{get(WordClass[wordClass], 'label')}</Text>
                   </Box>
                   <Box>
-                    <Text fontSize="lg" className="font-bold">Nsịbịdị</Text>
+                    <Text fontSize="lg" className="font-bold">
+                      Nsịbịdị
+                    </Text>
                     <Tooltip label={nsibidi}>
-                      <Text
-                        className={`${nsibidi ? 'akagu' : 'italic text-gray-600'} cursor-default`}
-                      >
+                      <Text className={`${nsibidi ? 'akagu' : 'italic text-gray-600'} cursor-default`}>
                         {nsibidi || 'No Nsịbịdị'}
                       </Text>
                     </Tooltip>
                   </Box>
                 </Box>
-                <Text fontSize="lg" className="font-bold">Definitions</Text>
-                {definitions?.length ? definitions.map((definition, index) => (
-                  <Box key={definition} className="flex flex-row space-x-1">
-                    <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-                    <Text>{definition}</Text>
-                  </Box>
-                )) : <Text className="text-gray-500 italic">No definitions</Text>}
+                <Text fontSize="lg" className="font-bold">
+                  Definitions
+                </Text>
+                {definitions?.length ? (
+                  definitions.map((definition, index) => (
+                    <Box key={definition} className="flex flex-row space-x-1">
+                      <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                      <Text>{definition}</Text>
+                    </Box>
+                  ))
+                ) : (
+                  <Text className="text-gray-500 italic">No definitions</Text>
+                )}
               </Box>
             ))}
           </Box>
         </Box>
         <Box>
-          <Text fontSize="lg" className="font-bold">Spelling Variations</Text>
-          {get(record, 'variations.length') ? record.variations.map((variation, index) => (
-            <Box key={variation} className="flex flex-row space-x-1">
-              <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <Text>{variation}</Text>
-            </Box>
-          )) : <Text className="text-gray-500 italic">No variations</Text>}
+          <Text fontSize="lg" className="font-bold">
+            Spelling Variations
+          </Text>
+          {get(record, 'variations.length') ? (
+            record.variations.map((variation, index) => (
+              <Box key={variation} className="flex flex-row space-x-1">
+                <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                <Text>{variation}</Text>
+              </Box>
+            ))
+          ) : (
+            <Text className="text-gray-500 italic">No variations</Text>
+          )}
         </Box>
         <Box>
-          <Text fontSize="lg" className="font-bold">Related Terms</Text>
-          {get(record, 'relatedTerms.length') ? record.relatedTerms.map((relatedTerm, index) => (
-            <Box key={relatedTerm} className="flex flex-row space-x-1">
-              <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <ResolvedWord wordId={relatedTerm} />
-            </Box>
-          )) : <Text className="text-gray-500 italic">No related terms</Text>}
+          <Text fontSize="lg" className="font-bold">
+            Related Terms
+          </Text>
+          {get(record, 'relatedTerms.length') ? (
+            record.relatedTerms.map((relatedTerm, index) => (
+              <Box key={relatedTerm} className="flex flex-row space-x-1">
+                <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                <ResolvedWord wordId={relatedTerm} />
+              </Box>
+            ))
+          ) : (
+            <Text className="text-gray-500 italic">No related terms</Text>
+          )}
         </Box>
         <Box>
-          <Text fontSize="lg" className="font-bold">Tags</Text>
-          {get(record, 'tags.length') ? record.tags.map((tag, index) => (
-            <Box key={tag} className="flex flex-row space-x-1">
-              <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-              <Text>{get(WordTags[tag.toUpperCase()], 'label')}</Text>
-            </Box>
-          )) : <Text className="text-gray-500 italic">No tags</Text>}
+          <Text fontSize="lg" className="font-bold">
+            Tags
+          </Text>
+          {get(record, 'tags.length') ? (
+            record.tags.map((tag, index) => (
+              <Box key={tag} className="flex flex-row space-x-1">
+                <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                <Text>{get(WordTags[tag.toUpperCase()], 'label')}</Text>
+              </Box>
+            ))
+          ) : (
+            <Text className="text-gray-500 italic">No tags</Text>
+          )}
         </Box>
         <Box>
-          <Text fontSize="lg" className="font-bold">Tags</Text>
+          <Text fontSize="lg" className="font-bold">
+            Tags
+          </Text>
           {get(record, 'frequency') ? (
             <Text>{record.frequency}</Text>
-          ) : <Text className="text-gray-500 italic">No word frequency</Text>}
+          ) : (
+            <Text className="text-gray-500 italic">No word frequency</Text>
+          )}
         </Box>
       </Box>
       <Box>
         <Box>
-          <Text fontSize="lg" className="font-bold">Dialectal Variations</Text>
+          <Text fontSize="lg" className="font-bold">
+            Dialectal Variations
+          </Text>
           {(get(record, 'dialects') || []).length ? (
             get(record, 'dialects').map(({ word, dialects, _id }, index) => (
               <Box key={_id} className="space-y-1">
@@ -136,36 +161,41 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
                   <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
                   <Text>{word}</Text>
                 </Box>
-                <AudioRecordingPreview record={record} audioPath={`dialects.${index}.pronunciation`} />
-                <Text>
-                  {dialects.map((regionalDialect) => (
-                    get(Dialects[regionalDialect], 'label')
-                  )).join(', ')}
-                </Text>
+                <AudioRecordingPreview record={record} audioPath={`dialects[${index}].pronunciation`} />
+                <Text>{dialects.map((regionalDialect) => get(Dialects[regionalDialect], 'label')).join(', ')}</Text>
               </Box>
-            ))) : <Text className="text-gray-500 italic">No dialects</Text>}
+            ))
+          ) : (
+            <Text className="text-gray-500 italic">No dialects</Text>
+          )}
         </Box>
       </Box>
     </Box>
     <Box>
-      <Text fontSize="lg" className="font-bold">Examples</Text>
+      <Text fontSize="lg" className="font-bold">
+        Examples
+      </Text>
       <Box className="space-y-2">
-        {get(record, 'examples.length') ? record.examples.map((example, index) => {
-          const { igbo, english, nsibidi } = example;
-          return (
-            <>
-              <Box className="flex flex-row items-center space-x-2">
-                <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-                <Box>
-                  <Text>{igbo}</Text>
-                  <Text className="italic text-gray-600">{english}</Text>
-                  <Text className={nsibidi ? 'akagu' : 'italic text-gray-600'}>{nsibidi || 'No Nsịbịdị'}</Text>
+        {get(record, 'examples.length') ? (
+          record.examples.map((example, index) => {
+            const { igbo, english, nsibidi } = example;
+            return (
+              <>
+                <Box className="flex flex-row items-center space-x-2">
+                  <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
+                  <Box>
+                    <Text>{igbo}</Text>
+                    <Text className="italic text-gray-600">{english}</Text>
+                    <Text className={nsibidi ? 'akagu' : 'italic text-gray-600'}>{nsibidi || 'No Nsịbịdị'}</Text>
+                  </Box>
                 </Box>
-              </Box>
-              <AudioRecordingPreview record={example} audioPath="pronunciations.0.audio" />
-            </>
-          );
-        }) : <Text className="text-gray-500 italic">No examples</Text>}
+                <AudioRecordingPreview record={example} audioPath="pronunciations.0.audio" />
+              </>
+            );
+          })
+        ) : (
+          <Text className="text-gray-500 italic">No examples</Text>
+        )}
       </Box>
     </Box>
   </Box>

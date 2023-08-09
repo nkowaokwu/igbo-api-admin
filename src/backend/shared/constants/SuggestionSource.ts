@@ -7,12 +7,12 @@ const SuggestionSource = {
     isSelectable: true,
   },
   [SuggestionSourceEnum.COMMUNITY]: {
-    value: SuggestionSourceEnum.INTERNAL,
+    value: SuggestionSourceEnum.COMMUNITY,
     label: 'Nkọwa okwu Community',
     isSelectable: true,
   },
   [SuggestionSourceEnum.IGBO_SPEECH]: {
-    value: SuggestionSourceEnum.INTERNAL,
+    value: SuggestionSourceEnum.IGBO_SPEECH,
     label: 'Igbo Speech',
     isSelectable: false,
   },

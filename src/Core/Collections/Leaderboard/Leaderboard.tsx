@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { cloneDeep, get } from 'lodash';
 import moment from 'moment';
+import { act } from 'react-dom/test-utils';
 import { Box, Button, Heading, Select, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
@@ -74,8 +75,10 @@ const Leaderboard = (): ReactElement => {
       const result = await getLeaderboardStats({ leaderboard, timeRange: leaderboardTimeRange });
       if (!cachedFetchedData[leaderboard]) {
         const filteredRankings = (result.rankings || []).filter(({ position }) => typeof position === 'number');
-        setUserRanking(result.userRanking);
-        setRankings(filteredRankings);
+        act(() => {
+          setUserRanking(result.userRanking);
+          setRankings(filteredRankings);
+        });
         const updatedCachedData = {
           ...cloneDeep(cachedFetchedData),
           [leaderboardTimeRange]: {
@@ -83,7 +86,9 @@ const Leaderboard = (): ReactElement => {
             [leaderboard]: { userRanking: result.userRanking, rankings: filteredRankings },
           },
         };
-        setCachedFetchedData(updatedCachedData);
+        act(() => {
+          setCachedFetchedData(updatedCachedData);
+        });
       }
     } catch (err) {
       toast({
@@ -94,7 +99,9 @@ const Leaderboard = (): ReactElement => {
         isClosable: true,
       });
     } finally {
-      setIsLoading(false);
+      act(() => {
+        setIsLoading(false);
+      });
     }
   };
 
@@ -128,7 +135,7 @@ const Leaderboard = (): ReactElement => {
               : timeRange !== LeaderboardTimeRange.IGBO_VOICE_ATHON,
           )
           .map(([key, value]) => (
-            <Tooltip label={LeaderboardTimeRangesMap[value].tooltip}>
+            <Tooltip label={LeaderboardTimeRangesMap[value].tooltip} key={value}>
               <Button
                 key={key}
                 colorScheme={value === leaderboardTimeRange ? 'green' : 'gray'}

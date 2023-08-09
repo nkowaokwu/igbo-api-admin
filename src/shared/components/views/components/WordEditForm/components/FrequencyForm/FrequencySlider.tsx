@@ -1,21 +1,13 @@
 import React, { ReactElement, useState } from 'react';
 import { times } from 'lodash';
-import {
-  Box,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  SliderMark,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, SliderMark, Tooltip } from '@chakra-ui/react';
 
 const FrequencySlider = ({
   onChange,
   defaultValue,
-} : {
-  onChange: (value: any) => void,
-  defaultValue: number,
+}: {
+  onChange: (value: any) => void;
+  defaultValue: number;
 }): ReactElement => {
   const [sliderValue, setSliderValue] = useState(5);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -39,21 +31,14 @@ const FrequencySlider = ({
         onMouseLeave={() => setShowTooltip(false)}
       >
         {times(5, (index) => (
-          <SliderMark value={index + 1} mt="2" ml="-2.5" fontSize="sm" fontWeight="bold">
+          <SliderMark key={index} value={index + 1} mt="2" ml="-2.5" fontSize="sm" fontWeight="bold">
             {index + 1}
           </SliderMark>
         ))}
         <SliderTrack>
           <SliderFilledTrack />
         </SliderTrack>
-        <Tooltip
-          hasArrow
-          bg="teal.500"
-          color="white"
-          placement="top"
-          isOpen={showTooltip}
-          label={sliderValue}
-        >
+        <Tooltip hasArrow bg="teal.500" color="white" placement="top" isOpen={showTooltip} label={sliderValue}>
           <SliderThumb />
         </Tooltip>
       </Slider>

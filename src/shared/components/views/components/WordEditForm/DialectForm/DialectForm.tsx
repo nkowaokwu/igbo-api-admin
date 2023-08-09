@@ -1,10 +1,5 @@
 import React, { useState, ReactElement } from 'react';
-import {
-  Box,
-  Heading,
-  IconButton,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Heading, IconButton, Tooltip } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
@@ -21,26 +16,23 @@ const DialectForm = ({
   setDialects,
   dialects,
   originalRecord,
-}: DialectFormInterface) : ReactElement => {
+}: DialectFormInterface): ReactElement => {
   const [warningMessage, setWarningMessage] = useState('');
   const { getValues, setValue } = control;
   const dialect = dialects[index];
-  const defaultDialectsValue = (dialect.dialects || []).map((value) => (
-    { label: Dialects[value].label, value }
-  ));
+  const defaultDialectsValue = (dialect.dialects || []).map((value) => ({ label: Dialects[value].label, value }));
   const error = errors.dialects
-    ? (
-      errors.dialects[index]?.dialects?.message
-    || errors.dialects[index]?.message
-    || errors.dialects.message
-    ) : null;
+    ? errors.dialects[index]?.dialects?.message || errors.dialects[index]?.message || errors.dialects.message
+    : null;
 
   const errorMessage = (typeof error === 'string' ? error : '').replace(`dialects[${index}].dialects`, 'Dialects');
 
   const handleWarningMessage = (e) => {
-    setWarningMessage((record?.word || '') !== e.target.value
-      ? 'A change in this dialect has been detected. Please consider re-recording the audio to match.'
-      : '');
+    setWarningMessage(
+      (record?.word || '') !== e.target.value
+        ? 'A change in this dialect has been detected. Please consider re-recording the audio to match.'
+        : '',
+    );
   };
 
   const handleDialectSelect = (onChange) => (e) => {
@@ -53,14 +45,13 @@ const DialectForm = ({
   };
 
   return (
-    <Box
-      className="mb-4 bg-gray-200 rounded p-3"
-      key={`dialects.${dialect.id}.word`}
-    >
+    <Box className="mb-4 bg-gray-200 rounded p-3" key={`dialects.${dialect.id}.word`}>
       <Box className="flex flex-col justify-center items-center space-y-3 lg:space-y-0 space-x-3">
         <Box flex={3} className="w-full">
           <Box className="flex flex-row justify-between items-center" mb={3}>
-            <Heading as="h3" m={0} fontSize="xl" fontWeight="normal">Word</Heading>
+            <Heading as="h3" m={0} fontSize="xl" fontWeight="normal">
+              Word
+            </Heading>
             <Tooltip label="Delete dialectal variation">
               <IconButton
                 colorScheme="red"
@@ -113,14 +104,16 @@ const DialectForm = ({
                 warningMessage={warningMessage}
               />
             )}
-            name={`dialects.${index}.pronunciation`}
+            name={`dialects[${index}].pronunciation`}
             defaultValue={dialect.pronunciation}
             control={control}
           />
         </Box>
       </Box>
       <Box className="mt-4">
-        <Heading as="h3" style={{ flex: 1 }} fontSize="xl" fontWeight="normal" mb={3}>Dialects</Heading>
+        <Heading as="h3" style={{ flex: 1 }} fontSize="xl" fontWeight="normal" mb={3}>
+          Dialects
+        </Heading>
         <Box flex={1} data-test={`dialects-input-container-${index}`}>
           <Controller
             render={({ onChange }) => (
@@ -138,9 +131,7 @@ const DialectForm = ({
           />
         </Box>
       </Box>
-      {errors.dialects ? (
-        <p className="error relative">{errorMessage}</p>
-      ) : null}
+      {errors.dialects ? <p className="error relative">{errorMessage}</p> : null}
     </Box>
   );
 };

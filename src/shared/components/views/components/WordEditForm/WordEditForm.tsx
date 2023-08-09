@@ -59,6 +59,7 @@ const WordEditForm = ({
   const { handleSubmit, getValues, setValue, control, errors, watch } = useForm({
     defaultValues: createDefaultWordFormValues(record),
     ...WordEditFormResolver(),
+    mode: 'onChange',
   });
   watch('definitions');
 

@@ -44,7 +44,7 @@ const IgboDefinitions = ({
             />
             <NsibidiForm
               control={control}
-              name={`definitions.${groupIndex}.igboDefinitions.${igboDefinitionIndex}.nsibidi`}
+              name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
               placeholder="Definition in Nsịbịdị"
               data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}
               errors={errors}

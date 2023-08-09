@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { noop } from 'lodash';
 import { Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
@@ -34,10 +35,12 @@ const NsibidiInput = React.forwardRef(
       fields: nsibidiCharacterIds,
       append,
       remove,
-    } = useFieldArray({
-      control,
-      name: nsibidiFormName,
-    });
+    } = enableSearch
+      ? useFieldArray({
+          control,
+          name: nsibidiFormName,
+        })
+      : { fields: [], append: noop, remove: noop };
 
     const updateNsibidiCharacters = (nsibidiCharacterId) => {
       // Avoids appending an Nsibidi character that's already in the array

@@ -18,32 +18,27 @@ describe('PartOfSpeech', () => {
   });
 
   it('render part of speech within dropdown and select', async () => {
-    const {
-      findByText,
-      findAllByText,
-      findByTestId,
-      queryByText,
-    } = render(
+    const { findByText, getByText, getAllByText, findByTestId, queryByText } = render(
       <TestContext groupIndex={0}>
         <PartOfSpeech />
       </TestContext>,
     );
     const partOfSpeechSelect = await findByTestId('word-class-input-container');
     fireEvent.keyDown(partOfSpeechSelect.firstChild, { key: 'ArrowDown' });
-    await Promise.all(Object.values(WordClass).map(async ({ label }) => {
+    Object.values(WordClass).forEach(({ label }) => {
       if (label !== WordClass.AV.label) {
-        await findByText(label);
+        getByText(label);
       } else {
-        await findAllByText(label);
+        getAllByText(label);
       }
-    }));
+    });
     userEvent.click(await findByText('Noun'));
-    await Promise.all(Object.values(WordClass).map(async ({ label }) => {
+    Object.values(WordClass).forEach(({ label }) => {
       if (label !== WordClass.NNC.label) {
-        expect(await queryByText(label)).toBeNull();
+        expect(queryByText(label)).toBeNull();
       } else {
-        await findByText(label);
+        getByText(label);
       }
-    }));
+    });
   });
 });

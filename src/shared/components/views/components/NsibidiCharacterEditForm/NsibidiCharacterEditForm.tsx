@@ -30,6 +30,8 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
       },
     },
     ...NsibidiCharacterEditFormResolver(),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
   const { isDirty } = formState;
 
@@ -151,7 +153,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
       <FormHeader title="Definitions" tooltip="Nsịbịdị definitions" />
       {definitions?.length
         ? definitions.map((definition, index) => (
-            <Box className="flex flex-row justify-between items-center space-x-2 my-2">
+            <Box key={definition.id} className="flex flex-row justify-between items-center space-x-2 my-2">
               <Controller
                 render={(props) => (
                   <Input

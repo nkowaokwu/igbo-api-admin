@@ -32,6 +32,7 @@ const CorpusEditForm = ({
       ...record,
     },
     ...CorpusEditFormResolver,
+    mode: 'onChange',
   });
   const [, setOriginalRecord] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);

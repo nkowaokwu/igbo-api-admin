@@ -13,40 +13,25 @@ const ExampleDiff = ({
   diffRecord,
   record,
   resource,
-} : {
-  value?: ExampleClientData,
-  index?: number,
-  diffRecord: Record,
-  record: Record,
-  resource: string,
+}: {
+  value?: ExampleClientData;
+  index?: number;
+  diffRecord: Record;
+  record: Record;
+  resource: string;
 }): ReactElement => (
   <Box className="flex flex-col space-y-2">
     <Box className="flex flex-col">
+      <DiffField path={`examples.${index}.igbo`} diffRecord={diffRecord} fallbackValue={value.igbo} />
+      <DiffField path={`examples.${index}.english`} diffRecord={diffRecord} fallbackValue={value.english} />
+      <DiffField path={`examples.${index}.meaning`} diffRecord={diffRecord} fallbackValue={value.meaning} />
       <DiffField
-        path={`examples.${index}.igbo`}
-        diffRecord={diffRecord}
-        fallbackValue={value.igbo}
-      />
-      <DiffField
-        path={`examples.${index}.english`}
-        diffRecord={diffRecord}
-        fallbackValue={value.english}
-      />
-      <DiffField
-        path={`examples.${index}.meaning`}
-        diffRecord={diffRecord}
-        fallbackValue={value.meaning}
-      />
-      <DiffField
-        path={`examples.${index}.nsibidi`}
+        path={`examples[${index}].nsibidi`}
         diffRecord={diffRecord}
         fallbackValue={value.nsibidi}
         renderNestedObject={(value) => <chakra.span className="akagu">{value}</chakra.span>}
       />
-      <ArrayDiffField
-        recordField={`examples.${index}.pronunciations`}
-        record={record}
-      >
+      <ArrayDiffField recordField={`examples[${index}].pronunciations`} record={record}>
         <ArrayDiff
           diffRecord={diffRecord}
           renderNestedObject={(pronunciation) => (
@@ -60,10 +45,7 @@ const ExampleDiff = ({
         />
       </ArrayDiffField>
     </Box>
-    <a
-      className="link"
-      href={`#/${resource === 'words' ? 'examples' : 'exampleSuggestions'}/${value.id}/show`}
-    >
+    <a className="link" href={`#/${resource === 'words' ? 'examples' : 'exampleSuggestions'}/${value.id}/show`}>
       Link to Example
     </a>
   </Box>

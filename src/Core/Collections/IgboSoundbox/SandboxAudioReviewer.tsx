@@ -55,7 +55,7 @@ const SandboxAudioReviewer = ({
           pronunciations.map(({ audio, approvals, denials, review, _id }, index) => {
             const currentSpeaker = isAdmin ? (speakers || [])[index] : null;
             return (
-              <>
+              <Box key={`soundbox-audio-reviewer-${_id}`}>
                 {review && !approvals.includes(uid) && !denials.includes(uid) ? (
                   <>
                     <AudioPlayback
@@ -98,7 +98,7 @@ const SandboxAudioReviewer = ({
                     )}
                   </>
                 ) : null}
-              </>
+              </Box>
             );
           })}
       </Box>
