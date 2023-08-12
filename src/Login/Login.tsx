@@ -1,5 +1,5 @@
 import React, { useState, ReactElement, Suspense } from 'react';
-import { Box, Button, Heading, Hide, Show, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Heading, Hide, Show, Text, chakra, useDisclosure } from '@chakra-ui/react';
 import moment from 'moment';
 import LoginStats from 'src/Login/components/LoginStats';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
@@ -83,16 +83,17 @@ const Login = (): ReactElement => {
           className="space-y-4 h-full"
           maxWidth="400px"
         >
-          <Hide above="lg">
-            <Box className="space-y-4">
+          <Box className="space-y-4">
+            <Hide above="lg">
               <Heading as="h1" fontFamily="Silka" color="gray.700" fontSize="2xl" textAlign="center">
                 Igbo API Editor Platform
               </Heading>
-              <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center" mb={4}>
-                Making history
-              </Heading>
-            </Box>
-          </Hide>
+            </Hide>
+            <Heading as="h2" fontFamily="Silka" fontSize="3xl" textAlign="center" mb={4}>
+              Join the <chakra.br />
+              Igbo Voice-athon
+            </Heading>
+          </Box>
           <Box className="w-full space-y-2">
             <GoogleLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
             {/* <FacebookLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} /> */}
