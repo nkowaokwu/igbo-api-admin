@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { first } from 'lodash';
-import { Box, Button, Heading, Image, Show, Text, chakra } from '@chakra-ui/react';
+import { Box, Button, Heading, Image, Show, Text, Link, chakra } from '@chakra-ui/react';
 import { getAuth } from 'firebase/auth';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
@@ -17,7 +17,7 @@ type CrowdsourcingOption = {
 const crowdsourcingOptions: CrowdsourcingOption[] = [
   {
     icon: '🎙',
-    title: 'Record Igbo audio',
+    title: 'Record Igbo audio for the Igbo Voice-athon',
     subtitle: 'Read Igbo sentences and record them out loud to build the largest Igbo audio library',
     hash: '#/igboSoundbox',
     backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/microphone.png',
@@ -80,6 +80,16 @@ const CrowdsourcingProgressManager = (): ReactElement => {
           {`Ndeewo, ${first((currentUser?.displayName || '').split(' '))} `}
           <chakra.span fontWeight="normal">Kedụ ụdị enyemaaka ị chọrọ inye anyị?</chakra.span>
         </Text>
+        <Box my={2} className="space-y-2 bg-green-100 rounded p-3" width="fit-content">
+          <Heading as="h2" fontSize="2xl" fontFamily="Silka">
+            Igbo Voice-athon
+          </Heading>
+          <Text fontSize="lg" fontFamily="heading" fontWeight="bold" color="primary" textDecoration="underline">
+            <Link href="https://www.youtube.com/watch?v=8FqpkeYd2Ws" target="_blank">
+              💸 Watch a 1-minute video to start the Igbo Voice-athon 💸
+            </Link>
+          </Text>
+        </Box>
       </Box>
       <Box className="w-full flex flex-col justify-start items-start space-y-4">
         <Box className="w-full flex flex-col md:flex-row flex-wrap justify-start items-center gap-8 lg:gap-24">
