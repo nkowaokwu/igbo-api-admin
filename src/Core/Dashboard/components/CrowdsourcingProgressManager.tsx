@@ -86,7 +86,12 @@ const CrowdsourcingProgressManager = (): ReactElement => {
           </Heading>
           <Text fontSize="lg" fontFamily="heading" fontWeight="bold" color="primary" textDecoration="underline">
             <Link href="https://www.youtube.com/watch?v=8FqpkeYd2Ws" target="_blank">
-              💸 Watch a 1-minute video to start the Igbo Voice-athon 💸
+              💸 Watch 1-minute video to start the Igbo Voice-athon
+            </Link>
+          </Text>
+          <Text fontSize="lg" fontFamily="heading" fontWeight="bold" color="primary" textDecoration="underline">
+            <Link href="https://forms.gle/QEF6gLBAT1PksYxk7" target="_blank">
+              📑 Google Form Sign up
             </Link>
           </Text>
         </Box>
