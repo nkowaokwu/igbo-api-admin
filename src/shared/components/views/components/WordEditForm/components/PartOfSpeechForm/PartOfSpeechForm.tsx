@@ -23,7 +23,7 @@ const PartOfSpeechForm = ({ errors, control, groupIndex }: PartOfSpeechFormInter
         <Controller
           render={(props) => <Select {...props} options={options} />}
           name={`definitions[${groupIndex}].wordClass`}
-          defaultValue={getValues(`definitions[${groupIndex}].wordClass`)}
+          defaultValue={getValues(`definitions[${groupIndex}].wordClass`) || null}
           control={control}
         />
       </Box>

@@ -7,30 +7,35 @@ import { getWord, resolveWord } from 'src/shared/API';
 import RelatedTermsFormInterface from './RelatedTermsFormInterface';
 import FormHeader from '../../../FormHeader';
 
-const RelatedTerms = (
-  { relatedTermIds, remove, control }
-  : { relatedTermIds: { id: string }[], remove: (index: number) => void, control: Control },
-) => {
+const RelatedTerms = ({
+  relatedTermIds,
+  remove,
+  control,
+}: {
+  relatedTermIds: { text: string }[];
+  remove: (index: number) => void;
+  control: Control;
+}) => {
   const [resolvedRelatedTerms, setResolvedRelatedTerms] = useState([]);
   const [isLoadingRelatedTerms, setIsLoadingRelatedTerms] = useState(false);
 
   const resolveRelatedTerms = async () => {
-    const shouldResolve = (
-      resolvedRelatedTerms?.length !== relatedTermIds.length
-      || !relatedTermIds.every(({ id }) => (
-        resolvedRelatedTerms.find(({ id: resolvedId }) => resolvedId === id)
-      ))
-    );
+    const shouldResolve =
+      resolvedRelatedTerms?.length !== relatedTermIds.length ||
+      !relatedTermIds.every(({ text }) => resolvedRelatedTerms.find(({ id: resolvedId }) => resolvedId === text));
     if (!shouldResolve) {
       return;
     }
     setIsLoadingRelatedTerms(true);
     try {
-      const compactedResolvedRelatedTerms = compact(await Promise.all(relatedTermIds
-        .map(async ({ id: relatedTermId }) => {
-          const word = await resolveWord(relatedTermId).catch(() => null);
-          return word;
-        })));
+      const compactedResolvedRelatedTerms = compact(
+        await Promise.all(
+          relatedTermIds.map(async ({ text: relatedTermId }) => {
+            const word = await resolveWord(relatedTermId).catch(() => null);
+            return word;
+          }),
+        ),
+      );
       setResolvedRelatedTerms(compactedResolvedRelatedTerms);
     } finally {
       setIsLoadingRelatedTerms(false);
@@ -63,23 +68,20 @@ const RelatedTerms = (
   );
 };
 
-const RelatedTermsForm = ({
-  errors,
-  control,
-  record,
-}: RelatedTermsFormInterface): ReactElement => {
-  const { fields: relatedTerms, append, remove } = useFieldArray({
+const RelatedTermsForm = ({ errors, control, record }: RelatedTermsFormInterface): ReactElement => {
+  const {
+    fields: relatedTerms,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'relatedTerms',
   });
   const [input, setInput] = useState('');
   const toast = useToast();
 
-  const canAddRelatedTerm = (userInput) => (
-    !relatedTerms.includes(userInput)
-    && userInput !== record.id
-    && userInput !== record.originalWordId
-  );
+  const canAddRelatedTerm = (userInput) =>
+    !relatedTerms.includes(userInput) && userInput !== record.id && userInput !== record.originalWordId;
 
   const handleAddRelatedTerm = async (userInput = input) => {
     try {
@@ -92,7 +94,7 @@ const RelatedTermsForm = ({
     } catch (err) {
       toast({
         title: 'Unable to add related term',
-        description: 'You have provided either an invalid word id or a the current word\'s or parent word\'s id.',
+        description: "You have provided either an invalid word id or a the current word's or parent word's id.",
         status: 'warning',
         duration: 4000,
         isClosable: true,
@@ -120,14 +122,8 @@ const RelatedTermsForm = ({
           onSelect={(e) => handleAddRelatedTerm(e.id)}
         />
       </Box>
-      <RelatedTerms
-        relatedTermIds={relatedTerms}
-        remove={remove}
-        control={control}
-      />
-      {errors.relatedTerms && (
-        <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>
-      )}
+      <RelatedTerms relatedTermIds={relatedTerms} remove={remove} control={control} />
+      {errors.relatedTerms && <p className="error">{errors.relatedTerms.message || errors.relatedTerms[0]?.message}</p>}
     </Box>
   );
 };
