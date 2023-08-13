@@ -7,20 +7,22 @@ import { getWord, resolveWord } from 'src/shared/API';
 import FormHeader from '../../../FormHeader';
 import StemsFormInterface from './StemsFormInterface';
 
-const Stems = (
-  { stemIds, remove, control }
-  : { stemIds: { id: string }[], remove: (index: number) => void, control: Control },
-) => {
+const Stems = ({
+  stemIds,
+  remove,
+  control,
+}: {
+  stemIds: { text: string }[];
+  remove: (index: number) => void;
+  control: Control;
+}) => {
   const [resolvedStems, setResolvedStems] = useState(null);
   const [isLoadingStems, setIsLoadingStems] = useState(false);
 
   const resolveStems = async () => {
-    const shouldResolve = (
-      resolvedStems?.length !== stemIds.length
-      || !stemIds.every(({ id }) => (
-        resolvedStems.find(({ id: resolvedId }) => resolvedId === id)
-      ))
-    );
+    const shouldResolve =
+      resolvedStems?.length !== stemIds.length ||
+      !stemIds.every(({ text }) => resolvedStems.find(({ id: resolvedId }) => resolvedId === text));
     if (!shouldResolve) {
       return;
     }
@@ -31,10 +33,14 @@ const Stems = (
        * by its MongoDB Id or regular word search, the compact array will be used
        * to save the Word Suggestion, omitting the unwanted word.
        */
-      const compactedResolvedStems = compact(await Promise.all(stemIds.map(async ({ id: stemId }) => {
-        const word = await resolveWord(stemId).catch(() => null);
-        return word;
-      })));
+      const compactedResolvedStems = compact(
+        await Promise.all(
+          stemIds.map(async ({ text: stemId }) => {
+            const word = await resolveWord(stemId).catch(() => null);
+            return word;
+          }),
+        ),
+      );
       setResolvedStems(compactedResolvedStems);
     } finally {
       setIsLoadingStems(false);
@@ -53,12 +59,7 @@ const Stems = (
     <Spinner />
   ) : resolvedStems && resolvedStems.length ? (
     <Box display="flex" flexDirection="column" className="space-y-3 py-4">
-      <WordPills
-        pills={resolvedStems}
-        onDelete={handleDeleteStems}
-        control={control}
-        formName="stems"
-      />
+      <WordPills pills={resolvedStems} onDelete={handleDeleteStems} control={control} formName="stems" />
     </Box>
   ) : (
     <Box className="flex w-full justify-center">
@@ -67,36 +68,33 @@ const Stems = (
   );
 };
 
-const StemsForm = ({
-  errors,
-  control,
-  record,
-} : StemsFormInterface): ReactElement => {
-  const { fields: stems, append, remove } = useFieldArray({
+const StemsForm = ({ errors, control, record }: StemsFormInterface): ReactElement => {
+  const {
+    fields: stems,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'stems',
   });
   const [input, setInput] = useState('');
   const toast = useToast();
 
-  const canAddStem = (userInput) => (
-    !stems.includes(userInput)
-    && userInput !== record.id
-    && userInput !== record.originalWordId
-  );
+  const canAddStem = (userInput) =>
+    !stems.includes(userInput) && userInput !== record.id && userInput !== record.originalWordId;
 
   const handleAddStem = async (userInput = input) => {
     try {
       if (canAddStem(userInput)) {
         const word = await getWord(userInput);
-        append({ id: word.id });
+        append({ text: word.id });
       } else {
         throw new Error('Invalid word id');
       }
     } catch (err) {
       toast({
         title: 'Unable to add stem',
-        description: 'You have provided either an invalid word id or a the current word\'s or parent word\'s id.',
+        description: "You have provided either an invalid word id or a the current word's or parent word's id.",
         status: 'warning',
         duration: 4000,
         isClosable: true,
@@ -125,14 +123,8 @@ const StemsForm = ({
           onSelect={(e) => handleAddStem(e.id)}
         />
       </Box>
-      <Stems
-        stemIds={stems}
-        remove={remove}
-        control={control}
-      />
-      {errors.stems && (
-        <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>
-      )}
+      <Stems stemIds={stems} remove={remove} control={control} />
+      {errors.stems && <p className="error">{errors.stems.message || errors.stems[0]?.message}</p>}
     </Box>
   );
 };

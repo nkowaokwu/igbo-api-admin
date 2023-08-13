@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { values } from 'lodash';
+import { get, values } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
@@ -23,7 +23,7 @@ const PartOfSpeechForm = ({ errors, control, groupIndex }: PartOfSpeechFormInter
         <Controller
           render={(props) => <Select {...props} options={options} />}
           name={`definitions[${groupIndex}].wordClass`}
-          defaultValue={getValues(`definitions[${groupIndex}].wordClass`)}
+          defaultValue={get(getValues(), `definitions[${groupIndex}].wordClass`)}
           control={control}
         />
       </Box>

@@ -1,14 +1,23 @@
 import { Record } from 'react-admin';
+import { omit } from 'lodash';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 
 const createDefaultWordFormValues = (record: Record): any => {
   const defaultValues = {
-    definitions: (record?.definitions || []).map((definition) => ({
-      ...definition,
-      definitions: (definition?.definitions || []).map((text) => ({ text })),
-      wordClass: WordClass[definition?.wordClass] || null,
-    })),
+    definitions: (record?.definitions || []).map((definition) =>
+      omit(
+        {
+          ...definition,
+          definitions: (definition?.definitions || []).map((text) => ({ text })),
+          wordClass: WordClass[definition?.wordClass] || null,
+          nsibidiCharacters: (definition?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({
+            text: nsibidiCharacterId,
+          })),
+        },
+        ['id'],
+      ),
+    ),
     dialects: record?.dialects || [],
     examples: record?.examples
       ? record.examples.map(({ id, ...example }) => ({
@@ -20,8 +29,8 @@ const createDefaultWordFormValues = (record: Record): any => {
         }))
       : [],
     variations: (record?.variations || []).map((variation) => ({ text: variation })),
-    relatedTerms: (record?.relatedTerms || []).map((relatedTerm) => ({ id: relatedTerm })),
-    stems: (record?.stems || []).map((stem) => ({ id: stem })),
+    relatedTerms: (record?.relatedTerms || []).map((relatedTerm) => ({ text: relatedTerm })),
+    stems: (record?.stems || []).map((stem) => ({ text: stem })),
     tenses: record?.tenses || {},
     pronunciation: record?.pronunciation || '',
     attributes:

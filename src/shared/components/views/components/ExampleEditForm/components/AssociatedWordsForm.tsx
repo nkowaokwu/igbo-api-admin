@@ -1,12 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { compact } from 'lodash';
-import {
-  Box,
-  IconButton,
-  Spinner,
-  Tooltip,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, IconButton, Spinner, Tooltip, useToast } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
@@ -14,20 +8,24 @@ import { resolveWord, getWord, getWords } from 'src/shared/API';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
-const AssociatedWords = (
-  { associatedWordIds, remove, control }
-  : { associatedWordIds: { id: string }[], remove: (index: number) => void, control: Control },
-): ReactElement => {
+const AssociatedWords = ({
+  associatedWordIds,
+  remove,
+  control,
+}: {
+  associatedWordIds: { text: string }[];
+  remove: (index: number) => void;
+  control: Control;
+}): ReactElement => {
   const [resolvedAssociatedWords, setResolvedAssociatedWords] = useState(null);
   const [isLoadingAssociatedWords, setIsLoadingAssociatedWords] = useState(false);
 
   const resolveAssociatedWords = async () => {
-    const shouldResolve = (
-      resolvedAssociatedWords?.length !== associatedWordIds.length
-      || !associatedWordIds.every(({ id }) => (
-        resolvedAssociatedWords.find(({ id: resolvedId }) => resolvedId === id)
-      ))
-    );
+    const shouldResolve =
+      resolvedAssociatedWords?.length !== associatedWordIds.length ||
+      !associatedWordIds.every(({ text }) =>
+        resolvedAssociatedWords.find(({ text: resolvedId }) => resolvedId === text),
+      );
     if (!shouldResolve) {
       return;
     }
@@ -35,10 +33,12 @@ const AssociatedWords = (
     setIsLoadingAssociatedWords(true);
     try {
       const resolvedAssociatedWords = compact(
-        await Promise.all(compact(associatedWordIds).map(async ({ id: associatedWordId }) => {
-          const associatedWord = await resolveWord(associatedWordId).catch(() => null);
-          return associatedWord;
-        })),
+        await Promise.all(
+          compact(associatedWordIds).map(async ({ text: associatedWordId }) => {
+            const associatedWord = await resolveWord(associatedWordId).catch(() => null);
+            return associatedWord;
+          }),
+        ),
       );
       setResolvedAssociatedWords(resolvedAssociatedWords);
     } finally {
@@ -72,37 +72,34 @@ const AssociatedWords = (
   );
 };
 
-const AssociatedWordsForm = ({
-  errors,
-  control,
-  record,
-}: AssociatedWordsFormInterface): ReactElement => {
+const AssociatedWordsForm = ({ errors, control, record }: AssociatedWordsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
 
-  const { fields: associatedWords, append, remove } = useFieldArray({
+  const {
+    fields: associatedWords,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'associatedWords',
   });
 
-  const canAddAssociatedWord = (userInput) => (
-    !associatedWords.includes(userInput)
-    && userInput !== record.id
-    && userInput !== record.originalExampleId
-  );
+  const canAddAssociatedWord = (userInput) =>
+    !associatedWords.includes(userInput) && userInput !== record.id && userInput !== record.originalExampleId;
 
   const handleAddAssociatedWord = async (userInput = input) => {
     try {
       if (canAddAssociatedWord(userInput)) {
-        const word = await getWord(userInput) || (await getWords(userInput))?.[0];
-        append({ id: word.id });
+        const word = (await getWord(userInput)) || (await getWords(userInput))?.[0];
+        append({ text: word.id });
       } else {
         throw new Error('Invalid word id');
       }
     } catch (err) {
       toast({
         title: 'Unable to add associated word',
-        description: 'You have provided either an invalid word id or a the current word\'s or parent word\'s id.',
+        description: "You have provided either an invalid word id or a the current word's or parent word's id.",
         status: 'warning',
         duration: 4000,
         isClosable: true,
@@ -114,10 +111,7 @@ const AssociatedWordsForm = ({
   return (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
       <Box className="flex items-center my-5 w-full justify-between">
-        <FormHeader
-          title="Associated Words"
-          tooltip="Associated words of the current Igbo example sentence."
-        />
+        <FormHeader title="Associated Words" tooltip="Associated words of the current Igbo example sentence." />
       </Box>
       <Box className="flex flex-row mb-4 space-x-2">
         <Input
@@ -137,11 +131,7 @@ const AssociatedWordsForm = ({
           />
         </Tooltip>
       </Box>
-      <AssociatedWords
-        associatedWordIds={associatedWords}
-        remove={remove}
-        control={control}
-      />
+      <AssociatedWords associatedWordIds={associatedWords} remove={remove} control={control} />
       {errors.associatedWords && (
         <p className="error">{errors.associatedWords.message || errors.associatedWords[0]?.message}</p>
       )}

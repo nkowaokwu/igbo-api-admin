@@ -44,8 +44,8 @@ const NsibidiInput = React.forwardRef(
 
     const updateNsibidiCharacters = (nsibidiCharacterId) => {
       // Avoids appending an Nsibidi character that's already in the array
-      if (!nsibidiCharacterIds.find(({ id }) => id === nsibidiCharacterId)) {
-        append({ id: nsibidiCharacterId });
+      if (!nsibidiCharacterIds.find(({ text }) => text === nsibidiCharacterId)) {
+        append({ text: nsibidiCharacterId });
       }
     };
 
