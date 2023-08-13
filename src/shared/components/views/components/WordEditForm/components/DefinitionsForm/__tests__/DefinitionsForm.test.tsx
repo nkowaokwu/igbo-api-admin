@@ -51,6 +51,7 @@ describe('DefinitionsForm', () => {
     // First definition group
     await findByText('Active verb');
     await findByText('first nsibidi');
+    await findByText('first definition');
     await findByText(extendWordRecord.definitions[0].definitions[0]);
 
     // Second definition group

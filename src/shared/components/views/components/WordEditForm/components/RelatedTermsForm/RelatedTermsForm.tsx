@@ -87,7 +87,7 @@ const RelatedTermsForm = ({ errors, control, record }: RelatedTermsFormInterface
     try {
       if (canAddRelatedTerm(userInput)) {
         const word = await getWord(userInput);
-        append({ id: word.id });
+        append({ text: word.id });
       } else {
         throw new Error('Invalid word id');
       }

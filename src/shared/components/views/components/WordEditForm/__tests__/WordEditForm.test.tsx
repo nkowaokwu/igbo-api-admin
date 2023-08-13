@@ -105,6 +105,22 @@ describe('Word Edit Form', () => {
     await findByText('resolved word definition');
   });
 
+  it('add a word nsibidi to word suggestion', async () => {
+    const { findByText, findAllByText, findByPlaceholderText } = render(
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
+        <WordEditForm record={{ definitions: [{ nsibidi: '', nsibidiCharacters: [] }] }} />
+      </TestContext>,
+    );
+
+    userEvent.type(await findByPlaceholderText('Search for a related term or use word id'), 'cat');
+    await findAllByText('retrieved word');
+    await findAllByText('NNC');
+    await findAllByText('first definition');
+    userEvent.click(last(await findAllByText('retrieved word')));
+    await findByText('ADJ');
+    await findByText('resolved word definition');
+  });
+
   it("doesn't show tenses with a non-verb", async () => {
     const { queryByText, findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>

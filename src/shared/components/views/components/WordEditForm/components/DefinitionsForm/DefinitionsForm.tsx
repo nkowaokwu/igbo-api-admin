@@ -7,18 +7,18 @@ import FormHeader from '../../../FormHeader';
 import DefinitionsFormInterface from './DefinitionsFormInterface';
 import DefinitionForm from './DefinitionForm';
 
-const DefinitionsForm = ({
-  errors,
-  control,
-  record,
-}: DefinitionsFormInterface): ReactElement => {
-  const { fields: definitions, append, remove } = useFieldArray({
+const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface): ReactElement => {
+  const {
+    fields: definitions,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'definitions',
   });
   const handleAddDefinitionGroup = () => {
     append({
-      wordClass: '',
+      wordClass: null,
       definitions: [],
       igboDefinitions: [],
       nsibidi: '',
@@ -51,12 +51,7 @@ const DefinitionsForm = ({
       </Box>
       <Box className="w-full grid grid-flow-row grid-cols-1 gap-4 px-3">
         {definitions.map(({ id }, index) => (
-          <Box
-            borderBottomWidth="1px"
-            borderBottomColor="gray.300"
-            mb={4}
-            key={`definitions-${id}`}
-          >
+          <Box borderBottomWidth="1px" borderBottomColor="gray.300" mb={4} key={`definitions-${id}`}>
             {definitions.length > 1 ? (
               <Tooltip label="Delete Definition Group">
                 <Button
@@ -76,15 +71,8 @@ const DefinitionsForm = ({
                 </Button>
               </Tooltip>
             ) : null}
-            <DefinitionForm
-              errors={errors}
-              control={control}
-              groupIndex={index}
-              record={record}
-            />
-            {(errors.definitions || [])[index] ? (
-              <p className="error relative">Definition is required</p>
-            ) : null}
+            <DefinitionForm errors={errors} control={control} groupIndex={index} record={record} />
+            {(errors.definitions || [])[index] ? <p className="error relative">Definition is required</p> : null}
           </Box>
         ))}
       </Box>

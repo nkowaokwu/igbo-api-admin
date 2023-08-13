@@ -83,7 +83,7 @@ export interface WordDialect {
 export interface DefinitionSchema {
   wordClass: WordClassEnum | WordDialect;
   definitions: string[];
-  label: string;
+  label?: string;
   igboDefinitions: { igbo: string; nsibidi: string }[];
   nsibidi: string;
   nsibidiCharacters: (Types.ObjectId | string)[];

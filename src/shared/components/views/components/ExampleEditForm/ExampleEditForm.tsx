@@ -14,6 +14,7 @@ import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
+import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -34,12 +35,7 @@ const ExampleEditForm = ({
     ['value', 'label'],
   ) || { value: '', label: '' };
   const { handleSubmit, getValues, control, errors } = useForm({
-    defaultValues: {
-      ...omit(record, 'pronunciation'),
-      style,
-      nsibidiCharacters: (record?.nsibidiCharacters || []).map((nsibidiCharacterId) => ({ id: nsibidiCharacterId })),
-      associatedWords: (record?.associatedWords || []).map((associatedWordId) => ({ id: associatedWordId })),
-    },
+    defaultValues: createDefaultExampleFormValues(record),
     ...ExampleEditFormResolver,
     mode: 'onChange',
   });

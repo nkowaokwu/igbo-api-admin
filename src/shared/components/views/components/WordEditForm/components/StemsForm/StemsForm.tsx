@@ -87,7 +87,7 @@ const StemsForm = ({ errors, control, record }: StemsFormInterface): ReactElemen
     try {
       if (canAddStem(userInput)) {
         const word = await getWord(userInput);
-        append({ id: word.id });
+        append({ text: word.id });
       } else {
         throw new Error('Invalid word id');
       }

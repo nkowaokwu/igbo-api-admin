@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { last } from 'lodash';
 import TestContext from 'src/__tests__/components/TestContext';
-
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import ExampleEditForm from '../ExampleEditForm';
@@ -26,7 +26,23 @@ describe('Example Edit', () => {
     await findByText('English');
     await findByText('Nsịbịdị');
     await findByText('Associated Words');
-    await findByText('Editor\'s Comments');
+    await findByText("Editor's Comments");
+  });
+
+  it('add an associated word to word suggestion', async () => {
+    const { findByText, findAllByText, findByPlaceholderText } = render(
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
+        <ExampleEditForm />
+      </TestContext>,
+    );
+
+    userEvent.type(await findByPlaceholderText('Search for associated word or use word id'), 'cat');
+    await findAllByText('retrieved word');
+    await findAllByText('NNC');
+    await findAllByText('first definition');
+    userEvent.click(last(await findAllByText('retrieved word')));
+    await findByText('ADJ');
+    await findByText('resolved word definition');
   });
 
   it.skip('submit example suggestions', async () => {
