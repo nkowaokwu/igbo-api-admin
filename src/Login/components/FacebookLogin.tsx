@@ -1,6 +1,12 @@
 import React, { ReactElement } from 'react';
 import { Button, Image, Text, useToast } from '@chakra-ui/react';
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  fetchSignInMethodsForEmail,
+} from 'firebase/auth';
 import getAWSAsset from 'src/utils/getAWSAsset';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 import { handleUserResult } from '../utils/handleUserResult';
@@ -35,8 +41,7 @@ const FacebookLogin = ({
         .catch(async (error) => {
           if (error.code === 'auth/account-exists-with-different-credential') {
             const { email: existingEmail, credential: existingCredential } = error;
-            // @ts-expect-error fetchSignInMethodsForEmail
-            const providers = await auth.fetchSignInMethodsForEmail(existingEmail);
+            const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
             // Links Facebook account to Google account if a Google account already exists
             // with the associated email
             if (providers.indexOf(GoogleAuthProvider.PROVIDER_ID) !== -1) {
