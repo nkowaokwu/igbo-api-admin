@@ -6,6 +6,8 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
   fetchSignInMethodsForEmail,
+  linkWithPopup,
+  linkWithCredential,
 } from 'firebase/auth';
 import getAWSAsset from 'src/utils/getAWSAsset';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
@@ -40,7 +42,10 @@ const FacebookLogin = ({
         })
         .catch(async (error) => {
           if (error.code === 'auth/account-exists-with-different-credential') {
-            const { email: existingEmail, credential: existingCredential } = error;
+            const {
+              customData: { email: existingEmail },
+              // credential: existingCredential,
+            } = error;
             const providers = await fetchSignInMethodsForEmail(auth, existingEmail);
             // Links Facebook account to Google account if a Google account already exists
             // with the associated email
@@ -54,8 +59,8 @@ const FacebookLogin = ({
                 setErrorMessage,
                 isNewUser: false,
               });
-              // @ts-expect-error linkWithCredentials
-              result.user.linkWithCredential(existingCredential);
+              linkWithPopup(result.user, facebookProvider);
+              // linkWithCredential(result.user, existingCredential);
             }
             return null;
           }
