@@ -9,6 +9,7 @@ const audioPronunciationSchema = new Schema(
   {
     audio: { type: String, default: '' },
     speaker: { type: String, default: '' },
+    archived: { type: Boolean, default: false },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

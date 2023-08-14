@@ -12,6 +12,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
+import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -64,6 +65,7 @@ const TestContext = ({
   record,
   index,
   basePath = '/',
+  resource,
   ...rest
 }: {
   view?: Views;
@@ -88,10 +90,14 @@ const TestContext = ({
   const history = jest.fn(() => ({
     listen: jest.fn(),
   }));
-  const staticWordRecord = cloneDeep(record || wordRecord);
+  const staticRecord = cloneDeep(record || wordRecord);
   const { control, watch } = useForm({
-    // @ts-expect-error
-    defaultValues: createDefaultWordFormValues(staticWordRecord),
+    defaultValues:
+      resource === Collections.EXAMPLE_SUGGESTIONS
+        ? // @ts-expect-error
+          createDefaultExampleFormValues(staticRecord)
+        : // @ts-expect-error
+          createDefaultWordFormValues(staticRecord),
     mode: 'onChange',
   });
 
@@ -104,13 +110,13 @@ const TestContext = ({
           React.cloneElement(child, {
             control,
             errors: {},
-            record: staticWordRecord,
-            originalWordRecord: staticWordRecord,
+            record: staticRecord,
+            originalWordRecord: staticRecord,
             getValues: jest.fn(),
             setValue: jest.fn(),
             setDialects: jest.fn(),
             // TODO: useFieldArray for dialects
-            dialects: staticWordRecord.dialects,
+            dialects: staticRecord.dialects,
             options: Object.entries(WordClass),
             history,
             watch,
@@ -118,6 +124,7 @@ const TestContext = ({
             index,
             setIsDirty,
             basePath,
+            resource,
             ...rest,
             ...child.props,
           }),
