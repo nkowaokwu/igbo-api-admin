@@ -13,6 +13,7 @@ const audioPronunciationSuggestionSchema = new Schema(
   {
     audio: { type: String, default: '' },
     speaker: { type: String, default: '' },
+    archived: { type: Boolean, default: false },
     review: { type: Boolean, default: true },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },

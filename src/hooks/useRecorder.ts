@@ -31,6 +31,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
         const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => {
           toast({
             title: 'Microphone access denied',
+            position: 'top-right',
+            variant: 'left-accent',
             description: 'You must grant microphone permission to record',
             status: 'error',
             duration: 30000,
@@ -61,6 +63,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
     } else if (isBlocked) {
       toast({
         title: 'Microphone access denied',
+        position: 'top-right',
+        variant: 'left-accent',
         description: 'You must grant microphone permission to record',
         status: 'error',
         duration: 30000,
@@ -85,6 +89,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
             if (typeof e.target.result !== 'string' || !e.target.result.includes('data:audio/mp3')) {
               return toast({
                 title: 'Unable to record',
+                position: 'top-right',
+                variant: 'left-accent',
                 description: 'Invalid file type. Must be .mp3',
                 status: 'warning',
                 duration: 9000,
@@ -94,6 +100,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
             if (e.target.result?.length > MAX_AUDIO_SIZE) {
               return toast({
                 title: 'Unable to record',
+                position: 'top-right',
+                variant: 'left-accent',
                 description: 'Audio is too large - 500Kb maximum. Shorten your recording.',
                 status: 'warning',
                 duration: 9000,
@@ -110,6 +118,8 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
     } else if (!isBlocked) {
       toast({
         title: 'Microphone access denied',
+        position: 'top-right',
+        variant: 'left-accent',
         description: 'Unable to stop recording. You must grant microphone permission to record',
         status: 'error',
         duration: 30000,

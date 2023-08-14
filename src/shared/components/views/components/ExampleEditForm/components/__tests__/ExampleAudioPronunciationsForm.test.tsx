@@ -1,16 +1,35 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
+import Collections from 'src/shared/constants/Collections';
 import ExampleAudioPronunciationsForm from '../ExampleAudioPronunciationsForm';
 
 describe('ExampleAudioPronunciationsForm', () => {
   it('render ExampleAudioPronunciationsForm', async () => {
     const { findByText } = render(
-      <TestContext groupIndex={0}>
+      <TestContext>
         <ExampleAudioPronunciationsForm />
       </TestContext>,
     );
     await findByText('Igbo Sentence Recordings');
     await findByText('Add Audio Pronunciation');
+  });
+
+  it('adds a new audio recording', async () => {
+    const { findByText, findByTestId, queryByTestId } = render(
+      <TestContext
+        record={{ pronunciations: [{ audio: 'first-audio', speaker: 'first-speaker' }] }}
+        resource={Collections.EXAMPLE_SUGGESTIONS}
+      >
+        <ExampleAudioPronunciationsForm />
+      </TestContext>,
+    );
+    await findByTestId('pronunciations.0.audio-audio-playback-container');
+    await findByText('Igbo Sentence Recordings');
+    userEvent.click(await findByText('Add Audio Pronunciation'));
+    await findByTestId('pronunciations.1.audio-audio-playback-container');
+    expect(queryByTestId('pronunciations.1.audio-audio-playback')).toBeNull();
+    await findByText('No audio pronunciation');
   });
 });

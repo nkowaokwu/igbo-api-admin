@@ -35,16 +35,10 @@ const RecorderBase = ({
   const shouldRenderNewPronunciationLabel = () => pronunciationValue && pronunciationValue.startsWith('data');
 
   const renderStatusLabel = () => (
-    <Box className="text-center flex flex-row justify-center">
+    <Box className="text-center flex flex-row justify-center" data-test={`${path}-audio-playback-container`}>
       {pronunciationValue && !isRecording ? (
-        <Box className="flex flex-col">
-          <ReactAudioPlayer
-            data-test={`${path}-audio-playback`}
-            style={{ height: '40px', width: '250px' }}
-            id="audio"
-            src={pronunciationValue}
-            controls
-          />
+        <Box className="flex flex-col" data-test={`${path}-audio-playback`}>
+          <ReactAudioPlayer style={{ height: '40px', width: '250px' }} id="audio" src={pronunciationValue} controls />
           {shouldRenderNewPronunciationLabel() && (
             <chakra.span className="text-green-500 mt-2" fontFamily="Silka">
               New pronunciation recorded

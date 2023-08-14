@@ -24,6 +24,16 @@ const ExampleAudioPronunciationsForm = ({
   });
   const { getValues, setValue } = control;
 
+  const handleAppend = () =>
+    append({
+      audio: '',
+      speaker: uid,
+      approvals: [],
+      denials: [],
+      archived: false,
+      review: true,
+    });
+
   return (
     <>
       <FormHeader
@@ -47,11 +57,11 @@ const ExampleAudioPronunciationsForm = ({
               defaultValue={pronunciation.speaker}
             />
             <AudioRecorder
-              path="pronunciations.0.audio"
-              getFormValues={() => get(getValues(), 'pronunciations.0.audio')}
+              path={`pronunciations.${index}.audio`}
+              getFormValues={() => get(getValues(), `pronunciations.${index}.audio`)}
               setPronunciation={(_, value) => {
-                setValue('pronunciations.0.audio', value);
-                setValue('pronunciations.0.speaker', uid);
+                setValue(`pronunciations[${index}].audio`, value);
+                setValue(`pronunciations[${index}].speaker`, uid);
               }}
               record={record}
               originalRecord={originalRecord}
@@ -67,7 +77,7 @@ const ExampleAudioPronunciationsForm = ({
           </Text>
         </Box>
       )}
-      <AddAudioPronunciationButton append={append} />
+      <AddAudioPronunciationButton onClick={handleAppend} />
     </>
   );
 };
