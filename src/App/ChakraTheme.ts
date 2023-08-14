@@ -120,6 +120,18 @@ export default extendTheme({
       800: '#2A4A36',
       900: '#1C4532',
     },
+    magenta: {
+      50: '#F8E6FF',
+      100: '#F2CCFF',
+      200: '#EBB3FF',
+      300: '#E599FF',
+      400: '#DE80FF',
+      500: '#D766FF',
+      600: '#D14DFF',
+      700: '#CA33FF',
+      800: '#C41AFF',
+      900: '#BD00FF',
+    },
   },
   fontSizes: {
     xs: '0.75rem',

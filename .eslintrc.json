@@ -19,7 +19,7 @@
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-cycle": "off",
-    "max-len": ["error", { "code": 120, "ignorePattern": "^import\\W.*" }],
+   "max-len": ["error", { "code": 120, "ignorePattern": "d=\"([\\s\\S]*?)\"" }],
     "no-await-in-loop": "off",
     "no-confusing-arrow": "off",
     "no-console": "off",
