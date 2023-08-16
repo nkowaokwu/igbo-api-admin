@@ -21,7 +21,7 @@ export const leaderboardItems = [
       color: 'gray.700',
     },
     title: titleMap[RECORD_EXAMPLE_AUDIO],
-    uid: RECORD_EXAMPLE_AUDIO,
+    id: RECORD_EXAMPLE_AUDIO,
   },
   {
     children: <LeaderboardItem Icon={<Icons.Done stroke="magenta.900" />} title={titleMap[VERIFY_EXAMPLE_AUDIO]} />,
@@ -30,6 +30,6 @@ export const leaderboardItems = [
       color: 'gray.700',
     },
     title: titleMap[VERIFY_EXAMPLE_AUDIO],
-    uid: VERIFY_EXAMPLE_AUDIO,
+    id: VERIFY_EXAMPLE_AUDIO,
   },
 ];
