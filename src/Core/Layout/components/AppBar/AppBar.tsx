@@ -14,6 +14,9 @@ const AppBar = ({ notifications, ...props }: { notifications: Interfaces.Notific
         whiteSpace: 'nowrap',
         overflow: 'hidden',
       },
+      '& .RaUserMenu-userButton': {
+        border: 'none',
+      },
     }}
     {...props}
     userMenu={<UserMenu />}
