@@ -12,12 +12,23 @@ describe('Leaderboard', () => {
     // @ts-expect-error
     getLeaderboardStats.mockClear();
   });
+
+  it('renders all leaderboard options', async () => {
+    const { findByText } = render(
+      <TestContext groupIndex={0}>
+        <Leaderboard />
+      </TestContext>,
+    );
+    await findByText('Recorded example sentence');
+    await findByText('Verified recorded sentence');
+  });
   it('render all leaderboard time frames', async () => {
     const { findByText } = render(
       <TestContext groupIndex={0}>
         <Leaderboard />
       </TestContext>,
     );
+    userEvent.click(await findByText('Recorded example sentence'));
     await findByText('All time');
     await findByText('Weekly');
     await findByText('Monthly');
@@ -30,6 +41,7 @@ describe('Leaderboard', () => {
         <Leaderboard />
       </TestContext>,
     );
+    userEvent.click(await findByText('Recorded example sentence'));
     userEvent.click(await findByText('All time'));
     await new Promise((resolve) => setTimeout(resolve, 2000));
     userEvent.click(await findByText('Weekly'));

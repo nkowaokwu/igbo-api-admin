@@ -17,6 +17,7 @@ import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
+import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import { EditDocumentTopBar, ShowDocumentStats, DocumentIds, Comments } from '../../components';
 import DialectDiff from '../diffFields/DialectDiff';
 import DiffField from '../diffFields/DiffField';
@@ -432,33 +433,26 @@ const WordShow = (props: ShowProps): ReactElement => {
             </Box>
           </Box>
         </Box>
-        {archivedExamples.length ? (
-          <details className="mt-4 cursor-pointer">
-            <summary>
-              <Heading display="inline" fontSize="lg" className="text-xl text-gray-600" ml={2}>
-                Archived Examples 🗄
-              </Heading>
-            </summary>
-            <Box className="flex flex-col mt-5">
-              {archivedExamples.map((archivedExample, archivedExampleIndex) => (
-                <Box key={`archived-example-${archivedExample.id}`} className="flex flex-row justify-start items-start">
-                  <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
-                  <Box>
-                    <Text>{archivedExample.igbo}</Text>
-                    <Text>{archivedExample.english}</Text>
-                    <Text>{archivedExample.nsibidi}</Text>
-                    <Text>{archivedExample.meaning}</Text>
-                    <ReactAudioPlayer
-                      src={archivedExample.pronunciation}
-                      style={{ height: '40px', width: '250px' }}
-                      controls
-                    />
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </details>
-        ) : null}
+        <SummaryList
+          items={archivedExamples}
+          title="Archived Examples 🗄"
+          render={(archivedExample, archivedExampleIndex) => (
+            <>
+              <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+              <Box>
+                <Text>{archivedExample.igbo}</Text>
+                <Text>{archivedExample.english}</Text>
+                <Text>{archivedExample.nsibidi}</Text>
+                <Text>{archivedExample.meaning}</Text>
+                <ReactAudioPlayer
+                  src={archivedExample.pronunciation}
+                  style={{ height: '40px', width: '250px' }}
+                  controls
+                />
+              </Box>
+            </>
+          )}
+        />
         {resource !== Collection.WORDS ? <Comments editorsNotes={editorsNotes} userComments={userComments} /> : null}
       </Box>
     </Skeleton>

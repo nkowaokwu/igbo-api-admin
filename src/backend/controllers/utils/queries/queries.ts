@@ -408,9 +408,10 @@ export const searchWordsWithoutIgboDefinitions = (): {
   'definitions.0.igboDefinitions.0': { $exists: false },
 });
 export const searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth = (): {
-  [key: string]: { $exists: boolean } | { $gte: number } | null;
+  [key: string]: { $exists: boolean } | { $gte: number } | { $ne: string } | null;
 } => ({
   'definitions.0.igboDefinitions.0': { $exists: false },
+  source: { $ne: SuggestionSourceEnum.COMMUNITY },
   updatedAt: { $gte: moment().subtract(1, 'months').startOf('month').valueOf() },
   merged: null,
 });

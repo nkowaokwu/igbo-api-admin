@@ -14,6 +14,7 @@ import { Textarea, Input } from 'src/shared/primitives';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
+// eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
@@ -34,7 +35,7 @@ const ExampleEditForm = ({
     Object.values(ExampleStyle).find(({ value }) => value === record.style),
     ['value', 'label'],
   ) || { value: '', label: '' };
-  const { handleSubmit, getValues, control, errors } = useForm({
+  const { errors, handleSubmit, getValues, control } = useForm({
     defaultValues: createDefaultExampleFormValues(record),
     ...ExampleEditFormResolver,
     mode: 'onChange',

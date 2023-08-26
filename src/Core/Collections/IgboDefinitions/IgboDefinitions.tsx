@@ -126,7 +126,9 @@ const IgboDefinitions = (): ReactElement => {
                 {WordClass[currentCard.definitions[0].wordClass].label}
               </Text>
             </Box>
-            <Text fontFamily="Silka">{currentCard.definitions[0].definitions[0]}</Text>
+            <Text fontFamily="Silka" fontStyle={currentCard.definitions[0].definitions[0] ? '' : 'italic'}>
+              {currentCard.definitions[0].definitions[0] || 'N/A'}
+            </Text>
           </Card>
         ) : isLoading ? (
           <Box minHeight="md" className="flex flex-row justify-center items-center">

@@ -34,17 +34,12 @@ describe('ExamplesForm', () => {
     await findByTestId('examples-0-english-input');
     await findByTestId('examples-0-meaning-input');
     await findByTestId('examples-0-nsibidi-input');
-    await findByLabelText('Delete Example');
+    await findByLabelText('Delete');
     await findByText('No Nsịbịdị characters');
   });
 
   it('deletes a new example', async () => {
-    const {
-      findByText,
-      findByTestId,
-      findByLabelText,
-      queryByTestId,
-    } = render(
+    const { findByText, findByTestId, findByLabelText, queryByTestId } = render(
       <TestContext>
         <ExamplesForm />
       </TestContext>,
@@ -56,7 +51,7 @@ describe('ExamplesForm', () => {
     userEvent.type(await findByTestId('examples-0-meaning-input'), 'meaning input');
     userEvent.type(await findByTestId('examples-0-nsibidi-input'), 'nsibidi input');
 
-    userEvent.click(await findByLabelText('Delete Example'));
+    userEvent.click(await findByLabelText('Delete'));
 
     expect(await queryByTestId('examples-0-igbo-input')).toBeNull();
     expect(await queryByTestId('examples-0-english-input')).toBeNull();
@@ -65,13 +60,7 @@ describe('ExamplesForm', () => {
   });
 
   it('deletes first example after editing the second', async () => {
-    const {
-      findByText,
-      findByTestId,
-      findByLabelText,
-      queryByTestId,
-      findAllByLabelText,
-    } = render(
+    const { findByText, findByTestId, findByLabelText, queryByTestId, findAllByLabelText } = render(
       <TestContext>
         <ExamplesForm />
       </TestContext>,
@@ -92,30 +81,32 @@ describe('ExamplesForm', () => {
     userEvent.type(await findByTestId('examples-1-meaning-input'), 'second meaning input');
     userEvent.type(await findByTestId('examples-1-nsibidi-input'), 'second nsibidi input');
 
-    userEvent.click((await findAllByLabelText('Delete Example'))[0]);
+    userEvent.click((await findAllByLabelText('Delete'))[0]);
 
-    expect((await queryByTestId('examples-0-igbo-input').getAttribute('value'))).toEqual('second igbo input');
-    expect((await queryByTestId('examples-0-english-input').getAttribute('value'))).toEqual('second english input');
-    expect((await queryByTestId('examples-0-meaning-input').getAttribute('value'))).toEqual('second meaning input');
-    expect((await queryByTestId('examples-0-nsibidi-input').getAttribute('value'))).toEqual('second nsibidi input');
+    expect(await queryByTestId('examples-0-igbo-input').getAttribute('value')).toEqual('second igbo input');
+    expect(await queryByTestId('examples-0-english-input').getAttribute('value')).toEqual('second english input');
+    expect(await queryByTestId('examples-0-meaning-input').getAttribute('value')).toEqual('second meaning input');
+    expect(await queryByTestId('examples-0-nsibidi-input').getAttribute('value')).toEqual('second nsibidi input');
   });
 
   it('renders the archive button for existing Example sentence', async () => {
     const staticWordRecord = cloneDeep(wordRecord);
-    staticWordRecord.examples = [{
-      originalExampleId: new Types.ObjectId(),
-      id: new Types.ObjectId(),
-      nsibidi: 'nsibidi',
-      igbo: 'igbo',
-      english: 'english',
-    }];
+    staticWordRecord.examples = [
+      {
+        originalExampleId: new Types.ObjectId(),
+        id: new Types.ObjectId(),
+        nsibidi: 'nsibidi',
+        igbo: 'igbo',
+        english: 'english',
+      },
+    ];
 
     const { findByText, findAllByLabelText } = render(
       <TestContext record={staticWordRecord}>
         <ExamplesForm />
       </TestContext>,
     );
-    userEvent.click((await findAllByLabelText('Archive Example'))[0]);
+    userEvent.click((await findAllByLabelText('Archive'))[0]);
     await findByText('Examples (0)');
   });
 });

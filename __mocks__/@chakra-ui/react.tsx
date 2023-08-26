@@ -15,6 +15,7 @@ export const {
   Container,
   Flex,
   Grid,
+  GridItem,
   SimpleGrid,
   Link,
   Stack,

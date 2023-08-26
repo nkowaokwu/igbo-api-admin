@@ -1,11 +1,12 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { get } from 'lodash';
-import { Box, IconButton, Spinner, Tooltip } from '@chakra-ui/react';
+import { Box, Spinner } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collections';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
+import ArchiveButton from 'src/shared/components/buttons/ArchiveButton';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -163,18 +164,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           You are able to record over pre-existing recordings."
         />
       </Box>
-      <Tooltip label={deleteMessage}>
-        <IconButton
-          backgroundColor={isExistingExample ? 'orange.100' : 'red.100'}
-          _hover={{
-            backgroundColor: isExistingExample ? 'orange.200' : 'red.200',
-          }}
-          aria-label={isExistingExample ? 'Archive Example' : 'Delete Example'}
-          onClick={() => remove(index)}
-          className="ml-3"
-          icon={isExistingExample ? (() => <>🗄</>)() : (() => <>🗑</>)()}
-        />
-      </Tooltip>
+      <ArchiveButton tooltip={deleteMessage} shouldArchive={isExistingExample} onClick={() => remove(index)} />
     </Box>
   ) : (
     <Spinner />
