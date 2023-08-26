@@ -4,6 +4,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collections';
+import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import ExampleShow from '../ExampleShow';
 
 describe('Example Show', () => {
@@ -15,13 +16,15 @@ describe('Example Show', () => {
     id: 123,
     igbo: 'first igbo example',
     english: 'first english example',
+    pronunciations: [{ audio: 'first', speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN, archived: false }],
   };
 
   it('render all fields for examples', async () => {
     const dataProvider = {
-      getOne: () => Promise.resolve({
-        data: record,
-      }),
+      getOne: () =>
+        Promise.resolve({
+          data: record,
+        }),
     };
     const { queryByText, findByText } = render(
       <TestContext
@@ -41,15 +44,16 @@ describe('Example Show', () => {
     await findByText('English');
     await findByText('Nsịbịdị');
     await findByText('Associated Words');
-    expect(await queryByText('Editor\'s Note')).toBeNull();
-    expect(await queryByText('User\'s comments')).toBeNull();
+    expect(await queryByText("Editor's Note")).toBeNull();
+    expect(await queryByText("User's comments")).toBeNull();
   });
 
   it('render all fields for example suggestions', async () => {
     const dataProvider = {
-      getOne: () => Promise.resolve({
-        data: record,
-      }),
+      getOne: () =>
+        Promise.resolve({
+          data: record,
+        }),
     };
     const { findByText } = render(
       <TestContext
@@ -57,7 +61,7 @@ describe('Example Show', () => {
         initialState={{ admin: { resources: { exampleSuggestions: { data: record } } } }}
         dataProvider={dataProvider}
       >
-        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} />
+        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} record={record} />
       </TestContext>,
     );
 
@@ -68,7 +72,7 @@ describe('Example Show', () => {
     await findByText('first english example');
     await findByText('English');
     await findByText('Associated Words');
-    await findByText('Editor\'s Note');
-    await findByText('User\'s comments');
+    await findByText("Editor's Note");
+    await findByText("User's comments");
   });
 });

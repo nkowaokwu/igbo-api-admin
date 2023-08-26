@@ -1,12 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import {
-  Box,
-  Heading,
-  Skeleton,
-  Text,
-  chakra,
-} from '@chakra-ui/react';
+import { Box, Heading, Skeleton, Text, chakra } from '@chakra-ui/react';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
@@ -16,17 +10,16 @@ import { getExample } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
+import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
+import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
+import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
-import {
-  ShowDocumentStats,
-  DocumentIds,
-  EditDocumentTopBar,
-  Comments,
-} from '../../components';
+import { ShowDocumentStats, DocumentIds, EditDocumentTopBar, Comments } from '../../components';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
+  const [isLoadingSpeakers, setIsLoadingSpeakers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [originalExampleRecord, setOriginalExampleRecord] = useState({});
   const [diffRecord, setDiffRecord] = useState(null);
@@ -47,7 +40,10 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     userComments,
     associatedWords,
     originalExampleId,
+    pronunciations,
   } = record || DEFAULT_EXAMPLE_RECORD;
+  const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
+  const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
 
   const DIFF_FILTER_KEYS = [
     'id',
@@ -70,6 +66,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     exampleSuggestions: 'Example Suggestion',
     examples: 'Example',
   };
+  const notArchivedPronunciations = pronunciations.filter(({ archived = false }) => !archived);
+  const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
 
   /* Grabs the original word if it exists */
   useEffect(() => {
@@ -84,7 +82,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-
       <Box className="bg-white shadow-sm p-10 mt-10">
         <EditDocumentTopBar
           record={record}
@@ -114,11 +111,10 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
               <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Audio Pronunciations</Heading>
-                <ArrayDiffField
-                  recordField="pronunciations"
-                  record={record}
-                >
+                <Heading fontSize="lg" className="text-xl text-gray-600">
+                  Audio Pronunciations
+                </Heading>
+                <ArrayDiffField recordField="pronunciations" record={{ pronunciations: notArchivedPronunciations }}>
                   <ArrayDiff
                     diffRecord={diffRecord}
                     renderNestedObject={(pronunciation) => (
@@ -169,7 +165,9 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
               />
               <Box className="flex flex-col">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Nsịbịdị Characters</Heading>
+                <Heading fontSize="lg" className="text-xl text-gray-600">
+                  Nsịbịdị Characters
+                </Heading>
                 <ArrayDiffField
                   recordField="nsibidiCharacters"
                   recordFieldSingular="nsibidiCharacter"
@@ -185,14 +183,41 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   />
                 </ArrayDiffField>
               </Box>
+              <SummaryList
+                items={archivedPronunciations}
+                title="Archived Example Pronunciations 🗄"
+                render={(archivedPronunciation, archivedPronunciationIndex) => (
+                  <>
+                    <Text color="gray.600" mr={3}>{`${archivedPronunciationIndex + 1}.`}</Text>
+                    <Box>
+                      <ReactAudioPlayer
+                        src={archivedPronunciation.audio}
+                        style={{ height: '40px', width: '250px' }}
+                        controls
+                      />
+                      <SpeakerNameManager
+                        isLoading={isLoadingSpeakers}
+                        speakers={speakers}
+                        index={archivedPronunciationIndex}
+                      />
+                    </Box>
+                  </>
+                )}
+              />
               <Box className="flex flex-col mt-5">
-                <Text fontWeight="bold" className="text-xl text-gray-600">Associated Words</Text>
-                {associatedWords?.length ? associatedWords?.map((associatedWord, index) => (
-                  <Box className="flex flex-row items-center space-x-2">
-                    <Text>{`${index + 1}. `}</Text>
-                    <ResolvedWord key={associatedWord} wordId={associatedWord} />
-                  </Box>
-                )) : <span className="text-gray-500 italic">No associated word Ids</span>}
+                <Text fontWeight="bold" className="text-xl text-gray-600">
+                  Associated Words
+                </Text>
+                {associatedWords?.length ? (
+                  associatedWords?.map((associatedWord, index) => (
+                    <Box className="flex flex-row items-center space-x-2">
+                      <Text>{`${index + 1}. `}</Text>
+                      <ResolvedWord key={associatedWord} wordId={associatedWord} />
+                    </Box>
+                  ))
+                ) : (
+                  <span className="text-gray-500 italic">No associated word Ids</span>
+                )}
               </Box>
               {resource !== Collection.EXAMPLES ? (
                 <Comments editorsNotes={editorsNotes} userComments={userComments} />

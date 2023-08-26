@@ -3,7 +3,8 @@ import { IconButton, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from 
 import { getAuth } from 'firebase/auth';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FlagIcon from '@mui/icons-material/Flag';
-import ConfirmFlagUserModal from 'src/Core/Collections/IgboSoundbox/components/SpeakerOptions/ConfirmFlagUserModal';
+// eslint-disable-next-line max-len
+import ConfirmFlagUserModal from 'src/Core/Collections/components/SpeakerNameManager/SpeakerOptions/ConfirmFlagUserModal';
 import { sendReportUserEmail, ReportUserInterface } from 'src/shared/PlatformAPI';
 
 const auth = getAuth();

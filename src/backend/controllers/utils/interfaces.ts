@@ -192,6 +192,7 @@ export interface ExampleData {
     review: boolean;
     approvals: string[];
     denials: string[];
+    archived: boolean;
     _id: Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;

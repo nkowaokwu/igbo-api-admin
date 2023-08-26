@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
 import { useFieldArray } from 'react-hook-form';
+import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
+import ReactAudioPlayer from 'react-audio-player';
 import AddExampleButton from './AddExampleButton';
 import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';
@@ -16,6 +18,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
     name: 'examples',
   });
   const { setValue } = control;
+  const archivedExamples = examples.filter(({ archived = false }) => archived);
 
   return (
     <>
@@ -57,6 +60,26 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
         </Accordion>
       </Box>
       <AddExampleButton append={append} />
+      <SummaryList
+        items={archivedExamples}
+        title="Archived Examples 🗄"
+        render={(archivedExample, archivedExampleIndex) => (
+          <>
+            <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+            <Box>
+              <Text>{archivedExample.igbo}</Text>
+              <Text>{archivedExample.english}</Text>
+              <Text>{archivedExample.nsibidi}</Text>
+              <Text>{archivedExample.meaning}</Text>
+              <ReactAudioPlayer
+                src={archivedExample.pronunciation}
+                style={{ height: '40px', width: '250px' }}
+                controls
+              />
+            </Box>
+          </>
+        )}
+      />
     </>
   );
 };

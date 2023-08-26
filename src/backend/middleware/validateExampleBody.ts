@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 import { Response, NextFunction } from 'express';
 import Joi from 'joi';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import SuggestionSourceEnum from '../shared/constants/SuggestionSourceEnum';
-import ExampleStyle from '../shared/constants/ExampleStyle';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 
 const { Types } = mongoose;
 export const exampleDataSchema = Joi.object().keys({
@@ -21,8 +22,11 @@ export const exampleDataSchema = Joi.object().keys({
   meaning: Joi.string().allow('').optional(),
   nsibidi: Joi.string().allow('').optional(),
   nsibidiCharacters: Joi.array().min(0).items(Joi.string()).optional(),
+  type: Joi.string()
+    .valid(...Object.values(SentenceTypeEnum))
+    .optional(),
   style: Joi.string()
-    .valid(...Object.values(ExampleStyle).map(({ value }) => value))
+    .valid(...Object.values(ExampleStyleEnum))
     .optional(),
   associatedWords: Joi.array().external((associatedWords) => {
     if (!associatedWords) {
@@ -55,6 +59,7 @@ export const exampleDataSchema = Joi.object().keys({
       speaker: Joi.string().allow('').optional(),
       createdAt: Joi.string().optional(),
       updatedAt: Joi.string().optional(),
+      archived: Joi.boolean().optional(),
     }),
   ),
   exampleForSuggestion: Joi.boolean().optional(),
