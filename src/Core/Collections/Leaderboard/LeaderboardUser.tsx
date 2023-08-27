@@ -31,10 +31,7 @@ const LeaderboardUser = ({
         </Box>
       </Box>
     </Box>
-    <Box className="flex flex-row space-x-2 items-center">
-      <Text color="gray.500" fontFamily="Silka">{`${count} points`}</Text>
-      {position <= 3 ? <Text fontSize="2xl">{position === 1 ? '🥇' : position === 2 ? '🥈' : '🥉'}</Text> : null}
-    </Box>
+    <Text color="gray.500" fontFamily="Silka">{`${count} points`}</Text>
   </Box>
 );
 
