@@ -1,6 +1,7 @@
 import React from 'react';
 import * as reactAdmin from 'react-admin';
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Profile from 'src/Core/Profile/Profile';
 import TestContext from 'src/__tests__/components/TestContext';
 
@@ -35,5 +36,30 @@ describe('Profile', () => {
     expect(await queryByText('Personal Contributions')).toBeNull();
     await findByText('Recorded example sentences');
     await findByText('Verified example sentences');
+  });
+  it('render Profile edit button', async () => {
+    const { findByText } = render(
+      <TestContext>
+        <Profile />
+      </TestContext>,
+    );
+
+    userEvent.click(await findByText('Edit'));
+    await findByText('Save');
+    await findByText('Cancel');
+  });
+
+  it('cancel the Profile edits', async () => {
+    const { queryByText, findByText } = render(
+      <TestContext>
+        <Profile />
+      </TestContext>,
+    );
+
+    userEvent.click(await findByText('Edit'));
+    await findByText('Save');
+    userEvent.click(await findByText('Cancel'));
+    await findByText('Edit');
+    expect(queryByText('Save')).toBeNull();
   });
 });

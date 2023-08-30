@@ -13,9 +13,11 @@ import IgboSoundboxStats from '../IgboSoundboxStats';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const UserStat = ({
+  isEditing = false,
   uid,
   user = { displayName: '', email: '', photoURL: '' },
 }: {
+  isEditing?: boolean;
   uid?: string;
   user?: { displayName: string; email: string; photoURL: string };
   dialectalVariations: number;
@@ -46,7 +48,7 @@ const UserStat = ({
 
   return (
     <Box>
-      <UserCard {...(user?.email ? user : currentUser)} />
+      <UserCard {...(user?.email ? user : currentUser)} isEditing={isEditing} />
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0 px-6">
         <Box className="w-full">
           <Heading as="h2" mb={4}>
