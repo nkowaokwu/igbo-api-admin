@@ -48,7 +48,7 @@ const Completed = ({
       </Box>
       <Box
         className="space-x-3 w-full flex flex-col lg:flex-row 
-      justify-center items-center flex-wrap space-y-4 lg:space-y-4"
+      justify-center items-center flex-wrap space-y-4 lg:space-y-0"
       >
         <Button colorScheme="green" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={handleMore}>
           {type === CrowdsourcingType.RECORD_EXAMPLE_AUDIO

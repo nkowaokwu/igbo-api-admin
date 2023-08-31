@@ -22,9 +22,11 @@ import { sendReportUserNotification } from 'src/backend/controllers/email';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
+// eslint-disable-next-line max-len
 import validateReviewRandomExampleSuggestionBody from 'src/backend/middleware/validateReviewRandomExampleSuggestionBody';
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
+// eslint-disable-next-line max-len
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
