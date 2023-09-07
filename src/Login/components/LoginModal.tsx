@@ -236,6 +236,15 @@ const LoginModal = ({
       });
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    return userLoginState === UserLoginState.CONFIRM_NUMBER
+      ? handleConfirmPhoneNumber()
+      : userLoginState === UserLoginState.CHECK_EMAIL
+      ? handlePageRefresh()
+      : handleUserLogin();
+  };
+
   // Automatically submits the confirmation request
   useEffect(() => {
     if (userLoginState === UserLoginState.CONFIRM_NUMBER && !!phoneNumberConfirmationCode) {
@@ -250,81 +259,76 @@ const LoginModal = ({
         <ModalContent data-test="login-modal" height="auto">
           <ProgressHeader userLoginState={userLoginState} />
           <ModalCloseButton />
-          <ModalBody mb={4}>
-            {userLoginState === UserLoginState.CHECK_EMAIL && identifierType === IdentifierType.EMAIL ? (
-              <Box className="flex flex-col justify-center items-center space-y-4">
-                <Heading as="h1">Check your email 📫</Heading>
-                <Text textAlign="center">
-                  Click on the verification link sent to your email. Then log into your account.
-                </Text>
-              </Box>
-            ) : userLoginState === UserLoginState.SUCCESS && identifierType === IdentifierType.PHONE ? (
-              <Box className="flex flex-col justify-center items-center space-y-4">
-                <Heading as="h1">Success 🎉</Heading>
-                <Text textAlign="center">Your phone number has been confirmed. Redirecting to the platform...</Text>
-              </Box>
-            ) : userLoginState !== UserLoginState.CONFIRM_NUMBER ? (
-              <EmailAndPhoneLogin
-                userLoginState={userLoginState}
-                setUserLoginState={setUserLoginState}
-                identifierType={identifierType}
-                setIdentifierType={setIdentifierType}
-                setDisplayName={setDisplayName}
-                setUserIdentifier={setUserIdentifier}
-                setPassword={setPassword}
-              />
-            ) : (
-              <Box className="space-y-4">
-                <Text>You have received an SMS text with a code. Please paste that code here</Text>
-                <Box>
-                  <FormLabel>Confirmation code</FormLabel>
-                  <ConfirmationCodeInput onComplete={setPhoneNumberConfirmationCode} />
+          <form onSubmit={handleSubmit}>
+            <ModalBody mb={4}>
+              {userLoginState === UserLoginState.CHECK_EMAIL && identifierType === IdentifierType.EMAIL ? (
+                <Box className="flex flex-col justify-center items-center space-y-4">
+                  <Heading as="h1">Check your email 📫</Heading>
+                  <Text textAlign="center">
+                    Click on the verification link sent to your email. Then log into your account.
+                  </Text>
                 </Box>
-              </Box>
-            )}
-          </ModalBody>
+              ) : userLoginState === UserLoginState.SUCCESS && identifierType === IdentifierType.PHONE ? (
+                <Box className="flex flex-col justify-center items-center space-y-4">
+                  <Heading as="h1">Success 🎉</Heading>
+                  <Text textAlign="center">Your phone number has been confirmed. Redirecting to the platform...</Text>
+                </Box>
+              ) : userLoginState !== UserLoginState.CONFIRM_NUMBER ? (
+                <EmailAndPhoneLogin
+                  userLoginState={userLoginState}
+                  setUserLoginState={setUserLoginState}
+                  identifierType={identifierType}
+                  setIdentifierType={setIdentifierType}
+                  setDisplayName={setDisplayName}
+                  setUserIdentifier={setUserIdentifier}
+                  setPassword={setPassword}
+                />
+              ) : (
+                <Box className="space-y-4">
+                  <Text>You have received an SMS text with a code. Please paste that code here</Text>
+                  <Box>
+                    <FormLabel>Confirmation code</FormLabel>
+                    <ConfirmationCodeInput onComplete={setPhoneNumberConfirmationCode} />
+                  </Box>
+                </Box>
+              )}
+            </ModalBody>
 
-          <ModalFooter className="w-full flex flex-row justify-between items-center" justifyContent="space-between">
-            <Button
-              type="submit"
-              backgroundColor="primary"
-              _hover={{
-                backgroundColor: 'primary',
-              }}
-              _active={{
-                backgroundColor: 'primary',
-              }}
-              _focus={{
-                backgroundColor: 'primary',
-              }}
-              color="white"
-              width="full"
-              onClick={
-                userLoginState === UserLoginState.CONFIRM_NUMBER
-                  ? handleConfirmPhoneNumber
+            <ModalFooter className="w-full flex flex-row justify-between items-center" justifyContent="space-between">
+              <Button
+                type="submit"
+                backgroundColor="primary"
+                _hover={{
+                  backgroundColor: 'primary',
+                }}
+                _active={{
+                  backgroundColor: 'primary',
+                }}
+                _focus={{
+                  backgroundColor: 'primary',
+                }}
+                color="white"
+                width="full"
+                isLoading={isLoading}
+                isDisabled={isLoading}
+                data-test="login-modal-button"
+              >
+                {userLoginState === UserLoginState.LOGIN
+                  ? 'Sign in'
+                  : userLoginState === UserLoginState.SUCCESS
+                  ? 'Enter platform'
                   : userLoginState === UserLoginState.CHECK_EMAIL
-                  ? handlePageRefresh
-                  : handleUserLogin
-              }
-              isLoading={isLoading}
-              isDisabled={isLoading}
-              data-test="login-modal-button"
-            >
-              {userLoginState === UserLoginState.LOGIN
-                ? 'Sign in'
-                : userLoginState === UserLoginState.SUCCESS
-                ? 'Enter platform'
-                : userLoginState === UserLoginState.CHECK_EMAIL
-                ? 'Log in'
-                : userLoginState === UserLoginState.PASSWORD_RECOVERY
-                ? 'Recover password'
-                : identifierType === IdentifierType.PHONE && userLoginState === UserLoginState.CONFIRM_NUMBER
-                ? 'Confirm number'
-                : identifierType === IdentifierType.PHONE && userLoginState !== UserLoginState.CONFIRM_NUMBER
-                ? 'Next'
-                : 'Sign up'}
-            </Button>
-          </ModalFooter>
+                  ? 'Log in'
+                  : userLoginState === UserLoginState.PASSWORD_RECOVERY
+                  ? 'Recover password'
+                  : identifierType === IdentifierType.PHONE && userLoginState === UserLoginState.CONFIRM_NUMBER
+                  ? 'Confirm number'
+                  : identifierType === IdentifierType.PHONE && userLoginState !== UserLoginState.CONFIRM_NUMBER
+                  ? 'Next'
+                  : 'Sign up'}
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>
