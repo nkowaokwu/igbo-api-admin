@@ -11,6 +11,7 @@ const DEFAULT_CONTENT_LENGTH = 1024;
 /* Puts a new .mp3 object in the AWS S3 Bucket */
 export const createAudioPronunciation = (id: string, pronunciationData: string): Promise<string> =>
   new Promise((resolve) => {
+    console.log(`Attempting to create audio pronunciation for ${id}`);
     if (!id || !pronunciationData) {
       throw new Error('id and pronunciation must be provided');
     }
@@ -54,6 +55,7 @@ export const createAudioPronunciation = (id: string, pronunciationData: string):
 /* Deletes an audio object in the AWS S3 Bucket */
 export const deleteAudioPronunciation = (id: string, isMp3 = false): Promise<any> =>
   new Promise((resolve) => {
+    console.log(`Attempting to delete audio pronunciation for ${id}`, { isMp3 });
     if (!id) {
       throw new Error('No pronunciation id provided');
     }
@@ -95,6 +97,7 @@ export const deleteAudioPronunciation = (id: string, isMp3 = false): Promise<any
 /* Takes an old and new pronunciation id and copies it (copies) */
 export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3 = false): Promise<string> =>
   new Promise((resolve) => {
+    console.log(`Attempting to copy old audio pronunciation of ${oldDocId} to ${newDocId}`, { isMp3 });
     const oldAudioId = removeAccents.remove(oldDocId);
     const newAudioId = removeAccents.remove(newDocId);
     try {
@@ -162,6 +165,7 @@ export const renameAudioPronunciation = async (oldDocId: string, newDocId: strin
     const newAudioId = removeAccents.remove(newDocId);
     return `${dummyUriPath}${newAudioId}`;
   }
+  console.log(`Attempting to rename old audio pronunciation of ${oldDocId} to ${newDocId}`, { isMp3 });
   /**
    * If the Word Suggestion doesn't have an audio pronunciation
    * for the field, then the audio pronunciation in the Word
