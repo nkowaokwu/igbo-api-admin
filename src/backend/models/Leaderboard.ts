@@ -5,7 +5,7 @@ import LeaderboardType from '../shared/constants/LeaderboardType';
 
 const userRankSchema = new Schema({
   uid: { type: String, required: true },
-  displayName: { type: String, required: true },
+  displayName: { type: String, default: 'N/A' },
   photoURL: { type: String, default: '' },
   email: { type: String, required: true },
   count: { type: Number, default: -1 },
