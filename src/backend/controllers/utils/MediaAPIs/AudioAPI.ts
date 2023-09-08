@@ -8,6 +8,8 @@ import initializeAPI from './initializeAPI';
 const { bucket, uriPath, dummyUriPath, mediaPath, s3, baseParams } = initializeAPI('audio-pronunciations');
 const DEFAULT_CONTENT_LENGTH = 1024;
 
+const generateExtension = (isMp3: boolean) => (isMp3 ? 'mp3' : 'webm');
+
 /* Puts a new .mp3 object in the AWS S3 Bucket */
 export const createAudioPronunciation = (id: string, pronunciationData: string): Promise<string> =>
   new Promise((resolve) => {
@@ -65,7 +67,7 @@ export const deleteAudioPronunciation = (id: string, isMp3 = false): Promise<any
         const Key = `${dummyUriPath}${audioId}`;
         return handleAudioPronunciation({ key: Key, event: AudioEventType.DELETE }).then(() => resolve(Key));
       }
-      const extension = isMp3 ? 'mp3' : 'webm';
+      const extension = generateExtension(isMp3);
       const params = {
         ...baseParams,
         Key: `${mediaPath}/${audioId}.${extension}`,
@@ -110,14 +112,15 @@ export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3
         }).then(() => resolve(Key));
       }
 
-      const extension = isMp3 ? 'mp3' : 'webm';
+      const extension = generateExtension(isMp3);
 
       const copyParams = {
         ...baseParams,
         MetadataDirective: 'REPLACE',
         Key: `${mediaPath}/${newAudioId}.${extension}`,
         ACL: 'public-read',
-        CopySource: `${bucket}/${mediaPath}/${oldAudioId}.${extension}`,
+        // TODO: Monitor this line if unable to work with audio recordings or if audio is not saving
+        CopySource: `${bucket}/${mediaPath}/${oldAudioId}.mp3`,
       };
 
       return s3
