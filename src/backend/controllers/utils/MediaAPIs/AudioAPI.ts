@@ -99,7 +99,6 @@ export const deleteAudioPronunciation = (id: string, isMp3 = false): Promise<any
 /* Takes an old and new pronunciation id and copies it (copies) */
 export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3 = false): Promise<string> =>
   new Promise((resolve) => {
-    console.log(`Attempting to copy old audio pronunciation of ${oldDocId} to ${newDocId}`, { isMp3 });
     const oldAudioId = removeAccents.remove(oldDocId);
     const newAudioId = removeAccents.remove(newDocId);
     try {
@@ -111,13 +110,12 @@ export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3
           event: AudioEventType.POST,
         }).then(() => resolve(Key));
       }
-
-      const extension = generateExtension(isMp3);
+      console.log(`Attempting to copy old audio pronunciation of ${oldAudioId} to ${newAudioId}`, { isMp3 });
 
       const copyParams = {
         ...baseParams,
         MetadataDirective: 'REPLACE',
-        Key: `${mediaPath}/${newAudioId}.${extension}`,
+        Key: `${mediaPath}/${newAudioId}.mp3`,
         ACL: 'public-read',
         // TODO: Monitor this line if unable to work with audio recordings or if audio is not saving
         CopySource: `${bucket}/${mediaPath}/${oldAudioId}.mp3`,
@@ -127,7 +125,7 @@ export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3
         .copyObject(copyParams)
         .promise()
         .then(async () => {
-          const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.${extension}`;
+          const copiedAudioPronunciationUri = `${uriPath}/${newAudioId}.mp3`;
           const data = await s3
             .headObject(pick(copyParams, ['Bucket', 'Key']))
             .promise()
