@@ -1,14 +1,8 @@
 import React, { ReactElement } from 'react';
-import {
-  Box,
-  Button,
-  Heading,
-  Progress,
-  Skeleton,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Button, Heading, Progress, Skeleton, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowForwardIcon, InfoIcon } from '@chakra-ui/icons';
+
+const GOAL_UNITS = 2000;
 
 const OptionCard = ({
   title,
@@ -17,18 +11,17 @@ const OptionCard = ({
   link,
   onButtonClick,
   currentStat,
-  goalStat,
   tooltipLabel,
-} : {
-  title: string,
-  icon: string,
-  link: string,
-  description: string,
-  onButtonClick: (e: any) => void,
-  currentStat: number,
-  goalStat: number
-  tooltipLabel: string,
+}: {
+  title: string;
+  icon: string;
+  link: string;
+  description: string;
+  onButtonClick: (e: any) => void;
+  currentStat: number;
+  tooltipLabel: string;
 }): ReactElement => {
+  const goalStat = Math.ceil((currentStat + 1) / GOAL_UNITS) * GOAL_UNITS;
   const handleOnClick = () => {
     window.scrollTo(0, 0);
     onButtonClick(link);
@@ -39,8 +32,12 @@ const OptionCard = ({
         <Box h={16} w={16} backgroundColor="gray.200" borderRadius="md" className="flex justify-center items-center">
           <Text fontSize="4xl">{icon}</Text>
         </Box>
-        <Heading textAlign="center" fontFamily="Silka">{title}</Heading>
-        <Text textAlign="center" fontFamily="Silka">{description}</Text>
+        <Heading textAlign="center" fontFamily="Silka">
+          {title}
+        </Heading>
+        <Text textAlign="center" fontFamily="Silka">
+          {description}
+        </Text>
         <Button
           rightIcon={<ArrowForwardIcon color="white" boxSize={4} />}
           onClick={handleOnClick}
@@ -78,7 +75,7 @@ const OptionCard = ({
           </Tooltip>
         </Skeleton>
         <Text fontFamily="Silka">
-          {`Your total goal is ${goalStat.toLocaleString(undefined, { minimumFractionDigits: 0 })}`}
+          {`Your next milestone goal is ${goalStat.toLocaleString(undefined, { minimumFractionDigits: 0 })}`}
         </Text>
       </Box>
     </Box>

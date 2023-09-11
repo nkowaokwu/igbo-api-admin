@@ -5,8 +5,6 @@ import { getTotalVerifiedExampleSuggestions, getTotalRecordedExampleSuggestions 
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import OptionCard from './OptionCard';
 
-const GOAL_STAT = 4000;
-
 const IgboSoundboxHome = ({
   setCurrentView,
 }: {
@@ -35,7 +33,6 @@ const IgboSoundboxHome = ({
           link={IgboSoundboxViews.RECORD}
           onButtonClick={setCurrentView}
           currentStat={totalRecordedExampleSuggestions}
-          goalStat={GOAL_STAT}
           tooltipLabel={`The total number of recorded is calculated by counting the number
           of example sentences you have recorded that doesn't have two denials`}
         />
@@ -46,7 +43,6 @@ const IgboSoundboxHome = ({
           link={IgboSoundboxViews.VERIFY}
           onButtonClick={setCurrentView}
           currentStat={totalVerifiedExampleSuggestions}
-          goalStat={GOAL_STAT}
           tooltipLabel="This stat counts the total number of example sentences you have approved or denied"
         />
       </Box>
