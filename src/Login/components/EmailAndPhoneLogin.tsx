@@ -129,6 +129,7 @@ const EmailAndPhoneLogin = ({
             textDecoration="underline"
             onClick={handleIdentifierTypeSwitch}
             outline="none"
+            tabIndex={-1}
           >
             {SwitchIdentifierMessage[identifierType].useMessage}
           </Button>
