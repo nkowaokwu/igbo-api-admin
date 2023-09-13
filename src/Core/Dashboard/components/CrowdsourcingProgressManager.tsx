@@ -1,12 +1,14 @@
 import React, { ReactElement } from 'react';
 import { first } from 'lodash';
-import { Box, Button, Heading, Image, Show, Text, Link, chakra } from '@chakra-ui/react';
+import moment from 'moment';
+import { Box, Button, Heading, Image, Show, Text, Link, chakra, Divider } from '@chakra-ui/react';
 import { getAuth } from 'firebase/auth';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
+import TranslateIcon from 'src/shared/icons/TranslateIcon';
 
 type CrowdsourcingOption = {
-  icon: string;
+  icon: string | ReactElement;
   title: string;
   subtitle: string;
   hash: string;
@@ -46,11 +48,12 @@ const crowdsourcingOptions: CrowdsourcingOption[] = [
   //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
   // },
   {
-    icon: '➡️',
+    icon: <TranslateIcon boxSize={8} />,
     title: 'Translate Igbo sentences',
     subtitle: 'Translate Igbo sentences to English to improve Igbo translation technology',
     hash: '#/translate',
-    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+    backgroundImage:
+      'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/speech_bubbles.png',
   },
   // {
   //   icon: '📸',
@@ -80,20 +83,44 @@ const CrowdsourcingProgressManager = (): ReactElement => {
           {`Ndeewo, ${first((currentUser?.displayName || '').split(' '))} `}
           <chakra.span fontWeight="normal">Kedụ ụdị enyemaaka ị chọrọ inye anyị?</chakra.span>
         </Text>
-        <Box my={2} className="space-y-2 bg-green-100 rounded p-3" width="fit-content">
-          <Heading as="h2" fontSize="2xl" fontFamily="Silka">
-            Igbo Voice-athon
-          </Heading>
-          <Text fontSize="lg" fontFamily="heading" fontWeight="bold" color="primary" textDecoration="underline">
-            <Link href="https://www.youtube.com/watch?v=8FqpkeYd2Ws" target="_blank">
-              💸 Watch 1-minute video to start the Igbo Voice-athon
-            </Link>
-          </Text>
-          <Text fontSize="lg" fontFamily="heading" fontWeight="bold" color="primary" textDecoration="underline">
-            <Link href="https://forms.gle/QEF6gLBAT1PksYxk7" target="_blank">
+        <Box my={2} className="space-y-2 rounded-md p-3" width="fit-content" backgroundColor="gray.700">
+          <Box className="w-full flex flex-row justify-between items-center">
+            <Heading as="h2" fontSize="xl" fontFamily="Silka" color="white">
+              Igbo Voice-athon
+            </Heading>
+            <Text color="white" fontSize="sm">{`End Date: ${moment('10-24-2023').format('MMM DD, YYYY')}`}</Text>
+          </Box>
+          <Box className="w-full">
+            <Divider color="gray.600" />
+          </Box>
+          <Box className="space-y-4">
+            <Text color="white" fontFamily="heading">
+              Please follow these steps to get started with the competition
+            </Text>
+            <Box className="w-full flex flex-row space-x-4">
+              <Text color="white" fontFamily="heading" fontWeight="bold">
+                Start here
+                <chakra.span ml={2}>
+                  <ArrowForwardIcon color="white" boxSize={4} />
+                </chakra.span>
+              </Text>
+              <Text fontFamily="heading" color="white" textDecoration="underline">
+                <Link href="https://www.youtube.com/watch?v=8FqpkeYd2Ws" target="_blank">
+                  💸 Watch 1-minute video
+                </Link>
+              </Text>
+            </Box>
+            <Button
+              width="full"
+              fontFamily="heading"
+              fontWeight="bold"
+              backgroundColor="primary"
+              color="white"
+              onClick={() => window.open('https://forms.gle/QEF6gLBAT1PksYxk7', '_blank')}
+            >
               📑 Google Form Sign up
-            </Link>
-          </Text>
+            </Button>
+          </Box>
         </Box>
       </Box>
       <Box className="w-full flex flex-col justify-start items-start space-y-4">
@@ -119,7 +146,7 @@ const CrowdsourcingProgressManager = (): ReactElement => {
                   width={{ base: '64px', md: '94px' }}
                   height={{ base: '64px', md: '94px' }}
                 >
-                  <Text fontSize={{ base: '3xl', lg: '5xl' }}>{icon}</Text>
+                  {typeof icon === 'string' ? <Text fontSize={{ base: '3xl', lg: '5xl' }}>{icon}</Text> : icon}
                 </Box>
                 <Text fontWeight="bold" fontFamily="Silka" fontSize={{ base: 'md', md: 'lg' }}>
                   {title}
