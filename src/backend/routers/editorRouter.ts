@@ -2,12 +2,14 @@ import express from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import {
   deleteWordSuggestion,
+  deleteOldWordSuggestions,
   getWordSuggestion,
   getWordSuggestions,
   putWordSuggestion,
   postWordSuggestion,
   approveWordSuggestion,
   denyWordSuggestion,
+  postRandomWordSuggestionsForIgboDefinitions,
 } from 'src/backend/controllers/wordSuggestions';
 import { deleteCorpusSuggestion } from 'src/backend/controllers/corpusSuggestions';
 import {
@@ -85,6 +87,11 @@ editorRouter.post(
   resolveWordDocument,
   postWordSuggestion,
 );
+editorRouter.delete(
+  '/wordSuggestions/igbo-definitions',
+  authorization([UserRoles.ADMIN]),
+  postRandomWordSuggestionsForIgboDefinitions,
+);
 editorRouter.put(
   '/wordSuggestions/:id',
   validId,
@@ -96,6 +103,7 @@ editorRouter.put(
 editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
 editorRouter.put('/wordSuggestions/:id/approve', validId, approveWordSuggestion);
 editorRouter.put('/wordSuggestions/:id/deny', validId, denyWordSuggestion);
+editorRouter.delete('/wordSuggestions/old', authorization([UserRoles.ADMIN]), deleteOldWordSuggestions);
 editorRouter.delete(
   '/wordSuggestions/:id',
   validId,

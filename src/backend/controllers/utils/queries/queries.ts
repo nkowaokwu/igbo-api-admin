@@ -415,7 +415,13 @@ export const searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth = (): {
   updatedAt: { $gte: moment().subtract(1, 'months').startOf('month').valueOf() },
   merged: null,
 });
-
+export const searchWordSuggestionsOlderThanAYear = (): {
+  [key: string]: { $lte: number } | { $ne: SuggestionSourceEnum } | null;
+} => ({
+  createdAt: { $lte: moment().subtract(1, 'year').valueOf() },
+  source: { $ne: SuggestionSourceEnum.COMMUNITY }, // Do not delete Word Suggestions from Nkọwa okwu users
+  merged: null,
+});
 /**
  * Gets example suggestions where the user's audio has been approved
  */

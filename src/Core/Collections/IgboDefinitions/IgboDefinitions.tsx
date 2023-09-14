@@ -2,14 +2,17 @@ import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { compact, noop } from 'lodash';
 import { Box, Heading, Input, Link, Spinner, Text, useToast } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
+import { usePermissions } from 'react-admin';
 import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
 import { IGBO_DEFINITIONS_STANDARDS_DOC } from 'src/Core/constants';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { getWordSuggestionsWithoutIgboDefinitions, putWordSuggestionsWithoutIgboDefinitions } from 'src/shared/API';
+import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import NavbarWrapper from '../components/NavbarWrapper';
 import Completed from '../components/Completed';
+import GenerateMoreWordsButton from './components/GenerateMoreWordsButton';
 
 const IgboDefinitions = (): ReactElement => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -23,6 +26,8 @@ const IgboDefinitions = (): ReactElement => {
   const toast = useToast();
   const currentCard = wordSuggestions[currentCardIndex];
   const showSubmitButton = visitedLastWordSuggestionIndex && igboDefinitions.some((igboDefinition) => !!igboDefinition);
+  const permissions = usePermissions();
+  const isAdmin = hasAdminPermissions(permissions?.permissions, true);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -108,6 +113,7 @@ const IgboDefinitions = (): ReactElement => {
             Igbo Definitions
           </Heading>
         </NavbarWrapper>
+        {isAdmin ? <GenerateMoreWordsButton isDisabled={!!wordSuggestions?.length} /> : null}
         <Text fontFamily="Silka" mt={4} textAlign="center">
           Each Igbo definition must follow our{' '}
           <Link textDecoration="underline" href={IGBO_DEFINITIONS_STANDARDS_DOC} target="_blank">
@@ -141,6 +147,10 @@ const IgboDefinitions = (): ReactElement => {
           {currentCard ? (
             <Text fontFamily="Silka" fontWeight="bold">
               {`${currentCardIndex + 1} / ${wordSuggestions.length}`}
+            </Text>
+          ) : !wordSuggestions?.length && !isLoading ? (
+            <Text my={12} fontSize="lg" color="gray.500" fontStyle="italic" fontFamily="heading">
+              No available words. Please request more.
             </Text>
           ) : null}
           <PrimaryButton

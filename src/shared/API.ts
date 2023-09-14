@@ -183,3 +183,9 @@ export const putWordSuggestionsWithoutIgboDefinitions = async (
       data: igboDefinitions,
     })
   ).data;
+
+export const deleteOldWordSuggestions = async (): Promise<any> =>
+  request({
+    method: 'DELETE',
+    url: `${Collection.WORD_SUGGESTIONS}/old`,
+  });

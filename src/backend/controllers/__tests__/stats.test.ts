@@ -44,6 +44,7 @@ describe('Stats', () => {
     await audioPronunciation.save();
     expect((await onUpdateTotalAudioDashboardStats())[0].totalExampleAudio).toBeGreaterThanOrEqual(1);
     expect((await onUpdateTotalAudioDashboardStats())[1].totalExampleSuggestionAudio).toBeLessThanOrEqual(0);
+    await disconnectDatabase();
   });
 
   it('calculates the total number of hours of example suggestion audio', async () => {

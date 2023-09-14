@@ -11,6 +11,7 @@ enum Collections {
   NOTIFICATIONS = 'notifications',
   NSIBIDI_CHARACTERS = 'nsibidiCharacters',
   DATA_DUMP = 'dataDump',
-};
+  LEADERBOARDS = 'leaderboards',
+}
 
 export default Collections;
