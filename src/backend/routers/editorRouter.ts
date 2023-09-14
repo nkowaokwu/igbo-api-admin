@@ -87,7 +87,7 @@ editorRouter.post(
   resolveWordDocument,
   postWordSuggestion,
 );
-editorRouter.delete(
+editorRouter.post(
   '/wordSuggestions/igbo-definitions',
   authorization([UserRoles.ADMIN]),
   postRandomWordSuggestionsForIgboDefinitions,
