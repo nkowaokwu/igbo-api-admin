@@ -22,9 +22,10 @@ import { CreateButton } from 'src/shared/primitives';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
-import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
+import { hasAdminOrMergerPermissions, hasAdminPermissions } from 'src/shared/utils/permissions';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import DeleteOldWordSuggestionsButton from 'src/shared/components/actions/components/DeleteOldWordSuggestionsButton';
 import Filter from '../Filter';
 
 /**
@@ -59,7 +60,9 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const [currentPartOfSpeechFilter, setCurrentPartOfSpeechFilter] = useState(
     getDefaultPartOfSpeechFilters(filterValues),
   );
-  const { permissions = {} } = usePermissions();
+  const permissions = usePermissions();
+  const isAdminOrMerger = hasAdminOrMergerPermissions(permissions?.permissions, true);
+  const isAdmin = hasAdminPermissions(permissions?.permissions, true);
 
   const selectedFilters = currentFilters.length > 1 || (currentFilters.length === 1 && currentFilters[0] !== 'word');
 
@@ -298,11 +301,10 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             </Box>
           ) : null}
         </Box>
-        {isSuggestionResource ||
-        (isPollResource && hasAdminOrMergerPermissions(permissions, true)) ||
-        resource === Collections.NSIBIDI_CHARACTERS ? (
+        {isSuggestionResource || (isPollResource && isAdminOrMerger) || resource === Collections.NSIBIDI_CHARACTERS ? (
           <CreateButton basePath={basePath} />
         ) : null}
+        {isAdmin && isWordResource && isSuggestionResource ? <DeleteOldWordSuggestionsButton /> : null}
       </Box>
     </TopToolbar>
   );

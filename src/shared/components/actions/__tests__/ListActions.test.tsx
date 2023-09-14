@@ -2,7 +2,9 @@ import React from 'react';
 import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
+import * as reactAdmin from 'react-admin';
 import Collections from 'src/shared/constants/Collections';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import ListActions from '../ListActions';
 
 configure({ testIdAttribute: 'data-test' });
@@ -130,5 +132,51 @@ describe('Render List Actions', () => {
     const isProverb = document.querySelector('[value="proverb"]');
     userEvent.click(isProverb);
     expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="proverb"]'))).toBe(true);
+  });
+
+  it('render the Delete old Word Suggestions button for only admins', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.ADMIN } });
+    const { findByText } = render(
+      <TestContext>
+        <ListActions resource={Collections.WORD_SUGGESTIONS} />
+      </TestContext>,
+    );
+
+    await findByText('Delete old Word Suggestions');
+  });
+
+  it('opens the Delete old Word Suggestions confirmation modal for only admins', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.ADMIN } });
+    const { findByText } = render(
+      <TestContext>
+        <ListActions resource={Collections.WORD_SUGGESTIONS} />
+      </TestContext>,
+    );
+
+    userEvent.click(await findByText('Delete old Word Suggestions'));
+    await findByText('Delete Old Word Suggestions');
+  });
+
+  it('does not render Delete old Word Suggestions button for non-admin', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.MERGER } });
+    const { queryByText } = render(
+      <TestContext>
+        <ListActions resource={Collections.WORD_SUGGESTIONS} />
+      </TestContext>,
+    );
+
+    expect(queryByText('Delete old Word Suggestions')).toBeNull();
+  });
+
+  it('does not render Delete old Word Suggestions button for non Word Suggestions', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.ADMIN } });
+
+    const { queryByText } = render(
+      <TestContext>
+        <ListActions resource={Collections.EXAMPLE_SUGGESTIONS} />
+      </TestContext>,
+    );
+
+    expect(queryByText('Delete old Word Suggestions')).toBeNull();
   });
 });

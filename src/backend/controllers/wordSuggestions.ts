@@ -1,13 +1,17 @@
 import { Connection, Document, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, compact, map, omit } from 'lodash';
+import { wordSchema } from 'src/backend/models/Word';
+import Author from 'src/backend/shared/constants/Author';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import {
   searchForLastWeekQuery,
   searchPreExistingWordSuggestionsRegexQuery,
+  searchWordSuggestionsOlderThanAYear,
   searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth,
+  searchWordsWithoutIgboDefinitions,
 } from './utils/queries';
 import * as Interfaces from './utils/interfaces';
 import {
@@ -34,7 +38,7 @@ export const createWordSuggestion = async ({
 }: {
   data: any;
   word: Interfaces.Word;
-  user: Interfaces.FirebaseUser;
+  user: { uid: string };
   mongooseConnection: Connection;
 }): Promise<Interfaces.WordSuggestion> => {
   let wordSuggestion;
@@ -318,6 +322,25 @@ export const deleteWordSuggestion = async (
   }
 };
 
+/* Deletes Word Suggestions that are older than a year */
+export const deleteOldWordSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ success: boolean; result: any }> | void> => {
+  try {
+    const { mongooseConnection } = req;
+    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+    const query = searchWordSuggestionsOlderThanAYear();
+
+    const result = await WordSuggestion.deleteMany(query);
+
+    return res.send({ success: true, result });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /* Returns all the WordSuggestions from last week */
 export const getWordSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
@@ -441,6 +464,73 @@ export const putRandomWordSuggestions = async (
     );
 
     return res.send(savedWordSuggestionIds);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Creates as many new Word Suggestions */
+export const postRandomWordSuggestionsForIgboDefinitions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ message: boolean }> | void> => {
+  const { mongooseConnection, body: data = {} } = req;
+  const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
+  const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+
+  try {
+    const WORD_LIMIT = data.limit ?? 5;
+    const MAXIMUM_WORDS = 10;
+
+    if (WORD_LIMIT > MAXIMUM_WORDS) {
+      throw new Error('Too many word suggestions attempted to be created. Please reduce the amount.');
+    }
+    const OMIT_WORD_KEYS = ['_id', 'id', 'createdAt', 'updatedAt'];
+    let createdWordSuggestionsCount = 0;
+    const systemUser = {
+      uid: Author.SYSTEM,
+    };
+    const query = searchWordsWithoutIgboDefinitions();
+    // Gets all Words in the database
+    const words = await Word.find(query);
+
+    if (!words || !words?.length) {
+      return res.status(204).send({ message: 'No word suggestion created' });
+    }
+
+    // 🚨 This will be a time consuming function 🚨
+    const wordSuggestionIds = compact(
+      await Promise.all(
+        words.map(async (word) => {
+          if (createdWordSuggestionsCount >= WORD_LIMIT) {
+            return null;
+          }
+          const wordData = omit(assign(word), OMIT_WORD_KEYS) as Interfaces.WordSuggestion;
+          wordData.originalWordId = word.id;
+          // Checks to see if an existing Word Suggestion exists for the Word
+          const existingWordSuggestion = await WordSuggestion.findOne({ originalWordId: word.id });
+
+          // If a Word Suggestion already exists, a new Word Suggestion will not be created from this Word
+          if (existingWordSuggestion?.id) {
+            return null;
+          }
+          // If no Word Suggestion already exists, a new Word Suggestion will be created from this Word
+          const savedWordSuggestion = await createWordSuggestion({
+            data: wordData,
+            word,
+            user: systemUser,
+            mongooseConnection,
+          });
+          createdWordSuggestionsCount += 1;
+          return savedWordSuggestion.id;
+        }),
+      ),
+    );
+
+    return res
+      .status(201)
+      .send({ message: `Created up to ${wordSuggestionIds.length} word suggestions`, ids: wordSuggestionIds });
   } catch (err) {
     return next(err);
   }

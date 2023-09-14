@@ -142,3 +142,6 @@ export const getLeaderboardStats = async ({
       params: { leaderboard, timeRange },
     })
   ).data;
+
+export const postWordSuggestionsForIgboDefinitions = async (data: { limit: number }): Promise<{ message: string }> =>
+  (await request({ method: 'POST', url: `${Collections.WORD_SUGGESTIONS}/igbo-definitions`, data })).data;

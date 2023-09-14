@@ -3,12 +3,14 @@ import * as requestModule from 'src/shared/utils/request';
 import { v4 as uuidv4 } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import Collections from 'src/shared/constants/Collections';
 import {
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
   getRandomExampleSuggestionsToTranslate,
   putRandomExampleSuggestionsToTranslate,
   bulkUploadExampleSuggestions,
+  postWordSuggestionsForIgboDefinitions,
 } from '../DataCollectionAPI';
 
 describe('DataCollectionAPI', () => {
@@ -131,6 +133,17 @@ describe('DataCollectionAPI', () => {
       method: 'POST',
       url: 'exampleSuggestions/upload',
       data: payload.sentences,
+    });
+  });
+
+  it('sends a POST request to suggest new word suggestions with Igbo definitions', async () => {
+    const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
+    const payload = { limit: 7 };
+    await postWordSuggestionsForIgboDefinitions(payload);
+    expect(requestSpy).toHaveBeenCalledWith({
+      method: 'POST',
+      url: `${Collections.WORD_SUGGESTIONS}/igbo-definitions`,
+      data: payload,
     });
   });
 });

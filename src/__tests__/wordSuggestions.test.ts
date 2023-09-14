@@ -17,6 +17,7 @@ import {
   getExample,
   getRandomWordSuggestions,
   putRandomWordSuggestions,
+  deleteOldWordSuggestions,
 } from './shared/commands';
 import {
   wordSuggestionData,
@@ -702,6 +703,14 @@ describe('MongoDB Word Suggestions', () => {
       const result = await deleteWordSuggestion(res.body.id);
       expect(result.status).toEqual(404);
       expect(result.body.error).not.toEqual(undefined);
+    });
+
+    it('should delete all old word suggestions', async () => {
+      const res = await suggestNewWord(wordSuggestionData);
+      expect(res.status).toEqual(200);
+      const result = await deleteOldWordSuggestions();
+      expect(result.status).toEqual(200);
+      console.log(result.body);
     });
   });
 

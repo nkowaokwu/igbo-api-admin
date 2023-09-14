@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import * as reactAdmin from 'react-admin';
-
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Card from '../Card';
 
 describe('Card', () => {
@@ -18,7 +18,7 @@ describe('Card', () => {
   });
 
   it('render card with text with link as admin', async () => {
-    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: 'admin' } });
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.ADMIN } });
 
     const text = 'Testing text';
     const href = 'href';
@@ -33,7 +33,7 @@ describe('Card', () => {
   });
 
   it('render card with text with link as crowdsourcer', async () => {
-    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: 'crowdsourcer' } });
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.CROWDSOURCER } });
 
     const text = 'Testing text';
     const href = 'href';

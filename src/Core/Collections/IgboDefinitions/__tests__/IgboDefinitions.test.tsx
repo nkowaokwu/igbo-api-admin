@@ -2,7 +2,9 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
+import * as reactAdmin from 'react-admin';
 import { putWordSuggestionsWithoutIgboDefinitions } from 'src/shared/API';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import IgboDefinitions from '../IgboDefinitions';
 
 describe('IgboDefinitions', () => {
@@ -100,5 +102,25 @@ describe('IgboDefinitions', () => {
       { id: '456', igboDefinition: 'fourth igbo definition' },
       { id: '567', igboDefinition: 'fifth igbo definition' },
     ]);
+  });
+
+  it('render generate more words button if admin', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.ADMIN } });
+    const { findByText } = render(
+      <TestContext>
+        <IgboDefinitions />
+      </TestContext>,
+    );
+    await findByText('Get more words');
+  });
+
+  it('does not render generate more words button if not admin', async () => {
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ permissions: { role: UserRoles.MERGER } });
+    const { queryByText } = render(
+      <TestContext>
+        <IgboDefinitions />
+      </TestContext>,
+    );
+    expect(queryByText('Get more words')).toBeNull();
   });
 });

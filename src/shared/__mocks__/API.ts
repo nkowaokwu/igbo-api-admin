@@ -121,3 +121,5 @@ export const getWordSuggestionsWithoutIgboDefinitions = jest.fn(async () => [
 ]);
 
 export const putWordSuggestionsWithoutIgboDefinitions = jest.fn();
+
+export const deleteOldWordSuggestions = jest.fn();

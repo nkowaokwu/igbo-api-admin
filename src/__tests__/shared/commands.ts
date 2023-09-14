@@ -49,6 +49,11 @@ export const deleteWordSuggestion = (id: string, options: OptionsType = { token:
     .delete(`/wordSuggestions/${id}`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const deleteOldWordSuggestions = (options: OptionsType = { token: '' }): Request =>
+  chaiServer
+    .delete('/wordSuggestions/old')
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 export const putRandomWordSuggestions = (
   data: { id: string; pronunciation?: string; review?: ReviewActions }[] | { id: string; igboDefinition: string }[],
   options: OptionsType = { token: '' },

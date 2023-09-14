@@ -12,6 +12,7 @@ import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
+// eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 
 configure({ testIdAttribute: 'data-test' });
