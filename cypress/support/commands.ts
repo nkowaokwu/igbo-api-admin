@@ -9,7 +9,7 @@
 // ***********************************************
 
 import '@testing-library/cypress/add-commands';
-import { v4 as uuidv4 } from 'uuid';
+import { ulid } from 'ulid'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/database';
@@ -332,7 +332,7 @@ Cypress.Commands.add('searchForDocument', (keyword: string) => {
 
 /* Makes a network request to make a new wordSuggestion */
 Cypress.Commands.add('createWordSuggestion', (data: any = {}) => {
-  const word = uuidv4();
+  const word = ulid();
   cy.request({
     method: 'POST',
     url: `${API_ROUTE}/wordSuggestions`,
@@ -356,7 +356,7 @@ Cypress.Commands.add('createExampleSuggestion', () => {
     auth: {
       bearer: localStorage.getItem('igbo-api-admin-access'),
     },
-    body: { ...exampleSuggestionData, igbo: uuidv4(), english: uuidv4() },
+    body: { ...exampleSuggestionData, igbo: ulid(), english: ulid() },
   }).its('status').should('eq', 200);
 });
 

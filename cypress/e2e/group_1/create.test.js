@@ -1,6 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
+import { ulid } from 'ulid';
 import Dialects from '../../../src/backend/shared/constants/Dialects';
-import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
+import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions, DialectOptions } from '../../constants';
+
 
 const errorMessage = 'An error occurred while saving';
 describe('Create', () => {
@@ -64,7 +65,7 @@ describe('Create', () => {
     });
 
     it('create a new wordSuggestion and merge with dialect', () => {
-      const word = uuidv4();
+      const word = ulid();
       const definition = 'first definition';
       cy.intercept('POST', '**/words').as('mergeWord');
       cy.selectCollection('wordSuggestions');
@@ -83,7 +84,7 @@ describe('Create', () => {
     });
 
     it('create a new word suggestion with nested exampleSuggestions', () => {
-      const word = uuidv4();
+      const word = ulid();
       const definition = 'first definition';
       const firstIgboSentence = 'first igbo sentence';
       const secondIgboSentence = 'second igbo sentence';
@@ -165,7 +166,7 @@ describe('Create', () => {
     });
 
     it('link to the nested example', () => {
-      const word = uuidv4();
+      const word = ulid();
       const igbo = 'igbo example';
       const english = 'english example';
       cy.selectCollection('wordSuggestions');

@@ -1,5 +1,5 @@
 import { times } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import { ulid } from 'ulid'
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import * as userMethods from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
@@ -137,6 +137,7 @@ describe('MongoDB Leaderboards', () => {
 
     it('return accurate user stats after reviewing audio for a sentence', async () => {
       const examples = [];
+
       await Promise.all(
         times(5, async () => {
           const exampleRes = await suggestNewExample(

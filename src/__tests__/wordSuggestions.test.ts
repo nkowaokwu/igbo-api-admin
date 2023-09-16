@@ -1,5 +1,6 @@
 import { forEach, forIn, isEqual, pick, times } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import { ulid } from 'ulid'
+import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
@@ -737,7 +738,7 @@ describe('MongoDB Word Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const wordRes = await suggestNewWord(
-            { ...wordSuggestionData, word: uuid() },
+            { ...wordSuggestionData, word: ulid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
           expect(wordRes.body.approvals).toHaveLength(0);
@@ -756,6 +757,7 @@ describe('MongoDB Word Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const wordRes = await suggestNewWord(
+
             { ...wordSuggestionWithoutIgboDefinitionsData, word: uuid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );

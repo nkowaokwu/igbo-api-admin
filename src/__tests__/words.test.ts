@@ -5,7 +5,7 @@ import {
   some,
   pick,
 } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import { ulid } from 'ulid'
 import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import {
@@ -117,7 +117,7 @@ describe('MongoDB Words', () => {
     });
 
     it('should return newly created word by searching with keyword', async () => {
-      const customWord = uuid();
+      const customWord = ulid();
       const res = await suggestNewWord({ ...wordSuggestionData, word: customWord });
       const mergingWordSuggestion = { ...wordSuggestionData, ...res.body };
       const result = await createWord(mergingWordSuggestion.id);

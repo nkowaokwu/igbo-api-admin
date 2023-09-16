@@ -1,5 +1,5 @@
 import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import { ulid } from 'ulid'
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
@@ -79,7 +79,7 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should bulk upload at most 500 example suggestions', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = uuid();
+        const igbo = ulid();
         const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleSuggestionData;
       });
@@ -95,6 +95,7 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should bulk upload at most 500 example suggestions with biblical type', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
+
         const igbo = uuid();
         const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceTypeEnum.BIBLICAL };
         return exampleSuggestionData;
@@ -106,6 +107,7 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should bulk upload at most 500 example suggestions with proverb style', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
+
         const igbo = uuid();
         const exampleSuggestionData = {
           ...bulkUploadExampleSuggestionData,
@@ -121,8 +123,8 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should bulk upload at most 500 example suggestions with english', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = uuid();
-        const english = uuid();
+        const igbo = ulid();
+        const english = ulid();
         const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo, english };
         return exampleSuggestionData;
       });
@@ -133,7 +135,7 @@ describe('MongoDB Example Suggestions', () => {
 
     it('should throw an error due to too many example suggestions for bulk upload', async () => {
       const payload = times(600, () => {
-        const igbo = uuid();
+        const igbo = ulid();
         const exampleSuggestionData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleSuggestionData;
       });
@@ -156,7 +158,7 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should throw an error with already existing data', async () => {
-      const igbo = uuid();
+      const igbo = ulid();
       const firstPayload = [{ ...bulkUploadExampleSuggestionData, igbo }];
       await postBulkUploadExampleSuggestions(firstPayload);
 
@@ -170,7 +172,7 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should throw an error bulk uploading example suggestions with insufficient permissions', async () => {
-      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: uuid() }];
+      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: ulid() }];
       const res = await postBulkUploadExampleSuggestions(payload, { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN });
       expect(res.status).toEqual(403);
     });
@@ -182,7 +184,7 @@ describe('MongoDB Example Suggestions', () => {
       const wordsRes = await getWords();
       expect(wordsRes.status).toEqual(200);
       const word = wordsRes.body[0];
-      const res = await suggestNewExample({ ...exampleSuggestionData, igbo: uuid(), associatedWords: [word.id] });
+      const res = await suggestNewExample({ ...exampleSuggestionData, igbo: ulid(), associatedWords: [word.id] });
       expect(res.status).toEqual(200);
       expect([undefined, null, '']).not.toContain(res.body.authorId);
       const result = await updateExampleSuggestion({ ...res.body, igbo: updatedIgboText });
@@ -541,7 +543,7 @@ describe('MongoDB Example Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const exampleRes = await suggestNewExample(
-            { ...exampleSuggestionData, igbo: uuid() },
+            { ...exampleSuggestionData, igbo: ulid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
           expect(exampleRes.body.approvals).toHaveLength(0);
@@ -586,7 +588,7 @@ describe('MongoDB Example Suggestions', () => {
       await Promise.all(
         times(5, async () => {
           const exampleRes = await suggestNewExample(
-            { ...exampleSuggestionData, igbo: uuid() },
+            { ...exampleSuggestionData, igbo: ulid() },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
           expect(exampleRes.body.approvals).toHaveLength(0);
@@ -619,7 +621,7 @@ describe('MongoDB Example Suggestions', () => {
                 { audio: 'audio-id', speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
                 { audio: 'audio-id', speaker: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
               ],
-              igbo: uuid(),
+              igbo: ulid(),
             },
             { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
           );

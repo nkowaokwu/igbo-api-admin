@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
+import { ulid } from 'ulid';
 import { compact, last } from 'lodash';
 import {
   copyAudioPronunciation,
@@ -18,7 +18,7 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
 
         await Promise.all(
           this.pronunciations.map(async (pronunciation: { audio: string; speaker: string }, index) => {
-            const newId = `${id}-${uuidv4()}`;
+            const newId = `${id}-${ulid()}`;
             if (
               // Going to mock creating and saving audio pronunciation while testing in Cypress
               (isCypress && this.pronunciations[index].audio) ||

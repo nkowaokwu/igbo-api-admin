@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { ulid } from 'ulid';
 import { every } from 'lodash';
 import { DocumentSelectOptions, SuggestionSelectOptions, WordClassOptions } from '../../constants';
 
@@ -180,7 +180,7 @@ describe('Edit', () => {
     });
 
     it('render the same amount of nested examples', () => {
-      const word = uuidv4();
+      const word = ulid();
       const definition = 'first definition';
       const firstIgboSentence = 'first igbo sentence';
       const firstEnglishSentence = 'first english sentence';
@@ -272,7 +272,7 @@ describe('Edit', () => {
     });
 
     it('return the same nested example suggestions for editing an existing word', () => {
-      const word = uuidv4();
+      const word = ulid();
       const definition = 'first definition';
       const firstIgboSentence = 'first igbo sentence';
       const firstEnglishSentence = 'first english sentence';

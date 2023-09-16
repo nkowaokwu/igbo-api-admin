@@ -1,6 +1,12 @@
-import { isEqual, forIn, some, times } from 'lodash';
-import { v4 as uuid } from 'uuid';
-import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import {
+  isEqual,
+  forIn,
+  some,
+  times,
+} from 'lodash';
+import { ulid } from 'ulid'
+
+import SentenceType from 'src/backend/shared/constants/SentenceType';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
@@ -110,7 +116,7 @@ describe('MongoDB Examples', () => {
 
     it('should bulk upload at most 500 examples', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = uuid();
+        const igbo = ulid();
         const exampleData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleData;
       });
@@ -126,6 +132,7 @@ describe('MongoDB Examples', () => {
 
     it('should bulk upload at most 500 examples with biblical type', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
+
         const igbo = uuid();
         const exampleData = { ...bulkUploadExampleSuggestionData, igbo, type: SentenceTypeEnum.BIBLICAL };
         return exampleData;
@@ -137,6 +144,7 @@ describe('MongoDB Examples', () => {
 
     it('should bulk upload at most 500 examples with proverb style', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
+
         const igbo = uuid();
         const exampleData = {
           ...bulkUploadExampleSuggestionData,
@@ -152,8 +160,8 @@ describe('MongoDB Examples', () => {
 
     it('should bulk upload at most 500 examples with english', async () => {
       const payload = times(BULK_UPLOAD_LIMIT, () => {
-        const igbo = uuid();
-        const english = uuid();
+        const igbo = ulid();
+        const english = ulid();
         const exampleData = { ...bulkUploadExampleSuggestionData, igbo, english };
         return exampleData;
       });
@@ -164,7 +172,7 @@ describe('MongoDB Examples', () => {
 
     it('should throw an error due to too many examples for bulk upload', async () => {
       const payload = times(600, () => {
-        const igbo = uuid();
+        const igbo = ulid();
         const exampleData = { ...bulkUploadExampleSuggestionData, igbo };
         return exampleData;
       });
@@ -187,7 +195,7 @@ describe('MongoDB Examples', () => {
     });
 
     it('should throw an error bulk uploading examples with already existing data', async () => {
-      const igbo = uuid();
+      const igbo = ulid();
       const firstPayload = [{ ...bulkUploadExampleSuggestionData, igbo }];
       await postBulkUploadExamples(firstPayload);
 
@@ -201,7 +209,7 @@ describe('MongoDB Examples', () => {
     });
 
     it('should throw an error with insufficient permissions', async () => {
-      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: uuid() }];
+      const payload = [{ ...bulkUploadExampleSuggestionData, igbo: ulid() }];
       const res = await postBulkUploadExamples(payload, { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN });
       expect(res.status).toEqual(403);
     });
