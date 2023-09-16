@@ -55,13 +55,13 @@ const crowdsourcingOptions: CrowdsourcingOption[] = [
     backgroundImage:
       'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/speech_bubbles.png',
   },
-  // {
-  //   icon: '📸',
-  //   title: 'Upload images of Igbo text',
-  //   subtitle: 'Upload images that contain Igbo text to be later annotated',
-  //   hash: '#/igboDefinitions',
-  //   backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
-  // },
+  {
+    icon: '📸',
+    title: 'Upload images of Igbo text',
+    subtitle: 'Upload images that contain Igbo text to be later annotated',
+    hash: '#/igboTextImages',
+    backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/verify.png',
+  },
 ];
 
 const handleNavigation = ({ hash, state }: { hash: string; state?: IgboSoundboxViews }) => {

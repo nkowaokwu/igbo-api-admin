@@ -4,13 +4,14 @@ import { Box, Heading, Text, Tooltip, useToast, chakra } from '@chakra-ui/react'
 import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
-import { Card, PrimaryButton, Spinner } from 'src/shared/primitives';
+import { Card, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
+import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
@@ -164,18 +165,13 @@ const RecordSentenceAudio = ({
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
         <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>
-          <Box>
-            <PrimaryButton
-              onClick={isCompleteEnabled ? handleComplete : noop}
-              rightIcon={(() => (
-                <>💾</>
-              ))()}
-              aria-label="Complete recordings"
-              isDisabled={!isCompleteEnabled}
-            >
-              Submit Batch
-            </PrimaryButton>
-          </Box>
+          <SubmitBatchButton
+            isLoading={isLoading}
+            isClickEnabled={isCompleteEnabled}
+            onClick={handleComplete}
+            isDisabled={!isCompleteEnabled}
+            aria-label="Complete recordings"
+          />
         </Tooltip>
         <RecorderBase
           path="pronunciation"

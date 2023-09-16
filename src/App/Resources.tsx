@@ -43,6 +43,7 @@ const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'))
 const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
+const IgboTextImages = React.lazy(() => import('src/Core/Collections/IgboTextImages'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
 const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
@@ -154,6 +155,13 @@ const adminRoutes = (permissions) =>
       options: { label: 'Data Dump' },
       list: withLastRoute(DataDump),
       icon: () => <>🏋🏾‍♂️</>,
+    },
+    {
+      name: 'igboTextImages',
+      key: 'igboTextImages',
+      options: { label: 'Igbo Text Images' },
+      list: withLastRoute(IgboTextImages),
+      icon: () => <>📸</>,
     },
   ]) || [];
 

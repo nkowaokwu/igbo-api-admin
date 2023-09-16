@@ -180,6 +180,7 @@ const CorpusEditForm = ({
           title={watchedTitle}
           onFileSelect={handleFileSelect}
           name="media"
+          type="media"
           register={register}
           errors={errors}
         />

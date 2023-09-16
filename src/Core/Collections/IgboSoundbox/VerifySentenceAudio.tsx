@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { compact, cloneDeep, noop } from 'lodash';
-import { Box, Button, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { Box, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import pluralize from 'pluralize';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
@@ -17,6 +17,7 @@ import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collections';
 import Views from 'src/shared/constants/Views';
+import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
@@ -196,21 +197,13 @@ const VerifySentenceAudio = ({
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
         <Tooltip label="Review all sentences before completing.">
           <Box>
-            <Button
-              colorScheme="green"
-              onClick={isCompleteEnabled ? handleComplete : noop}
-              rightIcon={(() => (
-                <>💾</>
-              ))()}
-              aria-label="Complete recordings"
+            <SubmitBatchButton
+              isLoading={isLoading}
+              isClickEnabled={isCompleteEnabled}
+              onClick={handleComplete}
               isDisabled={!isCompleteEnabled}
-              borderRadius="full"
-              fontFamily="Silka"
-              fontWeight="bold"
-              p={6}
-            >
-              Submit Batch
-            </Button>
+              aria-label="Complete recordings"
+            />
           </Box>
         </Tooltip>
         <ResourceNavigationController

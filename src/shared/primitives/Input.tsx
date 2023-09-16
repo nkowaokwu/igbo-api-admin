@@ -23,23 +23,21 @@ const Input = React.forwardRef(
       collection,
       hideDiacritics,
       ...rest
-    }:
-      | {
-          value?: string;
-          onChange: (value: any) => void;
-          width?: string;
-          className?: string;
-          placeholder?: string;
-          type?: string;
-          onBlur?: () => void;
-          defaultValue?: string;
-          onSelect?: (e: any) => void;
-          searchApi?: boolean;
-          collection?: Collections;
-          isDisabled?: boolean;
-          hideDiacritics?: boolean;
-        }
-      | InputProps,
+    }: {
+      value?: string;
+      onChange: (value: any) => void;
+      width?: string;
+      className?: string;
+      placeholder?: string;
+      type?: string;
+      onBlur?: () => void;
+      defaultValue?: string;
+      onSelect?: (e: any) => void;
+      searchApi?: boolean;
+      collection?: Collections;
+      isDisabled?: boolean;
+      hideDiacritics?: boolean;
+    } & InputProps,
     ref,
   ): ReactElement => {
     const [isVisible, _setIsVisible] = useState(false);
