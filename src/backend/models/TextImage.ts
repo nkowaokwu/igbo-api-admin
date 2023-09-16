@@ -8,7 +8,8 @@ export const textImageSchema = new Schema(
     objectId: { type: String, required: true, index: true },
     size: { type: Number, required: true },
     prevSize: { type: Number, default: -1 },
-    transcription: { type: String, default: '', index: true },
+    igbo: { type: String, default: '', index: true },
+    english: { type: String, default: '', index: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

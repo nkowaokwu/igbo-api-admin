@@ -186,16 +186,16 @@ export default extendTheme({
     Input: {
       baseStyle: {
         field: {
-          backgroundColor: 'gray.200',
+          backgroundColor: 'white',
           transition: 'all .2s ease',
-          borderColor: 'transparent',
+          borderColor: 'gray.400',
           borderWidth: '1px',
           ':focus': {
-            borderColor: 'transparent',
+            borderColor: 'gray.400',
             borderWidth: '1px',
           },
           ':active': {
-            borderColor: 'transparent',
+            borderColor: 'gray.400',
             borderWidth: '1px',
           },
           ':hover': {
@@ -219,16 +219,16 @@ export default extendTheme({
     },
     Textarea: {
       baseStyle: {
-        backgroundColor: 'gray.200',
+        backgroundColor: 'white',
         transition: 'all .2s ease',
-        borderColor: 'transparent',
+        borderColor: 'gray.400',
         borderWidth: '1px',
         ':focus': {
-          borderColor: 'transparent',
+          borderColor: 'gray.400',
           borderWidth: '1px',
         },
         ':active': {
-          borderColor: 'transparent',
+          borderColor: 'gray.400',
           borderWidth: '1px',
         },
         ':hover': {

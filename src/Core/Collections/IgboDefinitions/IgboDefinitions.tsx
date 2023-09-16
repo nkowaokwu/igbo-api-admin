@@ -3,13 +3,14 @@ import { compact, noop } from 'lodash';
 import { Box, Heading, Input, Link, Spinner, Text, useToast } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import { usePermissions } from 'react-admin';
-import { ActivityButton, Card, PrimaryButton } from 'src/shared/primitives';
+import { ActivityButton, Card } from 'src/shared/primitives';
 import { IGBO_DEFINITIONS_STANDARDS_DOC } from 'src/Core/constants';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { getWordSuggestionsWithoutIgboDefinitions, putWordSuggestionsWithoutIgboDefinitions } from 'src/shared/API';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
+import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import NavbarWrapper from '../components/NavbarWrapper';
 import Completed from '../components/Completed';
 import GenerateMoreWordsButton from './components/GenerateMoreWordsButton';
@@ -153,17 +154,12 @@ const IgboDefinitions = (): ReactElement => {
               No available words. Please request more.
             </Text>
           ) : null}
-          <PrimaryButton
-            onClick={isLoading ? noop : handleSubmit}
-            rightIcon={(() => (
-              <>💾</>
-            ))()}
-            aria-label="Complete Igbo definitions"
-            isDisabled={!showSubmitButton}
+          <SubmitBatchButton
             isLoading={isLoading}
-          >
-            Submit Batch
-          </PrimaryButton>
+            onClick={handleSubmit}
+            isDisabled={!showSubmitButton}
+            aria-label="Complete Igbo definitions"
+          />
         </Box>
         <Box className="flex flex-row w-full">
           <ActivityButton

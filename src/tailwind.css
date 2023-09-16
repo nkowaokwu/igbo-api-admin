@@ -364,6 +364,12 @@ input#igbo {
   z-index: 0 !important;
 }
 
+.file-picker.drag-active {
+  @apply bg-blue-100;
+  @apply border-blue-500;
+  @apply border-solid;
+}
+
 @media (min-width: 1024px) {
   html {
     width: 100vw;
