@@ -7,7 +7,7 @@ import urlencode from 'urlencode';
 import moment from 'moment';
 import axios from 'axios';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import {
   TWITTER_CLIENT_ID,
   TWITTER_CLIENT_SECRET,
@@ -23,12 +23,12 @@ import ConstructedPollThread from '../shared/constants/ConstructedPollThread';
 import { handleQueries } from './utils';
 
 type TweetPoll = {
-  created_at: string,
-  slack_message_ts?: string,
-  id: string,
-  igboWord: string,
-  text: string,
-  thread: string[],
+  created_at: string;
+  slack_message_ts?: string;
+  id: string;
+  igboWord: string;
+  text: string;
+  thread: string[];
 };
 
 const db = admin.firestore();
@@ -51,10 +51,9 @@ const getTwitterClient = async () => {
 
 /* Initiates the auto process to post tweets on behalf of @nkowaokwu */
 export const onTwitterAuth = async (_: Request, res: Response): Promise<void> => {
-  const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
-    callbackUrl,
-    { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] },
-  );
+  const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(callbackUrl, {
+    scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+  });
 
   await dbRef.set({ codeVerifier, state });
 
@@ -72,14 +71,11 @@ export const onTwitterCallback = async (
   const { codeVerifier, state: storedState } = dbSnapshot.data();
 
   if (state !== storedState) {
-    return res.status(400).send('Stored token didn\'t match!');
+    return res.status(400).send("Stored token didn't match!");
   }
 
-  const {
-    accessToken,
-    refreshToken,
-  } = await twitterClient.loginWithOAuth2({
-    code: (code as string),
+  const { accessToken, refreshToken } = await twitterClient.loginWithOAuth2({
+    code: code as string,
     codeVerifier,
     redirectUri: callbackUrl,
   });
@@ -90,38 +86,31 @@ export const onTwitterCallback = async (
 };
 
 /* Deletes the specified poll */
-export const onDeleteConstructedTermPoll = functions.https.onCall(
-  async (
-    { pollId } :
-    { pollId: string },
-  ) => {
-    const { refreshedClient } = await getTwitterClient();
-    const dbPollsRef = db.collection(Collections.POLLS);
-    const doc = (await dbPollsRef.doc(pollId).get()).data() as TweetPoll;
+export const onDeleteConstructedTermPoll = functions.https.onCall(async ({ pollId }: { pollId: string }) => {
+  const { refreshedClient } = await getTwitterClient();
+  const dbPollsRef = db.collection(Collections.POLLS);
+  const doc = (await dbPollsRef.doc(pollId).get()).data() as TweetPoll;
 
-    // Deletes all Tweets
-    refreshedClient.v2.deleteTweet(doc.id);
-    await Promise.all(doc.thread.map((tweetId) => (
-      refreshedClient.v2.deleteTweet(tweetId)
-    )));
+  // Deletes all Tweets
+  refreshedClient.v2.deleteTweet(doc.id);
+  await Promise.all(doc.thread.map((tweetId) => refreshedClient.v2.deleteTweet(tweetId)));
 
-    // Deletes Slack message
-    if (doc.slack_message_ts) {
-      axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
-        type: 'igbo_api_editor_platform',
-        event: {
-          type: 'delete_poll',
-          ts: doc.slack_message_ts,
-        },
-        url: TWITTER_APP_URL,
-      });
-    }
+  // Deletes Slack message
+  if (doc.slack_message_ts) {
+    axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+      type: 'igbo_api_editor_platform',
+      event: {
+        type: 'delete_poll',
+        ts: doc.slack_message_ts,
+      },
+      url: TWITTER_APP_URL,
+    });
+  }
 
-    // Delete the Firestore document
-    await dbPollsRef.doc(pollId).delete();
-    return `Deleted poll with id ${pollId}`;
-  },
-);
+  // Delete the Firestore document
+  await dbPollsRef.doc(pollId).delete();
+  return `Deleted poll with id ${pollId}`;
+});
 
 /* Posts a new constructed term poll to the @nkowaokwu Twitter account */
 export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest, res: Response): Promise<any> => {
@@ -220,25 +209,18 @@ export const getPolls = async (req: Interfaces.EditorRequest, res: Response, nex
     const { refreshToken } = (await dbRef.get()).data() || {};
     if (!refreshToken) {
       res.setHeader('Content-Range', 0);
-      res
-        .status(200)
-        .send([]);
+      res.status(200).send([]);
     }
     const dbPollsRef = db.collection('polls');
     const dbPollsWindowRef = db.collection('polls').orderBy('created_at', 'desc');
-    const {
-      accessToken,
-      refreshToken: newRefreshToken,
-    } = await twitterClient.refreshOAuth2Token(refreshToken);
+    const { accessToken, refreshToken: newRefreshToken } = await twitterClient.refreshOAuth2Token(refreshToken);
 
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
 
     const polls = (await dbPollsWindowRef.get()).docs.map((doc) => doc.data()).slice(skip, skip + limit - 1);
     const totalPolls = (await dbPollsRef.get()).docs;
     res.setHeader('Content-Range', totalPolls.length);
-    return res
-      .status(200)
-      .send(polls);
+    return res.status(200).send(polls);
   } catch (err) {
     console.log(err);
     return next(err);

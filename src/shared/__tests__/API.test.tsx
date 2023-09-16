@@ -1,6 +1,6 @@
 import { deleteOldWordSuggestions } from 'src/shared/API';
 import * as requestModule from 'src/shared/utils/request';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 
 describe('API', () => {
   it('sends a DELETE request to delete all old word suggestions', async () => {

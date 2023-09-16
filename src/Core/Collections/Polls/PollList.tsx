@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { ListProps, List, Datagrid, TextField, usePermissions } from 'react-admin';
 import { Select, Pagination, ListActions } from 'src/shared/components';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import Empty from '../../Empty';
 
 const PollList = (props: ListProps): ReactElement => {

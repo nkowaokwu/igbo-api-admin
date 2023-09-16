@@ -5,7 +5,7 @@ import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import { getExample } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
 import ResolvedWord from 'src/shared/components/ResolvedWord';

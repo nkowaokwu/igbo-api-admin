@@ -10,7 +10,7 @@ import {
   Select,
   WordPanel,
 } from 'src/shared/components';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import Empty from '../../Empty';
 
 export const WordList = (props: ListProps): ReactElement => {

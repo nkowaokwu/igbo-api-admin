@@ -16,7 +16,7 @@ import { compact } from 'lodash';
 import { ChevronDownIcon, DeleteIcon } from '@chakra-ui/icons';
 import { sanitizeListRestProps, TopToolbar, useListContext, usePermissions } from 'react-admin';
 import queryString from 'query-string';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';

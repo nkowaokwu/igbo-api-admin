@@ -11,7 +11,7 @@ import {
   Pagination,
   SourceField,
 } from 'src/shared/components';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 

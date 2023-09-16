@@ -1,7 +1,7 @@
 import { Document, LeanDocument, Connection, Types } from 'mongoose';
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';

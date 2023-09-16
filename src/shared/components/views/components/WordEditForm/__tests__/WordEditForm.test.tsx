@@ -3,7 +3,7 @@ import { cloneDeep, last } from 'lodash';
 import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import Tense from 'src/backend/shared/constants/Tense';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';

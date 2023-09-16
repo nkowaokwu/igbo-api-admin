@@ -1,6 +1,6 @@
 import { getAuth, updateProfile } from 'firebase/auth';
 import { FormattedUser } from 'src/backend/controllers/utils/interfaces';
-import Collection from './constants/Collections';
+import Collection from './constants/Collection';
 import { request } from './utils/request';
 
 export const getUserProfile = async (userId: string): Promise<FormattedUser> => {

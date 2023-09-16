@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import CorpusEditForm from '../CorpusEditForm';
 
@@ -24,7 +24,7 @@ describe('Corpus Edit', () => {
       </TestContext>,
     );
     await findByText('Title');
-    await findByText('Editor\'s Comments');
+    await findByText("Editor's Comments");
   });
 
   it('enter values in corpus edit form', async () => {

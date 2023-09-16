@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { last } from 'lodash';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import ExampleEditForm from '../ExampleEditForm';
 

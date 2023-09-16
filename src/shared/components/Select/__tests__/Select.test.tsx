@@ -3,12 +3,12 @@ import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Select from '../Select';
 
 configure({ testIdAttribute: 'data-test' });
 
-describe('Editor\'s Actions', () => {
+describe("Editor's Actions", () => {
   describe('Render Dropdown Menu', () => {
     beforeEach(() => {
       document.getElementsByTagName('html')[0].innerHTML = '';
@@ -39,10 +39,7 @@ describe('Editor\'s Actions', () => {
     it('show all select options for words as admin', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.ADMIN }}
-            resource={Collections.WORDS}
-          />
+          <Select permissions={{ role: UserRoles.ADMIN }} resource={Collections.WORDS} />
         </TestContext>,
       );
 
@@ -75,10 +72,7 @@ describe('Editor\'s Actions', () => {
     it('show all select options for word suggestions as merger', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.MERGER }}
-            resource={Collections.WORD_SUGGESTIONS}
-          />
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
@@ -111,10 +105,7 @@ describe('Editor\'s Actions', () => {
     it('show all select options for corpora as admin', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.ADMIN }}
-            resource={Collections.CORPORA}
-          />
+          <Select permissions={{ role: UserRoles.ADMIN }} resource={Collections.CORPORA} />
         </TestContext>,
       );
 
@@ -146,10 +137,7 @@ describe('Editor\'s Actions', () => {
     it('show all select options for corpus suggestions as merger', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.MERGER }}
-            resource={Collections.CORPUS_SUGGESTIONS}
-          />
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.CORPUS_SUGGESTIONS} />
         </TestContext>,
       );
 
@@ -199,10 +187,7 @@ describe('Editor\'s Actions', () => {
     it('show all select options for example suggestions as merger', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.MERGER }}
-            resource={Collections.WORD_SUGGESTIONS}
-          />
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
@@ -222,10 +207,7 @@ describe('Editor\'s Actions', () => {
     it('disable merge when not enough approvals are present as merger', async () => {
       const { findByTestId, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.MERGER }}
-            resource={Collections.WORD_SUGGESTIONS}
-          />
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
@@ -244,10 +226,7 @@ describe('Editor\'s Actions', () => {
     it('hide delete option for nsibidi characters', async () => {
       const { queryByText, findByText } = render(
         <TestContext>
-          <Select
-            permissions={{ role: UserRoles.MERGER }}
-            resource={Collections.NSIBIDI_CHARACTERS}
-          />
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.NSIBIDI_CHARACTERS} />
         </TestContext>,
       );
       await findByText('View');

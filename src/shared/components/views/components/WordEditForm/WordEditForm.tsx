@@ -14,7 +14,7 @@ import isVerb from 'src/backend/shared/utils/isVerb';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import ActionTypes from 'src/shared/constants/ActionTypes';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';

@@ -4,7 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Avatar, Box, Button, Menu, MenuButton, MenuList, MenuItem, Text, useToast } from '@chakra-ui/react';
 import moment from 'moment';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import openNotification from './utils/openNotification';
 
@@ -23,7 +23,7 @@ const Notifications = (props): ReactElement => {
     const { uid } = auth.currentUser;
     const q = query(
       collection(db, `${Collections.USERS}/${uid}/${Collections.NOTIFICATIONS}`),
-      where('recipient', '==', uid)
+      where('recipient', '==', uid),
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allNotifications = [];

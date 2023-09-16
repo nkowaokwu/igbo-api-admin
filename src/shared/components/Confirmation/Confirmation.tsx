@@ -6,7 +6,7 @@ import { Link, useToast } from '@chakra-ui/react';
 import { useRefresh } from 'react-admin';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ActionTypes from 'src/shared/constants/ActionTypes';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import ConfirmModal from '../ConfirmModal';
 import { ConfirmationButtonInterface } from './ConfirmationInterface';

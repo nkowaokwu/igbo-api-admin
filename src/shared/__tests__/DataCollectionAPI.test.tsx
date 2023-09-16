@@ -3,7 +3,7 @@ import * as requestModule from 'src/shared/utils/request';
 import { v4 as uuidv4 } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import {
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,

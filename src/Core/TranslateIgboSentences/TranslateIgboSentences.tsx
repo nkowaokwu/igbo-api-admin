@@ -8,7 +8,7 @@ import {
 import { Card, Input, Spinner } from 'src/shared/primitives';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { API_ROUTE } from 'src/shared/constants';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import Completed from 'src/Core/Collections/components/Completed';

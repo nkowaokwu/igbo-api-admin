@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, Responsive, ListProps } from 'react-admin';
 import { ArrayPreview, BulkSuggestionActions, Select, ListActions, Pagination } from 'src/shared/components';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 

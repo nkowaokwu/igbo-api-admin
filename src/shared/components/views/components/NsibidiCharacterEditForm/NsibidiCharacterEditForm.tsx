@@ -11,9 +11,10 @@ import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { Input } from 'src/shared/primitives';
 import WordClass from 'src/backend/shared/constants/WordClass';
+// eslint-disable-next-line max-len
 import RadicalsForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/RadicalsForm/RadicalsForm';
 import NsibidiInput from 'src/shared/components/views/components/WordEditForm/components/NsibidiForm/NsibidiInput';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';

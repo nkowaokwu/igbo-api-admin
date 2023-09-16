@@ -4,7 +4,7 @@ import { Box, Spinner } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ArchiveButton from 'src/shared/components/buttons/ArchiveButton';
 import AudioRecorder from '../../../../AudioRecorder';

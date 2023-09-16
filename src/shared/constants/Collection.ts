@@ -1,5 +1,5 @@
 /* Main list of all collections available in the platform */
-enum Collections {
+enum Collection {
   WORDS = 'words',
   EXAMPLES = 'examples',
   CORPORA = 'corpora',
@@ -12,6 +12,7 @@ enum Collections {
   NSIBIDI_CHARACTERS = 'nsibidiCharacters',
   DATA_DUMP = 'dataDump',
   LEADERBOARDS = 'leaderboards',
+  TEXT_IMAGE = 'textImages',
 }
 
-export default Collections;
+export default Collection;

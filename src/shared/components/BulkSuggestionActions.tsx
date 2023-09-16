@@ -1,20 +1,15 @@
 import React, { useState, ReactElement } from 'react';
 import { useRefresh, useListContext } from 'react-admin';
-import {
-  Box,
-  Button,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, Text, useToast } from '@chakra-ui/react';
 import ConfirmModal from './ConfirmModal';
 import actionsMap from '../constants/actionsMap';
-import Collection from '../constants/Collections';
+import Collection from '../constants/Collection';
 
 const BulkSuggestionActions = ({
   resource,
   selectedIds,
 }: {
-  resource?: Collection,
+  resource?: Collection;
   selectedIds?: string[];
 }): ReactElement => {
   const refresh = useRefresh();
@@ -42,33 +37,33 @@ const BulkSuggestionActions = ({
                 setIsConfirming(true);
                 if (resource === Collection.WORD_SUGGESTIONS) {
                   await Promise.all(
-                    selectedIds.map((selectedId) => (
+                    selectedIds.map((selectedId) =>
                       actionsMap.Merge.executeAction({
                         collection: Collection.WORDS,
                         resource,
                         record: { id: selectedId },
-                      })
-                    )),
+                      }),
+                    ),
                   );
                 } else if (resource === Collection.EXAMPLE_SUGGESTIONS) {
                   await Promise.all(
-                    selectedIds.map((selectedId) => (
+                    selectedIds.map((selectedId) =>
                       actionsMap.Merge.executeAction({
                         collection: Collection.EXAMPLES,
                         resource,
                         record: { id: selectedId },
-                      })
-                    )),
+                      }),
+                    ),
                   );
                 } else if (resource === Collection.CORPUS_SUGGESTIONS) {
                   await Promise.all(
-                    selectedIds.map((selectedId) => (
+                    selectedIds.map((selectedId) =>
                       actionsMap.Merge.executeAction({
                         collection: Collection.CORPORA,
                         resource,
                         record: { id: selectedId },
-                      })
-                    )),
+                      }),
+                    ),
                   );
                 }
 
@@ -98,9 +93,7 @@ const BulkSuggestionActions = ({
         onConfirm={selectedAction.onConfirm}
         confirm={selectedAction.type}
         isConfirming={isConfirming}
-        confirmColorScheme={
-          selectedAction.type === actionsMap.Delete.type ? 'red' : 'blue'
-        }
+        confirmColorScheme={selectedAction.type === actionsMap.Delete.type ? 'red' : 'blue'}
         cancel="Cancel"
         title={selectedAction.title}
       >

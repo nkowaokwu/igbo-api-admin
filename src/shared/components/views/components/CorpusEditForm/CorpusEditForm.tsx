@@ -10,7 +10,7 @@ import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Textarea, Input } from 'src/shared/primitives';
 import actionsMap, { handleUpdateDocument } from 'src/shared/constants/actionsMap';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import FilePicker from 'src/shared/primitives/FilePicker';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
 import ActionTypes from 'src/shared/constants/ActionTypes';
@@ -97,7 +97,10 @@ const CorpusEditForm = ({
       save(cleanedData, View.SHOW, {
         onSuccess: async ({ data }) => {
           if (mediaFile) {
-            await uploadToS3({ id: data.id, file: mediaFile }).catch(async (err) => {
+            await uploadToS3({
+              collection: Collection.CORPUS_SUGGESTIONS,
+              data: { id: data.id, file: mediaFile },
+            }).catch(async (err) => {
               toast({
                 title: 'Error',
                 description: err.message,

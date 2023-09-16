@@ -3,7 +3,7 @@ import { ShowProps, useShowController } from 'react-admin';
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { DEFAULT_NSIBIDI_CHARACTER_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';

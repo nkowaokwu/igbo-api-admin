@@ -4,7 +4,7 @@ import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {

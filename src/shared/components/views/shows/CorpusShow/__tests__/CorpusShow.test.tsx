@@ -3,7 +3,7 @@
 import React from 'react';
 import { render, configure } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import CorpusShow from '../CorpusShow';
 
 configure({ testIdAttribute: 'data-test' });
@@ -17,17 +17,19 @@ const record = {
 };
 
 const dataProvider = {
-  getOne: () => Promise.resolve({
-    data: record,
-  }),
+  getOne: () =>
+    Promise.resolve({
+      data: record,
+    }),
 };
 
 describe('Corpus Show', () => {
   beforeEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = '';
-    dataProvider.getOne = () => Promise.resolve({
-      data: record,
-    });
+    dataProvider.getOne = () =>
+      Promise.resolve({
+        data: record,
+      });
   });
 
   it('render all fields for corpora', async () => {
@@ -44,7 +46,7 @@ describe('Corpus Show', () => {
     await findByText('Corpus Document Details');
     await findByText('Title');
     await findByText('Media');
-    expect(await queryByText('Editor\'s Note')).toBeNull();
+    expect(await queryByText("Editor's Note")).toBeNull();
   });
 
   it('render all fields for corpus suggestions', async () => {
@@ -61,6 +63,6 @@ describe('Corpus Show', () => {
     await findByText('Corpus Suggestion Document Details');
     await findByText('Title');
     await findByText('Media');
-    await findByText('Editor\'s Note');
+    await findByText("Editor's Note");
   });
 });

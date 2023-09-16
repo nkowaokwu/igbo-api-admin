@@ -3,7 +3,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import ExampleShow from '../ExampleShow';
 

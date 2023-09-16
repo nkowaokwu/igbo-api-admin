@@ -3,7 +3,7 @@
 import React from 'react';
 import { render, configure } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordShow from '../WordShow';

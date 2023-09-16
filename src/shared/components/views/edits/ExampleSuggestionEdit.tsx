@@ -3,28 +3,13 @@ import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
-import Collection from 'src/shared/constants/Collections';
-import {
-  ExampleEditForm,
-  EditDocumentStats,
-  DocumentIds,
-  EditDocumentTopBar,
-} from '../components';
+import Collection from 'src/shared/constants/Collection';
+import { ExampleEditForm, EditDocumentStats, DocumentIds, EditDocumentTopBar } from '../components';
 
 const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
   const { history } = props;
-  const {
-    resource,
-    record,
-    save,
-    setOnFailure,
-  } = useEditController(props);
-  const {
-    id,
-    originalExampleId,
-    approvals,
-    denials,
-  } = record || {
+  const { resource, record, save, setOnFailure } = useEditController(props);
+  const { id, originalExampleId, approvals, denials } = record || {
     id: null,
     originalExampleId: null,
     approvals: [],

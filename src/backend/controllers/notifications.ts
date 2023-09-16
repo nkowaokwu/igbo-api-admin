@@ -6,7 +6,7 @@ import moment from 'moment';
 import { User } from 'firebase/auth';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import Views from 'src/shared/constants/Views';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { handleQueries } from './utils';
 
 const db = admin.firestore();
@@ -27,20 +27,19 @@ export const getNotifications = async (
       .collection(`${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`)
       .orderBy('created_at', 'desc');
 
-    const paginatedNotifications = (await dbUserNotificationsWindowRef.get())
-      .docs.map((doc) => {
+    const paginatedNotifications = (await dbUserNotificationsWindowRef.get()).docs
+      .map((doc) => {
         const docData = doc.data();
         docData.id = docData.created_at;
         return docData;
-      }).slice(skip, skip + limit - 1);
+      })
+      .slice(skip, skip + limit - 1);
     const totalNotifications = (await dbUserNotificationsRef.get()).docs;
     res.setHeader('Content-Range', totalNotifications.length);
-    return res
-      .status(200)
-      .send(paginatedNotifications);
+    return res.status(200).send(paginatedNotifications);
   } catch (err) {
     return next(new Error('An error occurred while grabbing notification'));
-  };
+  }
 };
 
 export const getNotification = async (
@@ -49,40 +48,40 @@ export const getNotification = async (
   next: NextFunction,
 ): Promise<any> => {
   try {
-    const { user, params: { id } } = req;
-    const dbUserNotificationRef = db.collection(
-      `${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`,
-    ).doc(id);
+    const {
+      user,
+      params: { id },
+    } = req;
+    const dbUserNotificationRef = db
+      .collection(`${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`)
+      .doc(id);
 
-    const notification = await dbUserNotificationRef.get()
-      .then((doc) => {
-        if (doc.exists) {
-          return doc.data();
-        }
-        return null;
-      });
+    const notification = await dbUserNotificationRef.get().then((doc) => {
+      if (doc.exists) {
+        return doc.data();
+      }
+      return null;
+    });
 
-    return res
-      .status(200)
-      .send({ ...notification, id });
+    return res.status(200).send({ ...notification, id });
   } catch (err) {
     return next(new Error('An error occurred while grabbing notification'));
-  };
+  }
 };
 
 export const postNotification = async ({
   data,
   author,
   context,
-} : {
+}: {
   data: {
-    type: string,
-    resource: Collections,
-    record: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion,
-    includeEditors: boolean,
-  },
-  author: User,
-  context: CallableContext,
+    type: string;
+    resource: Collections;
+    record: Interfaces.WordSuggestion | Interfaces.ExampleSuggestion;
+    includeEditors: boolean;
+  };
+  author: User;
+  context: CallableContext;
 }): Promise<any | void> => {
   const { includeEditors, record, resource } = data;
 
@@ -91,11 +90,14 @@ export const postNotification = async ({
     if (includeEditors) {
       // Will notify anyone who is the author, has denied, approved, or edited the suggestion
       // Excluding the notification initiator
-      to = Array.from(new Set([record.authorId]
-        .concat(record.denials || [])
-        .concat(record.approvals || [])
-        .concat(record.userInteractions || [])))
-        .filter((uid) => uid !== context.auth.uid);
+      to = Array.from(
+        new Set(
+          [record.authorId]
+            .concat(record.denials || [])
+            .concat(record.approvals || [])
+            .concat(record.userInteractions || []),
+        ),
+      ).filter((uid) => uid !== context.auth.uid);
     } else {
       to = author.uid !== context.auth.uid ? [author.uid] : [];
     }
@@ -115,12 +117,14 @@ export const postNotification = async ({
       opened: false,
     };
 
-    await Promise.all(to.map(async (recipient) => {
-      const dbNotificationsRef = db.collection(`${Collections.USERS}/${recipient}/${Collections.NOTIFICATIONS}`);
-      const timestamp = moment().unix();
-      const newNotification = { ...notificationData, recipient, created_at: timestamp };
-      await dbNotificationsRef.doc(`${timestamp}`).set(newNotification);
-    }));
+    await Promise.all(
+      to.map(async (recipient) => {
+        const dbNotificationsRef = db.collection(`${Collections.USERS}/${recipient}/${Collections.NOTIFICATIONS}`);
+        const timestamp = moment().unix();
+        const newNotification = { ...notificationData, recipient, created_at: timestamp };
+        await dbNotificationsRef.doc(`${timestamp}`).set(newNotification);
+      }),
+    );
 
     console.log('Sent in platform notification to the following', to);
     return `Saved ${to.length} ${to.length === 1 ? 'Notification' : 'Notifications'} `;
@@ -136,12 +140,13 @@ export const deleteNotification = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { user, params: { id } } = req;
+    const {
+      user,
+      params: { id },
+    } = req;
     const dbNotificationsRef = db.collection(`${Collections.USERS}/${user.uid}/${Collections.NOTIFICATIONS}`);
     await dbNotificationsRef.doc(id).delete();
-    return res
-      .status(200)
-      .send({ id });
+    return res.status(200).send({ id });
   } catch (err) {
     return next(err);
   }

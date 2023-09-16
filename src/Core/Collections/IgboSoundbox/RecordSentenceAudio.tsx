@@ -9,7 +9,7 @@ import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import { API_ROUTE } from 'src/shared/constants';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import Completed from '../components/Completed';

@@ -11,7 +11,7 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import ActionTypes from './ActionTypes';
-import Collections from './Collections';
+import Collections from './Collection';
 
 const prepareRecord = (record) => {
   const approvals = record?.approvals || [];

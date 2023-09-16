@@ -22,7 +22,7 @@ import ActionTypes from 'src/shared/constants/ActionTypes';
 import { hasAdminOrMergerPermissions, hasAdminPermissions } from 'src/shared/utils/permissions';
 import { determineCreateSuggestionRedirection } from 'src/shared/utils';
 import actionsMap from 'src/shared/constants/actionsMap';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import View from 'src/shared/constants/Views';
 import Requirements from 'src/backend/shared/constants/Requirements';
 import { TWITTER_APP_URL } from 'src/Core/constants';
