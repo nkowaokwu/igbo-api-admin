@@ -173,6 +173,14 @@ export interface WordSuggestion extends Word, Suggestion {
   };
 }
 
+export interface TextImage {
+  media: string;
+  size: number;
+  prevSize?: number;
+  igbo: string;
+  english: string;
+}
+
 export interface Example extends ExampleData, Document<any>, LeanDocument<any> {
   id: Types.ObjectId;
 }

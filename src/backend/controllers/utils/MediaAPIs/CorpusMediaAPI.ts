@@ -1,16 +1,11 @@
 import removeAccents from 'src/backend/utils/removeAccents';
 import { isAWSProduction, isCypress } from 'src/backend/config';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
+import { getUploadSignature } from 'src/backend/controllers/utils/MediaAPIs/BaseMediaAPI';
+import { SignedMediaResponse } from 'src/backend/controllers/utils/types/mediaTypes';
 import initializeAPI from './initializeAPI';
 
-const {
-  bucket,
-  uriPath,
-  dummyUriPath,
-  mediaPath,
-  s3,
-  baseParams,
-} = initializeAPI('media');
+const { bucket, uriPath, dummyUriPath, mediaPath, s3, baseParams } = initializeAPI('media');
 
 /* Puts a new media object in the AWS S3 Bucket */
 export const createMedia = async (id: string, mediaData: string, mediaType: MediaTypes | string): Promise<string> => {
@@ -38,10 +33,7 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
 };
 
 /* Takes an old and new media id and copies it (copies) */
-export const copyMedia = async (
-  oldDocId: string,
-  newDocId: string,
-): Promise<any> => {
+export const copyMedia = async (oldDocId: string, newDocId: string): Promise<any> => {
   const oldMediaId = removeAccents.remove(oldDocId);
   const newMediaId = removeAccents.remove(newDocId);
   try {
@@ -62,8 +54,8 @@ export const copyMedia = async (
     return copiedMediaUri;
   } catch (err) {
     console.log(
-      `Error occurred while copying media: ${err.message} with `
-      + `ids of oldDocId: ${oldMediaId} and newDocId: ${newMediaId}`,
+      `Error occurred while copying media: ${err.message} with ` +
+        `ids of oldDocId: ${oldMediaId} and newDocId: ${newMediaId}`,
     );
     return null;
   }
@@ -120,16 +112,16 @@ export const renameMedia = async (oldDocId: string, newDocId: string): Promise<a
   }
 };
 
-/* Generates a URL of uploaded media from the frontend */
-export const getUploadSignature = async ({ id, fileType } : { id: string, fileType: MediaTypes }) => {
+/* Generates a URL of uploaded media from the frontend for Corpus Suggestion */
+export const getCorpusUploadSignature = async ({
+  id,
+  fileType,
+}: {
+  id: string;
+  fileType: MediaTypes;
+}): Promise<SignedMediaResponse> => {
   if (!id) {
     throw new Error('id must be provided');
-  }
-  if (isCypress || !isAWSProduction) {
-    return {
-      signedRequest: `mock-signed-request/${id}`,
-      mediaUrl: `mock-url/${id}`,
-    };
   }
 
   const params = {
@@ -138,8 +130,5 @@ export const getUploadSignature = async ({ id, fileType } : { id: string, fileTy
     ContentType: fileType,
     ACL: 'public-read',
   };
-  const signedRequest = s3.getSignedUrl('putObject', params);
-  const mediaUrl = `${uriPath}/${id}`;
-  const response = { signedRequest, mediaUrl };
-  return response;
+  return getUploadSignature({ id, params });
 };

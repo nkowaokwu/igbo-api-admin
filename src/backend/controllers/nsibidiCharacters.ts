@@ -55,7 +55,10 @@ export const getNsibidiCharacter = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
-    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+    const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
+      'NsibidiCharacter',
+      nsibidiCharacterSchema,
+    );
     const nsibidiCharacter = await NsibidiCharacter.findById(id);
     if (!nsibidiCharacter) {
       throw new Error("Nsibidi character doesn't exist");
@@ -74,7 +77,10 @@ export const postNsibidiCharacter = async (
 ): Promise<any | void> => {
   try {
     const { mongooseConnection, body } = req;
-    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+    const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
+      'NsibidiCharacter',
+      nsibidiCharacterSchema,
+    );
     const nsibidiCharacter = new NsibidiCharacter(body);
     const savedNsibidiCharacter = await nsibidiCharacter.save();
     return res.send(savedNsibidiCharacter);

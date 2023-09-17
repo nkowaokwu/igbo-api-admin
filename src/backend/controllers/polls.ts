@@ -7,7 +7,7 @@ import urlencode from 'urlencode';
 import moment from 'moment';
 import axios from 'axios';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import Collections from 'src/shared/constants/Collection';
+import Collection from 'src/shared/constants/Collection';
 import {
   TWITTER_CLIENT_ID,
   TWITTER_CLIENT_SECRET,
@@ -88,7 +88,7 @@ export const onTwitterCallback = async (
 /* Deletes the specified poll */
 export const onDeleteConstructedTermPoll = functions.https.onCall(async ({ pollId }: { pollId: string }) => {
   const { refreshedClient } = await getTwitterClient();
-  const dbPollsRef = db.collection(Collections.POLLS);
+  const dbPollsRef = db.collection(Collection.POLLS);
   const doc = (await dbPollsRef.doc(pollId).get()).data() as TweetPoll;
 
   // Deletes all Tweets
@@ -115,7 +115,7 @@ export const onDeleteConstructedTermPoll = functions.https.onCall(async ({ pollI
 /* Posts a new constructed term poll to the @nkowaokwu Twitter account */
 export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest, res: Response): Promise<any> => {
   const { body } = req;
-  const dbPollsRef = db.collection(Collections.POLLS);
+  const dbPollsRef = db.collection(Collection.POLLS);
 
   try {
     const { refreshedClient, accessToken, newRefreshToken } = await getTwitterClient();

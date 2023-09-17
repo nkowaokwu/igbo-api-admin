@@ -52,6 +52,6 @@ describe('IgboSoundbox', () => {
     );
     userEvent.click((await findAllByText('Start here'))[0]);
     userEvent.click(await findByTestId('start-recording-button-pronunciation'));
-    await findByText('Submit Batch');
+    await findByText('Submit');
   });
 });

@@ -47,6 +47,8 @@ describe('App', () => {
     await findByText('Leaderboard');
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
+    await findByText('Igbo Text Images');
+    await findByText('Upload Igbo Text Images');
     expect(await queryByText('Profile')).toBeNull();
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
@@ -71,6 +73,8 @@ describe('App', () => {
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
     expect(await queryByText('Profile')).toBeNull();
+    expect(queryByText('Igbo Text Images'));
+    expect(queryByText('Upload Igbo Text Images'));
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
@@ -95,6 +99,8 @@ describe('App', () => {
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
     expect(await queryByText('Profile')).toBeNull();
+    expect(queryByText('Igbo Text Images'));
+    expect(queryByText('Upload Igbo Text Images'));
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
@@ -119,6 +125,8 @@ describe('App', () => {
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
     expect(await queryByText('Profile')).toBeNull();
+    expect(queryByText('Igbo Text Images'));
+    expect(queryByText('Upload Igbo Text Images'));
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
@@ -142,6 +150,8 @@ describe('App', () => {
     await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
     expect(await queryByText('Profile')).toBeNull();
+    expect(queryByText('Igbo Text Images'));
+    expect(queryByText('Upload Igbo Text Images'));
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });

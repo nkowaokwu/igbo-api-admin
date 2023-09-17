@@ -3,11 +3,11 @@ import { compact } from 'lodash';
 import { Box, Text, chakra, Image } from '@chakra-ui/react';
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import ReactPlayer from 'react-player';
-import { FileDataType } from 'src/Core/Collections/IgboTextImages/types';
+import { FileDataType } from 'src/Core/Collections/TextImages/types';
 
 const ACCEPT_TYPE = {
-  image: 'image/*',
-  media: 'video/*,audio/*',
+  image: 'image/png,image/jpg,image/jpeg',
+  media: 'video/wav,video/mp4,audio/wav,audio/mp3',
 };
 
 const getBase64 = (file): Promise<string> =>

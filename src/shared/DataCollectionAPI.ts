@@ -5,6 +5,8 @@ import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import Collections from 'src/shared/constants/Collection';
+import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
+import uploadToS3 from 'src/shared/utils/uploadToS3';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -145,3 +147,17 @@ export const getLeaderboardStats = async ({
 
 export const postWordSuggestionsForIgboDefinitions = async (data: { limit: number }): Promise<{ message: string }> =>
   (await request({ method: 'POST', url: `${Collections.WORD_SUGGESTIONS}/igbo-definitions`, data })).data;
+
+/* Text Images */
+export const postTextImages = async (data: { igbo: string }[]): Promise<{ id: string; igbo: string }[]> =>
+  (await request({ method: 'POST', url: `${Collections.TEXT_IMAGE}`, data })).data;
+
+export const attachTextImages = async (data: DataPayload[]): Promise<{ id: string; result: string | void }[]> => {
+  const result = await Promise.all(
+    data.map(async (payload) => {
+      const result = await uploadToS3({ collection: Collections.TEXT_IMAGE, data: payload });
+      return { id: payload.id, result };
+    }),
+  );
+  return result;
+};

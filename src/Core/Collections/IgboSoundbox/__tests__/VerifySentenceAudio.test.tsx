@@ -154,7 +154,7 @@ describe('VerifySentenceAudio', () => {
       </TestContext>,
     );
     await findByText('Listen to know if this sentence matches the audio');
-    await findByText('Submit Batch');
+    await findByText('Submit');
   });
 
   it('render multiple audio pronunciation review sections for a single sentence', async () => {
@@ -275,7 +275,7 @@ describe('VerifySentenceAudio', () => {
     userEvent.click(getByLabelText('Next sentence'));
     userEvent.click(getByLabelText('Next sentence'));
     userEvent.click(getByLabelText('Next sentence'));
-    userEvent.click(await findByText('Submit Batch'));
+    userEvent.click(await findByText('Submit'));
     expect(reviewSpy).toBeCalledWith([
       {
         id: 'first id',
