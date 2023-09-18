@@ -17,7 +17,7 @@ import 'firebase/compat/firestore';
 import 'cypress-localstorage-commands';
 import { times } from 'lodash';
 import { attachCustomCommands } from 'cypress-firebase';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
 import { API_ROUTE, wordSuggestionData, exampleSuggestionData } from '../constants';
 
@@ -31,7 +31,7 @@ Cypress.on('window:before:load', (window) => {
 });
 
 Cypress.Commands.add('typeLogin', (email: string, password: string) => {
-cy.visit('http://localhost:3030/#/login');
+  cy.visit('http://localhost:3030/#/login');
   cy.intercept('POST', '**/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword**').as('loggingIn');
   cy.contains('Sign in with email').click();
   cy.get('input[type="email"]').clear().type(email);
@@ -73,30 +73,17 @@ Cypress.Commands.add('getWordSuggestionDocumentDetails', (position: number = 1) 
     const docPosition = position;
     const WORD_COLUMN = isAdminOrMerger ? 3 : 0;
     const ID_COLUMN = 6;
-    cy
-      .findAllByTestId('review-cell')
+    cy.findAllByTestId('review-cell')
       .eq(docPosition - 1) // Needs to start at 0 to grab the first review-cell
       .as('selectedReviewedIcon');
-    cy
-      .get('tr')
-      .eq(docPosition)
-      .find('td span[class*="Mui"]')
-      .eq(WORD_COLUMN)
-      .as('selectedWord');
-    cy
-      .findAllByTestId('approval') // Needs to start at 0 to grab the first approval
+    cy.get('tr').eq(docPosition).find('td span[class*="Mui"]').eq(WORD_COLUMN).as('selectedWord');
+    cy.findAllByTestId('approval') // Needs to start at 0 to grab the first approval
       .eq(docPosition - 1)
       .as('selectedApprovals');
-    cy
-      .findAllByTestId('denial') // Needs to start at 0 to grab the first denial
+    cy.findAllByTestId('denial') // Needs to start at 0 to grab the first denial
       .eq(docPosition - 1)
       .as('selectedDenials');
-    cy
-      .get('tr')
-      .eq(docPosition)
-      .find('td span')
-      .eq(ID_COLUMN)
-      .as('selectedId');
+    cy.get('tr').eq(docPosition).find('td span').eq(ID_COLUMN).as('selectedId');
   });
 });
 
@@ -110,12 +97,8 @@ Cypress.Commands.add('getWordSuggestionDocumentDetails', (position: number = 1) 
  * @selectedId
  */
 Cypress.Commands.add('getWordDocumentDetails', (docPosition: number = 0) => {
-  cy.findAllByTestId('resource-word')
-    .eq(docPosition)
-    .as('selectedWord');
-  cy.findAllByTestId('resource-id')
-    .eq(docPosition)
-    .as('selectedId');
+  cy.findAllByTestId('resource-word').eq(docPosition).as('selectedWord');
+  cy.findAllByTestId('resource-id').eq(docPosition).as('selectedId');
 });
 
 /*
@@ -134,31 +117,11 @@ Cypress.Commands.add('getUserDocumentDetails', (position: number = 1) => {
   const EDITING_GROUP_COLUMN = 2;
   const ID_COLUMN = 3;
 
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(EMAIL_COLUMN)
-    .as('selectedEmail');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ROLE_COLUMN)
-    .as('selectedRole');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(EDITING_GROUP_COLUMN)
-    .as('selectedEditingGroup');
+  cy.get('tr').eq(docPosition).find('td span').eq(EMAIL_COLUMN).as('selectedEmail');
+  cy.get('tr').eq(docPosition).find('td span').eq(ROLE_COLUMN).as('selectedRole');
+  cy.get('tr').eq(docPosition).find('td span').eq(EDITING_GROUP_COLUMN).as('selectedEditingGroup');
 
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ID_COLUMN)
-    .as('selectedId');
+  cy.get('tr').eq(docPosition).find('td span').eq(ID_COLUMN).as('selectedId');
 });
 
 /*
@@ -197,42 +160,12 @@ Cypress.Commands.add('getExampleSuggestionDocumentDetails', (position: number = 
   const APPROVALS_COLUMN = 3;
   const DENIALS_COLUMN = 4;
   const ID_COLUMN = 5;
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td div')
-    .eq(ALREADY_REVIEWED_ICON_COLUMN)
-    .as('selectedReviewedIcon');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(IGBO_COLUMN)
-    .as('selectedIgbo');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ENGLISH_COLUMN)
-    .as('selectedEnglish');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(APPROVALS_COLUMN)
-    .as('selectedApprovals');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(DENIALS_COLUMN)
-    .as('selectedDenials');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ID_COLUMN)
-    .as('selectedId');
+  cy.get('tr').eq(docPosition).find('td div').eq(ALREADY_REVIEWED_ICON_COLUMN).as('selectedReviewedIcon');
+  cy.get('tr').eq(docPosition).find('td span').eq(IGBO_COLUMN).as('selectedIgbo');
+  cy.get('tr').eq(docPosition).find('td span').eq(ENGLISH_COLUMN).as('selectedEnglish');
+  cy.get('tr').eq(docPosition).find('td span').eq(APPROVALS_COLUMN).as('selectedApprovals');
+  cy.get('tr').eq(docPosition).find('td span').eq(DENIALS_COLUMN).as('selectedDenials');
+  cy.get('tr').eq(docPosition).find('td span').eq(ID_COLUMN).as('selectedId');
 });
 
 /*
@@ -249,40 +182,17 @@ Cypress.Commands.add('getExampleDetails', (position: number = 1) => {
   const ENGLISH_COLUMN = 1;
   const ASSOCIATED_WORDS_IDS_COLUMN = 2;
   const ID_COLUMN = 3;
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(IGBO_COLUMN)
-    .as('selectedIgbo');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ENGLISH_COLUMN)
-    .as('selectedEnglish');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ASSOCIATED_WORDS_IDS_COLUMN)
-    .as('selectedAssociatedWordsIds');
-  cy
-    .get('tr')
-    .eq(docPosition)
-    .find('td span')
-    .eq(ID_COLUMN)
-    .as('selectedId');
+  cy.get('tr').eq(docPosition).find('td span').eq(IGBO_COLUMN).as('selectedIgbo');
+  cy.get('tr').eq(docPosition).find('td span').eq(ENGLISH_COLUMN).as('selectedEnglish');
+  cy.get('tr').eq(docPosition).find('td span').eq(ASSOCIATED_WORDS_IDS_COLUMN).as('selectedAssociatedWordsIds');
+  cy.get('tr').eq(docPosition).find('td span').eq(ID_COLUMN).as('selectedId');
 });
 
 /* Grabs the editor's action dropdown for the first document in the list */
 // Alternative query: https://github.com/cypress-io/cypress/issues/549#issuecomment-523399928
 Cypress.Commands.add('getActionsOption', { scrollBehavior: false }, (optionText: string, position: number = 0) => {
   cy.findAllByTestId('actions-menu').should('be.visible').as('editorActions');
-  cy.get('@editorActions')
-    .eq(position)
-    .scrollIntoView()
-    .click({ force: true  });
+  cy.get('@editorActions').eq(position).scrollIntoView().click({ force: true });
   cy.findByRole('menuitem', { name: optionText }).as('menuItem');
   cy.wait(500);
   return cy.get('@menuItem');
@@ -301,7 +211,9 @@ Cypress.Commands.add('cancelConfirmation', () => {
 
 /* Checks for React Admin's red error message */
 Cypress.Commands.add('checkForErrorMessage', () => {
-  cy.get('div').contains(/^Error:/, { timeout: 1000 }).should('not.exist');
+  cy.get('div')
+    .contains(/^Error:/, { timeout: 1000 })
+    .should('not.exist');
   cy.get('div[class*="RaNotification-warning-"]').should('not.exist');
 });
 
@@ -344,7 +256,9 @@ Cypress.Commands.add('createWordSuggestion', (data: any = {}) => {
       word,
       ...data,
     },
-  }).its('status').should('eq', 200);
+  })
+    .its('status')
+    .should('eq', 200);
   return cy.wrap(word);
 });
 
@@ -357,13 +271,15 @@ Cypress.Commands.add('createExampleSuggestion', () => {
       bearer: localStorage.getItem('igbo-api-admin-access'),
     },
     body: { ...exampleSuggestionData, igbo: uuidv4(), english: uuidv4() },
-  }).its('status').should('eq', 200);
+  })
+    .its('status')
+    .should('eq', 200);
 });
 
 Cypress.Commands.add('selectCollection', (collection: Collection, overrideWait: boolean = false) => {
   if (!collection) {
-    throw new Error('\'collection\' must have a value');
-  };
+    throw new Error("'collection' must have a value");
+  }
   cy.get(`a[href="#/${collection}"]`).scrollIntoView().click({ force: true });
   cy.wait(1000);
 });

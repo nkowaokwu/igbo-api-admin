@@ -15,7 +15,7 @@ import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import SandboxAudioReviewer from './SandboxAudioReviewer';

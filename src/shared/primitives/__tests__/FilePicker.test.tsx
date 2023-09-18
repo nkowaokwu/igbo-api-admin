@@ -37,7 +37,7 @@ describe('FilePicker', () => {
       </TestContext>,
     );
 
-    expect((await findByTestId('file-picker-input')).getAttribute('accept')).toEqual('image/*');
+    expect((await findByTestId('file-picker-input')).getAttribute('accept')).toEqual('image/png,image/jpg,image/jpeg');
   });
 
   it('accept type is media', async () => {
@@ -47,6 +47,8 @@ describe('FilePicker', () => {
       </TestContext>,
     );
 
-    expect((await findByTestId('file-picker-input')).getAttribute('accept')).toEqual('video/*,audio/*');
+    expect((await findByTestId('file-picker-input')).getAttribute('accept')).toEqual(
+      'video/wav,video/mp4,audio/wav,audio/mp3',
+    );
   });
 });

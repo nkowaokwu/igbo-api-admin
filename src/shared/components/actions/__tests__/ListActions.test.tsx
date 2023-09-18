@@ -3,7 +3,7 @@ import { render, configure } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import * as reactAdmin from 'react-admin';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import ListActions from '../ListActions';
 

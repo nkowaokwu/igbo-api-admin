@@ -125,3 +125,7 @@ export const putRandomExampleSuggestionsToTranslate = jest.fn(async () => {});
 export const getRandomExampleSuggestionsToRecord = jest.fn(async () => ({ data: exampleSuggestions }));
 
 export const postWordSuggestionsForIgboDefinitions = jest.fn(async () => ({ message: 'Success' }));
+
+export const postTextImages = jest.fn(async () => []);
+
+export const attachTextImages = jest.fn(async () => []);

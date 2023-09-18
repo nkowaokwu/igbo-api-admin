@@ -1,11 +1,12 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { noop } from 'lodash';
-import { Box, Heading, Link, Text } from '@chakra-ui/react';
+import { compact, noop } from 'lodash';
+import { Box, Heading, Link, Text, useToast } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import NavbarWrapper from 'src/Core/Collections/components/NavbarWrapper';
 import { ActivityButton, FilePicker, Textarea } from 'src/shared/primitives';
-import { FileDataType } from 'src/Core/Collections/IgboTextImages/types';
+import { FileDataType } from 'src/Core/Collections/TextImages/types';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
+import { attachTextImages, postTextImages } from 'src/shared/DataCollectionAPI';
 
 type IgboTextPayloadType = FileDataType & {
   igbo: string;
@@ -16,9 +17,11 @@ const IGBO_TEXT_IMAGE_EXAMPLE =
   'https://github.com/nkowaokwu/igbo-ocr/blob/main/tesstrain/data/ibo-ground-truth/Aghu1.png?raw=true';
 
 const IgboTextImages = (): ReactElement => {
+  const [isLoading, setIsLoading] = useState(false);
   const [fileData, setFileData] = useState<IgboTextPayloadType[]>(null);
   const [fileDataIndex, setFileDataIndex] = useState(-1);
   const [visitedFileDataIndex, setVisitedFileDataIndex] = useState(false);
+  const toast = useToast();
 
   const currentFileData = fileData?.[fileDataIndex] || { filePath: '', file: { name: '' }, igbo: '' };
   const isCompleteEnabled = visitedFileDataIndex && fileData?.length;
@@ -39,6 +42,49 @@ const IgboTextImages = (): ReactElement => {
   const handleNext = () => {
     setFileDataIndex(fileDataIndex + 1);
     (document.querySelector('[data-test="igbo-image-transcription-textarea"]') as HTMLTextAreaElement).focus();
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const textImagesPayload = fileData.map(({ igbo }) => ({ igbo }));
+      const textImageIds = await postTextImages(textImagesPayload);
+      const mediaPayload = compact(
+        fileData.map(({ file, igbo }) => {
+          const textImageIdIndex = textImageIds.findIndex(({ igbo: transcription }) => transcription === igbo);
+          if (textImageIdIndex !== -1) {
+            return { id: textImageIds[textImageIdIndex].id, file };
+          }
+          return null;
+        }),
+      );
+      if (mediaPayload.length !== fileData.length) {
+        console.log('An error occurred where the associated text image document cannot be attached to an image.');
+      }
+      const attachedStatuses = await attachTextImages(mediaPayload);
+      console.log(attachedStatuses);
+      toast({
+        title: 'Success',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: 'Text images have been uploaded',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: 'Error',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: 'An error occurred while upload text images',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -102,8 +148,8 @@ const IgboTextImages = (): ReactElement => {
         {fileData?.length ? (
           <>
             <SubmitBatchButton
-              isLoading={false}
-              onClick={noop}
+              isLoading={isLoading}
+              onClick={handleSubmit}
               isDisabled={!isCompleteEnabled}
               aria-label="Complete recordings"
             />

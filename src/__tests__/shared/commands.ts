@@ -150,6 +150,12 @@ export const getCorpusSuggestions = (query = {}, options: OptionsType = { token:
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const getTextImages = (query = {}, options: OptionsType = { token: '' }): Request =>
+  chaiServer
+    .get('/textImages')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 export const getPolls = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
     .get('/polls')
@@ -204,6 +210,13 @@ export const createCorpus = async (id: string, query = {}, options: OptionsType 
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .send({ id });
 };
+
+export const createTextImage = async (id: string, query = {}, options: OptionsType = { token: '' }): Promise<Request> =>
+  chaiServer
+    .post('/textImages')
+    .query(query)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
+    .send({ id });
 
 export const createPoll = (id: string, query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer

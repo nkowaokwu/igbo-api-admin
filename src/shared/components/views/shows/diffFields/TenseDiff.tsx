@@ -14,22 +14,16 @@ import {
   Text,
   chakra,
 } from '@chakra-ui/react';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 
 /* Renders the visual red/green diff sections in the Show view */
-const TenseDiff = (
-  { record: propRecord, resource }:
-  { record: Interfaces.Word, resource: string },
-): ReactElement => {
+const TenseDiff = ({ record: propRecord, resource }: { record: Interfaces.Word; resource: string }): ReactElement => {
   const record = { ...(propRecord || {}), tenses: propRecord?.tenses || {} };
   // @ts-ignore
   return record?.word ? (
     <Box className="w-full">
       {resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS ? (
-        <Accordion
-          defaultIndex={[0]}
-          allowMultiple
-        >
+        <Accordion defaultIndex={[0]} allowMultiple>
           {Object.entries(record.tenses).map(([tenseKey, tenseValue]) => (
             <AccordionItem key={tenseKey}>
               <AccordionButton>
@@ -45,12 +39,12 @@ const TenseDiff = (
           ))}
         </Accordion>
       ) : (
-        <chakra.span className="text-gray-500 italic">
-          No tense changes
-        </chakra.span>
+        <chakra.span className="text-gray-500 italic">No tense changes</chakra.span>
       )}
     </Box>
-  ) : <Spinner />;
+  ) : (
+    <Spinner />
+  );
 };
 
 export default TenseDiff;

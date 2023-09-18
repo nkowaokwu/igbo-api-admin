@@ -8,7 +8,7 @@ import WordResults from 'src/shared/primitives/WordResults';
 import { getNsibidiCharacters, getWords } from '../API';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
 import { handlePosition, handleIsEditing } from './utils/positions';
-import Collections from '../constants/Collections';
+import Collections from '../constants/Collection';
 
 const Input = React.forwardRef(
   (

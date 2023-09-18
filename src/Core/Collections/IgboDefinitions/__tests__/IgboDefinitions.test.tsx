@@ -16,22 +16,22 @@ describe('IgboDefinitions', () => {
     );
     await findByText('first retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('second retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('third retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('fourth retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('fifth retrieved word');
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
   });
 
   it('gets all five Igbo definitions with enabled submit button', async () => {
@@ -43,25 +43,25 @@ describe('IgboDefinitions', () => {
     await findByText('first retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'first igbo definition');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('second retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('third retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('fourth retrieved word');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', false);
+    expect(await findByText('Submit')).toHaveProperty('disabled', false);
 
     await findByText('fifth retrieved word');
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', false);
+    expect(await findByText('Submit')).toHaveProperty('disabled', false);
 
     userEvent.click(await findByLabelText('Previous Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', false);
+    expect(await findByText('Submit')).toHaveProperty('disabled', false);
   });
 
   it('provides properly formatted payload', async () => {
@@ -73,27 +73,27 @@ describe('IgboDefinitions', () => {
     await findByText('first retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'first igbo definition');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('second retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'second igbo definition');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('third retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'third igbo definition');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', true);
+    expect(await findByText('Submit')).toHaveProperty('disabled', true);
 
     await findByText('fourth retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'fourth igbo definition');
     userEvent.click(await findByLabelText('Next Igbo definition'));
-    expect(await findByText('Submit Batch')).toHaveProperty('disabled', false);
+    expect(await findByText('Submit')).toHaveProperty('disabled', false);
 
     await findByText('fifth retrieved word');
     userEvent.type(await findByPlaceholderText('Type Igbo definition here'), 'fifth igbo definition');
 
-    userEvent.click(await findByText('Submit Batch'));
+    userEvent.click(await findByText('Submit'));
 
     expect(putWordSuggestionsWithoutIgboDefinitions).toBeCalledWith([
       { id: '123', igboDefinition: 'first igbo definition' },

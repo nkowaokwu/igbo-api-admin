@@ -9,7 +9,7 @@ import {
   Select,
   StyleField,
 } from 'src/shared/components';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import Empty from '../../Empty';
 
 const ExampleList = (props: ListProps): ReactElement => {

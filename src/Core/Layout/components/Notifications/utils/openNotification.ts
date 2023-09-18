@@ -1,5 +1,5 @@
 import { doc, setDoc, getFirestore } from 'firebase/firestore';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 
 const db = getFirestore();
 const openNotification = async ({
@@ -7,11 +7,11 @@ const openNotification = async ({
   recipient,
   link,
   toast,
-} : {
-  id: string,
-  recipient: string,
-  link: string,
-  toast?: (value: any) => void,
+}: {
+  id: string;
+  recipient: string;
+  link: string;
+  toast?: (value: any) => void;
 }): void => {
   try {
     const dbNotificationRef = doc(db, `${Collections.USERS}/${recipient}/${Collections.NOTIFICATIONS}`, id);

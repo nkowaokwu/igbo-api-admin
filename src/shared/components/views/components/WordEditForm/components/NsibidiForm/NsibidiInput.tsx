@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { getNsibidiCharacter } from 'src/shared/API';
 import NsibidiCharacters from './NsibidiCharacters';
 

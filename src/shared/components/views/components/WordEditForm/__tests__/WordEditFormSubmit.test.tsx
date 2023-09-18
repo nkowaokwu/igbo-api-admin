@@ -4,7 +4,7 @@ import { cloneDeep, first, last } from 'lodash';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import Dialects from 'src/backend/shared/constants/Dialect';

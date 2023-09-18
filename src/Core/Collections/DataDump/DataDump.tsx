@@ -21,7 +21,7 @@ import { InfoIcon, WarningIcon } from '@chakra-ui/icons';
 import pluralize from 'pluralize';
 import { Textarea } from 'src/shared/primitives';
 import { Confirmation } from 'src/shared/components';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import actionsMap from 'src/shared/constants/actionsMap';
 import SentenceType from 'src/backend/shared/constants/SentenceType';

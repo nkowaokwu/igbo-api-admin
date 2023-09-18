@@ -1,7 +1,7 @@
 import { Document, LeanDocument, Connection, Types } from 'mongoose';
 import { Request } from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { User } from 'firebase/auth';
@@ -171,6 +171,14 @@ export interface WordSuggestion extends Word, Suggestion {
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
   };
+}
+
+export interface TextImage {
+  media: string;
+  size: number;
+  prevSize?: number;
+  igbo: string;
+  english: string;
 }
 
 export interface Example extends ExampleData, Document<any>, LeanDocument<any> {

@@ -43,7 +43,8 @@ const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'))
 const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
-const IgboTextImages = React.lazy(() => import('src/Core/Collections/IgboTextImages'));
+const IgboTextImages = React.lazy(() => import('src/Core/Collections/TextImages'));
+const TextImageList = React.lazy(() => import('src/Core/Collections/TextImages/TextImageList'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
 const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
@@ -157,9 +158,16 @@ const adminRoutes = (permissions) =>
       icon: () => <>🏋🏾‍♂️</>,
     },
     {
+      name: 'textImages',
+      key: 'textImages',
+      options: { label: 'Igbo Text Images' },
+      list: withLastRoute(TextImageList),
+      icon: () => <>📸</>,
+    },
+    {
       name: 'igboTextImages',
       key: 'igboTextImages',
-      options: { label: 'Igbo Text Images' },
+      options: { label: 'Upload Igbo Text Images' },
       list: withLastRoute(IgboTextImages),
       icon: () => <>📸</>,
     },

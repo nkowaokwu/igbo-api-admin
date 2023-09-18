@@ -37,6 +37,7 @@ import {
   putNsibidiCharacter,
   deleteNsibidiCharacter,
 } from 'src/backend/controllers/nsibidiCharacters';
+import { getTextImages, postTextImage } from 'src/backend/controllers/textImages';
 import { getStats } from 'src/backend/controllers/stats';
 import { getPolls } from 'src/backend/controllers/polls';
 import { getNotifications, getNotification, deleteNotification } from 'src/backend/controllers/notifications';
@@ -159,6 +160,9 @@ editorRouter.delete(
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   deleteCorpusSuggestion,
 );
+
+editorRouter.get('/textImages', getTextImages);
+editorRouter.get('/textImages', postTextImage);
 
 editorRouter.get('/polls', getPolls);
 

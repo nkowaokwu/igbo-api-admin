@@ -12,7 +12,7 @@ describe('TranslateIgboSentences', () => {
       </TestContext>,
     );
 
-    await findByText('Submit Batch');
+    await findByText('Submit');
     await findByText('First Igbo');
   });
 });

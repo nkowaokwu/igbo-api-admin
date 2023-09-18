@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { List, Datagrid, DateField, EmailField, TextField, Responsive, ListProps } from 'react-admin';
 import { ListActions, Pagination, Select } from 'src/shared/components';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 
 const UserList = (props: ListProps): ReactElement => {
   const { permissions } = props;

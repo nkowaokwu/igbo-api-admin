@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { TopToolbar, ShowActionsProps } from 'react-admin';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import { CreateButton } from '../shared/primitives';
 
 const ExampleShowActions = ({ data }: ShowActionsProps): ReactElement => (

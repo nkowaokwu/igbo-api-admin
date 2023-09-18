@@ -4,7 +4,7 @@ import { compact } from 'lodash';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { getNsibidiCharacter, resolveNsibidiCharacter } from 'src/shared/API';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import FormHeader from '../../../FormHeader';
 import RadicalsFormInterface from './RadicalsFormInterface';
 

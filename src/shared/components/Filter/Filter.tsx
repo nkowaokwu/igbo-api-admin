@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import { Box, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { useListFilterContext } from 'react-admin';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import Input from 'src/shared/primitives/Input';
 import FilterInterface from './FilterInterface';
 

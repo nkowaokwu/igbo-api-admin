@@ -4,7 +4,7 @@ import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList } from 'src/shared/constants/emailList';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { assignUserRole } from './utils';

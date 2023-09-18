@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Link, Tooltip, chakra } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import { FormattedUser } from 'src/backend/controllers/utils/interfaces';
 

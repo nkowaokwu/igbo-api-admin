@@ -1,9 +1,10 @@
 import { noop } from 'lodash';
 import * as requestModule from 'src/shared/utils/request';
+import * as uploadToS3 from 'src/shared/utils/uploadToS3';
 import { v4 as uuidv4 } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
-import Collections from 'src/shared/constants/Collections';
+import Collections from 'src/shared/constants/Collection';
 import {
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
@@ -11,6 +12,8 @@ import {
   putRandomExampleSuggestionsToTranslate,
   bulkUploadExampleSuggestions,
   postWordSuggestionsForIgboDefinitions,
+  postTextImages,
+  attachTextImages,
 } from '../DataCollectionAPI';
 
 describe('DataCollectionAPI', () => {
@@ -144,6 +147,27 @@ describe('DataCollectionAPI', () => {
       method: 'POST',
       url: `${Collections.WORD_SUGGESTIONS}/igbo-definitions`,
       data: payload,
+    });
+  });
+
+  it('sends a POST request to create new text images', async () => {
+    const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
+    const textImagesPayload = [{ igbo: 'igbo' }];
+    await postTextImages(textImagesPayload);
+    expect(requestSpy).toHaveBeenCalledWith({
+      method: 'POST',
+      url: `${Collections.TEXT_IMAGE}`,
+      data: textImagesPayload,
+    });
+  });
+
+  it('sends a request to S3 to attach text images to images', async () => {
+    const uploadToS3Spy = jest.spyOn(uploadToS3, 'default').mockReturnValue({});
+    const textImagesPayload = [{ id: 'igbo', file: new File([], '') }];
+    await attachTextImages(textImagesPayload);
+    expect(uploadToS3Spy).toHaveBeenCalledWith({
+      collection: Collections.TEXT_IMAGE,
+      data: textImagesPayload[0],
     });
   });
 });

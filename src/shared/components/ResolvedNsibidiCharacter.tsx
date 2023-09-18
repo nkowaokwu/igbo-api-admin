@@ -2,7 +2,7 @@ import React, { useEffect, useState, ReactElement } from 'react';
 import { Box, Spinner, Text, Tooltip } from '@chakra-ui/react';
 import { WarningIcon } from '@chakra-ui/icons';
 import { getNsibidiCharacter } from '../API';
-import Collections from '../constants/Collections';
+import Collections from '../constants/Collection';
 
 const ResolvedNsibidiCharacter = ({ nsibidiCharacterId }: { nsibidiCharacterId: string }): ReactElement => {
   const [resolvedNsibidiCharacter, setResolvedNsibidiCharacter] = useState(null);

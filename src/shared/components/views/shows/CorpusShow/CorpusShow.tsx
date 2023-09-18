@@ -5,15 +5,10 @@ import diff from 'deep-diff';
 import ReactPlayer from 'react-player';
 import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
-import Collection from 'src/shared/constants/Collections';
+import Collection from 'src/shared/constants/Collection';
 import { getWord } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
-import {
-  EditDocumentTopBar,
-  ShowDocumentStats,
-  DocumentIds,
-  Comments,
-} from '../../components';
+import { EditDocumentTopBar, ShowDocumentStats, DocumentIds, Comments } from '../../components';
 import DiffField from '../diffFields/DiffField';
 
 const DIFF_FILTER_KEYS = [
@@ -44,18 +39,7 @@ const CorpusShow = (props: ShowProps): ReactElement => {
 
   record = record || DEFAULT_WORD_RECORD;
 
-  const {
-    id,
-    author,
-    title,
-    editorsNotes,
-    userComments,
-    merged,
-    media,
-    approvals,
-    denials,
-    originalWordId,
-  } = record;
+  const { id, author, title, editorsNotes, userComments, merged, media, approvals, denials, originalWordId } = record;
 
   const resourceTitle = {
     [Collection.CORPUS_SUGGESTIONS]: 'Corpus Suggestion',
@@ -66,10 +50,12 @@ const CorpusShow = (props: ShowProps): ReactElement => {
   useEffect(() => {
     (async () => {
       try {
-        const originalWord = record?.originalWordId ? await getWord(record.originalWordId).catch((err) => {
-          // Unable to retrieve word
-          console.log(err);
-        }) : null;
+        const originalWord = record?.originalWordId
+          ? await getWord(record.originalWordId).catch((err) => {
+              // Unable to retrieve word
+              console.log(err);
+            })
+          : null;
         const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
         setDiffRecord(differenceRecord);
       } catch (err) {
@@ -103,37 +89,41 @@ const CorpusShow = (props: ShowProps): ReactElement => {
               />
             </Box>
             <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">Title</Heading>
-              <DiffField
-                path="title"
-                diffRecord={diffRecord}
-                fallbackValue={title}
-              />
+              <Heading fontSize="lg" className="text-xl text-gray-600">
+                Title
+              </Heading>
+              <DiffField path="title" diffRecord={diffRecord} fallbackValue={title} />
             </Box>
             <Box className="w-full flex flex-col space-y-3">
               <Box className="flex flex-col">
-                <Heading fontSize="lg" className="text-xl text-gray-600">Media</Heading>
+                <Heading fontSize="lg" className="text-xl text-gray-600">
+                  Media
+                </Heading>
                 {/* TODO: check this part! */}
                 <DiffField
                   path="word"
                   diffRecord={diffRecord}
-                  fallbackValue={media ? (
-                    <ReactPlayer
-                      url={media}
-                      controls
-                      width="50%"
-                      height="50px"
-                      style={{
-                        overflow: 'hidden',
-                        height: '50px !important',
-                      }}
-                      config={{
-                        file: {
-                          forceAudio: true,
-                        },
-                      }}
-                    />
-                  ) : <span>No media</span>}
+                  fallbackValue={
+                    media ? (
+                      <ReactPlayer
+                        url={media}
+                        controls
+                        width="50%"
+                        height="50px"
+                        style={{
+                          overflow: 'hidden',
+                          height: '50px !important',
+                        }}
+                        config={{
+                          file: {
+                            forceAudio: true,
+                          },
+                        }}
+                      />
+                    ) : (
+                      <span>No media</span>
+                    )
+                  }
                   renderNestedObject={() => (
                     <ReactPlayer
                       url={media}
