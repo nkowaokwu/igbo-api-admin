@@ -1,10 +1,11 @@
 import React, { ReactElement } from 'react';
 import { noop } from 'lodash';
-import { Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
+import { Box, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input } from 'src/shared/primitives';
 import Collections from 'src/shared/constants/Collection';
 import { getNsibidiCharacter } from 'src/shared/API';
+import LegacyAkaguFont from 'src/backend/shared/constants/LegacyAkaguFont';
 import NsibidiCharacters from './NsibidiCharacters';
 
 const NsibidiInput = React.forwardRef(
@@ -18,6 +19,7 @@ const NsibidiInput = React.forwardRef(
       nsibidiFormName: string;
       control: Control;
       enableSearch?: boolean;
+      showLegacy?: boolean;
     },
     ref,
   ): ReactElement => {
@@ -28,6 +30,7 @@ const NsibidiInput = React.forwardRef(
       nsibidiFormName,
       control,
       enableSearch = true,
+      showLegacy = false,
     } = props;
     const toast = useToast();
 
@@ -85,10 +88,20 @@ const NsibidiInput = React.forwardRef(
             label="The rendered script is the final Nsịbịdị that will be shown to users"
             placement="bottom-start"
           >
-            <Text className=" mt-2">
-              {'Rendered Nsịbịdị: '}
-              <chakra.span className="akagu">{value}</chakra.span>
-            </Text>
+            <Box className="flex flex-row items-center space-x-3 mt-2">
+              <Text>
+                {'Rendered Nsịbịdị: '}
+                <chakra.span className="akagu">{value}</chakra.span>
+              </Text>
+              {showLegacy ? (
+                <Text>
+                  {'Legacy Nsịbịdị Characters: '}
+                  {Object.values(LegacyAkaguFont).map((legacyFont) => (
+                    <chakra.span className={legacyFont}>{value}</chakra.span>
+                  ))}
+                </Text>
+              ) : null}
+            </Box>
           </Tooltip>
         ) : null}
         {enableSearch ? (
