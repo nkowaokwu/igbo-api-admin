@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Akagu';
+  font-family: 'Akagu_2023';
+  src: url('./assets/fonts/Akagu2023.ttf');
+}
+
+@font-face {
+  font-family: 'Akagu_2020';
   src: url('./assets/fonts/Akagu2020.ttf');
 }
 
@@ -54,7 +59,12 @@ main,
 }
 
 .akagu {
-  font-family: 'Akagu', 'sans-serif' !important;
+  font-family: 'Akagu_2023', 'sans-serif' !important;
+  @apply text-green-800;
+}
+
+.akagu_2020 {
+  font-family: 'Akagu_2020', 'sans-serif' !important;
   @apply text-green-800;
 }
 

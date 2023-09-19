@@ -33,6 +33,7 @@ const FormHeader = ({
           fontWeight="normal"
           color={color}
           margin={title ? '20px' : 0}
+          mx={0}
         >
           {title}
         </Heading>

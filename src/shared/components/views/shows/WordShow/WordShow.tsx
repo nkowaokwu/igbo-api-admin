@@ -25,7 +25,7 @@ import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ExampleDiff from '../diffFields/ExampleDiff';
 import ArrayDiff from '../diffFields/ArrayDiff';
 import TenseDiff from '../diffFields/TenseDiff';
-import Attributes from './Attributes';
+import Attributes from '../components/Attributes';
 
 const DIFF_FILTER_KEYS = [
   'id',
@@ -393,7 +393,7 @@ const WordShow = (props: ShowProps): ReactElement => {
               </>
             )}
             <Box className="flex flex-col w-full justify-between">
-              <Attributes record={record} diffRecord={diffRecord} />
+              <Attributes attributeType={Collection.WORD_SUGGESTIONS} record={record} diffRecord={diffRecord} />
               <Box className="flex flex-col space-y-6 mt-5">
                 <Box className="flex flex-col mt-5">
                   <Heading fontSize="lg" className="text-xl text-gray-600">

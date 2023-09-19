@@ -119,4 +119,16 @@ describe('NsibidiCharacterEditForm', () => {
     userEvent.click(await findByText('Update'));
     expect(mockSave).not.toBeCalled();
   });
+
+  it('renders the has legacy characters attribute', async () => {
+    const mockSave = jest.fn(() => null);
+
+    const { findByText } = render(
+      <TestContext resource={Collections.NSIBIDI_CHARACTERS} record={{}} save={mockSave}>
+        <NsibidiCharacterEditForm />
+      </TestContext>,
+    );
+
+    await findByText('Has Legacy Characters');
+  });
 });

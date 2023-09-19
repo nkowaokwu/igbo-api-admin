@@ -17,6 +17,9 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 // eslint-disable-next-line max-len
 import RadicalsForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/RadicalsForm/RadicalsForm';
 import NsibidiInput from 'src/shared/components/views/components/WordEditForm/components/NsibidiForm/NsibidiInput';
+// eslint-disable-next-line max-len
+import CharacterAttributesForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/CharacterAttributesForm';
+import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -105,6 +108,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         title="Nsịbịdị"
         tooltip="This field uses the Chinese Unicode to represent its corresponding Nsịbịdị"
       />
+      <CharacterAttributesForm record={record} getValues={getValues} control={control} />
       <Controller
         render={(props) => (
           <NsibidiInput
@@ -114,6 +118,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
             placeholder="Input in Nsịbịdị"
             data-test="nsibidi-input"
             enableSearch={false}
+            showLegacy={get(getValues(), `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`)}
           />
         )}
         name="nsibidi"
@@ -130,6 +135,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
             placeholder="Nsịbịdị pronunciation"
             data-test="pronunciation-input"
             enableSearch={false}
+            showLegacy={get(getValues(), `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`)}
           />
         )}
         name="pronunciation"

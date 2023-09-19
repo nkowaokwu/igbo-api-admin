@@ -13,6 +13,7 @@ import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 
 export interface HandleQueries {
   searchWord: string;
@@ -274,6 +275,7 @@ export interface NsibidiCharacter {
   id: Types.ObjectId | string;
   nsibidi: string;
   definitions: { text: string }[];
+  attributes?: { [key in NsibidiCharacterAttributeEnum]: boolean };
   pronunciation: string;
   wordClass: string;
 }
