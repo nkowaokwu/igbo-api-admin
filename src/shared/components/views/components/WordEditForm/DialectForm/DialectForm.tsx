@@ -86,7 +86,7 @@ const DialectForm = ({
           <Controller
             render={() => (
               <AudioRecorder
-                path={`dialects.${index}`}
+                path={`dialects[${index}]`}
                 getFormValues={getValues}
                 setPronunciation={(path, value) => {
                   const updatedDialects = [...dialects];
