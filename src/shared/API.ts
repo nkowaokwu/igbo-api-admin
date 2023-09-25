@@ -35,13 +35,29 @@ export const getWordSuggestions = async (word: string): Promise<any> =>
     })
   ).data;
 
-export const getExample = async (id: string): Promise<any> => {
-  const { data: result } = await request({
-    method: 'GET',
-    url: `${Collection.EXAMPLES}/${id}`,
-  });
-  return result;
-};
+export const getExample = async (id: string): Promise<any> =>
+  (
+    await request({
+      method: 'GET',
+      url: `${Collection.EXAMPLES}/${id}`,
+    })
+  ).data;
+
+export const getExamples = async (word: string): Promise<any> =>
+  (
+    await request({
+      method: 'GET',
+      url: `${Collection.EXAMPLES}?keyword=${word}`,
+    })
+  ).data;
+
+export const getExampleSuggestions = async (word: string): Promise<any> =>
+  (
+    await request({
+      method: 'GET',
+      url: `${Collection.EXAMPLE_SUGGESTIONS}?keyword=${word}`,
+    })
+  ).data;
 
 export const getNsibidiCharacter = async (id: string): Promise<any> =>
   (

@@ -20,22 +20,35 @@ describe('ExamplesForm', () => {
     await findByText('Examples (0)');
     await findByText('No examples');
     await findByText('Add Example');
+    await findByText('Attach Existing Example');
   });
 
   it('creates a new example', async () => {
-    const { findByText, findByTestId, findByLabelText } = render(
+    const { findByText, findByTestId, findAllByText, findAllByLabelText } = render(
       <TestContext>
         <ExamplesForm />
       </TestContext>,
     );
 
-    await findByText('Examples (1)');
+    userEvent.click(await findByText('Add Example'));
+    await findByText('Examples (2)');
     await findByTestId('examples-0-igbo-input');
     await findByTestId('examples-0-english-input');
     await findByTestId('examples-0-meaning-input');
     await findByTestId('examples-0-nsibidi-input');
-    await findByLabelText('Delete');
-    await findByText('No Nsịbịdị characters');
+    await findAllByLabelText('Delete');
+    await findAllByText('No Nsịbịdị characters');
+  });
+
+  it('attaches a new example', async () => {
+    const { findByText, findByPlaceholderText } = render(
+      <TestContext>
+        <ExamplesForm />
+      </TestContext>,
+    );
+
+    userEvent.click(await findByText('Attach Existing Example'));
+    userEvent.type(await findByPlaceholderText('Search example sentence'), 'word');
   });
 
   it('deletes a new example', async () => {

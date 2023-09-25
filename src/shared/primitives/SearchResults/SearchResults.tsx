@@ -1,18 +1,23 @@
 import React, { useRef, ReactElement, MutableRefObject, ForwardedRef } from 'react';
-import { get } from 'lodash';
-import { Box, Spinner, Text, chakra } from '@chakra-ui/react';
+import { Box, Spinner } from '@chakra-ui/react';
 import useOnScreen from 'src/hooks/useOnScreen';
+import Collection from 'src/shared/constants/Collection';
+import ExampleResult from 'src/shared/primitives/SearchResults/components/ExampleResult';
+import NsibidiCharacterResult from 'src/shared/primitives/SearchResults/components/NsibidiCharacterResult';
+import WordResult from 'src/shared/primitives/SearchResults/components/WordResult';
 
-const WordResults = ({
+const SearchResults = ({
   inputRef,
   isSearchingAutoCompleteResults,
   autoCompleteResults,
   onClick,
+  collection,
 }: {
   inputRef: MutableRefObject<ForwardedRef<unknown>>;
   isSearchingAutoCompleteResults: boolean;
   autoCompleteResults: any[];
   onClick: (value: any) => void;
+  collection?: Collection;
 }): ReactElement => {
   const wordResultsRef = useRef(null);
   const isWordResultsClipped = useOnScreen(wordResultsRef);
@@ -54,26 +59,12 @@ const WordResults = ({
             {...(!index ? { borderTopRadius: 'md' } : {})}
             {...(index === autoCompleteResults.length - 1 ? { borderBottomRadius: 'md' } : {})}
           >
-            {result.word ? (
-              <>
-                <Text fontWeight="bold">
-                  {result.word}
-                  <chakra.span fontStyle="italic" color="gray.400" fontSize="sm" fontWeight="normal" ml={3}>
-                    {get(result, 'definitions.0.wordClass')}
-                  </chakra.span>
-                </Text>
-                <Text color="gray.600">{get(result, 'definitions[0].definitions[0]')}</Text>
-              </>
+            {collection === Collection.EXAMPLES || collection === Collection.EXAMPLE_SUGGESTIONS ? (
+              <ExampleResult result={result} data-test={`search-result-${index}`} />
+            ) : collection === Collection.NSIBIDI_CHARACTERS ? (
+              <NsibidiCharacterResult result={result} data-test={`search-result-${index}`} />
             ) : (
-              <>
-                <Text fontWeight="bold" className="akagu">
-                  {result.nsibidi}
-                  <chakra.span fontStyle="italic" color="gray.400" fontSize="sm" fontWeight="normal" ml={3}>
-                    {get(result, 'pronunciations[0].text')}
-                  </chakra.span>
-                </Text>
-                <Text color="gray.600">{get(result, 'definitions[0].text')}</Text>
-              </>
+              <WordResult result={result} data-test={`search-result-${index}`} />
             )}
           </Box>
         ))
@@ -82,4 +73,4 @@ const WordResults = ({
   );
 };
 
-export default WordResults;
+export default SearchResults;

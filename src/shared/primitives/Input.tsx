@@ -4,8 +4,8 @@ import { debounce, omit, noop } from 'lodash';
 import { Box, Input as ChakraInput, InputProps } from '@chakra-ui/react';
 import { isMobile } from 'react-device-detect';
 import useEventListener from 'src/hooks/useEventListener';
-import WordResults from 'src/shared/primitives/WordResults';
-import { getNsibidiCharacters, getWords } from '../API';
+import SearchResults from 'src/shared/primitives/SearchResults';
+import { getNsibidiCharacters, getWords, getExamples, getExampleSuggestions } from '../API';
 import DiacriticsBankPopup from './DiacriticsBankPopup';
 import { handlePosition, handleIsEditing } from './utils/positions';
 import Collections from '../constants/Collection';
@@ -64,7 +64,14 @@ const Input = React.forwardRef(
     const debounceInput = useCallback(
       debounce(async (search) => {
         setIsSearchingAutoCompleteResults(true);
-        const fetchMethod = collection === Collections.NSIBIDI_CHARACTERS ? getNsibidiCharacters : getWords;
+        const fetchMethod =
+          collection === Collections.NSIBIDI_CHARACTERS
+            ? getNsibidiCharacters
+            : collection === Collections.EXAMPLES
+            ? getExamples
+            : collection === Collections.EXAMPLE_SUGGESTIONS
+            ? getExampleSuggestions
+            : getWords;
         if (!search) {
           setIsSearchingAutoCompleteResults(false);
           return;
@@ -132,11 +139,12 @@ const Input = React.forwardRef(
           {...omit(rest, ['enableSearch', 'nsibidiFormName'])}
         />
         {searchApi && (isAutoCompleteVisible || isSearchingAutoCompleteResults) ? (
-          <WordResults
+          <SearchResults
             inputRef={inputRef}
             isSearchingAutoCompleteResults={isSearchingAutoCompleteResults}
             autoCompleteResults={autoCompleteResults}
             onClick={handleSelectAutocomplete}
+            collection={collection}
           />
         ) : null}
         <DiacriticsBankPopup

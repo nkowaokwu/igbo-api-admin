@@ -6,7 +6,7 @@ import { Input } from 'src/shared/primitives';
 import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collection';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
-import ArchiveButton from 'src/shared/components/buttons/ArchiveButton';
+import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -164,7 +164,11 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           You are able to record over pre-existing recordings."
         />
       </Box>
-      <ArchiveButton tooltip={deleteMessage} shouldArchive={isExistingExample} onClick={() => remove(index)} />
+      <ResourceConnectionButton
+        tooltip={deleteMessage}
+        shouldArchive={isExistingExample}
+        onClick={() => remove(index)}
+      />
     </Box>
   ) : (
     <Spinner />

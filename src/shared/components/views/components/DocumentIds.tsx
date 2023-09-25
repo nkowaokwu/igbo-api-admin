@@ -43,7 +43,7 @@ const DocumentIds = ({
           </a>
         ) : (
           <chakra.span color="gray.600" className="italic">
-            No original document Id
+            No original document ID
           </chakra.span>
         )}
       </Text>

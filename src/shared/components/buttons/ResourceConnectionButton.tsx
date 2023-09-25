@@ -1,13 +1,15 @@
 import React, { ReactElement } from 'react';
 import { IconButton, Tooltip } from '@chakra-ui/react';
 
-const ArchiveButton = ({
+const ResourceConnectionButton = ({
   tooltip,
   shouldArchive = false,
+  shouldDetach = false,
   onClick,
 }: {
   tooltip: string;
   shouldArchive?: boolean;
+  shouldDetach?: boolean;
   onClick: () => void;
 }): ReactElement => (
   <Tooltip label={tooltip}>
@@ -16,12 +18,12 @@ const ArchiveButton = ({
       _hover={{
         backgroundColor: shouldArchive ? 'orange.200' : 'red.200',
       }}
-      aria-label={shouldArchive ? 'Archive' : 'Delete'}
+      aria-label={shouldArchive ? 'Archive' : shouldDetach ? 'Detach' : 'Delete'}
       onClick={onClick}
       className="ml-3"
-      icon={shouldArchive ? (() => <>🗄</>)() : (() => <>🗑</>)()}
+      icon={shouldArchive ? <>🗄</> : shouldDetach ? <>🔌</> : <>🗑</>}
     />
   </Tooltip>
 );
 
-export default ArchiveButton;
+export default ResourceConnectionButton;

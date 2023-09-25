@@ -82,7 +82,7 @@ const TestContext = ({
   dialects?: any[];
   setDialects?: (value: any) => void;
   pronunciations?: ExampleSuggestion['pronunciations'];
-  review: SentenceVerification;
+  review?: SentenceVerification;
 }): ReactElement => {
   const nativeDataProvider = () =>
     Promise.resolve({
