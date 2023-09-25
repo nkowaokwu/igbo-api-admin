@@ -19,10 +19,12 @@ const populateList = (items = [], source) => {
       ) : isDefinitions ? (
         <>
           <Text className="italic text-gray-700">
-            {get(item, 'text') || get(WordClass[item.wordClass], 'label') || '[UPDATE PART OF SPEECH]'}
+            {get(item, 'text') || get(WordClass[item.wordClass], 'label') || '[MISSING DATA]'}
             {get(item, 'nsibidi') ? (
               <Tooltip label={get(item, 'nsibidi')}>
-                <chakra.span className="akagu not-italic cursor-default" ml={3}>{get(item, 'nsibidi')}</chakra.span>
+                <chakra.span className="akagu not-italic cursor-default" ml={3}>
+                  {get(item, 'nsibidi')}
+                </chakra.span>
               </Tooltip>
             ) : null}
           </Text>
@@ -37,11 +39,11 @@ const populateList = (items = [], source) => {
   ));
 
   if (items.length > itemsPreview.length) {
-    itemsPreview.push((
+    itemsPreview.push(
       <li className="font-bold" key="final-list-key">
         {`${items.length - itemsPreview.length} more ${source}`}
-      </li>
-    ));
+      </li>,
+    );
   }
   return itemsPreview;
 };
