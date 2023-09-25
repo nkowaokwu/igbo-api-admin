@@ -4,16 +4,13 @@ import { useFieldArray } from 'react-hook-form';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import ReactAudioPlayer from 'react-audio-player';
 import AddExampleButton from './AddExampleButton';
+import SearchAndAddExampleButton from './SearchAndAddExampleButton';
 import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
 const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
-  const {
-    fields: examples,
-    append,
-    remove,
-  } = useFieldArray({
+  const { fields: examples, append } = useFieldArray({
     control,
     name: 'examples',
   });
@@ -42,7 +39,6 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
                   <Example
                     key={`example-${example.id}`}
                     example={example}
-                    remove={remove}
                     index={index}
                     control={control}
                     setValue={setValue}
@@ -59,7 +55,10 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
           </AccordionItem>
         </Accordion>
       </Box>
-      <AddExampleButton append={append} />
+      <Box className="w-full flex flex-row justify-center items-center space-x-3">
+        <AddExampleButton append={append} />
+        <SearchAndAddExampleButton append={append} />
+      </Box>
       <SummaryList
         items={archivedExamples}
         title="Archived Examples 🗄"

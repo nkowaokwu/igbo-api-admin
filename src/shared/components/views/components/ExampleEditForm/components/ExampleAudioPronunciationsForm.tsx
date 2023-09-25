@@ -4,7 +4,7 @@ import { Box, Text, chakra } from '@chakra-ui/react';
 import { Record, usePermissions } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Controller, Control, useFieldArray } from 'react-hook-form';
-import ArchiveButton from 'src/shared/components/buttons/ArchiveButton';
+import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
@@ -124,7 +124,7 @@ const ExampleAudioPronunciationsForm = ({
                   formTitle=""
                   formTooltip=""
                 />
-                <ArchiveButton
+                <ResourceConnectionButton
                   tooltip={deleteMessage}
                   shouldArchive={isExistingPronunciation}
                   onClick={handleArchivePronunciation(!!isExistingPronunciation, index)}

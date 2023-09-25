@@ -1,5 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import { Record } from 'react-admin';
 import { Box, Link, Text, Tooltip, Popover, PopoverContent, chakra } from '@chakra-ui/react';
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import WordClass from 'src/backend/shared/constants/WordClass';
@@ -37,7 +38,7 @@ const SuggestedWords = ({ word, id: wordId }: { word: string; id: string | Recor
       {filteredWords.length || filteredWordSuggestions.length ? (
         <Text color="orange.500" fontSize="sm" className="italic mt-4">
           {'⚠️ If you are seeing similar existing below, '}
-          <chakra.span fontWeight="bold">please consider deleting this document if necessary</chakra.span>
+          <chakra.span fontWeight="bold">please consider deleting this suggestion document if necessary</chakra.span>
           {' and edit those existing documents to avoid duplicates.'}
         </Text>
       ) : null}
