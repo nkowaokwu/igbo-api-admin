@@ -15,28 +15,31 @@ const CharacterAttributesForm = ({
   control: Control;
 }): ReactElement => (
   <Box className="mb-4">
-    <Controller
-      render={({ onChange, value, ref }) => (
-        <Checkbox
-          onChange={(e) => onChange(e.target.checked)}
-          isChecked={value}
-          defaultIsChecked={record.attributes?.[NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS]}
-          ref={ref}
-          data-test={`${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}-checkbox`}
-          size="lg"
-        >
-          <chakra.span className="font-bold" fontFamily="Silka">
-            {NsibidiCharacterAttributes[NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS].label}
-          </chakra.span>
-        </Checkbox>
-      )}
-      defaultValue={
-        record.attributes?.[NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS] ||
-        getValues().attributes?.[NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS]
-      }
-      name={`attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`}
-      control={control}
-    />
+    {Object.values(NsibidiCharacterAttributeEnum).map((nsibidiCharacterAttribute) => (
+      <Controller
+        render={({ onChange, value, ref }) => (
+          <Checkbox
+            onChange={(e) => onChange(e.target.checked)}
+            isChecked={value}
+            defaultChecked={record.attributes?.[nsibidiCharacterAttribute]}
+            ref={ref}
+            data-test={`${nsibidiCharacterAttribute}-checkbox`}
+            name={`${nsibidiCharacterAttribute}-checkbox`}
+            size="lg"
+            mr={3}
+          >
+            <chakra.span className="font-bold" fontFamily="Silka">
+              {NsibidiCharacterAttributes[nsibidiCharacterAttribute].label}
+            </chakra.span>
+          </Checkbox>
+        )}
+        defaultValue={
+          record.attributes?.[nsibidiCharacterAttribute] || getValues().attributes?.[nsibidiCharacterAttribute]
+        }
+        name={`attributes.${nsibidiCharacterAttribute}`}
+        control={control}
+      />
+    ))}
   </Box>
 );
 

@@ -10,7 +10,11 @@ import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
 const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
-  const { fields: examples, append } = useFieldArray({
+  const {
+    fields: examples,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: 'examples',
   });
@@ -39,6 +43,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
                   <Example
                     key={`example-${example.id}`}
                     example={example}
+                    remove={remove}
                     index={index}
                     control={control}
                     setValue={setValue}

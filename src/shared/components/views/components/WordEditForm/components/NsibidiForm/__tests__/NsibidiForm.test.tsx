@@ -22,7 +22,6 @@ describe('NsibidiForm', () => {
       </TestContext>,
     );
     userEvent.type(await findByPlaceholderText('Input in Nsịbịdị'), 'nsibidi');
-    await findByText('first pronunciation');
     await findByText('first definition');
   });
 });

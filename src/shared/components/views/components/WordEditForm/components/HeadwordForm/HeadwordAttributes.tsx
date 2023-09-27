@@ -28,7 +28,7 @@ const HeadwordAttributes = ({
           <Checkbox
             onChange={(e) => onChange(e.target.checked)}
             isChecked={value}
-            defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_STANDARD_IGBO]}
+            defaultChecked={record.attributes?.[WordAttributeEnum.IS_STANDARD_IGBO]}
             ref={ref}
             data-test={`${WordAttributeEnum.IS_STANDARD_IGBO}-checkbox`}
             size="lg"
@@ -54,7 +54,7 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={!!value}
-                defaultIsChecked={!!(isHeadwordAccented || record.attributes?.[WordAttributeEnum.IS_ACCENTED])}
+                defaultChecked={!!(isHeadwordAccented || record.attributes?.[WordAttributeEnum.IS_ACCENTED])}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_ACCENTED}-checkbox`}
                 size="lg"
@@ -84,7 +84,7 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_SLANG]}
+                defaultChecked={record.attributes?.[WordAttributeEnum.IS_SLANG]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_SLANG}-checkbox`}
                 size="lg"
@@ -115,7 +115,7 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={isConstructedPollTerm || value}
-                defaultIsChecked={isConstructedPollTerm || record.attributes?.[WordAttributeEnum.IS_CONSTRUCTED_TERM]}
+                defaultChecked={isConstructedPollTerm || record.attributes?.[WordAttributeEnum.IS_CONSTRUCTED_TERM]}
                 isDisabled={isConstructedPollTerm}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_CONSTRUCTED_TERM}-checkbox`}
@@ -143,7 +143,7 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_BORROWED_TERM]}
+                defaultChecked={record.attributes?.[WordAttributeEnum.IS_BORROWED_TERM]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_BORROWED_TERM}-checkbox`}
                 size="lg"
@@ -172,7 +172,7 @@ const HeadwordAttributes = ({
               <Checkbox
                 onChange={(e) => onChange(e.target.checked)}
                 isChecked={value}
-                defaultIsChecked={record.attributes?.[WordAttributeEnum.IS_STEM]}
+                defaultChecked={record.attributes?.[WordAttributeEnum.IS_STEM]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_STEM}-checkbox`}
                 size="lg"

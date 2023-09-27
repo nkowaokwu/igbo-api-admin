@@ -5,6 +5,7 @@ import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collection';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Views from 'src/shared/constants/Views';
+import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import NsibidiCharacterEditForm from '../NsibidiCharacterEditForm';
 
 describe('NsibidiCharacterEditForm', () => {
@@ -35,6 +36,10 @@ describe('NsibidiCharacterEditForm', () => {
           radicals: [{ id: 'resolved-nsibidi-987' }],
           nsibidi: 'nsibidi',
           pronunciation: 'pronunciation',
+          attributes: {
+            [NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS]: undefined,
+            [NsibidiCharacterAttributeEnum.IS_RADICAL]: undefined,
+          },
           wordClass: WordClass.ADJ.nsibidiValue,
         },
         Views.SHOW,
