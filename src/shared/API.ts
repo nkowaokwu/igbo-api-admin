@@ -164,6 +164,13 @@ export const deleteDocument = async ({ resource, record }: { resource: Collectio
     url: `${resource}/${record.id}`,
   });
 
+export const bulkDeleteDocuments = async ({ resource, ids }: { resource: Collection; ids: string[] }): Promise<any> =>
+  request({
+    method: 'DELETE',
+    url: `${resource}`,
+    data: ids,
+  });
+
 export const combineDocument = ({
   primaryWordId,
   resource,

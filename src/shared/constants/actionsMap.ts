@@ -4,7 +4,14 @@ import { EmptyResponse } from 'src/shared/server-validation';
 import { useCallable } from 'src/hooks/useCallable';
 import { bulkUploadExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
-import { approveDocument, denyDocument, mergeDocument, deleteDocument, combineDocument } from 'src/shared/API';
+import {
+  approveDocument,
+  denyDocument,
+  mergeDocument,
+  deleteDocument,
+  combineDocument,
+  bulkDeleteDocuments,
+} from 'src/shared/API';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
@@ -115,6 +122,15 @@ export default {
     executeAction: ({ record, resource }: { record: Record | { id: string }; resource: Collections }): Promise<any> =>
       deleteDocument({ resource, record }),
     successMessage: 'Document has been deleted 🗑',
+  },
+  [ActionTypes.BULK_DELETE]: {
+    type: 'Bulk Delete',
+    title: 'Bulk Delete Documents',
+    content: `Are you sure you want to delete these documents? 
+    The original document creators will get a notification email.`,
+    executeAction: ({ ids, resource }: { ids: string[]; resource: Collections }): Promise<any> =>
+      bulkDeleteDocuments({ resource, ids }),
+    successMessage: 'Documents have been deleted 🗑',
   },
   [ActionTypes.COMBINE]: {
     type: 'Combine',
