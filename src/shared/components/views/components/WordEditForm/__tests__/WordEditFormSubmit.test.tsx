@@ -548,7 +548,7 @@ describe('Submit WordEditForm', () => {
     );
   });
 
-  it('submits word edit form with adding related terms', async () => {
+  it('submits word edit form with adding stems', async () => {
     const mockSave = jest.fn();
     const testWord = cloneDeep(wordRecord);
     delete testWord.id;

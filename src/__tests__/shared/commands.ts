@@ -54,6 +54,18 @@ export const deleteOldWordSuggestions = (options: OptionsType = { token: '' }): 
     .delete('/wordSuggestions/old')
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const bulkDeleteWordSuggestions = ({
+  data,
+  options = { token: '' },
+}: {
+  data: string[];
+  options?: OptionsType;
+}): Request =>
+  chaiServer
+    .delete('/wordSuggestions')
+    .send(data)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 export const putRandomWordSuggestions = (
   data: { id: string; pronunciation?: string; review?: ReviewActions }[] | { id: string; igboDefinition: string }[],
   options: OptionsType = { token: '' },

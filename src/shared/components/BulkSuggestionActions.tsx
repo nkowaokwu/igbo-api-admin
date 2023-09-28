@@ -23,69 +23,106 @@ const BulkSuggestionActions = ({
     title: '',
     content: '',
   });
+  const mergingCollection =
+    resource === Collection.WORD_SUGGESTIONS
+      ? Collection.WORDS
+      : resource === Collection.EXAMPLE_SUGGESTIONS
+      ? Collection.EXAMPLES
+      : Collection.CORPUS_SUGGESTIONS;
+
+  const handleBulkMerge = () => {
+    setSelectedAction({
+      ...actionsMap.Merge,
+      onConfirm: async () => {
+        try {
+          setIsConfirming(true);
+          await Promise.all(
+            selectedIds.map((selectedId) =>
+              actionsMap.Merge.executeAction({
+                collection: mergingCollection,
+                resource,
+                record: { id: selectedId },
+              }),
+            ),
+          );
+
+          toast({
+            title: 'Success',
+            description: actionsMap.Merge.successMessage,
+            status: 'success',
+            position: 'top-right',
+            variant: 'left-accent',
+            duration: 4000,
+            isClosable: true,
+          });
+          onUnselectItems();
+          refresh();
+        } catch (err) {
+          toast({
+            title: 'Error',
+            description: 'Unable to merge documents',
+            status: 'error',
+            position: 'top-right',
+            variant: 'left-accent',
+            duration: 4000,
+            isClosable: true,
+          });
+        } finally {
+          setIsConfirmOpen(false);
+        }
+      },
+    });
+    setIsConfirmOpen(true);
+  };
+
+  const handleBulkDelete = () => {
+    setSelectedAction({
+      ...actionsMap.BulkDelete,
+      onConfirm: async () => {
+        try {
+          setIsConfirming(true);
+          await actionsMap.BulkDelete.executeAction({
+            resource,
+            ids: selectedIds,
+          });
+
+          toast({
+            title: 'Success',
+            description: actionsMap.Merge.successMessage,
+            status: 'success',
+            position: 'top-right',
+            variant: 'left-accent',
+            duration: 4000,
+            isClosable: true,
+          });
+          onUnselectItems();
+          refresh();
+        } catch (err) {
+          toast({
+            title: 'Error',
+            description: 'Unable to delete documents',
+            status: 'error',
+            position: 'top-right',
+            variant: 'left-accent',
+            duration: 4000,
+            isClosable: true,
+          });
+        } finally {
+          setIsConfirmOpen(false);
+        }
+      },
+    });
+    setIsConfirmOpen(true);
+  };
 
   return (
     <Box className="flex flex-row items-center space-x-3 mb-3">
       <Text>Bulk actions</Text>
-      <Button
-        data-test="bulk-merge-button"
-        onClick={() => {
-          setSelectedAction({
-            ...actionsMap.Merge,
-            onConfirm: async () => {
-              try {
-                setIsConfirming(true);
-                if (resource === Collection.WORD_SUGGESTIONS) {
-                  await Promise.all(
-                    selectedIds.map((selectedId) =>
-                      actionsMap.Merge.executeAction({
-                        collection: Collection.WORDS,
-                        resource,
-                        record: { id: selectedId },
-                      }),
-                    ),
-                  );
-                } else if (resource === Collection.EXAMPLE_SUGGESTIONS) {
-                  await Promise.all(
-                    selectedIds.map((selectedId) =>
-                      actionsMap.Merge.executeAction({
-                        collection: Collection.EXAMPLES,
-                        resource,
-                        record: { id: selectedId },
-                      }),
-                    ),
-                  );
-                } else if (resource === Collection.CORPUS_SUGGESTIONS) {
-                  await Promise.all(
-                    selectedIds.map((selectedId) =>
-                      actionsMap.Merge.executeAction({
-                        collection: Collection.CORPORA,
-                        resource,
-                        record: { id: selectedId },
-                      }),
-                    ),
-                  );
-                }
-
-                toast({
-                  title: 'Success',
-                  description: actionsMap.Merge.successMessage,
-                  status: 'success',
-                  duration: 4000,
-                  isClosable: true,
-                });
-                setIsConfirming(false);
-                onUnselectItems();
-                refresh();
-              } catch (err) {
-                setIsConfirming(false);
-              }
-            },
-          });
-          setIsConfirmOpen(true);
-        }}
-      >
+      <Button data-test="bulk-merge-button" onClick={handleBulkMerge}>
         Merge
+      </Button>
+      <Button data-test="bulk-merge-button" onClick={handleBulkDelete}>
+        Delete
       </Button>
       <ConfirmModal
         isOpen={isConfirmOpen && !!selectedAction.type}

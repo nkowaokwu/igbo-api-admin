@@ -1,6 +1,12 @@
-import { deleteOldWordSuggestions, getExample, getExamples, getExampleSuggestions } from 'src/shared/API';
+import {
+  bulkDeleteDocuments,
+  deleteOldWordSuggestions,
+  getExample,
+  getExamples,
+  getExampleSuggestions,
+} from 'src/shared/API';
 import * as requestModule from 'src/shared/utils/request';
-import Collections from 'src/shared/constants/Collection';
+import Collection from 'src/shared/constants/Collection';
 
 describe('API', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -10,7 +16,18 @@ describe('API', () => {
       await deleteOldWordSuggestions();
       expect(requestSpy).toHaveBeenCalledWith({
         method: 'DELETE',
-        url: `${Collections.WORD_SUGGESTIONS}/old`,
+        url: `${Collection.WORD_SUGGESTIONS}/old`,
+      });
+    });
+
+    it('sends a DELETE request to bulk delete word suggestions', async () => {
+      const ids = ['id'];
+      const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
+      await bulkDeleteDocuments({ resource: Collection.WORD_SUGGESTIONS, ids });
+      expect(requestSpy).toHaveBeenLastCalledWith({
+        method: 'DELETE',
+        url: `${Collection.WORD_SUGGESTIONS}`,
+        data: ids,
       });
     });
   });
@@ -21,7 +38,7 @@ describe('API', () => {
       await getExample('id');
       expect(requestSpy).toHaveBeenCalledWith({
         method: 'GET',
-        url: `${Collections.EXAMPLES}/id`,
+        url: `${Collection.EXAMPLES}/id`,
       });
     });
     it('sends a GET request to get example sentences', async () => {
@@ -29,7 +46,7 @@ describe('API', () => {
       await getExamples('id');
       expect(requestSpy).toHaveBeenCalledWith({
         method: 'GET',
-        url: `${Collections.EXAMPLES}?keyword=id`,
+        url: `${Collection.EXAMPLES}?keyword=id`,
       });
     });
     it('sends a GET request to get example suggestions', async () => {
@@ -37,7 +54,7 @@ describe('API', () => {
       await getExampleSuggestions('word');
       expect(requestSpy).toHaveBeenCalledWith({
         method: 'GET',
-        url: `${Collections.EXAMPLE_SUGGESTIONS}?keyword=word`,
+        url: `${Collection.EXAMPLE_SUGGESTIONS}?keyword=word`,
       });
     });
   });

@@ -14,12 +14,13 @@ enum ActionTypes {
   NOTIFY = 'Notify',
   MERGE = 'Merge',
   DELETE = 'Delete',
+  BULK_DELETE = 'BulkDelete',
   COMBINE = 'Combine',
   CONVERT = 'Convert',
   REQUEST_DELETE = 'Send Delete Request',
   DELETE_POLL = 'Delete Poll',
   DELETE_USER = 'DeleteUser',
   BULK_UPLOAD_EXAMPLES = 'BulkUploadExamples',
-};
+}
 
 export default ActionTypes;

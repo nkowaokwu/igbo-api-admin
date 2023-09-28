@@ -1,4 +1,4 @@
-import { Connection, Document, Query, Types } from 'mongoose';
+import { Connection, Document, Model, Query, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, compact, map, omit } from 'lodash';
 import { wordSchema } from 'src/backend/models/Word';
@@ -268,6 +268,68 @@ export const getWordSuggestion = async (
   }
 };
 
+/** Deletes ExampleSuggestions that have no associated words left after
+ * deleting a WordSuggestion or filters out the associated WordSuggestion id
+ * if there are more than one associated words.
+ */
+export const deleteAssociatedExampleSuggestions = async ({
+  ExampleSuggestion,
+  wordSuggestionId,
+}: {
+  ExampleSuggestion: Model<Interfaces.ExampleSuggestion>;
+  wordSuggestionId: string;
+}): Promise<void> => {
+  const exampleSuggestions = await ExampleSuggestion.find({ associatedWords: wordSuggestionId });
+  await Promise.all(
+    exampleSuggestions.map(async (exampleSuggestion) => {
+      if (exampleSuggestion?.associatedWords.length <= 1) {
+        await ExampleSuggestion.findByIdAndDelete(exampleSuggestion.id);
+      } else {
+        exampleSuggestion.associatedWords = exampleSuggestion.associatedWords.filter(
+          (associatedWord) => associatedWord.toString() !== wordSuggestionId,
+        );
+        await exampleSuggestion.save();
+      }
+    }),
+  );
+};
+
+/* Deletes the provided word suggestion and associated data */
+export const deleteWordSuggestionData = async ({
+  ExampleSuggestion,
+  wordSuggestion,
+}: {
+  ExampleSuggestion: Model<Interfaces.ExampleSuggestion>;
+  wordSuggestion: Interfaces.WordSuggestion;
+}): Promise<Interfaces.WordSuggestion> => {
+  const id = wordSuggestion.id.toString();
+  /* Deletes all word pronunciations for the headword and dialects */
+  const isPronunciationMp3 = wordSuggestion.pronunciation && wordSuggestion.pronunciation.includes('mp3');
+  await deleteAudioPronunciation(id, isPronunciationMp3);
+  await Promise.all(
+    wordSuggestion.dialects.map(async ({ pronunciation, word: dialectalWord, _id: dialectalWordId }) => {
+      const dialectPronunciationMp3 = pronunciation && pronunciation.includes('mp3');
+      deleteAudioPronunciation(`${id}-${dialectalWord}`, dialectPronunciationMp3);
+      deleteAudioPronunciation(`${id}-${dialectalWordId}`, dialectPronunciationMp3);
+    }),
+  );
+  const { email: userEmail } = (await findUser(wordSuggestion.authorId).catch((err) => {
+    console.log("THe user doesn't exist.");
+    console.log(err);
+    return { email: null };
+  })) as Interfaces.FormattedUser;
+  /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
+  if (userEmail && !wordSuggestion.merged) {
+    sendRejectedEmail({
+      to: [userEmail],
+      suggestionType: SuggestionTypeEnum.WORD,
+      ...wordSuggestion.toObject(),
+    });
+  }
+  await deleteAssociatedExampleSuggestions({ ExampleSuggestion, wordSuggestionId: id });
+  return wordSuggestion;
+};
+
 /* Deletes a single WordSuggestion by using an id */
 export const deleteWordSuggestion = async (
   req: Interfaces.EditorRequest,
@@ -277,45 +339,55 @@ export const deleteWordSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
-    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
           throw new Error('No word suggestion exists with the provided id.');
         }
-        /* Deletes all word pronunciations for the headword and dialects */
-        const isPronunciationMp3 = wordSuggestion.pronunciation && wordSuggestion.pronunciation.includes('mp3');
-        await deleteAudioPronunciation(id, isPronunciationMp3);
-        await Promise.all(
-          wordSuggestion.dialects.map(async ({ pronunciation, word: dialectalWord, _id: dialectalWordId }) => {
-            const dialectPronunciationMp3 = pronunciation && pronunciation.includes('mp3');
-            deleteAudioPronunciation(`${id}-${dialectalWord}`, dialectPronunciationMp3);
-            deleteAudioPronunciation(`${id}-${dialectalWordId}`, dialectPronunciationMp3);
-          }),
-        );
-        const { email: userEmail } = (await findUser(wordSuggestion.authorId).catch((err) => {
-          console.log("THe user doesn't exist.");
-          console.log(err);
-          return { email: null };
-        })) as Interfaces.FormattedUser;
-        /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
-        if (userEmail && !wordSuggestion.merged) {
-          sendRejectedEmail({
-            to: [userEmail],
-            suggestionType: SuggestionTypeEnum.WORD,
-            ...wordSuggestion.toObject(),
-          });
-        }
-        return wordSuggestion;
+        return deleteWordSuggestionData({ ExampleSuggestion, wordSuggestion });
       })
       .catch((err) => {
         throw new Error(err.message || 'An error has occurred while deleting and return a single word suggestion');
       });
-    await ExampleSuggestion.deleteMany({ associatedWords: id });
+
+    return res.send(result);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* Deletes a batch of WordSuggestions by using ids */
+export const bulkDeleteWordSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const { mongooseConnection } = req;
+    const ids = req.body;
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
+    const result = await WordSuggestion.find({ _id: { $in: ids }, merged: null })
+      .then(async (wordSuggestions: Interfaces.WordSuggestion[]) => {
+        if (!wordSuggestions) {
+          throw new Error('No word suggestions exist with the provided id.');
+        }
+
+        await Promise.all(
+          wordSuggestions.map((wordSuggestion) => deleteWordSuggestionData({ ExampleSuggestion, wordSuggestion })),
+        );
+      })
+      .catch((err) => {
+        throw new Error(err.message || 'An error has occurred while deleting and return a single word suggestion');
+      });
     return res.send(result);
   } catch (err) {
     return next(err);

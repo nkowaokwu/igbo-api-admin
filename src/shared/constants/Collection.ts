@@ -12,7 +12,8 @@ enum Collection {
   NSIBIDI_CHARACTERS = 'nsibidiCharacters',
   DATA_DUMP = 'dataDump',
   LEADERBOARDS = 'leaderboards',
-  TEXT_IMAGE = 'textImages',
+  TEXT_IMAGES = 'textImages',
+  STATS = 'stats',
 }
 
 export default Collection;

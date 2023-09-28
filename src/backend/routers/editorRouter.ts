@@ -2,6 +2,7 @@ import express from 'express';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import {
   deleteWordSuggestion,
+  bulkDeleteWordSuggestions,
   deleteOldWordSuggestions,
   getWordSuggestion,
   getWordSuggestions,
@@ -54,6 +55,8 @@ import validateApprovals from 'src/backend/middleware/validateApprovals';
 import validateNsibidiCharacterBody from 'src/backend/middleware/validateNsibidiCharacterBody';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
 import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
+import validateBulkDeleteLimit from 'src/backend/middleware/validateBulkDeleteLimit';
+import Collection from 'src/shared/constants/Collection';
 
 const editorRouter = express.Router();
 const platformRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN];
@@ -61,27 +64,48 @@ editorRouter.use(authentication, authorization(platformRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
 editorRouter.post(
-  '/words',
+  `/${Collection.WORDS}`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   validateWordMerge,
   validateApprovals,
   mergeWord,
 );
-editorRouter.put('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putWord);
-editorRouter.delete('/words/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, deleteWord);
-editorRouter.get('/words/:id/wordSuggestions', validId, getAssociatedWordSuggestions);
-editorRouter.get('/words/:id/twitterPolls', getAssociatedWordSuggestionsByTwitterId);
+editorRouter.put(`/${Collection.WORDS}/:id`, authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putWord);
+editorRouter.delete(
+  `/${Collection.WORDS}/:id`,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
+  deleteWord,
+);
+editorRouter.get(`/${Collection.WORDS}/:id/wordSuggestions`, validId, getAssociatedWordSuggestions);
+editorRouter.get(`/${Collection.WORDS}/:id/twitterPolls`, getAssociatedWordSuggestionsByTwitterId);
 
-editorRouter.post('/examples', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validateExampleMerge, mergeExample);
-editorRouter.put('/examples/:id', authorization([UserRoles.MERGER, UserRoles.ADMIN]), validId, putExample);
-editorRouter.get('/examples/:id/exampleSuggestions', validId, getAssociatedExampleSuggestions);
-
-editorRouter.post('/corpora', authorization([UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
-editorRouter.put('/corpora/:id', authorization([UserRoles.ADMIN]), validId, validateCorpusBody, putCorpus);
-
-editorRouter.get('/wordSuggestions', getWordSuggestions);
 editorRouter.post(
-  '/wordSuggestions',
+  `/${Collection.EXAMPLES}`,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validateExampleMerge,
+  mergeExample,
+);
+editorRouter.put(
+  `/${Collection.EXAMPLES}/:id`,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
+  putExample,
+);
+editorRouter.get(`/${Collection.EXAMPLES}/:id/exampleSuggestions`, validId, getAssociatedExampleSuggestions);
+
+editorRouter.post(`/${Collection.CORPORA}`, authorization([UserRoles.ADMIN]), validateCorpusMerge, mergeCorpus);
+editorRouter.put(
+  `/${Collection.CORPORA}/:id`,
+  authorization([UserRoles.ADMIN]),
+  validId,
+  validateCorpusBody,
+  putCorpus,
+);
+
+editorRouter.get(`/${Collection.WORD_SUGGESTIONS}`, getWordSuggestions);
+editorRouter.post(
+  `/${Collection.WORD_SUGGESTIONS}`,
   authorization([]),
   validateWordBody,
   interactWithSuggestion,
@@ -89,87 +113,99 @@ editorRouter.post(
   postWordSuggestion,
 );
 editorRouter.post(
-  '/wordSuggestions/igbo-definitions',
+  `/${Collection.WORD_SUGGESTIONS}/igbo-definitions`,
   authorization([UserRoles.ADMIN]),
   postRandomWordSuggestionsForIgboDefinitions,
 );
 editorRouter.put(
-  '/wordSuggestions/:id',
+  `/${Collection.WORD_SUGGESTIONS}/:id`,
   validId,
   validateWordBody,
   interactWithSuggestion,
   resolveWordDocument,
   putWordSuggestion,
 );
-editorRouter.get('/wordSuggestions/:id', validId, getWordSuggestion);
-editorRouter.put('/wordSuggestions/:id/approve', validId, approveWordSuggestion);
-editorRouter.put('/wordSuggestions/:id/deny', validId, denyWordSuggestion);
-editorRouter.delete('/wordSuggestions/old', authorization([UserRoles.ADMIN]), deleteOldWordSuggestions);
+editorRouter.get(`/${Collection.WORD_SUGGESTIONS}/:id`, validId, getWordSuggestion);
+editorRouter.put(`/${Collection.WORD_SUGGESTIONS}/:id/approve`, validId, approveWordSuggestion);
+editorRouter.put(`/${Collection.WORD_SUGGESTIONS}/:id/deny`, validId, denyWordSuggestion);
 editorRouter.delete(
-  '/wordSuggestions/:id',
-  validId,
+  `/${Collection.WORD_SUGGESTIONS}`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validateBulkDeleteLimit,
+  bulkDeleteWordSuggestions,
+);
+editorRouter.delete(`/${Collection.WORD_SUGGESTIONS}/old`, authorization([UserRoles.ADMIN]), deleteOldWordSuggestions);
+editorRouter.delete(
+  `/${Collection.WORD_SUGGESTIONS}/:id`,
+  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
   deleteWordSuggestion,
 );
 
-editorRouter.get('/exampleSuggestions', getExampleSuggestions);
+editorRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}`, getExampleSuggestions);
 
 editorRouter.post(
-  '/exampleSuggestions',
+  `/${Collection.EXAMPLE_SUGGESTIONS}`,
   authorization(platformRoles),
   validateExampleBody,
   interactWithSuggestion,
   postExampleSuggestion,
 );
-editorRouter.put('/exampleSuggestions/:id', validId, validateExampleBody, interactWithSuggestion, putExampleSuggestion);
-editorRouter.get('/exampleSuggestions/:id', validId, getExampleSuggestion);
-editorRouter.put('/exampleSuggestions/:id/approve', validId, approveExampleSuggestion);
-editorRouter.put('/exampleSuggestions/:id/deny', validId, denyExampleSuggestion);
-editorRouter.delete(
-  '/exampleSuggestions/:id',
+editorRouter.put(
+  `/${Collection.EXAMPLE_SUGGESTIONS}/:id`,
   validId,
+  validateExampleBody,
+  interactWithSuggestion,
+  putExampleSuggestion,
+);
+editorRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/:id`, validId, getExampleSuggestion);
+editorRouter.put(`/${Collection.EXAMPLE_SUGGESTIONS}/:id/approve`, validId, approveExampleSuggestion);
+editorRouter.put(`/${Collection.EXAMPLE_SUGGESTIONS}/:id/deny`, validId, denyExampleSuggestion);
+editorRouter.delete(
+  `/${Collection.EXAMPLE_SUGGESTIONS}/:id`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
   deleteExampleSuggestion,
 );
 
-editorRouter.get('/nsibidiCharacters', getNsibidiCharacters);
-editorRouter.get('/nsibidiCharacters/:id', validId, getNsibidiCharacter);
+editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}`, getNsibidiCharacters);
+editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}/:id`, validId, getNsibidiCharacter);
 editorRouter.post(
-  '/nsibidiCharacters',
+  `/${Collection.NSIBIDI_CHARACTERS}`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   validateNsibidiCharacterBody,
   postNsibidiCharacter,
 );
 editorRouter.put(
-  '/nsibidiCharacters/:id',
+  `/${Collection.NSIBIDI_CHARACTERS}/:id`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
   validId,
   validateNsibidiCharacterBody,
   putNsibidiCharacter,
 );
 editorRouter.delete(
-  '/nsibidiCharacters/:id',
-  validId,
+  `/${Collection.NSIBIDI_CHARACTERS}/:id`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
   deleteNsibidiCharacter,
 );
 
 editorRouter.delete(
-  '/corpusSuggestions/:id',
-  validId,
+  `/${Collection.CORPUS_SUGGESTIONS}/:id`,
   authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  validId,
   deleteCorpusSuggestion,
 );
 
-editorRouter.get('/textImages', getTextImages);
-editorRouter.get('/textImages', postTextImage);
+editorRouter.get(`/${Collection.TEXT_IMAGES}`, getTextImages);
+editorRouter.get(`/${Collection.TEXT_IMAGES}`, postTextImage);
 
-editorRouter.get('/polls', getPolls);
+editorRouter.get(`/${Collection.POLLS}`, getPolls);
 
-editorRouter.get('/notifications', getNotifications);
-editorRouter.get('/notifications/:id', getNotification);
-editorRouter.delete('/notifications/:id', deleteNotification);
+editorRouter.get(`/${Collection.NOTIFICATIONS}`, getNotifications);
+editorRouter.get(`/${Collection.NOTIFICATIONS}/:id`, getNotification);
+editorRouter.delete(`/${Collection.NOTIFICATIONS}/:id`, deleteNotification);
 
-editorRouter.get('/stats/full', getStats);
+editorRouter.get(`/${Collection.STATS}/full`, getStats);
 
 export default editorRouter;
