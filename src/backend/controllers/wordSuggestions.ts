@@ -381,7 +381,7 @@ export const bulkDeleteWordSuggestions = async (
           throw new Error('No word suggestions exist with the provided id.');
         }
 
-        await Promise.all(
+        return Promise.all(
           wordSuggestions.map((wordSuggestion) => deleteWordSuggestionData({ ExampleSuggestion, wordSuggestion })),
         );
       })

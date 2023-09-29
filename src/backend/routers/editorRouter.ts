@@ -197,8 +197,8 @@ editorRouter.delete(
   deleteCorpusSuggestion,
 );
 
-editorRouter.get(`/${Collection.TEXT_IMAGES}`, getTextImages);
-editorRouter.get(`/${Collection.TEXT_IMAGES}`, postTextImage);
+editorRouter.get(`/${Collection.TEXT_IMAGESS}`, getTextImages);
+editorRouter.get(`/${Collection.TEXT_IMAGESS}`, postTextImage);
 
 editorRouter.get(`/${Collection.POLLS}`, getPolls);
 

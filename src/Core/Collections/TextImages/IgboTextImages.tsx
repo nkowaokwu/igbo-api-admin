@@ -13,7 +13,7 @@ type IgboTextPayloadType = FileDataType & {
 };
 
 const FILE_LIMIT = 5;
-const IGBO_TEXT_IMAGE_EXAMPLE =
+const IGBO_TEXT_IMAGES_EXAMPLE =
   'https://github.com/nkowaokwu/igbo-ocr/blob/main/tesstrain/data/ibo-ground-truth/Aghu1.png?raw=true';
 
 const IgboTextImages = (): ReactElement => {
@@ -103,7 +103,7 @@ const IgboTextImages = (): ReactElement => {
         </NavbarWrapper>
         <Text fontFamily="Silka" mt={4} textAlign="center">
           Upload screenshot images of Igbo text.{' '}
-          <Link textDecoration="underline" href={IGBO_TEXT_IMAGE_EXAMPLE} target="_blank">
+          <Link textDecoration="underline" href={IGBO_TEXT_IMAGES_EXAMPLE} target="_blank">
             Click here for an example.
             <ExternalLinkIcon boxSize="3" ml={1} />
           </Link>

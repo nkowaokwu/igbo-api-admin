@@ -11,10 +11,10 @@ describe('uploadToS3', () => {
     const uploadSpy = jest.spyOn(uploadToS3Helpers, 'upload').mockReturnValue();
     jest.spyOn(axios, 'request').mockReturnValue(Promise.resolve());
 
-    const payload = { collection: Collection.TEXT_IMAGE, data: { id: 'id', file: new File([], '') } };
+    const payload = { collection: Collection.TEXT_IMAGES, data: { id: 'id', file: new File([], '') } };
     await handleMediaUpload(payload);
     expect(handleGenerateMediaSignedRequestSpy).toBeCalledWith({
-      collection: Collection.TEXT_IMAGE,
+      collection: Collection.TEXT_IMAGES,
       data: { id: payload.data.id, fileType: payload.data.file.type },
     });
     expect(uploadSpy).toBeCalledWith({ mediaUrl: '', signedRequest: '', file: payload.data.file });
