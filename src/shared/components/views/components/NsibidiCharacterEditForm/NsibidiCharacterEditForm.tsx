@@ -197,9 +197,11 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         Add definition
       </Button>
       {errors.definitions && <p className="error">{errors.definitions.message || errors.definitions[0]?.message}</p>}
-      <Box className="w-full mt-4">
-        <RadicalsForm errors={errors} control={control} record={record} />
-      </Box>
+      {!get(getValues(), `attributes[${NsibidiCharacterAttributeEnum.IS_RADICAL}]`) ? (
+        <Box className="w-full mt-4">
+          <RadicalsForm errors={errors} control={control} record={record} />
+        </Box>
+      ) : null}
       <Box className="form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
         <Button
           className="mt-3 lg:my-0"

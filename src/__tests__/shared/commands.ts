@@ -99,6 +99,12 @@ export const getTotalRecordedExampleSuggestions = (query = {}, options: OptionsT
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const postTextImage = (data: { igbo: string }[], options: OptionsType = { token: '' }): Request =>
+  chaiServer
+    .post('/textImages')
+    .send(data)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 export const postBulkUploadExampleSuggestions = (
   data: { igbo: string }[],
   options: OptionsType = { token: '' },

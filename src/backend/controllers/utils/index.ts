@@ -148,10 +148,9 @@ export const packageResponse = async ({
   sort: { key: string; direction: boolean | 'asc' | 'desc' };
 }): Promise<Response> => {
   // Not handling sorting to preserve alphabetical order
-  const sendDocs = docs;
   const count = await model.countDocuments(query);
   res.setHeader('Content-Range', count);
-  return res.send(sendDocs);
+  return res.send(docs);
 };
 
 /* Converts the filter query into a word to be used as the keyword query */

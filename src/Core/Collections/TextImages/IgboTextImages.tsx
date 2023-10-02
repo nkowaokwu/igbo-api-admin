@@ -68,7 +68,7 @@ const IgboTextImages = (): ReactElement => {
         position: 'top-right',
         variant: 'left-accent',
         description: 'Text images have been uploaded',
-        status: 'error',
+        status: 'success',
         duration: 4000,
         isClosable: true,
       });
