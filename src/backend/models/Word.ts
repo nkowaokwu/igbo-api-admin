@@ -6,7 +6,7 @@ import { toJSONPlugin, toObjectPlugin } from './plugins';
 import Tense from '../shared/constants/Tense';
 import WordClass from '../shared/constants/WordClass';
 import WordAttributes from '../shared/constants/WordAttributes';
-import WordTags from '../shared/constants/WordTags';
+import WordTagEnum from '../shared/constants/WordTagEnum';
 
 const { Schema, Types } = mongoose;
 
@@ -69,12 +69,7 @@ export const wordSchema = new Schema(
     tags: {
       type: [String],
       default: [],
-      validate: (v) =>
-        v.every((tag) =>
-          Object.values(WordTags)
-            .map(({ value }) => value)
-            .includes(tag),
-        ),
+      validate: (v) => v.every((tag) => Object.values(WordTagEnum).includes(tag)),
     },
     tenses: Object.values(Tense).reduce(
       (tenses, { value }) => ({

@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import NsibidiCharacterAttributes from 'src/backend/shared/constants/NsibidiCharacterAttributes';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 
 const schema = yup.object().shape({
   nsibidi: yup.string().required(),
@@ -22,6 +23,15 @@ const schema = yup.object().shape({
       }),
     )
     .required(),
+  tags: yup
+    .array()
+    .min(0)
+    .of(
+      yup.object().shape({
+        value: yup.mixed().oneOf(Object.values(WordTagEnum)),
+        label: yup.string(),
+      }),
+    ),
   attributes: yup.object().shape(
     Object.entries(NsibidiCharacterAttributes).reduce(
       (finalAttributes, [, { value }]) => ({
