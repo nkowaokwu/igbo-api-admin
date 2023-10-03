@@ -1,20 +1,8 @@
-import {
-  forIn,
-  isEqual,
-  uniqBy,
-  some,
-  pick,
-} from 'lodash';
+import { forIn, isEqual, uniqBy, some, pick } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
 import WordClass from 'src/backend/shared/constants/WordClass';
-import {
-  INVALID_ID,
-  MESSAGE,
-  INVALID_MESSAGE,
-  AUTH_TOKEN,
-  SAVE_DOC_DELAY,
-} from './shared/constants';
+import { INVALID_ID, MESSAGE, INVALID_MESSAGE, AUTH_TOKEN, SAVE_DOC_DELAY } from './shared/constants';
 import {
   exampleSuggestionData,
   wordSuggestionData,
@@ -77,8 +65,9 @@ describe('MongoDB Words', () => {
       expect(updatedWordRes.status).toEqual(200);
       expect(updatedWordSuggestionRes.body.mergedBy).toEqual(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       expect(updatedWordRes.body.word).toEqual(updatedWordSuggestionRes.body.word);
-      expect(updatedWordRes.body.definitions[0].wordClass)
-        .toEqual(updatedWordSuggestionRes.body.definitions[0].wordClass);
+      expect(updatedWordRes.body.definitions[0].wordClass).toEqual(
+        updatedWordSuggestionRes.body.definitions[0].wordClass,
+      );
       expect(updatedWordRes.body.id).toEqual(updatedWordSuggestionRes.body.merged);
     });
 
@@ -141,15 +130,14 @@ describe('MongoDB Words', () => {
       expect(updateWordRes.status).toEqual(200);
       forIn(updatedWordData, (value, key) => {
         if (key === 'definitions') {
-          const cleanedDefinitions = updateWordRes.body[key].map((definitionGroup) => (
-            pick(definitionGroup, ['wordClass', 'definitions'])
-          ));
+          const cleanedDefinitions = updateWordRes.body[key].map((definitionGroup) =>
+            pick(definitionGroup, ['wordClass', 'definitions']),
+          );
           expect(isEqual(cleanedDefinitions, value)).toEqual(true);
         } else {
           expect(isEqual(updateWordRes.body[key], value)).toEqual(true);
         }
-        expect(moment(result.body.updatedAt).unix())
-          .toBeLessThan(moment(updateWordRes.body.updatedAt).unix());
+        expect(moment(result.body.updatedAt).unix()).toBeLessThan(moment(updateWordRes.body.updatedAt).unix());
       });
     });
     // eslint-disable-next-line max-len
@@ -172,10 +160,12 @@ describe('MongoDB Words', () => {
       const childRes = await suggestNewWord({
         ...result.body,
         originalWordId: result.body.id,
-        examples: [{
-          ...exampleData,
-          originalExampleId: result.body.examples[0].id,
-        }],
+        examples: [
+          {
+            ...exampleData,
+            originalExampleId: result.body.examples[0].id,
+          },
+        ],
       });
       expect(childRes.status).toEqual(200);
       expect(childRes.body.originalWordId).toEqual(result.body.id);
@@ -219,11 +209,30 @@ describe('MongoDB Words', () => {
       expect([null, undefined, '']).not.toContain(firstWord.id);
       expect([null, undefined, '']).not.toContain(secondWord.id);
       const combinedWordRes = await deleteWord(firstWord.id.toString(), secondWord.id);
-      const { definitions: [{ definitions }], variations, stems } = combinedWordRes.body;
+      const {
+        definitions: [{ definitions }],
+        variations,
+        stems,
+      } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
-      expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
-      expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
-      expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
+      expect(
+        isEqual(
+          definitions,
+          uniqBy(definitions, (definition) => definition),
+        ),
+      ).toEqual(true);
+      expect(
+        isEqual(
+          variations,
+          uniqBy(variations, (variation) => variation),
+        ),
+      ).toEqual(true);
+      expect(
+        isEqual(
+          stems,
+          uniqBy(stems, (stem) => stem),
+        ),
+      ).toEqual(true);
       expect(isEqual(definitions, firstWord.definitions[0].definitions)).toBeTruthy();
       expect(isEqual(definitions, secondWord.definitions[0].definitions)).toBeTruthy();
       expect(isEqual(variations, firstWord.variations)).toBeTruthy();
@@ -240,14 +249,18 @@ describe('MongoDB Words', () => {
       expect(firstExampleRes.body.associatedWords).not.toContain(firstWord.id);
       expect(secondExampleRes.body.associatedWords).toContain(combinedWordRes.body.id);
       expect(secondExampleRes.body.associatedWords).not.toContain(firstWord.id);
-      expect(isEqual(
-        firstExampleAssociatedWords,
-        uniqBy(firstExampleAssociatedWords, (associatedWord) => associatedWord),
-      )).toEqual(true);
-      expect(isEqual(
-        secondExampleAssociatedWords,
-        uniqBy(secondExampleAssociatedWords, (associatedWord) => associatedWord),
-      )).toEqual(true);
+      expect(
+        isEqual(
+          firstExampleAssociatedWords,
+          uniqBy(firstExampleAssociatedWords, (associatedWord) => associatedWord),
+        ),
+      ).toEqual(true);
+      expect(
+        isEqual(
+          secondExampleAssociatedWords,
+          uniqBy(secondExampleAssociatedWords, (associatedWord) => associatedWord),
+        ),
+      ).toEqual(true);
       const res = await getWord(firstWord.id.toString());
       expect(res.status).toEqual(404);
     });
@@ -275,11 +288,30 @@ describe('MongoDB Words', () => {
       await new Promise((resolve) => setTimeout(resolve, SAVE_DOC_DELAY));
       const firstWord = await createWordFromSuggestion({ ...updatedWordSuggestionData, stems: null });
       const combinedWordRes = await deleteWord(firstWord.id.toString(), wordWithNullStems.id);
-      const { definitions: [{ definitions }], variations, stems } = combinedWordRes.body;
+      const {
+        definitions: [{ definitions }],
+        variations,
+        stems,
+      } = combinedWordRes.body;
       expect(combinedWordRes.status).toEqual(200);
-      expect(isEqual(definitions, uniqBy(definitions, (definition) => definition))).toEqual(true);
-      expect(isEqual(variations, uniqBy(variations, (variation) => variation))).toEqual(true);
-      expect(isEqual(stems, uniqBy(stems, (stem) => stem))).toEqual(true);
+      expect(
+        isEqual(
+          definitions,
+          uniqBy(definitions, (definition) => definition),
+        ),
+      ).toEqual(true);
+      expect(
+        isEqual(
+          variations,
+          uniqBy(variations, (variation) => variation),
+        ),
+      ).toEqual(true);
+      expect(
+        isEqual(
+          stems,
+          uniqBy(stems, (stem) => stem),
+        ),
+      ).toEqual(true);
       combinedWordRes.body.definitions.forEach((definitionGroup) => {
         if (definitionGroup.wordClass === firstWord.definitions[0].wordClass) {
           firstWord.definitions[0].definitions.forEach((definition) => {

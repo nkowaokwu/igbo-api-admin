@@ -237,7 +237,15 @@ const Select = ({
               <span className="text-red-500">
                 <DeleteIcon className="mr-2" />
                 {`Request to Delete ${
-                  resource === Collection.WORDS ? 'Word' : resource === Collection.EXAMPLES ? 'Example' : 'Corpus'
+                  resource === Collection.WORDS
+                    ? 'Word'
+                    : resource === Collection.EXAMPLES
+                    ? 'Example'
+                    : resource === Collection.CORPORA
+                    ? 'Corpus'
+                    : resource === Collection.TEXT_IMAGES
+                    ? 'Text Image'
+                    : ''
                 }`}
               </span>
             ))(),

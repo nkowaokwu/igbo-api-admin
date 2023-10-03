@@ -7,6 +7,8 @@ import { ActivityButton, FilePicker, Textarea } from 'src/shared/primitives';
 import { FileDataType } from 'src/Core/Collections/TextImages/types';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import { attachTextImages, postTextImages } from 'src/shared/DataCollectionAPI';
+import Completed from 'src/Core/Collections/components/Completed';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
 type IgboTextPayloadType = FileDataType & {
   igbo: string;
@@ -21,6 +23,7 @@ const IgboTextImages = (): ReactElement => {
   const [fileData, setFileData] = useState<IgboTextPayloadType[]>(null);
   const [fileDataIndex, setFileDataIndex] = useState(-1);
   const [visitedFileDataIndex, setVisitedFileDataIndex] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   const toast = useToast();
 
   const currentFileData = fileData?.[fileDataIndex] || { filePath: '', file: { name: '' }, igbo: '' };
@@ -72,6 +75,7 @@ const IgboTextImages = (): ReactElement => {
         duration: 4000,
         isClosable: true,
       });
+      setIsComplete(true);
     } catch (err) {
       toast({
         title: 'Error',
@@ -93,7 +97,14 @@ const IgboTextImages = (): ReactElement => {
     }
   }, [fileDataIndex, fileData]);
 
-  return (
+  useEffect(() => {
+    if (!isComplete) {
+      setFileData(null);
+      setFileDataIndex(-1);
+    }
+  }, [isComplete]);
+
+  return !isComplete ? (
     <Box className="w-11/12 lg:w-full flex flex-col items-center h-full lg:h-auto" my={0} mx="auto">
       <Box className="w-full flex flex-col justify-center items-center space-y-4">
         <NavbarWrapper>
@@ -178,6 +189,8 @@ const IgboTextImages = (): ReactElement => {
         ) : null}
       </Box>
     </Box>
+  ) : (
+    <Completed type={CrowdsourcingType.UPLOAD_TEXT_IMAGE} setIsComplete={setIsComplete} setIsDirty={noop} />
   );
 };
 

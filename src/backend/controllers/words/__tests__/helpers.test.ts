@@ -1,17 +1,19 @@
 import { cloneDeep } from 'lodash';
-import WordTags from 'src/backend/shared/constants/WordTags';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import { combineWords, replaceWordIdsFromExampleAssociatedWords } from '../helpers';
 
 const firstWord = {
   word: 'first word',
-  definitions: [{
-    definitions: ['first word definition'],
-    wordClass: 'NNC',
-    toObject: () => ({
+  definitions: [
+    {
       definitions: ['first word definition'],
       wordClass: 'NNC',
-    }),
-  }],
+      toObject: () => ({
+        definitions: ['first word definition'],
+        wordClass: 'NNC',
+      }),
+    },
+  ],
   wordPronunciation: 'first word word pronunciation',
   conceptualWord: 'first word conceptual word',
   stems: ['first word stem'],
@@ -20,27 +22,31 @@ const firstWord = {
   hypernyms: ['first word hypernym'],
   hyponyms: ['first word hyponym'],
   nsibidi: 'first word nsibidi',
-  dialects: [{
-    dialects: ['ANI'],
-    word: 'first word dialect',
-  }],
+  dialects: [
+    {
+      dialects: ['ANI'],
+      word: 'first word dialect',
+    },
+  ],
   attributes: {
     isStandardIgbo: true,
     isAccented: true,
   },
-  tags: [WordTags.BOTANY.value],
+  tags: [WordTagEnum.BOTANY],
 };
 
 const secondWord = {
   word: 'second word',
-  definitions: [{
-    definitions: ['second word definition'],
-    wordClass: 'ADV',
-    toObject: () => ({
+  definitions: [
+    {
       definitions: ['second word definition'],
       wordClass: 'ADV',
-    }),
-  }],
+      toObject: () => ({
+        definitions: ['second word definition'],
+        wordClass: 'ADV',
+      }),
+    },
+  ],
   wordPronunciation: 'second word word pronunciation',
   conceptualWord: 'second word conceptual word',
   stems: ['second word stem'],
@@ -49,15 +55,17 @@ const secondWord = {
   hypernyms: ['second word hypernym'],
   hyponyms: ['second word hyponym'],
   nsibidi: 'second word nsibidi',
-  dialects: [{
-    dialects: ['ANI'],
-    word: 'second word dialect',
-  }],
+  dialects: [
+    {
+      dialects: ['ANI'],
+      word: 'second word dialect',
+    },
+  ],
   attributes: {
     isStandardIgbo: true,
     isAccented: false,
   },
-  tags: [WordTags.BOTANY.value],
+  tags: [WordTagEnum.BOTANY],
 };
 
 describe('word helpers', () => {
@@ -92,21 +100,23 @@ describe('word helpers', () => {
     expect(updatedWord.dialects[1].word).toEqual('second word dialect');
     expect(updatedWord.attributes.isStandardIgbo).toEqual(true);
     expect(updatedWord.attributes.isAccented).toEqual(true);
-    expect(updatedWord.tags).toEqual([WordTags.BOTANY.value]);
+    expect(updatedWord.tags).toEqual([WordTagEnum.BOTANY]);
     expect(updatedWord.pronunciation).toEqual('');
   });
 
   it('combines a word object into another with the same word classes', () => {
     const updatedSecondDoc = {
       word: 'second word',
-      definitions: [{
-        definitions: ['second word definition'],
-        wordClass: 'NNC',
-        toObject: () => ({
+      definitions: [
+        {
           definitions: ['second word definition'],
           wordClass: 'NNC',
-        }),
-      }],
+          toObject: () => ({
+            definitions: ['second word definition'],
+            wordClass: 'NNC',
+          }),
+        },
+      ],
       wordPronunciation: 'second word word pronunciation',
       conceptualWord: 'second word conceptual word',
       stems: ['second word stem'],
@@ -115,15 +125,17 @@ describe('word helpers', () => {
       hypernyms: ['second word hypernym'],
       hyponyms: ['second word hyponym'],
       nsibidi: 'second word nsibidi',
-      dialects: [{
-        dialects: ['ANI'],
-        word: 'second word dialect',
-      }],
+      dialects: [
+        {
+          dialects: ['ANI'],
+          word: 'second word dialect',
+        },
+      ],
       attributes: {
         isStandardIgbo: true,
         isAccented: false,
       },
-      tags: [WordTags.BOTANY.value],
+      tags: [WordTagEnum.BOTANY],
     };
 
     const updatedWord = combineWords({
@@ -152,7 +164,7 @@ describe('word helpers', () => {
     expect(updatedWord.dialects[1].word).toEqual('second word dialect');
     expect(updatedWord.attributes.isStandardIgbo).toEqual(true);
     expect(updatedWord.attributes.isAccented).toEqual(true);
-    expect(updatedWord.tags).toEqual([WordTags.BOTANY.value]);
+    expect(updatedWord.tags).toEqual([WordTagEnum.BOTANY]);
     expect(updatedWord.pronunciation).toEqual('');
   });
 

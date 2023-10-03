@@ -21,14 +21,14 @@ const TextImageList = (props: ListProps): React.ReactElement => {
         small={
           <Datagrid>
             <Select collection={Collection.TEXT_IMAGES} label="Editor's Actions" permissions={permissions} />
-            <TextField label="Igbo transcription" source="igbo" className="akagu" />
+            <TextField label="Igbo transcription" source="igbo" defaultValue="N/A" />
           </Datagrid>
         }
         medium={
           <Datagrid>
             <Select collection={Collection.TEXT_IMAGES} label="Editor's Actions" permissions={permissions} />
-            <TextField label="Igbo transcription" source="igbo" className="akagu" />
-            <UrlField label="Media URL" source="media" />
+            <TextField label="Igbo transcription" source="igbo" defaultValue="N/A" />
+            <UrlField label="Media URL" source="media" defaultValue="N/A" />
           </Datagrid>
         }
       />

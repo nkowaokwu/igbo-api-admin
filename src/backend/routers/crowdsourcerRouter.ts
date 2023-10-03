@@ -39,7 +39,7 @@ const crowdsourcerRouter = express.Router();
 const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER, UserRoles.CROWDSOURCER];
 crowdsourcerRouter.use(authentication, authorization(allRoles));
 
-crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/admnor`, getRandomWordSuggestions);
+crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/random`, getRandomWordSuggestions);
 crowdsourcerRouter.put(
   `/${Collection.WORD_SUGGESTIONS}/random`,
   validateRandomWordSuggestionBody,

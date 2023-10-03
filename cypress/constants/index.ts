@@ -1,7 +1,8 @@
-import Dialects from '../../src/backend/shared/constants/Dialects';
+import Dialect from '../../src/backend/shared/constants/Dialect';
 import WordClass from '../../src/backend/shared/constants/WordClass';
+import DialectEnum from '../../src/backend/shared/constants/DialectEnum';
 
-export const DialectOptions = Dialects;
+export const DialectOptions = Dialect;
 
 export const API_ROUTE = process.env.NODE_ENV !== 'production' ? 'http://localhost:3030' : 'https://editor.igboapi.com';
 
@@ -46,8 +47,8 @@ export const wordSuggestionData = {
   variations: ['main_word_variation'],
   dialects: [
     {
-      word: `${Dialects.NSA.value}-main_word`,
-      dialects: [Dialects.NSA.value],
+      word: `${DialectEnum.NSA}-main_word`,
+      dialects: [DialectEnum.NSA],
       variations: [],
       pronunciation: '',
     },
