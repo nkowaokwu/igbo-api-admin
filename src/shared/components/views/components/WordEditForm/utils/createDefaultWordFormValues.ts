@@ -2,6 +2,7 @@ import { Record } from 'react-admin';
 import { omit } from 'lodash';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import WordTags from 'src/backend/shared/constants/WordTags';
 
 const createDefaultWordFormValues = (record: Record): any => {
   const defaultValues = {
@@ -28,6 +29,7 @@ const createDefaultWordFormValues = (record: Record): any => {
           exampleId: id,
         }))
       : [],
+    tags: (record?.tags || []).map((tag) => WordTags[tag]),
     variations: (record?.variations || []).map((variation) => ({ text: variation })),
     relatedTerms: (record?.relatedTerms || []).map((relatedTerm) => ({ text: relatedTerm })),
     stems: (record?.stems || []).map((stem) => ({ text: stem })),

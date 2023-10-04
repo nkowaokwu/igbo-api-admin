@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
@@ -6,13 +7,8 @@ import WordTags from 'src/backend/shared/constants/WordTags';
 import FormHeader from '../FormHeader';
 import TagsInterface from './TagsFormInterface';
 
-const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
-  const generateDefaultTags = () => {
-    if (record?.tags) {
-      return record.tags.map((tag) => WordTags[tag.toUpperCase()]);
-    }
-    return [];
-  };
+const TagsForm = ({ errors, control }: TagsInterface): ReactElement => {
+  const tags = get(control.getValues(), 'tags');
 
   return (
     <Box className="flex flex-col w-full">
@@ -21,16 +17,9 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
         <Box className="w-full" data-test="tags-input-container">
           <Controller
             render={({ onChange, ref }) => (
-              <Select
-                ref={ref}
-                onChange={onChange}
-                options={Object.values(WordTags)}
-                defaultValue={generateDefaultTags()}
-                isMulti
-              />
+              <Select ref={ref} onChange={onChange} options={Object.values(WordTags)} value={tags} isMulti />
             )}
             name="tags"
-            defaultValue={generateDefaultTags()}
             control={control}
           />
         </Box>

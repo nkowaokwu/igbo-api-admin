@@ -215,7 +215,7 @@ const WordEditForm = ({
               watch={watch}
               onChange={handleWarningMessage}
             />
-            <TagsForm errors={errors} control={control} record={record} />
+            <TagsForm errors={errors} control={control} />
             <FrequencyForm errors={errors} control={control} record={record} />
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
