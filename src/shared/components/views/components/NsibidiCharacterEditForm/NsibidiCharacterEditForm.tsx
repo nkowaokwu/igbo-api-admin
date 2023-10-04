@@ -130,7 +130,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
           />
         </Box>
         <Box className="flex flex-1">
-          <TagsForm errors={errors} control={control} record={record} />
+          <TagsForm errors={errors} control={control} />
         </Box>
       </Box>
       <FormHeader title="Pronunciation" tooltip="Text representation of the Nsịbịdị pronunciation" />
