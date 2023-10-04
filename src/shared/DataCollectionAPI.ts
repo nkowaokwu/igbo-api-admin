@@ -150,12 +150,12 @@ export const postWordSuggestionsForIgboDefinitions = async (data: { limit: numbe
 
 /* Text Images */
 export const postTextImages = async (data: { igbo: string }[]): Promise<{ id: string; igbo: string }[]> =>
-  (await request({ method: 'POST', url: `${Collections.TEXT_IMAGE}`, data })).data;
+  (await request({ method: 'POST', url: `${Collections.TEXT_IMAGES}`, data })).data;
 
 export const attachTextImages = async (data: DataPayload[]): Promise<{ id: string; result: string | void }[]> => {
   const result = await Promise.all(
     data.map(async (payload) => {
-      const result = await uploadToS3({ collection: Collections.TEXT_IMAGE, data: payload });
+      const result = await uploadToS3({ collection: Collections.TEXT_IMAGES, data: payload });
       return { id: payload.id, result };
     }),
   );

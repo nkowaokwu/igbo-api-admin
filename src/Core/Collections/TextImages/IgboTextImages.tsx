@@ -7,13 +7,15 @@ import { ActivityButton, FilePicker, Textarea } from 'src/shared/primitives';
 import { FileDataType } from 'src/Core/Collections/TextImages/types';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 import { attachTextImages, postTextImages } from 'src/shared/DataCollectionAPI';
+import Completed from 'src/Core/Collections/components/Completed';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
 type IgboTextPayloadType = FileDataType & {
   igbo: string;
 };
 
 const FILE_LIMIT = 5;
-const IGBO_TEXT_IMAGE_EXAMPLE =
+const IGBO_TEXT_IMAGES_EXAMPLE =
   'https://github.com/nkowaokwu/igbo-ocr/blob/main/tesstrain/data/ibo-ground-truth/Aghu1.png?raw=true';
 
 const IgboTextImages = (): ReactElement => {
@@ -21,6 +23,7 @@ const IgboTextImages = (): ReactElement => {
   const [fileData, setFileData] = useState<IgboTextPayloadType[]>(null);
   const [fileDataIndex, setFileDataIndex] = useState(-1);
   const [visitedFileDataIndex, setVisitedFileDataIndex] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   const toast = useToast();
 
   const currentFileData = fileData?.[fileDataIndex] || { filePath: '', file: { name: '' }, igbo: '' };
@@ -68,10 +71,11 @@ const IgboTextImages = (): ReactElement => {
         position: 'top-right',
         variant: 'left-accent',
         description: 'Text images have been uploaded',
-        status: 'error',
+        status: 'success',
         duration: 4000,
         isClosable: true,
       });
+      setIsComplete(true);
     } catch (err) {
       toast({
         title: 'Error',
@@ -93,7 +97,14 @@ const IgboTextImages = (): ReactElement => {
     }
   }, [fileDataIndex, fileData]);
 
-  return (
+  useEffect(() => {
+    if (!isComplete) {
+      setFileData(null);
+      setFileDataIndex(-1);
+    }
+  }, [isComplete]);
+
+  return !isComplete ? (
     <Box className="w-11/12 lg:w-full flex flex-col items-center h-full lg:h-auto" my={0} mx="auto">
       <Box className="w-full flex flex-col justify-center items-center space-y-4">
         <NavbarWrapper>
@@ -103,7 +114,7 @@ const IgboTextImages = (): ReactElement => {
         </NavbarWrapper>
         <Text fontFamily="Silka" mt={4} textAlign="center">
           Upload screenshot images of Igbo text.{' '}
-          <Link textDecoration="underline" href={IGBO_TEXT_IMAGE_EXAMPLE} target="_blank">
+          <Link textDecoration="underline" href={IGBO_TEXT_IMAGES_EXAMPLE} target="_blank">
             Click here for an example.
             <ExternalLinkIcon boxSize="3" ml={1} />
           </Link>
@@ -178,6 +189,8 @@ const IgboTextImages = (): ReactElement => {
         ) : null}
       </Box>
     </Box>
+  ) : (
+    <Completed type={CrowdsourcingType.UPLOAD_TEXT_IMAGE} setIsComplete={setIsComplete} setIsDirty={noop} />
   );
 };
 

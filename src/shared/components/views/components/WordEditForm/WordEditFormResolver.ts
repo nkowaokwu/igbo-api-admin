@@ -4,6 +4,7 @@ import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
 const schema = yup.object().shape({
@@ -25,7 +26,7 @@ const schema = yup.object().shape({
     .min(0)
     .of(
       yup.object().shape({
-        value: yup.string(),
+        value: yup.mixed().oneOf(Object.values(WordTagEnum)),
         label: yup.string(),
       }),
     ),

@@ -156,7 +156,7 @@ describe('DataCollectionAPI', () => {
     await postTextImages(textImagesPayload);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'POST',
-      url: `${Collections.TEXT_IMAGE}`,
+      url: `${Collections.TEXT_IMAGES}`,
       data: textImagesPayload,
     });
   });
@@ -166,7 +166,7 @@ describe('DataCollectionAPI', () => {
     const textImagesPayload = [{ id: 'igbo', file: new File([], '') }];
     await attachTextImages(textImagesPayload);
     expect(uploadToS3Spy).toHaveBeenCalledWith({
-      collection: Collections.TEXT_IMAGE,
+      collection: Collections.TEXT_IMAGES,
       data: textImagesPayload[0],
     });
   });

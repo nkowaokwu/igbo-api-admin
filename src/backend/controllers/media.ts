@@ -74,7 +74,7 @@ export const onMediaSignedRequest = functions.https.onCall(
     switch (collection) {
       case Collection.CORPUS_SUGGESTIONS:
         return updateCorpusSuggestion({ mongooseConnection, data });
-      case Collection.TEXT_IMAGE:
+      case Collection.TEXT_IMAGES:
         return updateTextImage({ mongooseConnection, data });
       default:
         return null;

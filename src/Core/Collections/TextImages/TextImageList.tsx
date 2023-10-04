@@ -20,15 +20,15 @@ const TextImageList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={
           <Datagrid>
-            <Select collection={Collection.TEXT_IMAGE} label="Editor's Actions" permissions={permissions} />
-            <TextField label="Igbo transcription" source="igbo" className="akagu" />
+            <Select collection={Collection.TEXT_IMAGES} label="Editor's Actions" permissions={permissions} />
+            <TextField label="Igbo transcription" source="igbo" defaultValue="N/A" />
           </Datagrid>
         }
         medium={
           <Datagrid>
-            <Select collection={Collection.TEXT_IMAGE} label="Editor's Actions" permissions={permissions} />
-            <TextField label="Igbo transcription" source="igbo" className="akagu" />
-            <UrlField label="Media URL" source="media" />
+            <Select collection={Collection.TEXT_IMAGES} label="Editor's Actions" permissions={permissions} />
+            <TextField label="Igbo transcription" source="igbo" defaultValue="N/A" />
+            <UrlField label="Media URL" source="media" defaultValue="N/A" />
           </Datagrid>
         }
       />

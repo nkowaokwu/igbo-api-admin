@@ -15,6 +15,8 @@ import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import { invalidRelatedTermsWordClasses } from 'src/backend/controllers/utils/determineIsAsCompleteAsPossible';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import Collections from 'src/shared/constants/Collection';
+import TagsForm from 'src/shared/components/views/components/TagsForm';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -23,7 +25,6 @@ import VariationsForm from './components/VariationsForm';
 import StemsForm from './components/StemsForm';
 import RelatedTermsForm from './components/RelatedTermsForm';
 import HeadwordForm from './components/HeadwordForm';
-import TagsForm from './components/TagsForm';
 import FrequencyForm from './components/FrequencyForm';
 import TensesForm from './components/TensesForm';
 import AudioRecorder from '../AudioRecorder';
@@ -84,7 +85,7 @@ const WordEditForm = ({
   };
 
   /* Gets tag values */
-  const sanitizeTags = (tags: Word['tags']) => tags.map(({ value }) => value);
+  const sanitizeTags = (tags: { value: WordTagEnum; label: string }[]) => tags.map(({ value }) => value);
 
   /* Prepares the data to be cached */
   const createCacheWordData = (data: FormData, record: Record | Word = { id: null, dialects: {} }) => {

@@ -20,14 +20,13 @@ export const getTextImages = (
     };
     const TextImage = mongooseConnection.model<Interfaces.TextImage>('TextImage', textImageSchema);
 
-    console.log({ skip, limit, query: query.$or[0] });
     return TextImage.find(query)
       .skip(skip)
       .limit(limit)
       .then((textImages: Interfaces.TextImage[]) =>
         packageResponse({
           res,
-          docs: textImages,
+          docs: textImages.map((textImage) => textImage.toObject()),
           model: TextImage,
           query,
           ...rest,
@@ -50,10 +49,15 @@ export const postTextImage = async (
 ): Promise<any | void> => {
   try {
     const { mongooseConnection, body } = req;
-    const TextImage = mongooseConnection.model<Interfaces.TextImage>('TextImage', textImageSchema);
-    const textImage = new TextImage(body);
-    const savedTextImage = await textImage.save();
-    return res.send(savedTextImage);
+    const textImages = await Promise.all(
+      body.map(async (textImagePayload) => {
+        const TextImage = mongooseConnection.model<Interfaces.TextImage>('TextImage', textImageSchema);
+        const textImage = new TextImage(textImagePayload);
+        const savedTextImage = await textImage.save();
+        return savedTextImage.toObject();
+      }),
+    );
+    return res.send(textImages);
   } catch (err) {
     return next(err);
   }

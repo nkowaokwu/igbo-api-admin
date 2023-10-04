@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Controller } from 'react-hook-form';
 import WordTags from 'src/backend/shared/constants/WordTags';
-import FormHeader from '../../../FormHeader';
+import FormHeader from '../FormHeader';
 import TagsInterface from './TagsFormInterface';
 
 const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
@@ -17,14 +17,8 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
   return (
     <Box className="flex flex-col w-full">
       <Box className="flex flex-col my-2 space-y-2 justify-between items-between">
-        <FormHeader
-          title="Tags"
-          tooltip="Select tags that are associated with the word."
-        />
-        <Box
-          className="w-full"
-          data-test="tags-input-container"
-        >
+        <FormHeader title="Tags" tooltip="Select tags that are associated with the document." />
+        <Box className="w-full" data-test="tags-input-container">
           <Controller
             render={({ onChange, ref }) => (
               <Select
@@ -41,9 +35,7 @@ const TagsForm = ({ errors, control, record }: TagsInterface): ReactElement => {
           />
         </Box>
       </Box>
-      {errors.tags ? (
-        <p className="error relative">{errors.tags[0]?.message || errors.tags.message}</p>
-      ) : null}
+      {errors.tags ? <p className="error relative">{errors.tags[0]?.message || errors.tags.message}</p> : null}
     </Box>
   );
 };

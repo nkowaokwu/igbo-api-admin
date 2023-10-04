@@ -14,6 +14,7 @@ import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 
 export interface HandleQueries {
   searchWord: string;
@@ -108,7 +109,7 @@ export interface WordData {
   normalized: string;
   frequency: number;
   stems: string[];
-  tags: string[];
+  tags: WordTagEnum[];
   attributes: {
     [WordAttributeEnum.IS_STANDARD_IGBO]: boolean;
     [WordAttributeEnum.IS_ACCENTED]: boolean;
@@ -160,7 +161,7 @@ export interface Corpus extends Document<any>, LeanDocument<any> {
   title: string;
   body: string;
   media: string;
-  tags: string[];
+  tags: WordTagEnum[];
 }
 
 export interface CorpusSuggestion extends Corpus, Suggestion {}
@@ -174,12 +175,16 @@ export interface WordSuggestion extends Word, Suggestion {
   };
 }
 
-export interface TextImage {
+export interface TextImageData {
   media: string;
   size: number;
   prevSize?: number;
   igbo: string;
   english: string;
+}
+
+export interface TextImage extends TextImageData, Document<any>, LeanDocument<any> {
+  id: Types.ObjectId;
 }
 
 export interface Example extends ExampleData, Document<any>, LeanDocument<any> {
@@ -275,6 +280,7 @@ export interface NsibidiCharacter {
   id: Types.ObjectId | string;
   nsibidi: string;
   definitions: { text: string }[];
+  tags: WordTagEnum[];
   attributes?: { [key in NsibidiCharacterAttributeEnum]: boolean };
   pronunciation: string;
   wordClass: string;

@@ -18,6 +18,7 @@ import {
   calculateTranslatingExampleLeaderboard,
   getLeaderboard,
 } from 'src/backend/controllers/leaderboard';
+import { getTextImages, postTextImage } from 'src/backend/controllers/textImages';
 import { sendReportUserNotification } from 'src/backend/controllers/email';
 import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
@@ -28,21 +29,27 @@ import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRan
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 // eslint-disable-next-line max-len
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
+import validateTextImages from 'src/backend/middleware/validateTextImages';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
+import Collection from 'src/shared/constants/Collection';
 
 const crowdsourcerRouter = express.Router();
 const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER, UserRoles.CROWDSOURCER];
 crowdsourcerRouter.use(authentication, authorization(allRoles));
 
-crowdsourcerRouter.get('/wordSuggestions/random', getRandomWordSuggestions);
-crowdsourcerRouter.put('/wordSuggestions/random', validateRandomWordSuggestionBody, putRandomWordSuggestions);
-
-crowdsourcerRouter.get('/exampleSuggestions/random/audio', getRandomExampleSuggestionsToRecord);
-crowdsourcerRouter.get('/exampleSuggestions/random/translate', getRandomExampleSuggestionsToTranslate);
+crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/random`, getRandomWordSuggestions);
 crowdsourcerRouter.put(
-  '/exampleSuggestions/random/translate',
+  `/${Collection.WORD_SUGGESTIONS}/random`,
+  validateRandomWordSuggestionBody,
+  putRandomWordSuggestions,
+);
+
+crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/audio`, getRandomExampleSuggestionsToRecord);
+crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/translate`, getRandomExampleSuggestionsToTranslate);
+crowdsourcerRouter.put(
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/translate`,
   validateRandomExampleSuggestionTranslationBody,
   putRandomExampleSuggestionsToTranslate,
   calculateTranslatingExampleLeaderboard,
@@ -50,42 +57,45 @@ crowdsourcerRouter.put(
 
 // Records audio for example suggestion
 crowdsourcerRouter.put(
-  '/exampleSuggestions/random/audio',
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/audio`,
   validateAudioRandomExampleSuggestionBody,
   putAudioForRandomExampleSuggestions,
   calculateRecordingExampleLeaderboard,
 );
 // Reviews audio for example suggestion
 crowdsourcerRouter.put(
-  '/exampleSuggestions/random/review',
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/review`,
   validateReviewRandomExampleSuggestionBody,
   putReviewForRandomExampleSuggestions,
   calculateReviewingExampleLeaderboard,
 );
 crowdsourcerRouter.post(
-  '/exampleSuggestions/upload',
+  `/${Collection.EXAMPLE_SUGGESTIONS}/upload`,
   authorization([UserRoles.ADMIN]),
   validateBulkUploadExampleSuggestionBody,
   postBulkUploadExampleSuggestions,
 );
-crowdsourcerRouter.get('/exampleSuggestions/random/review', getRandomExampleSuggestionsToReview);
+crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/review`, getRandomExampleSuggestionsToReview);
 crowdsourcerRouter.get(
-  '/exampleSuggestions/random/stats/verified',
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/verified`,
   resourcePermission,
   getTotalVerifiedExampleSuggestions,
 );
 crowdsourcerRouter.get(
-  '/exampleSuggestions/random/stats/recorded',
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/recorded`,
   resourcePermission,
   getTotalRecordedExampleSuggestions,
 );
 
+crowdsourcerRouter.get(`/${Collection.TEXT_IMAGES}`, getTextImages);
+crowdsourcerRouter.post(`/${Collection.TEXT_IMAGES}`, validateTextImages, postTextImage);
+
 // TODO: use the new resourcePermission middleware to only grant
 // access to stats to the user who owns the stats or the admin
-crowdsourcerRouter.get('/stats/user', cacheControl, getUserStats);
-crowdsourcerRouter.get('/stats/users/:uid/merge', getUserMergeStats);
-crowdsourcerRouter.get('/stats/users/:uid/audio', getUserAudioStats);
-crowdsourcerRouter.get('/stats/users/:uid', cacheControl, getUserStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/user`, cacheControl, getUserStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/merge`, getUserMergeStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/audio`, getUserAudioStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid`, cacheControl, getUserStats);
 
 // Leaderboard
 crowdsourcerRouter.get('/leaderboard', getLeaderboard);

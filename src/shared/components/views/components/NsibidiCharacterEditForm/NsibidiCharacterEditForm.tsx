@@ -20,6 +20,7 @@ import NsibidiInput from 'src/shared/components/views/components/WordEditForm/co
 // eslint-disable-next-line max-len
 import CharacterAttributesForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/CharacterAttributesForm';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
+import TagsForm from 'src/shared/components/views/components/TagsForm';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -108,23 +109,30 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         title="Nsịbịdị"
         tooltip="This field uses the Chinese Unicode to represent its corresponding Nsịbịdị"
       />
-      <CharacterAttributesForm record={record} getValues={getValues} control={control} />
-      <Controller
-        render={(props) => (
-          <NsibidiInput
-            {...props}
+      <Box className="flex flex-row justify-between items-start">
+        <Box className="flex flex-1">
+          <CharacterAttributesForm record={record} getValues={getValues} control={control} />
+          <Controller
+            render={(props) => (
+              <NsibidiInput
+                {...props}
+                control={control}
+                nsibidiFormName="nsibidi"
+                placeholder="Input in Nsịbịdị"
+                data-test="nsibidi-input"
+                enableSearch={false}
+                showLegacy={get(getValues(), `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`)}
+              />
+            )}
+            name="nsibidi"
             control={control}
-            nsibidiFormName="nsibidi"
-            placeholder="Input in Nsịbịdị"
-            data-test="nsibidi-input"
-            enableSearch={false}
-            showLegacy={get(getValues(), `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`)}
+            defaultValue={get(record, 'nsibidi') || getValues().nsibidi || ''}
           />
-        )}
-        name="nsibidi"
-        control={control}
-        defaultValue={get(record, 'nsibidi') || getValues().nsibidi || ''}
-      />
+        </Box>
+        <Box className="flex flex-1">
+          <TagsForm errors={errors} control={control} record={record} />
+        </Box>
+      </Box>
       <FormHeader title="Pronunciation" tooltip="Text representation of the Nsịbịdị pronunciation" />
       <Controller
         render={(props) => (
@@ -197,9 +205,11 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         Add definition
       </Button>
       {errors.definitions && <p className="error">{errors.definitions.message || errors.definitions[0]?.message}</p>}
-      <Box className="w-full mt-4">
-        <RadicalsForm errors={errors} control={control} record={record} />
-      </Box>
+      {!get(getValues(), `attributes[${NsibidiCharacterAttributeEnum.IS_RADICAL}]`) ? (
+        <Box className="w-full mt-4">
+          <RadicalsForm errors={errors} control={control} record={record} />
+        </Box>
+      ) : null}
       <Box className="form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
         <Button
           className="mt-3 lg:my-0"
