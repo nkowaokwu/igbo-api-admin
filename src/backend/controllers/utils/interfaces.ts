@@ -4,7 +4,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collections from 'src/shared/constants/Collection';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import { User } from 'firebase/auth';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
@@ -36,14 +36,9 @@ export interface HandleQueries {
   params: Request['params'];
 }
 
-export interface FirebaseUser extends User {
-  editingGroup?: number | undefined;
-  customClaims?: any;
-  metadata?: any;
-}
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
-  user: FirebaseUser;
+  user: UserRecord;
   query: {
     keyword?: string;
     page?: number | string;
@@ -386,6 +381,20 @@ export interface FormattedUser {
   editingGroup: string;
   lastSignInTime: string;
   creationTime: string;
+}
+
+export type FirebaseUser = UserRecord;
+
+export interface User {
+  firebaseId: string;
+  id: string;
+  referralCode: string;
+}
+
+export interface Referral {
+  id: string;
+  referrer: User;
+  referredUser: User;
 }
 
 export interface SearchRegExp {
