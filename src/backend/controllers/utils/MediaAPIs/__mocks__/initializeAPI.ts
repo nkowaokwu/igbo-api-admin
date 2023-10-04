@@ -34,7 +34,7 @@ const initializeAPI = (
     throw new Error('Media Path is required');
   }
   const uriPath = `https://${bucket}.s3.${region}.amazonaws.com/${mediaPath}`;
-  const dummyUriPath = `https://igbo-api-test-local/${mediaPath}/`;
+  const dummyUriPath = `https://igbo-api-test-local.com/${mediaPath}/`;
   return {
     bucket,
     uriPath,
