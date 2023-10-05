@@ -8,8 +8,7 @@ import * as Interfaces from './utils/interfaces';
 
 const cachedUsers = {};
 
-// @ts-expect-error
-const formatUser = (user: Interfaces.FirebaseUser = { customClaims: {}, metadata: {} }): Interfaces.FormattedUser => {
+const formatUser = (user: Interfaces.FirebaseUser): Interfaces.FormattedUser => {
   const { customClaims, metadata } = user;
   return {
     uid: user.uid,
