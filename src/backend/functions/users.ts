@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { customAlphabet } from 'nanoid';
 import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
@@ -7,9 +8,34 @@ import { adminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collection';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
+import { findUsers } from '../controllers/users';
 import { assignUserRole } from './utils';
+import { connectDatabase } from '../utils/database';
+import * as Interfaces from '../controllers/utils/interfaces';
+import { UserSchema } from '../models/User';
+
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const topic = 'copy-firebase-users';
 
 const db = admin.firestore();
+
+/**
+ * Creates an associated mongodb User document
+ * @param {FirebaseUser['uid']} firebaseId firebase user id
+ *
+ * @returns {void}
+ */
+const createMongoUser = async (firebaseId: string) => {
+  const nanoid = customAlphabet(`${alphabet}${new Date().valueOf()}`, 6);
+
+  const connection = await connectDatabase();
+  const User = connection.model<Interfaces.User>('User', UserSchema);
+  await User.create({
+    firebaseId,
+    referralCode: nanoid(),
+  });
+};
+
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.auth.user().onCreate(async (user) => {
   try {
@@ -18,6 +44,7 @@ export const onCreateUserAccount = functions.auth.user().onCreate(async (user) =
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
     await incrementTotalUserStat();
+    await createMongoUser(user.uid);
 
     return successResponse({ uid: user.uid });
   } catch (err) {
@@ -93,4 +120,36 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
     console.log('Unable to send update role notification email');
   }
   return Promise.resolve(`Updated user ${uid} permissions to ${role}`);
+});
+
+/**
+ * Copies existing firebase users to MongoDB
+ *
+ * @returns {Promise}
+ */
+export const onCopyFirebaseUsers = functions.pubsub.topic(topic).onPublish(async () => {
+  const nanoid = customAlphabet(`${alphabet}${new Date().valueOf()}`, 6);
+
+  const connection = await connectDatabase();
+  const User = connection.model<Interfaces.User>('User', UserSchema);
+
+  const firebaseUsers = await findUsers();
+  const dupeUsers = await User.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });
+  const blacklist = dupeUsers.reduce<{ [k: string]: string }>((acc, { firebaseId }) => {
+    acc[firebaseId] = firebaseId;
+    return acc;
+  }, {});
+
+  const dedupedUsers = firebaseUsers.reduce<Omit<Interfaces.User, 'id'>[]>((acc, { id }) => {
+    if (!(id in blacklist)) {
+      acc.push({
+        firebaseId: id,
+        referralCode: nanoid(),
+      });
+    }
+    return acc;
+  }, []);
+
+  await User.insertMany(dedupedUsers);
+  return Promise.resolve('Successfully copied firebase users');
 });
