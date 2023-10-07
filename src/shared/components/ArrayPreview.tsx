@@ -2,20 +2,24 @@ import React, { ReactElement } from 'react';
 import { get, truncate } from 'lodash';
 import { Text, Tooltip, chakra } from '@chakra-ui/react';
 import WordClass from 'src/backend/shared/constants/WordClass';
+import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
+import ResolvedWord from 'src/shared/components/ResolvedWord';
 import { ArrayPreviewProps } from '../interfaces';
-import ResolvedWord from './ResolvedWord';
 
 /* Builds the list of preview items */
 const populateList = (items = [], source) => {
   if (!items?.length) {
     return [];
   }
-  const isResolvable = source === 'stems' || source === 'associatedWords';
+  const isResolvable = source === 'stems' || source === 'associatedWords' || source === 'radicals';
+  const isWord = source === 'stems' || source === 'associatedWords';
   const isDefinitions = source === 'definitions';
   const itemsPreview = items.slice(0, 10).map((item) => (
     <li className="list-disc" key={item}>
-      {isResolvable ? (
-        <ResolvedWord wordId={item} />
+      {isResolvable && isWord ? (
+        <ResolvedWord wordId={item?.id || item} />
+      ) : isResolvable && !isWord ? (
+        <ResolvedNsibidiCharacter nsibidiCharacterId={item?.id || item} />
       ) : isDefinitions ? (
         <>
           <Text className="italic text-gray-700">
