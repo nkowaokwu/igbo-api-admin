@@ -1,10 +1,8 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { assign, get, omit } from 'lodash';
-import { Box, Button, IconButton, Tooltip, useToast } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import Select from 'react-select';
+import { Box, Button, useToast } from '@chakra-ui/react';
 import { useNotify } from 'react-admin';
-import { Controller, useForm, useFieldArray } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { EditFormProps } from 'src/shared/interfaces';
 import View from 'src/shared/constants/Views';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
@@ -12,15 +10,12 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { handleUpdateDocument } from 'src/shared/constants/actionsMap';
 import ActionTypes from 'src/shared/constants/ActionTypes';
 import Collections from 'src/shared/constants/Collection';
-import { Input } from 'src/shared/primitives';
-import WordClass from 'src/backend/shared/constants/WordClass';
 // eslint-disable-next-line max-len
 import RadicalsForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/RadicalsForm/RadicalsForm';
 import NsibidiInput from 'src/shared/components/views/components/WordEditForm/components/NsibidiForm/NsibidiInput';
 // eslint-disable-next-line max-len
 import CharacterAttributesForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/CharacterAttributesForm';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
-import TagsForm from 'src/shared/components/views/components/TagsForm';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
@@ -41,22 +36,13 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
   const { isDirty } = formState;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {
-    fields: definitions,
-    append,
-    remove,
-  } = useFieldArray({
-    control,
-    name: 'definitions',
-  });
   const notify = useNotify();
   const toast = useToast();
-  const options = Object.values(WordClass).map(({ nsibidiValue }) => ({ label: nsibidiValue, value: nsibidiValue }));
 
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const preparedData = omit(assign(data, { wordClass: data.wordClass.value }), [view === View.CREATE ? 'id' : '']);
+      const preparedData = omit(assign(data), [view === View.CREATE ? 'id' : '']);
       const cleanedData = removePayloadFields(preparedData);
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
@@ -109,8 +95,8 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         title="Nsịbịdị"
         tooltip="This field uses the Chinese Unicode to represent its corresponding Nsịbịdị"
       />
-      <Box className="flex flex-row justify-between items-start">
-        <Box className="flex flex-1">
+      <Box className="flex flex-col lg:flex-row justify-between items-start">
+        <Box className="flex flex-col flex-1">
           <CharacterAttributesForm record={record} getValues={getValues} control={control} />
           <Controller
             render={(props) => (
@@ -129,82 +115,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
             defaultValue={get(record, 'nsibidi') || getValues().nsibidi || ''}
           />
         </Box>
-        <Box className="flex flex-1">
-          <TagsForm errors={errors} control={control} />
-        </Box>
       </Box>
-      <FormHeader title="Pronunciation" tooltip="Text representation of the Nsịbịdị pronunciation" />
-      <Controller
-        render={(props) => (
-          <NsibidiInput
-            {...props}
-            control={control}
-            nsibidiFormName="pronunciation"
-            placeholder="Nsịbịdị pronunciation"
-            data-test="pronunciation-input"
-            enableSearch={false}
-            showLegacy={get(getValues(), `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`)}
-          />
-        )}
-        name="pronunciation"
-        control={control}
-        defaultValue={get(record, 'pronunciation') || getValues().pronunciation || ''}
-      />
-      {errors.pronunciation && (
-        <p className="error">{errors.pronunciation.message || errors.pronunciation[0]?.message}</p>
-      )}
-      <FormHeader title="Part of Speech" tooltip="Part of speech in Nsịbịdị" />
-      <Box data-test="nsibidi-word-class-input-container">
-        <Controller
-          render={(props) => (
-            <Select {...props} options={options} className="akagu" data-test="nsibidi-pronunciation" />
-          )}
-          name="wordClass"
-          control={control}
-          defaultValue={get(record, 'wordClass') || getValues().wordClass || ''}
-        />
-      </Box>
-      {errors.wordClass && <p className="error">{errors.wordClass.message || errors.wordClass[0]?.message}</p>}
-      <FormHeader title="Definitions" tooltip="Nsịbịdị definitions" />
-      {definitions?.length
-        ? definitions.map((definition, index) => (
-            <Box key={definition.id} className="flex flex-row justify-between items-center space-x-2 my-2">
-              <Controller
-                render={(props) => (
-                  <Input
-                    {...props}
-                    defaultValue={definition.text}
-                    placeholder="Nsịbịdị definition"
-                    data-test={`definitions-${index}-input`}
-                  />
-                )}
-                name={`definitions.${index}.text`}
-                control={control}
-                defaultValue={get(record, `definitions[${index}].text`) || getValues().definitions?.[index]?.text || ''}
-              />
-              {definitions.length > 1 ? (
-                <Tooltip label="Deletes the current definition">
-                  <IconButton
-                    backgroundColor="red.100"
-                    _hover={{
-                      backgroundColor: 'red.200',
-                    }}
-                    aria-label="Delete definition"
-                    onClick={() => remove(index)}
-                    className="ml-3"
-                    icon={(() => (
-                      <>🗑</>
-                    ))()}
-                  />
-                </Tooltip>
-              ) : null}
-            </Box>
-          ))
-        : null}
-      <Button width="full" colorScheme="green" aria-label="Add Definition" onClick={append} leftIcon={<AddIcon />}>
-        Add definition
-      </Button>
-      {errors.definitions && <p className="error">{errors.definitions.message || errors.definitions[0]?.message}</p>}
       {!get(getValues(), `attributes[${NsibidiCharacterAttributeEnum.IS_RADICAL}]`) ? (
         <Box className="w-full mt-4">
           <RadicalsForm errors={errors} control={control} record={record} />

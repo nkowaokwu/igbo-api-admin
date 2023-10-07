@@ -274,11 +274,7 @@ export interface ExampleClientData {
 export interface NsibidiCharacter {
   id: Types.ObjectId | string;
   nsibidi: string;
-  definitions: { text: string }[];
-  tags: WordTagEnum[];
   attributes?: { [key in NsibidiCharacterAttributeEnum]: boolean };
-  pronunciation: string;
-  wordClass: string;
 }
 
 export interface CachedDocument extends WordSuggestion, ExampleSuggestion {

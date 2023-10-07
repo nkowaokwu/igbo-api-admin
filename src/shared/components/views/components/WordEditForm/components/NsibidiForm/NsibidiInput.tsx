@@ -73,7 +73,7 @@ const NsibidiInput = React.forwardRef(
     };
 
     return (
-      <>
+      <Box>
         <Input
           {...props}
           ref={ref}
@@ -112,7 +112,7 @@ const NsibidiInput = React.forwardRef(
             nsibidiFormName={nsibidiFormName}
           />
         ) : null}
-      </>
+      </Box>
     );
   },
 );
