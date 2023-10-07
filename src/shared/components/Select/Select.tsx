@@ -364,6 +364,7 @@ const Select = ({
       <Menu data-test="test-select-options" label="Editor's Action">
         <MenuButton
           as={Button}
+          maxWidth="160px"
           rightIcon={<ChevronDownIcon />}
           data-test="actions-menu"
           role="button"

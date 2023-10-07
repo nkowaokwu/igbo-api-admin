@@ -1,9 +1,11 @@
+import { Connection, Types } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign } from 'lodash';
+import { assign, compact } from 'lodash';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { exampleSchema } from 'src/backend/models/Example';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import { staticNsibidiCharacters } from 'src/backend/shared/constants/NsibidiCharacters';
 import { packageResponse, handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 import { nsibidiCharacterSchema } from '../models/NsibidiCharacter';
@@ -114,6 +116,53 @@ export const putNsibidiCharacter = async (
   }
 };
 
+const deleteNsibidiCharactersHelper = async ({
+  mongooseConnection,
+  ids,
+}: {
+  mongooseConnection: Connection;
+  ids: string[];
+}) => {
+  const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
+  const nestedModels = [
+    mongooseConnection.model<Interfaces.Word>('Word', wordSchema),
+    mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema),
+  ];
+  const flatModels = [
+    mongooseConnection.model<Interfaces.Example>('Example', exampleSchema),
+    mongooseConnection.model<Interfaces.ExampleSuggestion>('ExampleSuggestion', exampleSuggestionSchema),
+  ];
+
+  await NsibidiCharacter.deleteMany({ _id: { $in: ids } });
+  const objectIds = ids.map(Types.ObjectId);
+  await Promise.all([
+    ...nestedModels.map(async (Model) => {
+      const docs = await Model.find({ 'definitions.nsibidiCharacters': { $in: objectIds } });
+      await Promise.all(
+        docs.map(async (doc) => {
+          doc.definitions.forEach((_, index) => {
+            doc.definitions[index].nsibidiCharacters = doc.definitions[index].nsibidiCharacters.filter(
+              (nsibidiCharacter) => !ids.includes(nsibidiCharacter.toString()),
+            );
+          });
+          await doc.save();
+        }),
+      );
+    }),
+    ...flatModels.map(async (Model) => {
+      const docs = await Model.find({ nsibidiCharacters: { $in: objectIds } });
+      await Promise.all(
+        docs.map(async (doc) => {
+          doc.nsibidiCharacters = doc.nsibidiCharacters.filter(
+            (nsibidiCharacter) => !ids.includes(nsibidiCharacter.toString()),
+          );
+          await doc.save();
+        }),
+      );
+    }),
+  ]);
+};
+
 /**
  * Deletes NsibidiCharacters and any references to that character
  * @param req
@@ -131,29 +180,64 @@ export const deleteNsibidiCharacter = async (
       params: { id },
       mongooseConnection,
     } = req;
-    const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
-    const models = [
-      mongooseConnection.model<Interfaces.Word>('Word', wordSchema),
-      mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema),
-      mongooseConnection.model<Interfaces.Example>('Example', exampleSchema),
-      mongooseConnection.model<Interfaces.ExampleSuggestion>('ExampleSuggestion', exampleSuggestionSchema),
-    ];
 
-    await NsibidiCharacter.deleteOne({ _id: id });
-    await Promise.all(
-      models.map(async (Model) => {
-        const docs = await Model.find({ nsibidiCharacters: { $in: [id] } });
-        await Promise.all(
-          docs.map(async (doc) => {
-            doc.nsibidiCharacters = doc.nsibidiCharacters.filter(
-              (nsibidiCharacter) => nsibidiCharacter.toString() !== id,
-            );
-            await doc.save();
-          }),
-        );
+    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: [id] });
+    return res.send({ message: `Deleted Nsibidi character: ${id}` });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * 🚨 Not to be called in production 🚨
+ * Deletes all invalid NsibidiCharacters that include Latin characters or
+ * have a length of 2 characters or longer
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export const deleteInvalidNsibidiCharacters = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<any> | void> => {
+  const { mongooseConnection } = req;
+  try {
+    const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
+      'NsibidiCharacter',
+      nsibidiCharacterSchema,
+    );
+    const fetchedNsibidiCharacters = await NsibidiCharacter.find({ nsibidi: /.*/ });
+
+    const cjk = /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f\u3131-\uD79D]/;
+    const notCjk = /[^\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f\u3131-\uD79D]/;
+
+    const invalidNsibidiCharacterIds = fetchedNsibidiCharacters
+      .filter(({ nsibidi }) => nsibidi.length !== 1 || nsibidi.match(notCjk))
+      .map(({ id }: { id: string }) => id.toString());
+    const validNsibidiCharacters = fetchedNsibidiCharacters.filter(
+      ({ nsibidi }) => nsibidi.length === 1 && nsibidi.match(cjk),
+    );
+    // Deletes all the invalid Nsibidi Characters
+    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: invalidNsibidiCharacterIds });
+
+    const newNsibidiCharacters = compact(
+      staticNsibidiCharacters.map((nsibidi) => {
+        if (!validNsibidiCharacters.find(({ nsibidi: validNsibidi }) => validNsibidi === nsibidi)) {
+          return { nsibidi };
+        }
+        return null;
       }),
     );
-    return res.send({ message: `Deleted Nsibidi character: ${id}` });
+
+    // Create new NsibidiCharacters
+    await NsibidiCharacter.insertMany(newNsibidiCharacters);
+
+    // const updatedNsibidiCharacters = await NsibidiCharacter.find({ nsibidi: /.*/ });
+    // await connectNsibidiCharactersToDocuments({ mongooseConnection, nsibidiCharacters: updatedNsibidiCharacters });
+
+    return res.send({ message: `Deleted ${invalidNsibidiCharacterIds.length} invalid Nsibidi characters` });
   } catch (err) {
     return next(err);
   }

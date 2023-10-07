@@ -75,6 +75,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isUserResource = resource === Collections.USERS;
+  const isNsibidiResource = resource === Collections.NSIBIDI_CHARACTERS;
 
   /* Jumps to user-specified page */
   const handleJumpToPage = (e) => {
@@ -129,7 +130,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
       className={`${className} ${isSuggestionResource ? 'space-x-2' : ''} TopToolbar w-full flex-row`}
       {...sanitizeListRestProps(rest)}
     >
-      {isPollResource || isNotificationResource ? null : <Filter {...props} />}
+      {isPollResource || isNotificationResource || isNsibidiResource ? null : <Filter {...props} />}
       <Box
         className="flex flex-col lg:flex-row justify-end items-end
         lg:items-center space-y-2 lg:space-y-0 lg:space-x-3"
@@ -153,7 +154,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
           </form>
         )}
         <Box className="flex flex-row items-center space-x-3">
-          {isPollResource || isUserResource ? null : (
+          {isPollResource || isUserResource || isNsibidiResource ? null : (
             <Box
               data-test={isWordResource ? 'word-attributes-filter' : 'example-attributes-filter'}
               display="flex"
