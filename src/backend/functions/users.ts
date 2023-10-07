@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { customAlphabet } from 'nanoid';
+import { compact } from 'lodash';
 import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
@@ -9,7 +9,7 @@ import Collections from 'src/shared/constants/Collection';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { findUsers } from '../controllers/users';
-import { assignUserRole } from './utils';
+import { assignUserRole, generateId } from './utils';
 import { connectDatabase } from '../utils/database';
 import * as Interfaces from '../controllers/utils/interfaces';
 import { UserSchema } from '../models/User';
@@ -26,13 +26,13 @@ const db = admin.firestore();
  * @returns {void}
  */
 const createMongoUser = async (firebaseId: string) => {
-  const nanoid = customAlphabet(`${alphabet}${new Date().valueOf()}`, 6);
+  const characters = `${alphabet}${new Date().valueOf()}`;
 
   const connection = await connectDatabase();
   const User = connection.model<Interfaces.User>('User', UserSchema);
   await User.create({
     firebaseId,
-    referralCode: nanoid(),
+    referralCode: generateId(characters),
   });
 };
 
@@ -125,31 +125,26 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
 /**
  * Copies existing firebase users to MongoDB
  *
- * @returns {Promise}
+ * @returns {Promise<String>}
  */
 export const onCopyFirebaseUsers = functions.pubsub.topic(topic).onPublish(async () => {
-  const nanoid = customAlphabet(`${alphabet}${new Date().valueOf()}`, 6);
+  const characters = `${alphabet}${new Date().valueOf()}`;
 
   const connection = await connectDatabase();
   const User = connection.model<Interfaces.User>('User', UserSchema);
 
   const firebaseUsers = await findUsers();
-  const dupeUsers = await User.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });
-  const blacklist = dupeUsers.reduce<{ [k: string]: string }>((acc, { firebaseId }) => {
-    acc[firebaseId] = firebaseId;
-    return acc;
-  }, {});
+  const existingMongoUsers = await User.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });
 
-  const dedupedUsers = firebaseUsers.reduce<Omit<Interfaces.User, 'id'>[]>((acc, { id }) => {
-    if (!(id in blacklist)) {
-      acc.push({
-        firebaseId: id,
-        referralCode: nanoid(),
-      });
-    }
-    return acc;
-  }, []);
+  const newUsers = compact(
+    firebaseUsers.map((user) => {
+      if (!existingMongoUsers.some(({ id }) => id === user.id)) {
+        return { firebaseId: user.id, referralCode: generateId(characters) };
+      }
+      return null;
+    }),
+  );
 
-  await User.insertMany(dedupedUsers);
+  await User.insertMany(newUsers);
   return Promise.resolve('Successfully copied firebase users');
 });
