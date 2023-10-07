@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Datagrid, TextField, Responsive, ListProps } from 'react-admin';
-import { ArrayPreview, BulkSuggestionActions, Select, ListActions, Pagination } from 'src/shared/components';
+import { BulkSuggestionActions, Select, ListActions, Pagination, ArrayPreview } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collection';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
@@ -22,17 +22,13 @@ const NsibidiCharacterList = (props: ListProps): React.ReactElement => {
           <Datagrid>
             <Select collection={Collection.NSIBIDI_CHARACTERS} label="Editor's Actions" permissions={permissions} />
             <TextField label="Nsịbịdị" source="nsibidi" className="akagu" />
-            <ArrayPreview label="Definitions" source="definitions" />
-            <TextField label="Word Class" source="wordClass" className="akagu" />
           </Datagrid>
         }
         medium={
           <Datagrid>
             <Select collection={Collection.NSIBIDI_CHARACTERS} label="Editor's Actions" permissions={permissions} />
             <TextField label="Nsịbịdị" source="nsibidi" className="akagu" />
-            <ArrayPreview label="Definitions" source="definitions" />
-            <TextField label="Pronunciation" source="pronunciation" />
-            <TextField label="Word Class" source="wordClass" className="akagu" />
+            <ArrayPreview label="Radicals" source="radicals" />
           </Datagrid>
         }
       />

@@ -5,10 +5,7 @@ describe('validateNsibidiCharacterBody', () => {
   it('passes validation the provided nsibidi character body', async () => {
     const body = {
       nsibidi: 'nsibidi',
-      definitions: [{ text: 'text' }],
       radicals: [{ id: 'radical-id' }],
-      pronunciation: 'pronunciation',
-      wordClass: WordClass.ADJ.nsibidiValue,
     };
     const mockReq = { body };
     const mockRes = { send: jest.fn() };

@@ -2,14 +2,9 @@ import { Response, NextFunction } from 'express';
 import Joi from 'joi';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import NsibidiCharacterAttributes from 'src/backend/shared/constants/NsibidiCharacterAttributes';
-import WordClass from '../shared/constants/WordClass';
 
 const nsibidiCharacterDataSchema = Joi.object().keys({
   nsibidi: Joi.string().required(),
-  pronunciation: Joi.string(),
-  wordClass: Joi.string()
-    .valid(...Object.values(WordClass).map(({ nsibidiValue }) => nsibidiValue))
-    .required(),
   attributes: Joi.object().keys(
     Object.values(NsibidiCharacterAttributes).reduce(
       (finalSchema, { value }) => ({
@@ -19,13 +14,6 @@ const nsibidiCharacterDataSchema = Joi.object().keys({
       {},
     ),
   ),
-  definitions: Joi.array()
-    .min(0)
-    .items(
-      Joi.object().keys({
-        text: Joi.string().required(),
-      }),
-    ),
   radicals: Joi.array()
     .min(0)
     .items(
