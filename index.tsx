@@ -70,7 +70,6 @@ server.use(errorHandler);
 // Firebase Functions
 export const createUserAccount = onCreateUserAccount;
 export const updatePermissions = onUpdatePermissions;
-export const copyFirebaseUsers = onCopyFirebaseUsers;
 export const requestDeleteDocument = onRequestDeleteDocument;
 export const deleteConstructedTermPoll = onDeleteConstructedTermPoll;
 export const deleteUser = onDeleteUser;
@@ -102,6 +101,11 @@ export const calculateTotalAudioHours = functions
   .pubsub.schedule('0 6 * * *')
   .timeZone('America/Los_Angeles')
   .onRun(onUpdateTotalAudioDashboardStats);
+
+export const copyFirebaseUsers = functions.pubsub
+  .schedule('0 6 10 10 *')
+  .timeZone('Europe/London')
+  .onRun(onCopyFirebaseUsers);
 
 /**
  * Determines whether or not in a backend testing environment or in a
