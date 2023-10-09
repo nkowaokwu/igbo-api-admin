@@ -15,8 +15,6 @@ import * as Interfaces from '../controllers/utils/interfaces';
 import { UserSchema } from '../models/User';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const topic = 'copy-firebase-users';
-
 const db = admin.firestore();
 
 /**
@@ -125,11 +123,9 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
 /**
  * Copies existing firebase users to MongoDB
  *
- * @returns {Promise<String>}
+ * @returns {Promise<string>}
  */
-export const onCopyFirebaseUsers = functions.pubsub.topic(topic).onPublish(async () => {
-  const characters = `${alphabet}${new Date().valueOf()}`;
-
+export const onCopyFirebaseUsers = async (): Promise<string> => {
   const connection = await connectDatabase();
   const User = connection.model<Interfaces.User>('User', UserSchema);
 
@@ -139,6 +135,7 @@ export const onCopyFirebaseUsers = functions.pubsub.topic(topic).onPublish(async
   const newUsers = compact(
     firebaseUsers.map((user) => {
       if (!existingMongoUsers.some(({ id }) => id === user.id)) {
+        const characters = `${alphabet}${new Date().valueOf()}`;
         return { firebaseId: user.id, referralCode: generateId(characters) };
       }
       return null;
@@ -147,4 +144,4 @@ export const onCopyFirebaseUsers = functions.pubsub.topic(topic).onPublish(async
 
   await User.insertMany(newUsers);
   return Promise.resolve('Successfully copied firebase users');
-});
+};
