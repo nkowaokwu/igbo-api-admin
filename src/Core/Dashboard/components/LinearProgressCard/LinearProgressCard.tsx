@@ -9,6 +9,7 @@ const LinearProgressCard = ({
   stats,
   isLoaded,
   isGeneric = false,
+  children,
 }: LinearProgressCardInterface): ReactElement => (
   <Skeleton isLoaded={isLoaded}>
     <Box className="border bg-white space-y-3" borderRadius="md" borderColor="gray.300" p={5}>
@@ -24,6 +25,7 @@ const LinearProgressCard = ({
       {stats.map((stat) => (
         <StatBody key={stat.heading} isGeneric={isGeneric} {...stat} />
       ))}
+      {children}
     </Box>
   </Skeleton>
 );

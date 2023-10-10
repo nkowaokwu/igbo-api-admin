@@ -1,11 +1,24 @@
 import React, { ReactElement, useState } from 'react';
 import moment from 'moment';
-import { Box, Button } from '@chakra-ui/react';
+import { isNaN } from 'lodash';
+import { Box, Button, Text, chakra } from '@chakra-ui/react';
+import { usePermissions } from 'react-admin';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import { hasAdminPermissions } from 'src/shared/utils/permissions';
+import { PRICE_PER_VERIFIED_RECORDING } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
 const GOAL = 4000;
+
+/** Calculates the payment for the provided count */
+export const calculatePayment = (count: number): string => {
+  if (count <= 0 || isNaN(count) || typeof count !== 'number') {
+    return '$0.00';
+  }
+  return `$${((count || 0) * PRICE_PER_VERIFIED_RECORDING).toFixed(2)}`;
+};
+
 const IgboSoundboxStats = ({
   recordingStats,
   audioStats,
@@ -17,6 +30,8 @@ const IgboSoundboxStats = ({
   };
   audioStats: { audioApprovalsCount: number; audioDenialsCount: number };
 }): ReactElement => {
+  const permissions = usePermissions();
+  const showPaymentCalculations = hasAdminPermissions(permissions?.permissions, true);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
   const stats = [
     {
@@ -82,7 +97,14 @@ const IgboSoundboxStats = ({
         stats={monthlyRecordedStat}
         isLoaded
         isGeneric
-      />
+      >
+        {showPaymentCalculations ? (
+          <Box>
+            <Text fontFamily="heading">Price to be paid to the user:</Text>
+            <chakra.span fontFamily="heading">{calculatePayment(monthlyRecordedStat[0].totalCount)}</chakra.span>
+          </Box>
+        ) : null}
+      </LinearProgressCard>
     </Box>
   );
 };

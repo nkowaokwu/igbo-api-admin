@@ -8,10 +8,11 @@ interface LinearProgressCard {
     goal: number;
     heading: string;
     description: string;
-    leftIcon: ReactElement;
+    leftIcon?: ReactElement;
   }[];
   isLoaded: boolean;
   isGeneric?: boolean;
+  children?: JSX.Element;
 }
 
 export default LinearProgressCard;
