@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import SuggestionSource from 'src/backend/shared/constants/SuggestionSource';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
@@ -56,7 +56,7 @@ export const exampleSuggestionSchema = new Schema(
     authorId: { type: String, default: '' },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
-    source: { type: String, default: SuggestionSource.INTERNAL },
+    source: { type: String, default: SuggestionSourceEnum.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Example', default: null },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [] },

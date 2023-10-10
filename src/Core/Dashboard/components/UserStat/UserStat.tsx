@@ -24,7 +24,7 @@ const UserStat = ({
   completeExamples: number;
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
-  const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1 });
+  const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1, allRecorded: {} });
   const [audioStats, setAudioStats] = useState({ audioApprovalsCount: 0, audioDenialsCount: 0 });
   const { permissions } = usePermissions();
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
@@ -37,11 +37,18 @@ const UserStat = ({
       network(`/stats/users/${userUid}/audio`).then(({ json }) => {
         setAudioStats(json);
       });
-      const { count: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(userUid);
+      const { timestampedExampleSuggestions: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(
+        userUid,
+      );
       const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
+      const recordedCount = Object.values(recordedExampleSuggestions).reduce(
+        (finalSum: number, monthlyCount: number) => finalSum + monthlyCount,
+        0,
+      );
       setRecordingStats({
-        recorded: recordedExampleSuggestions,
+        recorded: recordedCount,
         verified: verifiedExampleSuggestions,
+        allRecorded: recordedExampleSuggestions,
       });
     })();
   }, []);

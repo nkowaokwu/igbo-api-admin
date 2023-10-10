@@ -21,9 +21,11 @@ import { findUser } from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+// eslint-disable-next-line max-len
 import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
+import moment from 'moment';
 
 const NO_LIMIT = 20000;
 /**
@@ -522,9 +524,10 @@ export const getTotalRecordedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
   const query = {
-    userInteractions: { $in: [uid] },
     'denials.1': { $exists: false },
     'pronunciations.audio': { $regex: /^http/, $type: 'string' },
+    'pronunciations.speaker': uid,
+    'pronunciations.review': true, // TODO: how to match with specific object in array
   };
 
   try {
@@ -533,7 +536,23 @@ export const getTotalRecordedExampleSuggestions = async (
       limit: NO_LIMIT,
       mongooseConnection,
     })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => res.send({ count: exampleSuggestions.length }))
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+        const timestampedExampleSuggestions = exampleSuggestions.reduce(
+          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
+            const stringifiedDate = exampleSuggestion.updatedAt.toISOString
+              ? exampleSuggestion.updatedAt.toISOString()
+              : exampleSuggestion.updatedAt.toString();
+            const exampleSuggestionMonth = moment(stringifiedDate).startOf('month').format('MMM, YYYY');
+            if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
+            }
+            finalTimestampedExampleSuggestions[exampleSuggestionMonth] += 1;
+            return finalTimestampedExampleSuggestions;
+          },
+          {},
+        );
+        return res.send({ timestampedExampleSuggestions });
+      })
       .catch((err) => {
         console.log(err);
         throw new Error('An error has occurred while returning all total recorded example suggestions');
@@ -634,6 +653,7 @@ export const putReviewForRandomExampleSuggestions = async (
 
           const audioPronunciation = exampleSuggestion.pronunciations[pronunciationIndex];
 
+          // Handle approving the Example Suggestion audio pronunciations
           if (review === ReviewActions.APPROVE) {
             const approvals = new Set(audioPronunciation.approvals);
             approvals.add(user.uid);
@@ -643,6 +663,7 @@ export const putReviewForRandomExampleSuggestions = async (
             );
             exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
           }
+          // Handle denying the Example Suggestion audio pronunciations
           if (review === ReviewActions.DENY) {
             const denials = new Set(audioPronunciation.denials);
             denials.add(user.uid);
