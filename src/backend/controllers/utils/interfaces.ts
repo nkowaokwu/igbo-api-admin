@@ -192,9 +192,10 @@ export interface ExampleData {
   english?: string;
   meaning?: string;
   nsibidi?: string;
-  nsibidiCharacters: string[];
+  nsibidiCharacters: (Types.ObjectId | string)[];
   associatedWords: string[];
   associatedDefinitionsSchemas: string[];
+  type: SentenceTypeEnum;
   pronunciations: {
     audio: string;
     speaker: string;
@@ -236,6 +237,7 @@ export interface StatData {
 export interface ExampleSuggestion extends ExampleSuggestionData, Suggestion {
   id: Types.ObjectId;
   exampleForSuggestion: boolean;
+  source: SuggestionSourceEnum;
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
   };
@@ -244,6 +246,7 @@ export interface ExampleSuggestion extends ExampleSuggestionData, Suggestion {
 export interface ExampleSuggestionData extends ExampleData {
   id: Types.ObjectId | string;
   exampleForSuggestion: boolean;
+  source: SuggestionSourceEnum;
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
   };
