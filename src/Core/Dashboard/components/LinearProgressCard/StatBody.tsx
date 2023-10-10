@@ -17,7 +17,7 @@ const StatBody = ({
   description: string;
   heading: string;
   isGeneric: boolean;
-  leftIcon: ReactElement;
+  leftIcon?: ReactElement;
 }): ReactElement => {
   const totalCount = (rawTotalCount || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });
   const goal = (rawGoal || 0).toLocaleString(undefined, { minimumFractionDigits: 0 });

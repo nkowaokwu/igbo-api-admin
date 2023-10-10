@@ -88,11 +88,11 @@ export const getUsers = async (
   try {
     const { skip, limit, filters } = await handleQueries(req);
     const users = (await findUsers()).filter((user) =>
-      // eslint-disable-next-line
-      Object.values(filters).every((value: string = '') => {
+      Object.values(filters).every((value: string) => {
         const displayName = (user.displayName || '').toLowerCase();
-        const { email } = user;
-        return displayName.includes(value.toLowerCase()) || email.includes(value.toLowerCase());
+        const { email, uid } = user;
+        // Finds users where the value matches their name, email, or Firebase id
+        return displayName.includes(value?.toLowerCase()) || email.includes(value?.toLowerCase()) || uid === value;
       }),
     );
     const paginatedUsers = users.slice(skip, skip + 1 + limit);
