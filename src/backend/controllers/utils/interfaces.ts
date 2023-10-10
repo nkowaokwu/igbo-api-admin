@@ -381,7 +381,7 @@ export interface FormattedUser {
 
 export type FirebaseUser = UserRecord;
 
-export interface User {
+export interface Crowdsourcer {
   firebaseId: string;
   id: string;
   referralCode: string;
@@ -389,8 +389,8 @@ export interface User {
 
 export interface Referral {
   id: string;
-  referrer: User;
-  referredUser: User;
+  referrer: Crowdsourcer;
+  referredUser: Crowdsourcer;
 }
 
 export interface SearchRegExp {

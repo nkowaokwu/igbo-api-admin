@@ -5,8 +5,8 @@ const { Schema, Types } = mongoose;
 
 export const ReferralSchema = new Schema(
   {
-    referrerId: { type: Types.ObjectId, ref: 'User' },
-    referredUserId: { type: Types.ObjectId, ref: 'User' },
+    referrerId: { type: Types.ObjectId, ref: 'Crowdsourcer' },
+    referredUserId: { type: Types.ObjectId, ref: 'Crowdsourcer' },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

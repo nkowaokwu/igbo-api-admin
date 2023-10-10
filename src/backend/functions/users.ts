@@ -12,7 +12,7 @@ import { findUsers } from '../controllers/users';
 import { assignUserRole, generateId } from './utils';
 import { connectDatabase } from '../utils/database';
 import * as Interfaces from '../controllers/utils/interfaces';
-import { UserSchema } from '../models/User';
+import { CrowdsourcerSchema } from '../models/Crowdsourcer';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const db = admin.firestore();
@@ -27,8 +27,8 @@ const createMongoUser = async (firebaseId: string) => {
   const characters = `${alphabet}${new Date().valueOf()}`;
 
   const connection = await connectDatabase();
-  const User = connection.model<Interfaces.User>('User', UserSchema);
-  await User.create({
+  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
+  await Crowdsourcer.create({
     firebaseId,
     referralCode: generateId(characters),
   });
@@ -127,10 +127,10 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
  */
 export const onCopyFirebaseUsers = async (): Promise<string> => {
   const connection = await connectDatabase();
-  const User = connection.model<Interfaces.User>('User', UserSchema);
+  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
 
   const firebaseUsers = await findUsers();
-  const existingMongoUsers = await User.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });
+  const existingMongoUsers = await Crowdsourcer.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });
 
   const newUsers = compact(
     firebaseUsers.map((user) => {
@@ -142,6 +142,6 @@ export const onCopyFirebaseUsers = async (): Promise<string> => {
     }),
   );
 
-  await User.insertMany(newUsers);
+  await Crowdsourcer.insertMany(newUsers);
   return Promise.resolve('Successfully copied firebase users');
 };
