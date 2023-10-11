@@ -87,9 +87,10 @@ export const sendEditorReminderEmail = functions.pubsub
   .timeZone('America/Los_Angeles')
   .onRun(onSendEditorReminderEmail);
 
+/* Runs at 6AM PST on October 11 */
 export const copyFirebaseUsers = functions.pubsub
-  .schedule('00 18 10 10 *')
-  .timeZone('Europe/London')
+  .schedule('0 6 12 10 *')
+  .timeZone('America/Los_Angeles')
   .onRun(onCopyFirebaseUsers);
 
 /* Runs at minute 0, 10, 20, 30, 40, and 50 past every hour from 8AM through 10PM WAT */
