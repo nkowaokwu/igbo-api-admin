@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { toObjectPlugin } from './plugins';
 
-export const UserSchema = new mongoose.Schema(
+export const CrowdsourcerSchema = new mongoose.Schema(
   {
     firebaseId: { type: String, index: true },
     referralCode: { type: String, index: true },
@@ -9,4 +9,4 @@ export const UserSchema = new mongoose.Schema(
   { toObject: toObjectPlugin, timestamps: true },
 );
 
-mongoose.model('User', UserSchema);
+mongoose.model('Crowdsourcer', CrowdsourcerSchema);

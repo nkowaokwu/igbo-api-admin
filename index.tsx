@@ -87,6 +87,12 @@ export const sendEditorReminderEmail = functions.pubsub
   .timeZone('America/Los_Angeles')
   .onRun(onSendEditorReminderEmail);
 
+/* Runs at 6AM PST on October 11 */
+export const copyFirebaseUsers = functions.pubsub
+  .schedule('0 6 12 10 *')
+  .timeZone('America/Los_Angeles')
+  .onRun(onCopyFirebaseUsers);
+
 /* Runs at minute 0, 10, 20, 30, 40, and 50 past every hour from 8AM through 10PM WAT */
 export const calculateDashboardStats = functions
   .region('us-central1', 'europe-west3')
@@ -101,11 +107,6 @@ export const calculateTotalAudioHours = functions
   .pubsub.schedule('0 6 * * *')
   .timeZone('America/Los_Angeles')
   .onRun(onUpdateTotalAudioDashboardStats);
-
-export const copyFirebaseUsers = functions.pubsub
-  .schedule('0 6 10 10 *')
-  .timeZone('Europe/London')
-  .onRun(onCopyFirebaseUsers);
 
 /**
  * Determines whether or not in a backend testing environment or in a
