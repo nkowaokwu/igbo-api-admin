@@ -31,6 +31,7 @@ import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/vali
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import validateTextImages from 'src/backend/middleware/validateTextImages';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
+import { findReferralCode } from 'src/backend/controllers/crowdsourcer';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
@@ -102,5 +103,8 @@ crowdsourcerRouter.get('/leaderboard', getLeaderboard);
 
 // Email
 crowdsourcerRouter.post('/email/report', sendReportUserNotification);
+
+// Crowdsourcer
+crowdsourcerRouter.get('/user', findReferralCode);
 
 export default crowdsourcerRouter;
