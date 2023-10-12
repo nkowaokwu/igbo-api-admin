@@ -6,8 +6,8 @@ import * as Interfaces from '../utils/interfaces';
 
 export const findReferralCode = async (req: Interfaces.EditorRequest, res: Response): Promise<void> => {
   const {
-    user: { uid },
     mongooseConnection,
+    user: { uid },
   } = handleQueries(req);
 
   const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
