@@ -258,6 +258,7 @@ export const handleQueries = ({
     body,
     uidQuery,
     leaderboard,
+    referralCode: query['referral-code'],
     timeRange,
     error,
     params,

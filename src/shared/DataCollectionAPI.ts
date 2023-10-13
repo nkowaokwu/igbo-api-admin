@@ -138,14 +138,21 @@ export const getLeaderboardStats = async ({
 }): Promise<{
   userRanking: UserRanking;
   rankings: UserRanking[];
-}> =>
-  (
+}> => {
+  await request({
+    method: 'POST',
+    url: 'referral',
+    params: { 'referral-code': '86HFJM' },
+  });
+
+  return (
     await request({
       method: 'GET',
       url: 'leaderboard',
       params: { leaderboard, timeRange },
     })
   ).data;
+};
 
 export const postWordSuggestionsForIgboDefinitions = async (data: { limit: number }): Promise<{ message: string }> =>
   (await request({ method: 'POST', url: `${Collections.WORD_SUGGESTIONS}/igbo-definitions`, data })).data;

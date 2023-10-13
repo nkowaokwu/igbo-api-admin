@@ -31,7 +31,7 @@ import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/vali
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import validateTextImages from 'src/backend/middleware/validateTextImages';
 import resourcePermission from 'src/backend/middleware/resourcePermission';
-import { findReferralCode } from 'src/backend/controllers/crowdsourcer';
+import { createReferral, findReferralCode } from 'src/backend/controllers/crowdsourcer';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
@@ -106,6 +106,7 @@ crowdsourcerRouter.get('/leaderboard', getLeaderboard);
 crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 
 // Crowdsourcer
+crowdsourcerRouter.post(`/${Collection.USERS}/referral`, createReferral);
 crowdsourcerRouter.get(`/${Collection.USERS}/referral`, findReferralCode);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
 crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);

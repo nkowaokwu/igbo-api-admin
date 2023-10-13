@@ -35,6 +35,7 @@ export interface HandleQueries {
   uidQuery?: string;
   error?: any;
   response?: any;
+  referralCode: string;
   params: Request['params'];
 }
 
@@ -51,6 +52,7 @@ export interface EditorRequest extends Request {
     uid?: string;
     leaderboard?: LeaderboardType;
     timeRange?: LeaderboardTimeRange;
+    'referral-code'?: string;
   };
   suggestionDoc?: Suggestion;
   body: any;
@@ -406,8 +408,8 @@ export interface Crowdsourcer {
 
 export interface Referral {
   id: string;
-  referrer: Crowdsourcer;
-  referredUser: Crowdsourcer;
+  referrerId: Crowdsourcer;
+  referredUserId: Crowdsourcer;
 }
 
 export interface SearchRegExp {
