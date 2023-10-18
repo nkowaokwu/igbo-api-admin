@@ -52,7 +52,7 @@ export interface EditorRequest extends Request {
     uid?: string;
     leaderboard?: LeaderboardType;
     timeRange?: LeaderboardTimeRange;
-    'referral-code'?: string;
+    referralCode?: string;
   };
   suggestionDoc?: Suggestion;
   body: any;
@@ -408,8 +408,8 @@ export interface Crowdsourcer {
 
 export interface Referral {
   id: string;
-  referrerId: Crowdsourcer;
-  referredUserId: Crowdsourcer;
+  referrerId: Crowdsourcer['firebaseId'];
+  referredUserId: Crowdsourcer['firebaseId'];
 }
 
 export interface SearchRegExp {

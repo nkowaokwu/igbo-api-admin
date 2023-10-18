@@ -30,10 +30,10 @@ describe('crowdsourcer', () => {
   describe('createReferral', () => {
     // arrange
     const referrer = {
-      id: 'awesome-referrer-id',
+      firebaseId: 'awesome-referrer-id',
     };
     const referredUser = {
-      id: 'awesome-referred-user-id',
+      firebaseId: 'awesome-referred-user-id',
     };
 
     it('should create a referral', async () => {
@@ -49,8 +49,11 @@ describe('crowdsourcer', () => {
       // assert
       expect(findOneMock).toHaveBeenNthCalledWith(1, { referralCode });
       expect(findOneMock).toHaveBeenNthCalledWith(2, { firebaseId: userId });
-      expect(findOneMock).toHaveBeenNthCalledWith(3, { referredUserId: referredUser.id });
-      expect(createMock).toHaveBeenCalledWith({ referredUserId: referredUser.id, referrerId: referrer.id });
+      expect(findOneMock).toHaveBeenNthCalledWith(3, { referredUserId: referredUser.firebaseId });
+      expect(createMock).toHaveBeenCalledWith({
+        referredUserId: referredUser.firebaseId,
+        referrerId: referrer.firebaseId,
+      });
       expect(sendMock).toHaveBeenCalledWith({
         message: 'Referral successful',
       });
