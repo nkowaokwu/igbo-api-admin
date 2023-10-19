@@ -106,7 +106,7 @@ crowdsourcerRouter.get('/leaderboard', getLeaderboard);
 crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 
 // Crowdsourcer
-crowdsourcerRouter.get('/user', findReferralCode);
+crowdsourcerRouter.get(`/${Collection.USERS}/referral`, findReferralCode);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
 crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
 

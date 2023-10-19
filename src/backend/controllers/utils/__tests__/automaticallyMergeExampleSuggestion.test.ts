@@ -1,6 +1,8 @@
 import { cloneDeep } from 'lodash';
 import Author from 'src/backend/shared/constants/Author';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import * as exampleModule from '../../examples';
 
 describe('automaticallyMergeExampleSuggestion', () => {
@@ -13,12 +15,14 @@ describe('automaticallyMergeExampleSuggestion', () => {
         speaker: 'first user',
         review: true,
         approvals: ['first user', 'second user'],
+        denials: [],
       },
       {
         audio: 'second audio',
         speaker: 'first user',
         review: true,
         approvals: ['first user', 'second user'],
+        denials: [],
       },
     ],
   };
@@ -32,7 +36,11 @@ describe('automaticallyMergeExampleSuggestion', () => {
   });
 
   it('merges the exampleSuggestion into a new example', async () => {
-    const exampleSuggestion = cloneDeep(topLevelExampleSuggestion);
+    const exampleSuggestion = cloneDeep({
+      ...topLevelExampleSuggestion,
+      source: SuggestionSourceEnum.BBC,
+      type: SentenceTypeEnum.DATA_COLLECTION,
+    });
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });

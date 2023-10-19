@@ -28,6 +28,9 @@ describe('NsibidiCharacterEditForm', () => {
           nsibidi: 'nsibidi',
           attributes: {
             [NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS]: undefined,
+            [NsibidiCharacterAttributeEnum.IS_COMPOUND]: undefined,
+            [NsibidiCharacterAttributeEnum.IS_NEW]: undefined,
+            [NsibidiCharacterAttributeEnum.IS_SIMPLIFIED]: undefined,
             [NsibidiCharacterAttributeEnum.IS_RADICAL]: undefined,
           },
         },

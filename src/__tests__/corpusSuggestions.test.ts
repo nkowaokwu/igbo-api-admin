@@ -1,4 +1,6 @@
 import { forIn, isEqual } from 'lodash';
+import * as admin from 'firebase-admin';
+import { allUsers } from 'src/__tests__/__mocks__/user_data';
 import {
   suggestNewCorpus,
   updateCorpusSuggestion,
@@ -15,6 +17,12 @@ import { corpusSuggestionId } from './__mocks__/documentIds';
 import { AUTH_TOKEN, INVALID_ID } from './shared/constants';
 
 describe('MongoDB Corpus Suggestions', () => {
+  beforeEach(() => {
+    jest.spyOn(admin, 'auth').mockReturnValue({
+      listUsers: jest.fn(async () => ({ users: allUsers })),
+      getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
+    });
+  });
   describe('/POST mongodb corpusSuggestion', () => {
     it('should save submitted corpus suggestion', async () => {
       const res = await suggestNewCorpus(corpusSuggestionData);

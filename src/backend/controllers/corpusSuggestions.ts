@@ -185,7 +185,7 @@ export const deleteCorpusSuggestion = (
         return res.send(corpusSuggestion);
       })
       .catch(() => {
-        throw new Error('An error has occurred while deleting and return a single corpus suggestion');
+        throw new Error('An error has occurred while deleting and returning a single corpus suggestion');
       });
   } catch (err) {
     return next(err);

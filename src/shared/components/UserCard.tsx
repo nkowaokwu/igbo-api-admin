@@ -94,7 +94,7 @@ const UserCard = ({
                 <chakra.span mr={1} fontWeight="bold">
                   Gender:
                 </chakra.span>
-                {Gender[gender].label}
+                {Gender[gender]?.label}
               </Text>
             </Box>
             <Text fontFamily="heading">

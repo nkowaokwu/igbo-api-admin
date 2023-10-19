@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { omit } from 'lodash';
-import { CrowdsourcerSchema } from '../../models/Crowdsourcer';
+import { crowdsourcerSchema } from '../../models/Crowdsourcer';
 import { handleQueries } from '../utils';
 import * as Interfaces from '../utils/interfaces';
 
@@ -10,7 +10,7 @@ export const findReferralCode = async (req: Interfaces.EditorRequest, res: Respo
     user: { uid },
   } = handleQueries(req);
 
-  const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
+  const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
   const crowdsourcer = await Crowdsourcer.findOne({ firebaseId: uid });
   res.send(omit(crowdsourcer, ['_id', '__v', 'createdAt', 'updatedAt']));
 };

@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin';
 import {
   decrementTotalUserStat,
   getLoginStats,
@@ -16,12 +17,17 @@ import { dropMongoDBCollections } from 'src/__tests__/shared';
 import { putReviewForRandomExampleSuggestions, suggestNewExample } from 'src/__tests__/shared/commands';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
+import { allUsers } from 'src/__tests__/__mocks__/user_data';
 import * as Interfaces from '../utils/interfaces';
 
 describe('Stats', () => {
   beforeEach(async () => {
     // Clear out database to start with a clean slate
     await dropMongoDBCollections();
+    jest.spyOn(admin, 'auth').mockReturnValue({
+      listUsers: jest.fn(async () => ({ users: allUsers })),
+      getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
+    });
   });
   it('calculates the total number of hours of example audio', async () => {
     const connection = await connectDatabase();

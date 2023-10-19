@@ -3,6 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
 import WordTags from 'src/backend/shared/constants/WordTags';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import TagsForm from '../TagsForm';
 
 describe('TagsForm', () => {
@@ -35,7 +36,7 @@ describe('TagsForm', () => {
     userEvent.click(await findByText('Commerce'));
     await findByText('Commerce');
     Object.values(WordTags).forEach(({ label }) => {
-      if (label !== WordTags.COMMERCE.label) {
+      if (label !== WordTags[WordTagEnum.COMMERCE].label) {
         expect(queryByText(label)).toBeNull();
       } else {
         getByText(label);

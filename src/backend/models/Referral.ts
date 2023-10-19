@@ -3,7 +3,7 @@ import { toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
 
-export const ReferralSchema = new Schema(
+export const referralSchema = new Schema(
   {
     referrerId: { type: Types.ObjectId, ref: 'Crowdsourcer' },
     referredUserId: { type: Types.ObjectId, ref: 'Crowdsourcer' },
@@ -11,4 +11,4 @@ export const ReferralSchema = new Schema(
   { toObject: toObjectPlugin, timestamps: true },
 );
 
-mongoose.model('Referral', ReferralSchema);
+mongoose.model('Referral', referralSchema);
