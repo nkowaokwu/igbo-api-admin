@@ -12,7 +12,7 @@ import { findUsers } from '../controllers/users';
 import { assignUserRole, generateId } from './utils';
 import { connectDatabase } from '../utils/database';
 import * as Interfaces from '../controllers/utils/interfaces';
-import { CrowdsourcerSchema } from '../models/Crowdsourcer';
+import { crowdsourcerSchema } from '../models/Crowdsourcer';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const db = admin.firestore();
@@ -27,7 +27,7 @@ const createMongoUser = async (firebaseId: string) => {
   const characters = `${alphabet}${new Date().valueOf()}`;
 
   const connection = await connectDatabase();
-  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
+  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
   await Crowdsourcer.create({
     firebaseId,
     referralCode: generateId(characters),

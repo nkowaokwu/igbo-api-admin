@@ -1,10 +1,10 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Heading, Skeleton } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { hasCrowdsourcerPermission } from 'src/shared/utils/permissions';
 import { getTotalRecordedExampleSuggestions, getTotalVerifiedExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserCard from 'src/shared/components/UserCard';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
@@ -14,12 +14,10 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const UserStat = ({
   isEditing = false,
-  uid,
-  user = { displayName: '', email: '', photoURL: '' },
+  user,
 }: {
   isEditing?: boolean;
-  uid?: string;
-  user?: { displayName: string; email: string; photoURL: string };
+  user: UserProfile;
   dialectalVariations: number;
   completeExamples: number;
 }): ReactElement => {
@@ -28,19 +26,18 @@ const UserStat = ({
   const [audioStats, setAudioStats] = useState({ audioApprovalsCount: 0, audioDenialsCount: 0 });
   const { permissions } = usePermissions();
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
-  const { currentUser = { uid: '' } } = getAuth();
 
   useEffect(() => {
     (async () => {
-      const userUid = uid || currentUser?.uid;
-      network(`/stats/users/${userUid}`).then(({ json }) => setUserStats(json));
-      network(`/stats/users/${userUid}/audio`).then(({ json }) => {
+      const { uid } = user;
+      network(`/stats/users/${uid}`).then(({ json }) => setUserStats(json));
+      network(`/stats/users/${uid}/audio`).then(({ json }) => {
         setAudioStats(json);
       });
       const { timestampedExampleSuggestions: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(
-        userUid,
+        uid,
       );
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(userUid);
+      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(uid);
       const recordedCount = Object.values(recordedExampleSuggestions).reduce(
         (finalSum: number, monthlyCount: number) => finalSum + monthlyCount,
         0,
@@ -54,8 +51,10 @@ const UserStat = ({
   }, []);
 
   return (
-    <Box>
-      <UserCard {...(user?.email ? user : currentUser)} isEditing={isEditing} />
+    <Box mt={4}>
+      <Skeleton isLoaded={Boolean(user?.firebaseId)}>
+        <UserCard {...user} isEditing={isEditing} />
+      </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0 px-6">
         <Box className="w-full">
           <Heading as="h2" mb={4}>

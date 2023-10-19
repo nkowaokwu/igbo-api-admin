@@ -4,7 +4,6 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
-import WordClass from 'src/backend/shared/constants/WordClass';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
 const mockDialects = [
@@ -166,9 +165,6 @@ export const bulkUploadExampleSuggestionData = {
 
 export const nsibidiCharacterData = {
   nsibidi: 'nsibidi',
-  pronunciation: 'pronunciation',
-  wordClass: WordClass.ADJ.nsibidiValue,
-  definitions: [{ text: 'first definition' }],
 };
 
 export const updatedExampleSuggestionData = {

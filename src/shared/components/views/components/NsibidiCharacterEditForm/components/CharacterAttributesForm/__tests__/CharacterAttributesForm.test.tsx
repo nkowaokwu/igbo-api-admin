@@ -19,6 +19,9 @@ describe('CharacterAttributesForm', () => {
     );
 
     await findByText('Has Legacy Characters');
+    await findByText('Is Compound');
+    await findByText('Is Simplified');
+    await findByText('Is New');
     await findByText('Is Radical');
   });
 

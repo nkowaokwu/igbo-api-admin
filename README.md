@@ -91,9 +91,11 @@ Once you save those files in `/functions`, you're own Igbo API Editor Platform i
 
 The backend server responsible for data business logic relies on the Igbo API to be running locally.
 
-Follow the instructions in the [Igbo API](https://github.com/ijemmao/igbo_api) and start
-the local development server. You should be able to interact with the API at
-[http://localhost:8080](http://localhost:8080)
+In a separate terminal, run the following:
+
+```
+yarn start:database
+```
 
 ### Step 5: Start the Platform's Dev Server
 

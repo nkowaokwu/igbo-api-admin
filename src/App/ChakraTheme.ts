@@ -188,14 +188,14 @@ export default extendTheme({
         field: {
           backgroundColor: 'white',
           transition: 'all .2s ease',
-          borderColor: 'gray.400',
+          borderColor: 'gray.200',
           borderWidth: '1px',
           ':focus': {
-            borderColor: 'gray.400',
+            borderColor: 'green.200',
             borderWidth: '1px',
           },
           ':active': {
-            borderColor: 'gray.400',
+            borderColor: 'green.200',
             borderWidth: '1px',
           },
           ':hover': {
@@ -212,23 +212,44 @@ export default extendTheme({
         variant: '',
       },
     },
+    Select: {
+      baseStyle: {
+        field: {
+          fontFamily: 'heading',
+          borderColor: 'gray.200 !important',
+          borderWidth: '1px',
+          ':focus': {
+            borderColor: 'green.200 !important',
+            borderWidth: '1px',
+          },
+          ':active': {
+            borderColor: 'green.200 !important',
+            borderWidth: '1px',
+          },
+          ':hover': {
+            borderColor: 'green.200 !important',
+            borderWidth: '1px',
+          },
+        },
+      },
+    },
     Button: {
       baseStyle: {
-        fontFamily: 'Silka',
+        fontFamily: 'heading',
       },
     },
     Textarea: {
       baseStyle: {
         backgroundColor: 'white',
         transition: 'all .2s ease',
-        borderColor: 'gray.400',
+        borderColor: 'gray.200',
         borderWidth: '1px',
         ':focus': {
-          borderColor: 'gray.400',
+          borderColor: 'gray.200',
           borderWidth: '1px',
         },
         ':active': {
-          borderColor: 'gray.400',
+          borderColor: 'gray.200',
           borderWidth: '1px',
         },
         ':hover': {
