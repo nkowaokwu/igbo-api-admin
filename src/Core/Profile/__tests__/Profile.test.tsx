@@ -22,6 +22,9 @@ describe('Profile', () => {
     await findByText('Personal Contributions');
     await findByText('Recorded example sentences');
     await findByText('Verified example sentences');
+    await findByText('18');
+    await findByText('Abịrịba');
+    await findByText('Female');
   });
   it('render Profile as crowdsourcer', async () => {
     jest
@@ -36,6 +39,9 @@ describe('Profile', () => {
     expect(await queryByText('Personal Contributions')).toBeNull();
     await findByText('Recorded example sentences');
     await findByText('Verified example sentences');
+    await findByText('18');
+    await findByText('Abịrịba');
+    await findByText('Female');
   });
   it('render Profile edit button', async () => {
     const { findByText } = render(

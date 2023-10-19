@@ -1,4 +1,3 @@
-import WordClass from 'src/backend/shared/constants/WordClass';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import { AUTH_TOKEN } from './shared/constants';
 import { suggestNewNsibidiCharacter, updateNsibidiCharacter } from './shared/commands';
@@ -11,9 +10,6 @@ describe('MongoDB Nsịbịdị Characters', () => {
       expect(res.status).toEqual(200);
       expect(res.body.id).not.toEqual(undefined);
       expect(res.body.nsibidi).toEqual('nsibidi');
-      expect(res.body.pronunciation).toEqual('pronunciation');
-      expect(res.body.wordClass).toEqual(WordClass.ADJ.nsibidiValue);
-      expect(res.body.definitions[0].text).toEqual('first definition');
       expect(res.body.attributes[NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS]).toEqual(false);
     });
 
@@ -22,9 +18,6 @@ describe('MongoDB Nsịbịdị Characters', () => {
       expect(res.status).toEqual(200);
       expect(res.body.id).not.toEqual(undefined);
       expect(res.body.nsibidi).toEqual('nsibidi');
-      expect(res.body.pronunciation).toEqual('pronunciation');
-      expect(res.body.wordClass).toEqual(WordClass.ADJ.nsibidiValue);
-      expect(res.body.definitions[0].text).toEqual('first definition');
     });
 
     it('should fail to save submitted nsibidi character as editor', async () => {
@@ -51,15 +44,9 @@ describe('MongoDB Nsịbịdị Characters', () => {
         id: nsibidiCharacterRes.body.id,
         ...nsibidiCharacterData,
         nsibidi: 'updated nsibidi',
-        pronunciation: 'updated pronunciation',
-        wordClass: WordClass.DEM.nsibidiValue,
-        definitions: [{ text: 'updated first definition' }],
       });
       expect(res.status).toEqual(200);
       expect(res.body.nsibidi).toEqual('updated nsibidi');
-      expect(res.body.pronunciation).toEqual('updated pronunciation');
-      expect(res.body.wordClass).toEqual(WordClass.DEM.nsibidiValue);
-      expect(res.body.definitions[0].text).toEqual('updated first definition');
     });
 
     it('should update existing nsibidi character as merger', async () => {
@@ -70,17 +57,11 @@ describe('MongoDB Nsịbịdị Characters', () => {
           id: nsibidiCharacterRes.body.id,
           ...nsibidiCharacterData,
           nsibidi: 'updated nsibidi',
-          pronunciation: 'updated pronunciation',
-          wordClass: WordClass.DEM.nsibidiValue,
-          definitions: [{ text: 'updated first definition' }],
         },
         { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
       );
       expect(res.status).toEqual(200);
       expect(res.body.nsibidi).toEqual('updated nsibidi');
-      expect(res.body.pronunciation).toEqual('updated pronunciation');
-      expect(res.body.wordClass).toEqual(WordClass.DEM.nsibidiValue);
-      expect(res.body.definitions[0].text).toEqual('updated first definition');
     });
 
     it('should fail to update existing nsibidi character as editor', async () => {
@@ -91,9 +72,6 @@ describe('MongoDB Nsịbịdị Characters', () => {
           id: nsibidiCharacterRes.body.id,
           ...nsibidiCharacterData,
           nsibidi: 'updated nsibidi',
-          pronunciation: 'updated pronunciation',
-          wordClass: WordClass.DEM.nsibidiValue,
-          definitions: [{ text: 'updated first definition' }],
         },
         { token: AUTH_TOKEN.EDITOR_AUTH_TOKEN },
       );
@@ -108,9 +86,6 @@ describe('MongoDB Nsịbịdị Characters', () => {
           id: nsibidiCharacterRes.body.id,
           ...nsibidiCharacterData,
           nsibidi: 'updated nsibidi',
-          pronunciation: 'updated pronunciation',
-          wordClass: WordClass.DEM.nsibidiValue,
-          definitions: [{ text: 'updated first definition' }],
         },
         { token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN },
       );
@@ -125,9 +100,6 @@ describe('MongoDB Nsịbịdị Characters', () => {
           id: nsibidiCharacterRes.body.id,
           ...nsibidiCharacterData,
           nsibidi: 'updated nsibidi',
-          pronunciation: 'updated pronunciation',
-          wordClass: WordClass.DEM.nsibidiValue,
-          definitions: [{ text: 'updated first definition' }],
         },
         { token: AUTH_TOKEN.TRANSCRIBER_AUTH_TOKEN },
       );

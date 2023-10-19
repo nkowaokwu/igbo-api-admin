@@ -52,11 +52,7 @@ const UserShow = (props: ShowProps): ReactElement => {
   return (
     <Skeleton isLoaded={!isLoading}>
       <Box className="bg-white shadow-sm p-10 mt-10">
-        {record.uid && !isLoading ? (
-          <>
-            <UserStat uid={record.uid} user={user} {...stats} />
-          </>
-        ) : null}
+        {record.uid && !isLoading ? <UserStat uid={record.uid} user={user} {...stats} /> : null}
       </Box>
     </Skeleton>
   );

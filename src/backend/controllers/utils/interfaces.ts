@@ -15,6 +15,8 @@ import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceE
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
+import { UserInfo } from 'firebase-functions/v1/auth';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 
 export interface HandleQueries {
   searchWord: string;
@@ -370,6 +372,15 @@ export interface ConstructedMessage extends EmailMessage {
   }[];
 }
 
+export interface UserProfile extends UserInfo, FormattedUser {
+  age: number;
+  createdAt: string;
+  dialects: DialectEnum[];
+  firebaseId: string;
+  gender: GenderEnum;
+  updatedAt: Date;
+}
+
 export interface FormattedUser {
   uid: string;
   id: string;
@@ -388,6 +399,9 @@ export interface Crowdsourcer {
   firebaseId: string;
   id: string;
   referralCode: string;
+  age: number;
+  dialects: DialectEnum[];
+  gender: GenderEnum[];
 }
 
 export interface Referral {

@@ -10,6 +10,7 @@ import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import Dialects from 'src/backend/shared/constants/Dialect';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordTags from 'src/backend/shared/constants/WordTags';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
@@ -310,14 +311,14 @@ describe('Submit WordEditForm', () => {
 
     const dialectsSelect = await findByTestId('tags-input-container');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
-    fireEvent.click(await findByText(WordTags.BOTANY.label));
+    fireEvent.click(await findByText(WordTags[WordTagEnum.BOTANY].label));
     fireEvent.submit(await findByText('Update'));
 
     await waitFor(() =>
       expect(mockSave).toBeCalledWith(
         {
           ...testWord,
-          tags: [WordTags.BOTANY.value],
+          tags: [WordTags[WordTagEnum.BOTANY].label],
         },
         Views.SHOW,
         { onFailure: expect.any(Function), onSuccess: expect.any(Function) },

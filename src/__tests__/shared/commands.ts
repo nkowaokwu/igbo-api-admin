@@ -418,6 +418,11 @@ export const getLeaderboard = (query = {}, options: OptionsType = { token: '' })
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const getUserProfile = (options: OptionsType = { token: '' }): Request =>
+  chaiServer.get('/users/:uid').set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+export const putUserProfile = (options: OptionsType = { token: '' }): Request =>
+  chaiServer.put('/users/:uid').set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 /* Hits the POST /populate route to seed the local MongoDB database */
 export const populateAPI = (): Request => chaiServer.post(`${TEST_ROUTE}/populate`);
 
