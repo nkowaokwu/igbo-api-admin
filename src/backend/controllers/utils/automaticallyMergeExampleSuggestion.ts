@@ -56,10 +56,10 @@ const automaticallyMergeExampleSuggestion = async ({
       if (!review) {
         return true;
       }
-      if (review && audio && approvals.length >= MINIMUM_REVIEWS) {
+      if (review && audio && approvals?.length >= MINIMUM_REVIEWS) {
         return true;
       }
-      if (review && audio && denials.length >= MINIMUM_REVIEWS) {
+      if (review && audio && denials?.length >= MINIMUM_REVIEWS) {
         return true;
       }
       return false;

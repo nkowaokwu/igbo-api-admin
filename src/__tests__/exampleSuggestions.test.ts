@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin';
 import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
@@ -6,6 +7,11 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import Author from 'src/backend/shared/constants/Author';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { allUsers } from 'src/__tests__/__mocks__/user_data';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import { connectDatabase } from 'src/backend/utils/database';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -47,6 +53,10 @@ describe('MongoDB Example Suggestions', () => {
       suggestNewWord(wordSuggestionData).then((res) => createWord(res.body.id)),
       suggestNewExample({ ...exampleSuggestionData, igbo: uuid() }).then(() => {}),
     ]);
+    jest.spyOn(admin, 'auth').mockReturnValue({
+      listUsers: jest.fn(async () => ({ users: allUsers })),
+      getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
+    });
   });
   describe('/POST mongodb exampleSuggestions', () => {
     it('should save submitted example suggestion', async () => {
@@ -221,7 +231,12 @@ describe('MongoDB Example Suggestions', () => {
     });
 
     it('should automatically merge exampleSuggestion', async () => {
-      const exampleSuggestionsRes = await suggestNewExample({
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+      const unsavedExampleSuggestion = new ExampleSuggestion({
         ...exampleSuggestionData,
         pronunciations: [
           {
@@ -229,33 +244,40 @@ describe('MongoDB Example Suggestions', () => {
             speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
           },
         ],
+        source: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
+        type: SentenceTypeEnum.DATA_COLLECTION,
+        igbo: 'updated igbo for test',
+        authorId: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
       });
-      await approveExampleSuggestion(exampleSuggestionsRes.body);
-      await approveExampleSuggestion(exampleSuggestionsRes.body, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+
+      const exampleSuggestion = await unsavedExampleSuggestion.save();
+      await approveExampleSuggestion(exampleSuggestion);
+      await approveExampleSuggestion(exampleSuggestion, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
 
       await putReviewForRandomExampleSuggestions([
         {
-          id: exampleSuggestionsRes.body.id,
-          reviews: { [exampleSuggestionsRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
+          id: exampleSuggestion.id,
+          reviews: { [exampleSuggestion.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
         },
       ]);
       await putReviewForRandomExampleSuggestions(
         [
           {
-            id: exampleSuggestionsRes.body.id,
-            reviews: { [exampleSuggestionsRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
+            id: exampleSuggestion.id,
+            reviews: { [exampleSuggestion.pronunciations[0]._id.toString()]: ReviewActions.APPROVE },
           },
         ],
         { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
       );
 
-      const res = await getExampleSuggestion(exampleSuggestionsRes.body.id);
+      const res = await getExampleSuggestion(exampleSuggestion.id);
       expect(res.status).toEqual(200);
       expect(res.body.merged).toBeTruthy();
       expect(res.body.mergedBy).toEqual(Author.SYSTEM);
     });
 
     it('should automatically merge exampleSuggestion', async () => {
+      const mongooseConnection = await connectDatabase();
       const data = cloneDeep(wordSuggestionWithNestedExampleSuggestionData);
       data.examples[0].pronunciations = [
         {
@@ -269,42 +291,49 @@ describe('MongoDB Example Suggestions', () => {
       const wordSuggestionRes = await suggestNewWord(data);
       expect(wordSuggestionRes.status).toEqual(200);
 
-      const exampleSuggestionRes = await suggestNewExample({
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+      const unsavedExampleSuggestion = new ExampleSuggestion({
         ...exampleSuggestionData,
+        source: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
+        type: SentenceTypeEnum.DATA_COLLECTION,
         igbo: 'updated igbo for test',
         pronunciations: [{ audio: 'first audio' }],
+        authorId: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
       });
-      await approveExampleSuggestion(exampleSuggestionRes.body);
-      await approveExampleSuggestion(exampleSuggestionRes.body, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
+      const exampleSuggestion = await unsavedExampleSuggestion.save();
+      await approveExampleSuggestion(exampleSuggestion);
+      await approveExampleSuggestion(exampleSuggestion, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
 
       await putReviewForRandomExampleSuggestions([
         {
-          id: exampleSuggestionRes.body.id,
+          id: exampleSuggestion.id,
           reviews: {
-            [exampleSuggestionRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
+            [exampleSuggestion.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
           },
         },
       ]);
       // Confirming the example suggestion hasn't been merged yet without enough approvals
-      const tempRes = await getExampleSuggestion(exampleSuggestionRes.body.id);
-      expect(tempRes.status).toEqual(200);
+      const tempRes = await getExampleSuggestion(exampleSuggestion.id);
       expect(tempRes.body.merged).toBeFalsy();
       expect(tempRes.body.mergedBy).toBeFalsy();
 
       await putReviewForRandomExampleSuggestions(
         [
           {
-            id: exampleSuggestionRes.body.id,
+            id: exampleSuggestion.id,
             reviews: {
-              [exampleSuggestionRes.body.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
+              [exampleSuggestion.pronunciations[0]._id.toString()]: ReviewActions.APPROVE,
             },
           },
         ],
         { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
       );
 
-      // Confirming the example suggestion has been merged with enough approvals
-      const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
+      // Confirming the example suggestion has been automatically merged with enough approvals
+      const res = await getExampleSuggestion(exampleSuggestion.id);
       expect(res.status).toEqual(200);
       expect(res.body.merged).toBeTruthy();
       expect(res.body.mergedBy).toEqual(Author.SYSTEM);
@@ -724,7 +753,7 @@ describe('MongoDB Example Suggestions', () => {
       expect(verifiedRes.status).toEqual(200);
       expect(recordedRes.status).toEqual(200);
       expect(typeof verifiedRes.body.count).toEqual('number');
-      expect(typeof recordedRes.body.count).toEqual('number');
+      expect(typeof recordedRes.body.timestampedExampleSuggestions).toEqual('object');
     });
   });
 

@@ -127,7 +127,7 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
  */
 export const onCopyFirebaseUsers = async (): Promise<string> => {
   const connection = await connectDatabase();
-  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', CrowdsourcerSchema);
+  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
 
   const firebaseUsers = await findUsers();
   const existingMongoUsers = await Crowdsourcer.find({ firebaseId: { $in: firebaseUsers.map(({ id }) => id) } });

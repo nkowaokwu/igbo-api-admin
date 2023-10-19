@@ -2,6 +2,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import { cloneDeep, merge } from 'lodash';
+import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 
 const baseUser = {
   uid: 'uid',
@@ -15,8 +16,8 @@ const baseUser = {
 export const defaultAdminUser = cloneDeep(
   merge(baseUser, {
     displayName: 'Admin name',
-    uid: 'admin-uid',
-    id: 'admin-uid',
+    uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    id: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
     email: 'admin@example.com',
     customClaims: { role: UserRoles.ADMIN },
   }),
@@ -25,8 +26,8 @@ export const defaultAdminUser = cloneDeep(
 export const defaultMergerUser = cloneDeep(
   merge(baseUser, {
     displayName: 'Merger name',
-    uid: 'merger-uid',
-    id: 'merger-uid',
+    uid: AUTH_TOKEN.MERGER_AUTH_TOKEN,
+    id: AUTH_TOKEN.MERGER_AUTH_TOKEN,
     email: 'merger@example.com',
     customClaims: { role: UserRoles.MERGER },
   }),
@@ -35,8 +36,8 @@ export const defaultMergerUser = cloneDeep(
 export const defaultEditorUser = cloneDeep(
   merge(baseUser, {
     displayName: 'Editor name',
-    uid: 'editor-uid',
-    id: 'editor-uid',
+    uid: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
+    id: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
     email: 'editor@example.com',
     customClaims: { role: UserRoles.EDITOR },
   }),
@@ -45,9 +46,11 @@ export const defaultEditorUser = cloneDeep(
 export const defaultCrowdsourcerUser = cloneDeep(
   merge(baseUser, {
     displayName: 'Crowdsourcer name',
-    uid: 'crowdsourcer-uid',
-    id: 'crowdsourcer-uid',
+    uid: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN,
+    id: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN,
     email: 'crowdsourcer@example.com',
     customClaims: { role: UserRoles.CROWDSOURCER },
   }),
 );
+
+export const allUsers = [defaultAdminUser, defaultMergerUser, defaultEditorUser, defaultCrowdsourcerUser];

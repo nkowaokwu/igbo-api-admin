@@ -19,15 +19,10 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import { connectDatabase } from 'src/backend/utils/database';
 import { dropMongoDBCollections } from 'src/__tests__/shared';
-import {
-  defaultAdminUser,
-  defaultCrowdsourcerUser,
-  defaultEditorUser,
-  defaultMergerUser,
-} from 'src/__tests__/__mocks__/user_data';
+import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
+import { allUsers, defaultAdminUser, defaultEditorUser, defaultMergerUser } from 'src/__tests__/__mocks__/user_data';
 
-const allUsers = [defaultAdminUser, defaultMergerUser, defaultEditorUser, defaultCrowdsourcerUser];
-const adminUid = 'admin-uid';
+const adminUid = AUTH_TOKEN.ADMIN_AUTH_TOKEN;
 
 describe('Users', () => {
   beforeEach(async () => {
@@ -70,7 +65,7 @@ describe('Users', () => {
 
   it('finds all users', async () => {
     const users = await findUsers();
-    const finalUsers = [defaultAdminUser, defaultMergerUser, defaultEditorUser, defaultCrowdsourcerUser].map(
+    const finalUsers = allUsers.map(
       // @ts-expect-error
       formatUser,
     );
@@ -117,7 +112,7 @@ describe('Users', () => {
     };
     const mockNext = jest.fn();
     await getUsers(mockReq, mockRes, mockNext);
-    const users = [defaultAdminUser, defaultMergerUser, defaultEditorUser, defaultCrowdsourcerUser].map(formatUser);
+    const users = allUsers.map(formatUser);
     expect(sendMock).toBeCalledWith(users);
   });
 

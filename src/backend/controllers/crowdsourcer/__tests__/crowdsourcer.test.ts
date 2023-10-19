@@ -1,5 +1,5 @@
-import { findReferralCode } from '../crowdsourcer';
-import * as utils from '../utils';
+import { findReferralCode } from '..';
+import * as utils from '../../utils';
 
 const handleQueriesMock = jest.spyOn(utils, 'handleQueries');
 

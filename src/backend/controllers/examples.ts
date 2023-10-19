@@ -126,20 +126,25 @@ const mergeIntoExample = (
 };
 
 /* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = (
+const createExampleFromSuggestion = async (
   exampleSuggestion: Interfaces.ExampleSuggestion,
   mergedBy: string,
   mongooseConnection: Connection,
-): Promise<Interfaces.Example> =>
-  createExample((exampleSuggestion as Interfaces.ExampleSuggestion).toObject(), mongooseConnection)
+): Promise<Interfaces.Example> => {
+  const example = await createExample(
+    (exampleSuggestion as Interfaces.ExampleSuggestion).toObject(),
+    mongooseConnection,
+  )
     .then(async (example: Interfaces.Example) => {
-      const updatedExample = await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
-      await updatedExample.save();
+      const updatedExampleSuggestion = await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
+      await updatedExampleSuggestion.save();
       return example;
     })
     .catch((error) => {
       throw new Error(`An error occurred while saving the new example: ${error.message}`);
     });
+  return example;
+};
 
 /* Executes the logic describe the mergeExample function description */
 export const executeMergeExample = async (
