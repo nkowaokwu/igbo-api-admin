@@ -9,7 +9,7 @@ export const crowdsourcerSchema = new mongoose.Schema(
     referralCode: { type: String, index: true },
     age: { type: Date, default: null },
     dialects: [{ type: String, enum: Object.values(DialectEnum), default: [] }],
-    gender: { type: String, enum: Object.values(GenderEnum), default: '' },
+    gender: { type: String, enum: Object.values(GenderEnum), default: GenderEnum.UNSPECIFIED },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
