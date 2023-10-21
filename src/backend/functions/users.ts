@@ -6,6 +6,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collection';
+import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { findUsers } from '../controllers/users';
@@ -21,17 +22,19 @@ const db = admin.firestore();
  * Creates an associated mongodb User document
  * @param {FirebaseUser['uid']} firebaseId firebase user id
  *
- * @returns {void}
+ * @returns Created Crowdsourcer user
  */
-const createMongoUser = async (firebaseId: string) => {
+export const createMongoUser = async (firebaseId: string): Promise<Partial<Interfaces.Crowdsourcer>> => {
   const characters = `${alphabet}${new Date().valueOf()}`;
 
   const connection = await connectDatabase();
   const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-  await Crowdsourcer.create({
+  const crowdsourcer = new Crowdsourcer({
     firebaseId,
     referralCode: generateId(characters),
   });
+  const savedCrowdsourcer = await crowdsourcer.save();
+  return cleanDocument(savedCrowdsourcer.toJSON());
 };
 
 /* Creates a user account and assigns the role to 'user' */

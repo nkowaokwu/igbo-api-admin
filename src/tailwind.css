@@ -248,6 +248,10 @@ button[class*='RaPaginationActions-currentPageButton'] {
   @apply border-solid !important;
 }
 
+select[class*='chakra-select'] {
+  @apply border-gray-200;
+}
+
 input#word,
 input#igbo {
   @apply h-8 !important;
@@ -378,6 +382,17 @@ input#igbo {
   @apply bg-blue-100;
   @apply border-blue-500;
   @apply border-solid;
+}
+
+.react-date-picker__wrapper {
+  border-radius: 5px;
+  padding: 4px;
+  @apply border-gray-200 !important;
+}
+
+.react-date-picker__inputGroup__input {
+  min-width: 48px;
+  @apply text-center;
 }
 
 @media (min-width: 1024px) {

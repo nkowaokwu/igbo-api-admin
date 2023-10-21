@@ -1,4 +1,5 @@
-import { onCopyFirebaseUsers } from '../users';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import { createMongoUser, onCopyFirebaseUsers } from '../users';
 import * as userController from '../../controllers/users';
 import * as database from '../../utils/database';
 import { FormattedUser } from '../../controllers/utils/interfaces';
@@ -55,6 +56,18 @@ describe('users', () => {
       expect(result).toMatch('Successfully copied firebase users');
       expect(insetManyMock.mock.calls[0][0]).toHaveLength(fixture.expectedUsers.length);
       expect(insetManyMock).toBeCalledWith(fixture.expectedUsers);
+    });
+  });
+
+  it('creates a new Mongo User', async () => {
+    const uid = 'uid';
+    const response = await createMongoUser(uid);
+    expect(response).toEqual({
+      age: response.age,
+      dialects: [],
+      firebaseId: uid,
+      gender: GenderEnum.UNSPECIFIED,
+      referralCode: 'ABCD1234',
     });
   });
 });

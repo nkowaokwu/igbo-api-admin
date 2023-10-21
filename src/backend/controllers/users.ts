@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import admin from 'firebase-admin';
 import { filter, compact, reduce, merge } from 'lodash';
+import { createMongoUser } from 'src/backend/functions/users';
 import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';
 import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import UserRoles from '../shared/constants/UserRoles';
@@ -160,7 +161,8 @@ export const getUser = async (
 export const testGetUsers = (_: Request, res: Response): Response<any> => res.status(200).send([{}]);
 
 /**
- * Gets the user profile from Firebase and MongoDB
+ * Gets the user profile from Firebase and MongoDB. If the user doesn't exist in MongoDB
+ * then a Crowdsourcer document will be created.
  * @param req
  * @param res
  * @param next
@@ -178,13 +180,18 @@ export const getUserProfile = async (
     } = await handleQueries(req);
     const user = await findUser(uid);
     const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-    const crowdsourcer = cleanDocument<Interfaces.Crowdsourcer>(
-      (await Crowdsourcer.findOne({ firebaseId: uid })).toJSON(),
-    );
+    let crowdsourcer: Partial<Interfaces.Crowdsourcer> = await Crowdsourcer.findOne({
+      firebaseId: uid,
+    });
+    if (!crowdsourcer) {
+      crowdsourcer = cleanDocument<Interfaces.Crowdsourcer>(await createMongoUser(uid));
+    } else {
+      crowdsourcer = crowdsourcer.toJSON();
+    }
 
     const userProfile = merge({
       ...(typeof user !== 'string' ? user : {}),
-      ...crowdsourcer,
+      ...(crowdsourcer ?? {}),
     });
 
     return res.status(200).send(userProfile);

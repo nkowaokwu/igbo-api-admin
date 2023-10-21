@@ -1,6 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { useState, ReactElement } from 'react';
+import moment from 'moment';
 import { Avatar, Box, Heading, Input, Link, Select, Text, Tooltip, chakra, useToast } from '@chakra-ui/react';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import DatePicker from 'react-date-picker';
 import { usePermissions } from 'react-admin';
 import { FormattedUser } from 'src/backend/controllers/utils/interfaces';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
@@ -24,6 +26,7 @@ const UserCard = ({
   gender: GenderEnum;
   dialects: DialectEnum[];
 }): ReactElement => {
+  const [birthday, setBirthday] = useState(age);
   const permissions = usePermissions();
   const toast = useToast();
   const isAdmin = hasAdminPermissions(permissions.permissions, true);
@@ -54,8 +57,15 @@ const UserCard = ({
               />
             </Box>
             <Box>
-              <Text fontFamily="heading">Age</Text>
-              <Input id="user-profile-age-input" type="number" fontFamily="heading" defaultValue={age} />
+              <Text fontFamily="heading">Birthday</Text>
+              <DatePicker onChange={setBirthday} value={birthday} />
+              <Input
+                position="absolute"
+                opacity={0}
+                pointerEvents="none"
+                id="user-profile-age-input"
+                value={birthday}
+              />
             </Box>
             <Box className="flex flex-row space-x-3">
               <Box>
@@ -86,22 +96,38 @@ const UserCard = ({
             <Box className="flex flex-row items-center space-x-3">
               <Text fontFamily="heading">
                 <chakra.span mr={1} fontWeight="bold">
-                  Age:
+                  Birthday:
                 </chakra.span>
-                {age}
+                {birthday ? (
+                  moment(birthday).format('MMMM D, YYYY')
+                ) : (
+                  <chakra.span fontStyle="italic" color="gray.400">
+                    No birthday set
+                  </chakra.span>
+                )}
               </Text>
               <Text fontFamily="heading">
                 <chakra.span mr={1} fontWeight="bold">
                   Gender:
                 </chakra.span>
-                {Gender[gender]?.label}
+                {Gender[gender]?.label || (
+                  <chakra.span fontStyle="italic" color="gray.400">
+                    Not selected
+                  </chakra.span>
+                )}
               </Text>
             </Box>
             <Text fontFamily="heading">
               <chakra.span mr={1} fontWeight="bold">
                 Dialects:
               </chakra.span>
-              {dialects.map((dialect) => Dialect[dialect].label).join(', ')}
+              {dialects?.length ? (
+                dialects.map((dialect) => Dialect[dialect].label).join(', ')
+              ) : (
+                <chakra.span fontSize="italic" color="gray.400">
+                  No dialects selected
+                </chakra.span>
+              )}
             </Text>
             <Box className="flex flex-row space-x-2">
               <Link color="green" href={`mailto:${email}`}>
