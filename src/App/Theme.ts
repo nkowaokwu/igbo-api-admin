@@ -6,8 +6,8 @@ const theme = createTheme({
     RaAppBar: {
       toolbar: {
         backgroundColor: '#417453 !important',
-        backgroundImage: 'url(\'https://nkowaokwu.s3.us-west-1.amazonaws.com'
-          + '/assets/images/igboAPIEditorPlatform/pattern.png\')',
+        backgroundImage:
+          "url('https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/pattern.png')",
         backgroundSize: 'contain',
       },
       menuButton: {
@@ -89,7 +89,7 @@ const theme = createTheme({
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
         overflowY: 'hidden',
-        padding: 0,
+        padding: '0 !important',
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',
