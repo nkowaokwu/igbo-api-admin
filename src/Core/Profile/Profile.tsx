@@ -1,5 +1,6 @@
 import React, { useState, ReactElement, useEffect } from 'react';
 import { Box, Button, Tooltip, useToast } from '@chakra-ui/react';
+import moment from 'moment';
 import { ChevronLeftIcon, EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { getAuth } from 'firebase/auth';
 import { getUserProfile, updateUserProfile } from 'src/shared/UserAPI';
@@ -27,7 +28,7 @@ const Profile = (): ReactElement => {
     if (isEditingUserProfile) {
       setIsLoading(true);
       const displayName = (document.querySelector('#user-profile-display-name-input') as HTMLInputElement).value;
-      const age = parseInt((document.querySelector('#user-profile-age-input') as HTMLInputElement).value || '-1', 10);
+      const age = moment((document.querySelector('#user-profile-age-input') as HTMLInputElement).value).toDate();
       const dialect = (document.querySelector('#user-dialect-input') as HTMLSelectElement).value as DialectEnum;
       const gender = (document.querySelector('#user-gender-input') as HTMLSelectElement).value as GenderEnum;
 

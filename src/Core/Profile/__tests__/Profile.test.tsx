@@ -4,6 +4,7 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Profile from 'src/Core/Profile/Profile';
 import TestContext from 'src/__tests__/components/TestContext';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 jest.mock('src/shared/DataCollectionAPI');
 jest.mock('src/Core/Dashboard/network');
@@ -12,7 +13,7 @@ describe('Profile', () => {
   it('render Profile as admin', async () => {
     jest
       .spyOn(reactAdmin, 'usePermissions')
-      .mockReturnValue({ loading: false, loaded: true, permissions: { role: 'admin' } });
+      .mockReturnValue({ loading: false, loaded: true, permissions: { role: UserRoles.ADMIN } });
     const { findByText } = render(
       <TestContext>
         <Profile />
@@ -29,7 +30,7 @@ describe('Profile', () => {
   it('render Profile as crowdsourcer', async () => {
     jest
       .spyOn(reactAdmin, 'usePermissions')
-      .mockReturnValue({ loading: false, loaded: true, permissions: { role: 'crowdsourcer' } });
+      .mockReturnValue({ loading: false, loaded: true, permissions: { role: UserRoles.CROWDSOURCER } });
     const { queryByText, findByText } = render(
       <TestContext>
         <Profile />
@@ -54,7 +55,6 @@ describe('Profile', () => {
     await findByText('Save');
     await findByText('Cancel');
   });
-
   it('cancel the Profile edits', async () => {
     const { queryByText, findByText } = render(
       <TestContext>
