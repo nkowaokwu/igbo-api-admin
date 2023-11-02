@@ -21,7 +21,7 @@ export const updateUserProfile = async ({
   userId: string;
   userProfile: {
     displayName: string;
-    age: number;
+    age: Date;
     dialects: DialectEnum[];
     gender: GenderEnum;
   };
