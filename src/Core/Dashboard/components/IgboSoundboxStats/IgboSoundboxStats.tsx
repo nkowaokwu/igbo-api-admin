@@ -64,7 +64,7 @@ const IgboSoundboxStats = ({
 
   const monthlyRecordedStat = [
     {
-      totalCount: recordingStats.allRecorded[currentMonth] || -1,
+      totalCount: recordingStats.allRecorded[currentMonth] || 0,
       goal: GOAL,
       heading: `Total recorded audio for ${moment(currentMonth).format('MMM, YYYY')}`,
       description: 'The total number of example sentences recorded for the current month',

@@ -514,7 +514,7 @@ export const getTotalVerifiedExampleSuggestions = async (
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns Total number of Example Suggestion the user has recorded
+ * @returns Total number of merged Example Suggestion the user has recorded
  */
 export const getTotalRecordedExampleSuggestions = async (
   req: Interfaces.EditorRequest,
@@ -528,6 +528,7 @@ export const getTotalRecordedExampleSuggestions = async (
     'pronunciations.audio': { $regex: /^http/, $type: 'string' },
     'pronunciations.speaker': uid,
     'pronunciations.review': true, // TODO: how to match with specific object in array
+    merged: { $ne: null },
   };
 
   try {
