@@ -423,7 +423,7 @@ export const searchWordSuggestionsOlderThanAYear = (): {
   merged: null,
 });
 /**
- * Gets example suggestions where the user's audio has been approved
+ * Gets example suggestions where the user's audio has been fully approved
  */
 export const searchApprovedExampleSuggestionAudioPronunciations = (
   uid: string,
@@ -441,7 +441,7 @@ export const searchApprovedExampleSuggestionAudioPronunciations = (
   },
 });
 /**
- * Gets example suggestions where the user's audio has been denied
+ * Gets example suggestions where the user's audio has been fully denied
  */
 export const searchDeniedExampleSuggestionAudioPronunciations = (
   uid: string,
@@ -454,7 +454,7 @@ export const searchDeniedExampleSuggestionAudioPronunciations = (
 } => ({
   pronunciations: {
     $elemMatch: {
-      $and: [{ speaker: uid }, { 'denials.0': { $exists: true } }],
+      $and: [{ speaker: uid }, { 'denials.1': { $exists: true } }],
     },
   },
 });
