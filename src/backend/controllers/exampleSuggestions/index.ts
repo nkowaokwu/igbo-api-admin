@@ -268,11 +268,10 @@ export const getRandomExampleSuggestionsToRecord = async (
       exampleSuggestionSchema,
     );
 
-    let query = {};
     let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
 
     // First searches for ExampleSuggestions that should be returned
-    query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
+    const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
     exampleSuggestions = await findExampleSuggestions({
       query,
       limit,
@@ -281,21 +280,6 @@ export const getRandomExampleSuggestionsToRecord = async (
       throw new Error('An error has occurred while returning random example suggestions to edit');
     });
 
-    // If none are found, then new ExampleSuggestions are created, up to the provided limit
-    // if (!exampleSuggestions || !exampleSuggestions.length) {
-    //   query = searchExamplesWithoutEnoughAudioRegexQuery(user.uid);
-    //   exampleSuggestions = await handleCreatingNewExampleSuggestions({
-    //     query,
-    //     skip,
-    //     limit,
-    //     mongooseConnection,
-    //   });
-
-    //   console.log(
-    //     `Created ${exampleSuggestions.length} new example suggestions`,
-    //     exampleSuggestions.map((id) => id),
-    //   );
-    // }
     return await packageResponse({
       res,
       docs: exampleSuggestions,
