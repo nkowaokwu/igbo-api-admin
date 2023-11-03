@@ -1,6 +1,18 @@
 import React, { useState, ReactElement } from 'react';
 import moment from 'moment';
-import { Avatar, Box, Heading, Input, Link, Select, Text, Tooltip, chakra, useToast } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Heading,
+  Input,
+  Link,
+  Select,
+  Text,
+  Tooltip,
+  chakra,
+  useToast,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import DatePicker from 'react-date-picker';
 import { usePermissions } from 'react-admin';
@@ -30,6 +42,7 @@ const UserCard = ({
   const permissions = usePermissions();
   const toast = useToast();
   const isAdmin = hasAdminPermissions(permissions.permissions, true);
+  const avatarSize = useBreakpointValue({ base: 'lg', lg: 'xl' });
 
   const handleCopyId = () => {
     copyToClipboard(
@@ -43,29 +56,31 @@ const UserCard = ({
 
   return (
     <Box className="flex flex-col md:flex-row items-center text-center md:text-left space-y-4 md:space-x-4 mb-4 p-6">
-      <Avatar name={displayName} src={photoURL} size="xl" />
+      <Avatar name={displayName} src={photoURL} size={avatarSize} />
       <Box>
         {isEditing ? (
           <Box className="flex flex-col space-y-3">
-            <Box>
-              <Text fontFamily="heading">Full name</Text>
-              <Input
-                id="user-profile-display-name-input"
-                data-test="user-profile-display-name-input"
-                fontFamily="heading"
-                defaultValue={displayName}
-              />
-            </Box>
-            <Box>
-              <Text fontFamily="heading">Birthday</Text>
-              <DatePicker onChange={setBirthday} value={birthday} />
-              <Input
-                position="absolute"
-                opacity={0}
-                pointerEvents="none"
-                id="user-profile-age-input"
-                value={birthday}
-              />
+            <Box className="flex flex-col lg:flex-row space-x-3">
+              <Box>
+                <Text fontFamily="heading">Full name</Text>
+                <Input
+                  id="user-profile-display-name-input"
+                  data-test="user-profile-display-name-input"
+                  fontFamily="heading"
+                  defaultValue={displayName}
+                />
+              </Box>
+              <Box>
+                <Text fontFamily="heading">Birthday</Text>
+                <DatePicker onChange={setBirthday} value={birthday} />
+                <Input
+                  position="absolute"
+                  opacity={0}
+                  pointerEvents="none"
+                  id="user-profile-age-input"
+                  value={birthday}
+                />
+              </Box>
             </Box>
             <Box className="flex flex-row space-x-3">
               <Box>
@@ -92,43 +107,43 @@ const UserCard = ({
           </Box>
         ) : (
           <>
-            <Heading className={!displayName ? 'text-gray-500 italic' : ''}>{displayName || 'No display name'}</Heading>
-            <Box className="flex flex-row items-center space-x-3">
-              <Text fontFamily="heading">
+            <Heading className={!displayName ? 'text-gray-500' : ''} fontSize={{ base: '2xl', lg: '3xl' }}>
+              {displayName || 'No display name'}
+            </Heading>
+            <Box className="my-2">
+              <Box className="flex flex-col lg:flex-row lg:items-center lg:space-x-3">
+                <Text fontFamily="heading" textAlign="left">
+                  <chakra.span mr={1} fontWeight="bold">
+                    Birthday:
+                  </chakra.span>
+                  {birthday ? (
+                    moment(birthday).format('MMMM D, YYYY')
+                  ) : (
+                    <chakra.span color="gray.400">No birthday set</chakra.span>
+                  )}
+                </Text>
+                <Text fontFamily="heading" textAlign="left">
+                  <chakra.span mr={1} fontWeight="bold">
+                    Gender:
+                  </chakra.span>
+                  {(Gender[gender]?.label && Gender[gender]?.value !== 'UNSPECIFIED') || (
+                    <chakra.span fontStyle="italic" color="gray.400">
+                      Not selected
+                    </chakra.span>
+                  )}
+                </Text>
+              </Box>
+              <Text fontFamily="heading" textAlign="left">
                 <chakra.span mr={1} fontWeight="bold">
-                  Birthday:
+                  Dialects:
                 </chakra.span>
-                {birthday ? (
-                  moment(birthday).format('MMMM D, YYYY')
+                {dialects?.length ? (
+                  dialects.map((dialect) => Dialect[dialect].label).join(', ')
                 ) : (
-                  <chakra.span fontStyle="italic" color="gray.400">
-                    No birthday set
-                  </chakra.span>
-                )}
-              </Text>
-              <Text fontFamily="heading">
-                <chakra.span mr={1} fontWeight="bold">
-                  Gender:
-                </chakra.span>
-                {Gender[gender]?.label || (
-                  <chakra.span fontStyle="italic" color="gray.400">
-                    Not selected
-                  </chakra.span>
+                  <chakra.span color="gray.400">No dialects selected</chakra.span>
                 )}
               </Text>
             </Box>
-            <Text fontFamily="heading">
-              <chakra.span mr={1} fontWeight="bold">
-                Dialects:
-              </chakra.span>
-              {dialects?.length ? (
-                dialects.map((dialect) => Dialect[dialect].label).join(', ')
-              ) : (
-                <chakra.span fontSize="italic" color="gray.400">
-                  No dialects selected
-                </chakra.span>
-              )}
-            </Text>
             <Box className="flex flex-row space-x-2">
               <Link color="green" href={`mailto:${email}`}>
                 {email}

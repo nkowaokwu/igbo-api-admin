@@ -166,9 +166,11 @@ const LoginModal = ({
             variant: 'left-accent',
           });
         } else if (userLoginState === UserLoginState.SIGN_UP && userCredential) {
-          await updateProfile(userCredential.user, {
-            displayName,
-          });
+          if (displayName) {
+            await updateProfile(userCredential.user, {
+              displayName,
+            });
+          }
           await sendEmailVerification(userCredential.user).then(() => {
             setErrorMessage('');
             setUserLoginState(UserLoginState.CHECK_EMAIL);
@@ -199,9 +201,11 @@ const LoginModal = ({
             });
           }
           try {
-            await updateProfile(auth.currentUser, {
-              displayName,
-            });
+            if (displayName) {
+              await updateProfile(auth.currentUser, {
+                displayName,
+              });
+            }
             handleUserResult({
               toast,
               setErrorMessage,

@@ -39,6 +39,7 @@ enum DialectEnum {
   UKW = 'UKW',
   UMU = 'UMU',
   UNW = 'UNW',
+  UNSPECIFIED = 'UNSPECIFIED',
 }
 
 export default DialectEnum;

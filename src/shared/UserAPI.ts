@@ -1,5 +1,5 @@
 import { getAuth, updateProfile } from 'firebase/auth';
-import { merge } from 'lodash';
+import { merge, pick } from 'lodash';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
@@ -27,7 +27,8 @@ export const updateUserProfile = async ({
   };
 }): Promise<UserProfile> => {
   const auth = getAuth();
-  await updateProfile(auth.currentUser, userProfile);
+  const firebaseProfile = pick(userProfile, ['displayName']);
+  await updateProfile(auth.currentUser, firebaseProfile);
 
   const { data: result } = await request({
     method: 'PUT',
