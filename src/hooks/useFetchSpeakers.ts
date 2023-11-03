@@ -20,7 +20,7 @@ const useFetchSpeakers = ({
       if (isAdmin) {
         setIsLoading(true);
         try {
-          const speakerProfiles = await Promise.all(speakerIds.map((speakerId) => getUserProfile(speakerId)));
+          const speakerProfiles = await Promise.all(speakerIds.map(getUserProfile));
           speakersRef.current = speakerProfiles;
         } catch (err) {
           speakersRef.current = [];
