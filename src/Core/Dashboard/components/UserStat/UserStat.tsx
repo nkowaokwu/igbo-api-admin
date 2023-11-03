@@ -52,7 +52,7 @@ const UserStat = ({
 
   return (
     <Box mt={4}>
-      <Skeleton isLoaded={Boolean(user?.firebaseId)}>
+      <Skeleton isLoaded={Boolean(user?.firebaseId || user?.uid)}>
         <UserCard {...user} isEditing={isEditing} />
       </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">

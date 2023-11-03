@@ -184,7 +184,7 @@ export const getUserProfile = async (
       firebaseId: uid,
     });
     if (!crowdsourcer) {
-      crowdsourcer = cleanDocument<Interfaces.Crowdsourcer>(await createMongoUser(uid));
+      crowdsourcer = cleanDocument<Partial<Interfaces.Crowdsourcer>>(await createMongoUser(uid));
     } else {
       crowdsourcer = crowdsourcer.toJSON();
     }

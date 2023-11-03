@@ -6,18 +6,18 @@ import network from 'src/Core/Dashboard/network';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
 import { hasNoEditorPermissions } from 'src/shared/utils/permissions';
 
+const DEFAULT_USER_RECORD = { displayName: '', photoURL: '', email: '', uid: '' };
+
 const NO_PERMISSION_STATUS = 403;
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({});
   const showProps = useShowController(props);
   const permissions = usePermissions();
-  let { record } = showProps;
+  const { record = DEFAULT_USER_RECORD } = showProps;
 
-  record = record || { id: null };
-
-  const { displayName, photoURL, email } = record;
-  const user = { displayName, photoURL, email };
+  const { displayName, photoURL, email, uid } = record;
+  const user = { displayName, photoURL, email, uid };
 
   const handleNoPermissionStatus = ({ status }) => {
     if (status === NO_PERMISSION_STATUS) {
@@ -26,10 +26,10 @@ const UserShow = (props: ShowProps): ReactElement => {
   };
 
   useEffect(() => {
-    if (record?.uid) {
+    if (showProps?.record?.uid) {
       setIsLoading(false);
     }
-  }, [record]);
+  }, [showProps]);
 
   useEffect(() => {
     if (!hasNoEditorPermissions(permissions?.permissions, true)) {
@@ -51,7 +51,7 @@ const UserShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="bg-white shadow-sm p-10 mt-10">
+      <Box className="bg-white shadow-sm px-10">
         {record.uid && !isLoading ? <UserStat uid={record.uid} user={user} {...stats} /> : null}
       </Box>
     </Skeleton>
