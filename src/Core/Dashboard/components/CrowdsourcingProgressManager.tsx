@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { first } from 'lodash';
-import moment from 'moment';
-import { Box, Button, Heading, Image, Show, Text, Link, chakra, Divider } from '@chakra-ui/react';
+import { Box, Button, Heading, Image, Show, Text, chakra } from '@chakra-ui/react';
 import { getAuth } from 'firebase/auth';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
@@ -19,7 +18,7 @@ type CrowdsourcingOption = {
 const crowdsourcingOptions: CrowdsourcingOption[] = [
   {
     icon: '🎙',
-    title: 'Record Igbo audio for the Igbo Voice-athon',
+    title: 'Record Igbo audio for example Igbo sentences',
     subtitle: 'Read Igbo sentences and record them out loud to build the largest Igbo audio library',
     hash: '#/igboSoundbox',
     backgroundImage: 'https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/microphone.png',
@@ -83,45 +82,6 @@ const CrowdsourcingProgressManager = (): ReactElement => {
           {`Ndeewo, ${first((currentUser?.displayName || '').split(' '))} `}
           <chakra.span fontWeight="normal">Kedụ ụdị enyemaaka ị chọrọ inye anyị?</chakra.span>
         </Text>
-        <Box my={2} className="space-y-2 rounded-md p-3" width="fit-content" backgroundColor="gray.700">
-          <Box className="w-full flex flex-row justify-between items-center">
-            <Heading as="h2" fontSize="xl" fontFamily="Silka" color="white">
-              Igbo Voice-athon
-            </Heading>
-            <Text color="white" fontSize="sm">{`End Date: ${moment('10-24-2023').format('MMM DD, YYYY')}`}</Text>
-          </Box>
-          <Box className="w-full">
-            <Divider color="gray.600" />
-          </Box>
-          <Box className="space-y-4">
-            <Text color="white" fontFamily="heading">
-              Please follow these steps to get started with the competition
-            </Text>
-            <Box className="w-full flex flex-row space-x-4">
-              <Text color="white" fontFamily="heading" fontWeight="bold">
-                Start here
-                <chakra.span ml={2}>
-                  <ArrowForwardIcon color="white" boxSize={4} />
-                </chakra.span>
-              </Text>
-              <Text fontFamily="heading" color="white" textDecoration="underline">
-                <Link href="https://www.youtube.com/watch?v=8FqpkeYd2Ws" target="_blank">
-                  💸 Watch 1-minute video
-                </Link>
-              </Text>
-            </Box>
-            <Button
-              width="full"
-              fontFamily="heading"
-              fontWeight="bold"
-              backgroundColor="primary"
-              color="white"
-              onClick={() => window.open('https://forms.gle/QEF6gLBAT1PksYxk7', '_blank')}
-            >
-              📑 Google Form Sign up
-            </Button>
-          </Box>
-        </Box>
       </Box>
       <Box className="w-full flex flex-col justify-start items-start space-y-4">
         <Box className="w-full flex flex-col md:flex-row flex-wrap justify-start items-center gap-8 lg:gap-24">
