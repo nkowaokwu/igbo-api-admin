@@ -1,11 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import { omit, times } from 'lodash';
+import { Types } from 'mongoose';
 import {
   updateExampleSuggestion,
   putReviewForRandomExampleSuggestions,
   putRandomExampleSuggestionsToTranslate,
   getRandomExampleSuggestionsToTranslate,
+  isVerifiedAudioPronunciation,
+  getExampleSuggestionUpdateAt,
+  getTotalRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import { connectDatabase } from 'src/backend/utils/database';
@@ -13,6 +18,9 @@ import { dropMongoDBCollections } from 'src/__tests__/shared';
 import { getExampleSuggestion, suggestNewExample } from 'src/__tests__/shared/commands';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import moment from 'moment';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 
 const omitTimestamps = (pronunciation) => {
   const updatedPronunciation = omit(pronunciation, ['createdAt', 'updatedAt']);
@@ -21,6 +29,26 @@ const omitTimestamps = (pronunciation) => {
   return updatedPronunciation;
 };
 
+const requestObject = async (
+  { user = AUTH_TOKEN.ADMIN_AUTH_TOKEN, body = {}, query = {} } = {
+    user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    body: {},
+    query: {},
+  },
+) => {
+  const mongooseConnection = await connectDatabase();
+  const reqMock = {
+    user,
+    body,
+    query,
+    mongooseConnection,
+  };
+  const resMock = {
+    send: jest.fn(),
+  };
+  const nextMock = jest.fn();
+  return { reqMock, resMock, nextMock };
+};
 // NOTE: It's expected for the updatedAt and createdAt fields within
 // each pronunciation to change. We rely on the review field within
 // Example Suggestions to calculate a user's contributions.
@@ -81,9 +109,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -92,12 +118,7 @@ describe('exampleSuggestions controller', () => {
           },
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -124,9 +145,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -135,12 +154,7 @@ describe('exampleSuggestions controller', () => {
           },
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -167,9 +181,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -178,12 +190,7 @@ describe('exampleSuggestions controller', () => {
           },
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -210,9 +217,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -221,12 +226,7 @@ describe('exampleSuggestions controller', () => {
           },
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -253,9 +253,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -264,12 +262,7 @@ describe('exampleSuggestions controller', () => {
           },
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putReviewForRandomExampleSuggestions(reqMock, resMock, nextMock);
 
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
@@ -293,21 +286,14 @@ describe('exampleSuggestions controller', () => {
     });
     expect(exampleSuggestionRes.status).toEqual(200);
 
-    const mongooseConnection = await connectDatabase();
-    const reqMock = {
-      user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+    const { reqMock, resMock, nextMock } = await requestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
           english: 'updated english',
         },
       ],
-      mongooseConnection,
-    };
-    const resMock = {
-      send: jest.fn(),
-    };
-    const nextMock = jest.fn();
+    });
     await putRandomExampleSuggestionsToTranslate(reqMock, resMock, nextMock);
     expect(reqMock.response[0].crowdsourcing[CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]).toEqual(true);
 
@@ -363,6 +349,155 @@ describe('exampleSuggestions controller', () => {
     res.forEach((exampleSuggestion) => {
       expect(exampleSuggestion.english).toBeFalsy();
       expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.EDITOR_AUTH_TOKEN);
+    });
+  });
+
+  describe('Verify Audio Pronunciation', () => {
+    it('verifies the audio pronunciation', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: [],
+        audio: 'http://',
+        speaker: uid,
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(true);
+    });
+
+    it('does not verify audio pronunciation - denials', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1', 'uid-3'],
+        audio: 'http://',
+        speaker: uid,
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - audio', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: '',
+        speaker: uid,
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - speaker', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: 'uid-1',
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - review', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: uid,
+        review: false,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - approvals', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: uid,
+        review: false,
+        approvals: ['uid'],
+        archived: false,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - archived', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: uid,
+        review: false,
+        approvals: ['uid', 'uid-2'],
+        archived: true,
+        _id: '',
+      };
+      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+  });
+
+  it('gets the example suggestion updated at date', async () => {
+    const mongooseConnection = await connectDatabase();
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+    const unsavedExampleSuggestion = new ExampleSuggestion({
+      ...exampleSuggestionData,
+    });
+    const exampleSuggestion = await unsavedExampleSuggestion.save();
+    const date = getExampleSuggestionUpdateAt(exampleSuggestion);
+    expect(date).toEqual(exampleSuggestion.updatedAt.toISOString());
+  });
+
+  describe('Get Total Recorded Example Suggestions', () => {
+    it('gets the total recorded exampple suggestions by month', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+      const unsavedExampleSuggestion = new ExampleSuggestion({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+            review: true,
+          },
+        ],
+        type: SentenceTypeEnum.DATA_COLLECTION,
+        merged: new Types.ObjectId(),
+        mergedBy: AUTH_TOKEN.MERGER_AUTH_TOKEN,
+      });
+
+      const exampleSuggestion = await unsavedExampleSuggestion.save();
+      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
+
+      expect(resMock.send).toBeCalledWith({
+        timestampedExampleSuggestions: {
+          [moment(exampleSuggestion.updatedAt).startOf('month').format('MMM, YYYY')]: 1,
+        },
+      });
     });
   });
 });

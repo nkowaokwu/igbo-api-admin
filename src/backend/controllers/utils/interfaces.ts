@@ -90,6 +90,21 @@ export interface DefinitionSchema {
   id?: string;
 }
 
+export interface PronunciationData {
+  audio: string;
+  speaker: string;
+  review: boolean;
+  approvals: string[];
+  denials: string[];
+  archived: boolean;
+}
+
+export interface PronunciationSchema extends PronunciationData {
+  _id: Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface Word extends WordData, Document<any>, LeanDocument<any> {
   id: Types.ObjectId;
 }
@@ -198,17 +213,7 @@ export interface ExampleData {
   associatedWords: string[];
   associatedDefinitionsSchemas: string[];
   type: SentenceTypeEnum;
-  pronunciations: {
-    audio: string;
-    speaker: string;
-    review: boolean;
-    approvals: string[];
-    denials: string[];
-    archived: boolean;
-    _id: Types.ObjectId;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }[];
+  pronunciations: PronunciationSchema[];
   updatedAt: Date;
 }
 
