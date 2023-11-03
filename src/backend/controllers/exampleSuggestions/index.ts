@@ -1,6 +1,7 @@
-import { Connection, Document, Query } from 'mongoose';
+import { Connection, Document, LeanDocument, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, omit, map } from 'lodash';
+import { assign, omit, map, pick } from 'lodash';
+import moment from 'moment';
 import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
@@ -25,7 +26,8 @@ import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
-import moment from 'moment';
+import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
+import Joi from 'joi';
 
 const NO_LIMIT = 20000;
 /**
@@ -510,6 +512,45 @@ export const getTotalVerifiedExampleSuggestions = async (
 };
 
 /**
+ * Determines if the current audio pronunciation is verified (i.e. complete)
+ * @param param0 pronunciation and uid
+ * @returns Boolean if the audio pronunciation is verified
+ */
+export const isVerifiedAudioPronunciation = ({
+  pronunciation,
+  uid,
+}: {
+  pronunciation: Interfaces.PronunciationData;
+  uid: string;
+}): boolean => {
+  const pronunciationSchema = Joi.object().keys({
+    approvals: Joi.array().min(MINIMUM_APPROVALS).items(Joi.string().allow('', null)),
+    denials: Joi.array().max(MINIMUM_DENIALS).items(Joi.string().allow('', null)),
+    audio: Joi.string().pattern(new RegExp('^http')).required(),
+    speaker: Joi.string().valid(uid).required(),
+    review: Joi.boolean().valid(true).required(),
+    archived: Joi.boolean().valid(false).optional(),
+  });
+
+  const validation = pronunciationSchema.validate(pronunciation, { abortEarly: false });
+  if (validation.error) {
+    console.log(validation.error);
+    return false;
+  }
+  return true;
+};
+
+/**
+ * Returns the Example Suggestion's date
+ * @param exampleSuggestion Example Suggestion
+ * @returns Date of Example Suggestion
+ */
+export const getExampleSuggestionUpdateAt = (exampleSuggestion: LeanDocument<Interfaces.ExampleSuggestion>): string =>
+  exampleSuggestion.updatedAt.toISOString
+    ? exampleSuggestion.updatedAt.toISOString()
+    : exampleSuggestion.updatedAt.toString();
+
+/**
  * Returns total number of Example Suggestions the user has recorded
  * @param req Request
  * @param res Response
@@ -524,10 +565,10 @@ export const getTotalRecordedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const uid = uidQuery || user.uid;
   const query = {
-    'denials.1': { $exists: false },
     'pronunciations.audio': { $regex: /^http/, $type: 'string' },
     'pronunciations.speaker': uid,
-    'pronunciations.review': true, // TODO: how to match with specific object in array
+    'pronunciations.review': true,
+    type: SentenceTypeEnum.DATA_COLLECTION,
     merged: { $ne: null },
   };
 
@@ -540,14 +581,27 @@ export const getTotalRecordedExampleSuggestions = async (
       .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
         const timestampedExampleSuggestions = exampleSuggestions.reduce(
           (finalTimestampedExampleSuggestions, exampleSuggestion) => {
-            const stringifiedDate = exampleSuggestion.updatedAt.toISOString
-              ? exampleSuggestion.updatedAt.toISOString()
-              : exampleSuggestion.updatedAt.toString();
-            const exampleSuggestionMonth = moment(stringifiedDate).startOf('month').format('MMM, YYYY');
-            if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
-            }
-            finalTimestampedExampleSuggestions[exampleSuggestionMonth] += 1;
+            // Gets the date and month of Example Suggestion
+            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
+            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
+
+            exampleSuggestion.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
+              // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
+              const pronunciation = pick(dbPronunciation, [
+                'approvals',
+                'denials',
+                'audio',
+                'speaker',
+                'review',
+                'archived',
+              ]);
+              const isVerified = isVerifiedAudioPronunciation({ pronunciation, uid });
+              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
+                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
+              }
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += isVerified;
+            });
+
             return finalTimestampedExampleSuggestions;
           },
           {},

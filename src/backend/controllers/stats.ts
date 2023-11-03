@@ -4,6 +4,7 @@ import { compact, times } from 'lodash';
 import moment from 'moment';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -466,8 +467,6 @@ export const getUserMergeStats = async (
   }
 };
 
-const MINIMUM_APPROVALS = 2;
-const MINIMUM_DENIALS = 1;
 /**
  * Gets the audio stats related to the user
  */
