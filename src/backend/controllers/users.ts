@@ -178,6 +178,7 @@ export const getUserProfile = async (
       user: { uid },
       mongooseConnection,
     } = await handleQueries(req);
+    const user = await findUser(uid);
     const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
     let crowdsourcer: Partial<Interfaces.Crowdsourcer> = await Crowdsourcer.findOne({
       firebaseId: uid,
