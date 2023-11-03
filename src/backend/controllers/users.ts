@@ -111,7 +111,7 @@ export const getUsers = async (
         const displayName = (user.displayName || '').toLowerCase();
         const { email, uid } = user;
         // Finds users where the value matches their name, email, or Firebase id
-        return displayName.includes(value?.toLowerCase()) || email.includes(value?.toLowerCase()) || uid === value;
+        return displayName.includes(value?.toLowerCase?.()) || email.includes(value?.toLowerCase?.()) || uid === value;
       }),
     );
     const paginatedUsers = users.slice(skip, skip + 1 + limit);
