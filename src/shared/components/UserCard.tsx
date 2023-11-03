@@ -126,7 +126,7 @@ const UserCard = ({
                   <chakra.span mr={1} fontWeight="bold">
                     Gender:
                   </chakra.span>
-                  {(Gender[gender]?.label && Gender[gender]?.value !== 'UNSPECIFIED') || (
+                  {(Gender[gender]?.value !== 'UNSPECIFIED' && Gender[gender]?.label) || (
                     <chakra.span fontStyle="italic" color="gray.400">
                       Not selected
                     </chakra.span>

@@ -522,7 +522,7 @@ export const getStats = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> => {
+): Promise<Response<{ [key in StatTypes]: { value: number } }> | void> => {
   try {
     const { mongooseConnection } = req;
     const Stat = mongooseConnection.model<Interfaces.Stat>('Stat', statSchema);
