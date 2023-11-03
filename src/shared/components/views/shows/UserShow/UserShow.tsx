@@ -1,23 +1,41 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { camelCase } from 'lodash';
+import { noop } from 'lodash';
 import { ShowProps, usePermissions, useShowController } from 'react-admin';
 import { Box, Skeleton } from '@chakra-ui/react';
-import network from 'src/Core/Dashboard/network';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
 import { hasNoEditorPermissions } from 'src/shared/utils/permissions';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
+import { UserProfile } from 'src/backend/controllers/utils/interfaces';
+import { getUserStats } from 'src/shared/UserAPI';
 
-const DEFAULT_USER_RECORD = { displayName: '', photoURL: '', email: '', uid: '' };
+const DEFAULT_USER_RECORD = {
+  displayName: '',
+  photoURL: '',
+  email: '',
+  uid: '',
+  age: null,
+  createdAt: null,
+  updatedAt: null,
+  dialects: [],
+  firebaseId: '',
+  gender: GenderEnum.UNSPECIFIED,
+  providerId: null,
+  phoneNumber: '',
+  toJSON: noop,
+  id: '',
+  role: UserRoles.USER,
+  editingGroup: '',
+};
 
 const NO_PERMISSION_STATUS = 403;
 const UserShow = (props: ShowProps): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState({});
+  const [stats, setStats] = useState<{ [key: string]: number }>({});
   const showProps = useShowController(props);
   const permissions = usePermissions();
-  const { record = DEFAULT_USER_RECORD } = showProps;
-
-  const { displayName, photoURL, email, uid } = record;
-  const user = { displayName, photoURL, email, uid };
+  const { record } = showProps;
+  const user = (record || DEFAULT_USER_RECORD) as UserProfile;
 
   const handleNoPermissionStatus = ({ status }) => {
     if (status === NO_PERMISSION_STATUS) {
@@ -32,27 +50,22 @@ const UserShow = (props: ShowProps): ReactElement => {
   }, [showProps]);
 
   useEffect(() => {
-    if (!hasNoEditorPermissions(permissions?.permissions, true)) {
-      network('/stats/full')
-        .then(({ body }) => {
-          const parsedBody = JSON.parse(body);
-          const updatedStats = Object.entries(parsedBody).reduce(
-            (finalStats, [key, value]: [string, { value: number }]) => ({
-              ...finalStats,
-              [camelCase(key)]: value.value,
-            }),
-            {},
-          );
+    (async () => {
+      if (!hasNoEditorPermissions(permissions?.permissions, true)) {
+        try {
+          const updatedStats = await getUserStats();
           setStats(updatedStats);
-        })
-        .catch(handleNoPermissionStatus);
-    }
+        } catch (err) {
+          handleNoPermissionStatus(err);
+        }
+      }
+    })();
   }, [permissions]);
 
   return (
     <Skeleton isLoaded={!isLoading}>
       <Box className="bg-white shadow-sm px-10">
-        {record.uid && !isLoading ? <UserStat uid={record.uid} user={user} {...stats} /> : null}
+        {user.uid && !isLoading ? <UserStat user={user} {...stats} /> : null}
       </Box>
     </Skeleton>
   );

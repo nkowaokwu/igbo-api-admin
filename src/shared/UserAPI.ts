@@ -1,8 +1,10 @@
 import { getAuth, updateProfile } from 'firebase/auth';
-import { merge, pick } from 'lodash';
+import { camelCase, merge, pick } from 'lodash';
+import network from 'src/Core/Dashboard/network';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import StatTypes from 'src/backend/shared/constants/StatTypes';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
 
@@ -36,4 +38,18 @@ export const updateUserProfile = async ({
     data: userProfile,
   });
   return merge(userProfile, result);
+};
+
+export const getUserStats = async (): Promise<{ [key: string]: number }> => {
+  const { body } = await network('/stats/full');
+  const parsedBody: { [key in StatTypes]: { value: number } } = JSON.parse(body);
+
+  const stats = Object.entries(parsedBody).reduce(
+    (finalStats, [key, value]) => ({
+      ...finalStats,
+      [camelCase(key)]: value.value,
+    }),
+    {} as { [key: string]: number },
+  );
+  return stats;
 };
