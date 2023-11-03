@@ -33,7 +33,7 @@ const IgboSoundboxStats = ({
   const permissions = usePermissions();
   const showPaymentCalculations = hasAdminPermissions(permissions?.permissions, true);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
-  const stats = [
+  const contributedStats = [
     {
       totalCount: recordingStats.recorded,
       goal: GOAL,
@@ -43,9 +43,12 @@ const IgboSoundboxStats = ({
     {
       totalCount: recordingStats.verified,
       goal: GOAL,
-      heading: 'Verified example sentences',
+      heading: 'Reviewed example sentences',
       description: 'The number of example sentences you have reviewed.',
     },
+  ];
+
+  const receivedStats = [
     {
       totalCount: audioStats.audioApprovalsCount,
       goal: GOAL,
@@ -82,8 +85,15 @@ const IgboSoundboxStats = ({
     <Box className="mb-6 space-y-3 w-full">
       <LinearProgressCard
         heading="Igbo Soundbox Contributions"
-        description="Your personalized Igbo Soundbox statistics"
-        stats={stats}
+        description="Contributions that you have made on the platform"
+        stats={contributedStats}
+        isLoaded
+        isGeneric
+      />
+      <LinearProgressCard
+        heading="Community Reviews"
+        description="Other platform contributors reviewing your audio"
+        stats={receivedStats}
         isLoaded
         isGeneric
       />

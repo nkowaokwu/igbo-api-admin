@@ -55,7 +55,7 @@ const UserStat = ({
       <Skeleton isLoaded={Boolean(user?.firebaseId)}>
         <UserCard {...user} isEditing={isEditing} />
       </Skeleton>
-      <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0 px-6">
+      <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">
         <Box className="w-full">
           <Heading as="h2" mb={4}>
             Contributions

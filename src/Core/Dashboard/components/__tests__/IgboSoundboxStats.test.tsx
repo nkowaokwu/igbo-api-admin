@@ -13,7 +13,13 @@ it('IgboSoundboxStats', async () => {
     </TestContext>,
   );
   await findByText('Igbo Soundbox Contributions');
-  await findByText('Your personalized Igbo Soundbox statistics');
+  await findByText('Community Reviews');
+  await findByText('Contributions that you have made on the platform');
+  await findByText('Other platform contributors reviewing your audio');
   await findByText('Approved audio recordings');
   await findByText('Denied audio recordings');
+  await findByText('Previous month');
+  await findByText('Next month');
+  await findByText('Monthly recorded example sentences');
+  await findByText('The number of recorded example sentences for each month');
 });

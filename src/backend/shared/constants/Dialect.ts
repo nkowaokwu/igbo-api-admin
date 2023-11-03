@@ -201,4 +201,9 @@ export default {
     value: DialectEnum.UNW,
     label: 'Unwana; Ungwana Lordji',
   },
+  [DialectEnum.UNSPECIFIED]: {
+    code: 'UNSPECIFIED',
+    value: DialectEnum.UNSPECIFIED,
+    label: 'No dialect selected',
+  },
 };

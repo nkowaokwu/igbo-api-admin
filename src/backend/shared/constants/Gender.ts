@@ -17,4 +17,8 @@ export default {
     value: GenderEnum.PREFER_NOT_TO_SAY,
     label: 'Prefer not to say',
   },
+  [GenderEnum.UNSPECIFIED]: {
+    value: GenderEnum.UNSPECIFIED,
+    label: 'No gender selected',
+  },
 };
