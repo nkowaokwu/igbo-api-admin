@@ -55,10 +55,10 @@ server.get('/twitter_auth', onTwitterAuth);
 server.get('/twitter_callback', onTwitterCallback);
 server.get('/stats/login', getLoginStats);
 server.use(apiRouter);
+server.use(adminRouter);
 server.use(crowdsourcerRouter);
 server.use(transcriberRouter);
 server.use(editorRouter);
-server.use(adminRouter);
 server.get('**', (_, res) => {
   const html = '';
   const finalHtml = index.replace('<!-- ::APP:: -->', html);
