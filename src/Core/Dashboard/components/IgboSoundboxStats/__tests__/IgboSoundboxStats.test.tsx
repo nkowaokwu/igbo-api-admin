@@ -23,12 +23,12 @@ describe('IgboSoundboxStats', () => {
       </TestContext>,
     );
 
-    await findByText('Recorded example sentences');
+    await findByText('Recorded example sentence audio');
     await findByText('Verified example sentences');
     await findByText('Approved audio recordings');
     await findByText('Denied audio recordings');
-    await findByText('Monthly recorded example sentences');
-    await findByText('The number of recorded example sentences for each month');
+    await findByText('Monthly merged recorded audio');
+    await findByText('The number of merged (verified) recorded audio for each month');
     await findByText('Previous month');
     await findByText('Next month');
     await findByText(`Total recorded audio for ${moment().format('MMM, YYYY')}`);
@@ -57,12 +57,12 @@ describe('IgboSoundboxStats', () => {
       </TestContext>,
     );
 
-    await findByText('Recorded example sentences');
+    await findByText('Recorded example sentence audio');
     await findByText('Verified example sentences');
     await findByText('Approved audio recordings');
     await findByText('Denied audio recordings');
-    await findByText('Monthly recorded example sentences');
-    await findByText('The number of recorded example sentences for each month');
+    await findByText('Monthly merged recorded audio');
+    await findByText('The number of merged (verified) recorded audio for each month');
     await findByText('Previous month');
     await findByText('Next month');
     await findByText(`Total recorded audio for ${moment().format('MMM, YYYY')}`);

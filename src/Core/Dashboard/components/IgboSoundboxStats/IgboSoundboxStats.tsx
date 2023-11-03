@@ -26,7 +26,7 @@ const IgboSoundboxStats = ({
   recordingStats: {
     recorded: number;
     verified: number;
-    allRecorded: { [key: string]: number };
+    mergedRecorded: { [key: string]: number };
   };
   audioStats: { audioApprovalsCount: number; audioDenialsCount: number };
 }): ReactElement => {
@@ -37,14 +37,14 @@ const IgboSoundboxStats = ({
     {
       totalCount: recordingStats.recorded,
       goal: GOAL,
-      heading: 'Recorded example sentences',
-      description: 'The number of recorded example sentences you have contributed',
+      heading: 'Recorded example sentence audio',
+      description: 'The number of example sentence audio you have recorded',
     },
     {
       totalCount: recordingStats.verified,
       goal: GOAL,
-      heading: 'Reviewed example sentences',
-      description: 'The number of example sentences you have reviewed.',
+      heading: 'Reviewed example sentence audio',
+      description: 'The number of example sentence audio you have reviewed',
     },
   ];
 
@@ -67,7 +67,7 @@ const IgboSoundboxStats = ({
 
   const monthlyRecordedStat = [
     {
-      totalCount: recordingStats.allRecorded[currentMonth] || 0,
+      totalCount: recordingStats.mergedRecorded[currentMonth] || 0,
       goal: GOAL,
       heading: `Total recorded audio for ${moment(currentMonth).format('MMM, YYYY')}`,
       description: 'The total number of example sentences recorded for the current month',
@@ -102,8 +102,8 @@ const IgboSoundboxStats = ({
         <Button onClick={handleNextMonth}>Next month</Button>
       </Box>
       <LinearProgressCard
-        heading="Monthly recorded example sentences"
-        description="The number of recorded example sentences for each month"
+        heading="Monthly merged recorded audio"
+        description="The number of merged (verified) recorded audio for each month"
         stats={monthlyRecordedStat}
         isLoaded
         isGeneric

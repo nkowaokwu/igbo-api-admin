@@ -6,9 +6,11 @@ import {
   putReviewForRandomExampleSuggestions,
   putRandomExampleSuggestionsToTranslate,
   getRandomExampleSuggestionsToTranslate,
-  isVerifiedAudioPronunciation,
+  isMergeableAudioPronunciation,
+  isEligibleAudioPronunciation,
   getExampleSuggestionUpdateAt,
   getTotalRecordedExampleSuggestions,
+  getTotalMergedRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
@@ -352,7 +354,7 @@ describe('exampleSuggestions controller', () => {
     });
   });
 
-  describe('Verify Audio Pronunciation', () => {
+  describe('Mergeable Audio Pronunciation', () => {
     it('verifies the audio pronunciation', () => {
       const uid = 'uid';
       const pronunciation = {
@@ -364,7 +366,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(true);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(true);
     });
 
     it('does not verify audio pronunciation - denials', () => {
@@ -378,7 +380,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
 
     it('does not verify audio pronunciation - audio', () => {
@@ -392,7 +394,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
 
     it('does not verify audio pronunciation - speaker', () => {
@@ -406,7 +408,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
 
     it('does not verify audio pronunciation - review', () => {
@@ -420,7 +422,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
 
     it('does not verify audio pronunciation - approvals', () => {
@@ -434,7 +436,7 @@ describe('exampleSuggestions controller', () => {
         archived: false,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
 
     it('does not verify audio pronunciation - archived', () => {
@@ -448,7 +450,93 @@ describe('exampleSuggestions controller', () => {
         archived: true,
         _id: '',
       };
-      expect(isVerifiedAudioPronunciation({ pronunciation, uid })).toEqual(false);
+      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+  });
+
+  describe('Eligible Audio Pronunciation', () => {
+    it('verifies the audio pronunciation', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: [],
+        audio: 'http://',
+        speaker: uid,
+        review: true,
+        approvals: [],
+        archived: false,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(true);
+    });
+
+    it('does not verify audio pronunciation - denials', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1', 'uid-3'],
+        audio: 'http://',
+        speaker: uid,
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - audio', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: '',
+        speaker: uid,
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - speaker', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: 'uid-1',
+        review: true,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - review', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: uid,
+        review: false,
+        approvals: ['uid', 'uid-2'],
+        archived: false,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
+    });
+
+    it('does not verify audio pronunciation - archived', () => {
+      const uid = 'uid';
+      const pronunciation = {
+        denials: ['uid-1'],
+        audio: 'https://',
+        speaker: uid,
+        review: false,
+        approvals: ['uid', 'uid-2'],
+        archived: true,
+        _id: '',
+      };
+      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
     });
   });
 
@@ -466,8 +554,8 @@ describe('exampleSuggestions controller', () => {
     expect(date).toEqual(exampleSuggestion.updatedAt.toISOString());
   });
 
-  describe('Get Total Recorded Example Suggestions', () => {
-    it('gets the total recorded exampple suggestions by month', async () => {
+  describe('Get Total Merged Recorded Example Suggestions', () => {
+    it('gets the total merged recorded example suggestions by month', async () => {
       const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
@@ -491,13 +579,79 @@ describe('exampleSuggestions controller', () => {
       });
 
       const exampleSuggestion = await unsavedExampleSuggestion.save();
-      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
+      await getTotalMergedRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
       expect(resMock.send).toBeCalledWith({
         timestampedExampleSuggestions: {
           [moment(exampleSuggestion.updatedAt).startOf('month').format('MMM, YYYY')]: 1,
         },
       });
+    });
+  });
+
+  describe('Get Total Recorded Example Suggestions', () => {
+    it('gets the total recorded example suggestions', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+      await Promise.all(
+        times(10, async () => {
+          const unsavedExampleSuggestion = new ExampleSuggestion({
+            ...exampleSuggestionData,
+            pronunciations: [
+              {
+                denials: [],
+                approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+                audio: 'https://',
+                speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+                review: true,
+              },
+            ],
+            type: SentenceTypeEnum.DATA_COLLECTION,
+          });
+
+          await unsavedExampleSuggestion.save();
+        }),
+      );
+      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
+
+      expect(resMock.send).toBeCalledWith({ count: 10 });
+    });
+
+    it('gets the total recorded example suggestions with merged example suggestions', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+      await Promise.all(
+        times(10, async () => {
+          const unsavedExampleSuggestion = new ExampleSuggestion({
+            ...exampleSuggestionData,
+            pronunciations: [
+              {
+                denials: [],
+                approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+                audio: 'https://',
+                speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+                review: true,
+              },
+            ],
+            type: SentenceTypeEnum.DATA_COLLECTION,
+            merged: new Types.ObjectId(),
+            mergedBy: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+          });
+
+          await unsavedExampleSuggestion.save();
+        }),
+      );
+      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
+
+      expect(resMock.send).toBeCalledWith({ count: 10 });
     });
   });
 });
