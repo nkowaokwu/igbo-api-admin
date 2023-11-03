@@ -175,10 +175,12 @@ export const getUserProfile = async (
 ): Promise<Response | void> => {
   try {
     const {
-      user: { uid },
+      user: { uid: userId, role },
+      params: { uid },
       mongooseConnection,
     } = await handleQueries(req);
-    const user = await findUser(uid);
+    const id = role === UserRoles.ADMIN ? uid : userId;
+    const user = await findUser(id);
     const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
     let crowdsourcer: Partial<Interfaces.Crowdsourcer> = await Crowdsourcer.findOne({
       firebaseId: uid,
@@ -197,7 +199,7 @@ export const getUserProfile = async (
     return res.status(200).send(userProfile);
   } catch (err) {
     console.log(err);
-    return next(new Error('An error occurred while getting the user profile'));
+    return next(new Error(`An error occurred while getting the user profile: ${err.message}`));
   }
 };
 

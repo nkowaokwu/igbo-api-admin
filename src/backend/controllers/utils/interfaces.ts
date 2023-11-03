@@ -40,7 +40,7 @@ export interface HandleQueries {
 
 // @ts-expect-error EditorRequest
 export interface EditorRequest extends Request {
-  user: UserRecord;
+  user: UserRecord & { role: UserRoles };
   query: {
     keyword?: string;
     page?: number | string;
