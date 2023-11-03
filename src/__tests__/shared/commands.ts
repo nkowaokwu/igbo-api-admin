@@ -87,9 +87,9 @@ export const getRandomExampleSuggestionsToReview = (query = {}, options: Options
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
-export const getTotalVerifiedExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
+export const getTotalReviewedExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random/stats/verified')
+    .get('/exampleSuggestions/random/stats/reviewed')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 

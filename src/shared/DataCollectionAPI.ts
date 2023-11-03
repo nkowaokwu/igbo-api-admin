@@ -120,11 +120,20 @@ export const getTotalRecordedExampleSuggestions = async (
     })
   ).data;
 
-export const getTotalVerifiedExampleSuggestions = async (uid?: string | null): Promise<any> =>
+export const getTotalMergedRecordedExampleSuggestions = async (uid?: string): Promise<{ count: number }> =>
   (
     await request({
       method: 'GET',
-      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/verified`,
+      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/recorded/merged`,
+      params: { uid },
+    })
+  ).data;
+
+export const getTotalReviewedExampleSuggestions = async (uid?: string | null): Promise<{ count: number }> =>
+  (
+    await request({
+      method: 'GET',
+      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/reviewed`,
       params: uid ? { uid } : {},
     })
   ).data;

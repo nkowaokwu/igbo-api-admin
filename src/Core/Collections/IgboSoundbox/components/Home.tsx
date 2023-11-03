@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { Box } from '@chakra-ui/react';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
-import { getTotalVerifiedExampleSuggestions, getTotalRecordedExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import { getTotalReviewedExampleSuggestions, getTotalRecordedExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import OptionCard from './OptionCard';
 
@@ -17,7 +17,7 @@ const IgboSoundboxHome = ({
 
   useEffect(() => {
     (async () => {
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(firebaseUid);
+      const { count: verifiedExampleSuggestions } = await getTotalReviewedExampleSuggestions(firebaseUid);
       const { timestampedExampleSuggestions } = await getTotalRecordedExampleSuggestions(firebaseUid);
       const recordedExampleSuggestions = Object.values(timestampedExampleSuggestions).reduce(
         (total, count) => total + count,

@@ -21,7 +21,7 @@ describe('Profile', () => {
     );
     await findByText('Back');
     await findByText('Personal Contributions');
-    await findByText('Recorded example sentences');
+    await findByText('Recorded example sentence audio');
     await findByText('Verified example sentences');
     await findByText('18');
     await findByText('Abịrịba');
@@ -38,7 +38,7 @@ describe('Profile', () => {
     );
     await findByText('Back');
     expect(await queryByText('Personal Contributions')).toBeNull();
-    await findByText('Recorded example sentences');
+    await findByText('Recorded example sentence audio');
     await findByText('Verified example sentences');
     await findByText('18');
     await findByText('Abịrịba');

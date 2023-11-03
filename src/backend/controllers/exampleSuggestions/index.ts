@@ -1,7 +1,8 @@
 import { Connection, Document, LeanDocument, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, omit, map, pick } from 'lodash';
+import { assign, omit, map } from 'lodash';
 import moment from 'moment';
+import Joi from 'joi';
 import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
@@ -27,7 +28,7 @@ import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
 import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
-import Joi from 'joi';
+import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/leanPronunciation';
 
 const NO_LIMIT = 20000;
 /**
@@ -486,7 +487,7 @@ export const getRandomExampleSuggestionsToTranslate = async (
  * @param next NextFunction
  * @returns Total number of Example Suggestions the user has approved or denied
  */
-export const getTotalVerifiedExampleSuggestions = async (
+export const getTotalReviewedExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
@@ -512,11 +513,11 @@ export const getTotalVerifiedExampleSuggestions = async (
 };
 
 /**
- * Determines if the current audio pronunciation is verified (i.e. complete)
+ * Determines if the current audio pronunciation is mergeable (i.e. complete)
  * @param param0 pronunciation and uid
- * @returns Boolean if the audio pronunciation is verified
+ * @returns Boolean if the audio pronunciation is mergeable
  */
-export const isVerifiedAudioPronunciation = ({
+export const isMergeableAudioPronunciation = ({
   pronunciation,
   uid,
 }: {
@@ -525,6 +526,35 @@ export const isVerifiedAudioPronunciation = ({
 }): boolean => {
   const pronunciationSchema = Joi.object().keys({
     approvals: Joi.array().min(MINIMUM_APPROVALS).items(Joi.string().allow('', null)),
+    denials: Joi.array().max(MINIMUM_DENIALS).items(Joi.string().allow('', null)),
+    audio: Joi.string().pattern(new RegExp('^http')).required(),
+    speaker: Joi.string().valid(uid).required(),
+    review: Joi.boolean().valid(true).required(),
+    archived: Joi.boolean().valid(false).optional(),
+  });
+
+  const validation = pronunciationSchema.validate(pronunciation, { abortEarly: false });
+  if (validation.error) {
+    console.log(validation.error);
+    return false;
+  }
+  return true;
+};
+
+/**
+ * Determines if the current audio pronunciation is a valid recording, eligible to be merged
+ * @param param0 pronunciation and uid
+ * @returns Boolean if the audio pronunciation is a valid recording
+ */
+export const isEligibleAudioPronunciation = ({
+  pronunciation,
+  uid,
+}: {
+  pronunciation: Interfaces.PronunciationData;
+  uid: string;
+}): boolean => {
+  const pronunciationSchema = Joi.object().keys({
+    approvals: Joi.array().min(0).items(Joi.string().allow('', null)),
     denials: Joi.array().max(MINIMUM_DENIALS).items(Joi.string().allow('', null)),
     audio: Joi.string().pattern(new RegExp('^http')).required(),
     speaker: Joi.string().valid(uid).required(),
@@ -551,13 +581,13 @@ export const getExampleSuggestionUpdateAt = (exampleSuggestion: LeanDocument<Int
     : exampleSuggestion.updatedAt.toString();
 
 /**
- * Returns total number of Example Suggestions the user has recorded
+ * Returns total number of Example Suggestions the user has recorded that have been merged
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns Total number of merged Example Suggestion the user has recorded
+ * @returns Total number of merged Example Suggestion the user has recorded that have been merged
  */
-export const getTotalRecordedExampleSuggestions = async (
+export const getTotalMergedRecordedExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
@@ -587,19 +617,12 @@ export const getTotalRecordedExampleSuggestions = async (
 
             exampleSuggestion.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
               // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
-              const pronunciation = pick(dbPronunciation, [
-                'approvals',
-                'denials',
-                'audio',
-                'speaker',
-                'review',
-                'archived',
-              ]);
-              const isVerified = isVerifiedAudioPronunciation({ pronunciation, uid });
+              const pronunciation = leanPronunciation(dbPronunciation);
+              const isMergeable = isMergeableAudioPronunciation({ pronunciation, uid });
               if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
                 finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
               }
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += isVerified;
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isMergeable);
             });
 
             return finalTimestampedExampleSuggestions;
@@ -607,6 +630,54 @@ export const getTotalRecordedExampleSuggestions = async (
           {},
         );
         return res.send({ timestampedExampleSuggestions });
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning all total recorded example suggestions');
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Returns total number of Example Suggestions the user has recorded
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns Total number of merged Example Suggestion the user has recorded
+ */
+export const getTotalRecordedExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  const { user, mongooseConnection, uidQuery } = await handleQueries(req);
+  const uid = uidQuery || user.uid;
+  const query = {
+    'denials.1': { $exists: false },
+    'pronunciations.audio': { $regex: /^http/, $type: 'string' },
+    'pronunciations.speaker': uid,
+    'pronunciations.review': true,
+    type: SentenceTypeEnum.DATA_COLLECTION,
+  };
+
+  try {
+    return await findExampleSuggestions({
+      query,
+      limit: NO_LIMIT,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+        let audioPronunciationCount = 0;
+        exampleSuggestions.forEach((exampleSuggestion) => {
+          exampleSuggestion.pronunciations.forEach((dbPronunciation) => {
+            const pronunciation = leanPronunciation(dbPronunciation);
+            const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
+            audioPronunciationCount += Number(isEligible);
+          });
+        });
+        res.send({ count: audioPronunciationCount });
       })
       .catch((err) => {
         console.log(err);

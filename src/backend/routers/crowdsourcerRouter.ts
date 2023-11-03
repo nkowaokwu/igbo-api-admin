@@ -7,10 +7,11 @@ import {
   getRandomExampleSuggestionsToReview,
   getRandomExampleSuggestionsToTranslate,
   putRandomExampleSuggestionsToTranslate,
-  getTotalVerifiedExampleSuggestions,
+  getTotalReviewedExampleSuggestions,
   getTotalRecordedExampleSuggestions,
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
+  getTotalMergedRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
 import {
   calculateReviewingExampleLeaderboard,
@@ -79,14 +80,19 @@ crowdsourcerRouter.post(
 );
 crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/review`, getRandomExampleSuggestionsToReview);
 crowdsourcerRouter.get(
-  `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/verified`,
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/reviewed`,
   resourcePermission,
-  getTotalVerifiedExampleSuggestions,
+  getTotalReviewedExampleSuggestions,
 );
 crowdsourcerRouter.get(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/recorded`,
   resourcePermission,
   getTotalRecordedExampleSuggestions,
+);
+crowdsourcerRouter.get(
+  `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/recorded/merged`,
+  resourcePermission,
+  getTotalMergedRecordedExampleSuggestions,
 );
 
 crowdsourcerRouter.get(`/${Collection.TEXT_IMAGES}`, getTextImages);

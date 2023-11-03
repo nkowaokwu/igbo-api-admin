@@ -3,7 +3,11 @@ import { Box, Heading, Skeleton } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { hasCrowdsourcerPermission } from 'src/shared/utils/permissions';
-import { getTotalRecordedExampleSuggestions, getTotalVerifiedExampleSuggestions } from 'src/shared/DataCollectionAPI';
+import {
+  getTotalRecordedExampleSuggestions,
+  getTotalMergedRecordedExampleSuggestions,
+  getTotalReviewedExampleSuggestions,
+} from 'src/shared/DataCollectionAPI';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserCard from 'src/shared/components/UserCard';
 import network from '../../network';
@@ -22,7 +26,7 @@ const UserStat = ({
   completeExamples: number;
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
-  const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1, allRecorded: {} });
+  const [recordingStats, setRecordingStats] = useState({ recorded: -1, verified: -1, mergedRecorded: {} });
   const [audioStats, setAudioStats] = useState({ audioApprovalsCount: 0, audioDenialsCount: 0 });
   const { permissions } = usePermissions();
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
@@ -34,18 +38,14 @@ const UserStat = ({
       network(`/stats/users/${uid}/audio`).then(({ json }) => {
         setAudioStats(json);
       });
-      const { timestampedExampleSuggestions: recordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(
-        uid,
-      );
-      const { count: verifiedExampleSuggestions } = await getTotalVerifiedExampleSuggestions(uid);
-      const recordedCount = Object.values(recordedExampleSuggestions).reduce(
-        (finalSum: number, monthlyCount: number) => finalSum + monthlyCount,
-        0,
-      );
+      const { timestampedExampleSuggestions: recordedExampleSuggestions } =
+        await getTotalMergedRecordedExampleSuggestions(uid);
+      const { count: recorded } = await getTotalRecordedExampleSuggestions(uid);
+      const { count: verifiedCount } = await getTotalReviewedExampleSuggestions(uid);
       setRecordingStats({
-        recorded: recordedCount,
-        verified: verifiedExampleSuggestions,
-        allRecorded: recordedExampleSuggestions,
+        recorded,
+        verified: verifiedCount,
+        mergedRecorded: recordedExampleSuggestions, // Count of audio recordings by current user that have been merged
       });
     })();
   }, []);
