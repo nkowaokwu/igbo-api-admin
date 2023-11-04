@@ -1,6 +1,11 @@
 import DialectEnum from './DialectEnum';
 
 export default {
+  [DialectEnum.ABA]: {
+    code: 'ibo-aba',
+    value: DialectEnum.ABA,
+    label: 'Abakaliki',
+  },
   [DialectEnum.ABI]: {
     code: 'ibo-abi',
     value: DialectEnum.ABI,
@@ -20,6 +25,11 @@ export default {
     code: 'ibo-aja',
     value: DialectEnum.AJA,
     label: 'Ajalị',
+  },
+  [DialectEnum.AKA]: {
+    code: 'ibo-aka',
+    value: DialectEnum.AKA,
+    label: 'Akatta',
   },
   [DialectEnum.AMA]: {
     code: 'ibo-ama',

@@ -1,8 +1,10 @@
 enum DialectEnum {
+  ABA = 'ABA',
   ABI = 'ABI',
   ACH = 'ACH',
   AFI = 'AFI',
   AJA = 'AJA',
+  AKA = 'AKA',
   AMA = 'AMA',
   ANA = 'ANA',
   ANI = 'ANI',
