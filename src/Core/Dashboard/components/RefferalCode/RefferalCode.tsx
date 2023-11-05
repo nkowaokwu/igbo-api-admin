@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { getReferralCode } from '../../../../shared/CrowdsourcerAPI';
 import copyToClipboard from '../../../../shared/utils/copyToClipboard';
+import * as Icons from '../../../Collections/iconography';
 
 export const RefferalCode = (): React.ReactElement => {
   const [referralCode, setReferralCode] = React.useState('');
@@ -32,7 +33,7 @@ export const RefferalCode = (): React.ReactElement => {
           <Text fontWeight="400">This is your referral code</Text>
         </Flex>
         <Flex alignItems="center">
-          <Button backgroundColor="green.100" onClick={onCopyReferralCode}>
+          <Button leftIcon={<Icons.Copy />} backgroundColor="green.100" onClick={onCopyReferralCode}>
             copy
           </Button>
         </Flex>
