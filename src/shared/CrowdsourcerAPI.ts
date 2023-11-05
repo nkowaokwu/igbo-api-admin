@@ -2,7 +2,7 @@ import { Crowdsourcer } from 'src/backend/controllers/utils/interfaces';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
 
-export const getReferralCode = async () => {
+export const getReferralCode = async (): Promise<string> => {
   const {
     data: { referralCode },
   } = await request<Crowdsourcer>({
