@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { getAuth } from 'firebase/auth';
 import { API_ROUTE } from '../constants/index';
 
@@ -16,9 +16,9 @@ const createHeaders = async () => ({
   Authorization: await createAuthorizationHeader(),
 });
 
-export const request = async (requestObject: AxiosRequestConfig): Promise<any> => {
+export const request = async <T = any>(requestObject: AxiosRequestConfig): Promise<AxiosResponse<T>> => {
   const headers = await createHeaders();
-  return axios.request({
+  return axios.request<T>({
     ...requestObject,
     url: `${API_ROUTE}/${requestObject.url}`,
     headers,
