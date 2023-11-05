@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { getReferralCode } from '../../../../shared/CrowdsourcerAPI';
+import copyToClipboard from '../../../../shared/utils/copyToClipboard';
 
 export const RefferalCode = (): React.ReactElement => {
   const [referralCode, setReferralCode] = React.useState('');
@@ -15,7 +16,10 @@ export const RefferalCode = (): React.ReactElement => {
     range.selectNode(ref.current);
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
-    window.navigator.clipboard.writeText(ref.current.textContent);
+
+    copyToClipboard({
+      copyText: ref.current.textContent,
+    });
   };
 
   return (
