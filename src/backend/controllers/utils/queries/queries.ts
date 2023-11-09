@@ -9,6 +9,7 @@ import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 2;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
@@ -257,19 +258,28 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
  * @param uid
  * @returns
  */
-export const searchRandomExampleSuggestionsToReviewRegexQuery = (
-  uid: string,
-): {
+export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
+  uid,
+  isLacunaFundExtensionCrowdsourcer,
+}: {
+  uid: string;
+  isLacunaFundExtensionCrowdsourcer: boolean;
+}): {
   merged: null;
   exampleForSuggestion: { $ne: true };
   'pronunciations.review': true;
   type: SentenceTypeEnum.DATA_COLLECTION;
+  updatedAt: { $gte: Date };
   pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
   'pronunciations.review': true,
   type: SentenceTypeEnum.DATA_COLLECTION,
+  // If the current user is a Lacuna Fund Extension Crowdsourcer they will only review other Extension Crowdsourcers
+  ...(isLacunaFundExtensionCrowdsourcer ? { 'pronunciations.speaker': { $in: LacunaFundExtensionCrowdsourcers } } : {}),
+  // Only looks at the data collection sentences uploaded starting from 2023
+  updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   pronunciations: {
     $elemMatch: {

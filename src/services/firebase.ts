@@ -7,22 +7,20 @@ import firebaseJson from '../../firebase.json'; // eslint-disable-line
 
 const firebaseConfig = useFirebaseConfig();
 const apps = getApps();
-let app;
+let currentApp;
 // Initialize Firebase
 if (!apps.length) {
-  app = initializeApp(firebaseConfig);
+  currentApp = initializeApp(firebaseConfig);
 } else {
-  app = getApp();
+  currentApp = getApp();
 }
-const shouldUseEmulator = (
-  process.env.NODE_ENV === 'development'
-  || process.env.NODE_ENV === 'test'
-  || window.location.hostname === 'localhost'
-);
+const shouldUseEmulator =
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' || window.location.hostname === 'localhost';
 
 const auth = getAuth();
-const db = getFirestore(app);
-const functions = getFunctions(getApp());
+const db = getFirestore(currentApp);
+const functions = getFunctions(currentApp);
+export const app = currentApp;
 
 if (shouldUseEmulator) {
   /* Use Firebase Emulators */

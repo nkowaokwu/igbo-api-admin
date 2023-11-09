@@ -29,6 +29,7 @@ import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/h
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
 import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
 import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/leanPronunciation';
+import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
 
 const NO_LIMIT = 20000;
 /**
@@ -356,30 +357,80 @@ export const getRandomExampleSuggestionsToReview = async (
 ): Promise<any | void> => {
   try {
     const { limit, user, mongooseConnection } = await handleQueries(req);
-
-    const query = searchRandomExampleSuggestionsToReviewRegexQuery(user.uid);
+    const isLacunaFundExtensionCrowdsourcer = LacunaFundExtensionCrowdsourcers.includes(user.uid);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
 
-    return await findExampleSuggestions({
-      query,
-      limit,
-      mongooseConnection,
-    })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) =>
-        packageResponse({
-          res,
-          docs: exampleSuggestions,
-          model: ExampleSuggestion,
-          query,
-        }),
-      )
-      .catch((err) => {
-        console.log(err);
-        throw new Error('An error has occurred while returning random example suggestions to review');
+    const query = searchRandomExampleSuggestionsToReviewRegexQuery({
+      uid: user.uid,
+      isLacunaFundExtensionCrowdsourcer,
+    });
+
+    try {
+      const dbExampleSuggestions = await ExampleSuggestion.aggregate()
+        .match(query)
+        .unwind('$pronunciations')
+        .group({
+          _id: '$_id',
+          originalExampleId: { $first: '$originalExampleId' },
+          igbo: { $first: '$igbo' },
+          english: { $first: '$english' },
+          meaning: { $first: '$meaning' },
+          nsibidi: { $first: '$nsibidi' },
+          nsibidiCharacters: { $first: '$nsibidiCharacters' },
+          associatedWords: { $first: '$associatedWords' },
+          associatedDefinitionsSchemas: { $first: '$associatedDefinitionsSchemas' },
+          type: { $first: '$type' },
+          style: { $first: '$style' },
+          pronunciations: { $push: '$pronunciations' },
+          editorsNotes: { $first: '$editorsNotes' },
+          userComments: { $first: '$userComments' },
+          authorEmail: { $first: '$authorEmail' },
+          authorId: { $first: '$authorId' },
+          approvals: { $first: '$approvals' },
+          denials: { $first: '$denials' },
+          source: { $first: '$source' },
+          merged: { $first: '$merged' },
+          mergedBy: { $first: '$mergedBy' },
+          userInteractions: { $first: '$userInteractions' },
+          crowdsourcing: { $first: '$crowdsourcing' },
+          updatedAt: { $first: '$updatedAt' },
+          createdAt: { $first: '$createdAt' },
+          missingPronunciationApprovals: {
+            $sum: {
+              $cond: {
+                if: { $lt: [{ $size: '$pronunciations.approvals' }, 2] },
+                then: { $subtract: [2, { $size: '$pronunciations.approvals' }] },
+                else: 0,
+              },
+            },
+          },
+          pronunciationApprovals: { $sum: { $size: '$pronunciations.approvals' } },
+          pronunciationDenials: { $sum: { $size: '$pronunciations.denials' } },
+        })
+        .sort({ missingPronunciationApprovals: -1, updatedAt: 1 })
+        .limit(limit);
+
+      // removes the field that don't live on the Example Suggestion model
+      const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
+        omit(exampleSuggestion.toJSON(), [
+          'missingPronunciationApprovals',
+          'pronunciationApprovals',
+          'pronunciationsDenials',
+        ]),
+      );
+      return await packageResponse({
+        res,
+        docs: exampleSuggestions,
+        model: ExampleSuggestion,
+        query,
       });
+    } catch (err) {
+      console.log(err);
+      throw new Error('An error has occurred while returning random example suggestions to review');
+    }
   } catch (err) {
     return next(err);
   }
