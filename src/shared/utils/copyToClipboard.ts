@@ -1,10 +1,13 @@
-const copyToClipboard = ({
-  copyText,
-  successMessage,
-} : {
-  copyText: string,
-  successMessage: string,
-}, toast: (value: any) => void): void => {
+const copyToClipboard = (
+  {
+    copyText,
+    successMessage,
+  }: {
+    copyText: string;
+    successMessage?: string;
+  },
+  toast?: (value: any) => void,
+): void => {
   if (window.navigator) {
     window.navigator.clipboard.writeText(copyText);
     if (toast) {

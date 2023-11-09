@@ -13,6 +13,7 @@ import UserCard from 'src/shared/components/UserCard';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
+import { RefferalCode } from '../RefferalCode';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -64,6 +65,7 @@ const UserStat = ({
             <Box className="space-y-3 w-full">
               <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
+              <RefferalCode />
             </Box>
           </Box>
         </Box>
