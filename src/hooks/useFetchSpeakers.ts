@@ -12,11 +12,11 @@ const useFetchSpeakers = ({
   setIsLoading: (value: boolean) => void;
   speakerIds: string[];
 }): FormattedUser[] => {
-  const isAdmin = permissions?.permissions?.role === UserRoles.ADMIN;
   const speakersRef = useRef<FormattedUser[]>([]);
 
   useEffect(() => {
     (async () => {
+      const isAdmin = permissions?.permissions?.role === UserRoles.ADMIN;
       if (isAdmin) {
         setIsLoading(true);
         try {

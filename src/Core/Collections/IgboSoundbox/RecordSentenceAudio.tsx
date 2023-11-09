@@ -1,5 +1,4 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { noop } from 'lodash';
 import { Box, Heading, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
 import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
@@ -35,7 +34,12 @@ const RecordSentenceAudio = ({
     const updatedPronunciations = [...pronunciations];
     updatedPronunciations[exampleIndex] = audioData;
     setPronunciations(updatedPronunciations);
-    setIsDirty(true);
+  };
+
+  const handleResetPronunciation = () => {
+    const updatedPronunciations = [...pronunciations];
+    updatedPronunciations[exampleIndex] = '';
+    setPronunciations(updatedPronunciations);
   };
 
   const handleNext = () => {
@@ -141,6 +145,12 @@ const RecordSentenceAudio = ({
     }
   }, [exampleIndex, examples]);
 
+  useEffect(() => {
+    if (!pronunciations.every((pronunciation) => !pronunciation)) {
+      setIsDirty(true);
+    }
+  }, [pronunciations]);
+
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
   const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
@@ -177,7 +187,7 @@ const RecordSentenceAudio = ({
           path="pronunciation"
           hideTitle
           onStopRecording={handlePronunciation}
-          onResetRecording={noop}
+          onResetRecording={handleResetPronunciation}
           audioValue={pronunciations[exampleIndex]}
           toastEnabled={false}
         />

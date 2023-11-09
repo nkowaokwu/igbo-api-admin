@@ -11,11 +11,13 @@ const findExampleSuggestions = ({
   query,
   skip = 0,
   limit = 10,
+  sort = { updatedAt: -1 },
   mongooseConnection,
 }: {
   query: any;
   skip?: number;
   limit?: number;
+  sort?: { [key: string]: number };
   mongooseConnection: Connection;
 }): Query<any, Document<Interfaces.ExampleSuggestion>> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
@@ -23,7 +25,7 @@ const findExampleSuggestions = ({
     exampleSuggestionSchema,
   );
 
-  return ExampleSuggestion.find(query).skip(skip).limit(limit).sort({ updatedAt: -1 });
+  return ExampleSuggestion.find(query).skip(skip).limit(limit).sort(sort);
 };
 
 export default findExampleSuggestions;
