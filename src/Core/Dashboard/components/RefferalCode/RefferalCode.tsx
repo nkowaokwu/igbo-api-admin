@@ -8,20 +8,24 @@ export const RefferalCode = (): React.ReactElement => {
   const [referralCode, setReferralCode] = React.useState('');
   const ref = React.useRef<HTMLParagraphElement>();
 
+  const onCopyReferralCode = () => {
+    const { textContent: referralCode } = ref.current;
+
+    if (referralCode) {
+      const range = window.document.createRange();
+      range.selectNode(ref.current);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+
+      copyToClipboard({
+        copyText: referralCode,
+      });
+    }
+  };
+
   React.useEffect(() => {
     getReferralCode().then(setReferralCode);
   }, []);
-
-  const onCopyReferralCode = () => {
-    const range = window.document.createRange();
-    range.selectNode(ref.current);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-
-    copyToClipboard({
-      copyText: ref.current.textContent,
-    });
-  };
 
   return (
     <Box bg="gray.100" borderRadius="lg" w="100%" p={4} color="gray.700">
