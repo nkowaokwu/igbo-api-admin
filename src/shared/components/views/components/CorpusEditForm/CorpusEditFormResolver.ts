@@ -1,17 +1,17 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
 
-const schema = yup.object().shape({
-  title: yup.string(),
-  annotations: yup.array().of(yup.object()).optional(),
-  body: yup.string().optional(),
-  media: yup.string().nullable(),
-  tags: yup.array().min(0).of(yup.string()),
-  id: yup.string().optional(),
+const schema = Joi.object({
+  title: Joi.string(),
+  annotations: Joi.array().items(Joi.object()).optional(),
+  body: Joi.string().optional(),
+  media: Joi.string().allow(null),
+  tags: Joi.array().min(0).items(Joi.string()),
+  id: Joi.string().optional(),
 });
 
 const resolver = {
-  resolver: yupResolver(schema),
+  resolver: joiResolver(schema),
 };
 
 export default resolver;
