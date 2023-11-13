@@ -12,7 +12,7 @@ import {
   searchExampleSuggestionTranslatedByUser,
 } from '../utils/queries/leaderboardQueries';
 import { handleQueries } from '../utils';
-import { sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
+import { getReferralPoints, sortRankings, splitRankings, assignRankings, sortLeaderboards } from './utils';
 import { findUser } from '../users';
 
 const LeaderboardQuery = {
@@ -130,18 +130,23 @@ export const getLeaderboard = async (
     sortLeaderboards(leaderboards);
 
     const allRankings = leaderboards.map(({ rankings }) => rankings).flat();
-    const userIndex = allRankings.findIndex(({ uid }) => uid === user.uid);
-    let userRanking = {};
-    if (userIndex === -1) {
+    let userRanking = allRankings.find(({ uid }) => uid === user.uid);
+
+    if (userRanking) {
+      userRanking.count += await getReferralPoints(uid);
+    } else {
       // If the user hasn't contributed anything yet, they don't have a position;
       userRanking = { position: null, count: -1, ...user };
-    } else {
-      userRanking = allRankings[userIndex];
     }
 
     res.setHeader('Content-Range', allRankings.length);
 
     const rankings = allRankings.slice(skip, skip + limit);
+    for (let i = 0; i < rankings.length; i += 1) {
+      const ranking = rankings[i];
+      ranking.count += await getReferralPoints(ranking.uid);
+    }
+
     return res.send({
       userRanking,
       rankings,

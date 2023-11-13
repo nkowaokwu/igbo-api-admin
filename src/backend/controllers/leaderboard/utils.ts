@@ -1,8 +1,11 @@
 import { cloneDeep } from 'lodash';
 import { Model } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { referralSchema } from 'src/backend/models/Referral';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
+import { ReferralPoints } from 'src/shared/constants/referral-points';
+import { connectDatabase } from '../../utils/database';
 
 export const sortRankings = ({
   leaderboardRankings,
@@ -89,4 +92,13 @@ export const sortLeaderboards = (leaderboards: Interfaces.Leaderboard[]): void =
     }
     return 0;
   });
+};
+
+export const getReferralPoints = async (id: string): Promise<number> => {
+  const connection = await connectDatabase();
+  const Referral = connection.model<Interfaces.Referral>('Referral', referralSchema);
+  const referrerCount = (await Referral.count({ referrerId: id })) * ReferralPoints.REFERRER;
+  const referredUserCount = (await Referral.count({ referredUserId: id })) * ReferralPoints.REFERREDUSER;
+
+  return referrerCount + referredUserCount;
 };
