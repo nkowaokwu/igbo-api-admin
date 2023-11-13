@@ -236,6 +236,7 @@ export const handleQueries = ({
     uid: uidQuery,
     leaderboard,
     timeRange,
+    referralCode,
   } = query;
   const { word, example = '', ...filters } = parseFilter(filterQuery, user);
   const searchWord = removePrefix(keyword || word || '');
@@ -258,6 +259,7 @@ export const handleQueries = ({
     body,
     uidQuery,
     leaderboard,
+    referralCode,
     timeRange,
     error,
     params,
