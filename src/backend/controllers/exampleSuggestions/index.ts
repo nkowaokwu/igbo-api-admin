@@ -374,6 +374,7 @@ export const getRandomExampleSuggestionsToReview = async (
         .unwind('$pronunciations')
         .group({
           _id: '$_id',
+          id: { $first: '$_id' },
           originalExampleId: { $first: '$originalExampleId' },
           igbo: { $first: '$igbo' },
           english: { $first: '$english' },
@@ -413,12 +414,14 @@ export const getRandomExampleSuggestionsToReview = async (
         .sort({ missingPronunciationApprovals: -1, updatedAt: 1 })
         .limit(limit);
 
+      console.log(dbExampleSuggestions[0]);
       // removes the field that don't live on the Example Suggestion model
       const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
-        omit(exampleSuggestion.toJSON(), [
+        omit(exampleSuggestion, [
           'missingPronunciationApprovals',
           'pronunciationApprovals',
           'pronunciationsDenials',
+          '_id',
         ]),
       );
       return await packageResponse({
