@@ -58,7 +58,7 @@ describe('crowdsourcer', () => {
         message: 'Referral successful',
       });
     });
-    it('should respond with a 503 if auth user has previously been referred', async () => {
+    it('should respond with a 403 if auth user has previously been referred', async () => {
       // arrange
       handleQueriesMock.mockReturnValueOnce(mockRequest);
       findOneMock.mockResolvedValueOnce(referrer);
@@ -70,8 +70,8 @@ describe('crowdsourcer', () => {
 
       // assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);
-      expect(sendMock).toHaveBeenCalledWith({
-        error: `Users cannot be referred twice. Referral code [${referralCode}] will be ignored`,
+      expect(sendMock).toHaveBeenNthCalledWith(1, {
+        error: `Users cannot be referred twice. Referral code ${referralCode} will be ignored`,
       });
     });
   });

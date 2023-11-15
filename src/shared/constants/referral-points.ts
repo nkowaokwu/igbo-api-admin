@@ -1,4 +1,4 @@
 export enum ReferralPoints {
   REFERRER = 20,
-  REFERREDUSER = 10,
+  REFERRED_USER = 10,
 }

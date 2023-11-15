@@ -98,7 +98,7 @@ export const getReferralPoints = async (id: string): Promise<number> => {
   const connection = await connectDatabase();
   const Referral = connection.model<Interfaces.Referral>('Referral', referralSchema);
   const referrerCount = (await Referral.count({ referrerId: id })) * ReferralPoints.REFERRER;
-  const referredUserCount = (await Referral.count({ referredUserId: id })) * ReferralPoints.REFERREDUSER;
+  const referredUserCount = (await Referral.count({ referredUserId: id })) * ReferralPoints.REFERRED_USER;
 
   return referrerCount + referredUserCount;
 };
