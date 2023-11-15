@@ -11,8 +11,8 @@ const LinearProgressCard = ({
   isGeneric = false,
   children,
 }: LinearProgressCardInterface): ReactElement => (
-  <Skeleton isLoaded={isLoaded}>
-    <Box className="border bg-white space-y-3" borderRadius="md" borderColor="gray.300" p={5}>
+  <Skeleton isLoaded={isLoaded} width="full">
+    <Box className="border bg-white space-y-3 w-full" borderRadius="md" borderColor="gray.300" p={5}>
       <Box className="space-y-3">
         <Heading fontSize="lg" fontFamily="Silka">
           {heading}

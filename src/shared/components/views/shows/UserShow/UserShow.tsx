@@ -22,6 +22,7 @@ const DEFAULT_USER_RECORD = {
   gender: GenderEnum.UNSPECIFIED,
   providerId: null,
   phoneNumber: '',
+  referralCode: '',
   toJSON: noop,
   id: '',
   role: UserRoles.USER,
@@ -44,10 +45,10 @@ const UserShow = (props: ShowProps): ReactElement => {
   };
 
   useEffect(() => {
-    if (showProps?.record?.uid) {
+    if (user?.uid) {
       setIsLoading(false);
     }
-  }, [showProps]);
+  }, [user]);
 
   useEffect(() => {
     (async () => {
@@ -63,7 +64,7 @@ const UserShow = (props: ShowProps): ReactElement => {
   }, [permissions]);
 
   return (
-    <Skeleton isLoaded={!isLoading}>
+    <Skeleton isLoaded={!isLoading} minHeight="100vh">
       <Box className="bg-white shadow-sm px-10">
         {user.uid && !isLoading ? <UserStat user={user} {...stats} /> : null}
       </Box>

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
-import { toObjectPlugin } from './plugins';
+import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 export const crowdsourcerSchema = new mongoose.Schema(
   {
@@ -13,5 +13,7 @@ export const crowdsourcerSchema = new mongoose.Schema(
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
+
+toJSONPlugin(crowdsourcerSchema);
 
 mongoose.model('Crowdsourcer', crowdsourcerSchema);

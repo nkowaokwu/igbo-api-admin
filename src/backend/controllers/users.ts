@@ -194,6 +194,9 @@ export const getUserProfile = async (
     const userProfile = merge({
       ...(typeof user !== 'string' ? user : {}),
       ...(crowdsourcer ?? {}),
+      // id must match :uid in UI to show the user profile after refreshing
+      id: crowdsourcer.firebaseId,
+      _id: crowdsourcer.id,
     });
 
     return res.status(200).send(userProfile);

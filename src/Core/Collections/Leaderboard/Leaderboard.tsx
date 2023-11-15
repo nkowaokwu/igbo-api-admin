@@ -3,6 +3,7 @@ import { cloneDeep, get } from 'lodash';
 import moment from 'moment';
 import { act } from 'react-dom/test-utils';
 import { Box, IconButton, Grid, Heading, Text, useToast, chakra, Tooltip, Button } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { getLeaderboardStats } from 'src/shared/DataCollectionAPI';
 import { Spinner } from 'src/shared/primitives';
@@ -12,7 +13,6 @@ import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRa
 import BottomCardRanking from 'src/Core/Collections/Leaderboard/BottomCardRanking';
 import { LeaderboardRenderer } from './components/LeaderboardRenderer';
 import { leaderboardItems } from './config/leaderboardItems';
-import * as Icons from '../iconography';
 
 type CachedRankings = {
   [timeRange in LeaderboardTimeRange]: {
@@ -134,7 +134,7 @@ const Leaderboard = (): ReactElement => {
             aria-label="reset leaderboard option"
             marginRight={2}
             onClick={handleBackButton}
-            icon={<Icons.ArrowBack width={6} height={6} stroke="gray.700" />}
+            icon={<ArrowBackIcon boxSize={4} color="gray.700" />}
           />
         ) : null}
         Leaderboards
