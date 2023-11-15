@@ -83,20 +83,22 @@ const IgboSoundboxStats = ({
 
   return (
     <Box className="mb-6 space-y-3 w-full">
-      <LinearProgressCard
-        heading="Igbo Soundbox Contributions"
-        description="Contributions that you have made on the platform"
-        stats={contributedStats}
-        isLoaded
-        isGeneric
-      />
-      <LinearProgressCard
-        heading="Community Reviews"
-        description="Other platform contributors reviewing your audio"
-        stats={receivedStats}
-        isLoaded
-        isGeneric
-      />
+      <Box className="flex flex-col lg:flex-row space-y-3 lg:space-x-3 lg:space-y-0">
+        <LinearProgressCard
+          heading="Igbo Soundbox Contributions"
+          description="Contributions that you have made on the platform"
+          stats={contributedStats}
+          isLoaded
+          isGeneric
+        />
+        <LinearProgressCard
+          heading="Community Reviews"
+          description="Other platform contributors reviewing your audio"
+          stats={receivedStats}
+          isLoaded
+          isGeneric
+        />
+      </Box>
       <Box className="flex flex-row justify-between items-center w-full">
         <Button onClick={handlePreviousMonth}>Previous month</Button>
         <Button onClick={handleNextMonth}>Next month</Button>

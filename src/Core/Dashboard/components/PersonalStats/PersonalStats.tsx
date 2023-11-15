@@ -15,7 +15,7 @@ const PersonalStats = ({ userStats }: { userStats: { [key: string]: number } }):
       <Divider mt={2} />
     </Box>
     <details>
-      <summary>View all personal contribution stats</summary>
+      <summary className="Silka">View all personal contribution stats</summary>
       <Skeleton isLoaded={!!userStats}>
         <Box className="grid grid-flow-row grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 my-4">
           {Object.entries(userStats || {}).map(([key, value]: [key: string, value: number]) => (

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { toObjectPlugin } from './plugins';
+import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
 
@@ -11,4 +11,5 @@ export const referralSchema = new Schema(
   { toObject: toObjectPlugin, timestamps: true },
 );
 
+toJSONPlugin(referralSchema);
 mongoose.model('Referral', referralSchema);

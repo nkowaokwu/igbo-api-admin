@@ -10,10 +10,10 @@ import {
 } from 'src/shared/DataCollectionAPI';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserCard from 'src/shared/components/UserCard';
+import ReferralCode from 'src/Core/Dashboard/components/ReferralCode';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
-import { RefferalCode } from '../RefferalCode';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -52,12 +52,15 @@ const UserStat = ({
   }, []);
 
   return (
-    <Box mt={4}>
+    <Box m={4}>
       <Skeleton isLoaded={Boolean(user?.firebaseId || user?.uid)}>
         <UserCard {...user} isEditing={isEditing} />
       </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">
         <Box className="w-full">
+          <Skeleton isLoaded={Boolean(user?.referralCode)}>
+            <ReferralCode referralCode={user.referralCode} />
+          </Skeleton>
           <Heading as="h2" mb={4}>
             Contributions
           </Heading>
@@ -65,7 +68,6 @@ const UserStat = ({
             <Box className="space-y-3 w-full">
               <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
-              <RefferalCode />
             </Box>
           </Box>
         </Box>

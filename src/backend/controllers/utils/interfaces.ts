@@ -386,14 +386,11 @@ export interface UserProfile extends UserInfo, FormattedUser {
   firebaseId: string;
   gender: GenderEnum;
   updatedAt: Date;
+  referralCode: string;
 }
 
 export interface FormattedUser {
-  uid: string;
   id: string;
-  email: string;
-  displayName: string;
-  photoURL: string;
   role: string;
   editingGroup: string;
   lastSignInTime: string;

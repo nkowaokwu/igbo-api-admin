@@ -11,9 +11,9 @@ const ExampleTitle = ({ record }: Record<any, any>): ReactElement => (
 );
 
 const ExampleShow = (props: ShowProps): ReactElement => (
+  // @ts-expect-error Show
   <Show actions={<ExampleShowActions />} title={<ExampleTitle />} {...props}>
-    <SimpleShowLayout>
-    </SimpleShowLayout>
+    <SimpleShowLayout></SimpleShowLayout>
   </Show>
 );
 
