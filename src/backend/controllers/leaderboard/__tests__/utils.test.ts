@@ -1,5 +1,6 @@
 import { cloneDeep, times } from 'lodash';
-import { sortLeaderboards, sortRankings, splitRankings } from '../utils';
+import * as database from 'src/backend/utils/database';
+import { getReferralPoints, sortLeaderboards, sortRankings, splitRankings } from '../utils';
 
 const rankings = [
   {
@@ -221,16 +222,18 @@ describe('leaderboard utils', () => {
       expect(rankingGroups).toHaveLength(3);
     });
     it('splits 434 organized rankings', () => {
-      const rankingGroups = splitRankings(sortRankings({
-        leaderboardRankings: manyRankings,
-        user: {
-          uid: '0 user',
-          displayName: 'User',
-          email: 'email@example.com',
-          photoURL: '',
-        },
-        count: 10,
-      }));
+      const rankingGroups = splitRankings(
+        sortRankings({
+          leaderboardRankings: manyRankings,
+          user: {
+            uid: '0 user',
+            displayName: 'User',
+            email: 'email@example.com',
+            photoURL: '',
+          },
+          count: 10,
+        }),
+      );
       rankingGroups.forEach((rankingGroup) => {
         rankingGroup.forEach((ranking, index) => {
           if (index + 1 < rankingGroup.length) {
@@ -249,6 +252,56 @@ describe('leaderboard utils', () => {
       // @ts-expect-error
       sortLeaderboards(leaderboards);
       expect(leaderboards).toEqual([{ page: 0 }, { page: 1 }, { page: 2 }]);
+    });
+  });
+
+  describe('getReferralPoints', () => {
+    const mockDb = jest.spyOn(database, 'connectDatabase');
+    const countMock = jest.fn();
+
+    mockDb.mockImplementation(
+      () =>
+        Promise.resolve({
+          model: () => ({
+            count: countMock,
+          }),
+        }) as any,
+    );
+
+    it.each([
+      {
+        referred: 7,
+        referredUser: 1,
+        expected: 150,
+      },
+      {
+        referred: 0,
+        referredUser: 0,
+        expected: 0,
+      },
+      {
+        referred: 9,
+        referredUser: 0,
+        expected: 180,
+      },
+      {
+        referred: 55,
+        referredUser: 1,
+        expected: 1110,
+      },
+    ])('should return correct referral points', async (fixture) => {
+      // arrange
+      const id = 'awesome-id';
+      countMock.mockResolvedValueOnce(fixture.referred);
+      countMock.mockResolvedValueOnce(fixture.referredUser);
+
+      // act
+      const result = await getReferralPoints(id);
+
+      // assert
+      expect(result).toEqual(fixture.expected);
+      expect(countMock).toHaveBeenNthCalledWith(1, { referrerId: id });
+      expect(countMock).toHaveBeenNthCalledWith(2, { referredUserId: id });
     });
   });
 });

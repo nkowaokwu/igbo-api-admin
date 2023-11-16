@@ -23,6 +23,7 @@ export const createReferral = async (req: Interfaces.EditorRequest, res: Respons
   const existingReferral = await Referral.findOne({ referredUserId: referredUser.firebaseId });
   if (existingReferral) {
     res.status(403).send({ error: `Users cannot be referred twice. Referral code ${referralCode} will be ignored` });
+    return;
   }
 
   await Referral.create({
