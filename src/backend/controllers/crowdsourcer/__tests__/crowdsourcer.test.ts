@@ -70,7 +70,8 @@ describe('crowdsourcer', () => {
 
       // assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);
-      expect(sendMock).toHaveBeenNthCalledWith(1, {
+      expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(sendMock).toHaveBeenCalledWith({
         error: `Users cannot be referred twice. Referral code ${referralCode} will be ignored`,
       });
     });

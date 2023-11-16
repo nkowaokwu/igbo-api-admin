@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import { omit } from 'lodash';
 import { crowdsourcerSchema } from '../../models/Crowdsourcer';
 import { referralSchema } from '../../models/Referral';
 import { handleQueries } from '../utils';
@@ -24,6 +23,7 @@ export const createReferral = async (req: Interfaces.EditorRequest, res: Respons
   const existingReferral = await Referral.findOne({ referredUserId: referredUser.firebaseId });
   if (existingReferral) {
     res.status(403).send({ error: `Users cannot be referred twice. Referral code ${referralCode} will be ignored` });
+    return;
   }
 
   await Referral.create({
@@ -32,15 +32,4 @@ export const createReferral = async (req: Interfaces.EditorRequest, res: Respons
   });
 
   res.send({ message: 'Referral successful' });
-};
-
-export const findReferralCode = async (req: Interfaces.EditorRequest, res: Response): Promise<void> => {
-  const {
-    mongooseConnection,
-    user: { uid },
-  } = handleQueries(req);
-
-  const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-  const crowdsourcer = await Crowdsourcer.findOne({ firebaseId: uid });
-  res.send(omit(crowdsourcer, ['_id', '__v', 'createdAt', 'updatedAt']));
 };

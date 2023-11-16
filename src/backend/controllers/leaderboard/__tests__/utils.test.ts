@@ -1,5 +1,5 @@
 import { cloneDeep, times } from 'lodash';
-import * as database from '../../../utils/database';
+import * as database from 'src/backend/utils/database';
 import { getReferralPoints, sortLeaderboards, sortRankings, splitRankings } from '../utils';
 
 const rankings = [

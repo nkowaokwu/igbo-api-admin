@@ -4,8 +4,8 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { referralSchema } from 'src/backend/models/Referral';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
-import { ReferralPoints } from 'src/shared/constants/referral-points';
-import { connectDatabase } from '../../utils/database';
+import { ReferralPoints } from 'src/shared/constants/ReferralPoints';
+import { connectDatabase } from 'src/backend/utils/database';
 
 export const sortRankings = ({
   leaderboardRankings,
@@ -94,6 +94,14 @@ export const sortLeaderboards = (leaderboards: Interfaces.Leaderboard[]): void =
   });
 };
 
+/**
+ * Calculates referral points by multiplying the total occurrences
+ * of a user's referrerId by a factor of 20. Similarly, referred user points
+ * are determined by applying a factor of 10 to the total occurrences of a user's referredUserId.
+ *
+ * @param {string} id - crowdsourcer id
+ * @returns {number} The total amount of referral points relating to a crowdsourcer
+ */
 export const getReferralPoints = async (id: string): Promise<number> => {
   const connection = await connectDatabase();
   const Referral = connection.model<Interfaces.Referral>('Referral', referralSchema);
