@@ -87,6 +87,7 @@ const CrowdsourcingProgressManager = (): ReactElement => {
         <Box className="w-full flex flex-col md:flex-row flex-wrap justify-start items-center gap-8 lg:gap-24">
           {crowdsourcingOptions.map(({ icon, subtitle, title, hash, state, backgroundImage }) => (
             <Box
+              key={title}
               className="bg-gray-100 lg:bg-white space-y-4 flex flex-col justify-start items-start relative"
               borderWidth="1px"
               borderColor={{ base: 'gray.200', md: 'white' }}

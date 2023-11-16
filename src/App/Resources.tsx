@@ -1,4 +1,6 @@
 import React from 'react';
+import { ReferralModal } from 'src/Core/ReferralModal/ReferralModal';
+import { ModelContextParam } from 'src/shared/contexts/ModalContext';
 import {
   hasAdminPermissions,
   hasEditorPermissions,
@@ -52,6 +54,7 @@ const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSe
 const defaultRoutes = (permissions) =>
   hasAccessToPlatformPermissions(permissions, [
     {
+      key: 'dashboard',
       name: '#',
       options: { label: 'Dashboard' },
       icon: () => <>🏠</>,
@@ -173,7 +176,7 @@ const adminRoutes = (permissions) =>
     },
   ]) || [];
 
-const crowdsourcerRoutes = (permissions) =>
+const crowdsourcerRoutes = (permissions, { onOpen }: { onOpen: (p: ModelContextParam) => void }) =>
   hasAtLeastCrowdsourcerPermissions(permissions, [
     {
       name: 'leaderboard',
@@ -196,13 +199,22 @@ const crowdsourcerRoutes = (permissions) =>
       list: withLastRoute(IgboDefinitions),
       icon: () => <>✍🏾</>,
     },
+    {
+      name: '',
+      key: 'useReferralCode',
+      options: { label: 'Use Referral Code' },
+      onClick: () => {
+        onOpen({ component: <ReferralModal />, render: true });
+      },
+      icon: () => <>🤝</>,
+    },
   ]) || [];
 
-export const getResourceObjects = (permissions: any): any => [
+export const getResourceObjects = (permissions: any, options: { onOpen: (p: ModelContextParam) => void }): any => [
   ...defaultRoutes(permissions),
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
-  ...crowdsourcerRoutes(permissions),
+  ...crowdsourcerRoutes(permissions, options),
 ];
 
 export const getCustomRouteObjects = (): any => [
