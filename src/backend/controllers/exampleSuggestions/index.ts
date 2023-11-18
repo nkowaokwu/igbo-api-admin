@@ -411,7 +411,7 @@ export const getRandomExampleSuggestionsToReview = async (
           pronunciationApprovals: { $sum: { $size: '$pronunciations.approvals' } },
           pronunciationDenials: { $sum: { $size: '$pronunciations.denials' } },
         })
-        .sort({ missingPronunciationApprovals: -1, updatedAt: 1 })
+        .sort({ missingPronunciationApprovals: 1, updatedAt: 1 })
         .limit(limit);
 
       console.log(dbExampleSuggestions[0]);
