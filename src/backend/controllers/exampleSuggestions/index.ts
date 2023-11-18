@@ -269,17 +269,17 @@ export const getRandomExampleSuggestionsToRecord = async (
       exampleSuggestionSchema,
     );
 
-    let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
-
     // First searches for ExampleSuggestions that should be returned
     const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
-    exampleSuggestions = await findExampleSuggestions({
-      query,
-      limit,
-      mongooseConnection,
-    }).catch(() => {
-      throw new Error('An error has occurred while returning random example suggestions to edit');
-    });
+    const dbExampleSuggestions = await ExampleSuggestion.aggregate()
+      .match(query)
+      .addFields({ pronunciationsSize: { $size: '$pronunciations' } })
+      .sort({ pronunciationsSize: 1 })
+      .limit(limit);
+
+    const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
+      omit(exampleSuggestion, ['pronunciationsSize', '_id']),
+    );
 
     return await packageResponse({
       res,
@@ -288,6 +288,7 @@ export const getRandomExampleSuggestionsToRecord = async (
       query,
     });
   } catch (err) {
+    console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }
 };
