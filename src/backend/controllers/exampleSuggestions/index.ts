@@ -32,6 +32,17 @@ import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helper
 import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
 
 const NO_LIMIT = 20000;
+
+/**
+ * Returns the Example Suggestion's date
+ * @param exampleSuggestion Example Suggestion
+ * @returns Date of Example Suggestion
+ */
+export const getExampleSuggestionUpdateAt = (exampleSuggestion: LeanDocument<Interfaces.ExampleSuggestion>): string =>
+  exampleSuggestion.updatedAt.toISOString
+    ? exampleSuggestion.updatedAt.toISOString()
+    : exampleSuggestion.updatedAt.toString();
+
 /**
  * Creates and saves a new Example Suggestion in the database
  * @param data ExampleClientData
@@ -269,17 +280,17 @@ export const getRandomExampleSuggestionsToRecord = async (
       exampleSuggestionSchema,
     );
 
-    let exampleSuggestions: Interfaces.ExampleSuggestion[] = [];
-
     // First searches for ExampleSuggestions that should be returned
     const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid);
-    exampleSuggestions = await findExampleSuggestions({
-      query,
-      limit,
-      mongooseConnection,
-    }).catch(() => {
-      throw new Error('An error has occurred while returning random example suggestions to edit');
-    });
+    const dbExampleSuggestions = await ExampleSuggestion.aggregate()
+      .match(query)
+      .addFields({ pronunciationsSize: { $size: '$pronunciations' } })
+      .sort({ pronunciationsSize: 1 })
+      .limit(limit);
+
+    const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
+      omit(exampleSuggestion, ['pronunciationsSize', '_id']),
+    );
 
     return await packageResponse({
       res,
@@ -288,6 +299,7 @@ export const getRandomExampleSuggestionsToRecord = async (
       query,
     });
   } catch (err) {
+    console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }
 };
@@ -411,7 +423,7 @@ export const getRandomExampleSuggestionsToReview = async (
           pronunciationApprovals: { $sum: { $size: '$pronunciations.approvals' } },
           pronunciationDenials: { $sum: { $size: '$pronunciations.denials' } },
         })
-        .sort({ missingPronunciationApprovals: -1, updatedAt: 1 })
+        .sort({ missingPronunciationApprovals: 1, updatedAt: 1 })
         .limit(limit);
 
       console.log(dbExampleSuggestions[0]);
@@ -540,7 +552,23 @@ export const getTotalReviewedExampleSuggestions = async (
       limit: NO_LIMIT,
       mongooseConnection,
     })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => res.send({ count: exampleSuggestions.length }))
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+        const timestampedReviewedExampleSuggestions = exampleSuggestions.reduce(
+          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
+            // Gets the date and month of Example Suggestion
+            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
+            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
+
+            if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
+            }
+            finalTimestampedExampleSuggestions[exampleSuggestionMonth] += 1;
+            return finalTimestampedExampleSuggestions;
+          },
+          {},
+        );
+        return res.send({ timestampedReviewedExampleSuggestions });
+      })
       .catch((err) => {
         console.log(err);
         throw new Error('An error has occurred while returning all total verified example suggestions');
@@ -607,16 +635,6 @@ export const isEligibleAudioPronunciation = ({
   }
   return true;
 };
-
-/**
- * Returns the Example Suggestion's date
- * @param exampleSuggestion Example Suggestion
- * @returns Date of Example Suggestion
- */
-export const getExampleSuggestionUpdateAt = (exampleSuggestion: LeanDocument<Interfaces.ExampleSuggestion>): string =>
-  exampleSuggestion.updatedAt.toISOString
-    ? exampleSuggestion.updatedAt.toISOString()
-    : exampleSuggestion.updatedAt.toString();
 
 /**
  * Returns total number of Example Suggestions the user has recorded that have been merged
@@ -707,15 +725,24 @@ export const getTotalRecordedExampleSuggestions = async (
       mongooseConnection,
     })
       .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
-        let audioPronunciationCount = 0;
-        exampleSuggestions.forEach((exampleSuggestion) => {
-          exampleSuggestion.pronunciations.forEach((dbPronunciation) => {
-            const pronunciation = leanPronunciation(dbPronunciation);
-            const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
-            audioPronunciationCount += Number(isEligible);
-          });
-        });
-        res.send({ count: audioPronunciationCount });
+        const timestampedRecordedExampleSuggestions = exampleSuggestions.reduce(
+          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
+            // Gets the date and month of Example Suggestion
+            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
+            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
+
+            exampleSuggestion.pronunciations.forEach((dbPronunciation) => {
+              const pronunciation = leanPronunciation(dbPronunciation);
+              const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
+              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
+                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
+              }
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isEligible);
+            });
+            return finalTimestampedExampleSuggestions;
+          },
+        );
+        res.send({ timestampedRecordedExampleSuggestions });
       })
       .catch((err) => {
         console.log(err);

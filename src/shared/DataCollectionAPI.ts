@@ -109,7 +109,9 @@ export const bulkUploadExampleSuggestions = async (
   return result;
 };
 
-export const getTotalRecordedExampleSuggestions = async (uid?: string): Promise<{ count: number }> =>
+export const getTotalRecordedExampleSuggestions = async (
+  uid?: string,
+): Promise<{ timestampedRecordedExampleSuggestions: { [key: string]: number } }> =>
   (
     await request({
       method: 'GET',
@@ -129,7 +131,9 @@ export const getTotalMergedRecordedExampleSuggestions = async (
     })
   ).data;
 
-export const getTotalReviewedExampleSuggestions = async (uid?: string | null): Promise<{ count: number }> =>
+export const getTotalReviewedExampleSuggestions = async (
+  uid?: string | null,
+): Promise<{ timestampedReviewedExampleSuggestions: { [key: string]: number } }> =>
   (
     await request({
       method: 'GET',

@@ -344,6 +344,14 @@ export interface DocumentDeletionRequestNotification {
   definition: string;
 }
 
+export interface AudioPronunciationDeletionNotification {
+  to: string;
+  firstDenierEmail: string;
+  secondDenierEmail: string;
+  example: Partial<ExampleSuggestionData>;
+  deletedAudioPronunciation: string;
+}
+
 export interface DocumentUpdateNotification {
   author: string;
   to: string;
@@ -390,7 +398,11 @@ export interface UserProfile extends UserInfo, FormattedUser {
 }
 
 export interface FormattedUser {
+  uid: string;
   id: string;
+  photoURL: string;
+  email: string;
+  displayName: string;
   role: string;
   editingGroup: string;
   lastSignInTime: string;

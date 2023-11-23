@@ -22,20 +22,25 @@ const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
       exampleSuggestion.pronunciations.map(async (pronunciation) => {
         const { review, audio, denials } = pronunciation;
         if (review && audio && denials.length >= MINIMUM_REVIEWS) {
-          const audioRecorderEmail = (await findUser(pronunciation.speaker))?.email;
-          if (audioRecorderEmail) {
-            const deniersEmails = compact(
-              await Promise.all(denials.map(async (denial) => (await findUser(denial))?.email)),
-            );
-            const data = {
-              to: audioRecorderEmail,
-              firstDenierEmail: deniersEmails[0],
-              secondDenierEmail: deniersEmails[1],
-              example: rawExampleSuggestion,
-              deletedAudioPronunciation: audio,
-            };
-            // Sends email to audio recorder whose audio is deleted
-            await sendAudioPronunciationDeletionNotification(data);
+          try {
+            const audioRecorderEmail = (await findUser(pronunciation.speaker))?.email;
+            if (audioRecorderEmail) {
+              const deniersEmails = compact(
+                await Promise.all(denials.map(async (denial) => (await findUser(denial))?.email)),
+              );
+              const data = {
+                to: audioRecorderEmail,
+                firstDenierEmail: deniersEmails[0],
+                secondDenierEmail: deniersEmails[1],
+                example: rawExampleSuggestion,
+                deletedAudioPronunciation: audio,
+              };
+              // Sends email to audio recorder whose audio is deleted
+              await sendAudioPronunciationDeletionNotification(data);
+            }
+          } catch (err) {
+            console.log(err);
+            console.error('Unable to send audio pronunciation deletion notification email');
           }
 
           // Removes the reference to the audio pronunciation

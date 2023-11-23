@@ -17,14 +17,18 @@ const IgboSoundboxHome = ({
 
   useEffect(() => {
     (async () => {
-      const { count: verifiedExampleSuggestions } = await getTotalReviewedExampleSuggestions(firebaseUid);
-      const { timestampedExampleSuggestions } = await getTotalRecordedExampleSuggestions(firebaseUid);
-      const recordedExampleSuggestions = Object.values(timestampedExampleSuggestions).reduce(
+      const { timestampedReviewedExampleSuggestions } = await getTotalReviewedExampleSuggestions(firebaseUid);
+      const { timestampedRecordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(firebaseUid);
+      const reviewedExampleSuggestions = Object.values(timestampedReviewedExampleSuggestions).reduce(
         (total, count) => total + count,
         0,
       );
-      setTotalVerifiedExampleSuggestions(verifiedExampleSuggestions);
+      const recordedExampleSuggestions = Object.values(timestampedRecordedExampleSuggestions).reduce(
+        (total, count) => total + count,
+        0,
+      );
       setTotalRecordedExampleSuggestions(recordedExampleSuggestions);
+      setTotalVerifiedExampleSuggestions(reviewedExampleSuggestions);
     })();
   }, []);
   return (
