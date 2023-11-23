@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import { compact, map } from 'lodash';
 import { API_FROM_EMAIL, NKOWAOKWU_FROM_EMAIL } from 'src/backend/config';
 import * as Interfaces from '../../utils/interfaces';
 
@@ -6,6 +6,7 @@ import * as Interfaces from '../../utils/interfaces';
 const constructMessage = (messageFields: Interfaces.EmailMessage): Interfaces.ConstructedMessage => ({
   from: { email: NKOWAOKWU_FROM_EMAIL, name: 'Nkọwa okwu' },
   ...messageFields,
+  to: compact(messageFields.to),
   reply_to: { email: API_FROM_EMAIL, name: 'Igbo API' },
   personalizations: map(messageFields.to, (to) => ({ to: [{ email: to }] })),
 });

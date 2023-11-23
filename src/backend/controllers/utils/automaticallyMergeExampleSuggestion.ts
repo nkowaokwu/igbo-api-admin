@@ -1,5 +1,7 @@
 import { assign, compact } from 'lodash';
 import { Connection } from 'mongoose';
+import { sendAudioPronunciationDeletionNotification } from 'src/backend/controllers/email';
+import { findUser } from 'src/backend/controllers/users';
 import { Example, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import Author from 'src/backend/shared/constants/Author';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
@@ -13,16 +15,40 @@ const MINIMUM_REVIEWS = 2;
  * @param rawExampleSuggestion
  * @returns A cleaned Example Suggestion with no completely denied audio pronunciations
  */
-const removeDeniedAudio = (rawExampleSuggestion: ExampleSuggestion) => {
+const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
   const exampleSuggestion = assign(rawExampleSuggestion);
   exampleSuggestion.pronunciations = compact(
-    exampleSuggestion.pronunciations.map((pronunciation) => {
-      const { review, audio, denials } = pronunciation;
-      if (review && audio && denials.length >= MINIMUM_REVIEWS) {
-        return null;
-      }
-      return pronunciation;
-    }),
+    await Promise.all(
+      exampleSuggestion.pronunciations.map(async (pronunciation) => {
+        const { review, audio, denials } = pronunciation;
+        if (review && audio && denials.length >= MINIMUM_REVIEWS) {
+          try {
+            const audioRecorderEmail = (await findUser(pronunciation.speaker))?.email;
+            if (audioRecorderEmail) {
+              const deniersEmails = compact(
+                await Promise.all(denials.map(async (denial) => (await findUser(denial))?.email)),
+              );
+              const data = {
+                to: audioRecorderEmail,
+                firstDenierEmail: deniersEmails[0],
+                secondDenierEmail: deniersEmails[1],
+                example: rawExampleSuggestion,
+                deletedAudioPronunciation: audio,
+              };
+              // Sends email to audio recorder whose audio is deleted
+              await sendAudioPronunciationDeletionNotification(data);
+            }
+          } catch (err) {
+            console.log(err);
+            console.error('Unable to send audio pronunciation deletion notification email');
+          }
+
+          // Removes the reference to the audio pronunciation
+          return null;
+        }
+        return pronunciation;
+      }),
+    ),
   );
   return exampleSuggestion;
 };
@@ -65,7 +91,7 @@ const automaticallyMergeExampleSuggestion = async ({
       return false;
     })
   ) {
-    const cleanedExampleSuggestion = removeDeniedAudio(exampleSuggestion);
+    const cleanedExampleSuggestion = await removeDeniedAudio(exampleSuggestion);
     const example = await executeMergeExample(cleanedExampleSuggestion, Author.SYSTEM, mongooseConnection);
     return example;
   }

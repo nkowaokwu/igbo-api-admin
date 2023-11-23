@@ -101,7 +101,9 @@ const IgboSoundboxStats = ({
       </Box>
       <Box className="flex flex-row justify-between items-center w-full">
         <Button onClick={handlePreviousMonth}>Previous month</Button>
-        <Button onClick={handleNextMonth}>Next month</Button>
+        <Button onClick={handleNextMonth} isDisabled={moment().startOf('month').format('MMM, YYYY') === currentMonth}>
+          Next month
+        </Button>
       </Box>
       <LinearProgressCard
         heading="Monthly merged recorded audio"

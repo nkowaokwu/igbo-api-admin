@@ -54,6 +54,7 @@ jobs:
           firebase functions:config:set sendgrid.document_deletion_request_notification=$SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION --token $FIREBASE_TOKEN
           firebase functions:config:set sendgrid.document_update_notification=$SENDGRID_DOCUMENT_UPDATE_NOTIFICATION --token $FIREBASE_TOKEN
           firebase functions:config:set sendgrid.sender_email=$SENDGRID_SENDER_EMAIL --token $FIREBASE_TOKEN
+          firebase functions:config:set sendgrid.audio_pronunciation_deletion_notification=$SENDGRID_AUDIO_PRONUNCIATION_DELETION_NOTIFICATION --token $FIREBASE_TOKEN
           firebase functions:config:set aws.access_key=$AWS_ACCESS_KEY aws.secret_access_key=$AWS_SECRET_ACCESS_KEY aws.bucket=$AWS_BUCKET aws.region=$AWS_REGION
           firebase functions:config:set twitter.client_id=$TWITTER_CLIENT_ID twitter.client_secret=$TWITTER_CLIENT_SECRET --token $FIREBASE_TOKEN
           firebase functions:config:set twitter.consumer_key=$TWITTER_CONSUMER_KEY twitter.consumer_secret=$TWITTER_CONSUMER_SECRET twitter.access_token=$TWITTER_ACCESS_TOKEN twitter.access_token_secret=$TWITTER_ACCESS_TOKEN_SECRET --token $FIREBASE_TOKEN
@@ -75,6 +76,7 @@ jobs:
           SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION: ${{ secrets.SENDGRID_DOCUMENT_DELETION_REQUEST_NOTIFICATION }}
           SENDGRID_DOCUMENT_UPDATE_NOTIFICATION: ${{ secrets.SENDGRID_DOCUMENT_UPDATE_NOTIFICATION }}
           SENDGRID_SENDER_EMAIL: ${{ secrets.SENDGRID_SENDER_EMAIL }}
+          SENDGRID_AUDIO_PRONUNCIATION_DELETION_NOTIFICATION: ${{ secrets.SENDGRID_AUDIO_PRONUNCIATION_DELETION_NOTIFICATION }}
           TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
           TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET }}
           TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}

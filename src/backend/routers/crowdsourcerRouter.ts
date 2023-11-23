@@ -72,23 +72,28 @@ crowdsourcerRouter.put(
   putReviewForRandomExampleSuggestions,
   calculateReviewingExampleLeaderboard,
 );
+// Uploads new example suggestions to record and review
 crowdsourcerRouter.post(
   `/${Collection.EXAMPLE_SUGGESTIONS}/upload`,
   authorization([UserRoles.ADMIN]),
   validateBulkUploadExampleSuggestionBody,
   postBulkUploadExampleSuggestions,
 );
+// Gets example suggestions to review
 crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/review`, getRandomExampleSuggestionsToReview);
+// Gets user's stats on how many examples suggestions they have reviewed
 crowdsourcerRouter.get(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/reviewed`,
   resourcePermission,
   getTotalReviewedExampleSuggestions,
 );
+// Gets user's stats on how many examples suggestions they have recorded
 crowdsourcerRouter.get(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/recorded`,
   resourcePermission,
   getTotalRecordedExampleSuggestions,
 );
+// Gets user's stats on how many of their example suggestions have been merged
 crowdsourcerRouter.get(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/stats/recorded/merged`,
   resourcePermission,

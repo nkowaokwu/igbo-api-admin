@@ -39,14 +39,23 @@ const UserStat = ({
       network(`/stats/users/${uid}/audio`).then(({ json }) => {
         setAudioStats(json);
       });
-      const { timestampedExampleSuggestions: recordedExampleSuggestions } =
-        await getTotalMergedRecordedExampleSuggestions(uid);
-      const { count: recorded } = await getTotalRecordedExampleSuggestions(uid);
-      const { count: verifiedCount } = await getTotalReviewedExampleSuggestions(uid);
+      const { timestampedExampleSuggestions: mergedExampleSuggestion } = await getTotalMergedRecordedExampleSuggestions(
+        uid,
+      );
+      const { timestampedRecordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(uid);
+      const { timestampedReviewedExampleSuggestions } = await getTotalReviewedExampleSuggestions(uid);
+      const recordedExampleSuggestions = Object.values(timestampedRecordedExampleSuggestions).reduce(
+        (total, count) => total + count,
+        0,
+      );
+      const reviewedExampleSuggestions = Object.values(timestampedReviewedExampleSuggestions).reduce(
+        (total, count) => total + count,
+        0,
+      );
       setRecordingStats({
-        recorded,
-        verified: verifiedCount,
-        mergedRecorded: recordedExampleSuggestions, // Count of audio recordings by current user that have been merged
+        recorded: recordedExampleSuggestions,
+        verified: reviewedExampleSuggestions,
+        mergedRecorded: mergedExampleSuggestion, // Count of audio recordings by current user that have been merged
       });
     })();
   }, []);
@@ -66,7 +75,9 @@ const UserStat = ({
           </Heading>
           <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
             <Box className="space-y-3 w-full">
-              <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
+              <Skeleton isLoaded={recordingStats.recorded !== -1}>
+                <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
+              </Skeleton>
               {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
           </Box>

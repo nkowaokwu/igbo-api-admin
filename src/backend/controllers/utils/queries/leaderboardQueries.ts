@@ -22,7 +22,7 @@ const LeaderboardTimeRanges = {
 
 export const searchExampleAudioPronunciationsReviewedByUser = ({
   uid,
-  timeRange,
+  timeRange = LeaderboardTimeRange.ALL_TIME,
 }: {
   uid: string;
   timeRange?: LeaderboardTimeRange;
@@ -34,7 +34,7 @@ export const searchExampleAudioPronunciationsReviewedByUser = ({
   };
   updatedAt?: { $gte: number | null; $lte: number | null };
 } => {
-  const { startDate, endDate } = LeaderboardTimeRanges[timeRange] || { startDate: null, endDate: null };
+  const { startDate, endDate } = LeaderboardTimeRanges[timeRange];
   return {
     pronunciations: {
       $elemMatch: {
