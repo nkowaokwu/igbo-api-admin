@@ -9,7 +9,7 @@ import UserRoles from '../shared/constants/UserRoles';
 import { handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
 
-const cachedUsers = {};
+const cachedUsers: { [key: string]: Interfaces.FormattedUser } = {};
 
 /**
  * Formats provided FirebaseUser
@@ -126,7 +126,7 @@ export const getUsers = async (
  * @param uid
  * @returns Firebase user
  */
-export const findUser = async (uid: string): Promise<Interfaces.FormattedUser | string> => {
+export const findUser = async (uid: string): Promise<Interfaces.FormattedUser> => {
   if (cachedUsers[uid]) {
     return cachedUsers[uid];
   }

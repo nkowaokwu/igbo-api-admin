@@ -12,6 +12,7 @@ import {
   DOCUMENT_DELETION_REQUEST_NOTIFICATION,
   DOCUMENT_UPDATE_NOTIFICATION,
   REPORT_USER_NOTIFICATION,
+  AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
 } from 'src/backend/config';
 import constructMessage from 'src/backend/controllers/email/utils/constructMessage';
 import { findAdminUserEmails } from '../users';
@@ -30,6 +31,7 @@ export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void>
         .send(message)
         .then(() => {
           console.log('Email successfully sent.');
+          return true;
         })
         .catch((err) => {
           console.trace('sendEmail error:', err.response?.body || err.message);
@@ -39,10 +41,11 @@ export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void>
           throw err;
         })
     : (async () => {
-        if (!message.to) {
+        if (!message.to || !message.to.length) {
           throw new Error("'to' field must be defined");
         }
-        return Promise.resolve();
+        console.log('Email successfully sent.');
+        return Promise.resolve(true);
       })();
 
 /* Email sent when an editor clicks the approve button */
@@ -173,4 +176,16 @@ export const sendReportUserNotification = async (
   });
   await sendEmail(message);
   return res.send({ message: 'success' });
+};
+
+export const sendAudioPronunciationDeletionNotification = async (
+  data: Interfaces.AudioPronunciationDeletionNotification,
+): Promise<void> => {
+  const message = constructMessage({
+    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
+    to: [data.to],
+    templateId: AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
+    dynamic_template_data: omit(data, ['to']),
+  });
+  return sendEmail(message);
 };
