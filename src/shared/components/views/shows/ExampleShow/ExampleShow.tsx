@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
 import { Box, Heading, Skeleton, Text, chakra } from '@chakra-ui/react';
+import pluralize from 'pluralize';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
@@ -13,6 +14,7 @@ import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiChara
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
+import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -69,6 +71,33 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const notArchivedPronunciations = pronunciations.filter(({ archived = false }) => !archived);
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
 
+  const renderNestedAudioPronunciation = (
+    { audio, approvals, denials }: PronunciationData = {
+      audio: '',
+      speaker: '',
+      approvals: [],
+      denials: [],
+      archived: false,
+      review: false,
+    },
+  ) => (
+    <>
+      <ReactAudioPlayer data-test="pronunciations" src={audio} style={{ height: '40px', width: '250px' }} controls />
+      <Text className="space-x-4">
+        <chakra.span fontStyle="italic" color={approvals.length >= 2 ? 'green' : 'gray'} fontSize="sm">
+          {pluralize('approval', approvals.length, true)}
+        </chakra.span>
+        <chakra.span
+          fontStyle="italic"
+          color={denials.length === 1 ? 'orange' : denials.length >= 2 ? 'red' : 'gray'}
+          fontSize="sm"
+        >
+          {pluralize('denial', denials.length, true)}
+        </chakra.span>
+      </Text>
+    </>
+  );
+
   /* Grabs the original word if it exists */
   useEffect(() => {
     (async () => {
@@ -115,17 +144,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   Audio Pronunciations
                 </Heading>
                 <ArrayDiffField recordField="pronunciations" record={{ pronunciations: notArchivedPronunciations }}>
-                  <ArrayDiff
-                    diffRecord={diffRecord}
-                    renderNestedObject={(pronunciation) => (
-                      <ReactAudioPlayer
-                        data-test="pronunciations"
-                        src={pronunciation?.audio}
-                        style={{ height: '40px', width: '250px' }}
-                        controls
-                      />
-                    )}
-                  />
+                  <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
                 </ArrayDiffField>
               </Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">

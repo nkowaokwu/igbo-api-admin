@@ -105,11 +105,15 @@ export const putAudioForRandomExampleSuggestions = jest.fn(async () => {});
 export const putReviewForRandomExampleSuggestions = jest.fn(async () => {});
 
 export const getTotalRecordedExampleSuggestions = jest.fn(async () => ({
-  count: 0,
+  timestampedRecordedExampleSuggestions: {},
+}));
+
+export const getTotalMergedRecordedExampleSuggestions = jest.fn(async () => ({
+  timestampedExampleSuggestions: {},
 }));
 
 export const getTotalReviewedExampleSuggestions = jest.fn(async () => ({
-  count: 0,
+  timestampedReviewedExampleSuggestions: {},
 }));
 
 export const getLeaderboardStats = jest.fn(async () => ({

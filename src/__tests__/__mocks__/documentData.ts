@@ -165,6 +165,8 @@ export const bulkUploadExampleSuggestionData = {
 
 export const nsibidiCharacterData = {
   nsibidi: 'nsibidi',
+  pronunciation: 'nsi',
+  definitions: [{ text: 'first definition' }],
 };
 
 export const updatedExampleSuggestionData = {

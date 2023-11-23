@@ -20,6 +20,9 @@ describe('NsibidiCharacterEditForm', () => {
     userEvent.type(await findByPlaceholderText('Input in Nsịbịdị'), 'nsibidi');
     userEvent.type(await findByPlaceholderText('Search for radical or use radical id'), 'gi');
 
+    userEvent.click(await findByText('nsibidi'));
+    userEvent.click(await findByText('first definition'));
+
     userEvent.click(await findByText('Update'));
     await waitFor(() =>
       expect(mockSave).toBeCalledWith(

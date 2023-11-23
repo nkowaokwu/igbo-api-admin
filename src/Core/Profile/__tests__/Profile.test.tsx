@@ -1,9 +1,9 @@
 import React from 'react';
+import TestContext from 'src/__tests__/components/TestContext';
 import * as reactAdmin from 'react-admin';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Profile from 'src/Core/Profile/Profile';
-import TestContext from 'src/__tests__/components/TestContext';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 jest.mock('src/shared/DataCollectionAPI');
@@ -22,8 +22,7 @@ describe('Profile', () => {
     await findByText('Back');
     await findByText('Personal Contributions');
     await findByText('Recorded example sentence audio');
-    await findByText('Verified example sentences');
-    await findByText('18');
+    await findByText('Reviewed example sentence audio');
     await findByText('Abịrịba');
     await findByText('Female');
   });
@@ -39,8 +38,7 @@ describe('Profile', () => {
     await findByText('Back');
     expect(await queryByText('Personal Contributions')).toBeNull();
     await findByText('Recorded example sentence audio');
-    await findByText('Verified example sentences');
-    await findByText('18');
+    await findByText('Reviewed example sentence audio');
     await findByText('Abịrịba');
     await findByText('Female');
   });
