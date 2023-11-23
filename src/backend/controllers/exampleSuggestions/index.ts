@@ -741,6 +741,7 @@ export const getTotalRecordedExampleSuggestions = async (
             });
             return finalTimestampedExampleSuggestions;
           },
+          {},
         );
         res.send({ timestampedRecordedExampleSuggestions });
       })

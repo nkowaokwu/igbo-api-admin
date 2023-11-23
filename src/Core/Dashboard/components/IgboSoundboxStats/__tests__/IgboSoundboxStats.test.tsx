@@ -14,7 +14,7 @@ describe('IgboSoundboxStats', () => {
     const recordingStats = {
       recorded: 10,
       verified: 15,
-      allRecorded: {},
+      mergedRecorded: {},
     };
     const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };
     const { findByText } = render(
@@ -24,7 +24,7 @@ describe('IgboSoundboxStats', () => {
     );
 
     await findByText('Recorded example sentence audio');
-    await findByText('Verified example sentences');
+    await findByText('Reviewed example sentence audio');
     await findByText('Approved audio recordings');
     await findByText('Denied audio recordings');
     await findByText('Monthly merged recorded audio');
@@ -38,7 +38,7 @@ describe('IgboSoundboxStats', () => {
     await findByText('15');
     await findByText('20');
     await findByText('25');
-    await findByText('-1');
+    await findByText('0');
   });
 
   it('hides the payment calculation for non admins', async () => {
@@ -48,7 +48,7 @@ describe('IgboSoundboxStats', () => {
     const recordingStats = {
       recorded: 10,
       verified: 15,
-      allRecorded: {},
+      mergedRecorded: {},
     };
     const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };
     const { findByText, queryByText } = render(
@@ -58,7 +58,7 @@ describe('IgboSoundboxStats', () => {
     );
 
     await findByText('Recorded example sentence audio');
-    await findByText('Verified example sentences');
+    await findByText('Reviewed example sentence audio');
     await findByText('Approved audio recordings');
     await findByText('Denied audio recordings');
     await findByText('Monthly merged recorded audio');
@@ -70,7 +70,7 @@ describe('IgboSoundboxStats', () => {
     await findByText('15');
     await findByText('20');
     await findByText('25');
-    await findByText('-1');
+    await findByText('0');
     expect(queryByText('Price to be paid to the user:')).toBeNull();
     expect(queryByText('$0.00')).toBeNull();
   });

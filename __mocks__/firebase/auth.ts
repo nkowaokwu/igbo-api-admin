@@ -2,6 +2,7 @@ export const getAuth = jest.fn(() => ({
   currentUser: {
     getIdToken: jest.fn(async () => 'user-access'),
     displayName: 'Testing user',
+    uid: 'admin-auth-token',
   },
   useDeviceLanguage: jest.fn(),
 }));

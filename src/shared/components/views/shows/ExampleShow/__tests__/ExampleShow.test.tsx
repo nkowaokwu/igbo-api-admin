@@ -16,7 +16,15 @@ describe('Example Show', () => {
     id: 123,
     igbo: 'first igbo example',
     english: 'first english example',
-    pronunciations: [{ audio: 'first', speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN, archived: false }],
+    pronunciations: [
+      {
+        audio: 'first',
+        speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+        archived: false,
+        approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.MERGER_AUTH_TOKEN],
+        denials: [AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+      },
+    ],
   };
 
   it('render all fields for examples', async () => {
@@ -38,6 +46,8 @@ describe('Example Show', () => {
 
     await findByText('Example Document Details');
     await findByText('Audio Pronunciations');
+    await findByText('2 approvals');
+    await findByText('1 denial');
     await findByText('Igbo');
     await findByText('first igbo example');
     await findByText('first english example');

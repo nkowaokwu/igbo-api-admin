@@ -318,7 +318,7 @@ describe('Submit WordEditForm', () => {
       expect(mockSave).toBeCalledWith(
         {
           ...testWord,
-          tags: [WordTags[WordTagEnum.BOTANY].label],
+          tags: [WordTags[WordTagEnum.BOTANY].value],
         },
         Views.SHOW,
         { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
@@ -331,6 +331,7 @@ describe('Submit WordEditForm', () => {
     const testWord = cloneDeep(wordRecord);
     delete testWord.id;
     delete testWord.dialects[0].id;
+    delete testWord.examples[0].style;
 
     const { findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>

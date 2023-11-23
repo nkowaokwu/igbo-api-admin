@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
@@ -14,7 +15,7 @@ describe('UserCard', () => {
       displayName: 'First name',
       email: 'email@email.com',
       photoURL: '',
-      age: 18,
+      age: moment().toDate(),
       dialects: [DialectEnum.ABI],
       gender: GenderEnum.FEMALE,
     };
@@ -24,7 +25,7 @@ describe('UserCard', () => {
       </TestContext>,
     );
 
-    await findByText('18');
+    await findByText(moment().format('MMMM DD, YYYY'));
     await findByText('Abịrịba');
     await findByText('Female');
   });
@@ -45,8 +46,7 @@ describe('UserCard', () => {
     );
 
     await findByTestId('user-profile-display-name-input');
-    await findByText('Age');
-    await findByText('Full name');
+    await findByText('Birthday');
     await findByText('Native dialect');
     await findByText('Gender');
     const inputElement = (await findByTestId('user-profile-display-name-input')) as HTMLInputElement;

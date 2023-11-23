@@ -6,7 +6,7 @@ import TestContext from 'src/__tests__/components/TestContext';
 it('IgboSoundboxStats', async () => {
   const { findByText } = render(
     <TestContext
-      recordingStats={{ recorded: 0, verified: 0 }}
+      recordingStats={{ recorded: 0, verified: 0, mergedRecorded: {} }}
       audioStats={{ audioApprovalsCount: 0, audioDenialsCount: 0 }}
     >
       <IgboSoundboxStats />
@@ -20,6 +20,6 @@ it('IgboSoundboxStats', async () => {
   await findByText('Denied audio recordings');
   await findByText('Previous month');
   await findByText('Next month');
-  await findByText('Monthly recorded example sentences');
-  await findByText('The number of recorded example sentences for each month');
+  await findByText('Monthly merged recorded audio');
+  await findByText('The number of merged (verified) recorded audio for each month');
 });
