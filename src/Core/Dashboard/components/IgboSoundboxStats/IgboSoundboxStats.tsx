@@ -24,8 +24,8 @@ const IgboSoundboxStats = ({
   audioStats,
 }: {
   recordingStats: {
-    recorded: number;
-    verified: number;
+    recorded: { [key: string]: number };
+    verified: { [key: string]: number };
     mergedRecorded: { [key: string]: number };
   };
   audioStats: { audioApprovalsCount: number; audioDenialsCount: number };
@@ -35,13 +35,13 @@ const IgboSoundboxStats = ({
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
   const contributedStats = [
     {
-      totalCount: recordingStats.recorded,
+      totalCount: recordingStats.recorded[currentMonth],
       goal: GOAL,
       heading: 'Recorded example sentence audio',
       description: 'The number of example sentence audio you have recorded',
     },
     {
-      totalCount: recordingStats.verified,
+      totalCount: recordingStats.verified[currentMonth] || 0,
       goal: GOAL,
       heading: 'Reviewed example sentence audio',
       description: 'The number of example sentence audio you have reviewed',
@@ -83,27 +83,37 @@ const IgboSoundboxStats = ({
 
   return (
     <Box className="mb-6 space-y-3 w-full">
-      <Box className="flex flex-col lg:flex-row space-y-3 lg:space-x-3 lg:space-y-0">
-        <LinearProgressCard
-          heading="Igbo Soundbox Contributions"
-          description="Contributions that you have made on the platform"
-          stats={contributedStats}
-          isLoaded
-          isGeneric
-        />
-        <LinearProgressCard
-          heading="Community Reviews"
-          description="Other platform contributors reviewing your audio"
-          stats={receivedStats}
-          isLoaded
-          isGeneric
-        />
-      </Box>
-      <Box className="flex flex-row justify-between items-center w-full">
-        <Button onClick={handlePreviousMonth}>Previous month</Button>
-        <Button onClick={handleNextMonth} isDisabled={moment().startOf('month').format('MMM, YYYY') === currentMonth}>
-          Next month
-        </Button>
+      <Box className="w-full">
+        <Box className="space-y-2" mb={2}>
+          <Box className="flex flex-row justify-between items-center w-full">
+            <Button onClick={handlePreviousMonth}>Previous month</Button>
+            <Button
+              onClick={handleNextMonth}
+              isDisabled={moment().startOf('month').format('MMM, YYYY') === currentMonth}
+            >
+              Next month
+            </Button>
+          </Box>
+          <Text fontStyle="italic" fontSize="sm" color="gray">
+            Stats are showing for {currentMonth}
+          </Text>
+        </Box>
+        <Box className="flex flex-col lg:flex-row space-y-3 lg:space-x-3 lg:space-y-0">
+          <LinearProgressCard
+            heading="Igbo Soundbox Contributions"
+            description="Contributions that you have made on the platform"
+            stats={contributedStats}
+            isLoaded
+            isGeneric
+          />
+          <LinearProgressCard
+            heading="Community Reviews"
+            description="Other platform contributors reviewing your audio"
+            stats={receivedStats}
+            isLoaded
+            isGeneric
+          />
+        </Box>
       </Box>
       <LinearProgressCard
         heading="Monthly merged recorded audio"
