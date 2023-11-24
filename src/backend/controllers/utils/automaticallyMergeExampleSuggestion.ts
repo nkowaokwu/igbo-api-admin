@@ -36,7 +36,7 @@ const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
                 deletedAudioPronunciation: audio,
               };
               // Sends email to audio recorder whose audio is deleted
-              // await sendAudioPronunciationDeletionNotification(data);
+              await sendAudioPronunciationDeletionNotification(data);
             }
           } catch (err) {
             console.log(err);
