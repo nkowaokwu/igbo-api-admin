@@ -12,8 +12,8 @@ describe('IgboSoundboxStats', () => {
       .spyOn(reactAdmin, 'usePermissions')
       .mockReturnValue({ loading: false, loaded: true, permissions: { role: UserRoles.ADMIN } });
     const recordingStats = {
-      recorded: 10,
-      verified: 15,
+      recorded: { [moment().format('MMM, YYYY')]: 10 },
+      verified: { [moment().format('MMM, YYYY')]: 15 },
       mergedRecorded: {},
     };
     const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };
@@ -46,8 +46,8 @@ describe('IgboSoundboxStats', () => {
       .spyOn(reactAdmin, 'usePermissions')
       .mockReturnValue({ loading: false, loaded: true, permissions: { role: UserRoles.CROWDSOURCER } });
     const recordingStats = {
-      recorded: 10,
-      verified: 15,
+      recorded: { [moment().format('MMM, YYYY')]: 10 },
+      verified: { [moment().format('MMM, YYYY')]: 15 },
       mergedRecorded: {},
     };
     const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };

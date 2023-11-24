@@ -10,7 +10,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: true,
       approvals: [],
       archived: false,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(true);
   });
@@ -24,7 +23,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -38,7 +36,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -52,7 +49,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -66,7 +62,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: false,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -80,7 +75,6 @@ describe('Eligible Audio Pronunciation', () => {
       review: false,
       approvals: ['uid', 'uid-2'],
       archived: true,
-      _id: '',
     };
     expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });

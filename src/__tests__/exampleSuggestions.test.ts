@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as admin from 'firebase-admin';
 import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -690,6 +691,7 @@ describe('MongoDB Example Suggestions', () => {
       );
       const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview();
       expect(randomExampleSuggestionsRes.status).toEqual(200);
+      console.log('hihi', randomExampleSuggestionsRes.body);
       const reviewedExampleSuggestions: {
         id: string;
         reviews: { [key: string]: ReviewActions };
@@ -707,6 +709,7 @@ describe('MongoDB Example Suggestions', () => {
         );
         return { id, reviews };
       });
+      console.log('sanity', reviewedExampleSuggestions);
       const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(
@@ -744,7 +747,10 @@ describe('MongoDB Example Suggestions', () => {
         expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       });
       const verifiedRes = await getTotalReviewedExampleSuggestions();
-      expect(verifiedRes.body.count).toBeGreaterThanOrEqual(2);
+      console.log(verifiedRes.body);
+      expect(
+        verifiedRes.body.timestampedReviewedExampleSuggestions[moment().format('MMM, YYYY')],
+      ).toBeGreaterThanOrEqual(2);
     });
 
     it('should show all example suggestion stats for user', async () => {
@@ -752,8 +758,8 @@ describe('MongoDB Example Suggestions', () => {
       const recordedRes = await getTotalRecordedExampleSuggestions();
       expect(verifiedRes.status).toEqual(200);
       expect(recordedRes.status).toEqual(200);
-      expect(typeof verifiedRes.body.count).toEqual('number');
-      expect(typeof recordedRes.body.timestampedExampleSuggestions).toEqual('object');
+      expect(verifiedRes.body.timestampedReviewedExampleSuggestions).toEqual({});
+      expect(recordedRes.body.timestampedRecordedExampleSuggestions).toEqual({});
     });
   });
 

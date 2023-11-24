@@ -489,7 +489,7 @@ export const searchDeniedExampleSuggestionAudioPronunciations = (
 } => ({
   pronunciations: {
     $elemMatch: {
-      $and: [{ speaker: uid }, { 'denials.1': { $exists: true } }],
+      $and: [{ speaker: uid }, { 'denials.0': { $exists: true } }],
     },
   },
 });

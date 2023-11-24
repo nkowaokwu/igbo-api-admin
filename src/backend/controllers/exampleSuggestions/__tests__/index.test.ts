@@ -21,6 +21,7 @@ import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import moment from 'moment';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import createRequestObject from 'src/__tests__/shared/createRequestObject';
 import { getRandomExampleSuggestionsToRecord } from '..';
 
 const omitTimestamps = (pronunciation) => {
@@ -30,27 +31,6 @@ const omitTimestamps = (pronunciation) => {
   return updatedPronunciation;
 };
 
-const requestObject = async (
-  { user = { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN }, body = {}, query = {} } = {
-    user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
-    body: {},
-    query: {},
-  },
-) => {
-  const mongooseConnection = await connectDatabase();
-  const reqMock = {
-    user,
-    body,
-    query,
-    mongooseConnection,
-  };
-  const resMock = {
-    send: jest.fn(),
-    setHeader: jest.fn(),
-  };
-  const nextMock = jest.fn();
-  return { reqMock, resMock, nextMock };
-};
 // NOTE: It's expected for the updatedAt and createdAt fields within
 // each pronunciation to change. We rely on the review field within
 // Example Suggestions to calculate a user's contributions.
@@ -111,7 +91,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -147,7 +127,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -183,7 +163,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -219,7 +199,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -255,7 +235,7 @@ describe('exampleSuggestions controller', () => {
 
     const { createdAt, updatedAt } = exampleSuggestionRes.body.pronunciations[0];
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -288,7 +268,7 @@ describe('exampleSuggestions controller', () => {
     });
     expect(exampleSuggestionRes.status).toEqual(200);
 
-    const { reqMock, resMock, nextMock } = await requestObject({
+    const { reqMock, resMock, nextMock } = await createRequestObject({
       body: [
         {
           id: exampleSuggestionRes.body.id,
@@ -356,7 +336,7 @@ describe('exampleSuggestions controller', () => {
 
   describe('Get Total Merged Recorded Example Suggestions', () => {
     it('gets the total merged recorded example suggestions by month', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',
@@ -391,7 +371,7 @@ describe('exampleSuggestions controller', () => {
 
   describe('Get Total Recorded Example Suggestions', () => {
     it('gets the total recorded example suggestions', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',
@@ -424,7 +404,7 @@ describe('exampleSuggestions controller', () => {
     });
 
     it('gets the total recorded example suggestions with merged example suggestions', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
+      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',
@@ -459,7 +439,7 @@ describe('exampleSuggestions controller', () => {
     });
 
     it('returns example suggestions not already recorded by current user', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject({
+      const { reqMock, resMock, nextMock } = await createRequestObject({
         user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
       });
       const mongooseConnection = await connectDatabase();
@@ -496,7 +476,7 @@ describe('exampleSuggestions controller', () => {
     });
 
     it('does not return example suggestions already recorded by current user', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject({
+      const { reqMock, resMock, nextMock } = await createRequestObject({
         user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
       });
       const mongooseConnection = await connectDatabase();
@@ -533,7 +513,7 @@ describe('exampleSuggestions controller', () => {
     });
 
     it('returns example suggestions not recorded by current user when reviewing', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject();
+      const { reqMock, resMock, nextMock } = await createRequestObject();
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',
@@ -561,7 +541,7 @@ describe('exampleSuggestions controller', () => {
     });
 
     it('does not return example suggestions recorded by current user when reviewing', async () => {
-      const { reqMock, resMock, nextMock } = await requestObject();
+      const { reqMock, resMock, nextMock } = await createRequestObject();
       const mongooseConnection = await connectDatabase();
       const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
         'ExampleSuggestion',

@@ -1,4 +1,5 @@
-import { createReferral, findReferralCode } from '../crowdsourcer';
+import { dropMongoDBCollections } from 'src/__tests__/shared';
+import { createReferral } from '../crowdsourcer';
 import * as utils from '../../utils';
 
 const handleQueriesMock = jest.spyOn(utils, 'handleQueries');
@@ -26,6 +27,11 @@ describe('crowdsourcer', () => {
     send: sendMock,
     status: jest.fn(() => mockResponse),
   } as any;
+  const mockNext = jest.fn();
+
+  beforeEach(async () => {
+    await dropMongoDBCollections();
+  });
 
   describe('createReferral', () => {
     // arrange
@@ -44,7 +50,7 @@ describe('crowdsourcer', () => {
       findOneMock.mockResolvedValueOnce(null);
 
       // act
-      await createReferral(mockRequest, mockResponse);
+      await createReferral(mockRequest, mockResponse, mockNext);
 
       // assert
       expect(findOneMock).toHaveBeenNthCalledWith(1, { referralCode });
@@ -66,38 +72,12 @@ describe('crowdsourcer', () => {
       findOneMock.mockResolvedValueOnce(referredUser);
 
       // act
-      await createReferral(mockRequest, mockResponse);
+      await createReferral(mockRequest, mockResponse, mockNext);
 
       // assert
       expect(mockResponse.status).toHaveBeenCalledWith(403);
       expect(sendMock).toHaveBeenCalledWith({
-        error: `Users cannot be referred twice. Referral code [${referralCode}] will be ignored`,
-      });
-    });
-  });
-
-  describe('findReferralCode', () => {
-    it('should find a user document and return relevant properties', async () => {
-      // arrange
-      const crowdsourcer = {
-        __v: 0,
-        _id: 'awesome-id',
-        createdAt: '2023-10-10T14:22:44.561Z',
-        firebaseId: 'awesome-fireabse-id',
-        referralCode: 'awesome-referral-code',
-        updatedAt: '2023-10-10T14:22:44.561Z',
-      };
-      handleQueriesMock.mockReturnValueOnce(mockRequest);
-      findOneMock.mockResolvedValueOnce(crowdsourcer);
-
-      // act
-      await findReferralCode(mockRequest, mockResponse);
-
-      // assert
-      expect(findOneMock).toHaveBeenCalledWith({ firebaseId: userId });
-      expect(mockResponse.send).toBeCalledWith({
-        firebaseId: 'awesome-fireabse-id',
-        referralCode: 'awesome-referral-code',
+        error: `Users cannot be referred twice. Referral code ${referralCode} will be ignored`,
       });
     });
   });

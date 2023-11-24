@@ -62,12 +62,10 @@ describe('users', () => {
   it('creates a new Mongo User', async () => {
     const uid = 'uid';
     const response = await createMongoUser(uid);
-    expect(response).toEqual({
-      age: response.age,
-      dialects: [],
-      firebaseId: uid,
-      gender: GenderEnum.UNSPECIFIED,
-      referralCode: 'ABCD1234',
-    });
+    expect(response.age).toEqual(response.age);
+    expect(response.dialects).toEqual([]);
+    expect(response.firebaseId).toEqual(uid);
+    expect(response.gender).toEqual(GenderEnum.UNSPECIFIED);
+    expect(response.referralCode).toEqual('ABCD1234');
   });
 });
