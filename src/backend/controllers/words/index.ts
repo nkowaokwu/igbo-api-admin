@@ -12,6 +12,8 @@ import { getDocumentsIds } from 'src/backend/shared/utils/documentUtils';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { assignExampleSuggestionToExampleData } from 'src/backend/controllers/utils/nestedExampleSuggestionUtils';
+import createExample from 'src/backend/controllers/examples/helpers/createExample';
+import findExampleByAssociatedWordId from 'src/backend/controllers/examples/helpers/findExampleByAssociatedWordId';
 import { sortDocsBy, packageResponse, handleQueries, updateDocumentMerge } from '../utils';
 import {
   searchIgboTextSearch,
@@ -22,7 +24,6 @@ import {
   searchForAssociatedSuggestionsByTwitterId,
 } from '../utils/queries';
 import { findWordsWithMatch } from '../utils/buildDocs';
-import { createExample, findExampleByAssociatedWordId } from '../examples';
 import { deleteWordSuggestionsByOriginalWordId } from '../wordSuggestions';
 import { sendMergedEmail } from '../email';
 import { renameAudioPronunciation } from '../utils/MediaAPIs/AudioAPI';

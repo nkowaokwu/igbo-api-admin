@@ -1,4 +1,4 @@
-import mongoose, { Connection, Document, Query } from 'mongoose';
+import mongoose, { Connection, Document } from 'mongoose';
 import { Response, NextFunction } from 'express';
 import { assign, some, map, trim, uniq } from 'lodash';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
@@ -8,38 +8,15 @@ import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPI
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { isPronunciationMp3, getPronunciationId } from 'src/backend/shared/utils/splitAudioUrl';
 import findExampleSuggestionById from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestionById';
-import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
-import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
-import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
-import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
-import { sendMergedEmail } from './email';
-import * as Interfaces from './utils/interfaces';
-
-/* Create a new Example object in MongoDB */
-export const createExample = (
-  data: Interfaces.ExampleClientData,
-  mongooseConnection: Connection,
-): Promise<Interfaces.Example> => {
-  const Example = mongooseConnection.model('Example', exampleSchema);
-  const example = new Example(data);
-  return example.save();
-};
-
-/* Uses regex to search for examples with both Igbo and English */
-export const searchExamples = ({
-  query,
-  skip,
-  limit,
-  mongooseConnection,
-}: {
-  query: RegExp | any;
-  skip: number;
-  limit: number;
-  mongooseConnection: Connection;
-}): Promise<Interfaces.Example[]> => {
-  const Example = mongooseConnection.model('Example', exampleSchema);
-  return Example.find(query).skip(skip).limit(limit);
-};
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import searchExamples from 'src/backend/controllers/examples/helpers/searchExamples';
+import findExampleById from 'src/backend/controllers/examples/helpers/findExampleById';
+import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
+import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from 'src/backend/controllers/utils/queries';
+import createExampleFromSuggestion from 'src/backend/controllers/examples/helpers/createExampleFromSuggestion';
+import { packageResponse, handleQueries, updateDocumentMerge } from '../utils';
+import { sendMergedEmail } from '../email';
 
 /* Returns examples from MongoDB */
 export const getExamples = async (
@@ -68,22 +45,6 @@ export const getExamples = async (
   } catch (err) {
     return next(err);
   }
-};
-
-export const findExampleById = (
-  id: string,
-  mongooseConnection: Connection,
-): Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
-  const Example = mongooseConnection.model('Example', exampleSchema);
-  return Example.findById(id);
-};
-
-export const findExampleByAssociatedWordId = (
-  id: string,
-  mongooseConnection: Connection,
-): Query<Document<Interfaces.Example>[], Document<Interfaces.Example>> => {
-  const Example = mongooseConnection.model('Example', exampleSchema);
-  return Example.find({ associatedWords: { $in: [id] } });
 };
 
 /* Returns an example from MongoDB using an id */
@@ -123,27 +84,6 @@ const mergeIntoExample = (
       return updatedExample.save();
     },
   );
-};
-
-/* Creates a new Example document from an existing ExampleSuggestion document */
-const createExampleFromSuggestion = async (
-  exampleSuggestion: Interfaces.ExampleSuggestion,
-  mergedBy: string,
-  mongooseConnection: Connection,
-): Promise<Interfaces.Example> => {
-  const example = await createExample(
-    (exampleSuggestion as Interfaces.ExampleSuggestion).toObject(),
-    mongooseConnection,
-  )
-    .then(async (example: Interfaces.Example) => {
-      const updatedExampleSuggestion = await updateDocumentMerge(exampleSuggestion, example.id.toString(), mergedBy);
-      await updatedExampleSuggestion.save();
-      return example;
-    })
-    .catch((error) => {
-      throw new Error(`An error occurred while saving the new example: ${error.message}`);
-    });
-  return example;
 };
 
 /* Executes the logic describe the mergeExample function description */
