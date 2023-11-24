@@ -36,6 +36,7 @@ export const dropMongoDBCollections = async (): Promise<void> => {
   await mongoose.connection.dropCollection('leaderboards').catch(noop);
   await mongoose.connection.dropCollection('textimages').catch(noop);
   await mongoose.connection.dropCollection('crowdsourcers').catch(noop);
+  await mongoose.connection.dropCollection('referrals').catch(noop);
 };
 
 export const setUpTestEnvironment = (): { initializedAdminApp: admin.app.App } => {

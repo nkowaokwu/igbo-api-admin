@@ -23,7 +23,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -37,7 +36,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -51,7 +49,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: true,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -65,7 +62,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: false,
       approvals: ['uid', 'uid-2'],
       archived: false,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -79,7 +75,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: false,
       approvals: ['uid'],
       archived: false,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });
@@ -93,7 +88,6 @@ describe('Mergeable Audio Pronunciation', () => {
       review: false,
       approvals: ['uid', 'uid-2'],
       archived: true,
-      _id: '',
     };
     expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
   });

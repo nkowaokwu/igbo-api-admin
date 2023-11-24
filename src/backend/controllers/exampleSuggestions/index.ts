@@ -709,6 +709,11 @@ export const putReviewForRandomExampleSuggestions = async (
           return null;
         });
         const savedExampleSuggestion = await exampleSuggestion.save();
+        console.log(
+          'saved',
+          savedExampleSuggestion.pronunciations[0].approvals,
+          savedExampleSuggestion.pronunciations[0].denials,
+        );
 
         // Automatically merge ExampleSuggestion
         await automaticallyMergeExampleSuggestion({

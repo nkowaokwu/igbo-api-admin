@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import moment from 'moment';
 import {
   findAdminUsers,
   findPermittedUserEmails,
@@ -143,7 +144,7 @@ describe('Users', () => {
     const crowdsourcer = new Crowdsourcer({
       firebaseId: adminUid,
       referralCode: '',
-      age: 24,
+      age: moment().toDate(),
       dialects: [],
       gender: GenderEnum.FEMALE,
     });
@@ -151,6 +152,7 @@ describe('Users', () => {
 
     const sendMock = jest.fn();
     const mockReq = {
+      params: { uid: adminUid },
       user: { uid: adminUid },
       mongooseConnection,
     };
@@ -161,26 +163,28 @@ describe('Users', () => {
     };
     const mockNext = jest.fn();
     await getUserProfile(mockReq, mockRes, mockNext);
-    expect(sendMock).toBeCalledWith({
+    expect(sendMock.mock.calls[0][0]).toMatchObject({
       ...formatUser(defaultAdminUser),
       ...savedCrowdsourcer,
+      id: defaultAdminUser.id,
     });
   });
 
   it('puts the user profile', async () => {
     const mongooseConnection = await connectDatabase();
     const sendMock = jest.fn();
+    const age = moment().toDate();
     const Crowdsourcer = mongooseConnection.model<Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
     const crowdsourcer = new Crowdsourcer({
       firebaseId: adminUid,
       referralCode: '',
-      age: 18,
+      age,
       dialects: [],
       gender: GenderEnum.FEMALE,
     });
     const savedCrowdsourcer = cleanDocument((await crowdsourcer.save()).toJSON());
     const updatedCrowdsourcer = {
-      age: 22,
+      age,
       dialects: [DialectEnum.ACH],
       gender: GenderEnum.MALE,
     };
