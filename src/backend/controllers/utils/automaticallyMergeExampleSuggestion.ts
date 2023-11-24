@@ -4,6 +4,7 @@ import { sendAudioPronunciationDeletionNotification } from 'src/backend/controll
 import { findUser } from 'src/backend/controllers/users';
 import { Example, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import Author from 'src/backend/shared/constants/Author';
+import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { executeMergeExample } from '../examples';
@@ -24,7 +25,7 @@ const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
         if (review && audio && denials.length >= MINIMUM_REVIEWS) {
           try {
             const audioRecorderEmail = (await findUser(pronunciation.speaker))?.email;
-            if (audioRecorderEmail) {
+            if (audioRecorderEmail && LacunaFundExtensionCrowdsourcers.includes(pronunciation.speaker)) {
               const deniersEmails = compact(
                 await Promise.all(denials.map(async (denial) => (await findUser(denial))?.email)),
               );
@@ -36,7 +37,7 @@ const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
                 deletedAudioPronunciation: audio,
               };
               // Sends email to audio recorder whose audio is deleted
-              // await sendAudioPronunciationDeletionNotification(data);
+              await sendAudioPronunciationDeletionNotification(data);
             }
           } catch (err) {
             console.log(err);
