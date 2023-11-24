@@ -1,10 +1,10 @@
 import { Connection } from 'mongoose';
 import { assign, compact, omit } from 'lodash';
 import { searchPreExistingExampleSuggestionsRegexQuery } from 'src/backend/controllers/utils/queries';
-import { exampleSuggestionSchema } from '../../../models/ExampleSuggestion';
-import * as Interfaces from '../../utils/interfaces';
-import { searchExamples } from '../../examples';
-import Author from '../../../shared/constants/Author';
+import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import searchExamples from 'src/backend/controllers/examples/helpers/searchExamples';
+import Author from 'src/backend/shared/constants/Author';
 
 const handleCreatingNewExampleSuggestions = async ({
   query,

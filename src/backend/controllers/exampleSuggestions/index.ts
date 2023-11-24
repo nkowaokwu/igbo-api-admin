@@ -1,9 +1,6 @@
-import { Connection, Document, LeanDocument, Query } from 'mongoose';
 import { Response, NextFunction } from 'express';
-import { assign, omit, map } from 'lodash';
+import { omit, map } from 'lodash';
 import moment from 'moment';
-import Joi from 'joi';
-import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
@@ -11,74 +8,28 @@ import { packageResponse, handleQueries, populateFirebaseUsers } from 'src/backe
 import {
   searchExampleAudioPronunciationsReviewedByUser,
   searchExampleSuggestionsRegexQuery,
-  searchForLastWeekQuery,
-  searchPreExistingExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
 } from 'src/backend/controllers/utils/queries';
 import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { sendRejectedEmail } from 'src/backend/controllers/email';
-import { findUser } from 'src/backend/controllers/users';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-// eslint-disable-next-line max-len
-import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
-import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
 import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/leanPronunciation';
 import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
+import isMergeableAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isMergeableAudioPronunciation';
+import isEligibleAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleAudioPronunciation';
+import isUserReviewedAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/IsUserReviewedAudioPronunciation';
+import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
+import createExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/createExampleSuggestion';
+import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
+import removeExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/removeExampleSuggestion';
+import findExampleSuggestionById from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestionById';
 
 const NO_LIMIT = 20000;
-
-/**
- * Returns the Example Suggestion's date
- * @param exampleSuggestion Example Suggestion
- * @returns Date of Example Suggestion
- */
-export const getExampleSuggestionUpdateAt = (exampleSuggestion: LeanDocument<Interfaces.ExampleSuggestion>): string =>
-  exampleSuggestion.updatedAt.toISOString
-    ? exampleSuggestion.updatedAt.toISOString()
-    : exampleSuggestion.updatedAt.toString();
-
-/**
- * Creates and saves a new Example Suggestion in the database
- * @param data ExampleClientData
- * @param mongooseConnection Connection
- * @returns Newly created Example Suggestion document
- */
-export const createExampleSuggestion = async (
-  data: Interfaces.ExampleClientData,
-  mongooseConnection: Connection,
-): Promise<Interfaces.ExampleSuggestion> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-  try {
-    const query = searchPreExistingExampleSuggestionsRegexQuery(data);
-    const identicalExampleSuggestions = await ExampleSuggestion.find(query);
-
-    if (identicalExampleSuggestions.length) {
-      const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
-      console.log(`Existing ExampleSuggestion id(s): ${exampleSuggestionIds}`);
-      throw new Error(
-        'There is an existing Example Suggestion with the same Igbo text. Please edit the existing Example Suggestion',
-      );
-    }
-  } catch (err) {
-    console.log(err.message);
-    throw err;
-  }
-
-  const newExampleSuggestion = new ExampleSuggestion(data) as Interfaces.ExampleSuggestion;
-  return newExampleSuggestion.save().catch((err) => {
-    console.log(err.message);
-    throw new Error('An error has occurred while saving, double check your provided data');
-  });
-};
 
 /**
  * Creates a new Example Suggestion document in the database
@@ -110,54 +61,6 @@ export const postExampleSuggestion = async (
   } catch (err) {
     return next(err);
   }
-};
-
-/**
- * Helper function that updates an Example Suggestion
- * @param param0
- * @returns Updated Example Suggestion
- */
-export const updateExampleSuggestion = ({
-  id,
-  data: clientData,
-  mongooseConnection,
-}: {
-  id: string;
-  data: Partial<Interfaces.ExampleSuggestion>;
-  mongooseConnection: Connection;
-}): Promise<(Interfaces.ExampleSuggestion & Interfaces.ExampleClientData) | void> => {
-  const data = assign(clientData) as Interfaces.ExampleClientData;
-  delete data.authorId;
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-  // @ts-expect-error
-  return ExampleSuggestion.findById(id).then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
-    if (!exampleSuggestion) {
-      throw new Error("Example suggestion doesn't exist");
-    }
-    if (exampleSuggestion.merged) {
-      throw new Error('Unable to edit a merged example suggestion');
-    }
-
-    await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
-
-    // Properly handle merging
-    Object.entries(data?.crowdsourcing || {}).forEach(([key, value]) => {
-      exampleSuggestion.crowdsourcing[key] = value;
-    });
-    const updatedExampleSuggestion = assign(exampleSuggestion, omit(data, ['crowdsourcing']));
-
-    // Updates the user interactions to include the current user
-    const updatedUserInteractions = new Set(
-      updatedExampleSuggestion.userInteractions.concat(data?.userInteractions || []),
-    );
-    updatedExampleSuggestion.userInteractions = Array.from(updatedUserInteractions);
-
-    exampleSuggestion.markModified('crowdsourcing');
-    return updatedExampleSuggestion.save();
-  });
 };
 
 /**
@@ -197,23 +100,6 @@ export const putExampleSuggestion = async (
   } catch (err) {
     return next(err);
   }
-};
-
-/**
- * Finds a single Example Suggestion by its Id
- * @param id Id of the Example Suggestion
- * @param mongooseConnection Connection
- * @returns Single Example Suggestion
- */
-export const findExampleSuggestionById = (
-  id: string,
-  mongooseConnection: Connection,
-): Query<any, Document<Interfaces.ExampleSuggestion>> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-  return ExampleSuggestion.findById(id);
 };
 
 /* Returns all existing ExampleSuggestion objects */
@@ -562,7 +448,16 @@ export const getTotalReviewedExampleSuggestions = async (
             if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
               finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
             }
-            finalTimestampedExampleSuggestions[exampleSuggestionMonth] += 1;
+
+            exampleSuggestion.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
+              // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
+              const pronunciation = leanPronunciation(dbPronunciation);
+              const isUserReviewed = isUserReviewedAudioPronunciation({ pronunciation, uid });
+              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
+                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
+              }
+              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isUserReviewed);
+            });
             return finalTimestampedExampleSuggestions;
           },
           {},
@@ -576,64 +471,6 @@ export const getTotalReviewedExampleSuggestions = async (
   } catch (err) {
     return next(err);
   }
-};
-
-/**
- * Determines if the current audio pronunciation is mergeable (i.e. complete)
- * @param param0 pronunciation and uid
- * @returns Boolean if the audio pronunciation is mergeable
- */
-export const isMergeableAudioPronunciation = ({
-  pronunciation,
-  uid,
-}: {
-  pronunciation: Interfaces.PronunciationData;
-  uid: string;
-}): boolean => {
-  const pronunciationSchema = Joi.object().keys({
-    approvals: Joi.array().min(MINIMUM_APPROVALS).items(Joi.string().allow('', null)),
-    denials: Joi.array().max(MINIMUM_DENIALS).items(Joi.string().allow('', null)),
-    audio: Joi.string().pattern(new RegExp('^http')).required(),
-    speaker: Joi.string().valid(uid).required(),
-    review: Joi.boolean().valid(true).required(),
-    archived: Joi.boolean().valid(false).optional(),
-  });
-
-  const validation = pronunciationSchema.validate(pronunciation, { abortEarly: false });
-  if (validation.error) {
-    console.log(validation.error);
-    return false;
-  }
-  return true;
-};
-
-/**
- * Determines if the current audio pronunciation is a valid recording, eligible to be merged
- * @param param0 pronunciation and uid
- * @returns Boolean if the audio pronunciation is a valid recording
- */
-export const isEligibleAudioPronunciation = ({
-  pronunciation,
-  uid,
-}: {
-  pronunciation: Interfaces.PronunciationData;
-  uid: string;
-}): boolean => {
-  const pronunciationSchema = Joi.object().keys({
-    approvals: Joi.array().min(0).items(Joi.string().allow('', null)),
-    denials: Joi.array().max(MINIMUM_DENIALS).items(Joi.string().allow('', null)),
-    audio: Joi.string().pattern(new RegExp('^http')).required(),
-    speaker: Joi.string().valid(uid).required(),
-    review: Joi.boolean().valid(true).required(),
-    archived: Joi.boolean().valid(false).optional(),
-  });
-
-  const validation = pronunciationSchema.validate(pronunciation, { abortEarly: false });
-  if (validation.error) {
-    console.log(validation.error);
-    return false;
-  }
-  return true;
 };
 
 /**
@@ -917,40 +754,6 @@ export const getExampleSuggestion = async (
   }
 };
 
-export const removeExampleSuggestion = (
-  id: string,
-  mongooseConnection: Connection,
-): Promise<Interfaces.ExampleSuggestion> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-
-  return ExampleSuggestion.findByIdAndDelete(id)
-    .then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
-      if (!exampleSuggestion) {
-        throw new Error('No example suggestion exists with the provided id.');
-      }
-      const { email: userEmail } = ((await findUser(exampleSuggestion.authorId).catch((err) => {
-        console.log('Error with finding user while deleting example sentence', err);
-        return { email: '' };
-      })) as Interfaces.FormattedUser) || { email: '' };
-      /* Sends rejection email to user if they provided an email and the exampleSuggestion isn't merged */
-      if (userEmail && !exampleSuggestion.merged) {
-        sendRejectedEmail({
-          to: [userEmail],
-          suggestionType: SuggestionTypeEnum.WORD,
-          ...exampleSuggestion.toObject(),
-        });
-      }
-      return exampleSuggestion;
-    })
-    .catch((err) => {
-      console.log('Unable to delete example suggestion', err);
-      throw new Error('An error has occurred while deleting and return a single example suggestion');
-    });
-};
-
 /* Deletes a single ExampleSuggestion by using an id */
 export const deleteExampleSuggestion = async (
   req: Interfaces.EditorRequest,
@@ -964,25 +767,6 @@ export const deleteExampleSuggestion = async (
   } catch (err) {
     return next(err);
   }
-};
-
-/* Returns all the ExampleSuggestions from last week */
-export const getExampleSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-
-  return ExampleSuggestion.find(searchForLastWeekQuery()).lean().exec();
-};
-
-export const getNonMergedExampleSuggestions = (mongooseConnection: Connection): Promise<any> => {
-  const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-    'ExampleSuggestion',
-    exampleSuggestionSchema,
-  );
-
-  return ExampleSuggestion.find({ merged: null, exampleForSuggestion: false }).lean().exec();
 };
 
 export const approveExampleSuggestion = async (

@@ -3,7 +3,9 @@ import { assign, filter, pick, differenceBy, reduce, map } from 'lodash';
 import { exampleSchema } from 'src/backend/models/Example';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { executeMergeExample } from 'src/backend/controllers/examples';
-import { createExampleSuggestion, updateExampleSuggestion, removeExampleSuggestion } from '../exampleSuggestions';
+import createExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/createExampleSuggestion';
+import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
+import removeExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/removeExampleSuggestion';
 import * as Interfaces from './interfaces';
 
 /* Adds the example key on each wordSuggestion returned back to the client */

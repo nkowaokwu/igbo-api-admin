@@ -19,7 +19,10 @@
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-cycle": "off",
-   "max-len": ["error", { "code": 120, "ignorePattern": "d=\"([\\s\\S]*?)\"" }],
+    "max-len": [
+      "error",
+      { "code": 120, "ignorePattern": "(d=\"([\\s\\S]*?)\")|(^import\\s.+\\sfrom\\s.+;$)", "ignoreUrls": true }
+    ],
     "no-await-in-loop": "off",
     "no-confusing-arrow": "off",
     "no-console": "off",
