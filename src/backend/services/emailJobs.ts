@@ -1,19 +1,17 @@
 import { compact, flatten } from 'lodash';
+import getExampleSuggestionsFromLastWeek from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionsFromLastWeek';
+import getNonMergedExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/getNonMergedExampleSuggestion';
 import { connectDatabase, disconnectDatabase } from '../utils/database';
 import { findPermittedUserEmails } from '../controllers/users';
 import { LOOK_BACK_DATE } from '../shared/constants/emailDates';
 import { sendMergedStats, sendSuggestionsReminder } from '../controllers/email';
 import { getTotalWordsWithAudioPronunciations, getTotalWordsInStandardIgbo } from '../controllers/words';
 import { getWordSuggestionsFromLastWeek, getNonMergedWordSuggestions } from '../controllers/wordSuggestions';
-import { getExampleSuggestionsFromLastWeek, getNonMergedExampleSuggestions } from '../controllers/exampleSuggestions';
 
-const getMergedWords = async (mongooseConnection) => (
-  compact(await getWordSuggestionsFromLastWeek(mongooseConnection))
-);
+const getMergedWords = async (mongooseConnection) => compact(await getWordSuggestionsFromLastWeek(mongooseConnection));
 
-const getMergedExamples = async (mongooseConnection) => (
-  compact(flatten([await getExampleSuggestionsFromLastWeek(mongooseConnection)]))
-);
+const getMergedExamples = async (mongooseConnection) =>
+  compact(flatten([await getExampleSuggestionsFromLastWeek(mongooseConnection)]));
 
 /**
  * Aggregates data for merged words and examples from the past week and sends

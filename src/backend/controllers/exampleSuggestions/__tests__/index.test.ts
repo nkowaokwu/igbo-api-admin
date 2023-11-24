@@ -2,16 +2,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { omit, times } from 'lodash';
 import { Types } from 'mongoose';
 import {
-  updateExampleSuggestion,
   putReviewForRandomExampleSuggestions,
   putRandomExampleSuggestionsToTranslate,
   getRandomExampleSuggestionsToTranslate,
-  isMergeableAudioPronunciation,
-  isEligibleAudioPronunciation,
-  getExampleSuggestionUpdateAt,
   getTotalRecordedExampleSuggestions,
   getTotalMergedRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
+import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
+import isEligibleAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleAudioPronunciation';
+import isMergeableAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isMergeableAudioPronunciation';
+import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';

@@ -7,7 +7,7 @@ const handleExampleSuggestionAudioPronunciations = async ({
   data,
 }: {
   exampleSuggestion: ExampleSuggestion;
-  data: ExampleClientData;
+  data: Partial<ExampleClientData>;
 }): Promise<void> => {
   if (!data?.pronunciations || !data?.pronunciations?.length) {
     return;

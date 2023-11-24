@@ -7,11 +7,11 @@ import { wordSchema } from 'src/backend/models/Word';
 import { deleteAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
 import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { isPronunciationMp3, getPronunciationId } from 'src/backend/shared/utils/splitAudioUrl';
+import findExampleSuggestionById from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestionById';
 import SuggestionTypeEnum from '../shared/constants/SuggestionTypeEnum';
 import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import { packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import { searchExamplesRegexQuery, searchForAssociatedExampleSuggestions } from './utils/queries';
-import { findExampleSuggestionById } from './exampleSuggestions';
 import { sendMergedEmail } from './email';
 import * as Interfaces from './utils/interfaces';
 
