@@ -7,11 +7,9 @@ import {
   getRandomExampleSuggestionsToTranslate,
   getTotalRecordedExampleSuggestions,
   getTotalMergedRecordedExampleSuggestions,
+  getRandomExampleSuggestionsToReview,
 } from 'src/backend/controllers/exampleSuggestions';
 import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
-import isEligibleAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleAudioPronunciation';
-import isMergeableAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isMergeableAudioPronunciation';
-import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
@@ -23,6 +21,7 @@ import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import moment from 'moment';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import { getRandomExampleSuggestionsToRecord } from '..';
 
 const omitTimestamps = (pronunciation) => {
   const updatedPronunciation = omit(pronunciation, ['createdAt', 'updatedAt']);
@@ -32,8 +31,8 @@ const omitTimestamps = (pronunciation) => {
 };
 
 const requestObject = async (
-  { user = AUTH_TOKEN.ADMIN_AUTH_TOKEN, body = {}, query = {} } = {
-    user: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+  { user = { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN }, body = {}, query = {} } = {
+    user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
     body: {},
     query: {},
   },
@@ -47,6 +46,7 @@ const requestObject = async (
   };
   const resMock = {
     send: jest.fn(),
+    setHeader: jest.fn(),
   };
   const nextMock = jest.fn();
   return { reqMock, resMock, nextMock };
@@ -354,206 +354,6 @@ describe('exampleSuggestions controller', () => {
     });
   });
 
-  describe('Mergeable Audio Pronunciation', () => {
-    it('verifies the audio pronunciation', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: [],
-        audio: 'http://',
-        speaker: uid,
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(true);
-    });
-
-    it('does not verify audio pronunciation - denials', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1', 'uid-3'],
-        audio: 'http://',
-        speaker: uid,
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - audio', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: '',
-        speaker: uid,
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - speaker', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: 'uid-1',
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - review', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: uid,
-        review: false,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - approvals', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: uid,
-        review: false,
-        approvals: ['uid'],
-        archived: false,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - archived', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: uid,
-        review: false,
-        approvals: ['uid', 'uid-2'],
-        archived: true,
-        _id: '',
-      };
-      expect(isMergeableAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-  });
-
-  describe('Eligible Audio Pronunciation', () => {
-    it('verifies the audio pronunciation', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: [],
-        audio: 'http://',
-        speaker: uid,
-        review: true,
-        approvals: [],
-        archived: false,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(true);
-    });
-
-    it('does not verify audio pronunciation - denials', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1', 'uid-3'],
-        audio: 'http://',
-        speaker: uid,
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - audio', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: '',
-        speaker: uid,
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - speaker', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: 'uid-1',
-        review: true,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - review', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: uid,
-        review: false,
-        approvals: ['uid', 'uid-2'],
-        archived: false,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-
-    it('does not verify audio pronunciation - archived', () => {
-      const uid = 'uid';
-      const pronunciation = {
-        denials: ['uid-1'],
-        audio: 'https://',
-        speaker: uid,
-        review: false,
-        approvals: ['uid', 'uid-2'],
-        archived: true,
-        _id: '',
-      };
-      expect(isEligibleAudioPronunciation({ pronunciation, uid })).toEqual(false);
-    });
-  });
-
-  it('gets the example suggestion updated at date', async () => {
-    const mongooseConnection = await connectDatabase();
-    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-      'ExampleSuggestion',
-      exampleSuggestionSchema,
-    );
-    const unsavedExampleSuggestion = new ExampleSuggestion({
-      ...exampleSuggestionData,
-    });
-    const exampleSuggestion = await unsavedExampleSuggestion.save();
-    const date = getExampleSuggestionUpdateAt(exampleSuggestion);
-    expect(date).toEqual(exampleSuggestion.updatedAt.toISOString());
-  });
-
   describe('Get Total Merged Recorded Example Suggestions', () => {
     it('gets the total merged recorded example suggestions by month', async () => {
       const { reqMock, resMock, nextMock } = await requestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
@@ -618,7 +418,9 @@ describe('exampleSuggestions controller', () => {
       );
       await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
-      expect(resMock.send).toBeCalledWith({ count: 10 });
+      expect(resMock.send).toBeCalledWith({
+        timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
+      });
     });
 
     it('gets the total recorded example suggestions with merged example suggestions', async () => {
@@ -651,7 +453,139 @@ describe('exampleSuggestions controller', () => {
       );
       await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
-      expect(resMock.send).toBeCalledWith({ count: 10 });
+      expect(resMock.send).toBeCalledWith({
+        timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
+      });
+    });
+
+    it('returns example suggestions not already recorded by current user', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject({
+        user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+      });
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+
+      const unsavedExampleSuggestion = new ExampleSuggestion({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.MERGER_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.MERGER_AUTH_TOKEN,
+            review: true,
+          },
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
+            review: true,
+          },
+        ],
+        type: SentenceTypeEnum.DATA_COLLECTION,
+      });
+
+      await unsavedExampleSuggestion.save();
+
+      await getRandomExampleSuggestionsToRecord(reqMock, resMock, nextMock);
+      expect(resMock.send).not.toBeCalledWith([]);
+    });
+
+    it('does not return example suggestions already recorded by current user', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject({
+        user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+      });
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+
+      const unsavedExampleSuggestion = new ExampleSuggestion({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.MERGER_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.MERGER_AUTH_TOKEN,
+            review: true,
+          },
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+            review: true,
+          },
+        ],
+        type: SentenceTypeEnum.DATA_COLLECTION,
+      });
+
+      await unsavedExampleSuggestion.save();
+
+      await getRandomExampleSuggestionsToRecord(reqMock, resMock, nextMock);
+      expect(resMock.send).toBeCalledWith([]);
+    });
+
+    it('returns example suggestions not recorded by current user when reviewing', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject();
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+
+      const unsavedExampleSuggestion = new ExampleSuggestion({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.MERGER_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.MERGER_AUTH_TOKEN,
+            review: true,
+          },
+        ],
+        type: SentenceTypeEnum.DATA_COLLECTION,
+      });
+
+      await unsavedExampleSuggestion.save();
+
+      await getRandomExampleSuggestionsToReview(reqMock, resMock, nextMock);
+      expect(resMock.send).not.toBeCalledWith([]);
+    });
+
+    it('does not return example suggestions recorded by current user when reviewing', async () => {
+      const { reqMock, resMock, nextMock } = await requestObject();
+      const mongooseConnection = await connectDatabase();
+      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+        'ExampleSuggestion',
+        exampleSuggestionSchema,
+      );
+
+      const unsavedExampleSuggestion = new ExampleSuggestion({
+        ...exampleSuggestionData,
+        pronunciations: [
+          {
+            denials: [],
+            approvals: [AUTH_TOKEN.MERGER_AUTH_TOKEN],
+            audio: 'https://',
+            speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
+            review: true,
+          },
+        ],
+        type: SentenceTypeEnum.DATA_COLLECTION,
+      });
+
+      await unsavedExampleSuggestion.save();
+
+      await getRandomExampleSuggestionsToReview(reqMock, resMock, nextMock);
+      expect(resMock.send).toBeCalledWith([]);
     });
   });
 });

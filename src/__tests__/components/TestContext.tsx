@@ -24,6 +24,9 @@ export const mocks = {
     pause: jest.fn(),
     play: jest.fn(),
   },
+  clipboard: {
+    writeText: jest.fn(),
+  },
 };
 // Audio mock
 global.Audio = jest.fn().mockImplementation(() => ({
@@ -36,6 +39,9 @@ Object.defineProperty(global.navigator, 'mediaDevices', {
     getUserMedia: mockGetUserMedia,
   },
 });
+global.navigator.clipboard = {
+  writeText: mocks.clipboard.writeText,
+};
 
 // IntersectionObserver mock
 const mockIntersectionObserver = jest.fn();

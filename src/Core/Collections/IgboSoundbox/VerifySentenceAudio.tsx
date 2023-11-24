@@ -94,8 +94,11 @@ const VerifySentenceAudio = ({
         isClosable: true,
       });
     } catch (err) {
+      console.log(err);
       toast({
-        title: 'An error occurred',
+        title: 'Unable to save points',
+        position: 'top-right',
+        variant: 'left-accent',
         description: 'Unable to upload example sentence reviews.',
         status: 'error',
         duration: 4000,
