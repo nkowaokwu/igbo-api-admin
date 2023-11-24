@@ -6,17 +6,27 @@ import { usePermissions } from 'react-admin';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
-import { PRICE_PER_VERIFIED_RECORDING } from 'src/Core/constants';
+import { PRICE_PER_RECORDING, PRICE_PER_REVIEW } from 'src/Core/constants';
 import LinearProgressCard from '../LinearProgressCard';
 
 const GOAL = 4000;
 
 /** Calculates the payment for the provided count */
-export const calculatePayment = (count: number): string => {
-  if (count <= 0 || isNaN(count) || typeof count !== 'number') {
+export const calculatePayment = (recordings: number, reviews: number): string => {
+  if (
+    recordings <= 0 ||
+    isNaN(recordings) ||
+    typeof recordings !== 'number' ||
+    reviews <= 0 ||
+    isNaN(reviews) ||
+    typeof reviews !== 'number'
+  ) {
     return '$0.00';
   }
-  return `$${((count || 0) * PRICE_PER_VERIFIED_RECORDING).toFixed(2)}`;
+  const recordingsPrice = (recordings || 0) * PRICE_PER_RECORDING;
+  const reviewsPrice = (reviews || 0) * PRICE_PER_REVIEW;
+
+  return `$${(recordingsPrice + reviewsPrice).toFixed(2)}`;
 };
 
 const IgboSoundboxStats = ({
@@ -105,7 +115,16 @@ const IgboSoundboxStats = ({
             stats={contributedStats}
             isLoaded
             isGeneric
-          />
+          >
+            {showPaymentCalculations ? (
+              <Box>
+                <Text fontFamily="heading">Price to be paid to the user:</Text>
+                <chakra.span fontFamily="heading">
+                  {calculatePayment(contributedStats[0].totalCount, contributedStats[1].totalCount)}
+                </chakra.span>
+              </Box>
+            ) : null}
+          </LinearProgressCard>
           <LinearProgressCard
             heading="Community Reviews"
             description="Other platform contributors reviewing your audio"
@@ -121,14 +140,7 @@ const IgboSoundboxStats = ({
         stats={monthlyRecordedStat}
         isLoaded
         isGeneric
-      >
-        {showPaymentCalculations ? (
-          <Box>
-            <Text fontFamily="heading">Price to be paid to the user:</Text>
-            <chakra.span fontFamily="heading">{calculatePayment(monthlyRecordedStat[0].totalCount)}</chakra.span>
-          </Box>
-        ) : null}
-      </LinearProgressCard>
+      />
     </Box>
   );
 };

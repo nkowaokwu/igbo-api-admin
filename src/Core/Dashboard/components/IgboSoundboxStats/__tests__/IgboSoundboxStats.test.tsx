@@ -76,14 +76,15 @@ describe('IgboSoundboxStats', () => {
   });
 
   it('calculates the expected payment', () => {
-    const count = 100;
-    expect(calculatePayment(count)).toEqual('$2.00');
+    const recordings = 5000;
+    const reviews = 15000;
+    expect(calculatePayment(recordings, reviews)).toEqual('$100.00');
   });
   it('returns no dollars for invalid string input', () => {
     // @ts-expect-error
-    expect(calculatePayment('invalid')).toEqual('$0.00');
+    expect(calculatePayment('invalid'), 1000).toEqual('$0.00');
   });
   it('returns no dollars for invalid NaN input', () => {
-    expect(calculatePayment(parseInt('invalid', 10))).toEqual('$0.00');
+    expect(calculatePayment(parseInt('invalid', 10), 1000)).toEqual('$0.00');
   });
 });
