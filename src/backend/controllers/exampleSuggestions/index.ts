@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { omit, map } from 'lodash';
+import { omit, map, merge } from 'lodash';
 import moment from 'moment';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
@@ -175,7 +175,7 @@ export const getRandomExampleSuggestionsToRecord = async (
       .limit(limit);
 
     const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
-      omit(exampleSuggestion, ['pronunciationsSize', '_id']),
+      omit(merge(exampleSuggestion, { id: exampleSuggestion._id }), ['pronunciationsSize', '_id']),
     );
 
     return await packageResponse({
@@ -185,6 +185,7 @@ export const getRandomExampleSuggestionsToRecord = async (
       query,
     });
   } catch (err) {
+    console.log(err);
     console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }

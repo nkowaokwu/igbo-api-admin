@@ -1,7 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TestContext from 'src/__tests__/components/TestContext';
+import TestContext, { mocks } from 'src/__tests__/components/TestContext';
+import * as reactAdmin from 'react-admin';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import RecordSentenceAudio from '../RecordSentenceAudio';
 
 describe('RecordSentenceAudio', () => {
@@ -36,5 +38,31 @@ describe('RecordSentenceAudio', () => {
       </TestContext>,
     );
     await findByText('igbo 1');
+  });
+
+  it('copies resource link', async () => {
+    jest
+      .spyOn(reactAdmin, 'usePermissions')
+      .mockReturnValue({ loading: false, loaded: true, permissions: { role: UserRoles.CROWDSOURCER } });
+
+    const { findByText, findByLabelText } = render(
+      <TestContext>
+        <RecordSentenceAudio />
+      </TestContext>,
+    );
+    userEvent.click(await findByText('Copy resource link'));
+    expect(mocks.clipboard.writeText).toHaveBeenCalledWith('https://localhost/#/exampleSuggestions/first id/show');
+    userEvent.click(await findByLabelText('Next sentence'));
+    userEvent.click(await findByText('Copy resource link'));
+    expect(mocks.clipboard.writeText).toHaveBeenCalledWith('https://localhost/#/exampleSuggestions/second id/show');
+    userEvent.click(await findByLabelText('Next sentence'));
+    userEvent.click(await findByText('Copy resource link'));
+    expect(mocks.clipboard.writeText).toHaveBeenCalledWith('https://localhost/#/exampleSuggestions/third id/show');
+    userEvent.click(await findByLabelText('Next sentence'));
+    userEvent.click(await findByText('Copy resource link'));
+    expect(mocks.clipboard.writeText).toHaveBeenCalledWith('https://localhost/#/exampleSuggestions/fourth id/show');
+    userEvent.click(await findByLabelText('Next sentence'));
+    userEvent.click(await findByText('Copy resource link'));
+    expect(mocks.clipboard.writeText).toHaveBeenCalledWith('https://localhost/#/exampleSuggestions/fifth id/show');
   });
 });
