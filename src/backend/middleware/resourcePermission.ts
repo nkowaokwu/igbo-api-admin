@@ -3,13 +3,9 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import UserRoles from '../shared/constants/UserRoles';
 
 /* Checks if the provided uid's resources can be accessed by the current requesting user */
-const resourcePermission = (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Response | void => {
-  const { user = {}, query } = req;
-  const uidQuery = query.uid;
+const resourcePermission = (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
+  const { user = {}, query, params } = req;
+  const uidQuery = query.uid || params.uid;
 
   // The requesting user is attempt to access their own resources
   if (uidQuery && user.uid === uidQuery) {
@@ -26,9 +22,7 @@ const resourcePermission = (
     return next();
   }
 
-  return res
-    .status(403)
-    .send({ error: 'Unauthorized. Invalid user permissions to view the requested resource.' });
+  return res.status(403).send({ error: 'Unauthorized. Invalid user permissions to view the requested resource.' });
 };
 
 export default resourcePermission;

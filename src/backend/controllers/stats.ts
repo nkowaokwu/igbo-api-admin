@@ -477,7 +477,7 @@ export const getUserAudioStats = async (
 ): Promise<Response<any> | void> => {
   const {
     mongooseConnection,
-    user: { uid },
+    params: { uid },
   } = req;
   try {
     const ExampleSuggestion = await mongooseConnection.model<Interfaces.ExampleSuggestion>(
