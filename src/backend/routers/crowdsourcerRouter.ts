@@ -106,8 +106,8 @@ crowdsourcerRouter.post(`/${Collection.TEXT_IMAGES}`, validateTextImages, postTe
 // TODO: use the new resourcePermission middleware to only grant
 // access to stats to the user who owns the stats or the admin
 crowdsourcerRouter.get(`/${Collection.STATS}/user`, cacheControl, getUserStats);
-crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/merge`, getUserMergeStats);
-crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/audio`, getUserAudioStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/merge`, resourcePermission, getUserMergeStats);
+crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid/audio`, resourcePermission, getUserAudioStats);
 crowdsourcerRouter.get(`/${Collection.STATS}/users/:uid`, cacheControl, getUserStats);
 
 // Leaderboard
