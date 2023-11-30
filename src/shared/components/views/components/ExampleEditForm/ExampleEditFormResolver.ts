@@ -1,53 +1,48 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 
-export const ExampleEditFormSchema = yup.object().shape({
-  igbo: yup.string().required(),
-  english: yup.string(),
-  meaning: yup.string().optional(),
-  nsibidi: yup.string().optional(),
-  nsibidiCharacters: yup
-    .array()
+export const ExampleEditFormSchema = Joi.object({
+  igbo: Joi.string().required(),
+  english: Joi.string(),
+  meaning: Joi.string().optional(),
+  nsibidi: Joi.string().optional(),
+  nsibidiCharacters: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        id: yup.string(),
+    .items(
+      Joi.object({
+        id: Joi.string(),
       }),
     )
     .optional(),
-  style: yup
-    .object()
-    .shape({
-      value: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ value }) => value)),
-      label: yup.mixed().oneOf(Object.values(ExampleStyle).map(({ label }) => label)),
-    })
-    .required(),
-  associatedWords: yup
-    .array()
+  style: Joi.object({
+    value: Joi.alternatives().try(...Object.values(ExampleStyle).map(({ value }) => value)),
+    label: Joi.alternatives().try(...Object.values(ExampleStyle).map(({ label }) => label)),
+  }).required(),
+  associatedWords: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        id: yup.string(),
+    .items(
+      Joi.object({
+        id: Joi.string(),
       }),
     ),
-  associatedDefinitionsSchemas: yup.array().min(0).of(yup.string()),
-  id: yup.string().optional(),
-  exampleId: yup.string().optional(),
-  originalExampleId: yup.string().nullable().optional(),
-  pronunciations: yup.array().of(
-    yup.object().shape({
-      audio: yup.string(),
-      speaker: yup.string().optional(),
-      approvals: yup.string().optional(),
-      denials: yup.string().optional(),
-      archived: yup.boolean(),
+  associatedDefinitionsSchemas: Joi.array().min(0).items(Joi.string()),
+  id: Joi.string().optional(),
+  exampleId: Joi.string().optional(),
+  originalExampleId: Joi.string().allow(null).optional(),
+  pronunciations: Joi.array().items(
+    Joi.object({
+      audio: Joi.string(),
+      speaker: Joi.string().optional(),
+      approvals: Joi.string().optional(),
+      denials: Joi.string().optional(),
+      archived: Joi.boolean(),
     }),
   ),
 });
 
 const resolver = {
-  resolver: yupResolver(ExampleEditFormSchema),
+  resolver: joiResolver(ExampleEditFormSchema),
 };
 
 export default resolver;

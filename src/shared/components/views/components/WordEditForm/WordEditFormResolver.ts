@@ -1,5 +1,5 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClass from 'src/backend/shared/constants/WordClass';
@@ -7,72 +7,63 @@ import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import { ExampleEditFormSchema } from '../ExampleEditForm/ExampleEditFormResolver';
 
-const schema = yup.object().shape({
-  attributes: yup.object().shape(
+const schema = Joi.object({
+  attributes: Joi.object(
     Object.entries(WordAttributes).reduce(
       (finalAttributes, [, { value }]) => ({
         ...finalAttributes,
         [value]:
           value === WordAttributeEnum.IS_SLANG || value === WordAttributeEnum.IS_CONSTRUCTED_TERM
-            ? yup.boolean().optional()
-            : yup.boolean(),
+            ? Joi.boolean().optional()
+            : Joi.boolean(),
       }),
       {},
     ),
   ),
-  word: yup.string().required(),
-  tags: yup
-    .array()
+  word: Joi.string().required(),
+  tags: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        value: yup.mixed().oneOf(Object.values(WordTagEnum)),
-        label: yup.string(),
+    .items(
+      Joi.object({
+        value: Joi.alternatives().try(...Object.values(WordTagEnum)),
+        label: Joi.string(),
       }),
     ),
-  definitions: yup
-    .array()
+  definitions: Joi.array()
     .min(1)
-    .of(
-      yup.object().shape({
-        wordClass: yup
-          .object()
-          .shape({
-            value: yup.mixed().oneOf(Object.values(WordClass).map(({ value }) => value)),
-            label: yup.mixed().oneOf(Object.values(WordClass).map(({ label }) => label)),
-          })
-          .required(),
-        nsibidi: yup.string().optional(),
-        nsibidiCharacters: yup
-          .array()
+    .items(
+      Joi.object({
+        wordClass: Joi.object({
+          value: Joi.alternatives().try(...Object.values(WordClass).map(({ value }) => value)),
+          label: Joi.alternatives().try(...Object.values(WordClass).map(({ label }) => label)),
+        }).required(),
+        nsibidi: Joi.string().optional(),
+        nsibidiCharacters: Joi.array()
           .min(0)
-          .of(
-            yup.object().shape({
-              id: yup.string(),
+          .items(
+            Joi.object({
+              id: Joi.string(),
             }),
           )
           .optional(),
-        definitions: yup
-          .array()
+        definitions: Joi.array()
           .min(0)
-          .of(
-            yup.object().shape({
-              text: yup.string(),
+          .items(
+            Joi.object({
+              text: Joi.string(),
             }),
           ),
-        igboDefinitions: yup
-          .array()
+        igboDefinitions: Joi.array()
           .min(0)
-          .of(
-            yup.object().shape({
-              igbo: yup.string().optional(),
-              nsibidi: yup.string().optional(),
-              nsibidiCharacters: yup
-                .array()
+          .items(
+            Joi.object({
+              igbo: Joi.string().optional(),
+              nsibidi: Joi.string().optional(),
+              nsibidiCharacters: Joi.array()
                 .min(0)
-                .of(
-                  yup.object().shape({
-                    id: yup.string(),
+                .items(
+                  Joi.object({
+                    id: Joi.string(),
                   }),
                 )
                 .optional(),
@@ -81,61 +72,54 @@ const schema = yup.object().shape({
           .optional(),
       }),
     ),
-  variations: yup
-    .array()
+  variations: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        text: yup.string(),
+    .items(
+      Joi.object({
+        text: Joi.string(),
       }),
     ),
-  dialects: yup
-    .array()
+  dialects: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        dialects: yup.array().min(1).of(yup.string()),
-        variations: yup.array().min(0).of(yup.string()).optional(),
-        pronunciation: yup.string().optional(),
-        word: yup.string(),
+    .items(
+      Joi.object({
+        dialects: Joi.array().min(1).items(Joi.string()),
+        variations: Joi.array().min(0).items(Joi.string()).optional(),
+        pronunciation: Joi.string().optional(),
+        word: Joi.string(),
       }),
     ),
-  tenses: yup
-    .object()
-    .shape(
-      Object.values(Tense).reduce(
-        (finalSchema, tenseValue) => ({
-          ...finalSchema,
-          [tenseValue.value]: yup.string().optional(),
-        }),
-        {},
-      ),
-    )
-    .optional(),
-  stems: yup
-    .array()
+  tenses: Joi.object(
+    Object.values(Tense).reduce(
+      (finalSchema, tenseValue) => ({
+        ...finalSchema,
+        [tenseValue.value]: Joi.string().optional(),
+      }),
+      {},
+    ),
+  ).optional(),
+  stems: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        id: yup.string(),
+    .items(
+      Joi.object({
+        id: Joi.string(),
       }),
     ),
-  relatedTerms: yup
-    .array()
+  relatedTerms: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        id: yup.string(),
+    .items(
+      Joi.object({
+        id: Joi.string(),
       }),
     ),
-  pronunciation: yup.string().optional(),
-  twitterPollId: yup.string().optional(),
-  frequency: yup.number().min(1).max(5),
-  examples: yup.array().min(0).of(ExampleEditFormSchema),
+  pronunciation: Joi.string().optional(),
+  twitterPollId: Joi.string().optional(),
+  frequency: Joi.number().min(1).max(5),
+  examples: Joi.array().min(0).items(ExampleEditFormSchema),
 });
 
 const resolver = (): any => ({
-  resolver: yupResolver(schema),
+  resolver: joiResolver(schema),
 });
 
 export default resolver;

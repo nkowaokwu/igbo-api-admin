@@ -1,31 +1,30 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { joiResolver } from '@hookform/resolvers/joi';
+import Joi from 'joi';
 import NsibidiCharacterAttributes from 'src/backend/shared/constants/NsibidiCharacterAttributes';
 
-const schema = yup.object().shape({
-  nsibidi: yup.string().required(),
-  attributes: yup.object().shape(
+const schema = Joi.object({
+  nsibidi: Joi.string().required(),
+  attributes: Joi.object(
     Object.entries(NsibidiCharacterAttributes).reduce(
       (finalAttributes, [, { value }]) => ({
         ...finalAttributes,
-        [value]: yup.boolean(),
+        [value]: Joi.boolean(),
       }),
       {},
     ),
   ),
-  radicals: yup
-    .array()
+  radicals: Joi.array()
     .min(0)
-    .of(
-      yup.object().shape({
-        id: yup.string(),
+    .items(
+      Joi.object({
+        id: Joi.string(),
       }),
     )
     .optional(),
 });
 
 const resolver = (): any => ({
-  resolver: yupResolver(schema),
+  resolver: joiResolver(schema),
 });
 
 export default resolver;
