@@ -246,26 +246,23 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   // @ts-expect-error
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
   'pronunciations.speaker': { $nin: [string] };
-  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
-} => {
-  console.log(uid);
-  return {
-    merged: null,
-    exampleForSuggestion: { $ne: true },
-    igbo: { $exists: true, $type: 'string' },
-    $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
-    type: SentenceTypeEnum.DATA_COLLECTION,
-    [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
-    updatedAt: { $gte: moment('2023-01-01').toDate() },
-    // Returns an example where the user hasn't approved or denied an audio pronunciation
-    'pronunciations.speaker': { $nin: [uid] },
-    pronunciations: {
-      $elemMatch: {
-        $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
-      },
-    },
-  };
-};
+  // pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
+} => ({
+  merged: null,
+  exampleForSuggestion: { $ne: true },
+  igbo: { $exists: true, $type: 'string' },
+  $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
+  type: SentenceTypeEnum.DATA_COLLECTION,
+  [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
+  updatedAt: { $gte: moment('2023-01-01').toDate() },
+  // Returns an example where the user hasn't approved or denied an audio pronunciation
+  'pronunciations.speaker': { $nin: [uid] },
+  // pronunciations: {
+  //   $elemMatch: {
+  //     $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
+  //   },
+  // },
+});
 
 /**
  * Returns ExampleSuggestion documents that are marked for review
