@@ -42,4 +42,4 @@ export const BULK_UPLOAD_LIMIT = 500;
 /** Calculating payment prices */
 export const PRICE_PER_VERIFIED_RECORDING = 0.02;
 export const PRICE_PER_RECORDING = 0.014;
-export const PRICE_PER_REVIEW = 0.004;
+export const PRICE_PER_REVIEW = 0.014;
