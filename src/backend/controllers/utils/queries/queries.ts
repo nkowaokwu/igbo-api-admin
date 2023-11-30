@@ -11,7 +11,7 @@ import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import LacunaFundExtensionCrowdsourcers from 'src/backend/shared/constants/LacunaFundExtensionCrowdsourcers';
 
-const EXAMPLE_PRONUNCIATION_LIMIT = 3;
+const EXAMPLE_PRONUNCIATION_LIMIT = 1;
 type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
 
 type Filters = {
