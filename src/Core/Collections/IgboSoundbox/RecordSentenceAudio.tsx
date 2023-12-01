@@ -171,8 +171,7 @@ const RecordSentenceAudio = ({
           <chakra.span fontWeight="bold" mr="2">
             Note:
           </chakra.span>
-          Sentence may contain grammatical and spelling errors. Record audio to match the intended pronunciation of each
-          word.
+          Sentence may contain grammatical and spelling errors. Record audio to match the exact spelling of each word.
         </Text>
         <Card text={currentExample.igbo} href={currentExampleHref} />
       </Box>
