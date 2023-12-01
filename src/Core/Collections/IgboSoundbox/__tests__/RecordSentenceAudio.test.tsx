@@ -17,7 +17,7 @@ describe('RecordSentenceAudio', () => {
     await findByText('Play audio and then record audio for each sentence');
     await findByText(
       // eslint-disable-next-line max-len
-      'Sentence may contain grammatical and spelling errors. Record audio to match the intended pronunciation of each word.',
+      'Sentence may contain grammatical and spelling errors. Record audio to match the exact spelling of each word.',
     );
     await findByText('Submit');
   });
