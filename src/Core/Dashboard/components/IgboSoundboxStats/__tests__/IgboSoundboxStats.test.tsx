@@ -7,6 +7,27 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import IgboSoundboxStats, { calculatePayment } from '../IgboSoundboxStats';
 
 describe('IgboSoundboxStats', () => {
+  it('renders the IgboSoundboxStats component', async () => {
+    const { findByText } = render(
+      <TestContext
+        recordingStats={{ recorded: {}, verified: {}, mergedRecorded: {} }}
+        audioStats={{ timestampedAudioApprovals: {}, timestampedAudioDenials: {} }}
+      >
+        <IgboSoundboxStats />
+      </TestContext>,
+    );
+    await findByText('Igbo Soundbox Contributions');
+    await findByText('Community Reviews');
+    await findByText('Contributions that you have made on the platform');
+    await findByText('Other platform contributors reviewing your audio');
+    await findByText('Approved audio recordings');
+    await findByText('Denied audio recordings');
+    await findByText('Previous month');
+    await findByText('Next month');
+    await findByText('Monthly merged recorded audio');
+    await findByText('The number of merged (verified) recorded audio for each month');
+  });
+
   it('render the Igbo soundbox stats component as admin', async () => {
     jest
       .spyOn(reactAdmin, 'usePermissions')
@@ -16,7 +37,14 @@ describe('IgboSoundboxStats', () => {
       verified: { [moment().format('MMM, YYYY')]: 15 },
       mergedRecorded: {},
     };
-    const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };
+    const audioStats = {
+      timestampedAudioApprovals: {
+        [moment().format('MMM, YYYY')]: 20,
+      },
+      timestampedAudioDenials: {
+        [moment().format('MMM, YYYY')]: 25,
+      },
+    };
     const { findByText } = render(
       <TestContext>
         <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
@@ -50,7 +78,14 @@ describe('IgboSoundboxStats', () => {
       verified: { [moment().format('MMM, YYYY')]: 15 },
       mergedRecorded: {},
     };
-    const audioStats = { audioApprovalsCount: 20, audioDenialsCount: 25 };
+    const audioStats = {
+      timestampedAudioApprovals: {
+        [moment().format('MMM, YYYY')]: 20,
+      },
+      timestampedAudioDenials: {
+        [moment().format('MMM, YYYY')]: 25,
+      },
+    };
     const { findByText, queryByText } = render(
       <TestContext>
         <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />

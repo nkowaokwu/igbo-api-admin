@@ -28,7 +28,7 @@ const UserStat = ({
 }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: {}, verified: {}, mergedRecorded: {} });
-  const [audioStats, setAudioStats] = useState({ audioApprovalsCount: 0, audioDenialsCount: 0 });
+  const [audioStats, setAudioStats] = useState({ timestampedAudioApprovals: {}, timestampedAudioDenials: {} });
   const [isLoading, setIsLoading] = useState(true);
   const { permissions } = usePermissions();
   const toast = useToast();
@@ -39,7 +39,12 @@ const UserStat = ({
       try {
         const { uid } = user;
         network(`/stats/users/${uid}`).then(({ json }) => setUserStats(json));
-        network(`/stats/users/${uid}/audio`).then(({ json }) => {
+        network<{
+          json: {
+            timestampedAudioApprovals: { [key: string]: number };
+            timestampedAudioDenials: { [key: string]: number };
+          };
+        }>(`/stats/users/${uid}/audio`).then(({ json }) => {
           setAudioStats(json);
         });
         const { timestampedExampleSuggestions: mergedExampleSuggestion } =
