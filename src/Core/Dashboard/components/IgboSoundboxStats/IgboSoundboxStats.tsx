@@ -38,7 +38,10 @@ const IgboSoundboxStats = ({
     verified: { [key: string]: number };
     mergedRecorded: { [key: string]: number };
   };
-  audioStats: { audioApprovalsCount: number; audioDenialsCount: number };
+  audioStats: {
+    timestampedAudioApprovals: { [key: string]: number };
+    timestampedAudioDenials: { [key: string]: number };
+  };
 }): ReactElement => {
   const permissions = usePermissions();
   const showPaymentCalculations = hasAdminPermissions(permissions?.permissions, true);
@@ -60,17 +63,20 @@ const IgboSoundboxStats = ({
 
   const receivedStats = [
     {
-      totalCount: audioStats.audioApprovalsCount,
+      totalCount: audioStats.timestampedAudioApprovals[currentMonth] || 0,
       goal: GOAL,
       heading: 'Approved audio recordings',
-      description: 'The number of audio recordings that you have recorded that have been approved by others.',
+      description:
+        'The number of audio recordings that you have recorded ' +
+        'that have been approved by at least two other reviewers.',
       leftIcon: <ThumbUpOffAltIcon sx={{ color: 'var(--chakra-colors-green-500)' }} />,
     },
     {
-      totalCount: audioStats.audioDenialsCount,
+      totalCount: audioStats.timestampedAudioDenials[currentMonth] || 0,
       goal: GOAL,
       heading: 'Denied audio recordings',
-      description: 'The number of audio recordings that you have recorded that have been denied by others.',
+      description:
+        'The number of audio recordings that you have recorded that have been denied by at least one other reviewer.',
       leftIcon: <ThumbDownOffAltIcon sx={{ color: 'var(--chakra-colors-red-500)' }} />,
     },
   ];

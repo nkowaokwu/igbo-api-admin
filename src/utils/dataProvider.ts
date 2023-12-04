@@ -6,10 +6,10 @@ import { createAuthorizationHeader } from 'src/shared/utils/request';
 import { API_ROUTE } from '../shared/constants';
 import authProvider from './authProvider';
 
-export const httpClient = async (
+export const httpClient = async <T>(
   url: string,
   options?: { headers?: any; method: string; body?: string | Record<string, unknown> },
-): Promise<any | void> => {
+): Promise<T> => {
   const updatedOptions = assign(options);
   try {
     if (!updatedOptions.headers) {

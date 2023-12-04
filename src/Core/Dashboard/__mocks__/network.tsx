@@ -28,8 +28,8 @@ export default jest.fn(async (url = '') => {
   if (url.startsWith('/stats/users/') && url.endsWith('/audio')) {
     return {
       json: {
-        audioApprovalsCount: 0,
-        audioDenialsCount: 0,
+        timestampedAudioApprovals: {},
+        timestampedAudioDenials: {},
       },
     };
   }

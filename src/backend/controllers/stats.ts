@@ -5,6 +5,7 @@ import moment from 'moment';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
+import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -31,6 +32,14 @@ import Author from '../shared/constants/Author';
 const BYTES_TO_SECONDS = 43800;
 const WORD_SUGGESTION_QUERY_LIMIT = 3000;
 const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
+const TWELVE_WEEKS = 12;
+const threeMonthsAgo = new Date(
+  moment()
+    .subtract(TWELVE_WEEKS - 1, 'weeks')
+    .startOf('week')
+    .toISOString(),
+);
+
 const findStat = async ({ type, authorId = Author.SYSTEM, Stat }) => {
   let stat = await Stat.findOne({ type, authorId });
   if (!stat) {
@@ -367,13 +376,6 @@ export const getUserMergeStats = async (
       params: { uid },
       mongooseConnection,
     } = req;
-    const TWELVE_WEEKS = 12;
-    const threeMonthsAgo = new Date(
-      moment()
-        .subtract(TWELVE_WEEKS - 1, 'weeks')
-        .startOf('week')
-        .toISOString(),
-    );
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
@@ -490,27 +492,47 @@ export const getUserAudioStats = async (
       ExampleSuggestion.find(approvedQuery),
       ExampleSuggestion.find(deniedQuery),
     ]);
-    const audioApprovalsCount = approvedExampleSuggestionAudios.reduce((finalCount, exampleSuggestion) => {
-      let currentCount = finalCount;
-      exampleSuggestion.pronunciations.forEach(({ speaker, approvals }) => {
-        if (speaker === uid && approvals.length === MINIMUM_APPROVALS) {
-          currentCount += 1;
+    const timestampedAudioApprovals = approvedExampleSuggestionAudios.reduce(
+      (finalTimestampedAudioApprovals, exampleSuggestion) => {
+        // Gets the date and month of Example Suggestion
+        const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
+        const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
+
+        if (!finalTimestampedAudioApprovals[exampleSuggestionMonth]) {
+          finalTimestampedAudioApprovals[exampleSuggestionMonth] = 0;
         }
-      });
-      return currentCount;
-    }, 0);
-    const audioDenialsCount = deniedExampleSuggestionAudios.reduce((finalCount, exampleSuggestion) => {
-      let currentCount = finalCount;
-      exampleSuggestion.pronunciations.forEach(({ speaker, denials }) => {
-        if (speaker === uid && denials.length === MINIMUM_DENIALS) {
-          currentCount += 1;
+
+        exampleSuggestion.pronunciations.forEach(({ speaker, approvals }) => {
+          if (speaker === uid && approvals.length === MINIMUM_APPROVALS) {
+            finalTimestampedAudioApprovals[exampleSuggestionMonth] += 1;
+          }
+        });
+        return finalTimestampedAudioApprovals;
+      },
+      {},
+    );
+    const timestampedAudioDenials = deniedExampleSuggestionAudios.reduce(
+      (finalTimestampedAudioDenials, exampleSuggestion) => {
+        // Gets the date and month of Example Suggestion
+        const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
+        const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
+
+        if (!finalTimestampedAudioDenials[exampleSuggestionMonth]) {
+          finalTimestampedAudioDenials[exampleSuggestionMonth] = 0;
         }
-      });
-      return currentCount;
-    }, 0);
+
+        exampleSuggestion.pronunciations.forEach(({ speaker, denials }) => {
+          if (speaker === uid && denials.length === MINIMUM_DENIALS) {
+            finalTimestampedAudioDenials[exampleSuggestionMonth] += 1;
+          }
+        });
+        return finalTimestampedAudioDenials;
+      },
+      {},
+    );
     return res.send({
-      audioApprovalsCount,
-      audioDenialsCount,
+      timestampedAudioApprovals,
+      timestampedAudioDenials,
     });
   } catch (err) {
     return next(err);

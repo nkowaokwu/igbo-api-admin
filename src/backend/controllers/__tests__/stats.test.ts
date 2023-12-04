@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as admin from 'firebase-admin';
 import {
   decrementTotalUserStat,
@@ -183,8 +184,8 @@ describe('Stats', () => {
         mockNext,
       );
       expect(mockRes.send).toBeCalledWith({
-        audioApprovalsCount: 1,
-        audioDenialsCount: 0,
+        timestampedAudioApprovals: { [moment().format('MMM, YYYY')]: 1 },
+        timestampedAudioDenials: {},
       });
       await disconnectDatabase();
     });
@@ -225,8 +226,8 @@ describe('Stats', () => {
         mockNext,
       );
       expect(mockRes.send).toBeCalledWith({
-        audioApprovalsCount: 0,
-        audioDenialsCount: 1,
+        timestampedAudioApprovals: {},
+        timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
       });
       await disconnectDatabase();
     });
@@ -271,8 +272,8 @@ describe('Stats', () => {
         mockNext,
       );
       expect(mockRes.send).toBeCalledWith({
-        audioApprovalsCount: 0,
-        audioDenialsCount: 1,
+        timestampedAudioApprovals: {},
+        timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
       });
       await disconnectDatabase();
     });
@@ -315,7 +316,10 @@ describe('Stats', () => {
 
       const res = await getUserAudioStatsCommand(AUTH_TOKEN.MERGER_AUTH_TOKEN, { token: AUTH_TOKEN.MERGER_AUTH_TOKEN });
       expect(res.status).toEqual(200);
-      expect(res.body).toEqual({ audioApprovalsCount: 0, audioDenialsCount: 1 });
+      expect(res.body).toEqual({
+        timestampedAudioApprovals: {},
+        timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
+      });
     });
 
     it('fetches another user audio stats as admin', async () => {
@@ -344,7 +348,10 @@ describe('Stats', () => {
 
       const res = await getUserAudioStatsCommand(AUTH_TOKEN.MERGER_AUTH_TOKEN);
       expect(res.status).toEqual(200);
-      expect(res.body).toEqual({ audioApprovalsCount: 0, audioDenialsCount: 1 });
+      expect(res.body).toEqual({
+        timestampedAudioApprovals: {},
+        timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
+      });
     });
 
     it('fails to fetch another user audio stats as editor', async () => {
