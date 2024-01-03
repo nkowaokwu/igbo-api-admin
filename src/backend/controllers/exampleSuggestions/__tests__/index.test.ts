@@ -8,6 +8,7 @@ import {
   getTotalRecordedExampleSuggestions,
   getTotalMergedRecordedExampleSuggestions,
   getRandomExampleSuggestionsToReview,
+  postBulkUploadExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
 import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -566,6 +567,35 @@ describe('exampleSuggestions controller', () => {
 
       await getRandomExampleSuggestionsToReview(reqMock, resMock, nextMock);
       expect(resMock.send).toBeCalledWith([]);
+    });
+  });
+
+  describe('Bulk Uploading Example Suggestions', () => {
+    it('bulk uploads 500 example suggestions', async () => {
+      const exampleSentenceData = times(500, (index) => ({
+        igbo: `random-sentence-${index}`,
+      }));
+      const result = times(500, (index) => ({
+        message: 'Success',
+        meta: {
+          sentenceData: `random-sentence-${index}`,
+        },
+        success: true,
+      }));
+      const mongooseConnection = await connectDatabase();
+      const reqMock = {
+        user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
+        body: exampleSentenceData,
+        mongooseConnection,
+      };
+
+      const resMock = {
+        send: jest.fn(),
+        setHeader: jest.fn(),
+      };
+      const nextMock = jest.fn();
+      await postBulkUploadExampleSuggestions(reqMock, resMock, nextMock);
+      expect(resMock.send.mock.calls[0][0]).toMatchObject(result);
     });
   });
 });
