@@ -64,3 +64,6 @@ cypress/videos
 
 # ESLint
 .eslintcache
+
+# NVM
+.nvmrc

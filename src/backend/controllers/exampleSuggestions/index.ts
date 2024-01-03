@@ -191,6 +191,12 @@ export const getRandomExampleSuggestionsToRecord = async (
   }
 };
 
+type BulkUploadResult = {
+  success: boolean;
+  message: string;
+  meta: { sentenceData: string; id?: string };
+}[];
+
 /**
  * Bulk uploads Example Suggestion for data dump
  * @param req Request
@@ -205,36 +211,41 @@ export const postBulkUploadExampleSuggestions = async (
 ): Promise<any | void> => {
   try {
     const { body: data, mongooseConnection } = req;
-
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
 
-    const result = await Promise.all(
-      data.map(async (sentenceData: Interfaces.ExampleClientData) => {
-        const existingExampleSuggestion = await ExampleSuggestion.findOne({
-          igbo: sentenceData.igbo,
-        });
-        if (existingExampleSuggestion) {
-          return {
-            success: false,
-            message: 'There is an example suggestion with identical Igbo text',
-            meta: { sentenceData },
-          };
-        }
-        const exampleSuggestion = new ExampleSuggestion({
-          ...sentenceData,
-          type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
-        });
-        const savedExampleSuggestion = await exampleSuggestion.save();
-        return {
-          success: true,
-          message: 'Success',
-          meta: { sentenceData, id: savedExampleSuggestion._id },
-        };
-      }),
-    );
+    const rawClientIgboSentences = data.map(({ igbo }) => igbo);
+    const existingExampleSuggestions = await ExampleSuggestion.find({ igbo: { $in: rawClientIgboSentences } });
+    const rawExistingExampleSuggestions = existingExampleSuggestions.map(({ igbo }) => igbo);
+
+    // Separate duplicated vs unique example sentences from UI
+    const duplicatedExampleSuggestions = data.filter(({ igbo }) => rawExistingExampleSuggestions.includes(igbo));
+    const uniqueExampleSuggestions = data.filter(({ igbo }) => !rawExistingExampleSuggestions.includes(igbo));
+
+    const preparedExampleSuggestions = uniqueExampleSuggestions.map((sentenceData: Interfaces.ExampleClientData) => ({
+      ...sentenceData,
+      type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
+    }));
+    // Bulk inserts all the example sentences
+    const bulkInsertedExampleSuggestions = await ExampleSuggestion.insertMany(preparedExampleSuggestions);
+
+    // Creates the result object to show detailed status to UI about success/failure while
+    // bulk uploading
+    const result: BulkUploadResult = bulkInsertedExampleSuggestions.map(({ _id, igbo }) => ({
+      success: true,
+      message: 'Success',
+      meta: { sentenceData: igbo, id: _id },
+    }));
+
+    duplicatedExampleSuggestions.forEach(({ igbo }) => {
+      result.push({
+        success: false,
+        message: 'There is an example suggestion with identical Igbo text',
+        meta: { sentenceData: igbo },
+      });
+    });
 
     return res.send(result);
   } catch (err) {
