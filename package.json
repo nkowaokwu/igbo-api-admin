@@ -56,7 +56,7 @@
     "precommit": "lint-staged"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=16"
   },
   "author": "",
   "husky": {
