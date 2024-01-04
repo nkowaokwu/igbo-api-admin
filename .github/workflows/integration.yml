@@ -25,11 +25,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
-          node-version: '18'
+          node-version: '16'
       - name: Install Project Dependencies 🛠
         run: |
           yarn install
-          npm install -g firebase-tools
+          npm install -g firebase-tools@12.9.1
       - name: Log into Docker Account 🐳
         run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
       - name: Run Igbo API Docker Instance 🇳🇬
