@@ -64,6 +64,7 @@ const DataDump = (): ReactElement => {
   const [sentenceType, setSentenceType] = useState<SentenceTypeEnum>(SentenceTypeEnum.DATA_COLLECTION);
   const [suggestionSource, setSuggestionSource] = useState<SuggestionSourceEnum>(SuggestionSourceEnum.INTERNAL);
   const [totalSentences, setTotalSentences] = useState(-1);
+  const [isUploading, setIsUploading] = useState(false);
   const toast = useToast();
   const isDataPresent = textareaValue.length || fileData?.length;
   const action = {
@@ -71,6 +72,11 @@ const DataDump = (): ReactElement => {
     content:
       `Are you sure you want to upload ${totalSentences} example suggestions at once? ` +
       'This will take a few minutes to complete.',
+    executeAction: async ({ data, onProgressSuccess, onProgressFailure }) => {
+      setIsUploading(true);
+      await actionsMap.BulkUploadExamples.executeAction({ data, onProgressSuccess, onProgressFailure });
+      setIsUploading(false);
+    },
   };
 
   const handleExampleDocumentType = (event) => {
@@ -226,7 +232,7 @@ const DataDump = (): ReactElement => {
           onProgressSuccess,
         }}
       />
-      <Box className="space-y-3">
+      <Box className="space-y-3 p-4">
         <Heading>Bulk Upload Sentences</Heading>
         <Text fontFamily="Silka">
           {`This page expects a list of newline-separated sentences that
@@ -266,7 +272,7 @@ const DataDump = (): ReactElement => {
                   }
                 >
                   <Box className="w-full lg:w-4/12">
-                    <Button colorScheme="green" type="submit" isDisabled={!isDataPresent}>
+                    <Button colorScheme="green" type="submit" isDisabled={!isDataPresent} isLoading={isUploading}>
                       Bulk upload sentences
                     </Button>
                   </Box>

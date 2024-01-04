@@ -37,7 +37,7 @@ export const PROVERBS_GOAL = 4000;
 export const TOTAL_EXAMPLE_AUDIO_GOAL = 2000;
 export const TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL = 100;
 
-export const BULK_UPLOAD_LIMIT = 500;
+export const BULK_UPLOAD_LIMIT = 100;
 
 /** Calculating payment prices */
 export const PRICE_PER_VERIFIED_RECORDING = 0.02;
