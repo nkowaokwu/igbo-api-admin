@@ -22,10 +22,10 @@ jobs:
     steps:
       - name: Checkout Igbo API Admin Code 🛎
         uses: actions/checkout@v2
-      - name: Use Node.js 16.20.1
+      - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
-          node-version: '16.20.1'
+          node-version: '18'
       - name: Install Project Dependencies 🛠
         run: |
           yarn install

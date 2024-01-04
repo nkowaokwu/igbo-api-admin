@@ -691,7 +691,6 @@ describe('MongoDB Example Suggestions', () => {
       );
       const randomExampleSuggestionsRes = await getRandomExampleSuggestionsToReview();
       expect(randomExampleSuggestionsRes.status).toEqual(200);
-      console.log('hihi', randomExampleSuggestionsRes.body);
       const reviewedExampleSuggestions: {
         id: string;
         reviews: { [key: string]: ReviewActions };
@@ -709,7 +708,6 @@ describe('MongoDB Example Suggestions', () => {
         );
         return { id, reviews };
       });
-      console.log('sanity', reviewedExampleSuggestions);
       const updatedRandomExampleSuggestionRes = await putReviewForRandomExampleSuggestions(reviewedExampleSuggestions);
       expect(updatedRandomExampleSuggestionRes.status).toEqual(200);
       await Promise.all(
