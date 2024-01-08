@@ -23,9 +23,9 @@ exampleSuggestions.forEach((exampleSuggestion) => {
   }
 });
 
-console.log(exampleSuggestions.length);
-console.log(deDuppedExampleSuggestions.length);
-console.log(duppedExampleSuggestions.length);
+// console.log(exampleSuggestions.length);
+// console.log(deDuppedExampleSuggestions.length);
+// console.log(duppedExampleSuggestions.length);
 
 fs.writeFileSync('./cleaned-example-suggestions.json', JSON.stringify(deDuppedExampleSuggestions), {
   encoding: 'utf-8',

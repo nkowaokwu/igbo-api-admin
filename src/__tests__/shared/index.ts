@@ -47,8 +47,8 @@ export const setUpTestEnvironment = (): { initializedAdminApp: admin.app.App } =
 
   connectFirestoreEmulator(db, 'localhost', firebaseConfig.emulators.firestore.port);
   connectFunctionsEmulator(functions, 'localhost', firebaseConfig.emulators.functions.port);
-  console.log(`Testing Firestore Emulator at localhost:${firebaseConfig.emulators.firestore.port}`);
-  console.log(`Testing Functions Emulator at localhost:${firebaseConfig.emulators.functions.port}`);
+  // console.log(`Testing Firestore Emulator at localhost:${firebaseConfig.emulators.firestore.port}`);
+  // console.log(`Testing Functions Emulator at localhost:${firebaseConfig.emulators.functions.port}`);
 
   return { initializedAdminApp };
 };

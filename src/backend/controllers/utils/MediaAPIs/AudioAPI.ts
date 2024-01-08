@@ -41,10 +41,8 @@ export const createAudioPronunciation = (id: string, pronunciationData: string):
         const data = await s3
           .headObject(pick(params, ['Bucket', 'Key']))
           .promise()
-          .catch((err) => {
-            console.log(`Unable to to get head of S3 object: ${err.message}`, params);
-            return resolve(Location);
-          });
+          // console.log(`Unable to to get head of S3 object: ${err.message}`, params);
+          .catch(() => resolve(Location));
         if (data && typeof data.ContentLength === 'number') {
           await handleAudioPronunciation({ key: params.Key, size: data.ContentLength, event: AudioEventType.POST });
         } else {

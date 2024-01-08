@@ -745,7 +745,7 @@ describe('MongoDB Example Suggestions', () => {
         expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       });
       const verifiedRes = await getTotalReviewedExampleSuggestions();
-      console.log(verifiedRes.body);
+      // console.log(verifiedRes.body);
       expect(
         verifiedRes.body.timestampedReviewedExampleSuggestions[moment().format('MMM, YYYY')],
       ).toBeGreaterThanOrEqual(2);

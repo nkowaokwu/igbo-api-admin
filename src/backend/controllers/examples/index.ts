@@ -141,7 +141,7 @@ const handleSendingMergedEmail = async (result, mongooseConnection): Promise<voi
       }
     }
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
   }
 };
 

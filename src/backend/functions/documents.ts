@@ -33,7 +33,7 @@ export const onRequestDeleteDocument = functions.https.onCall(
       });
       return { redirect: false };
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },
@@ -113,11 +113,11 @@ export const onUpdateDocument = functions.https.onCall(
         //   editorsNotes: record.editorsNotes,
         // });
       } else {
-        console.log('No one to send to:', to);
+        // console.log('No one to send to:', to);
       }
       return { redirect: false };
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return err;
     }
   },

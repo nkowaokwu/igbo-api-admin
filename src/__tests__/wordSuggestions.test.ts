@@ -710,7 +710,7 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.status).toEqual(200);
       const result = await deleteOldWordSuggestions();
       expect(result.status).toEqual(200);
-      console.log(result.body);
+      // console.log(result.body);
     });
   });
 
@@ -804,7 +804,7 @@ describe('MongoDB Word Suggestions', () => {
       }));
       const res = await putRandomWordSuggestions(igboDefinitions);
       expect(res.status).toEqual(200);
-      console.log(res.body);
+      // console.log(res.body);
       expect(res.body.length).toEqual(4);
       await Promise.all(
         res.body.map(async (id, index) => {

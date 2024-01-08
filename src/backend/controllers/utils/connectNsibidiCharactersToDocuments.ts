@@ -32,19 +32,24 @@ export const connectNsibidiCharactersToDocuments = async ({
           await Word.updateMany(
             { nsibidi: { $regex: nsibidi }, 'definitions.$.nsibidiCharacters': { $nin: [objectId] } },
             { $push: { nsibidiCharacters: id } },
-          ).catch(() => console.log('Unable to update Word document while attaching Nsibidi Character')),
+          ).catch(() => /* console.log('Unable to update Word document while attaching Nsibidi Character') */ null),
           await WordSuggestion.updateMany(
             { nsibidi: { $regex: nsibidi }, 'definitions.$.nsibidiCharacters': { $nin: [objectId] } },
             { $push: { nsibidiCharacters: id } },
-          ).catch(() => console.log('Unable to update WordSuggestion document while attaching Nsibidi Character')),
+          ).catch(
+            () => /* console.log('Unable to update WordSuggestion document while attaching Nsibidi Character') */ null,
+          ),
           await Example.updateMany(
             { nsibidi: { $regex: nsibidi }, nsibidiCharacters: { $nin: [objectId] } },
             { $push: { nsibidiCharacters: id } },
-          ).catch(() => console.log('Unable to update Example document while attaching Nsibidi Character')),
+          ).catch(() => /* console.log('Unable to update Example document while attaching Nsibidi Character') */ null),
           await ExampleSuggestion.updateMany(
             { nsibidi: { $regex: nsibidi }, nsibidiCharacters: { $nin: [objectId] } },
             { $push: { nsibidiCharacters: id } },
-          ).catch(() => console.log('Unable to update ExampleSuggestion document while attaching Nsibidi Character')),
+          ).catch(
+            () =>
+              /* console.log('Unable to update ExampleSuggestion document while attaching Nsibidi Character') */ null,
+          ),
         ],
       );
     }),

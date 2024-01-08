@@ -67,7 +67,7 @@ const FilePicker = ({
   const handleFile = async (file: File, index: number): Promise<FileDataType | null> => {
     try {
       if (!file) {
-        console.log('Failed to get file');
+        // console.log('Failed to get file');
       }
       if (index >= fileLimit) {
         return null;

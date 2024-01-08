@@ -40,8 +40,8 @@ const createRecaptchaVerifier = () =>
     'recaptcha-container',
     {
       size: 'invisible',
-      callback: (response) => {
-        console.log('prepared phone auth process', response);
+      callback: (/* response */) => {
+        // console.log('prepared phone auth process', response);
       },
     },
     auth,
@@ -212,7 +212,7 @@ const LoginModal = ({
             });
           } catch (err) {
             const message = 'Unable to sign in user';
-            console.log(message, err);
+            // console.log(message, err);
             toast({
               title: 'An error occurred',
               description: message,

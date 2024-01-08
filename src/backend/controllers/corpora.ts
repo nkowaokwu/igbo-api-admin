@@ -4,26 +4,22 @@ import { assign, omit } from 'lodash';
 import { corpusSchema } from 'src/backend/models/Corpus';
 import { corpusSuggestionSchema } from 'src/backend/models/CorpusSuggestion';
 import { renameMedia } from 'src/backend/controllers/utils/MediaAPIs/CorpusMediaAPI';
-import {
-  sortDocsBy,
-  packageResponse,
-  handleQueries,
-  updateDocumentMerge,
-} from './utils';
+import { sortDocsBy, packageResponse, handleQueries, updateDocumentMerge } from './utils';
 import * as Interfaces from './utils/interfaces';
 import { findCorporaWithMatch } from './utils/buildDocs';
 import { searchCorpusTextSearch } from './utils/queries';
 
 /* Searches for a corpus within MongoDB */
-const searchCorpus = async (
-  {
-    query,
-    searchWord,
-    mongooseConnection,
-    ...rest
-  }:
-  { query: any, searchWord: string, mongooseConnection: Connection },
-): Promise<Interfaces.Word[]> => {
+const searchCorpus = async ({
+  query,
+  searchWord,
+  mongooseConnection,
+  ...rest
+}: {
+  query: any;
+  searchWord: string;
+  mongooseConnection: Connection;
+}): Promise<Interfaces.Word[]> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
   const corpora: Interfaces.Word[] = await findCorporaWithMatch({ match: query, Corpus, ...rest });
   ({ match: query, ...rest });
@@ -88,13 +84,12 @@ export const getCorpus = async (
       match: { _id: mongoose.Types.ObjectId(id) },
       limit: 1,
       Corpus,
-    })
-      .then(async ([corpus]: Interfaces.Corpus[]) => {
-        if (!corpus) {
-          throw new Error('No corpus exists with the provided id.');
-        }
-        return corpus;
-      });
+    }).then(async ([corpus]: Interfaces.Corpus[]) => {
+      if (!corpus) {
+        throw new Error('No corpus exists with the provided id.');
+      }
+      return corpus;
+    });
     return res.send(updatedCorpus);
   } catch (err) {
     return next(err);
@@ -111,13 +106,12 @@ const findAndUpdateCorpus = (
   }
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
-  return Corpus.findById(id)
-    .then(async (corpus: Interfaces.Corpus) => {
-      if (!corpus) {
-        throw new Error('Corpus doesn\'t exist');
-      }
-      return cb(assign(corpus));
-    });
+  return Corpus.findById(id).then(async (corpus: Interfaces.Corpus) => {
+    if (!corpus) {
+      throw new Error("Corpus doesn't exist");
+    }
+    return cb(assign(corpus));
+  });
 };
 
 /* Updates a Corpus document in the database */
@@ -127,7 +121,11 @@ export const putCorpus = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { body: data, params: { id }, mongooseConnection } = req;
+    const {
+      body: data,
+      params: { id },
+      mongooseConnection,
+    } = req;
     const savedCorpus: Interfaces.Corpus = await findAndUpdateCorpus(id, mongooseConnection, (corpus) => {
       const updatedCorpus = assign(corpus, data);
       return updatedCorpus.save();
@@ -167,8 +165,8 @@ const overwriteCorpusPronunciation = async (
     const savedCorpus = await corpus.save();
     return savedCorpus;
   } catch (err) {
-    console.log('An error while merging media failed:', err.message);
-    console.log('Deleting the associated corpus document to avoid producing duplicates');
+    // console.log('An error while merging media failed:', err.message);
+    // console.log('Deleting the associated corpus document to avoid producing duplicates');
     await corpus.delete();
     throw err;
   }
@@ -190,7 +188,7 @@ const mergeIntoCorpus = (
   )
     .then(async (updatedCorpus: Interfaces.Corpus) => {
       if (!updatedCorpus) {
-        throw new Error('Corpus doesn\'t exist');
+        throw new Error("Corpus doesn't exist");
       }
 
       await overwriteCorpusPronunciation(suggestionDoc, updatedCorpus, mongooseConnection);
@@ -204,11 +202,10 @@ const mergeIntoCorpus = (
 
 /* Creates Corpus documents in MongoDB database */
 export const createCorpus = async (
-  data: (
-    Interfaces.CorpusClientData
+  data:
+    | Interfaces.CorpusClientData
     | Interfaces.CorpusSuggestion
-    | LeanDocument<Document<Interfaces.CorpusClientData | Interfaces.CorpusSuggestion>>
-  ),
+    | LeanDocument<Document<Interfaces.CorpusClientData | Interfaces.CorpusSuggestion>>,
   mongooseConnection: Connection,
 ): Promise<Document<Interfaces.Corpus>> => {
   const Corpus = mongooseConnection.model('Corpus', corpusSchema);
@@ -222,7 +219,7 @@ const createCorpusFromSuggestion = (
   corpusSuggestion: Interfaces.CorpusSuggestion,
   mergedBy: string,
   mongooseConnection: Connection,
-): Promise<Document<Interfaces.Corpus> | void> => (
+): Promise<Document<Interfaces.Corpus> | void> =>
   createCorpus(corpusSuggestion.toObject(), mongooseConnection)
     .then(async (corpus: Document<Interfaces.Corpus>) => {
       const updatedPronunciationsWord = await overwriteCorpusPronunciation(
@@ -235,8 +232,7 @@ const createCorpusFromSuggestion = (
     })
     .catch((err) => {
       throw new Error(`An error occurred while saving the new corpus: ${err.message}`);
-    })
-);
+    });
 
 /* Merges the existing CorpusSuggestion into either a brand
  * new Corpus document or merges into an existing Corpus document */
@@ -249,11 +245,10 @@ export const mergeCorpus = async (
     const { user, mongooseConnection } = req;
     const suggestionDoc = req.suggestionDoc as Interfaces.CorpusSuggestion;
 
-    const mergedCorpus: Document<Interfaces.Corpus> | any = (
-      suggestionDoc.originalCorpusId
+    const mergedCorpus: Document<Interfaces.Corpus> | any =
+      (suggestionDoc.originalCorpusId
         ? await mergeIntoCorpus(suggestionDoc, user.uid, mongooseConnection)
-        : await createCorpusFromSuggestion(suggestionDoc, user.uid, mongooseConnection)
-    ) || {};
+        : await createCorpusFromSuggestion(suggestionDoc, user.uid, mongooseConnection)) || {};
     return res.send(mergedCorpus);
   } catch (err) {
     return next(err);

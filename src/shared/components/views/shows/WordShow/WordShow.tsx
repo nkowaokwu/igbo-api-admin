@@ -108,9 +108,9 @@ const WordShow = (props: ShowProps): ReactElement => {
     (async () => {
       try {
         const originalWord: Interfaces.Word | null = record?.originalWordId
-          ? await getWord(record.originalWordId).catch((err) => {
+          ? await getWord(record.originalWordId).catch(() => {
               // Unable to retrieve word
-              console.log(err);
+              // console.log(err);
             })
           : null;
         if (originalWord) {
@@ -123,7 +123,7 @@ const WordShow = (props: ShowProps): ReactElement => {
         setOriginalWordRecord(originalWord);
         setDiffRecord(differenceRecord);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       } finally {
         setIsLoading(false);
       }

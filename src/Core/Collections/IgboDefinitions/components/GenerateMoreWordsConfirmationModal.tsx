@@ -56,7 +56,7 @@ const GenerateMoreWordsConfirmationModal = ({
                 colorScheme="blue"
                 mr={3}
                 onClick={() => {
-                  console.log(`Creating ${limit} new word suggestions without Igbo definitions`);
+                  // console.log(`Creating ${limit} new word suggestions without Igbo definitions`);
                   onClose(limit);
                 }}
                 isDisabled={!limit}

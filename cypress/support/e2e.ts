@@ -4,8 +4,8 @@ import './commands';
 configure({ testIdAttribute: 'data-test' });
 
 Cypress.on('uncaught:exception', (err) => {
-  console.log(err.message);
-  console.log(err.stack);
+  // console.log(err.message);
+  // console.log(err.stack);
   return false;
 });
 

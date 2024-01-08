@@ -153,7 +153,7 @@ export const getUser = async (
     const user = await findUser(uid);
     return res.status(200).send(user);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return next(new Error('An error occurred while grabbing a single user'));
   }
 };
@@ -201,7 +201,7 @@ export const getUserProfile = async (
 
     return res.status(200).send(userProfile);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return next(new Error(`An error occurred while getting the user profile: ${err.message}`));
   }
 };

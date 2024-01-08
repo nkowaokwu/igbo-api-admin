@@ -40,7 +40,7 @@ const removeDeniedAudio = async (rawExampleSuggestion: ExampleSuggestion) => {
               await sendAudioPronunciationDeletionNotification(data);
             }
           } catch (err) {
-            console.log(err);
+            // console.log(err);
             console.error('Unable to send audio pronunciation deletion notification email');
           }
 

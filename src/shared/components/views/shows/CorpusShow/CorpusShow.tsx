@@ -51,15 +51,15 @@ const CorpusShow = (props: ShowProps): ReactElement => {
     (async () => {
       try {
         const originalWord = record?.originalWordId
-          ? await getWord(record.originalWordId).catch((err) => {
+          ? await getWord(record.originalWordId).catch(() => {
               // Unable to retrieve word
-              console.log(err);
+              // console.log(err);
             })
           : null;
         const differenceRecord = diff(originalWord, record, (_, key) => DIFF_FILTER_KEYS.indexOf(key) > -1);
         setDiffRecord(differenceRecord);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       } finally {
         setIsLoading(false);
       }

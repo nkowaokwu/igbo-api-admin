@@ -84,7 +84,7 @@ const RecordSentenceAudio = ({
         isClosable: true,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       toast({
         title: 'Unable to save points',
         position: 'top-right',
@@ -94,7 +94,7 @@ const RecordSentenceAudio = ({
         duration: 4000,
         isClosable: true,
       });
-      console.log('Unable to submit audio', err);
+      // console.log('Unable to submit audio', err);
     } finally {
       setIsLoading(false);
     }

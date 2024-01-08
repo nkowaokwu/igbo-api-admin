@@ -39,8 +39,8 @@ export const getNsibidiCharacters = (
           ...rest,
         }),
       )
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning Nsịbịdị characters, double check your provided data');
       });
   } catch (err) {

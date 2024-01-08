@@ -136,8 +136,8 @@ describe('nestedExampleSuggestionUtils', () => {
       originalWord: { ...wordSuggestionData, id: mergedWordRes.body.id, toObject: jest.fn() },
       mergedBy: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
       mongooseConnection,
-    }).catch((err) => {
-      console.log(err.message);
+    }).catch(() => {
+      // console.log(err.message);
     });
   });
 });

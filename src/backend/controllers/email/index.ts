@@ -29,10 +29,8 @@ export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void>
   process.env.NODE_ENV !== 'test'
     ? sgMail
         .send(message)
-        .then(() => {
-          console.log('Email successfully sent.');
-          return true;
-        })
+        // console.log('Email successfully sent.');
+        .then(() => true)
         .catch((err) => {
           console.trace('sendEmail error:', err.response?.body || err.message);
           if (process.env.NODE_ENV !== 'production') {
@@ -44,7 +42,7 @@ export const sendEmail = (message: Interfaces.ConstructedMessage): Promise<void>
         if (!message.to || !message.to.length) {
           throw new Error("'to' field must be defined");
         }
-        console.log('Email successfully sent.');
+        // console.log('Email successfully sent.');
         return Promise.resolve(true);
       })();
 

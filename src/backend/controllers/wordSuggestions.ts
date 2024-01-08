@@ -79,19 +79,15 @@ export const postWordSuggestion = async (
     const { body: rawData, word, user, mongooseConnection } = req;
     const data = rawData;
 
-    try {
-      const savedWordSuggestion = await createWordSuggestion({
-        data,
-        word,
-        user,
-        mongooseConnection,
-      });
-      return res.send(savedWordSuggestion);
-    } catch (error) {
-      console.log('An error occurred while posting new word suggestion:', error.message);
-      console.log('Deleting the associated word document to avoid producing duplicates');
-      throw error;
-    }
+    const savedWordSuggestion = await createWordSuggestion({
+      data,
+      word,
+      user,
+      mongooseConnection,
+    });
+    return res.send(savedWordSuggestion);
+    // console.log('An error occurred while posting new word suggestion:', error.message);
+    // console.log('Deleting the associated word document to avoid producing duplicates');
   } catch (err) {
     return next(err);
   }
@@ -207,7 +203,7 @@ export const getWordSuggestions = (
     const regexMatch = searchPreExistingWordSuggestionsRegexQuery(user.uid, regexKeyword, filters);
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
-    console.time('Get word suggestions');
+    // console.time('Get word suggestions');
     return findWordSuggestions({
       regexMatch,
       skip,
@@ -221,7 +217,7 @@ export const getWordSuggestions = (
             placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection),
           ),
         );
-        console.timeEnd('Get word suggestions');
+        // console.timeEnd('Get word suggestions');
         return packageResponse({
           res,
           docs: wordSuggestionsWithExamples,
@@ -313,11 +309,11 @@ export const deleteWordSuggestionData = async ({
       deleteAudioPronunciation(`${id}-${dialectalWordId}`, dialectPronunciationMp3);
     }),
   );
-  const { email: userEmail } = (await findUser(wordSuggestion.authorId).catch((err) => {
-    console.log("THe user doesn't exist.");
-    console.log(err);
-    return { email: null };
-  })) as Interfaces.FormattedUser;
+  const { email: userEmail } = (await findUser(wordSuggestion.authorId).catch(() => ({
+    // console.log("THe user doesn't exist.");
+    // console.log(err);
+    email: null,
+  }))) as Interfaces.FormattedUser;
   /* Sends rejection email to user if they provided an email and the wordSuggestion isn't merged */
   if (userEmail && !wordSuggestion.merged) {
     sendRejectedEmail({
