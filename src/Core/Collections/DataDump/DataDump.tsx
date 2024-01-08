@@ -108,8 +108,8 @@ const DataDump = (): ReactElement => {
   };
 
   const onProgressFailure = (message) => {
-    const { response } = message;
-    console.log('Failure message:', response.data);
+    // const { response } = message;
+    // console.log('Failure message:', response.data);
     const updatedFailures = [...failures];
     updatedFailures.push(message);
     setFailures(updatedFailures);
@@ -175,7 +175,7 @@ const DataDump = (): ReactElement => {
         }, []);
         setFileData(finalFinalData);
       } else {
-        console.log('Invalid file uploaded');
+        // console.log('Invalid file uploaded');
       }
     }
   };

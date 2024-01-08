@@ -53,10 +53,10 @@ export const copyMedia = async (oldDocId: string, newDocId: string): Promise<any
     const copiedMediaUri = `${uriPath}/${newMediaId}`;
     return copiedMediaUri;
   } catch (err) {
-    console.log(
+    /* console.log(
       `Error occurred while copying media: ${err.message} with ` +
         `ids of oldDocId: ${oldMediaId} and newDocId: ${newMediaId}`,
-    );
+    ); */
     return null;
   }
 };
@@ -101,15 +101,11 @@ export const renameMedia = async (oldDocId: string, newDocId: string): Promise<a
     return '';
   }
 
-  try {
-    const renamedMediaUri = await copyMedia(oldDocId, newDocId);
-    await deleteMedia(oldDocId);
+  const renamedMediaUri = await copyMedia(oldDocId, newDocId);
+  await deleteMedia(oldDocId);
 
-    return renamedMediaUri;
-  } catch (err) {
-    console.log('Error caught in renameMedia', err.message);
-    throw err;
-  }
+  return renamedMediaUri;
+  // console.log('Error caught in renameMedia', err.message);
 };
 
 /* Generates a URL of uploaded media from the frontend for Corpus Suggestion */

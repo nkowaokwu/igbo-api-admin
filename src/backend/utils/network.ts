@@ -1,12 +1,12 @@
 import axios, { Method } from 'axios';
 import { Request } from 'express';
 import querystring from 'querystring';
-import { upperCase } from 'lodash';
+// import { upperCase } from 'lodash';
 import Collections from 'src/shared/constants/Collection';
 import { CI, IGBO_API_ROOT, GET_MAIN_KEY } from 'src/backend/config';
 
-const logger = (req, method, path, collection) => {
-  console.log(`${upperCase(method)} - ${IGBO_API_ROOT}/${collection}${path}?${querystring.stringify(req.query)}`);
+const logger = (/* req, method, path, collection */) => {
+  // console.log(`${upperCase(method)} - ${IGBO_API_ROOT}/${collection}${path}?${querystring.stringify(req.query)}`);
 };
 
 export default async (
@@ -23,6 +23,7 @@ export default async (
 ): Promise<any> => {
   const { accept, connection, referer, pragma, authorization, origin } = req.headers;
   if (!process.env.CI) {
+    // @ts-expect-error
     logger(req, method, path, collection);
   }
   return axios({
@@ -39,8 +40,9 @@ export default async (
       'X-API-Key': GET_MAIN_KEY(),
     },
     data: req.body || {},
-  }).catch((error) => {
-    console.log('Network Error:', error.response?.data?.error);
-    return error.response;
-  });
+  }).catch(
+    (error) =>
+      // console.log('Network Error:', error.response?.data?.error);
+      error.response,
+  );
 };

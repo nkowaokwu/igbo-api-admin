@@ -118,7 +118,7 @@ export const onUpdatePermissions = functions.https.onCall(async (data: UpdatePer
     await sendUpdatedRoleNotification({ to: [email], role, displayName });
   } catch (err) {
     console.trace(err);
-    console.log('Unable to send update role notification email');
+    // console.log('Unable to send update role notification email');
   }
   return Promise.resolve(`Updated user ${uid} permissions to ${role}`);
 });

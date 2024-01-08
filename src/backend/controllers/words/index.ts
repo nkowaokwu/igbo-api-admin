@@ -249,7 +249,7 @@ const overwriteWordPronunciation = async (
           wordDialectPronunciationKey,
           isMp3,
         ).catch((err) => {
-          console.log('Inside overwriteWordPronunciation dialects', err.message);
+          // console.log('Inside overwriteWordPronunciation dialects', err.message);
           throw err;
         });
 
@@ -269,8 +269,8 @@ const overwriteWordPronunciation = async (
     // TODO: audio ids for dialects will use a different schema id since they change on each save
     return { suggestion, word };
   } catch (err) {
-    console.log('An error occurred while merging audio pronunciations failed:', err.message);
-    console.log('Deleting the associated word document to avoid producing duplicates');
+    // console.log('An error occurred while merging audio pronunciations failed:', err.message);
+    // console.log('Deleting the associated word document to avoid producing duplicates');
     await word.delete();
     throw err;
   }
@@ -341,7 +341,7 @@ const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> 
       });
     }
   } catch (err) {
-    console.log(err.message);
+    // console.log(err.message);
   }
 };
 

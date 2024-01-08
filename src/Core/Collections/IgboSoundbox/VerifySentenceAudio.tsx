@@ -94,7 +94,7 @@ const VerifySentenceAudio = ({
         isClosable: true,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       toast({
         title: 'Unable to save points',
         position: 'top-right',

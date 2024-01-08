@@ -36,11 +36,11 @@ const LabelStudioReact = ({
   annotations,
   onSubmit,
   onUpdate,
-} : {
-  data: string,
-  annotations: any[],
-  onSubmit: (value: any) => void,
-  onUpdate: (value: any) => void,
+}: {
+  data: string;
+  annotations: any[];
+  onSubmit: (value: any) => void;
+  onUpdate: (value: any) => void;
 }): ReactElement => {
   const labelStudioContainerRef = useRef();
   const auth = getAuth();
@@ -74,12 +74,12 @@ const LabelStudioReact = ({
     });
     labelStudio.on('submitAnnotation', (LS, annotation) => {
       // Retrieve an annotation in JSON format
-      console.log(annotation.serializeAnnotation());
+      // console.log(annotation.serializeAnnotation());
       const annotations = cleanAnnotations(annotation);
       onSubmit(annotations);
     });
     labelStudio.on('updateAnnotation', (LS, annotation) => {
-      console.log(annotation.serializeAnnotation());
+      // console.log(annotation.serializeAnnotation());
       const annotations = cleanAnnotations(annotation);
       onUpdate(annotations);
     });
@@ -87,10 +87,7 @@ const LabelStudioReact = ({
 
   return (
     <>
-      <div
-        id="label-studio"
-        ref={labelStudioContainerRef}
-      />
+      <div id="label-studio" ref={labelStudioContainerRef} />
     </>
   );
 };

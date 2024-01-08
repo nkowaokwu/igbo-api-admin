@@ -21,7 +21,7 @@ const handleExampleSuggestionAudioPronunciations = async ({
 
     // Delete the old audio pronunciations
     if (deletePronunciations.length) {
-      console.log('Deleting the following example suggestions audio:', deletePronunciations);
+      // console.log('Deleting the following example suggestions audio:', deletePronunciations);
       await Promise.all(
         deletePronunciations.map(async ({ audio: deleteAudio }) => {
           const isAudioMp3 = isPronunciationMp3(deleteAudio);

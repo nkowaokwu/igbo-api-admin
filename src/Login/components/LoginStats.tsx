@@ -24,7 +24,7 @@ const LoginStats = ({
         setAudioHours(Math.ceil(stats.hours ?? 0));
         setVolunteersCount(stats.volunteers ?? 0);
       } catch (err) {
-        console.log('Unable to fetch platform stats');
+        // console.log('Unable to fetch platform stats');
         setIsError(true);
       } finally {
         setIsLoading(false);

@@ -25,7 +25,7 @@ const authentication = async (
 
     if (authHeader) {
       if (!authHeader.startsWith('Bearer ')) {
-        throw new Error('Malformed authorization header. Must start with \'Bearer\'');
+        throw new Error("Malformed authorization header. Must start with 'Bearer'");
       }
       const token = authHeader.split(' ')[1] || '';
 
@@ -55,18 +55,14 @@ const authentication = async (
         }
       } catch (err) {
         if (process.env.NODE_ENV !== 'test') {
-          console.log(`Firebase authing error: ${err.message}`);
-          return res
-            .status(403)
-            .send({ error: err.message });
+          // console.log(`Firebase authing error: ${err.message}`);
+          return res.status(403).send({ error: err.message });
         }
       }
       return next();
     }
   } catch (err) {
-    return res
-      .status(400)
-      .send({ error: err.message });
+    return res.status(400).send({ error: err.message });
   }
   return next();
 };

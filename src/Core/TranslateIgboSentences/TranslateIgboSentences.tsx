@@ -99,7 +99,7 @@ const TranslateIgboSentences = (): ReactElement => {
           setTranslations(emptyTranslations);
           setExampleIndex(0);
         } catch (err) {
-          console.log('the error', err);
+          // console.log('the error', err);
           toast({
             title: 'An error occurred',
             description: 'Unable to retrieve example sentences.',

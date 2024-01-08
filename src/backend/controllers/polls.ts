@@ -152,21 +152,21 @@ export const onSubmitConstructedTermPoll = async (req: Interfaces.EditorRequest,
   }
 };
 
-const handleTwitResponse = (err, data, response) => {
+const handleTwitResponse = (err) => {
   if (!err) {
-    console.log('Successful merged construction tweet 🐦');
-    console.log('Returned data');
-    console.log(data);
-    console.log('Returned Response');
-    console.log(response);
+    // console.log('Successful merged construction tweet 🐦');
+    // console.log('Returned data');
+    // console.log(data);
+    // console.log('Returned Response');
+    // console.log(response);
   } else {
-    console.log(err);
+    // console.log(err);
   }
 };
 
 /* Posts an update tweet about a constructed term poll getting merged to Twitter and Slack */
 export const onMergeConstructedTermPoll = async (mergedWord: Interfaces.Word): Promise<any> => {
-  console.log(`Sending tweet and Slack message for ${mergedWord.word} with id ${mergedWord.id}`);
+  // console.log(`Sending tweet and Slack message for ${mergedWord.word} with id ${mergedWord.id}`);
   try {
     const status = `
     We have added ${mergedWord.word} as our latest constructed term.
@@ -186,19 +186,19 @@ export const onMergeConstructedTermPoll = async (mergedWord: Interfaces.Word): P
     twitBot.post('statuses/update', { status }, handleTwitResponse);
 
     // Sends the message to Slack
-    const slackRes = await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
-      type: 'igbo_api_editor_platform',
-      event: {
-        type: 'merged_constructed_term',
-      },
-      mergedWord,
-      nkowaokwuUrl: `${DICTIONARY_APP_URL}/search?word=${urlencode(mergedWord.word)}`,
-      editorUrl: `${IGBO_API_EDITOR_PLATFORM_ROOT}/#/words/${mergedWord.id}/show`,
-    });
-    console.log('Slack response');
-    console.log(slackRes);
+    // const slackRes = await axios.post(`${DICTIONARY_APP_URL}/slack-events`, {
+    //   type: 'igbo_api_editor_platform',
+    //   event: {
+    //     type: 'merged_constructed_term',
+    //   },
+    //   mergedWord,
+    //   nkowaokwuUrl: `${DICTIONARY_APP_URL}/search?word=${urlencode(mergedWord.word)}`,
+    //   editorUrl: `${IGBO_API_EDITOR_PLATFORM_ROOT}/#/words/${mergedWord.id}/show`,
+    // });
+    // console.log('Slack response');
+    // console.log(slackRes);
   } catch (err) {
-    console.log('Unable to send tweet and Slack message', err);
+    // console.log('Unable to send tweet and Slack message', err);
   }
 };
 
@@ -222,7 +222,7 @@ export const getPolls = async (req: Interfaces.EditorRequest, res: Response, nex
     res.setHeader('Content-Range', totalPolls.length);
     return res.status(200).send(polls);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return next(err);
   }
 };

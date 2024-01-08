@@ -126,7 +126,7 @@ export const postNotification = async ({
       }),
     );
 
-    console.log('Sent in platform notification to the following', to);
+    // console.log('Sent in platform notification to the following', to);
     return `Saved ${to.length} ${to.length === 1 ? 'Notification' : 'Notifications'} `;
   } catch (err) {
     console.warn('Unable to create notification', err);

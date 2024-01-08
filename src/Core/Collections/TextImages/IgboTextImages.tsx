@@ -6,7 +6,7 @@ import NavbarWrapper from 'src/Core/Collections/components/NavbarWrapper';
 import { ActivityButton, FilePicker, Textarea } from 'src/shared/primitives';
 import { FileDataType } from 'src/Core/Collections/TextImages/types';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
-import { attachTextImages, postTextImages } from 'src/shared/DataCollectionAPI';
+import { postTextImages } from 'src/shared/DataCollectionAPI';
 import Completed from 'src/Core/Collections/components/Completed';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
@@ -62,10 +62,10 @@ const IgboTextImages = (): ReactElement => {
         }),
       );
       if (mediaPayload.length !== fileData.length) {
-        console.log('An error occurred where the associated text image document cannot be attached to an image.');
+        // console.log('An error occurred where the associated text image document cannot be attached to an image.');
       }
-      const attachedStatuses = await attachTextImages(mediaPayload);
-      console.log(attachedStatuses);
+      // const attachedStatuses = await attachTextImages(mediaPayload);
+      // console.log(attachedStatuses);
       toast({
         title: 'Success',
         position: 'top-right',

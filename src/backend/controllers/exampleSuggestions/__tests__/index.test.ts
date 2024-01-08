@@ -63,7 +63,7 @@ describe('exampleSuggestions controller', () => {
         mongooseConnection,
       })
     ).toObject();
-    console.log(res);
+    // console.log(res);
 
     res.pronunciations = res.pronunciations.map(omitTimestamps);
     exampleSuggestionRes.body.pronunciations = exampleSuggestionRes.body.pronunciations.map(omitTimestamps);
@@ -72,7 +72,7 @@ describe('exampleSuggestions controller', () => {
       if (key !== 'createdAt' && key !== 'updatedAt') {
         expect(res[key]).toEqual(value);
       } else {
-        console.log(res[key], value);
+        // console.log(res[key], value);
       }
     });
   });
@@ -107,7 +107,7 @@ describe('exampleSuggestions controller', () => {
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
     expect(res.status).toEqual(200);
 
-    console.log(res.body.pronunciations[0].updatedAt);
+    // console.log(res.body.pronunciations[0].updatedAt);
 
     expect(res.body.pronunciations[0].createdAt).toEqual(createdAt);
     expect(res.body.pronunciations[0].updatedAt).not.toEqual(updatedAt);
@@ -143,7 +143,7 @@ describe('exampleSuggestions controller', () => {
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
     expect(res.status).toEqual(200);
 
-    console.log(res.body.pronunciations[0].updatedAt);
+    // console.log(res.body.pronunciations[0].updatedAt);
 
     expect(res.body.pronunciations[0].createdAt).toEqual(createdAt);
     expect(res.body.pronunciations[0].updatedAt).not.toEqual(updatedAt);
@@ -179,7 +179,7 @@ describe('exampleSuggestions controller', () => {
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
     expect(res.status).toEqual(200);
 
-    console.log(res.body.pronunciations[0].updatedAt);
+    // console.log(res.body.pronunciations[0].updatedAt);
 
     expect(res.body.pronunciations[0].createdAt).toEqual(createdAt);
     expect(res.body.pronunciations[0].updatedAt).toEqual(updatedAt);
@@ -215,7 +215,7 @@ describe('exampleSuggestions controller', () => {
     const res = await getExampleSuggestion(exampleSuggestionRes.body.id);
     expect(res.status).toEqual(200);
 
-    console.log(res.body.pronunciations[0].updatedAt);
+    // console.log(res.body.pronunciations[0].updatedAt);
 
     expect(res.body.pronunciations[0].createdAt).toEqual(createdAt);
     expect(res.body.pronunciations[0].updatedAt).toEqual(updatedAt);

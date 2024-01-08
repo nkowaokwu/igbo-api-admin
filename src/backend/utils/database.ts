@@ -12,7 +12,7 @@ export const connectDatabase = async (): Promise<mongoose.Connection> =>
   new Promise((resolve) => {
     /* Connects to the MongoDB Database */
     if (mongooseConnection?.readyState === DISCONNECTED) {
-      console.time('Create MongoDB connection');
+      // console.time('Create MongoDB connection');
       mongoose.connect(MONGO_URI, {
         useNewUrlParser: true,
         useFindAndModify: false,
@@ -24,16 +24,16 @@ export const connectDatabase = async (): Promise<mongoose.Connection> =>
 
       mongooseConnection.on('error', console.error.bind(console, '❌ MongoDB connection error:'));
       mongooseConnection.once('open', () => {
-        console.timeEnd('Create MongoDB connection');
+        // console.timeEnd('Create MongoDB connection');
         if (config?.runtime?.env === 'production') {
-          console.log('🆕 Created a new mongooseConnection.');
-          console.log('🗄 Database is connected', process.env.CI, MONGO_URI);
+          // console.log('🆕 Created a new mongooseConnection.');
+          // console.log('🗄 Database is connected', process.env.CI, MONGO_URI);
         }
         resolve(mongooseConnection);
       });
     } else {
       if (config?.runtime?.env === 'production') {
-        console.log('ℹ️  mongooseConnection has already been initialized and is being reused.');
+        // console.log('ℹ️  mongooseConnection has already been initialized and is being reused.');
       }
       resolve(mongooseConnection);
     }
@@ -47,7 +47,7 @@ export const disconnectDatabase = (): Promise<void> =>
     //   mongooseConnection.close();
     //   mongooseConnection.once('close', () => {
     //     if (config?.runtime?.env === 'production') {
-    //       console.log('🗃 Database is connection closed', process.env.CI, MONGO_URI);
+    //       // console.log('🗃 Database is connection closed', process.env.CI, MONGO_URI);
     //     }
     //     resolve();
     //   });

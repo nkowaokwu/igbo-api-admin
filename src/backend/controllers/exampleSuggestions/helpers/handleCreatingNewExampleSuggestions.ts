@@ -49,11 +49,11 @@ const handleCreatingNewExampleSuggestions = async ({
         const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
         if (identicalExampleSuggestions.length) {
-          console.log(`Not automatically creating Example Suggestion from Example: ${example.id}`);
+          // console.log(`Not automatically creating Example Suggestion from Example: ${example.id}`);
           return null;
         }
 
-        console.log(`Creating a new Example Suggestion with text: ${example.igbo}`);
+        // console.log(`Creating a new Example Suggestion with text: ${example.igbo}`);
         return omit(
           {
             ...assign(example),
@@ -75,7 +75,7 @@ const handleCreatingNewExampleSuggestions = async ({
           const exampleSuggestion = new ExampleSuggestion(data);
           return await exampleSuggestion.save();
         } catch (err) {
-          console.log(`Unable to create new Example Suggestion: ${err.message}`);
+          // console.log(`Unable to create new Example Suggestion: ${err.message}`);
           return null;
         }
       }),

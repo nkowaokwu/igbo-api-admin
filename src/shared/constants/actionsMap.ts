@@ -220,14 +220,10 @@ export default {
         file,
       );
 
-      try {
-        // Validating the body of the bulk sentences
-        bulkSentencesSchema.validate(payload);
-        await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
-      } catch (err) {
-        console.log('Data validation for bulk sentence upload failed.');
-        throw err;
-      }
+      // Validating the body of the bulk sentences
+      bulkSentencesSchema.validate(payload);
+      await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
+      // console.log('Data validation for bulk sentence upload failed.');
     },
   },
 };

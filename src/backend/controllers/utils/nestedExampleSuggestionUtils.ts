@@ -199,7 +199,7 @@ export const assignExampleSuggestionToExampleData = async ({
   );
   const archivingExampleIds = uneditedExamples.map(({ id }) => id?.toString?.());
   if (archivingExampleIds.length) {
-    console.log('Archiving the following examples:', archivingExampleIds);
+    // console.log('Archiving the following examples:', archivingExampleIds);
   }
   // 4. Archive all non-updated examples
   if (archivingExampleIds.length) {

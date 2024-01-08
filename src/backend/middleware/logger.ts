@@ -1,9 +1,9 @@
-import chalk from 'chalk';
+// import chalk from 'chalk';
 
 export default (req, _, next) => {
-  console.log('-----------');
+  // console.log('-----------');
   // @ts-ignore
-  console.log(chalk.log('Query:'), req.query);
-  console.log('-----------');
+  // console.log(chalk.log('Query:'), req.query);
+  // console.log('-----------');
   next();
 };

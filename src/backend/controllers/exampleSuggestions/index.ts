@@ -138,8 +138,8 @@ export const getExampleSuggestions = (
           ...rest,
         }),
       )
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning example suggestions, double check your provided data');
       });
   } catch (err) {
@@ -185,7 +185,7 @@ export const getRandomExampleSuggestionsToRecord = async (
       query,
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }
@@ -324,7 +324,7 @@ export const getRandomExampleSuggestionsToReview = async (
         .sort({ missingPronunciationApprovals: 1, updatedAt: 1 })
         .limit(limit);
 
-      console.log(dbExampleSuggestions[0]);
+      // console.log(dbExampleSuggestions[0]);
       // removes the field that don't live on the Example Suggestion model
       const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
         omit(exampleSuggestion, [
@@ -341,7 +341,7 @@ export const getRandomExampleSuggestionsToReview = async (
         query,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new Error('An error has occurred while returning random example suggestions to review');
     }
   } catch (err) {
@@ -375,7 +375,7 @@ export const putRandomExampleSuggestionsToTranslate = async (
           },
           mongooseConnection,
         });
-        console.log('how does this work?>>', res);
+        // console.log('how does this work?>>', res);
         return res;
       }),
     );
@@ -419,8 +419,8 @@ export const getRandomExampleSuggestionsToTranslate = async (
           query,
         }),
       )
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning random example suggestions to translate');
       });
   } catch (err) {
@@ -476,8 +476,8 @@ export const getTotalReviewedExampleSuggestions = async (
         );
         return res.send({ timestampedReviewedExampleSuggestions });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning all total verified example suggestions');
       });
   } catch (err) {
@@ -536,8 +536,8 @@ export const getTotalMergedRecordedExampleSuggestions = async (
         );
         return res.send({ timestampedExampleSuggestions });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning all total recorded example suggestions');
       });
   } catch (err) {
@@ -594,8 +594,8 @@ export const getTotalRecordedExampleSuggestions = async (
         );
         res.send({ timestampedRecordedExampleSuggestions });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning all total recorded example suggestions');
       });
   } catch (err) {
@@ -626,7 +626,7 @@ export const putAudioForRandomExampleSuggestions = async (
       body.map(async ({ id, pronunciation }) => {
         const exampleSuggestion = await ExampleSuggestion.findById(id);
         if (!exampleSuggestion) {
-          console.log(`No example suggestion with the id: ${id}`);
+          // console.log(`No example suggestion with the id: ${id}`);
           return null;
         }
         const userInteractions = new Set(exampleSuggestion.userInteractions);
@@ -639,7 +639,7 @@ export const putAudioForRandomExampleSuggestions = async (
             approvals: [],
             denials: [],
           });
-          console.log(`Pushed new pronunciation object to example suggestion ${id}`);
+          // console.log(`Pushed new pronunciation object to example suggestion ${id}`);
 
           // Only add uid to userInteractions for recording audio
           userInteractions.add(user.uid);
@@ -680,7 +680,7 @@ export const putReviewForRandomExampleSuggestions = async (
       body.map(async ({ id, reviews }) => {
         const exampleSuggestion = await ExampleSuggestion.findById(id);
         if (!exampleSuggestion) {
-          console.log(`No example suggestion with the id: ${id}`);
+          // console.log(`No example suggestion with the id: ${id}`);
           return null;
         }
 
@@ -715,7 +715,7 @@ export const putReviewForRandomExampleSuggestions = async (
             exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
           }
           if (review === ReviewActions.SKIP) {
-            console.log(`The user ${user.uid} skipped reviewing the word suggestion ${id}`);
+            // console.log(`The user ${user.uid} skipped reviewing the word suggestion ${id}`);
           }
           return null;
         });
@@ -725,8 +725,8 @@ export const putReviewForRandomExampleSuggestions = async (
         await automaticallyMergeExampleSuggestion({
           exampleSuggestion: savedExampleSuggestion,
           mongooseConnection,
-        }).catch((err) => {
-          console.log(`Unable to automatically merge the Example Suggestion ${exampleSuggestion.id}:`, err.message);
+        }).catch(() => {
+          // console.log(`Unable to automatically merge the Example Suggestion ${exampleSuggestion.id}:`, err.message);
         });
         return null;
       }),

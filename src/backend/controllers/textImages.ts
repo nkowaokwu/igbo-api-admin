@@ -32,8 +32,8 @@ export const getTextImages = (
           ...rest,
         }),
       )
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
         throw new Error('An error has occurred while returning text images, double check your provided data');
       });
   } catch (err) {

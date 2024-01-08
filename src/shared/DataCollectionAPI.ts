@@ -90,7 +90,7 @@ export const bulkUploadExampleSuggestions = async (
     dataChunks.push(dataChunk);
     chunkIndex += groupSize;
   }
-  console.time(`Bulk upload time for ${dataChunks.length} chunks`);
+  // console.time(`Bulk upload time for ${dataChunks.length} chunks`);
   const result = await dataChunks.reduce(
     (chain, dataChunk) =>
       chain
@@ -105,7 +105,7 @@ export const bulkUploadExampleSuggestions = async (
         .catch(onProgressFailure),
     Promise.resolve(),
   );
-  console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
+  // console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
   return result;
 };
 

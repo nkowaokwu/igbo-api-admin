@@ -381,20 +381,20 @@ export const getUserMergeStats = async (
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
-    console.time(`Querying user merge stat example suggestions for ${uid}`);
+    // console.time(`Querying user merge stat example suggestions for ${uid}`);
     const exampleSuggestions = (await ExampleSuggestion.find({
       authorId: uid,
       mergedBy: { $ne: null },
       updatedAt: { $gt: threeMonthsAgo },
     }).limit(EXAMPLE_SUGGESTION_QUERY_LIMIT)) as Interfaces.ExampleSuggestion[];
-    console.timeEnd(`Querying user merge stat example suggestions for ${uid}`);
-    console.time(`Querying user merge stat word suggestions for ${uid}`);
+    // console.timeEnd(`Querying user merge stat example suggestions for ${uid}`);
+    // console.time(`Querying user merge stat word suggestions for ${uid}`);
     const wordSuggestions = (await WordSuggestion.find({
       mergedBy: { $ne: null },
       'dialects.editor': uid,
       updatedAt: { $gt: threeMonthsAgo },
     }).limit(WORD_SUGGESTION_QUERY_LIMIT)) as Interfaces.WordSuggestion[];
-    console.timeEnd(`Querying user merge stat word suggestions for ${uid}`);
+    // console.timeEnd(`Querying user merge stat word suggestions for ${uid}`);
     const defaultMerges = {};
     const isoWeekToDateMap = {};
     times(TWELVE_WEEKS, (index) => {
@@ -409,7 +409,7 @@ export const getUserMergeStats = async (
       exampleSuggestions: 0,
       dialectalVariations: 0,
     };
-    console.time(`Example suggestion merge creation for ${uid}`);
+    // console.time(`Example suggestion merge creation for ${uid}`);
     const exampleSuggestionMerges = exampleSuggestions.reduce(
       (finalData, exampleSuggestion) => {
         const exampleSuggestionUpdateDate = moment(exampleSuggestion.updatedAt);
@@ -424,18 +424,18 @@ export const getUserMergeStats = async (
         if (dateOfIsoWeek) {
           finalData[dateOfIsoWeek] += 1;
         } else {
-          console.log(
+          /* console.log(
             'No dateOfIsoWeek found for the following exampleSuggestion timestamp:',
             exampleSuggestion.updatedAt,
             exampleSuggestionUpdateIsoWeek,
-          );
+          ); */
         }
         return finalData;
       },
       { ...defaultMerges },
     );
-    console.timeEnd(`Example suggestion merge creation for ${uid}`);
-    console.time(`Dialectal variation merge creation for ${uid}`);
+    // console.timeEnd(`Example suggestion merge creation for ${uid}`);
+    // console.time(`Dialectal variation merge creation for ${uid}`);
     const dialectalVariationMerges = wordSuggestions.reduce(
       (finalData, wordSuggestion) => {
         const wordSuggestionUpdateDate = moment(wordSuggestion.updatedAt);
@@ -451,17 +451,17 @@ export const getUserMergeStats = async (
         if (dateOfIsoWeek) {
           finalData[dateOfIsoWeek] += countedHeadword + dialectEditorCount;
         } else {
-          console.log(
+          /* console.log(
             'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
             wordSuggestion.updatedAt,
             wordSuggestionUpdateIsoWeek,
-          );
+          ); */
         }
         return finalData;
       },
       { ...defaultMerges },
     );
-    console.timeEnd(`Dialectal variation merge creation for ${uid}`);
+    // console.timeEnd(`Dialectal variation merge creation for ${uid}`);
 
     return res.send({ exampleSuggestionMerges, dialectalVariationMerges, currentMonthMerges });
   } catch (err) {
@@ -586,7 +586,7 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
     await disconnectDatabase();
   } catch (err) {
     await disconnectDatabase();
-    console.log(err);
+    // console.log(err);
   }
 };
 
@@ -616,7 +616,7 @@ export const onUpdateTotalAudioDashboardStats = async (): Promise<
     return result;
   } catch (err) {
     await disconnectDatabase();
-    console.log(err);
+    // console.log(err);
     return null;
   }
 };
@@ -653,7 +653,7 @@ export const incrementTotalUserStat = async (): Promise<any> => {
     const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
     const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
     if (!stat) {
-      console.log('There is no total user stat');
+      // console.log('There is no total user stat');
       return null;
     }
     stat.value = (stat?.value ?? 0) + 1;
@@ -676,7 +676,7 @@ export const decrementTotalUserStat = async (): Promise<any> => {
     const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
     const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
     if (!stat) {
-      console.log('There is no total user stat');
+      // console.log('There is no total user stat');
       return null;
     }
     stat.value = stat?.value === 0 ? 0 : (stat?.value ?? 0) - 1;

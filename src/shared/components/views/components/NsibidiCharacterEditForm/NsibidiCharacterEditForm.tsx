@@ -56,7 +56,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
-          console.log('Saving error', error);
+          // console.log('Saving error', error);
           toast({
             title: 'Error',
             description: body?.error || message || errorMessage || 'An error occurred while saving Nsịbịdị character',
@@ -68,7 +68,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         },
       });
     } catch (err) {
-      console.log('Caught saving error', err);
+      // console.log('Caught saving error', err);
       toast({
         title: 'Error',
         description: 'An error occurred while saving Nsịbịdị character',

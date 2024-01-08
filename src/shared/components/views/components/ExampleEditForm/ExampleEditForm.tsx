@@ -120,7 +120,7 @@ const ExampleEditForm = ({
         },
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setIsSubmitting(false);
     }
   };

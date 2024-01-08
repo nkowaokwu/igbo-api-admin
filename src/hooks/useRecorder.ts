@@ -45,7 +45,7 @@ const useRecorder = (): [string, boolean, () => void, () => void, number] => {
           });
           wave.fromElement('audio', 'canvas');
         } catch (err) {
-          console.log('An error with Wave occurred:', err.message);
+          // console.log('An error with Wave occurred:', err.message);
         }
       })();
     }

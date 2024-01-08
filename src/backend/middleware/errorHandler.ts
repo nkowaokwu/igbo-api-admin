@@ -11,9 +11,9 @@ export default async (err, req, res, next) => {
   }
   if (!isProduction) {
     if (err.stack) {
-      console.log(err.stack);
+      // console.log(err.stack);
     } else {
-      console.log(err?.message);
+      // console.log(err?.message);
     }
   }
 
