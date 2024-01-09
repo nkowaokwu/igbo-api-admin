@@ -171,8 +171,7 @@ export const getRandomExampleSuggestionsToRecord = async (
     const dbExampleSuggestions = await ExampleSuggestion.aggregate()
       .match(query)
       .addFields({ pronunciationsSize: { $size: '$pronunciations' } })
-      .sort({ pronunciationsSize: 1 })
-      .limit(limit);
+      .sample(limit);
 
     const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
       omit(merge(exampleSuggestion, { id: exampleSuggestion._id }), ['pronunciationsSize', '_id']),
@@ -186,7 +185,7 @@ export const getRandomExampleSuggestionsToRecord = async (
     });
   } catch (err) {
     // console.log(err);
-    console.error('An error has occurred while returning random example suggestions to edit');
+    // console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }
 };
