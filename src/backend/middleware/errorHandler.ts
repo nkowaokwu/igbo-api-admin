@@ -19,7 +19,7 @@ export default async (err, req, res, next) => {
 
   if (isProduction) {
     // Send error to Cloud Logging
-    logger.error(err?.message || err?.details);
+    // logger.error(err?.message || err?.details);
   }
 
   await disconnectDatabase();
