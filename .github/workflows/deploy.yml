@@ -88,8 +88,7 @@ jobs:
           AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
       - name: Deploy to prod
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --project=igbo-api-admin --only functions,hosting
+        run: |
+          firebase deploy --project=igbo-api-admin --only functions,hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.PROD_TOKEN }}
