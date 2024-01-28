@@ -1,6 +1,6 @@
 {
   "functions": {
-    "predeploy": "yarn build:server"
+    "predeploy": "yarn build"
   },
   "firestore": {
     "rules": "firestore.rules",
