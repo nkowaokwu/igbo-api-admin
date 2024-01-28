@@ -1,17 +1,22 @@
 {
+  "functions": {
+    "predeploy": "yarn build"
+  },
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "app"
-      }
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
     ],
+    "rewrites": [{
+      "source": "**",
+      "function": "app"
+    }],
     "headers": [
       {
         "source": "/",
