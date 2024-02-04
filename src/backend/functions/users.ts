@@ -14,6 +14,7 @@ import { assignUserRole, generateId } from './utils';
 import { connectDatabase } from '../utils/database';
 import * as Interfaces from '../controllers/utils/interfaces';
 import { crowdsourcerSchema } from '../models/Crowdsourcer';
+import { referralSchema } from '../models/Referral';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const db = admin.firestore();
@@ -36,6 +37,22 @@ export const createMongoUser = async (firebaseId: string): Promise<Partial<Inter
   const savedCrowdsourcer = await crowdsourcer.save();
   return cleanDocument(savedCrowdsourcer.toJSON());
 };
+
+/* Deletes an associated mongodb User and Refferal documents */
+export const onDeleteUserAccount = functions.auth.user().onDelete(async (user) => {
+  try {
+    const connection = await connectDatabase();
+    const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
+    const crowdsourcer = await Crowdsourcer.findOneAndDelete({ firebaseId: user.uid });
+
+    const Referral = connection.model<Interfaces.Referral>('Referral', referralSchema);
+    await Referral.deleteMany({ $or: [{ referrerId: crowdsourcer.id }, { referredUserId: crowdsourcer.id }] });
+
+    return successResponse({ uid: user.uid });
+  } catch (err) {
+    return errorResponse(err);
+  }
+});
 
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.auth.user().onCreate(async (user) => {
