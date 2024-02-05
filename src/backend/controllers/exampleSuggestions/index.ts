@@ -504,6 +504,8 @@ export const getTotalMergedRecordedExampleSuggestions = async (
     'pronunciations.review': true,
     type: SentenceTypeEnum.DATA_COLLECTION,
     merged: { $ne: null },
+    // TODO: Remove updatedAt after fixing bug
+    updatedAt: { $gte: moment('2024-01-01') },
   };
 
   try {
@@ -564,6 +566,8 @@ export const getTotalRecordedExampleSuggestions = async (
     'pronunciations.speaker': uid,
     'pronunciations.review': true,
     type: SentenceTypeEnum.DATA_COLLECTION,
+    // TODO: Remove updatedAt after fixing bug
+    updatedAt: { $gte: moment('2024-01-01') },
   };
 
   try {

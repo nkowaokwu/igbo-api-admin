@@ -30,8 +30,8 @@ export const calculatePayment = (recordings: number, reviews: number): string =>
 };
 
 const IgboSoundboxStats = ({
-  recordingStats,
-  audioStats,
+  recordingStats = { recorded: {}, verified: {}, mergedRecorded: {} },
+  audioStats = { timestampedAudioApprovals: {}, timestampedAudioDenials: {} },
 }: {
   recordingStats: {
     recorded: { [key: string]: number };
