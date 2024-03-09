@@ -58,7 +58,7 @@ const Completed = ({
         className="space-x-3 w-full flex flex-col lg:flex-row 
       justify-center items-center flex-wrap space-y-4 lg:space-y-0"
       >
-        <Button colorScheme="green" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={handleMore}>
+        <Button colorScheme="purple" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={handleMore}>
           {CrowdsourcingNextStep[type] || 'Review more Igbo definitions ✅'}
         </Button>
         <Button colorScheme="gray" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={goHome}>

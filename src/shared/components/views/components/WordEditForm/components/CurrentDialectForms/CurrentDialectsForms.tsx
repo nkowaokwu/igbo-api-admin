@@ -23,8 +23,9 @@ const CurrentDialectsForms = ({
     </Box>
     <Box className="my-4">
       <Box
-        className={'grid grid-flow-row grid-cols-1 '
-        + `${dialects.length !== 1 ? 'xl:grid-cols-2' : 'xl:grid-cols-1'} gap-4`}
+        className={`grid grid-flow-row grid-cols-1 ${
+          dialects.length !== 1 ? 'xl:grid-cols-2' : 'xl:grid-cols-1'
+        } gap-4`}
       >
         {dialects.map((dialect, index) => (
           // eslint-disable-next-line
@@ -40,9 +41,7 @@ const CurrentDialectsForms = ({
             />
           </Box>
         ))}
-        {errors.dialects ? (
-          <p className="error">{errors.dialects.message}</p>
-        ) : null}
+        {errors.dialects ? <p className="error">{errors.dialects.message}</p> : null}
       </Box>
       <Button
         onClick={() => {
@@ -57,7 +56,7 @@ const CurrentDialectsForms = ({
           ]);
         }}
         width="full"
-        colorScheme="green"
+        colorScheme="purple"
         leftIcon={<AddIcon color="white" boxSize={5} />}
       >
         Add Dialectal Variation

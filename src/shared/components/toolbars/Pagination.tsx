@@ -1,29 +1,15 @@
 import React, { ReactElement } from 'react';
 import { useListContext } from 'react-admin';
-import {
-  Box,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Menu, MenuButton, MenuList, MenuItem, Text } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 
 const Pagination = (): ReactElement => {
-  const {
-    page,
-    perPage,
-    total,
-    setPage,
-    setPerPage,
-  } = useListContext();
+  const { page, perPage, total, setPage, setPerPage } = useListContext();
   const nbPages = Math.ceil(total / perPage) || 1;
   return (
     nbPages > 1 && (
       <Box className="w-full flex flex-row justify-end items-center space-x-3 my-4 px-3">
-        <Text>{`${(perPage * (page - 1)) + 1} - ${perPage * page > total ? total : perPage * page} of ${total}`}</Text>
+        <Text>{`${perPage * (page - 1) + 1} - ${perPage * page > total ? total : perPage * page} of ${total}`}</Text>
         <Menu id="per-page-menu">
           {({ isOpen }) => (
             <>
@@ -42,7 +28,7 @@ const Pagination = (): ReactElement => {
           )}
         </Menu>
         <Button
-          colorScheme="green"
+          colorScheme="purple"
           key="prev"
           isDisabled={page <= 1}
           onClick={() => setPage(page - 1)}
@@ -63,7 +49,7 @@ const Pagination = (): ReactElement => {
         {page + 2 < nbPages ? <Button onClick={() => setPage(page + 2)}>{page + 2}</Button> : null}
         {page !== nbPages ? <Button onClick={() => setPage(nbPages)}>{nbPages}</Button> : null}
         <Button
-          colorScheme="green"
+          colorScheme="purple"
           key="next"
           isDisabled={page === nbPages}
           onClick={() => setPage(page + 1)}

@@ -35,18 +35,12 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
                 <AccordionIcon />
               </Box>
             </AccordionButton>
-            <AccordionPanel>
-              {errorInfo.componentStack}
-            </AccordionPanel>
+            <AccordionPanel>{errorInfo.componentStack}</AccordionPanel>
           </AccordionItem>
         </Accordion>
       )}
       <Box>
-        <Button
-          onClick={() => window.history.go(-1)}
-          leftIcon={<RepeatClockIcon />}
-          colorScheme="green"
-        >
+        <Button onClick={() => window.history.go(-1)} leftIcon={<RepeatClockIcon />} colorScheme="purple">
           Go back
         </Button>
       </Box>

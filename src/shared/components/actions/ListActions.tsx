@@ -147,7 +147,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                 placeholder="Page #"
                 name="page"
               />
-              <Button type="submit" className="px-3" minWidth={24} colorScheme="green">
+              <Button type="submit" className="px-3" minWidth={24} colorScheme="purple">
                 Jump to page
               </Button>
             </Box>
@@ -164,7 +164,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
               <Menu closeOnSelect={false} placement="bottom-end">
                 <MenuButton
                   as={Button}
-                  colorScheme={selectedFilters ? 'yellow' : 'blue'}
+                  colorScheme={selectedFilters ? 'yellow' : 'purple'}
                   backgroundColor={selectedFilters ? 'yellow.100' : 'white'}
                   variant="outline"
                   rightIcon={<ChevronDownIcon />}
@@ -276,7 +276,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
               <Menu closeOnSelect={false} placement="bottom-end">
                 <MenuButton
                   as={Button}
-                  colorScheme={!currentPartOfSpeechFilter.length ? 'blue' : 'yellow'}
+                  colorScheme={!currentPartOfSpeechFilter.length ? 'purple' : 'yellow'}
                   backgroundColor={currentPartOfSpeechFilter.length ? 'yellow.100' : 'white'}
                   variant="outline"
                   rightIcon={<ChevronDownIcon />}

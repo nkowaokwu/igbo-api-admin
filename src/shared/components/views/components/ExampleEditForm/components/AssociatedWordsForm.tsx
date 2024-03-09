@@ -124,7 +124,7 @@ const AssociatedWordsForm = ({ errors, control, record }: AssociatedWordsFormInt
         />
         <Tooltip label="Click this button to add the associated word">
           <IconButton
-            colorScheme="green"
+            colorScheme="purple"
             aria-label="Add Associated Word"
             onClick={handleAddAssociatedWord}
             icon={<AddIcon />}
