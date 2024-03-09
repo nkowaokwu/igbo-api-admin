@@ -31,33 +31,22 @@ export const getCorpora = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> => {
+): Promise<Response<Interfaces.Corpus> | void> => {
   try {
-    const {
-      searchWord,
-      regexKeyword,
-      range,
-      skip,
-      limit,
-      strict,
-      dialects,
-      filters,
-      user,
-      mongooseConnection,
-      ...rest
-    } = handleQueries(req);
+    const { searchWord, regexKeyword, skip, limit, strict, filters, user, mongooseConnection, ...rest } =
+      handleQueries(req);
     const searchQueries = {
       searchWord,
       skip,
       limit,
-      dialects,
+      dialects: true,
       examples: true,
     };
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
     const query = searchCorpusTextSearch(searchWord, regexKeyword);
     const corpora = await searchCorpus({ query, mongooseConnection, ...searchQueries });
-    return await packageResponse({
+    return await packageResponse<Interfaces.Corpus>({
       res,
       docs: corpora,
       model: Corpus,
@@ -81,7 +70,7 @@ export const getCorpus = async (
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
     const updatedCorpus = await findCorporaWithMatch({
-      match: { _id: mongoose.Types.ObjectId(id) },
+      match: { _id: new mongoose.Types.ObjectId(id) },
       limit: 1,
       Corpus,
     }).then(async ([corpus]: Interfaces.Corpus[]) => {

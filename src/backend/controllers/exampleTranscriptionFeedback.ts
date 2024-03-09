@@ -1,4 +1,4 @@
-import { Connection, Query } from 'mongoose';
+import { Connection, Query, Types } from 'mongoose';
 import { NextFunction, Response } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleTranscriptionFeedbackSchema } from 'src/backend/models/ExampleTranscriptionFeedback';
@@ -25,7 +25,7 @@ export const findExampleTranscriptionFeedbackByExampleSuggestionId = (
     'ExampleTranscriptionFeedback',
     exampleTranscriptionFeedbackSchema,
   );
-  return ExampleTranscriptionFeedback.findOne({ exampleSuggestionId: id });
+  return ExampleTranscriptionFeedback.findOne({ exampleSuggestionId: new Types.ObjectId(id) });
 };
 
 /* Returns a single ExampleTranscriptionFeedback by using an id */

@@ -27,6 +27,7 @@
     "no-confusing-arrow": "off",
     "no-console": "off",
     "no-extra-boolean-cast": "off",
+    "no-misleading-character-class": "off",
     "no-nested-ternary": "off",
     "no-param-reassign": "off",
     "no-underscore-dangle": "off",

@@ -157,7 +157,7 @@ export const titleQuery = (regex: SearchRegExp): { title: { $regex: RegExp } } =
   title: { $regex: regex.wordReg },
 });
 export const wordQuery = (regex: SearchRegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex.wordReg } });
-const fullTextSearchQuery = (keyword: string, regex: SearchRegExp): { word?: { $regex: RegExp }; $or?: any } =>
+export const fullTextSearchQuery = (keyword: string, regex: SearchRegExp): { word?: { $regex: RegExp }; $or?: any } =>
   !keyword
     ? { word: { $regex: /./ } }
     : {
