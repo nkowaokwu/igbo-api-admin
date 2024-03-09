@@ -1,10 +1,8 @@
-import { Types } from 'mongoose';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
-import { Word, WordData, WordDialect, DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
+import { WordData, WordDialect, DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
 export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionSchema => {
-  const objectId = new Types.ObjectId();
   return {
     wordClass: WordClassEnum.ADJ,
     definitions: [],
@@ -12,13 +10,12 @@ export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionS
     igboDefinitions: [],
     nsibidi: '',
     nsibidiCharacters: [],
-    id: `${objectId}`,
-    _id: objectId,
+    id: '6596ca4a6fab49612273b724',
     ...data,
   };
 };
 
-export const wordFixture = (data?: Partial<Word>): WordData => ({
+export const wordFixture = (data?: Partial<WordData>): WordData => ({
   attributes: Object.values(WordAttributeEnum).reduce(
     (finalAttributes, attribute) => ({ ...finalAttributes, [attribute]: false }),
     {} as { [key in WordAttributeEnum]: boolean },
@@ -38,13 +35,13 @@ export const wordFixture = (data?: Partial<Word>): WordData => ({
   definitions: [definitionFixture()],
   dialects: [],
   tags: [],
-  id: `${new Types.ObjectId()}`,
+  id: '6596ca4a6fab49612273b724',
   ...data,
 });
 
 export const dialectFixture = (data?: Partial<WordDialect>): WordDialect => ({
   dialects: [],
-  id: `${new Types.ObjectId()}`,
+  id: '6596ca4a6fab49612273b724',
   pronunciation: '',
   variations: [],
   word: '',

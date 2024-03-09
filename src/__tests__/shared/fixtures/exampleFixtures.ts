@@ -1,10 +1,9 @@
-import { Types } from 'mongoose';
-import { Example, ExampleData } from 'src/backend/controllers/utils/interfaces';
+import { ExampleData } from 'src/backend/controllers/utils/interfaces';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 
-export const exampleFixture = (data?: Partial<Example>): ExampleData => ({
-  id: `${new Types.ObjectId()}`,
+export const exampleFixture = (data?: Partial<ExampleData>): ExampleData => ({
+  id: '6596ca4a6fab49612273b724',
   associatedDefinitionsSchemas: [],
   associatedWords: [],
   english: '',

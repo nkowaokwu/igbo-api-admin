@@ -23,6 +23,7 @@ export const mocks = {
   Audio: {
     pause: jest.fn(),
     play: jest.fn(),
+    addEventListener: jest.fn(),
   },
   clipboard: {
     writeText: jest.fn(),
@@ -32,6 +33,7 @@ export const mocks = {
 global.Audio = jest.fn().mockImplementation(() => ({
   pause: mocks.Audio.pause,
   play: mocks.Audio.play,
+  addEventListener: mocks.Audio.addEventListener,
 }));
 
 Object.defineProperty(global.navigator, 'mediaDevices', {

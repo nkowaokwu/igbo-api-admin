@@ -16,6 +16,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiTableRow: {
+      root: {
+        '&:hover': {
+          backgroundColor: 'transparent !important',
+        },
+      },
+    },
     MuiMenuItem: {
       root: {
         fontFamily: silkaFontFamily,
