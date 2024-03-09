@@ -395,6 +395,19 @@ input#igbo {
   @apply text-center;
 }
 
+audio::-webkit-media-controls-panel {
+  @apply bg-white;
+  @apply border-solid;
+}
+audio::-webkit-media-controls-enclosure {
+  @apply rounded-md;
+  @apply border-solid;
+  @apply border-gray-200;
+}
+audio::-webkit-media-controls-timeline {
+  stroke: #f5fbff;
+}
+
 @media (min-width: 1024px) {
   html {
     width: 100vw;

@@ -31,7 +31,7 @@ const SourceField = ({
   record?: Interfaces.WordData;
   source: string;
 }): ReactElement => {
-  const value = get(record, source);
+  const value = get(record, source) || SuggestionSourceEnum.INTERNAL;
   const badgeLabel = sourceFieldConfig[value].badge || sourceFieldConfig[SuggestionSourceEnum.INTERNAL].badge;
   const label = sourceFieldConfig[value].description || sourceFieldConfig[SuggestionSourceEnum.INTERNAL].description;
   const colorScheme = sourceFieldConfig[value].color || sourceFieldConfig[SuggestionSourceEnum.INTERNAL].color;

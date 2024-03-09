@@ -12,31 +12,32 @@ const AudioRecorder = ({
   setPronunciation,
   record,
   originalRecord: originalRecordProp,
-  formTitle,
-  formTooltip,
+  formTitle = 'Word Pronunciation',
+  formTooltip = 'Record the audio for the headword only one time. You are able to record over pre-existing recordings.',
   warningMessage,
   hideTitle = false,
 }: {
-  path: string,
-  getFormValues: (key: string) => any,
-  setPronunciation: (path: string, value: any) => any,
-  record: Record | Example | Word,
-  originalRecord: Record,
-  formTitle?: string,
-  formTooltip?: string,
-  warningMessage?: string,
-  hideTitle?: boolean,
+  path: string;
+  getFormValues: (key: string) => any;
+  setPronunciation: (path: string, value: any) => any;
+  record: Record | Example | Word;
+  originalRecord: Record;
+  formTitle?: string;
+  formTooltip?: string;
+  warningMessage?: string;
+  hideTitle?: boolean;
 }): ReactElement => {
-  const originalRecord = record.originalWordId || record.originalExampleId
-    ? originalRecordProp
-    : record?.associatedWords
+  const originalRecord =
+    record.originalWordId || record.originalExampleId
+      ? originalRecordProp
+      : record?.associatedWords
       ? DEFAULT_EXAMPLE_RECORD
       : DEFAULT_WORD_RECORD;
   const valuePath = path.endsWith('audio')
     ? path
     : path.startsWith('dialects')
-      ? `${path}.pronunciation`
-      : 'pronunciation';
+    ? `${path}.pronunciation`
+    : 'pronunciation';
   const [pronunciationValue, setPronunciationValue] = useState(null);
   const toast = useToast();
 
@@ -59,10 +60,7 @@ const AudioRecorder = ({
 
   /* Grabbing the default pronunciation value for the word or example document */
   useEffect(() => {
-    const recordHasPronunciationField = (
-      has(record, 'pronunciation')
-      || has(record, 'pronunciations')
-    );
+    const recordHasPronunciationField = has(record, 'pronunciation') || has(record, 'pronunciations');
 
     if (recordHasPronunciationField && !pronunciationValue) {
       setPronunciationValue(get(record, valuePath));
@@ -95,11 +93,6 @@ const AudioRecorder = ({
       audioValue={pronunciationValue}
     />
   );
-};
-
-AudioRecorder.defaultProps = {
-  formTitle: 'Word Pronunciation',
-  formTooltip: 'Record the audio for the headword only one time. You are able to record over pre-existing recordings.',
 };
 
 export default AudioRecorder;
