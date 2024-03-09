@@ -157,6 +157,11 @@ export const deleteExampleSuggestion = (id: string, options: OptionsType = { tok
     .delete(`/exampleSuggestions/${id}`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
+export const getExampleTranscriptionFeedback = (id: string, options: OptionsType = { token: '' }): Request =>
+  chaiServer
+    .get(`/exampleTranscriptionFeedbacks/${id}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
 export const getCorpusSuggestion = (id: string, options: OptionsType = { token: '' }): Request =>
   chaiServer
     .get(`/corpusSuggestions/${id}`)

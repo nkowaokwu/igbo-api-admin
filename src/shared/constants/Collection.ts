@@ -5,6 +5,7 @@ enum Collection {
   CORPORA = 'corpora',
   WORD_SUGGESTIONS = 'wordSuggestions',
   EXAMPLE_SUGGESTIONS = 'exampleSuggestions',
+  EXAMPLE_TRANSCRIPTION_FEEDBACK = 'exampleTranscriptionFeedbacks',
   CORPUS_SUGGESTIONS = 'corpusSuggestions',
   USERS = 'users',
   POLLS = 'polls',

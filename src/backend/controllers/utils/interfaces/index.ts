@@ -3,6 +3,7 @@ export * from './corpusSuggestionInterfaces';
 export * from './emailInterfaces';
 export * from './exampleInterfaces';
 export * from './exampleSuggestionInterfaces';
+export * from './exampleTranscriptionFeedbackInterfaces';
 export * from './leaderboardInterfaces';
 export * from './notificationInterfaces';
 export * from './nsibidiCharacterInterfaces';

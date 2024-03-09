@@ -4,6 +4,7 @@ import {
   getExample,
   getExamples,
   getExampleSuggestions,
+  getExampleTranscriptionFeedback,
 } from 'src/shared/API';
 import * as requestModule from 'src/shared/utils/request';
 import Collection from 'src/shared/constants/Collection';
@@ -41,6 +42,7 @@ describe('API', () => {
         url: `${Collection.EXAMPLES}/id`,
       });
     });
+
     it('sends a GET request to get example sentences', async () => {
       const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
       await getExamples('id');
@@ -49,12 +51,24 @@ describe('API', () => {
         url: `${Collection.EXAMPLES}?keyword=id`,
       });
     });
+
     it('sends a GET request to get example suggestions', async () => {
       const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
       await getExampleSuggestions('word');
       expect(requestSpy).toHaveBeenCalledWith({
         method: 'GET',
         url: `${Collection.EXAMPLE_SUGGESTIONS}?keyword=word`,
+      });
+    });
+  });
+
+  describe('Example Transcription Feedback', () => {
+    it('sends a GET request to get example transcription feedback', async () => {
+      const requestSpy = jest.spyOn(requestModule, 'request').mockReturnValue({});
+      await getExampleTranscriptionFeedback('exampleSuggestionId');
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: 'GET',
+        url: `${Collection.EXAMPLE_TRANSCRIPTION_FEEDBACK}/exampleSuggestionId`,
       });
     });
   });

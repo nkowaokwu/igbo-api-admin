@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
@@ -37,6 +38,7 @@ export const exampleSchema = new Schema(
       default: [],
     },
     archived: { type: Boolean, default: false },
+    source: { type: String, default: SuggestionSourceEnum.INTERNAL },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

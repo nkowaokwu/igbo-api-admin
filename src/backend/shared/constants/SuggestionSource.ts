@@ -13,7 +13,7 @@ const SuggestionSource = {
   },
   [SuggestionSourceEnum.IGBO_SPEECH]: {
     value: SuggestionSourceEnum.IGBO_SPEECH,
-    label: 'Igbo Speech',
+    label: 'IgboSpeech',
     isSelectable: false,
   },
   [SuggestionSourceEnum.IGBO_WIKIMEDIANS]: {

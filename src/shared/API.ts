@@ -1,4 +1,13 @@
 import { Record } from 'react-admin';
+import {
+  Corpus,
+  Example,
+  ExampleSuggestionData,
+  NsibidiCharacter,
+  Word,
+  WordSuggestion,
+} from 'src/backend/controllers/utils/interfaces';
+import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces/exampleTranscriptionFeedbackInterfaces';
 import network from '../Core/Dashboard/network';
 import type { Poll } from '../backend/shared/types/Poll';
 import Collection from './constants/Collection';
@@ -11,7 +20,7 @@ const handleSubmitConstructedTermPoll = (poll: Poll) =>
     data: poll,
   });
 
-export const getWord = async (id: string, { dialects } = { dialects: true }): Promise<any> => {
+export const getWord = async (id: string, { dialects } = { dialects: true }): Promise<Word> => {
   const { data: result } = await request({
     method: 'GET',
     url: `${Collection.WORDS}/${id}?dialects=${dialects}`,
@@ -19,7 +28,7 @@ export const getWord = async (id: string, { dialects } = { dialects: true }): Pr
   return result;
 };
 
-export const getWords = async (word: string): Promise<any> =>
+export const getWords = async (word: string): Promise<Word[]> =>
   (
     await request({
       method: 'GET',
@@ -35,7 +44,7 @@ export const getWordSuggestions = async (word: string): Promise<any> =>
     })
   ).data;
 
-export const getExample = async (id: string): Promise<any> =>
+export const getExample = async (id: string): Promise<Example[]> =>
   (
     await request({
       method: 'GET',
@@ -43,7 +52,7 @@ export const getExample = async (id: string): Promise<any> =>
     })
   ).data;
 
-export const getExamples = async (word: string): Promise<any> =>
+export const getExamples = async (word: string): Promise<Example[]> =>
   (
     await request({
       method: 'GET',
@@ -51,15 +60,25 @@ export const getExamples = async (word: string): Promise<any> =>
     })
   ).data;
 
-export const getExampleSuggestions = async (word: string): Promise<any> =>
+export const getExampleSuggestions = async (word: string): Promise<ExampleSuggestionData[]> =>
   (
-    await request({
+    await request<ExampleSuggestionData[]>({
       method: 'GET',
       url: `${Collection.EXAMPLE_SUGGESTIONS}?keyword=${word}`,
     })
   ).data;
 
-export const getNsibidiCharacter = async (id: string): Promise<any> =>
+export const getExampleTranscriptionFeedback = async (
+  exampleSuggestionId: string,
+): Promise<ExampleTranscriptionFeedbackData> =>
+  (
+    await request<ExampleTranscriptionFeedbackData>({
+      method: 'GET',
+      url: `${Collection.EXAMPLE_TRANSCRIPTION_FEEDBACK}/${exampleSuggestionId}`,
+    })
+  ).data;
+
+export const getNsibidiCharacter = async (id: string): Promise<NsibidiCharacter> =>
   (
     await request({
       method: 'GET',
@@ -67,7 +86,7 @@ export const getNsibidiCharacter = async (id: string): Promise<any> =>
     })
   ).data;
 
-export const getNsibidiCharacters = async (nsibidi: string): Promise<any> =>
+export const getNsibidiCharacters = async (nsibidi: string): Promise<NsibidiCharacter[]> =>
   (
     await request({
       method: 'GET',
@@ -75,7 +94,7 @@ export const getNsibidiCharacters = async (nsibidi: string): Promise<any> =>
     })
   ).data;
 
-export const getCorpus = async (id: string): Promise<any> => {
+export const getCorpus = async (id: string): Promise<Corpus> => {
   const { data: result } = await request({
     method: 'GET',
     url: `${Collection.CORPORA}/${id}`,
@@ -83,7 +102,7 @@ export const getCorpus = async (id: string): Promise<any> => {
   return result;
 };
 
-export const resolveWord = async (wordId: string): Promise<any> => {
+export const resolveWord = async (wordId: string): Promise<Word> => {
   const wordRes = await getWord(wordId, { dialects: true }).catch(async () => {
     /**
      * If there is a regular word string (not a MongoDB Id) then the platform
@@ -98,7 +117,7 @@ export const resolveWord = async (wordId: string): Promise<any> => {
   return wordRes;
 };
 
-export const resolveNsibidiCharacter = async (nsibidiCharacterId: string): Promise<any> => {
+export const resolveNsibidiCharacter = async (nsibidiCharacterId: string): Promise<NsibidiCharacter> => {
   const nsibidiCharacterRes = await getNsibidiCharacter(nsibidiCharacterId).catch(async () => {
     /**
      * If there is a regular Nsibidi character string (not a MongoDB Id) then the platform
@@ -115,7 +134,7 @@ export const resolveNsibidiCharacter = async (nsibidiCharacterId: string): Promi
   return nsibidiCharacterRes;
 };
 
-export const getAssociatedExampleSuggestions = async (id: string): Promise<any> =>
+export const getAssociatedExampleSuggestions = async (id: string): Promise<Example[]> =>
   (
     await request({
       method: 'GET',
@@ -123,7 +142,7 @@ export const getAssociatedExampleSuggestions = async (id: string): Promise<any> 
     })
   ).data;
 
-export const getAssociatedWordSuggestions = async (id: string): Promise<any> =>
+export const getAssociatedWordSuggestions = async (id: string): Promise<WordSuggestion[]> =>
   (
     await request({
       method: 'GET',
@@ -131,7 +150,7 @@ export const getAssociatedWordSuggestions = async (id: string): Promise<any> =>
     })
   ).data;
 
-export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promise<any> =>
+export const getAssociatedWordSuggestionByTwitterId = async (id: string): Promise<WordSuggestion[]> =>
   (
     await request({
       method: 'GET',

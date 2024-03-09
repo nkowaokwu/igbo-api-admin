@@ -31,6 +31,7 @@ import {
   approveExampleSuggestion,
   denyExampleSuggestion,
 } from 'src/backend/controllers/exampleSuggestions';
+import { getExampleTranscriptionFeedback } from 'src/backend/controllers/exampleTranscriptionFeedback';
 import {
   getNsibidiCharacters,
   getNsibidiCharacter,
@@ -166,6 +167,8 @@ editorRouter.delete(
   validId,
   deleteExampleSuggestion,
 );
+
+editorRouter.get(`/${Collection.EXAMPLE_TRANSCRIPTION_FEEDBACK}/:id`, validId, getExampleTranscriptionFeedback);
 
 editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}`, getNsibidiCharacters);
 editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}/:id`, validId, getNsibidiCharacter);
