@@ -2,9 +2,10 @@ import React, { ReactElement } from 'react';
 import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
-import Collections from 'src/shared/constants/Collection';
+import Collection from 'src/shared/constants/Collection';
 import { HistoryProps } from 'src/shared/interfaces';
-import { DocumentIds, EditDocumentTopBar, NsibidiCharacterEditForm } from '../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { EditDocumentTopBar, NsibidiCharacterEditForm } from '../components';
 
 const NsibidiCharacterEdit = (props: HistoryProps): ReactElement => {
   const { history } = props;
@@ -22,9 +23,7 @@ const NsibidiCharacterEdit = (props: HistoryProps): ReactElement => {
   return record ? (
     <Box className="bg-white shadow-sm p-10 mt-10">
       <EditDocumentTopBar record={record} resource={resource} view={View.EDIT} title="Edit Nsịbịdị Character" id={id} />
-      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <DocumentIds collection={Collections.WORDS} record={record} id={id} title="Parent Word Id:" />
-      </Box>
+      <DocumentStats collection={Collection.NSIBIDI_CHARACTERS} record={record} id={id} />
       {record ? (
         <NsibidiCharacterEditForm view={View.EDIT} resource={resource} record={record} save={save} history={history} />
       ) : null}

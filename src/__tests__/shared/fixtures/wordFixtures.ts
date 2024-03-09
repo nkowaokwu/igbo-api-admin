@@ -1,6 +1,7 @@
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
-import { WordData, WordDialect, DefinitionSchema } from 'src/backend/controllers/utils/interfaces';
+import { WordData, WordDialect, DefinitionSchema, WordSuggestionData } from 'src/backend/controllers/utils/interfaces';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
 export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionSchema => {
   return {
@@ -15,7 +16,7 @@ export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionS
   };
 };
 
-export const wordFixture = (data?: Partial<WordData>): WordData => ({
+export const wordFixture = (data?: Partial<WordData & { createdAt: Date }>): WordData & { createdAt: Date } => ({
   attributes: Object.values(WordAttributeEnum).reduce(
     (finalAttributes, attribute) => ({ ...finalAttributes, [attribute]: false }),
     {} as { [key in WordAttributeEnum]: boolean },
@@ -28,6 +29,7 @@ export const wordFixture = (data?: Partial<WordData>): WordData => ({
   relatedTerms: [],
   stems: [],
   updatedAt: new Date(),
+  createdAt: new Date(),
   variations: [],
   normalized: '',
   word: '',
@@ -36,6 +38,23 @@ export const wordFixture = (data?: Partial<WordData>): WordData => ({
   dialects: [],
   tags: [],
   id: '6596ca4a6fab49612273b724',
+  ...data,
+});
+
+export const wordSuggestionFixture = (
+  data?: Partial<WordSuggestionData & { createdAt: Date }>,
+): WordSuggestionData & { createdAt: Date } => ({
+  ...wordFixture(),
+  approvals: [],
+  denials: [],
+  examples: [],
+  merged: null,
+  mergedBy: null,
+  userInteractions: [],
+  crowdsourcing: Object.values(CrowdsourcingType).reduce(
+    (finalCrowdsourcing, crowdsourcing) => ({ ...finalCrowdsourcing, crowdsourcing }),
+    {} as { [key in CrowdsourcingType]: boolean },
+  ),
   ...data,
 });
 

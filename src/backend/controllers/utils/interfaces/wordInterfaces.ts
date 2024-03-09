@@ -1,6 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { Example, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces/exampleSuggestionInterfaces';
+import { ExampleData, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
@@ -60,5 +59,5 @@ export interface WordData {
   hypernyms: string[];
   hyponyms: string[];
   updatedAt: Date;
-  examples?: (Example | ExampleSuggestion | ExampleClientData)[];
+  examples?: ExampleData[];
 }

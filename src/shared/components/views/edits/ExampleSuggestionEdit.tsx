@@ -4,7 +4,8 @@ import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
 import Collection from 'src/shared/constants/Collection';
-import { ExampleEditForm, EditDocumentStats, DocumentIds, EditDocumentTopBar } from '../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { ExampleEditForm, EditDocumentTopBar } from '../components';
 
 const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
   const { history } = props;
@@ -29,16 +30,15 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
         title="Edit Example Suggestion"
         id={id}
       />
-      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <DocumentIds
-          collection={Collection.EXAMPLES}
-          originalId={originalExampleId}
-          record={record}
-          id={id}
-          title="Parent Example Id:"
-        />
-        <EditDocumentStats approvals={approvals} denials={denials} />
-      </Box>
+      <DocumentStats
+        collection={Collection.EXAMPLES}
+        originalId={originalExampleId}
+        record={record}
+        id={id}
+        title="Parent Example Id:"
+        approvals={approvals}
+        denials={denials}
+      />
       {record ? (
         <ExampleEditForm
           view={View.EDIT}

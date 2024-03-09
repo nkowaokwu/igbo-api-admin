@@ -1,14 +1,11 @@
-import { Types } from 'mongoose';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces/exampleSuggestionInterfaces';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import { Suggestion } from './suggestionInterfaces';
-import { Word } from './wordInterfaces';
+import { Document } from 'mongoose';
+import { ExampleSuggestionData } from 'src/backend/controllers/utils/interfaces/exampleSuggestionInterfaces';
+import { SuggestionData } from './suggestionInterfaces';
+import { WordData } from './wordInterfaces';
 
-export interface WordSuggestion extends Word, Suggestion {
-  originalWordId?: Types.ObjectId;
-  examples?: ExampleSuggestion[];
-  twitterPollUrl?: string;
-  crowdsourcing: {
-    [key in CrowdsourcingType]: boolean;
-  };
+export interface WordSuggestionData extends WordData, SuggestionData {
+  originalWordId?: string;
+  examples?: ExampleSuggestionData[];
 }
+
+export interface WordSuggestion extends Document<WordSuggestionData, any, any> {}

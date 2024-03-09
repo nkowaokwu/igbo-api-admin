@@ -4,7 +4,8 @@ import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
 import { HistoryProps } from 'src/shared/interfaces';
 import Collection from 'src/shared/constants/Collection';
-import { CorpusEditForm, EditDocumentStats, DocumentIds, EditDocumentTopBar } from '../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { CorpusEditForm, EditDocumentTopBar } from '../components';
 
 const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
   const { history } = props;
@@ -23,16 +24,15 @@ const CorpusSuggestionEdit = (props: HistoryProps): ReactElement => {
   return record ? (
     <Box className="bg-white shadow-sm lg:px-10 mt-10">
       <EditDocumentTopBar record={record} resource={resource} view={View.EDIT} title="Edit Corpus Suggestion" id={id} />
-      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <DocumentIds
-          collection={Collection.CORPORA}
-          originalId={originalCorpusId}
-          record={record}
-          id={id}
-          title="Parent Corpus Id:"
-        />
-        <EditDocumentStats approvals={approvals} denials={denials} />
-      </Box>
+      <DocumentStats
+        collection={Collection.CORPORA}
+        originalId={originalCorpusId}
+        record={record}
+        id={id}
+        title="Parent Corpus Id:"
+        approvals={approvals}
+        denials={denials}
+      />
       {record ? (
         <CorpusEditForm
           view={View.EDIT}

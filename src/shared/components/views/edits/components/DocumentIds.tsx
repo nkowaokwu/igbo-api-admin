@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Identifier, Record } from 'react-admin';
 import { Box, Heading, Text, chakra } from '@chakra-ui/react';
-import { determineDate } from '../shows/utils';
+import { determineDate } from '../../shows/utils';
 
 const DocumentIds = ({
   collection,
@@ -32,22 +32,24 @@ const DocumentIds = ({
         {id}
       </Text>
     </Box>
-    <Box className="flex items-center">
-      <Heading fontSize="lg" className="text-l text-gray-600 mr-3">
-        {title}
-      </Heading>
-      <Text fontSize="lg" fontFamily={originalId ? 'monospace' : ''} className="text-l text-gray-800">
-        {originalId ? (
-          <a className="link" href={`#/${collection}/${originalId}/show`}>
-            {originalId}
-          </a>
-        ) : (
-          <chakra.span color="gray.600" className="italic">
-            No original document ID
-          </chakra.span>
-        )}
-      </Text>
-    </Box>
+    {title ? (
+      <Box className="flex items-center">
+        <Heading fontSize="lg" className="text-l text-gray-600 mr-3">
+          {title}
+        </Heading>
+        <Text fontSize="lg" fontFamily={originalId ? 'monospace' : ''} className="text-l text-gray-800">
+          {originalId ? (
+            <a className="link" href={`#/${collection}/${originalId}/show`}>
+              {originalId}
+            </a>
+          ) : (
+            <chakra.span color="gray.600" className="italic">
+              No original document ID
+            </chakra.span>
+          )}
+        </Text>
+      </Box>
+    ) : null}
   </Box>
 );
 

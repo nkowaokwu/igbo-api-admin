@@ -39,7 +39,7 @@ const ShowDocumentStats = ({
           Document Status:
         </Text>
         <Box
-          className="flex flex-col rounded border border-solid border-gray-200 shadow-md fit-content py-3 px-5"
+          className="flex flex-col rounded border border-solid border-gray-200 fit-content py-3 px-5"
           style={{ width: 'fit-content' }}
         >
           <Box className="flex flex-col">
