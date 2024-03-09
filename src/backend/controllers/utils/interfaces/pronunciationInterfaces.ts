@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export interface PronunciationData {
   audio: string;
@@ -15,15 +15,13 @@ export interface PronunciationSchema extends PronunciationData {
   updatedAt?: Date;
 }
 
-export interface AudioPronunciation extends AudioPronunciationData, Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-}
-
 export interface AudioPronunciationData {
-  id: Types.ObjectId | string;
+  id: string;
   objectId: string;
   size: number;
   prevSize?: number;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface AudioPronunciation extends Document<AudioPronunciationData, any, any> {}

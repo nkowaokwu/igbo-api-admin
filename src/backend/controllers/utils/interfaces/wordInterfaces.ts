@@ -1,4 +1,4 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { Example, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces/exampleSuggestionInterfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
@@ -32,12 +32,10 @@ export interface WordClientData extends Word {
   examples?: ExampleClientData[];
 }
 
-export interface Word extends WordData, Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-}
+export interface Word extends Document<WordData, any, any> {}
 
 export interface WordData {
-  id: Types.ObjectId | string;
+  id: string;
   word: string;
   wordPronunciation: string;
   conceptualWord: string;

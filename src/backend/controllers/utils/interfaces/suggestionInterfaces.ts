@@ -1,6 +1,6 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Types } from 'mongoose';
 
-export interface Suggestion extends Document<any>, LeanDocument<any> {
+export interface Suggestion {
   id: Types.ObjectId;
   originalWordId?: Types.ObjectId;
   userComments?: string;

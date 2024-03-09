@@ -1,4 +1,4 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 export interface TextImageData {
   media: string;
@@ -8,6 +8,4 @@ export interface TextImageData {
   english: string;
 }
 
-export interface TextImage extends TextImageData, Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-}
+export interface TextImage extends Document<TextImageData, any, any> {}
