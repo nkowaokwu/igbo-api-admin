@@ -236,7 +236,7 @@ const deleteUneditedExampleSuggestions = async ({
   mongooseConnection: Connection;
 }): Promise<void> => {
   const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
-  await Promise.all(Object.keys(existingExampleSuggestionIds).map((id) => ExampleSuggestion.findByIdAndRemove(id)));
+  await Promise.all(Object.keys(existingExampleSuggestionIds).map((id) => ExampleSuggestion.findByIdAndDelete(id)));
 };
 
 export const createNestedExampleSuggestionBody = ({

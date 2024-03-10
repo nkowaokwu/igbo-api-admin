@@ -9,8 +9,6 @@ export const nsibidiCharacterFixture = (data?: Partial<NsibidiCharacter>): Nsibi
     (finalAttributes, attribute) => ({ ...finalAttributes, [attribute]: false }),
     {} as { [key in NsibidiCharacterAttributeEnum]: boolean },
   ),
-  pronunciation: '',
-  definitions: [],
-  wordClass: undefined,
+  radicals: [],
   ...cloneDeep(data),
 });

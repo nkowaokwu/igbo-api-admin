@@ -125,6 +125,7 @@ export const wordRecord: WordData = {
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
+  type: SentenceTypeEnum.DATA_COLLECTION,
   pronunciations: [],
   associatedWords: [],
 };

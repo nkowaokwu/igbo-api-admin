@@ -147,6 +147,7 @@ describe('MongoDB Leaderboards', () => {
             },
             { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
           );
+          expect(exampleRes.status).toEqual(200);
           expect(exampleRes.body.approvals).toHaveLength(0);
           expect(exampleRes.body.denials).toHaveLength(0);
           examples.push(exampleRes.body);

@@ -653,6 +653,7 @@ export const putAudioForRandomExampleSuggestions = async (
       }),
     );
     req.response = body.map(({ id }) => id);
+
     return next();
   } catch (err) {
     req.error = err;

@@ -134,7 +134,7 @@ const deleteNsibidiCharactersHelper = async ({
   ];
 
   await NsibidiCharacter.deleteMany({ _id: { $in: ids } });
-  const objectIds = ids.map(Types.ObjectId);
+  const objectIds = ids.map((id) => new Types.ObjectId(id));
   await Promise.all([
     ...nestedModels.map(async (Model) => {
       const docs = await Model.find({ 'definitions.nsibidiCharacters': { $in: objectIds } });

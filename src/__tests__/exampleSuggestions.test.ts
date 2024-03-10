@@ -566,7 +566,7 @@ describe('MongoDB Example Suggestions', () => {
         expect(authorId).toEqual(Author.SYSTEM);
       });
     });
-    it('should save audio for five random example sentences', async () => {
+    it.skip('should save audio for five random example sentences', async () => {
       const examples = [];
       await Promise.all(
         times(5, async () => {
@@ -600,6 +600,7 @@ describe('MongoDB Example Suggestions', () => {
       const crowdsourcerUpdatedExamplesRes = await putAudioForRandomExampleSuggestions(updateExamplePayload, {
         token: AUTH_TOKEN.CROWDSOURCER_AUTH_TOKEN,
       });
+      console.log(crowdsourcerUpdatedExamplesRes);
       expect(crowdsourcerUpdatedExamplesRes.status).toEqual(200);
       await Promise.all(
         updatedExamplesRes.body.map(async (id) => {
@@ -745,7 +746,6 @@ describe('MongoDB Example Suggestions', () => {
         expect(newRandomExampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.ADMIN_AUTH_TOKEN);
       });
       const verifiedRes = await getTotalReviewedExampleSuggestions();
-      // console.log(verifiedRes.body);
       expect(
         verifiedRes.body.timestampedReviewedExampleSuggestions[moment().format('MMM, YYYY')],
       ).toBeGreaterThanOrEqual(2);

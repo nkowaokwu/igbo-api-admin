@@ -26,8 +26,8 @@ import { createWordFromSuggestion, createExampleFromSuggestion } from './shared/
 
 describe('MongoDB Words', () => {
   /* Create a base wordSuggestion document */
-  beforeAll(async () => {
-    await suggestNewWord(wordSuggestionData);
+  beforeEach(async () => {
+    await suggestNewWord({ ...wordSuggestionData, word: uuid() });
   });
   describe('/POST mongodb words', () => {
     it('should create a new word in the database by merging wordSuggestion', async () => {

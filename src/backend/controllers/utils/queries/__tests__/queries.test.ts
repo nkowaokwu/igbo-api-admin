@@ -195,16 +195,24 @@ describe('queries', () => {
   it('searchCorpusTextSearch - no filters', () => {
     const query = searchCorpusTextSearch(uid, regex);
     expect(query).toStrictEqual({
-      $or: [titleQuery(regex), bodyQuery(regex)],
-      merged: null,
+      $or: [
+        { title: uid },
+        { title: { $regex: regex.wordReg } },
+        { body: uid },
+        { body: { $regex: regex.definitionsReg } },
+      ],
     });
   });
 
   it('searchCorpusTextSearch - filters', () => {
     const query = searchCorpusTextSearch(uid, regex);
     expect(query).toStrictEqual({
-      $or: [titleQuery(regex), bodyQuery(regex)],
-      merged: null,
+      $or: [
+        { title: uid },
+        { title: { $regex: regex.wordReg } },
+        { body: uid },
+        { body: { $regex: regex.definitionsReg } },
+      ],
       ...generateSearchFilters(filters, uid),
     });
   });
