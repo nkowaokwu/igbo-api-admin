@@ -58,7 +58,7 @@ const schema = Joi.object({
           .items(
             Joi.object({
               igbo: Joi.string().optional(),
-              nsibidi: Joi.string().optional(),
+              nsibidi: Joi.string().allow('').optional(),
               nsibidiCharacters: Joi.array()
                 .min(0)
                 .items(

@@ -31,7 +31,6 @@ export const exampleSuggestionFixture = (
   originalExampleId: '',
   exampleForSuggestion: false,
   source: SuggestionSourceEnum.INTERNAL,
-  style: ExampleStyleEnum.NO_STYLE,
   editorsNotes: '',
   crowdsourcing: Object.values(CrowdsourcingType).reduce(
     (finalCrowdsourcing, crowdsourcing) => ({ ...finalCrowdsourcing, crowdsourcing }),

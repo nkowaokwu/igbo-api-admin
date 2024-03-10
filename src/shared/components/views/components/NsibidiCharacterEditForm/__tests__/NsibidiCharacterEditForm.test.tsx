@@ -56,7 +56,7 @@ describe('NsibidiCharacterEditForm', () => {
     expect(mockSave).not.toHaveBeenCalled();
   });
 
-  it('renders the has legacy characters attribute', async () => {
+  it('renders all attributes', async () => {
     const mockSave = jest.fn(() => null);
 
     const { findByText } = render(
@@ -66,5 +66,9 @@ describe('NsibidiCharacterEditForm', () => {
     );
 
     await findByText('Has Legacy Characters');
+    await findByText('Is Compound');
+    await findByText('Is Simplified');
+    await findByText('Is New');
+    await findByText('Is Radical');
   });
 });

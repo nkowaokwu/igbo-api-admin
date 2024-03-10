@@ -16,7 +16,7 @@ describe('Submit ExampleEditForm', () => {
     const mockSave = jest.fn();
     const testExample = exampleSuggestionFixture(exampleSuggestionData);
     const { findByText } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );
@@ -45,7 +45,7 @@ describe('Submit ExampleEditForm', () => {
     });
 
     const { findByText } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );
@@ -73,7 +73,7 @@ describe('Submit ExampleEditForm', () => {
     const testExample = exampleSuggestionFixture(exampleSuggestionData);
 
     const { findByText } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );
@@ -109,7 +109,7 @@ describe('Submit ExampleEditForm', () => {
     const testExample = exampleSuggestionFixture(exampleSuggestionData);
 
     const { findByText, findByTestId } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );
@@ -151,7 +151,7 @@ describe('Submit ExampleEditForm', () => {
     const testExample = exampleSuggestionFixture(exampleSuggestionData);
 
     const { findByText, findByTestId } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );
@@ -185,7 +185,7 @@ describe('Submit ExampleEditForm', () => {
     const testExample = exampleSuggestionFixture(exampleSuggestionData);
 
     const { findByText, findAllByText, findByPlaceholderText } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testExample}>
+      <TestContext view={Views.EDIT} resource={Collections.EXAMPLE_SUGGESTIONS} record={testExample}>
         <ExampleEditForm save={mockSave} />
       </TestContext>,
     );

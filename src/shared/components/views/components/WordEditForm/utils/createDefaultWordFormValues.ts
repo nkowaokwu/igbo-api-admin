@@ -29,7 +29,7 @@ const createDefaultWordFormValues = (record: Record): any => {
           nsibidiCharacters: (example.nsibidiCharacters || []).map((nsibidiCharacterId) => ({
             id: nsibidiCharacterId,
           })),
-          style: pick(ExampleStyle[example?.style] || WordClass[ExampleStyleEnum.NO_STYLE], ['value', 'label']),
+          style: pick(ExampleStyle[example?.style] || ExampleStyle[ExampleStyleEnum.NO_STYLE], ['value', 'label']),
           exampleId: id,
         }))
       : [],

@@ -28,7 +28,7 @@ export const ExampleEditFormSchema = Joi.object({
     ),
   associatedDefinitionsSchemas: Joi.array().min(0).items(Joi.string()),
   id: Joi.string().optional(),
-  exampleId: Joi.string().optional(),
+  exampleId: Joi.string().allow('', null).optional(),
   originalExampleId: Joi.string().allow(null).optional(),
   pronunciations: Joi.array().items(
     Joi.object({

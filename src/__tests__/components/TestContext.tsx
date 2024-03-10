@@ -15,6 +15,7 @@ import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/Se
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import { wordFixture } from 'src/__tests__/shared/fixtures';
 import { wordRecord } from 'src/__tests__/__mocks__/documentData';
+import createDefaultNsibidiCharacterFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultNsibidiCharacterFormValues';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -108,6 +109,8 @@ const TestContext = ({
     defaultValues:
       resource === Collections.EXAMPLE_SUGGESTIONS
         ? createDefaultExampleFormValues(staticRecord)
+        : resource === Collections.NSIBIDI_CHARACTERS
+        ? createDefaultNsibidiCharacterFormValues(staticRecord)
         : createDefaultWordFormValues(staticRecord),
     mode: 'onChange',
   });

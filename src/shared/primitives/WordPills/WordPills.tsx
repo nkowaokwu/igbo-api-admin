@@ -15,7 +15,7 @@ const WordPills = ({
   formName: string;
   control: Control;
 }): ReactElement => (
-  <Box className="w-full grid grid-flow-row grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+  <Box className="w-full grid grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
     {pills.map((pill, index) => (
       <Box key={pill.id}>
         <input

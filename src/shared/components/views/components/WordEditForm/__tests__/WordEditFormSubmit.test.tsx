@@ -14,13 +14,74 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import { exampleSuggestionFixture, pronunciationFixture, wordSuggestionFixture } from 'src/__tests__/shared/fixtures';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordEditForm from '../WordEditForm';
+
+/** Copied from expected test result - no need to edit or delete */
+const result: { [key: string]: any } & { examples: any[] } = {
+  attributes: {
+    isAccented: false,
+    isBorrowedTerm: false,
+    isConstructedTerm: false,
+    isSlang: false,
+    isStandardIgbo: false,
+    isStem: false,
+  },
+  conceptualWord: undefined,
+  definitions: [
+    {
+      definitions: ['first definition'],
+      igboDefinitions: [],
+      nsibidi: 'first nsibidi',
+      nsibidiCharacters: [],
+      wordClass: 'AV',
+    },
+  ],
+  dialects: [
+    {
+      dialects: ['ABI'],
+      pronunciation: '',
+      word: 'word',
+    },
+  ],
+  editorsNotes: '',
+  examples: [
+    {
+      associatedWords: [],
+      english: 'english',
+      id: 'example-id',
+      igbo: 'igbo',
+      meaning: '',
+      nsibidi: '',
+      nsibidiCharacters: [],
+      pronunciations: [],
+    },
+  ],
+  frequency: 1,
+  normalized: '',
+  pronunciation: '',
+  relatedTerms: [],
+  stems: [],
+  tags: [],
+  tenses: {
+    future: '',
+    imperative: '',
+    infinitive: '',
+    presentContinuous: '',
+    presentPassive: '',
+    simplePast: '',
+    simplePresent: '',
+  },
+  variations: [],
+  word: 'word',
+  wordPronunciation: undefined,
+};
 
 describe('Submit WordEditForm', () => {
   it('submits word edit form', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -30,7 +91,7 @@ describe('Submit WordEditForm', () => {
     fireEvent.submit(await findByText('Update'));
 
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(testWord, Views.SHOW, {
+      expect(mockSave).toHaveBeenCalledWith(result, Views.SHOW, {
         onFailure: expect.any(Function),
         onSuccess: expect.any(Function),
       }),
@@ -54,22 +115,60 @@ describe('Submit WordEditForm', () => {
 
   it('submits word edit for with audio pronunciations approvals, denials, and review', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture({ examples: [exampleSuggestionFixture()] });
-    testWord.examples[0].pronunciations[0] = pronunciationFixture({
-      audio: 'recording',
+    const record = wordSuggestionFixture({
+      ...cloneDeep(wordRecord),
+      examples: [
+        exampleSuggestionFixture({
+          igbo: 'igbo',
+          english: 'english',
+          id: 'example-id',
+          pronunciations: [pronunciationFixture({ audio: 'recording' })],
+        }),
+      ],
     });
 
     const { findByText } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={testWord}>
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={record}>
         <WordEditForm save={mockSave} />
       </TestContext>,
     );
     fireEvent.submit(await findByText('Update'));
 
-    const finalWord = cloneDeep(testWord);
-    finalWord.examples[0].pronunciations[0] = pronunciationFixture({
-      audio: 'recording',
-      speaker: '',
+    const finalWord = cloneDeep(result);
+    finalWord.examples[0].pronunciations[0] = { audio: 'recording', speaker: '' };
+
+    await waitFor(() =>
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
+    );
+  });
+
+  it('submits word edit form with an extra example sentence without omitting ids', async () => {
+    const mockSave = jest.fn();
+
+    const { findByText, findByTestId } = render(
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
+        <WordEditForm save={mockSave} />
+      </TestContext>,
+    );
+    fireEvent.click(await findByText('Add Example'));
+    userEvent.type(await findByTestId('examples-1-igbo-input'), 'second igbo example');
+    userEvent.type(await findByTestId('examples-1-english-input'), 'second english example');
+    userEvent.type(await findByTestId('examples-1-meaning-input'), 'second meaning example');
+    userEvent.type(await findByTestId('examples-1-nsibidi-input'), 'second nsibidi example');
+    fireEvent.submit(await findByText('Update'));
+
+    const finalWord = cloneDeep(result);
+    finalWord.examples.push({
+      igbo: 'second igbo example',
+      english: 'second english example',
+      nsibidi: 'second nsibidi example',
+      meaning: 'second meaning example',
+      associatedWords: [],
+      nsibidiCharacters: [],
+      pronunciations: [],
     });
 
     await waitFor(() =>
@@ -80,89 +179,15 @@ describe('Submit WordEditForm', () => {
     );
   });
 
-  it('submits word edit form with an extra example sentence', async () => {
-    const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
-
-    testWord.examples.push(
-      exampleSuggestionFixture({
-        igbo: 'second igbo example',
-        english: 'second english example',
-        nsibidi: 'second nsibidi example',
-        meaning: 'second meaning example',
-        associatedWords: [],
-        nsibidiCharacters: [],
-        pronunciations: [],
-      }),
-    );
-
-    const { findByText, findByTestId } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
-        <WordEditForm save={mockSave} />
-      </TestContext>,
-    );
-    fireEvent.click(await findByText('Add Example'));
-    userEvent.type(await findByTestId('examples-1-igbo-input'), 'second igbo example');
-    userEvent.type(await findByTestId('examples-1-english-input'), 'second english example');
-    userEvent.type(await findByTestId('examples-1-meaning-input'), 'second meaning example');
-    userEvent.type(await findByTestId('examples-1-nsibidi-input'), 'second nsibidi example');
-    fireEvent.submit(await findByText('Update'));
-
-    await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(testWord, Views.SHOW, {
-        onFailure: expect.any(Function),
-        onSuccess: expect.any(Function),
-      }),
-    );
-  });
-
-  it('submits word edit form with example without omitting its id', async () => {
-    const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture({ examples: [exampleSuggestionFixture({ id: 'example-id' })] });
-
-    const { findByText, findByTestId } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
-        <WordEditForm save={mockSave} />
-      </TestContext>,
-    );
-
-    fireEvent.click(await findByText('Add Example'));
-    userEvent.type(await findByTestId('examples-1-igbo-input'), 'second igbo example');
-    userEvent.type(await findByTestId('examples-1-english-input'), 'second english example');
-    userEvent.type(await findByTestId('examples-1-meaning-input'), 'second meaning example');
-    userEvent.type(await findByTestId('examples-1-nsibidi-input'), 'second nsibidi example');
-
-    fireEvent.submit(await findByText('Update'));
-
-    await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          examples: [
-            ...testWord.examples,
-            {
-              igbo: 'second igbo example',
-              english: 'second english example',
-              nsibidi: 'second nsibidi example',
-              meaning: 'second meaning example',
-              associatedWords: [],
-              nsibidiCharacters: [],
-              pronunciations: [],
-            },
-          ],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
-    );
-  });
-
   it('submits word edit form with example without overwriting first audio', async () => {
     const mockSave = jest.fn();
     const testWord = wordSuggestionFixture({
+      ...cloneDeep(wordRecord),
       examples: [
         exampleSuggestionFixture({
-          id: 'example-id ',
+          id: 'example-id',
+          igbo: 'igbo',
+          english: 'english',
           pronunciations: [
             pronunciationFixture({ audio: 'first-audio-pronunciation' }),
             pronunciationFixture({ audio: 'second-audio-pronunciation' }),
@@ -186,33 +211,33 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.examples = [
+      {
+        igbo: 'first igbo example',
+        id: 'example-id',
+        english: 'first english example',
+        nsibidi: 'first nsibidi example',
+        meaning: 'first meaning example',
+        associatedWords: [],
+        nsibidiCharacters: [],
+        pronunciations: [
+          { audio: 'first-audio-pronunciation', speaker: '' },
+          { audio: 'second-audio-pronunciation', speaker: '' },
+        ],
+      },
+    ];
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          examples: [
-            {
-              ...testWord.examples[0],
-              igbo: 'first igbo example',
-              english: 'first english example',
-              nsibidi: 'first nsibidi example',
-              meaning: 'first meaning example',
-              pronunciations: [
-                { audio: 'first-audio-pronunciation', speaker: '' },
-                { audio: 'second-audio-pronunciation', speaker: '' },
-              ],
-            },
-          ],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with adding a dialectal variation', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -227,21 +252,19 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.dialects.push({ dialects: [DialectEnum.AJA], pronunciation: '', word: 'New dialectal variation' });
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          dialects: [...testWord.dialects, { dialects: ['AJA'], pronunciation: '', word: 'New dialectal variation' }],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with all headword attributes selected', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -257,26 +280,24 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.attributes = Object.values(WordAttributes).reduce((attributes, { value }) => {
+      if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
+        attributes[value] = true;
+      }
+      return attributes;
+    }, {});
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          attributes: Object.values(WordAttributes).reduce((attributes, { value }) => {
-            if (value !== WordAttributeEnum.IS_COMPLETE && value !== WordAttributeEnum.IS_COMMON) {
-              attributes[value] = true;
-            }
-            return attributes;
-          }, {}),
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with a selected tag', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -289,21 +310,19 @@ describe('Submit WordEditForm', () => {
     fireEvent.click(await findByText(WordTags[WordTagEnum.BOTANY].label));
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.tags = [WordTags[WordTagEnum.BOTANY].value];
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          tags: [WordTags[WordTagEnum.BOTANY].value],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with an updated headword', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -315,21 +334,19 @@ describe('Submit WordEditForm', () => {
     userEvent.type(await findByTestId('word-input'), 'updated word');
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.word = 'updated word';
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          word: 'updated word',
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with an updated definition group', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId, findAllByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -354,30 +371,28 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.definitions = [
+      {
+        nsibidiCharacters: [],
+        definitions: ['first definition'],
+        igboDefinitions: [{ igbo: 'first igbo definition', nsibidi: 'igbo definition nsibidi' }],
+        wordClass: WordClassEnum.CJN,
+        nsibidi: 'nsibidi input',
+      },
+    ];
+    finalWord.tenses = Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: '' }), {});
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          definitions: [
-            {
-              ...testWord.definitions[0],
-              definitions: ['first definition'],
-              igboDefinitions: [{ igbo: 'first igbo definition', nsibidi: 'igbo definition nsibidi' }],
-              wordClass: WordClassEnum.CJN,
-              nsibidi: 'nsibidi input',
-            },
-          ],
-          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with deleting first definition group and updating the only one left', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId, findAllByText, findAllByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -401,30 +416,28 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.definitions = [
+      {
+        nsibidiCharacters: [],
+        definitions: ['second english definition'],
+        igboDefinitions: [{ igbo: 'second igbo definition', nsibidi: '' }],
+        wordClass: WordClassEnum.ADV,
+        nsibidi: 'second nsibidi input',
+      },
+    ];
+    finalWord.tenses = Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: '' }), {});
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          definitions: [
-            {
-              ...testWord.definitions[0],
-              definitions: ['second english definition'],
-              igboDefinitions: [{ igbo: 'second igbo definition', nsibidi: '' }],
-              wordClass: WordClassEnum.ADV,
-              nsibidi: 'second nsibidi input',
-            },
-          ],
-          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: undefined }), {}),
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with filled in verb tenses', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId, getByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -442,22 +455,28 @@ describe('Submit WordEditForm', () => {
 
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.definitions = [
+      {
+        wordClass: WordClassEnum.PV,
+        definitions: ['first definition'],
+        igboDefinitions: [],
+        nsibidi: 'first nsibidi',
+        nsibidiCharacters: [],
+      },
+    ];
+    finalWord.tenses = Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: value }), {});
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          definitions: [{ ...testWord.definitions[0], wordClass: WordClassEnum.PV }],
-          tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: value }), {}),
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with adding variations', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findByTestId } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -471,21 +490,19 @@ describe('Submit WordEditForm', () => {
     userEvent.type(await findByTestId('variation-1-input'), 'second spelling variation');
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.variations = ['first spelling variation', 'second spelling variation'];
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          variations: ['first spelling variation', 'second spelling variation'],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with adding related terms', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findAllByText, findByPlaceholderText } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -500,21 +517,18 @@ describe('Submit WordEditForm', () => {
     userEvent.click(last(await findAllByText('retrieved word')));
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.relatedTerms = ['567'];
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          relatedTerms: ['567'],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 
   it('submits word edit form with adding stems', async () => {
     const mockSave = jest.fn();
-    const testWord = wordSuggestionFixture();
 
     const { findByText, findAllByText, findByPlaceholderText } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS}>
@@ -529,15 +543,14 @@ describe('Submit WordEditForm', () => {
     userEvent.click(last(await findAllByText('retrieved word')));
     fireEvent.submit(await findByText('Update'));
 
+    const finalWord = cloneDeep(result);
+    finalWord.stems = ['567'];
+
     await waitFor(() =>
-      expect(mockSave).toHaveBeenCalledWith(
-        {
-          ...testWord,
-          stems: ['567'],
-        },
-        Views.SHOW,
-        { onFailure: expect.any(Function), onSuccess: expect.any(Function) },
-      ),
+      expect(mockSave).toHaveBeenCalledWith(finalWord, Views.SHOW, {
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
     );
   });
 });

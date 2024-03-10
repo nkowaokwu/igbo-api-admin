@@ -43,8 +43,9 @@ describe('Example Show', () => {
         enableReducers
         initialState={{ admin: { resources: { examples: { data: {} } } } }}
         dataProvider={dataProvider}
+        resource={Collections.EXAMPLES}
       >
-        <ExampleShow basePath="/" resource={Collections.EXAMPLES} id={record.id} />
+        <ExampleShow basePath="/" id={record.id} />
       </TestContext>,
     );
 
@@ -76,8 +77,9 @@ describe('Example Show', () => {
         initialState={{ admin: { resources: { exampleSuggestions: { data: record } } } }}
         dataProvider={dataProvider}
         record={record}
+        resource={Collections.EXAMPLE_SUGGESTIONS}
       >
-        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} />
+        <ExampleShow basePath="/" id={record.id} />
       </TestContext>,
     );
 
