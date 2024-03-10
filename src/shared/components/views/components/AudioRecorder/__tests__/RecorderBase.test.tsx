@@ -31,7 +31,7 @@ describe('RecorderBase', () => {
     await findByText('Recorded new audio');
     await findByText('A new audio pronunciation has been recorded');
 
-    expect(mockStopRecording).toBeCalledWith('audioBlob');
+    expect(mockStopRecording).toHaveBeenCalledWith('audioBlob');
   });
 
   it('click on reset recording button', async () => {
@@ -46,6 +46,6 @@ describe('RecorderBase', () => {
     );
     fireEvent.click(await findByTestId('reset-recording-button-examples'));
 
-    expect(mockResetRecording).toBeCalled();
+    expect(mockResetRecording).toHaveBeenCalled();
   });
 });

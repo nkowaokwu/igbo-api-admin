@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { NextFunction, Response } from 'express';
 import { Connection } from 'mongoose';
 import { EditorRequest } from 'src/backend/controllers/utils/interfaces';
@@ -16,7 +17,7 @@ export const requestFixture = (data: any = {}) =>
   ({
     mongooseConnection: mongooseConnectionFixture(),
     params: { id: '' },
-    ...data,
+    ...cloneDeep(data),
   } as EditorRequest);
 
 export const responseFixture = () =>

@@ -8,9 +8,12 @@ import { PARTS_OF_SPEECH_LIST } from 'src/Core/constants';
 import FormHeader from '../../../FormHeader';
 import PartOfSpeechFormInterface from './PartOfSpeechFormInterface';
 
-const PartOfSpeechForm = ({ errors, control, groupIndex }: PartOfSpeechFormInterface): ReactElement => {
-  const { getValues } = control;
-  const options = values(WordClass);
+const PartOfSpeechForm = ({ errors, control, groupIndex, record }: PartOfSpeechFormInterface): ReactElement => {
+  const options = values(WordClass).map(({ value, label }) => ({ value, label }));
+  const defaultValue = {
+    label: WordClass[get(record, `definitions[${groupIndex}].wordClass`)]?.label || 'No selected part of speech',
+    value: get(record, `definitions[${groupIndex}].wordClass`),
+  };
 
   return (
     <Box className="flex flex-col w-full">
@@ -23,7 +26,7 @@ const PartOfSpeechForm = ({ errors, control, groupIndex }: PartOfSpeechFormInter
         <Controller
           render={(props) => <Select {...props} options={options} />}
           name={`definitions[${groupIndex}].wordClass`}
-          defaultValue={get(getValues(), `definitions[${groupIndex}].wordClass`)}
+          defaultValue={defaultValue}
           control={control}
         />
       </Box>

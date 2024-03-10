@@ -15,6 +15,6 @@ describe('ConfirmationCodeInput', () => {
       </TestContext>,
     );
     userEvent.paste(await findByTestId('first-input-code-verification'), verificationCode);
-    expect(onCompleteMock).toBeCalledWith(verificationCode);
+    expect(onCompleteMock).toHaveBeenCalledWith(verificationCode);
   });
 });

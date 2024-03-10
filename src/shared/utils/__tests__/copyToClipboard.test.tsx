@@ -15,7 +15,7 @@ it('copies text to the keyboard', () => {
   copyToClipboard({ copyText, successMessage }, mockToast);
 
   expect(navigator.clipboard.writeText).toHaveBeenCalledWith(copyText);
-  expect(mockToast).toBeCalledWith({
+  expect(mockToast).toHaveBeenCalledWith({
     title: 'Copied to clipboard 📋',
     description: successMessage,
     status: 'info',

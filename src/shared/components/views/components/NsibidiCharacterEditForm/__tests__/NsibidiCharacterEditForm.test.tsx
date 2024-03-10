@@ -25,7 +25,7 @@ describe('NsibidiCharacterEditForm', () => {
 
     userEvent.click(await findByText('Update'));
     await waitFor(() =>
-      expect(mockSave).toBeCalledWith(
+      expect(mockSave).toHaveBeenCalledWith(
         {
           radicals: [{ id: 'resolved-nsibidi-987' }],
           nsibidi: 'nsibidi',
@@ -53,7 +53,7 @@ describe('NsibidiCharacterEditForm', () => {
     );
 
     userEvent.click(await findByText('Update'));
-    expect(mockSave).not.toBeCalled();
+    expect(mockSave).not.toHaveBeenCalled();
   });
 
   it('renders the has legacy characters attribute', async () => {

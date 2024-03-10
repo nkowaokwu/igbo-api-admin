@@ -44,7 +44,7 @@ describe('automaticallyMergeExampleSuggestion', () => {
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });
-    expect(mockExecuteMergeExample).toBeCalledWith(exampleSuggestion, Author.SYSTEM, mongooseConnection);
+    expect(mockExecuteMergeExample).toHaveBeenCalledWith(exampleSuggestion, Author.SYSTEM, mongooseConnection);
   });
   it('does not merge the exampleSuggestion due to being an exampleForSuggestion', async () => {
     const exampleSuggestion = cloneDeep(topLevelExampleSuggestion);
@@ -52,7 +52,7 @@ describe('automaticallyMergeExampleSuggestion', () => {
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });
-    expect(mockExecuteMergeExample).not.toBeCalled();
+    expect(mockExecuteMergeExample).not.toHaveBeenCalled();
   });
   it('does not merge the exampleSuggestion due to not having enough approvals', async () => {
     const exampleSuggestion = cloneDeep(topLevelExampleSuggestion);
@@ -60,7 +60,7 @@ describe('automaticallyMergeExampleSuggestion', () => {
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });
-    expect(mockExecuteMergeExample).not.toBeCalled();
+    expect(mockExecuteMergeExample).not.toHaveBeenCalled();
   });
   it('does not merge the exampleSuggestion due one pronunciation not having enough approvals', async () => {
     const exampleSuggestion = cloneDeep(topLevelExampleSuggestion);
@@ -68,6 +68,6 @@ describe('automaticallyMergeExampleSuggestion', () => {
     const mongooseConnection = {};
     // @ts-expect-error
     await automaticallyMergeExampleSuggestion({ exampleSuggestion, mongooseConnection });
-    expect(mockExecuteMergeExample).not.toBeCalled();
+    expect(mockExecuteMergeExample).not.toHaveBeenCalled();
   });
 });

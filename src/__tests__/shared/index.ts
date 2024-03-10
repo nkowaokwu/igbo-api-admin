@@ -40,7 +40,7 @@ export const dropMongoDBCollections = async (): Promise<void> => {
 };
 
 export const setUpTestEnvironment = (): { initializedAdminApp: admin.app.App } => {
-  jest.retryTimes(2);
+  jest.retryTimes(1);
   initializeApp(useFirebaseConfig());
   const db = getFirestore();
   const functions = getFunctions(getApp());

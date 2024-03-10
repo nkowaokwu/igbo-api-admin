@@ -1,13 +1,18 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
-import { wordSuggestionData, exampleSuggestionData, nsibidiCharacterData } from 'src/__tests__/__mocks__/documentData';
+import { wordSuggestionData, exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
 import Collection from 'src/shared/constants/Collection';
+import { nsibidiCharacterFixture } from 'src/__tests__/shared/fixtures';
 import SearchResults from '../SearchResults';
 
 const wordResult = wordSuggestionData;
 const exampleResult = exampleSuggestionData;
-const nsibidiCharacterResult = nsibidiCharacterData;
+const nsibidiCharacterResult = nsibidiCharacterFixture({
+  nsibidi: 'nsibidi',
+  pronunciation: 'nsibidi pronunciation',
+  definitions: [{ text: 'first nsibidi definition' }],
+});
 
 describe('SearchResults', () => {
   it('render the word results', async () => {

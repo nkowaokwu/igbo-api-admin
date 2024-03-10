@@ -34,11 +34,11 @@ describe('ConfirmFlagUserModal', () => {
     fireEvent.click(await findByText('Inappropriate activity'));
     userEvent.type(await findByPlaceholderText("Please share details on this user's activity."), 'True reason');
     fireEvent.click(await findByText('Submit report'));
-    expect(mockOnConfirm).toBeCalledWith({
+    expect(mockOnConfirm).toHaveBeenCalledWith({
       reason: 'Inappropriate activity',
       details: 'True reason',
     });
-    expect(mockOnClose).toBeCalled();
+    expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('cancels the confirm flag user modal', async () => {
@@ -54,7 +54,7 @@ describe('ConfirmFlagUserModal', () => {
     fireEvent.click(await findByText('Inappropriate activity'));
     userEvent.type(await findByPlaceholderText("Please share details on this user's activity."), 'True reason');
     fireEvent.click(await findByText('Cancel'));
-    expect(mockOnClose).toBeCalled();
-    expect(mockOnConfirm).not.toBeCalled();
+    expect(mockOnClose).toHaveBeenCalled();
+    expect(mockOnConfirm).not.toHaveBeenCalled();
   });
 });

@@ -328,7 +328,7 @@ describe('exampleSuggestions controller', () => {
     };
     const nextMock = jest.fn();
     await getRandomExampleSuggestionsToTranslate(reqMock, resMock, nextMock);
-    expect(resMock.send).toBeCalled();
+    expect(resMock.send).toHaveBeenCalled();
     res.forEach((exampleSuggestion) => {
       expect(exampleSuggestion.english).toBeFalsy();
       expect(exampleSuggestion.userInteractions).not.toContain(AUTH_TOKEN.EDITOR_AUTH_TOKEN);
@@ -362,7 +362,7 @@ describe('exampleSuggestions controller', () => {
       const exampleSuggestion = await unsavedExampleSuggestion.save();
       await getTotalMergedRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
-      expect(resMock.send).toBeCalledWith({
+      expect(resMock.send).toHaveBeenCalledWith({
         timestampedExampleSuggestions: {
           [moment(exampleSuggestion.updatedAt).startOf('month').format('MMM, YYYY')]: 1,
         },
@@ -399,7 +399,7 @@ describe('exampleSuggestions controller', () => {
       );
       await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
-      expect(resMock.send).toBeCalledWith({
+      expect(resMock.send).toHaveBeenCalledWith({
         timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
       });
     });
@@ -434,7 +434,7 @@ describe('exampleSuggestions controller', () => {
       );
       await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
 
-      expect(resMock.send).toBeCalledWith({
+      expect(resMock.send).toHaveBeenCalledWith({
         timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
       });
     });
@@ -473,7 +473,7 @@ describe('exampleSuggestions controller', () => {
       await unsavedExampleSuggestion.save();
 
       await getRandomExampleSuggestionsToRecord(reqMock, resMock, nextMock);
-      expect(resMock.send).not.toBeCalledWith([]);
+      expect(resMock.send).not.toHaveBeenCalledWith([]);
     });
 
     it('does not return example suggestions already recorded by current user', async () => {
@@ -510,7 +510,7 @@ describe('exampleSuggestions controller', () => {
       await unsavedExampleSuggestion.save();
 
       await getRandomExampleSuggestionsToRecord(reqMock, resMock, nextMock);
-      expect(resMock.send).toBeCalledWith([]);
+      expect(resMock.send).toHaveBeenCalledWith([]);
     });
 
     it('returns example suggestions not recorded by current user when reviewing', async () => {
@@ -538,7 +538,7 @@ describe('exampleSuggestions controller', () => {
       await unsavedExampleSuggestion.save();
 
       await getRandomExampleSuggestionsToReview(reqMock, resMock, nextMock);
-      expect(resMock.send).not.toBeCalledWith([]);
+      expect(resMock.send).not.toHaveBeenCalledWith([]);
     });
 
     it('does not return example suggestions recorded by current user when reviewing', async () => {
@@ -566,7 +566,7 @@ describe('exampleSuggestions controller', () => {
       await unsavedExampleSuggestion.save();
 
       await getRandomExampleSuggestionsToReview(reqMock, resMock, nextMock);
-      expect(resMock.send).toBeCalledWith([]);
+      expect(resMock.send).toHaveBeenCalledWith([]);
     });
   });
 

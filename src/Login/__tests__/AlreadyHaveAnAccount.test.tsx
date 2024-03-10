@@ -15,6 +15,6 @@ describe('AlreadyHaveAnAccount', () => {
       </TestContext>,
     );
     userEvent.click(await findByText('Log into account'));
-    expect(onClickMock).toBeCalledWith(UserLoginState.LOGIN);
+    expect(onClickMock).toHaveBeenCalledWith(UserLoginState.LOGIN);
   });
 });

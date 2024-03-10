@@ -51,7 +51,7 @@ const DefinitionForm = ({
   return (
     <>
       <Box className="flex flex-col lg:flex-row lg:space-x-3 items-start">
-        <PartOfSpeechForm errors={errors} control={control} groupIndex={groupIndex} />
+        <PartOfSpeechForm errors={errors} control={control} groupIndex={groupIndex} record={record} />
         <NsibidiForm
           control={control}
           name={`definitions[${groupIndex}].nsibidi`}

@@ -6,47 +6,47 @@ import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collection';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordClass from 'src/backend/shared/constants/WordClass';
+import { definitionFixture, exampleFixture, pronunciationFixture, wordFixture } from 'src/__tests__/shared/fixtures';
+import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
+import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordShow from '../WordShow';
 
 configure({ testIdAttribute: 'data-test' });
 
-const record = {
-  id: 123,
+const record = wordFixture({
   word: 'tésting word',
   definitions: [
-    {
+    definitionFixture({
       wordClass: WordClassEnum.ADJ,
       definitions: ['first definition'],
-    },
+    }),
   ],
   variations: [],
   examples: [
-    {
+    exampleFixture({
       igbo: 'igbo',
       english: 'english',
-      pronunciations: [],
-      associatedWords: [],
-    },
+    }),
   ],
   pronunciation: '1234',
-  stems: [],
-  relatedTerms: [],
-  dialects: [],
   attributes: {
+    ...Object.values(WordAttributeEnum).reduce(
+      (finalAttributes, attribute) => ({ ...finalAttributes, [attribute]: false }),
+      {} as { [key in WordAttributeEnum]: boolean },
+    ),
     isStandardIgbo: true,
   },
-  nsibidi: '',
-};
+});
 
-const completeRecord = {
+const completeRecord = wordFixture({
   ...record,
   examples: [
-    {
+    exampleFixture({
       igbo: 'igbo',
       english: 'english',
-      pronunciations: [{ audio: 'example-pronunciation', speaker: '' }],
+      pronunciations: [pronunciationFixture({ audio: 'example-pronunciation' })],
       associatedWords: ['associatedWordId'],
-    },
+    }),
   ],
   pronunciation: 'word-pronunciation',
   stems: ['stemId'],
@@ -54,13 +54,12 @@ const completeRecord = {
   dialects: [
     {
       variations: [],
-      dialects: ['NSA'],
+      dialects: [DialectEnum.NSA],
       pronunciation: 'dialect-pronunciation',
       word: 'word',
     },
   ],
-  nsibidi: 'nsibidi',
-};
+});
 
 const dataProvider = {
   getOne: () =>

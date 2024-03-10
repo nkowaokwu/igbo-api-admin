@@ -36,7 +36,7 @@ describe('DeleteOldWordSuggestionsConfirmationModal', () => {
     fireEvent.click(await findByText('Cancel'));
     fireEvent.click(await findByText('Delete word suggestions'));
 
-    expect(onCloseMock).toBeCalled();
-    expect(onCancelMock).toBeCalled();
+    expect(onCloseMock).toHaveBeenCalled();
+    expect(onCancelMock).toHaveBeenCalled();
   });
 });

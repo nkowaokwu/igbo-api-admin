@@ -23,8 +23,8 @@ describe('validateExampleBody', () => {
 
     // @ts-expect-error
     await validateExampleBody(mockReq, mockRes, mockNext);
-    expect(mockNext).toBeCalled();
-    expect(mockRes.send).not.toBeCalled();
+    expect(mockNext).toHaveBeenCalled();
+    expect(mockRes.send).not.toHaveBeenCalled();
   });
 
   it('fails validation the provided example sentence body', async () => {
@@ -48,8 +48,8 @@ describe('validateExampleBody', () => {
 
     // @ts-expect-error
     await validateExampleBody(mockReq, mockRes, mockNext);
-    expect(mockRes.send).toBeCalled();
-    expect(mockRes.status).toBeCalledWith(400);
-    expect(mockNext).not.toBeCalled();
+    expect(mockRes.send).toHaveBeenCalled();
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockNext).not.toHaveBeenCalled();
   });
 });

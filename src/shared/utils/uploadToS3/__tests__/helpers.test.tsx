@@ -6,7 +6,7 @@ describe('helpers', () => {
     const requestSpy = jest.spyOn(axios, 'request').mockReturnValue(Promise.resolve());
     const payload = { signedRequest: '', mediaUrl: '', file: new File([], '') };
     await upload(payload);
-    expect(requestSpy).toBeCalledWith({
+    expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
       url: '',
       data: payload.file,

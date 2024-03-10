@@ -17,7 +17,7 @@ describe('Input', () => {
     await findByTestId('testing');
     userEvent.type(await findByPlaceholderText('Input placeholder'), 'a');
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(onChangeMock).toBeCalled();
+    expect(onChangeMock).toHaveBeenCalled();
   });
 
   it('handle searching the api for nsibidi characters', async () => {
@@ -31,7 +31,7 @@ describe('Input', () => {
     );
     userEvent.type(await findByTestId('testing'), 'nsibidi');
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(getNsibidiCharactersMock).toBeCalledWith('nsibidi');
+    expect(getNsibidiCharactersMock).toHaveBeenCalledWith('nsibidi');
   });
   it('handle searching the api for examples', async () => {
     const onChangeMock = jest.fn();
@@ -45,7 +45,7 @@ describe('Input', () => {
     );
     userEvent.type(await findByTestId('testing'), 'example');
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(getExamplesMock).toBeCalledWith('example');
+    expect(getExamplesMock).toHaveBeenCalledWith('example');
   });
   it('handle searching the api for example suggestions', async () => {
     const onChangeMock = jest.fn();
@@ -58,7 +58,7 @@ describe('Input', () => {
     );
     userEvent.type(await findByTestId('testing'), 'example suggestion');
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(getExampleSuggestionsMock).toBeCalledWith('example suggestion');
+    expect(getExampleSuggestionsMock).toHaveBeenCalledWith('example suggestion');
   });
   it('handle searching the api for words', async () => {
     const onChangeMock = jest.fn();
@@ -71,6 +71,6 @@ describe('Input', () => {
     );
     userEvent.type(await findByTestId('testing'), 'word');
     await new Promise((resolve) => setTimeout(resolve, 500));
-    expect(getWordsMock).toBeCalledWith('word');
+    expect(getWordsMock).toHaveBeenCalledWith('word');
   });
 });

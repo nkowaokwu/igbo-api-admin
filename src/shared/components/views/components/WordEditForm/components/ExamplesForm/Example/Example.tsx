@@ -112,6 +112,18 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           defaultValue={nsibidi}
           control={control}
         />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples[${index}].style.value`}
+          ref={control.register}
+          defaultValue={get(example, 'style.value')}
+        />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples[${index}].style.label`}
+          ref={control.register}
+          defaultValue={get(example, 'style.label')}
+        />
         {pronunciations?.length ? (
           pronunciations.map((_, pronunciationIndex) => (
             <>

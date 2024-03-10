@@ -95,7 +95,7 @@ describe('IgboDefinitions', () => {
 
     userEvent.click(await findByText('Submit'));
 
-    expect(putWordSuggestionsWithoutIgboDefinitions).toBeCalledWith([
+    expect(putWordSuggestionsWithoutIgboDefinitions).toHaveBeenCalledWith([
       { id: '123', igboDefinition: 'first igbo definition' },
       { id: '234', igboDefinition: 'second igbo definition' },
       { id: '345', igboDefinition: 'third igbo definition' },

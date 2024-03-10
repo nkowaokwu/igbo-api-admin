@@ -13,7 +13,7 @@ describe('ResourceConnectionButton', () => {
       </TestContext>,
     );
     fireEvent.click(await findByLabelText('Archive'));
-    expect(mockClick).toBeCalled();
+    expect(mockClick).toHaveBeenCalled();
   });
 
   it('render detach state for ResourceConnectionButton', async () => {
@@ -23,7 +23,7 @@ describe('ResourceConnectionButton', () => {
       </TestContext>,
     );
     fireEvent.click(await findByLabelText('Detach'));
-    expect(mockClick).toBeCalled();
+    expect(mockClick).toHaveBeenCalled();
   });
 
   it('render delete state for ResourceConnectionButton', async () => {
@@ -33,6 +33,6 @@ describe('ResourceConnectionButton', () => {
       </TestContext>,
     );
     fireEvent.click(await findByLabelText('Delete'));
-    expect(mockClick).toBeCalled();
+    expect(mockClick).toHaveBeenCalled();
   });
 });

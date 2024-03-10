@@ -7,7 +7,7 @@ describe('PlatformAPI', () => {
       .spyOn(requestUtils, 'request')
       .mockReturnValue(new Promise((resolve) => resolve({ data: { volunteers: 1, hours: 100 } })));
     const res = await getPlatformStats();
-    expect(requestMock).toBeCalledWith({
+    expect(requestMock).toHaveBeenCalledWith({
       method: 'GET',
       url: 'stats/login',
     });
@@ -32,7 +32,7 @@ describe('PlatformAPI', () => {
       details: 'details',
     };
     const res = await sendReportUserEmail(data);
-    expect(requestMock).toBeCalledWith({
+    expect(requestMock).toHaveBeenCalledWith({
       method: 'POST',
       url: 'email/report',
       data,

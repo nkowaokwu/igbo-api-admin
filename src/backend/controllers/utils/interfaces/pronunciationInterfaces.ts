@@ -1,4 +1,4 @@
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 export interface PronunciationData {
   audio: string;
@@ -10,7 +10,7 @@ export interface PronunciationData {
 }
 
 export interface PronunciationSchema extends PronunciationData {
-  _id: Types.ObjectId;
+  _id: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

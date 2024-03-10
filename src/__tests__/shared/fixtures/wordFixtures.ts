@@ -1,7 +1,9 @@
+import { cloneDeep } from 'lodash';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import { WordData, WordDialect, DefinitionSchema, WordSuggestionData } from 'src/backend/controllers/utils/interfaces';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 
 export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionSchema => {
   return {
@@ -12,7 +14,7 @@ export const definitionFixture = (data?: Partial<DefinitionSchema>): DefinitionS
     nsibidi: '',
     nsibidiCharacters: [],
     id: '6596ca4a6fab49612273b724',
-    ...data,
+    ...cloneDeep(data),
   };
 };
 
@@ -37,8 +39,12 @@ export const wordFixture = (data?: Partial<WordData & { createdAt: Date }>): Wor
   definitions: [definitionFixture()],
   dialects: [],
   tags: [],
+  tenses: Object.values(TenseEnum).reduce(
+    (finalTenses, tense) => ({ ...finalTenses, [tense]: '' }),
+    {} as { [key in TenseEnum]: string },
+  ),
   id: '6596ca4a6fab49612273b724',
-  ...data,
+  ...cloneDeep(data),
 });
 
 export const wordSuggestionFixture = (
@@ -51,11 +57,12 @@ export const wordSuggestionFixture = (
   merged: null,
   mergedBy: null,
   userInteractions: [],
+  editorsNotes: '',
   crowdsourcing: Object.values(CrowdsourcingType).reduce(
     (finalCrowdsourcing, crowdsourcing) => ({ ...finalCrowdsourcing, crowdsourcing }),
     {} as { [key in CrowdsourcingType]: boolean },
   ),
-  ...data,
+  ...cloneDeep(data),
 });
 
 export const dialectFixture = (data?: Partial<WordDialect>): WordDialect => ({
@@ -64,5 +71,5 @@ export const dialectFixture = (data?: Partial<WordDialect>): WordDialect => ({
   pronunciation: '',
   variations: [],
   word: '',
-  ...data,
+  ...cloneDeep(data),
 });

@@ -1,12 +1,10 @@
-import { cloneDeep } from 'lodash';
-import { wordRecord } from 'src/__tests__/__mocks__/documentData';
+import { wordFixture } from 'src/__tests__/shared/fixtures';
 import createDefaultWordFormValues from '../utils/createDefaultWordFormValues';
 
 describe('WordEditForm utils', () => {
   it('creates a default word form value', () => {
-    const staticWordRecord = cloneDeep(wordRecord);
-    // @ts-expect-error
-    const defaultValues = createDefaultWordFormValues(staticWordRecord);
+    const word = wordFixture();
+    const defaultValues = createDefaultWordFormValues(word);
 
     expect(defaultValues.definitions[0].wordClass.value).toEqual('AV');
     expect(defaultValues.definitions[0].wordClass.label).toEqual('Active verb');

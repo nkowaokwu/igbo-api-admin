@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces';
 import Feedback from 'src/backend/shared/constants/Feedback';
@@ -16,5 +17,5 @@ export const exampleTranscriptionFeedbackFixture = (
   denials: [],
   source: SuggestionSourceEnum.IGBO_SPEECH,
   userInteractions: [],
-  ...data,
+  ...cloneDeep(data),
 });

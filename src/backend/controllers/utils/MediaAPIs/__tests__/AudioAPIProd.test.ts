@@ -26,7 +26,7 @@ describe('AudioAPI Production', () => {
       const pronunciationData = 'pronunciation-data';
       const res = await createAudioPronunciation(id, pronunciationData);
       expect(res).toEqual(`https://igbo-api-prod-local/audio-pronunciations/${id}.mp3`);
-      expect(handleAudioPronunciation).toBeCalledWith({
+      expect(handleAudioPronunciation).toHaveBeenCalledWith({
         key: `audio-pronunciations/${id}.mp3`,
         event: AudioEventType.POST,
         size: 1024,
@@ -38,7 +38,7 @@ describe('AudioAPI Production', () => {
       const isMp3 = true;
       const res = await copyAudioPronunciation(oldId, newId, isMp3);
       expect(res).toEqual(`https://AWS_BUCKET.s3.AWS_REGION.amazonaws.com/audio-pronunciations/${newId}.mp3`);
-      expect(handleAudioPronunciation).toBeCalledWith({
+      expect(handleAudioPronunciation).toHaveBeenCalledWith({
         key: `audio-pronunciations/${newId}.mp3`,
         event: AudioEventType.POST,
         size: 1024,
@@ -50,7 +50,7 @@ describe('AudioAPI Production', () => {
       const isMp3 = true;
       const res = await renameAudioPronunciation(oldId, newId, isMp3);
       expect(res).toEqual(`https://AWS_BUCKET.s3.AWS_REGION.amazonaws.com/audio-pronunciations/${newId}.mp3`);
-      expect(handleAudioPronunciation).toBeCalledWith({
+      expect(handleAudioPronunciation).toHaveBeenCalledWith({
         key: `audio-pronunciations/${newId}.mp3`,
         event: AudioEventType.POST,
         size: 1024,
@@ -61,7 +61,7 @@ describe('AudioAPI Production', () => {
       const isMp3 = true;
       const res = await deleteAudioPronunciation(id, isMp3);
       expect(res).toEqual({});
-      expect(handleAudioPronunciation).toBeCalledWith({
+      expect(handleAudioPronunciation).toHaveBeenCalledWith({
         key: `audio-pronunciations/${id}.mp3`,
         event: AudioEventType.DELETE,
       });

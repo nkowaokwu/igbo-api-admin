@@ -40,9 +40,9 @@ describe('handleExampleSuggestionAudioPronunciations', () => {
       data: clientExampleSuggestion,
     });
 
-    expect(mockDeleteAudioPronunciation).not.toBeCalled();
-    expect(mockIsPronunciationMp3).not.toBeCalled();
-    expect(mockGetPronunciationId).not.toBeCalled();
+    expect(mockDeleteAudioPronunciation).not.toHaveBeenCalled();
+    expect(mockIsPronunciationMp3).not.toHaveBeenCalled();
+    expect(mockGetPronunciationId).not.toHaveBeenCalled();
   });
 
   it('deletes on pronunciation', () => {
@@ -62,9 +62,9 @@ describe('handleExampleSuggestionAudioPronunciations', () => {
       data: clientExampleSuggestion,
     });
 
-    expect(mockDeleteAudioPronunciation).toBeCalled();
-    expect(mockIsPronunciationMp3).toBeCalledWith('db third audio');
-    expect(mockGetPronunciationId).toBeCalledWith('db third audio');
+    expect(mockDeleteAudioPronunciation).toHaveBeenCalled();
+    expect(mockIsPronunciationMp3).toHaveBeenCalledWith('db third audio');
+    expect(mockGetPronunciationId).toHaveBeenCalledWith('db third audio');
   });
   it('deletes all pronunciation', () => {
     const dbExampleSuggestion = cloneDeep(staticDbExampleSuggestion);
@@ -85,12 +85,12 @@ describe('handleExampleSuggestionAudioPronunciations', () => {
       data: clientExampleSuggestion,
     });
 
-    expect(mockDeleteAudioPronunciation).toBeCalled();
-    expect(mockIsPronunciationMp3).toBeCalledWith('db first audio');
-    expect(mockIsPronunciationMp3).toBeCalledWith('db second audio');
-    expect(mockIsPronunciationMp3).toBeCalledWith('db third audio');
-    expect(mockGetPronunciationId).toBeCalledWith('db first audio');
-    expect(mockGetPronunciationId).toBeCalledWith('db second audio');
-    expect(mockGetPronunciationId).toBeCalledWith('db third audio');
+    expect(mockDeleteAudioPronunciation).toHaveBeenCalled();
+    expect(mockIsPronunciationMp3).toHaveBeenCalledWith('db first audio');
+    expect(mockIsPronunciationMp3).toHaveBeenCalledWith('db second audio');
+    expect(mockIsPronunciationMp3).toHaveBeenCalledWith('db third audio');
+    expect(mockGetPronunciationId).toHaveBeenCalledWith('db first audio');
+    expect(mockGetPronunciationId).toHaveBeenCalledWith('db second audio');
+    expect(mockGetPronunciationId).toHaveBeenCalledWith('db third audio');
   });
 });

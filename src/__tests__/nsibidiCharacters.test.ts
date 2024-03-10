@@ -1,7 +1,9 @@
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
+import { nsibidiCharacterFixture } from 'src/__tests__/shared/fixtures';
 import { AUTH_TOKEN } from './shared/constants';
 import { suggestNewNsibidiCharacter, updateNsibidiCharacter } from './shared/commands';
-import { nsibidiCharacterData } from './__mocks__/documentData';
+
+const nsibidiCharacterData = nsibidiCharacterFixture({ nsibidi: 'nsibidi ' });
 
 describe('MongoDB Nsịbịdị Characters', () => {
   describe('/POST mongodb nsibidiCharacters', () => {

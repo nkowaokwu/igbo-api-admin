@@ -99,7 +99,7 @@ describe('Stats', () => {
       await incrementTotalUserStat();
       // @ts-expect-error mongooseConnection
       await getLoginStats({ mongooseConnection }, { send: sendMock }, () => null);
-      expect(sendMock).toBeCalledWith({
+      expect(sendMock).toHaveBeenCalledWith({
         hours: 100,
         volunteers: 1,
       });
@@ -183,7 +183,7 @@ describe('Stats', () => {
         mockRes,
         mockNext,
       );
-      expect(mockRes.send).toBeCalledWith({
+      expect(mockRes.send).toHaveBeenCalledWith({
         timestampedAudioApprovals: { [moment().format('MMM, YYYY')]: 1 },
         timestampedAudioDenials: {},
       });
@@ -225,7 +225,7 @@ describe('Stats', () => {
         mockRes,
         mockNext,
       );
-      expect(mockRes.send).toBeCalledWith({
+      expect(mockRes.send).toHaveBeenCalledWith({
         timestampedAudioApprovals: {},
         timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
       });
@@ -271,7 +271,7 @@ describe('Stats', () => {
         mockRes,
         mockNext,
       );
-      expect(mockRes.send).toBeCalledWith({
+      expect(mockRes.send).toHaveBeenCalledWith({
         timestampedAudioApprovals: {},
         timestampedAudioDenials: { [moment().format('MMM, YYYY')]: 1 },
       });

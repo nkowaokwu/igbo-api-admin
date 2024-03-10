@@ -1,8 +1,8 @@
 import { Record } from 'react-admin';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
-import Tense from 'src/backend/shared/constants/Tense';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 import isVerb from 'src/backend/shared/utils/isVerb';
-import { Word } from './interfaces';
+import { WordData } from './interfaces';
 
 export const invalidRelatedTermsWordClasses = [
   WordClassEnum.CJN,
@@ -16,7 +16,7 @@ export const invalidRelatedTermsWordClasses = [
   WordClassEnum.SYM,
 ];
 
-export default (word: Word | Record): boolean =>
+export default (word: WordData | Record): boolean =>
   !!(
     word.word &&
     (word.word.normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g) || (word.attributes || {}).isAccented) &&
@@ -40,8 +40,7 @@ export default (word: Word | Record): boolean =>
     (isVerb(word.wordClass)
       ? !Object.entries(word.tenses || {}).every(
           ([key, value]) =>
-            (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)) ||
-            key === Tense.PRESENT_PASSIVE.value,
+            (value && Object.values(TenseEnum).find((tense) => key === tense)) || key === TenseEnum.PRESENT_PASSIVE,
         )
       : true)
   );

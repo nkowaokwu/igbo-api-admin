@@ -6,14 +6,15 @@ import { TestContext as ReactAdminTestContext } from 'ra-test';
 import { configure } from '@testing-library/react';
 // eslint-disable-next-line max-len
 import createDefaultWordFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultWordFormValues';
-import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import { DefinitionSchema, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
 // eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
+import { wordFixture } from 'src/__tests__/shared/fixtures';
+import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 
 configure({ testIdAttribute: 'data-test' });
 
@@ -91,6 +92,7 @@ const TestContext = ({
   setDialects?: (value: any) => void;
   pronunciations?: ExampleSuggestion['pronunciations'];
   review?: SentenceVerification;
+  definitions?: DefinitionSchema[];
 }): ReactElement => {
   const nativeDataProvider = () =>
     Promise.resolve({
@@ -99,14 +101,14 @@ const TestContext = ({
   const history = jest.fn(() => ({
     listen: jest.fn(),
   }));
-  const staticRecord = cloneDeep(record || wordRecord);
+
+  const staticRecord = cloneDeep(record || wordFixture(wordRecord));
+
   const { control, watch } = useForm({
     defaultValues:
       resource === Collections.EXAMPLE_SUGGESTIONS
-        ? // @ts-expect-error
-          createDefaultExampleFormValues(staticRecord)
-        : // @ts-expect-error
-          createDefaultWordFormValues(staticRecord),
+        ? createDefaultExampleFormValues(staticRecord)
+        : createDefaultWordFormValues(staticRecord),
     mode: 'onChange',
   });
 

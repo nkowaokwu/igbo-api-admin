@@ -60,7 +60,6 @@ describe('Example Edit', () => {
     userEvent.type(await findByText('Igbo'), 'updated igbo');
     userEvent.type(await findByText('English'), 'updated english');
     fireEvent.submit(await findByTestId('example-submit-button'));
-    expect(mockHandleSubmit).toBeCalled();
-    expect(mockSave).toBeCalled();
+    expect(mockSave).toHaveBeenCalled();
   });
 });

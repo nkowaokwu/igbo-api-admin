@@ -114,7 +114,7 @@ describe('Users', () => {
     const mockNext = jest.fn();
     await getUsers(mockReq, mockRes, mockNext);
     const users = allUsers.map(formatUser);
-    expect(sendMock).toBeCalledWith(users);
+    expect(sendMock).toHaveBeenCalledWith(users);
   });
 
   it('gets a user with the uid', async () => {
@@ -130,7 +130,7 @@ describe('Users', () => {
     const mockNext = jest.fn();
     await getUser(mockReq, mockRes, mockNext);
     // @ts-expect-error
-    expect(sendMock).toBeCalledWith(formatUser(defaultAdminUser));
+    expect(sendMock).toHaveBeenCalledWith(formatUser(defaultAdminUser));
   });
 
   it('finds a user', async () => {
@@ -202,7 +202,7 @@ describe('Users', () => {
     const mockNext = jest.fn();
 
     await putUserProfile(mockReq, mockRes, mockNext);
-    expect(sendMock).toBeCalledWith({
+    expect(sendMock).toHaveBeenCalledWith({
       ...savedCrowdsourcer,
       ...updatedCrowdsourcer,
     });

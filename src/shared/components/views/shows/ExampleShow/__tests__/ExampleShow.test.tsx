@@ -5,6 +5,7 @@ import { render } from '@testing-library/react';
 import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collection';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
+import { exampleSuggestionFixture } from 'src/__tests__/shared/fixtures';
 import ExampleShow from '../ExampleShow';
 
 describe('Example Show', () => {
@@ -12,20 +13,23 @@ describe('Example Show', () => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });
 
-  const record = {
-    id: 123,
+  const record = exampleSuggestionFixture({
+    id: '123',
+    originalExampleId: 'original-example-id',
     igbo: 'first igbo example',
     english: 'first english example',
     pronunciations: [
       {
+        _id: 'pronunciation-123',
         audio: 'first',
         speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
         archived: false,
         approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.MERGER_AUTH_TOKEN],
         denials: [AUTH_TOKEN.EDITOR_AUTH_TOKEN],
+        review: false,
       },
     ],
-  };
+  });
 
   it('render all fields for examples', async () => {
     const dataProvider = {
@@ -65,13 +69,15 @@ describe('Example Show', () => {
           data: record,
         }),
     };
+
     const { findByText } = render(
       <TestContext
         enableReducers
         initialState={{ admin: { resources: { exampleSuggestions: { data: record } } } }}
         dataProvider={dataProvider}
+        record={record}
       >
-        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} record={record} />
+        <ExampleShow basePath="/" resource={Collections.EXAMPLE_SUGGESTIONS} id={record.id} />
       </TestContext>,
     );
 

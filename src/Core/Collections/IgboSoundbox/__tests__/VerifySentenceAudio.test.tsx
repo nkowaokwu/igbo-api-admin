@@ -276,7 +276,7 @@ describe('VerifySentenceAudio', () => {
     userEvent.click(getByLabelText('Next sentence'));
     userEvent.click(getByLabelText('Next sentence'));
     userEvent.click(await findByText('Submit'));
-    expect(reviewSpy).toBeCalledWith([
+    expect(reviewSpy).toHaveBeenCalledWith([
       {
         id: 'first id',
         reviews: {

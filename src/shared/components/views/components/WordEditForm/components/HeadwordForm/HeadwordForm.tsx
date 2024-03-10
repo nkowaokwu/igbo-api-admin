@@ -20,19 +20,15 @@ const generateIPALabel = (word = '') => {
   });
   return (
     <Text>
-      <chakra.span fontWeight="bold" fontFamily="Silka">Generated IPA: </chakra.span>
+      <chakra.span fontWeight="bold" fontFamily="Silka">
+        Generated IPA:{' '}
+      </chakra.span>
       {IPA}
     </Text>
   );
 };
 
-const HeadwordForm = ({
-  errors,
-  control,
-  record,
-  watch,
-  onChange,
-}: HeadwordInterface): ReactElement => {
+const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
   const { getValues } = control;
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
@@ -60,7 +56,7 @@ const HeadwordForm = ({
           record={record}
           errors={errors}
           control={control}
-          isHeadwordAccented={!!(isHeadwordAccented?.length)}
+          isHeadwordAccented={!!isHeadwordAccented?.length}
           isAsCompleteAsPossible={isAsCompleteAsPossible}
           isConstructedPollTerm={isConstructedPollTerm}
         />
@@ -79,14 +75,18 @@ const HeadwordForm = ({
         )}
         name="word"
         control={control}
-        defaultValue={record.word || getValues().word || ''}
+        defaultValue={get(record, 'word') || get(getValues(), 'word')}
       />
       <details className="mt-4 cursor-pointer">
         <summary>
-          <chakra.span fontWeight="bold" fontFamily="Silka">Advanced Headword Options</chakra.span>
+          <chakra.span fontWeight="bold" fontFamily="Silka">
+            Advanced Headword Options
+          </chakra.span>
         </summary>
         <Box className="space-y-3 mt-3">
-          <chakra.span fontWeight="bold" fontFamily="Silka">Headword pronunciation spelling: </chakra.span>
+          <chakra.span fontWeight="bold" fontFamily="Silka">
+            Headword pronunciation spelling:{' '}
+          </chakra.span>
           <Controller
             render={(props) => (
               <Input
@@ -97,7 +97,7 @@ const HeadwordForm = ({
             )}
             name="wordPronunciation"
             control={control}
-            defaultValue={record.wordPronunciation || getValues().wordPronunciation || ''}
+            defaultValue={get(record, 'wordPronunciation') || get(getValues(), 'wordPronunciation')}
           />
           {generateIPALabel(watchedWordPronunciation)}
           <Controller
@@ -110,22 +110,22 @@ const HeadwordForm = ({
             )}
             name="conceptualWord"
             control={control}
-            defaultValue={record.conceptualWord || getValues().conceptualWord || ''}
+            defaultValue={get(record, 'conceptualWord') || get(getValues(), 'conceptualWord')}
           />
         </Box>
       </details>
-      {Object.values(flags).map((message: string) => (
+      {Object.values(flags).map((message: string) =>
         message ? (
           <Box key={message} className="flex flex-row items-start">
             <WarningIcon boxSize={3} mr={2} mt={2} color="orange.600" />
-            <Text color="orange.600" fontSize="sm">{message}</Text>
+            <Text color="orange.600" fontSize="sm">
+              {message}
+            </Text>
           </Box>
-        ) : null
-      ))}
-      <SuggestedWords word={watchedWord || ''} id={get(record, 'id')} />
-      {errors.word && (
-        <p className="error">Word is required</p>
+        ) : null,
       )}
+      <SuggestedWords word={watchedWord || ''} id={get(record, 'id')} />
+      {errors.word && <p className="error">Word is required</p>}
     </Box>
   );
 };

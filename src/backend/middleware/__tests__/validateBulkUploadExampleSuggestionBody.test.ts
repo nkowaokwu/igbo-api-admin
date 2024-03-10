@@ -34,8 +34,8 @@ describe('validateBulkUploadExampleSuggestionBody', () => {
     const mockNext = jest.fn();
 
     await validateBulkUploadExampleSuggestionBody(mockReq, mockRes, mockNext);
-    expect(mockNext).toBeCalled();
-    expect(mockRes.send).not.toBeCalled();
+    expect(mockNext).toHaveBeenCalled();
+    expect(mockRes.send).not.toHaveBeenCalled();
   });
 
   it('fails validation for the provided bulk sentence data', async () => {
@@ -68,7 +68,7 @@ describe('validateBulkUploadExampleSuggestionBody', () => {
     const mockNext = jest.fn();
 
     await validateBulkUploadExampleSuggestionBody(mockReq, mockRes, mockNext);
-    expect(mockRes.send).toBeCalled();
-    expect(mockNext).not.toBeCalled();
+    expect(mockRes.send).toHaveBeenCalled();
+    expect(mockNext).not.toHaveBeenCalled();
   });
 });

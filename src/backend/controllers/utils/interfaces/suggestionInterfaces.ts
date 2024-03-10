@@ -11,6 +11,7 @@ export interface SuggestionData {
   mergedBy?: string;
   userInteractions?: string[];
   twitterPollUrl?: string;
+  editorsNotes?: string;
   crowdsourcing: {
     [key in CrowdsourcingType]: boolean;
   };

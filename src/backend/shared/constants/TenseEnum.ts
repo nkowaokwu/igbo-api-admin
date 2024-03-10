@@ -1,11 +1,11 @@
-enum Tense {
-  INFINITIVE = 'INFINITIVE',
-  IMPERATIVE = 'IMPERATIVE',
-  SIMPLE_PAST = 'SIMPLE_PAST',
-  PRESENT_PASSIVE = 'PRESENT_PASSIVE',
-  SIMPLE_PRESENT = 'SIMPLE_PRESENT',
-  PRESENT_CONTINUOUS = 'PRESENT_CONTINUOUS',
-  FUTURE = 'FUTURE',
+enum TenseEnum {
+  INFINITIVE = 'infinitive',
+  IMPERATIVE = 'imperative',
+  SIMPLE_PAST = 'simplePast',
+  PRESENT_PASSIVE = 'presentPassive',
+  SIMPLE_PRESENT = 'simplePresent',
+  PRESENT_CONTINUOUS = 'presentContinuous',
+  FUTURE = 'future',
 }
 
-export default Tense;
+export default TenseEnum;

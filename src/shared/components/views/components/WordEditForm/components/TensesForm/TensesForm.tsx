@@ -4,14 +4,14 @@ import { Controller } from 'react-hook-form';
 import { Box, Text, Tooltip } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { Input } from 'src/shared/primitives';
-import Tense from 'src/backend/shared/constants/Tense';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 import FormHeader from '../../../FormHeader';
 import TensesFormInterface from './TensesFormInterface';
 
-const DEFAULT_TENSES = Object.values(Tense).reduce(
+const DEFAULT_TENSES = Object.values(TenseEnum).reduce(
   (finalTenses, tense) => ({
     ...finalTenses,
-    [tense.value]: '',
+    [tense]: '',
   }),
   {},
 );
@@ -36,7 +36,7 @@ const TensesForm = ({ record, errors, control }: TensesFormInterface): ReactElem
                 <Box>
                   <Text className="text-gray-700 mb-2">
                     {`${label}:`}
-                    {key === Tense.PRESENT_PASSIVE.value ? (
+                    {key === TenseEnum.PRESENT_PASSIVE ? (
                       <Tooltip
                         label={
                           'The present passive verb tense should only be filled in if the ' +

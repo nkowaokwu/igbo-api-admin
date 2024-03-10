@@ -39,6 +39,7 @@ export interface ExampleData {
   associatedWords: string[];
   associatedDefinitionsSchemas: string[];
   type: SentenceTypeEnum;
+  style?: ExampleStyleEnum;
   source?: SuggestionSourceEnum;
   pronunciations: PronunciationSchema[];
   updatedAt: Date;
