@@ -6,4 +6,5 @@ module.exports = {
   moduleFileExtensions: ['tsx', 'ts', 'js', 'json', 'html'],
   coverageDirectory: '../../coverage/apps/functions',
   setupFilesAfterEnv: ['./src/__tests__/shared/script.ts'],
+  modulePathIgnorePatterns: ['<rootDir>/functions/'],
 };

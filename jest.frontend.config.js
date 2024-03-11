@@ -10,4 +10,5 @@ module.exports = {
     '^[./a-zA-Z0-9$_-]+\\.(svg|gif|png|less|css)$': '<rootDir>/src/__data__/assetStub.ts',
   },
   setupFilesAfterEnv: ['./src/__tests__/shared/script.ts'],
+  modulePathIgnorePatterns: ['<rootDir>/functions/'],
 };
