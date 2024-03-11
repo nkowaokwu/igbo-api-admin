@@ -24,12 +24,8 @@ type OptionsType = {
 };
 
 export const dropMongoDBCollections = async (): Promise<void> => {
-  try {
-    await connectDatabase();
-    await mongoose.connection.dropDatabase();
-  } catch (err) {
-    console.log('Unable to drop MongoDB collections', err);
-  }
+  await connectDatabase();
+  await mongoose.connection.dropDatabase();
 };
 
 export const setUpTestEnvironment = (): { initializedAdminApp: admin.app.App } => {
