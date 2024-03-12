@@ -1,5 +1,4 @@
 import moment from 'moment';
-import * as admin from 'firebase-admin';
 import { forEach, every, isEqual, times, cloneDeep } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
@@ -9,7 +8,6 @@ import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import Author from 'src/backend/shared/constants/Author';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { allUsers } from 'src/__tests__/__mocks__/user_data';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { connectDatabase } from 'src/backend/utils/database';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
@@ -54,10 +52,6 @@ describe('MongoDB Example Suggestions', () => {
       suggestNewWord(wordSuggestionData).then((res) => createWord(res.body.id)),
       suggestNewExample({ ...exampleSuggestionData, igbo: uuid() }).then(() => {}),
     ]);
-    jest.spyOn(admin, 'auth').mockReturnValue({
-      listUsers: jest.fn(async () => ({ users: allUsers })),
-      getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
-    });
   });
   describe('/POST mongodb exampleSuggestions', () => {
     it('should save submitted example suggestion', async () => {

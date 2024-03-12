@@ -1,4 +1,3 @@
-import * as admin from 'firebase-admin';
 import moment from 'moment';
 import {
   findAdminUsers,
@@ -29,10 +28,6 @@ describe('Users', () => {
   beforeEach(async () => {
     // Clear out database to start with a clean slate
     await dropMongoDBCollections();
-    jest.spyOn(admin, 'auth').mockReturnValue({
-      listUsers: jest.fn(async () => ({ users: allUsers })),
-      getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
-    });
   });
 
   it('formats the user object', () => {

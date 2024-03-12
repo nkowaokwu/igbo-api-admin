@@ -1,10 +1,7 @@
+const baseConfig = require('./jest.config');
+
 module.exports = {
-  displayName: 'igbo-api-admin',
+  ...baseConfig,
   testMatch: ['./**.test.ts'],
-  testTimeout: 20000,
   testEnvironment: 'node',
-  moduleFileExtensions: ['tsx', 'ts', 'js', 'json', 'html'],
-  coverageDirectory: '../../coverage/apps/functions',
-  setupFilesAfterEnv: ['./src/__tests__/shared/script.ts'],
-  modulePathIgnorePatterns: ['<rootDir>/functions/'],
 };
