@@ -30,25 +30,25 @@ jobs:
         run: |
           yarn install
           npm install -g firebase-tools@12.9.1
-      - name: Log into Docker Account 🐳
-        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-      - name: Run Igbo API Docker Instance 🇳🇬
-        run: |
-          docker pull $DOCKER_USERNAME/$DOCKER_IMAGE
-          yarn start:docker:ci -d
-      - name: Check Running Docker Containers ✅
-        run: docker-compose ps -a
+      # - name: Log into Docker Account 🐳
+      #   run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+      # - name: Run Igbo API Docker Instance 🇳🇬
+      #   run: |
+      #     docker pull $DOCKER_USERNAME/$DOCKER_IMAGE
+      #     yarn start:docker:ci -d
+      # - name: Check Running Docker Containers ✅
+      #   run: docker-compose ps -a
       - name: Setup Firebase Environment 🔥
         run: |
           firebase use staging --token $FIREBASE_TOKEN
           yarn build:dev
-      - name: Set Environment Variables 📟
-        run: |
-          firebase functions:config:set runtime.env="cypress" --token $FIREBASE_TOKEN
-          firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
-          yarn functions:env
-      - name: Wait for Docker ⏱
-        run: sleep 10
+      # - name: Set Environment Variables 📟
+      #   run: |
+      #     firebase functions:config:set runtime.env="cypress" --token $FIREBASE_TOKEN
+      #     firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
+      #     yarn functions:env
+      # - name: Wait for Docker ⏱
+      #   run: sleep 10
       # - name: Run Cypress Tests 🎨
       #   run: yarn test:ci
       #   env:
