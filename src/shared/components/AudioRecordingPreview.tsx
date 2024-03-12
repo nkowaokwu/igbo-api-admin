@@ -3,10 +3,13 @@ import { get } from 'lodash';
 import { Record } from 'react-admin';
 import { Box, Spinner, Tag } from '@chakra-ui/react';
 
-const AudioRecordingPreview = (
-  { record, audioPath = 'pronunciation' }:
-  { record: { pronunciation: string } | Record, audioPath?: string },
-): ReactElement => {
+const AudioRecordingPreview = ({
+  record,
+  audioPath = 'pronunciation',
+}: {
+  record: { pronunciation: string } | Record;
+  audioPath?: string;
+}): ReactElement => {
   const audio = new Audio(record.pronunciation);
   const [isLoading, setIsLoading] = useState(true);
   const [isAudioAvailable, setIsAudioAvailable] = useState(false);
@@ -36,7 +39,9 @@ const AudioRecordingPreview = (
           {isLoading ? <Spinner /> : !isAudioAvailable ? 'Rerecord audio' : '🎙 Play'}
         </Tag>
       ) : (
-        <Tag colorScheme="red" className="text-center">No Recording</Tag>
+        <Tag colorScheme="red" className="text-center">
+          No Recording
+        </Tag>
       )}
     </Box>
   );

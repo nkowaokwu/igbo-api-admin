@@ -41,6 +41,34 @@ type FormData = {
   tags: string[];
 };
 
+/* Gets tag values */
+const sanitizeTags = (tags: { value: WordTagEnum; label: string }[]) => tags.map(({ value }) => value);
+
+/* Prepares the data to be cached */
+const createCacheWordData = (data: FormData, record: Record | Word = { id: null, dialects: {} }) => {
+  const cleanedData = omit(
+    {
+      ...record,
+      ...data,
+      definitions: (data.definitions || []).map((definition) => ({
+        ...definition,
+        wordClass: definition.wordClass.value,
+        definitions: sanitizeWith(definition.definitions, 'text'),
+        nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
+        igboDefinitions: definition.igboDefinitions || [],
+      })),
+      variations: sanitizeWith(data.variations || [], 'text'),
+      relatedTerms: sanitizeWith(uniqBy(data.relatedTerms || [], 'id')),
+      stems: sanitizeWith(uniqBy(data.stems || [], 'id')),
+      examples: sanitizeExamples(data.examples || []),
+      pronunciation: data.pronunciation || '',
+      tags: sanitizeTags(data.tags || []),
+    },
+    ['crowdsourcing'],
+  );
+  return cleanedData;
+};
+
 const WordEditForm = ({
   view,
   record,
@@ -82,34 +110,6 @@ const WordEditForm = ({
         ? 'A change in the headword has been detected. Please consider re-recording the audio to match.'
         : '',
     );
-  };
-
-  /* Gets tag values */
-  const sanitizeTags = (tags: { value: WordTagEnum; label: string }[]) => tags.map(({ value }) => value);
-
-  /* Prepares the data to be cached */
-  const createCacheWordData = (data: FormData, record: Record | Word = { id: null, dialects: {} }) => {
-    const cleanedData = omit(
-      {
-        ...record,
-        ...data,
-        definitions: (data.definitions || []).map((definition) => ({
-          ...definition,
-          wordClass: definition.wordClass.value,
-          definitions: sanitizeWith(definition.definitions, 'text'),
-          nsibidiCharacters: sanitizeWith(definition.nsibidiCharacters || []),
-          igboDefinitions: definition.igboDefinitions || [],
-        })),
-        variations: sanitizeWith(data.variations || [], 'text'),
-        relatedTerms: sanitizeWith(uniqBy(data.relatedTerms || [], 'id')),
-        stems: sanitizeWith(uniqBy(data.stems || [], 'id')),
-        examples: sanitizeExamples(data.examples || []),
-        pronunciation: getValues().pronunciation || '',
-        tags: sanitizeTags(data.tags || []),
-      },
-      ['crowdsourcing'],
-    );
-    return cleanedData;
   };
 
   /* Combines the approvals, denials, and cached form data to
@@ -299,7 +299,7 @@ const WordEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="green"
+          colorScheme="purple"
           variant="solid"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}

@@ -125,7 +125,7 @@ export const getWord = async (
     const Word = mongooseConnection.model('Word', wordSchema);
 
     const updatedWord = await findWordsWithMatch({
-      match: { _id: mongoose.Types.ObjectId(id) },
+      match: { _id: new mongoose.Types.ObjectId(id) },
       examples: true,
       limit: 1,
       Word,

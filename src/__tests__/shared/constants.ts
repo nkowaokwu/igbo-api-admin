@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import testAuthTokens from 'src/backend/shared/constants/testAuthTokens';
 
 export const LOCAL_ROUTE = '/';
@@ -59,7 +58,6 @@ export const WORD_SUGGESTION_KEYS = [
 export const EXCLUDE_KEYS = ['__v', '_id'];
 export const SITE_TITLE = 'The First African Language API';
 export const INVALID_ID = 'fdsafdsad';
-export const NONEXISTENT_ID = new mongoose.Types.ObjectId();
 export const MESSAGE = {
   to: ['test@example.com'],
   reply_to: { email: '', name: '' },

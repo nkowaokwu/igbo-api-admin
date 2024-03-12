@@ -20,9 +20,9 @@ describe('useFetchSpeakers', () => {
         <TestingUseFetchSpeakers />
       </TestContext>,
     );
-    expect(mockSetIsLoading).toBeCalledWith(true);
-    expect(getUserProfile).toBeCalledWith(speakerIds[0], 0, speakerIds);
-    expect(getUserProfile).toBeCalledWith(speakerIds[1], 1, speakerIds);
-    expect(mockSetIsLoading).toBeCalledWith(true);
+    expect(mockSetIsLoading).toHaveBeenCalledWith(true);
+    expect(getUserProfile).toHaveBeenCalledWith(speakerIds[0], 0, speakerIds);
+    expect(getUserProfile).toHaveBeenCalledWith(speakerIds[1], 1, speakerIds);
+    expect(mockSetIsLoading).toHaveBeenCalledWith(true);
   });
 });

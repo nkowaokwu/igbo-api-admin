@@ -47,12 +47,13 @@ describe('CurrentDialectsForms', () => {
     const dialectsSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
     fireEvent.click(await findByText(Dialects.AJA.label));
-    expect(mockOnChange).toBeCalledWith([
+    expect(mockOnChange).toHaveBeenCalledWith([
       {
         dialects: [DialectEnum.ABI, DialectEnum.AJA],
         id: 'dialect-id',
         word: 'word',
         pronunciation: '',
+        variations: [],
       },
     ]);
   });
@@ -66,13 +67,13 @@ describe('CurrentDialectsForms', () => {
     );
     const dialectsSelect = await findByTestId('dialects-input-container-0');
     fireEvent.keyDown(dialectsSelect.firstChild, { key: 'ArrowDown' });
-    const dialectOption = await findByText(Dialects.ABI.label);
-    fireEvent.click(dialectOption.nextSibling);
-    expect(mockOnChange).toBeCalledWith([
+    fireEvent.click(await (await findByText(Dialects.ABI.label)).nextSibling);
+    expect(mockOnChange).toHaveBeenCalledWith([
       {
         dialects: [],
         id: 'dialect-id',
         word: 'word',
+        variations: [],
         pronunciation: '',
       },
     ]);
@@ -88,6 +89,6 @@ describe('CurrentDialectsForms', () => {
       </TestContext>,
     );
     fireEvent.click(await findByTestId('reset-recording-button-dialects.0'));
-    expect(mockSetValue).toBeCalledWith('dialects.0.pronunciation', undefined);
+    expect(mockSetValue).toHaveBeenCalledWith('dialects.0.pronunciation', undefined);
   });
 });

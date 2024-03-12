@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import admin from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { NextFunction, Request, Response } from 'express';
 import TwitterApi from 'twitter-api-v2';
 import Twit from 'twit';

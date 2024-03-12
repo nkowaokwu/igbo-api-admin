@@ -1,4 +1,4 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
@@ -27,9 +27,7 @@ export interface ExampleClientData {
   userInteractions?: string[];
 }
 
-export interface Example extends ExampleData, Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-}
+export interface Example extends Document<ExampleData, any, any> {}
 
 export interface ExampleData {
   id: Types.ObjectId | string;
@@ -41,6 +39,8 @@ export interface ExampleData {
   associatedWords: string[];
   associatedDefinitionsSchemas: string[];
   type: SentenceTypeEnum;
+  style?: ExampleStyleEnum;
+  source?: SuggestionSourceEnum;
   pronunciations: PronunciationSchema[];
   updatedAt: Date;
 }

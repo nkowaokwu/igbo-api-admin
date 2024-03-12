@@ -653,6 +653,7 @@ export const putAudioForRandomExampleSuggestions = async (
       }),
     );
     req.response = body.map(({ id }) => id);
+
     return next();
   } catch (err) {
     req.error = err;
@@ -751,7 +752,7 @@ export const getExampleSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
-    const populatedUser = await findExampleSuggestionById(id, mongooseConnection).then(
+    const exampleSuggestion = await findExampleSuggestionById(id, mongooseConnection).then(
       async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
         if (!exampleSuggestion) {
           throw new Error('No example suggestion exists with the provided id.');
@@ -763,7 +764,7 @@ export const getExampleSuggestion = async (
         return populatedUserExampleSuggestion;
       },
     );
-    return res.send(populatedUser);
+    return res.send(exampleSuggestion);
   } catch (err) {
     return next(err);
   }

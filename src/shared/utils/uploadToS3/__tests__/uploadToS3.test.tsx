@@ -13,10 +13,10 @@ describe('uploadToS3', () => {
 
     const payload = { collection: Collection.TEXT_IMAGES, data: { id: 'id', file: new File([], '') } };
     await handleMediaUpload(payload);
-    expect(handleGenerateMediaSignedRequestSpy).toBeCalledWith({
+    expect(handleGenerateMediaSignedRequestSpy).toHaveBeenCalledWith({
       collection: Collection.TEXT_IMAGES,
       data: { id: payload.data.id, fileType: payload.data.file.type },
     });
-    expect(uploadSpy).toBeCalledWith({ mediaUrl: '', signedRequest: '', file: payload.data.file });
+    expect(uploadSpy).toHaveBeenCalledWith({ mediaUrl: '', signedRequest: '', file: payload.data.file });
   });
 });

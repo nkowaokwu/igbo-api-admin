@@ -1,4 +1,4 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Document } from 'mongoose';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 
 export interface UserRanking {
@@ -10,10 +10,12 @@ export interface UserRanking {
   position: number;
 }
 
-export interface Leaderboard extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
+export interface LeaderboardData {
+  id: string;
   rankings: UserRanking[];
   type: LeaderboardType;
   page: number;
   updatedAt: Date;
 }
+
+export interface Leaderboard extends Document<LeaderboardData, any, any> {}

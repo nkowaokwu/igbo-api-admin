@@ -24,12 +24,12 @@ describe('email', () => {
     };
     // @ts-expect-error
     await sendReportUserNotification(mockReq, mockRes);
-    expect(constructMessage).toBeCalledWith({
+    expect(constructMessage).toHaveBeenCalledWith({
       from: { email: API_FROM_EMAIL, name: 'Igbo API' },
       to: ['admin@example.com'],
       templateId: REPORT_USER_NOTIFICATION,
       dynamic_template_data: body,
     });
-    expect(mockRes.send).toBeCalled();
+    expect(mockRes.send).toHaveBeenCalled();
   });
 });

@@ -1,12 +1,13 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { assign, map, omit, pick } from 'lodash';
-import { Box, Button, useToast } from '@chakra-ui/react';
+import { Box, Button, Text, chakra, useToast, Tooltip } from '@chakra-ui/react';
+import { PiMagicWandBold } from 'react-icons/pi';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'react-select';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import { EditFormProps } from 'src/shared/interfaces';
-import { getExample } from 'src/shared/API';
+import { getExample, getExampleTranscriptionFeedback } from 'src/shared/API';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import View from 'src/shared/constants/Views';
 import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
@@ -16,6 +17,7 @@ import ActionTypes from 'src/shared/constants/ActionTypes';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 // eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
+import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -41,6 +43,7 @@ const ExampleEditForm = ({
     mode: 'onChange',
   });
   const [originalRecord, setOriginalRecord] = useState(null);
+  const [exampleTranscriptionFeedback, setExampleTranscriptionFeedback] = useState<ExampleTranscriptionFeedbackData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const notify = useNotify();
   const redirect = useRedirect();
@@ -62,6 +65,9 @@ const ExampleEditForm = ({
       if (record.originalExampleId) {
         setOriginalRecord(await getExample(record.originalExampleId));
       }
+
+      const exampleTranscriptionFeedbackRecord = await getExampleTranscriptionFeedback(`${record.id}`);
+      setExampleTranscriptionFeedback(exampleTranscriptionFeedbackRecord);
     })();
   }, []);
 
@@ -164,12 +170,60 @@ const ExampleEditForm = ({
           </Box>
         </Box>
         <FormHeader title="Igbo" tooltip="The example sentence in Standard Igbo" />
-        <Controller
-          render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
-          name="igbo"
-          control={control}
-          defaultValue={record.igbo || getValues().igbo || ''}
-        />
+        <Box
+          {...(exampleTranscriptionFeedback?.humanTranscription
+            ? {
+                rounded: 'md',
+                borderColor: 'green.300',
+                borderWidth: '1px',
+                backgroundColor: 'green.100',
+                padding: '4',
+                className: 'space-y-2',
+              }
+            : {})}
+        >
+          <Controller
+            render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
+            name="igbo"
+            control={control}
+            defaultValue={record.igbo || getValues().igbo || ''}
+          />
+          {exampleTranscriptionFeedback?.humanTranscription ? (
+            <Box className="flex flex-row justify-between items-center">
+              <Tooltip
+                placement="bottom-start"
+                label="The user who recorded the audio in this suggestion from the 
+            IgboSpeech website also suggested this as the correct transcription. Before
+            accepting, please review the Dictionary Editing Standards guide."
+              >
+                <Text className="flex flex-row items-center space-x-2" cursor="default">
+                  <PiMagicWandBold fill="var(--chakra-colors-purple-500)" />
+                  <chakra.span color="purple.600" fontWeight="bold">
+                    Suggested by human:
+                  </chakra.span>
+                  <chakra.span>{exampleTranscriptionFeedback.humanTranscription}</chakra.span>
+                </Text>
+              </Tooltip>
+              <Button
+                variant="ghost"
+                onClick={() => control.setValue('igbo', exampleTranscriptionFeedback.humanTranscription)}
+                _hover={{
+                  backgroundColor: 'transparent',
+                }}
+                _active={{
+                  backgroundColor: 'transparent',
+                }}
+                _focus={{
+                  backgroundColor: 'transparent',
+                }}
+              >
+                <Text color="purple.600" _hover={{ color: 'purple.700' }}>
+                  Use suggestion
+                </Text>
+              </Button>
+            </Box>
+          ) : null}
+        </Box>
         {errors.igbo ? <p className="error">Igbo is required</p> : null}
       </Box>
       <Box className="flex flex-col">
@@ -230,7 +284,7 @@ const ExampleEditForm = ({
         <Button
           data-test="example-submit-button"
           type="submit"
-          colorScheme="green"
+          colorScheme="purple"
           variant="solid"
           className="m-0"
           isLoading={isSubmitting}

@@ -30,7 +30,7 @@ describe('textImages controller', () => {
 
     await getTextImages(mockReq, mockRes, jest.fn());
 
-    expect(mockRes.send).toBeCalledWith([savedTextImage.toObject()]);
+    expect(mockRes.send).toHaveBeenCalledWith([savedTextImage.toObject()]);
 
     await disconnectDatabase();
   });

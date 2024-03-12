@@ -62,7 +62,8 @@ export const createWordSuggestion = async ({
     const savedWordSuggestion = await placeExampleSuggestionsOnSuggestionDoc(wordSuggestion, mongooseConnection);
     return savedWordSuggestion;
   } catch (err) {
-    if (wordSuggestion) {
+    console.log('Unable to create word suggestion', err);
+    if (wordSuggestion?.delete) {
       await wordSuggestion.delete();
     }
     throw err;

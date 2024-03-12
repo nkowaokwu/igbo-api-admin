@@ -1,15 +1,13 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Types } from 'mongoose';
 import TestContext from 'src/__tests__/components/TestContext';
-import { wordRecord } from 'src/__tests__/__mocks__/documentData';
+import { exampleSuggestionFixture, wordFixture, wordSuggestionFixture } from 'src/__tests__/shared/fixtures';
 import ExamplesForm from '../ExamplesForm';
 
 describe('ExamplesForm', () => {
   it('renders the examples', async () => {
-    const testRecord = cloneDeep(wordRecord);
+    const testRecord = wordFixture();
     testRecord.examples = [];
     const { findByText } = render(
       <TestContext record={testRecord}>
@@ -24,8 +22,9 @@ describe('ExamplesForm', () => {
   });
 
   it('creates a new example', async () => {
+    const record = wordFixture({ examples: [exampleSuggestionFixture()] });
     const { findByText, findByTestId, findAllByText, findAllByLabelText } = render(
-      <TestContext>
+      <TestContext record={record}>
         <ExamplesForm />
       </TestContext>,
     );
@@ -52,8 +51,9 @@ describe('ExamplesForm', () => {
   });
 
   it('deletes a new example', async () => {
+    const record = wordFixture({ examples: [exampleSuggestionFixture()] });
     const { findByText, findByTestId, findByLabelText, queryByTestId } = render(
-      <TestContext>
+      <TestContext record={record}>
         <ExamplesForm />
       </TestContext>,
     );
@@ -73,8 +73,9 @@ describe('ExamplesForm', () => {
   });
 
   it('deletes first example after editing the second', async () => {
+    const record = wordSuggestionFixture({ examples: [exampleSuggestionFixture()] });
     const { findByText, findByTestId, findByLabelText, queryByTestId, findAllByLabelText } = render(
-      <TestContext>
+      <TestContext record={record}>
         <ExamplesForm />
       </TestContext>,
     );
@@ -103,15 +104,15 @@ describe('ExamplesForm', () => {
   });
 
   it('renders the archive button for existing Example sentence', async () => {
-    const staticWordRecord = cloneDeep(wordRecord);
+    const staticWordRecord = wordFixture();
     staticWordRecord.examples = [
-      {
-        originalExampleId: new Types.ObjectId(),
-        id: new Types.ObjectId(),
+      exampleSuggestionFixture({
+        originalExampleId: 'original-example-id',
+        id: 'example-id',
         nsibidi: 'nsibidi',
         igbo: 'igbo',
         english: 'english',
-      },
+      }),
     ];
 
     const { findByText, findAllByLabelText } = render(

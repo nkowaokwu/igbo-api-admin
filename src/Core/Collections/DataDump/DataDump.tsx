@@ -272,7 +272,7 @@ const DataDump = (): ReactElement => {
                   }
                 >
                   <Box className="w-full lg:w-4/12">
-                    <Button colorScheme="green" type="submit" isDisabled={!isDataPresent} isLoading={isUploading}>
+                    <Button colorScheme="purple" type="submit" isDisabled={!isDataPresent} isLoading={isUploading}>
                       Bulk upload sentences
                     </Button>
                   </Box>

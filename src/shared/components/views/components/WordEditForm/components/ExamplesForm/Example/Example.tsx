@@ -7,6 +7,8 @@ import network from 'src/utils/dataProvider';
 import Collection from 'src/shared/constants/Collection';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
+import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -111,6 +113,18 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           name={`examples[${index}].nsibidi`}
           defaultValue={nsibidi}
           control={control}
+        />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples[${index}].style.value`}
+          ref={control.register}
+          defaultValue={get(example, 'style.value') || ExampleStyleEnum.NO_STYLE}
+        />
+        <input
+          style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
+          name={`examples[${index}].style.label`}
+          ref={control.register}
+          defaultValue={get(example, 'style.label') || ExampleStyle[ExampleStyleEnum.NO_STYLE].label}
         />
         {pronunciations?.length ? (
           pronunciations.map((_, pronunciationIndex) => (

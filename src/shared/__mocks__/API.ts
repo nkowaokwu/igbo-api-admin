@@ -1,3 +1,5 @@
+import { exampleTranscriptionFeedbackFixture } from 'src/__tests__/shared/fixtures';
+
 export const getWord = jest.fn(async () => ({
   word: 'retrieved word',
   id: '234',
@@ -42,6 +44,8 @@ export const getWordSuggestions = jest.fn(async () => []);
 export const getExamples = jest.fn(async () => [{ igbo: 'igbo-example', english: 'english-example' }]);
 
 export const getExampleSuggestions = jest.fn(async () => []);
+
+export const getExampleTranscriptionFeedback = jest.fn(async () => exampleTranscriptionFeedbackFixture());
 
 // Used by word stems test
 export const resolveWord = jest.fn(async () => ({

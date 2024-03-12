@@ -58,6 +58,8 @@ const DiffField = ({
       <code className={`text-md text-gray-800 ${className}`} {...rest}>
         {children}
       </code>
+    ) : typeof fallbackValue === 'object' || typeof fallbackValue === 'function' ? (
+      children
     ) : (
       <Text className={`text-md text-gray-800 ${className}`} style={{ whiteSpace: 'pre-wrap' }} {...rest}>
         {children}

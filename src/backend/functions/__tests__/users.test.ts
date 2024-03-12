@@ -55,7 +55,7 @@ describe('users', () => {
       // assert
       expect(result).toMatch('Successfully copied firebase users');
       expect(insetManyMock.mock.calls[0][0]).toHaveLength(fixture.expectedUsers.length);
-      expect(insetManyMock).toBeCalledWith(fixture.expectedUsers);
+      expect(insetManyMock).toHaveBeenCalledWith(fixture.expectedUsers);
     });
   });
 

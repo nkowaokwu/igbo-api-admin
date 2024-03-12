@@ -18,7 +18,7 @@ const CreateSuggestion = ({
   resource: string;
   push: (value: any) => void;
 }): ReactElement => (
-  <Button colorScheme="green" onClick={() => determineCreateSuggestionRedirection({ record, resource, push })}>
+  <Button colorScheme="purple" onClick={() => determineCreateSuggestionRedirection({ record, resource, push })}>
     Suggest an Edit
   </Button>
 );

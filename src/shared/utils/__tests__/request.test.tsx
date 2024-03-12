@@ -14,7 +14,7 @@ describe('request', () => {
     const requestSpy = jest.spyOn(axios, 'request').mockReturnValue(response);
     await request({ data: 'test data', url: 'test' });
 
-    expect(requestSpy).toBeCalledWith({
+    expect(requestSpy).toHaveBeenCalledWith({
       data: 'test data',
       url: 'https://localhost/test',
       headers: {
@@ -29,7 +29,7 @@ describe('request', () => {
     const requestSpy = jest.spyOn(axios, 'request').mockReturnValue(response);
     await request({ data: 'test data' });
 
-    expect(requestSpy).toBeCalledWith({
+    expect(requestSpy).toHaveBeenCalledWith({
       data: 'test data',
       url: 'https://localhost/undefined',
       headers: {

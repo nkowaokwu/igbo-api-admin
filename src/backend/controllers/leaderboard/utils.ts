@@ -64,14 +64,14 @@ export const assignRankings = async ({
 }): Promise<Interfaces.Leaderboard[]> =>
   Promise.all(
     rankingsGroups.map(async (rankings, index) => {
-      const leaderboard = leaderboards[index];
+      let leaderboard: Interfaces.Leaderboard | undefined = leaderboards[index];
       if (!leaderboard) {
         const newLeaderboard = new Leaderboard({
           type: LeaderboardType.RECORD_EXAMPLE_AUDIO,
           page: index,
           timeRange,
         });
-        await newLeaderboard.save();
+        leaderboard = await newLeaderboard.save();
       }
       leaderboard.rankings = rankings;
       leaderboard.markModified('rankings');

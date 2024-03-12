@@ -16,19 +16,14 @@ import NsibidiInput from 'src/shared/components/views/components/WordEditForm/co
 // eslint-disable-next-line max-len
 import CharacterAttributesForm from 'src/shared/components/views/components/NsibidiCharacterEditForm/components/CharacterAttributesForm';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
+import createDefaultNsibidiCharacterFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultNsibidiCharacterFormValues';
 import NsibidiCharacterEditFormResolver from './NsibidiCharacterEditFormResolver';
 import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
 
 const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }: EditFormProps): ReactElement => {
   const { handleSubmit, control, getValues, errors, formState } = useForm({
-    defaultValues: {
-      ...(record || {}),
-      wordClass: {
-        label: record.wordClass || '',
-        value: record.wordClass || '',
-      },
-    },
+    defaultValues: createDefaultNsibidiCharacterFormValues(record),
     ...NsibidiCharacterEditFormResolver(),
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -133,7 +128,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         </Button>
         <Button
           type="submit"
-          colorScheme="green"
+          colorScheme="purple"
           variant="solid"
           isDisabled={!isDirty}
           isLoading={isSubmitting}

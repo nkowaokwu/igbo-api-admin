@@ -1,6 +1,6 @@
 /* Get all users from Firebase */
 import { Request, Response, NextFunction } from 'express';
-import admin from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { filter, compact, reduce, merge } from 'lodash';
 import { createMongoUser } from 'src/backend/functions/users';
 import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';

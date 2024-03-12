@@ -1,23 +1,12 @@
-import { Types } from 'mongoose';
+import { Document } from 'mongoose';
 import { ExampleData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
-import { Suggestion } from 'src/backend/controllers/utils/interfaces/suggestionInterfaces';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import { SuggestionData } from 'src/backend/controllers/utils/interfaces/suggestionInterfaces';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 
-export interface ExampleSuggestionData extends ExampleData {
-  id: Types.ObjectId | string;
+export interface ExampleSuggestionData extends ExampleData, SuggestionData {
+  originalExampleId?: string;
   exampleForSuggestion: boolean;
   source: SuggestionSourceEnum;
-  crowdsourcing: {
-    [key in CrowdsourcingType]: boolean;
-  };
 }
 
-export interface ExampleSuggestion extends ExampleSuggestionData, Suggestion {
-  id: Types.ObjectId;
-  exampleForSuggestion: boolean;
-  source: SuggestionSourceEnum;
-  crowdsourcing: {
-    [key in CrowdsourcingType]: boolean;
-  };
-}
+export interface ExampleSuggestion extends Document<ExampleSuggestionData, any, any> {}

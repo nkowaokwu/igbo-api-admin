@@ -8,7 +8,8 @@ import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
 import { getWord } from 'src/shared/API';
 import SourceField from 'src/shared/components/SourceField';
-import { EditDocumentTopBar, ShowDocumentStats, DocumentIds, Comments } from '../../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { EditDocumentTopBar, ShowDocumentStats, Comments } from '../../components';
 import DiffField from '../diffFields/DiffField';
 
 const DIFF_FILTER_KEYS = [
@@ -80,7 +81,7 @@ const CorpusShow = (props: ShowProps): ReactElement => {
         <Box className="flex flex-col lg:flex-row mb-1">
           <Box className="flex flex-col flex-auto justify-between items-start space-y-4 mr-4">
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
-              <DocumentIds
+              <DocumentStats
                 collection={Collection.WORDS}
                 originalId={originalWordId}
                 record={record}

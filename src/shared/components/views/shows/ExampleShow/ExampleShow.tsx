@@ -15,10 +15,11 @@ import SummaryList from 'src/shared/components/views/shows/components/SummaryLis
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
-import { ShowDocumentStats, DocumentIds, EditDocumentTopBar, Comments } from '../../components';
+import { ShowDocumentStats, EditDocumentTopBar, Comments } from '../../components';
 
 const ExampleShow = (props: ShowProps): ReactElement => {
   const [isLoadingSpeakers, setIsLoadingSpeakers] = useState(false);
@@ -29,20 +30,20 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const { permissions } = props;
   const {
     id,
-    author,
-    approvals,
-    denials,
-    merged,
     igbo,
     english,
     meaning,
     nsibidi,
     style,
+    associatedWords,
+    pronunciations = [],
+    originalExampleId,
     editorsNotes,
     userComments,
-    associatedWords,
-    originalExampleId,
-    pronunciations,
+    approvals,
+    denials,
+    merged,
+    author,
   } = record || DEFAULT_EXAMPLE_RECORD;
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
@@ -122,7 +123,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
         />
         <Box className="flex flex-col-reverse lg:flex-row mt-1">
           <Box className="flex flex-col flex-auto justify-between items-start">
-            <DocumentIds
+            <DocumentStats
               collection={Collection.EXAMPLES}
               originalId={originalExampleId}
               record={record}

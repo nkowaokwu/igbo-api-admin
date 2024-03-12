@@ -1,19 +1,9 @@
-import { WordClientData } from 'src/backend/controllers/utils/interfaces';
+import { WordData } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
-import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
-import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
-
-const mockDialects = [
-  {
-    word: 'word',
-    dialects: [DialectEnum.ABI],
-    id: 'dialect-id',
-    pronunciation: '',
-  },
-];
+import { dialectFixture, exampleSuggestionFixture } from 'src/__tests__/shared/fixtures';
 
 export const wordSuggestionData = {
   word: 'word',
@@ -95,10 +85,16 @@ export const updatedWordData = {
   ],
 };
 
-export const wordRecord: WordClientData = {
+export const wordRecord: WordData = {
   word: 'word',
   id: '5f864d7401203866b6546dd0',
-  dialects: mockDialects,
+  dialects: [
+    dialectFixture({
+      word: 'word',
+      dialects: [DialectEnum.ABI],
+      id: 'dialect-id',
+    }),
+  ],
   definitions: [
     {
       wordClass: WordClassEnum.AV,
@@ -109,28 +105,15 @@ export const wordRecord: WordClientData = {
     },
   ],
   examples: [
-    {
+    exampleSuggestionFixture({
       id: 'example-id',
       igbo: 'igbo',
       english: 'english',
-      meaning: '',
-      nsibidi: '',
-      style: undefined,
-      nsibidiCharacters: [],
-      pronunciations: [],
-      associatedWords: [],
-    },
+    }),
   ],
-  editorsNotes: '',
   frequency: 1,
   pronunciation: '',
   relatedTerms: [],
-  attributes: Object.values(WordAttributes).reduce((attributes, { value }) => {
-    if (value !== WordAttributeEnum.IS_COMMON && value !== WordAttributeEnum.IS_COMPLETE) {
-      attributes[value] = false;
-    }
-    return attributes;
-  }, {}),
   tenses: Object.values(Tense).reduce((tenses, { value }) => ({ ...tenses, [value]: '' }), {}),
   variations: [],
   conceptualWord: '',
@@ -142,6 +125,7 @@ export const wordRecord: WordClientData = {
 export const exampleSuggestionData = {
   igbo: 'igbo text',
   english: 'english text',
+  type: SentenceTypeEnum.DATA_COLLECTION,
   pronunciations: [],
   associatedWords: [],
 };
@@ -161,10 +145,6 @@ export const malformedExampleSuggestionData = {
 export const bulkUploadExampleSuggestionData = {
   english: '',
   type: SentenceTypeEnum.DATA_COLLECTION,
-};
-
-export const nsibidiCharacterData = {
-  nsibidi: 'nsibidi',
 };
 
 export const updatedExampleSuggestionData = {

@@ -14,7 +14,7 @@ const CharacterAttributesForm = ({
   getValues: () => any;
   control: Control;
 }): ReactElement => (
-  <Box className="mb-4">
+  <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4">
     {Object.values(NsibidiCharacterAttributeEnum).map((nsibidiCharacterAttribute) => (
       <Controller
         render={({ onChange, value, ref }) => (

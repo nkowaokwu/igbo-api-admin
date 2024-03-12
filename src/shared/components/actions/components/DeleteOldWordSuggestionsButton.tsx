@@ -42,7 +42,7 @@ const DeleteOldWordSuggestionsButton = (): ReactElement => {
         onClose={handleDeleteWordSuggestions}
         isLoading={isLoading}
       />
-      <Button colorScheme="red" onClick={onOpen} isLoading={isLoading}>
+      <Button colorScheme="red" onClick={onOpen} isLoading={isLoading} variant="outline">
         Delete old Word Suggestions
       </Button>
     </>

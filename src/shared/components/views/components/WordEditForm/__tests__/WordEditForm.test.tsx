@@ -6,8 +6,9 @@ import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import Tense from 'src/backend/shared/constants/Tense';
-import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { definitionFixture, wordSuggestionFixture } from 'src/__tests__/shared/fixtures';
+import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordEditForm from '../WordEditForm';
 
 jest.mock('src/Core/Dashboard/network');
@@ -47,8 +48,8 @@ describe('Word Edit Form', () => {
       </TestContext>,
     );
     fireEvent.submit(await findByTestId('word-edit-form'));
-    expect(mockHandleSubmit).toBeCalled();
-    expect(mockSave).toBeCalled();
+    expect(mockHandleSubmit).toHaveBeenCalled();
+    expect(mockSave).toHaveBeenCalled();
   });
 
   it('render dialectal variations', async () => {
@@ -106,9 +107,12 @@ describe('Word Edit Form', () => {
   });
 
   it('add a word nsibidi to word suggestion', async () => {
+    const record = wordSuggestionFixture(cloneDeep(wordRecord));
     const { findByText, findAllByText, findByPlaceholderText } = render(
       <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
-        <WordEditForm record={{ definitions: [{ nsibidi: '', nsibidiCharacters: [] }] }} />
+        <WordEditForm
+          record={{ ...record, definitions: [{ wordClass: WordClassEnum.NNC, nsibidi: '', nsibidiCharacters: [] }] }}
+        />
       </TestContext>,
     );
 
@@ -137,10 +141,9 @@ describe('Word Edit Form', () => {
   });
 
   it('shows tenses with a verb', async () => {
-    const staticWordRecord = cloneDeep(wordRecord);
-    staticWordRecord.definitions[0].wordClass = WordClassEnum.AV;
+    const word = wordSuggestionFixture({ definitions: [definitionFixture({ wordClass: WordClassEnum.AV })] });
     const { findByText, getByTestId } = render(
-      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} save={() => {}}>
+      <TestContext view={Views.EDIT} resource={Collections.WORD_SUGGESTIONS} record={word} save={() => {}}>
         <WordEditForm />
       </TestContext>,
     );

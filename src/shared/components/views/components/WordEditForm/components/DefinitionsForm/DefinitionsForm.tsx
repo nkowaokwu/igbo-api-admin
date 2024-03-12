@@ -41,7 +41,7 @@ const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface):
           />
         </Box>
         <Button
-          colorScheme="green"
+          colorScheme="purple"
           aria-label="Add Definition Group"
           onClick={handleAddDefinitionGroup}
           leftIcon={<AddIcon />}

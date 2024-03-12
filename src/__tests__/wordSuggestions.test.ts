@@ -1,6 +1,6 @@
 import { forEach, forIn, isEqual, pick, times } from 'lodash';
 import { v4 as uuid } from 'uuid';
-import Tense from 'src/backend/shared/constants/Tense';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
@@ -435,16 +435,16 @@ describe('MongoDB Word Suggestions', () => {
     it('should create a word suggestion with tenses', async () => {
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
-        tenses: Object.values(Tense).reduce(
-          (finalTenses, { value }) => ({
+        tenses: Object.values(TenseEnum).reduce(
+          (finalTenses, tense) => ({
             ...finalTenses,
-            [value]: '',
+            [tense]: '',
           }),
           {},
         ),
       });
       expect(wordSuggestionRes.status).toEqual(200);
-      expect(wordSuggestionRes.body.tenses[Tense.INFINITIVE.value]).toEqual('');
+      expect(wordSuggestionRes.body.tenses[TenseEnum.INFINITIVE]).toEqual('');
       const updatedWordSuggestionRes = await updateWordSuggestion({
         ...wordSuggestionRes.body,
         definitions: wordSuggestionRes.body.definitions.map((definitionGroup) =>
@@ -452,20 +452,20 @@ describe('MongoDB Word Suggestions', () => {
         ),
         tenses: {
           ...wordSuggestionRes.body.tenses,
-          [Tense.IMPERATIVE.value]: 'testing',
+          [TenseEnum.IMPERATIVE]: 'testing',
         },
       });
       expect(updatedWordSuggestionRes.status).toEqual(200);
-      expect(updatedWordSuggestionRes.body.tenses[Tense.IMPERATIVE.value]).toEqual('testing');
+      expect(updatedWordSuggestionRes.body.tenses[TenseEnum.IMPERATIVE]).toEqual('testing');
     });
 
     it('should update a word suggestion with two different authors', async () => {
       const wordSuggestionRes = await suggestNewWord({
         ...wordSuggestionData,
-        tenses: Object.values(Tense).reduce(
-          (finalTenses, { value }) => ({
+        tenses: Object.values(TenseEnum).reduce(
+          (finalTenses, tense) => ({
             ...finalTenses,
-            [value]: '',
+            [tense]: '',
           }),
           {},
         ),
@@ -476,7 +476,7 @@ describe('MongoDB Word Suggestions', () => {
           ...wordSuggestionRes.body,
           tenses: {
             ...wordSuggestionRes.body.tenses,
-            [Tense.IMPERATIVE.value]: 'testing',
+            [TenseEnum.IMPERATIVE]: 'testing',
           },
           examples: [
             {
@@ -495,7 +495,7 @@ describe('MongoDB Word Suggestions', () => {
           ...updatedWordSuggestionRes.body,
           tenses: {
             ...wordSuggestionRes.body.tenses,
-            [Tense.IMPERATIVE.value]: 'testing',
+            [TenseEnum.IMPERATIVE]: 'testing',
           },
           examples: [
             {

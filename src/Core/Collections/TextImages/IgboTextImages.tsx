@@ -177,7 +177,7 @@ const IgboTextImages = (): ReactElement => {
                 <ActivityButton
                   tooltipLabel="Next Igbo text image"
                   onClick={fileDataIndex === fileData?.length - 1 ? noop : handleNext}
-                  colorScheme="green"
+                  colorScheme="purple"
                   icon={<ArrowForwardIcon color="white" />}
                   aria-label="Previous Igbo definition"
                   isDisabled={fileDataIndex === fileData?.length - 1}

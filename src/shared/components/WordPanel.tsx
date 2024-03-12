@@ -55,9 +55,9 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
           <Text fontSize="xl" className="font-bold">
             Definition Groups
           </Text>
-          <Box>
+          <Box className="space-y-4">
             {(get(record, 'definitions') || []).map(({ wordClass, definitions, nsibidi, id }) => (
-              <Box key={id}>
+              <Box key={id} rounded="md" p={4} backgroundColor="gray.50">
                 <Box className="flex flex-row space-x-3 items-start">
                   <Box>
                     <Text fontSize="lg" className="font-bold">
@@ -131,7 +131,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
             record.tags.map((tag, index) => (
               <Box key={tag} className="flex flex-row space-x-1">
                 <Text className="font-bold text-gray-600">{`${index + 1}.`}</Text>
-                <Text>{get(WordTags[tag.toUpperCase()], 'label')}</Text>
+                <Text>{get(WordTags[tag], 'label')}</Text>
               </Box>
             ))
           ) : (
@@ -140,7 +140,7 @@ const WordPanel = ({ record }: { record?: Record }): ReactElement => (
         </Box>
         <Box>
           <Text fontSize="lg" className="font-bold">
-            Tags
+            Word Frequency
           </Text>
           {get(record, 'frequency') ? (
             <Text>{record.frequency}</Text>

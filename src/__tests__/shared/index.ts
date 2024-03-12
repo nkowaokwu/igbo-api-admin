@@ -1,6 +1,5 @@
 /* eslint-disable import/prefer-default-export */
 import mongoose from 'mongoose';
-import { noop } from 'lodash';
 import { initializeApp, getApp } from 'firebase/app';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -9,6 +8,7 @@ import * as admin from 'firebase-admin';
 import { v4 as uuidv4 } from 'uuid'; // eslint-disable-line
 import { initializedAdminApp } from 'src/backend/services/initializeAdmin';
 import useFirebaseConfig from 'src/hooks/useFirebaseConfig';
+import { connectDatabase } from 'src/backend/utils/database';
 import firebaseConfig from '../../../firebase.json'; // eslint-disable-line
 
 type AuthType = {
@@ -24,23 +24,12 @@ type OptionsType = {
 };
 
 export const dropMongoDBCollections = async (): Promise<void> => {
-  await mongoose.connection.dropCollection('words').catch(noop);
-  await mongoose.connection.dropCollection('wordsuggestions').catch(noop);
-  await mongoose.connection.dropCollection('examples').catch(noop);
-  await mongoose.connection.dropCollection('examplesuggestions').catch(noop);
-  await mongoose.connection.dropCollection('corpora').catch(noop);
-  await mongoose.connection.dropCollection('corpus').catch(noop);
-  await mongoose.connection.dropCollection('corpussuggestions').catch(noop);
-  await mongoose.connection.dropCollection('audiopronunciations').catch(noop);
-  await mongoose.connection.dropCollection('stats').catch(noop);
-  await mongoose.connection.dropCollection('leaderboards').catch(noop);
-  await mongoose.connection.dropCollection('textimages').catch(noop);
-  await mongoose.connection.dropCollection('crowdsourcers').catch(noop);
-  await mongoose.connection.dropCollection('referrals').catch(noop);
+  await connectDatabase();
+  await mongoose.connection.dropDatabase();
 };
 
 export const setUpTestEnvironment = (): { initializedAdminApp: admin.app.App } => {
-  jest.retryTimes(2);
+  jest.retryTimes(1);
   initializeApp(useFirebaseConfig());
   const db = getFirestore();
   const functions = getFunctions(getApp());

@@ -22,17 +22,13 @@ const createExampleSuggestion = async (
   const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
   if (identicalExampleSuggestions.length) {
-    // const exampleSuggestionIds = map(identicalExampleSuggestions, (exampleSuggestion) => exampleSuggestion.id);
-    // console.log(`Existing ExampleSuggestion id(s): ${exampleSuggestionIds}`);
     throw new Error(
       'There is an existing Example Suggestion with the same Igbo text. Please edit the existing Example Suggestion',
     );
   }
-  // console.log(err.message);
 
   const newExampleSuggestion = new ExampleSuggestion(data) as Interfaces.ExampleSuggestion;
   return newExampleSuggestion.save().catch(() => {
-    // console.log(err.message);
     throw new Error('An error has occurred while saving, double check your provided data');
   });
 };

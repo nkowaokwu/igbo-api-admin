@@ -2,7 +2,7 @@ import axios from 'axios';
 import { compact } from 'lodash';
 import { Record } from 'react-admin';
 import { Word } from 'src/backend/controllers/utils/interfaces';
-import Tense from 'src/backend/shared/constants/Tense';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import { invalidRelatedTermsWordClasses } from './determineIsAsCompleteAsPossible';
 
@@ -67,8 +67,7 @@ export default async (
     definitions.some(({ wordClass }) => isVerb(wordClass)) &&
     !Object.entries(tenses).every(
       ([key, value]) =>
-        (value && Object.values(Tense).find(({ value: tenseValue }) => key === tenseValue)) ||
-        key === Tense.PRESENT_PASSIVE.value,
+        (value && Object.values(TenseEnum).find((tense) => key === tense)) || key === TenseEnum.PRESENT_PASSIVE,
     )
       ? 'All verb tenses are needed'
       : null,

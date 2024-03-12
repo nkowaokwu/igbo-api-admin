@@ -1,7 +1,7 @@
-import { Document, LeanDocument, Types } from 'mongoose';
-import { Example, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces/exampleSuggestionInterfaces';
+import { Document, Types } from 'mongoose';
+import { ExampleData, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import Tense from 'src/backend/shared/constants/TenseEnum';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
@@ -32,16 +32,14 @@ export interface WordClientData extends Word {
   examples?: ExampleClientData[];
 }
 
-export interface Word extends WordData, Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-}
+export interface Word extends Document<WordData, any, any> {}
 
 export interface WordData {
-  id: Types.ObjectId | string;
+  id: string;
   word: string;
   wordPronunciation: string;
   conceptualWord: string;
-  definitions: [DefinitionSchema];
+  definitions: DefinitionSchema[];
   dialects: WordDialect[];
   pronunciation: string;
   variations: string[];
@@ -49,18 +47,11 @@ export interface WordData {
   frequency: number;
   stems: string[];
   tags: WordTagEnum[];
-  attributes: {
-    [WordAttributeEnum.IS_STANDARD_IGBO]: boolean;
-    [WordAttributeEnum.IS_ACCENTED]: boolean;
-    [WordAttributeEnum.IS_COMPLETE]: boolean;
-    [WordAttributeEnum.IS_SLANG]: boolean;
-    [WordAttributeEnum.IS_CONSTRUCTED_TERM]: boolean;
-    [WordAttributeEnum.IS_BORROWED_TERM]: boolean;
-    [WordAttributeEnum.IS_STEM]: boolean;
-  };
+  attributes: { [key in WordAttributeEnum]: boolean };
+  tenses: { [key in Tense]: boolean };
   relatedTerms: string[];
   hypernyms: string[];
   hyponyms: string[];
   updatedAt: Date;
-  examples?: (Example | ExampleSuggestion | ExampleClientData)[];
+  examples?: ExampleData[];
 }

@@ -511,6 +511,7 @@ export const getUserAudioStats = async (
       },
       {},
     );
+
     const timestampedAudioDenials = deniedExampleSuggestionAudios.reduce(
       (finalTimestampedAudioDenials, exampleSuggestion) => {
         // Gets the date and month of Example Suggestion

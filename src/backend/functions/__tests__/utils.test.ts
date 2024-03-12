@@ -22,13 +22,13 @@ describe('utils', () => {
     it('should generate a random id with the default length', () => {
       // act and assert
       expect(generateId(characters)).toMatch(mockGeneratedId);
-      expect(customAlphabetMock).toBeCalledWith(characters, 6);
+      expect(customAlphabetMock).toHaveBeenCalledWith(characters, 6);
     });
 
     it.each([4, 8, 16, 21, 13])('should generate a random id for the given sizes', (size) => {
       // act and assert
       expect(generateId(characters, size)).toMatch(mockGeneratedId);
-      expect(customAlphabetMock).toBeCalledWith(characters, size);
+      expect(customAlphabetMock).toHaveBeenCalledWith(characters, size);
     });
   });
 });

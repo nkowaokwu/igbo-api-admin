@@ -1,22 +1,24 @@
-import { Example, NsibidiCharacter, Word } from 'src/backend/controllers/utils/interfaces';
+import { ExampleData, NsibidiCharacter, WordData } from 'src/backend/controllers/utils/interfaces';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
+import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
-export const API_ROUTE = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3030'
-  : `https://${window.location.host}`;
+export const API_ROUTE =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:3030' : `https://${window.location.host}`;
 
-export const DEFAULT_WORD_RECORD: Word = {
+export const DEFAULT_WORD_RECORD: WordData = {
   id: '',
   author: '',
   word: '',
-  definitions: [{
-    wordClass: '',
-    definitions: [],
-    label: '',
-    igboDefinitions: [],
-    nsibidi: '',
-    nsibidiCharacters: [],
-  }],
+  definitions: [
+    {
+      wordClass: undefined,
+      definitions: [],
+      label: '',
+      igboDefinitions: [],
+      nsibidi: '',
+      nsibidiCharacters: [],
+    },
+  ],
   dialects: [],
   examples: [],
   variations: [],
@@ -25,10 +27,13 @@ export const DEFAULT_WORD_RECORD: Word = {
   details: '',
   merged: '',
   // @ts-expect-error
-  attributes: Object.values(WordAttributes).reduce((finalSchema, { value }) => ({
-    ...finalSchema,
-    [value]: false,
-  }), {}),
+  attributes: Object.values(WordAttributes).reduce(
+    (finalSchema, { value }) => ({
+      ...finalSchema,
+      [value]: false,
+    }),
+    {},
+  ),
   accented: '',
   pronunciation: '',
   stems: [],
@@ -38,24 +43,18 @@ export const DEFAULT_WORD_RECORD: Word = {
   updatedAt: new Date(),
 };
 
-export const DEFAULT_EXAMPLE_RECORD: Example = {
+export const DEFAULT_EXAMPLE_RECORD: ExampleData = {
   id: '',
-  author: '',
   igbo: '',
   english: '',
   meaning: '',
   nsibidi: '',
+  type: undefined,
   style: undefined,
   pronunciations: [],
   nsibidiCharacters: [],
   associatedWords: [],
-  approvals: [],
-  denials: [],
-  details: '',
-  merged: '',
-  originalExampleId: '',
-  editorsNotes: '',
-  userComments: '',
+  associatedDefinitionsSchemas: [],
   updatedAt: new Date(),
 };
 
@@ -64,5 +63,5 @@ export const DEFAULT_NSIBIDI_CHARACTER_RECORD: NsibidiCharacter = {
   nsibidi: '',
   pronunciation: '',
   definitions: [],
-  wordClass: '',
+  wordClass: WordClassEnum.NNC,
 };

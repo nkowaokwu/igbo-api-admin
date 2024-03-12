@@ -31,7 +31,7 @@ const ResourceNavigationController = ({
     <ActivityButton
       onClick={!resources[index] ? onSkip : index === resources.length - 1 ? noop : onNext}
       icon={<ArrowForwardIcon />}
-      colorScheme="green"
+      colorScheme="purple"
       aria-label="Next sentence"
       isDisabled={index === resources.length - 1}
     />

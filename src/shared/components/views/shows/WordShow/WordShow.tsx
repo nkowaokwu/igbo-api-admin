@@ -18,7 +18,8 @@ import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
-import { EditDocumentTopBar, ShowDocumentStats, DocumentIds, Comments } from '../../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { EditDocumentTopBar, ShowDocumentStats, Comments } from '../../components';
 import DialectDiff from '../diffFields/DialectDiff';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
@@ -58,7 +59,7 @@ const WordShow = (props: ShowProps): ReactElement => {
   const showProps = useShowController(props);
   const { resource } = showProps;
   // @ts-expect-error
-  let { record }: { record: Interfaces.Word } = showProps;
+  let { record }: { record: Interfaces.WordData | Interfaces.WordSuggestionData } = showProps;
   const { permissions } = props;
   const hasFlags = !!Object.values(generateFlags({ word: record || {}, flags: {} }).flags).length;
 
@@ -94,7 +95,6 @@ const WordShow = (props: ShowProps): ReactElement => {
 
   const prepareOriginalWordRecordForExamples = (): Interfaces.Word => {
     if (!!originalWordRecord && 'examples' in originalWordRecord) {
-      // @ts-expect-error
       return {
         ...assign(originalWordRecord),
         examples: originalWordRecord.examples.filter(({ archived = false }) => !archived),
@@ -144,7 +144,7 @@ const WordShow = (props: ShowProps): ReactElement => {
         <Box className="flex flex-col lg:flex-row mb-1">
           <Box className="flex flex-col flex-auto justify-start items-start">
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
-              <DocumentIds
+              <DocumentStats
                 collection={Collection.WORDS}
                 originalId={originalWordId}
                 record={record}
@@ -370,10 +370,14 @@ const WordShow = (props: ShowProps): ReactElement => {
                 <ArrayDiffField
                   recordField="examples"
                   recordFieldSingular="example"
-                  record={{ examples } as Interfaces.Word}
+                  record={{ examples } as { examples: Interfaces.ExampleData[] }}
                   originalRecord={prepareOriginalWordRecordForExamples()}
                 >
-                  <ExampleDiff record={{ examples } as Interfaces.Word} diffRecord={diffRecord} resource={resource} />
+                  <ExampleDiff
+                    record={{ examples } as { examples: Interfaces.ExampleData[] }}
+                    diffRecord={diffRecord}
+                    resource={resource}
+                  />
                 </ArrayDiffField>
               </Box>
             </Box>

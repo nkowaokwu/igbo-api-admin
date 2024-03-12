@@ -8,10 +8,11 @@ import Collection from 'src/shared/constants/Collection';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import LegacyAkaguFont from 'src/backend/shared/constants/LegacyAkaguFont';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
-import { DocumentIds, EditDocumentTopBar } from '../../components';
+import { EditDocumentTopBar } from '../../components';
 import Attributes from '../components/Attributes';
 
 const NsibidiCharacterShow = (props: ShowProps): ReactElement => {
@@ -35,7 +36,7 @@ const NsibidiCharacterShow = (props: ShowProps): ReactElement => {
       />
       <Box className="flex flex-col-reverse lg:flex-row mt-1">
         <Box className="flex flex-col flex-auto justify-between items-start">
-          <DocumentIds collection={Collection.EXAMPLES} record={record} id={id} />
+          <DocumentStats collection={Collection.EXAMPLES} record={record} id={id} />
           <Box className="w-full flex flex-col lg:flex-row-reverse justify-between items-start space-y-4 lg:space-y-0">
             <Attributes
               attributeType={Collection.NSIBIDI_CHARACTERS}

@@ -5,13 +5,13 @@ import mongoose from 'mongoose';
 import { Request } from '@types/superagent';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import './setupFilesAfterEnv';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import { resultsFromDictionarySearch } from 'src/backend/services/words';
 import { sendEmail } from 'src/backend/controllers/email';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removePayloadFields from 'src/shared/utils/removePayloadFields';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import './script';
 import { app as expressServer } from '../../../index';
 import { API_KEY, API_URL, AUTH_TOKEN, ORIGIN_HEADER, LOCAL_ROUTE, TEST_ROUTE } from './constants';
 import mockedData from '../__mocks__/data_mock';
@@ -155,6 +155,11 @@ export const getExampleSuggestion = (id: string, options: OptionsType = { token:
 export const deleteExampleSuggestion = (id: string, options: OptionsType = { token: '' }): Request =>
   chaiServer
     .delete(`/exampleSuggestions/${id}`)
+    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
+
+export const getExampleTranscriptionFeedback = (id: string, options: OptionsType = { token: '' }): Request =>
+  chaiServer
+    .get(`/exampleTranscriptionFeedbacks/${id}`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
 export const getCorpusSuggestion = (id: string, options: OptionsType = { token: '' }): Request =>

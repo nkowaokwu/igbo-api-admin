@@ -5,8 +5,8 @@ import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 export const ExampleEditFormSchema = Joi.object({
   igbo: Joi.string().required(),
   english: Joi.string(),
-  meaning: Joi.string().optional(),
-  nsibidi: Joi.string().optional(),
+  meaning: Joi.string().allow('').optional(),
+  nsibidi: Joi.string().allow('').optional(),
   nsibidiCharacters: Joi.array()
     .min(0)
     .items(
@@ -28,17 +28,18 @@ export const ExampleEditFormSchema = Joi.object({
     ),
   associatedDefinitionsSchemas: Joi.array().min(0).items(Joi.string()),
   id: Joi.string().optional(),
-  exampleId: Joi.string().optional(),
+  exampleId: Joi.string().allow('', null).optional(),
   originalExampleId: Joi.string().allow(null).optional(),
   pronunciations: Joi.array().items(
     Joi.object({
-      audio: Joi.string(),
-      speaker: Joi.string().optional(),
+      audio: Joi.string().allow(''),
+      speaker: Joi.string().allow('').optional(),
       approvals: Joi.string().optional(),
       denials: Joi.string().optional(),
       archived: Joi.boolean(),
     }),
   ),
+  editorsNotes: Joi.string().allow('').optional(),
 });
 
 const resolver = {

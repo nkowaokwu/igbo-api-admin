@@ -34,7 +34,7 @@ type Filters = {
   merged?: boolean;
 };
 
-const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
+export const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
   let searchFilters: Filters = filters
     ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
         allFilters.$or = allFilters.$or || [];
@@ -153,9 +153,11 @@ const generateSearchFilters = (filters: { [key: string]: string }, uid: string):
   }
   return searchFilters;
 };
-const titleQuery = (regex: SearchRegExp): { title: { $regex: RegExp } } => ({ title: { $regex: regex.wordReg } });
-const wordQuery = (regex: SearchRegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex.wordReg } });
-const fullTextSearchQuery = (keyword: string, regex: SearchRegExp): { word?: { $regex: RegExp }; $or?: any } =>
+export const titleQuery = (regex: SearchRegExp): { title: { $regex: RegExp } } => ({
+  title: { $regex: regex.wordReg },
+});
+export const wordQuery = (regex: SearchRegExp): { word: { $regex: RegExp } } => ({ word: { $regex: regex.wordReg } });
+export const fullTextSearchQuery = (keyword: string, regex: SearchRegExp): { word?: { $regex: RegExp }; $or?: any } =>
   !keyword
     ? { word: { $regex: /./ } }
     : {
@@ -172,8 +174,8 @@ const fullTextSearchQuery = (keyword: string, regex: SearchRegExp): { word?: { $
           ),
         ],
       };
-const bodyQuery = (regex: SearchRegExp): { body: { $regex: RegExp } } => ({ body: { $regex: regex.wordReg } });
-const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => ({
+export const bodyQuery = (regex: SearchRegExp): { body: { $regex: RegExp } } => ({ body: { $regex: regex.wordReg } });
+export const variationsQuery = (regex: SearchRegExp): { variations: { $in: [RegExp] } } => ({
   variations: { $in: [regex.wordReg] },
 });
 const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $in: [host] } });
@@ -242,6 +244,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   igbo: { $exists: boolean; $type: string };
   $expr: { $gt: ({ $strLenCP: string } | number)[] };
   type: SentenceTypeEnum.DATA_COLLECTION;
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   // @ts-expect-error
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
@@ -253,6 +256,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
   type: SentenceTypeEnum.DATA_COLLECTION,
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
@@ -280,6 +284,7 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   exampleForSuggestion: { $ne: true };
   'pronunciations.review': true;
   type: SentenceTypeEnum.DATA_COLLECTION;
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   'pronunciations.speaker': { $nin: [string] };
   pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
@@ -288,6 +293,7 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   exampleForSuggestion: { $ne: true },
   'pronunciations.review': true,
   type: SentenceTypeEnum.DATA_COLLECTION,
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
 
   // TODO: 🚨 remove this section after the project is over 🚨
 
@@ -319,12 +325,14 @@ export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
   merged: null;
   english: string;
   exampleForSuggestion: { $ne: true };
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   'pronunciations.0.audio': { $exists: boolean; $type: string; $ne: string };
   pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
 } => ({
   merged: null,
   english: '',
   exampleForSuggestion: { $ne: true },
+  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
   'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   pronunciations: {

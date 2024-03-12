@@ -2,9 +2,10 @@ import React, { ReactElement } from 'react';
 import { Box } from '@chakra-ui/react';
 import { useEditController } from 'react-admin';
 import View from 'src/shared/constants/Views';
-import Collections from 'src/shared/constants/Collection';
+import Collection from 'src/shared/constants/Collection';
 import { HistoryProps } from 'src/shared/interfaces';
-import { WordEditForm, EditDocumentStats, DocumentIds, EditDocumentTopBar } from '../components';
+import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import { WordEditForm, EditDocumentTopBar } from '../components';
 
 const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
   const { history } = props;
@@ -23,16 +24,15 @@ const WordSuggestionEdit = (props: HistoryProps): ReactElement => {
   return record ? (
     <Box className="bg-white shadow-sm p-10 mt-10">
       <EditDocumentTopBar record={record} resource={resource} view={View.EDIT} title="Edit Word Suggestion" id={id} />
-      <Box className="flex flex-col lg:flex-row flex-auto justify-between items-start lg:items-center">
-        <DocumentIds
-          collection={Collections.WORDS}
-          originalId={originalWordId}
-          record={record}
-          id={id}
-          title="Parent Word Id:"
-        />
-        <EditDocumentStats approvals={approvals} denials={denials} />
-      </Box>
+      <DocumentStats
+        collection={Collection.WORDS}
+        originalId={originalWordId}
+        record={record}
+        id={id}
+        title="Parent Word Id:"
+        approvals={approvals}
+        denials={denials}
+      />
       {record ? (
         <WordEditForm
           view={View.EDIT}

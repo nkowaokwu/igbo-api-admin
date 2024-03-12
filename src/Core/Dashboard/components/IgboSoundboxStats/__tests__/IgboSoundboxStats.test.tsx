@@ -61,7 +61,7 @@ describe('IgboSoundboxStats', () => {
     await findByText('Next month');
     await findByText(`Total recorded audio for ${moment().format('MMM, YYYY')}`);
     await findByText('Price to be paid to the user:');
-    await findByText('$0.00');
+    await findByText('$0.32');
     await findByText('10');
     await findByText('15');
     await findByText('20');
@@ -113,12 +113,14 @@ describe('IgboSoundboxStats', () => {
   it('calculates the expected payment', () => {
     const recordings = 5000;
     const reviews = 15000;
-    expect(calculatePayment(recordings, reviews)).toEqual('$100.00');
+    expect(calculatePayment(recordings, reviews)).toEqual('$260.00');
   });
+
   it('returns no dollars for invalid string input', () => {
     // @ts-expect-error
-    expect(calculatePayment('invalid'), 1000).toEqual('$0.00');
+    expect(calculatePayment('invalid', 1000)).toEqual('$0.00');
   });
+
   it('returns no dollars for invalid NaN input', () => {
     expect(calculatePayment(parseInt('invalid', 10), 1000)).toEqual('$0.00');
   });

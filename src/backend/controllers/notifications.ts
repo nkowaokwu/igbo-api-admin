@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import admin from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { CallableContext } from 'firebase-functions/v1/https';
 import { omit, pick } from 'lodash';
 import moment from 'moment';

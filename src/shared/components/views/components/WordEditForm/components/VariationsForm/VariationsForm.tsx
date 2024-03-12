@@ -24,7 +24,7 @@ const VariationsForm = ({ control }: VariationsFormInterface): ReactElement => {
           variations in spelling within Standard Igbo.`}
         />
         <Button
-          colorScheme="green"
+          colorScheme="purple"
           aria-label="Add Variation"
           onClick={() => append({ text: '' })}
           leftIcon={<AddIcon />}

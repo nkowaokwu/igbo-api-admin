@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { Box, Button, IconButton, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
-import { RepeatIcon } from '@chakra-ui/icons';
+import { FiRefreshCw } from 'react-icons/fi';
 import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
 
@@ -75,8 +75,7 @@ const RecorderBase = ({
       <Box
         data-test="word-pronunciation-input-container"
         width="full"
-        className="flex flex-col justify-center items-center"
-        backgroundColor="gray.100"
+        className="flex flex-col justify-center items-center bg-gray-200 rounded p-3"
         borderRadius="md"
         minHeight="96px"
         p={3}
@@ -90,17 +89,10 @@ const RecorderBase = ({
               <Tooltip label="Start recording">
                 <Button
                   borderRadius="full"
-                  borderColor="gray.300"
-                  borderWidth="3px"
                   backgroundColor="white"
                   height="44px"
                   width="44px"
-                  _hover={{
-                    backgroundColor: 'gray.100',
-                  }}
-                  _active={{
-                    backgroundColor: 'gray.100',
-                  }}
+                  _hover={{ backgroundColor: 'white' }}
                   padding="0px"
                   data-test={`start-recording-button${path === 'headword' ? '' : `-${path}`}`}
                   className="flex justify-center items-start"
@@ -113,14 +105,12 @@ const RecorderBase = ({
               <Tooltip label="Reset recording">
                 <IconButton
                   aria-label="Reset recording"
-                  icon={<RepeatIcon color="gray.600" />}
+                  icon={<FiRefreshCw color="gray.600" />}
                   data-test={`reset-recording-button${path === 'headword' ? '' : `-${path}`}`}
-                  backgroundColor="gray.300"
+                  backgroundColor="white"
+                  _hover={{ backgroundColor: 'white' }}
                   onClick={onResetRecording}
                   borderRadius="full"
-                  _hover={{
-                    backgroundColor: 'gray.400',
-                  }}
                   variant="ghost"
                 />
               </Tooltip>

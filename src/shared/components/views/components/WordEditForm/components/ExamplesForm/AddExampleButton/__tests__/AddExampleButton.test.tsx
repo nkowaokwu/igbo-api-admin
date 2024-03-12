@@ -13,6 +13,6 @@ describe('AddExampleButton', () => {
     );
 
     fireEvent.click(await findByText('Add Example'));
-    expect(mockAppend).toBeCalled();
+    expect(mockAppend).toHaveBeenCalled();
   });
 });

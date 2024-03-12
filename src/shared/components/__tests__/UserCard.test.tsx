@@ -25,7 +25,7 @@ describe('UserCard', () => {
       </TestContext>,
     );
 
-    await findByText(moment().format('MMMM DD, YYYY'));
+    await findByText(moment().format('MMMM D, YYYY'));
     await findByText('Abịrịba');
     await findByText('Female');
   });

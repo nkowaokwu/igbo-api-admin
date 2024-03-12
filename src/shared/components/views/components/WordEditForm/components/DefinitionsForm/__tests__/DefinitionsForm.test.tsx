@@ -1,16 +1,20 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TestContext from 'src/__tests__/components/TestContext';
-import { wordRecord } from 'src/__tests__/__mocks__/documentData';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { definitionFixture, wordFixture } from 'src/__tests__/shared/fixtures';
 import DefinitionsForm from '../DefinitionsForm';
 
 describe('DefinitionsForm', () => {
   it('renders a single definition group', async () => {
+    const record = wordFixture({
+      definitions: [
+        definitionFixture({ definitions: ['first definition'], wordClass: WordClassEnum.AV, nsibidi: 'first nsibidi' }),
+      ],
+    });
     const { findByText } = render(
-      <TestContext>
+      <TestContext record={record}>
         <DefinitionsForm />
       </TestContext>,
     );
@@ -21,20 +25,31 @@ describe('DefinitionsForm', () => {
     await findByText('Nsịbịdị');
     await findByText('first nsibidi');
     await findByText('No Nsịbịdị characters');
-    await findByText(wordRecord.definitions[0].definitions[0]);
+    await findByText(record.definitions[0].definitions[0]);
     await findByText('Add English Definition');
     await findByText('Add Igbo Definition');
   });
 
   it('renders multiple definition group', async () => {
-    const extendWordRecord = cloneDeep(wordRecord);
-    extendWordRecord.definitions.push({
-      wordClass: WordClassEnum.ADJ,
-      definitions: ['second definition'],
-      nsibidi: 'second nsibidi',
-      nsibidiCharacters: [],
-      igboDefinitions: [],
+    const extendWordRecord = wordFixture({
+      definitions: [
+        definitionFixture({
+          wordClass: WordClassEnum.AV,
+          definitions: ['first definition'],
+          nsibidi: 'first nsibidi',
+          nsibidiCharacters: [],
+          igboDefinitions: [],
+        }),
+        definitionFixture({
+          wordClass: WordClassEnum.ADJ,
+          definitions: ['second definition'],
+          nsibidi: 'second nsibidi',
+          nsibidiCharacters: [],
+          igboDefinitions: [],
+        }),
+      ],
     });
+
     const { findByText, findAllByText } = render(
       <TestContext record={extendWordRecord} definitions={extendWordRecord.definitions}>
         <DefinitionsForm />

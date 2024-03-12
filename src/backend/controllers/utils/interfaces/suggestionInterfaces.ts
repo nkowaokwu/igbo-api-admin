@@ -1,8 +1,7 @@
-import { Document, LeanDocument, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 
-export interface Suggestion extends Document<any>, LeanDocument<any> {
-  id: Types.ObjectId;
-  originalWordId?: Types.ObjectId;
+export interface SuggestionData {
   userComments?: string;
   authorEmail?: string;
   authorId?: string;
@@ -11,4 +10,11 @@ export interface Suggestion extends Document<any>, LeanDocument<any> {
   merged?: Types.ObjectId;
   mergedBy?: string;
   userInteractions?: string[];
+  twitterPollUrl?: string;
+  editorsNotes?: string;
+  crowdsourcing: {
+    [key in CrowdsourcingType]: boolean;
+  };
 }
+
+export interface Suggestion extends Document<SuggestionData, any, any> {}

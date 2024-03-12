@@ -114,7 +114,7 @@ const PollsCreate = (): ReactElement => {
             <Tooltip label="This will authorize the @nkowaokwu Twitter account to post on your behalf" placement="top">
               <Button
                 type="submit"
-                colorScheme="green"
+                colorScheme="purple"
                 variant="outline"
                 className="mb-4 lg:mb-0"
                 onClick={handleAccountAuthorization}
@@ -125,7 +125,7 @@ const PollsCreate = (): ReactElement => {
             <Tooltip label="This poll will be posted on the public @nkowaokwu Twitter account" placement="top">
               <Button
                 type="submit"
-                colorScheme="green"
+                colorScheme="purple"
                 variant="solid"
                 isLoading={isSubmitting}
                 className="mb-4 lg:mb-0"
@@ -146,7 +146,10 @@ const PollsCreate = (): ReactElement => {
           {` document. This page allow translators to directly poll the Twitter Igbo community on whether 
           this is a word that they can see themselves using.`}
         </Text>
-        <Box className="flex flex-col lg:flex-row lg:justify-center items-start space-y-10 lg:space-y-0 lg:space-x-24 my-6">
+        <Box
+          className="flex flex-col lg:flex-row lg:justify-center 
+        items-start space-y-10 lg:space-y-0 lg:space-x-24 my-6"
+        >
           <Box flex={2} className="w-full space-y-4">
             <Box>
               <Heading as="h3" fontSize="md" mb={4}>
@@ -171,7 +174,7 @@ const PollsCreate = (): ReactElement => {
                 </Heading>
                 {pollOptions.length < MAXIMUM_POLL_OPTIONS ? (
                   <IconButton
-                    colorScheme="green"
+                    colorScheme="purple"
                     aria-label="Add poll option"
                     icon={<AddIcon />}
                     onClick={handleAddPollOption}

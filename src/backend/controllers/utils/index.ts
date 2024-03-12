@@ -135,7 +135,7 @@ export const convertToSkipAndLimit = ({
 };
 
 /* Packages the res response with sorting */
-export const packageResponse = async ({
+export const packageResponse = async <T>({
   res,
   docs,
   model,
@@ -143,8 +143,8 @@ export const packageResponse = async ({
 }: {
   res: Response;
   docs: any[];
-  model: Model<Document<any>>;
-  query: Query<Document<any> | Document<any>[], Document<any>>;
+  model: Model<Document<T, any, any>>;
+  query: Query<Document<T, any, any> | Document<T, any, any>[], Document<T, any, any>>;
   sort: { key: string; direction: boolean | 'asc' | 'desc' };
 }): Promise<Response> => {
   // Not handling sorting to preserve alphabetical order

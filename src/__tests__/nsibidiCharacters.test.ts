@@ -1,7 +1,10 @@
+import { omit } from 'lodash';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
+import { nsibidiCharacterFixture } from 'src/__tests__/shared/fixtures';
 import { AUTH_TOKEN } from './shared/constants';
 import { suggestNewNsibidiCharacter, updateNsibidiCharacter } from './shared/commands';
-import { nsibidiCharacterData } from './__mocks__/documentData';
+
+const nsibidiCharacterData = omit(nsibidiCharacterFixture({ nsibidi: 'nsibidi' }), ['id']);
 
 describe('MongoDB Nsịbịdị Characters', () => {
   describe('/POST mongodb nsibidiCharacters', () => {
@@ -41,9 +44,9 @@ describe('MongoDB Nsịbịdị Characters', () => {
       const nsibidiCharacterRes = await suggestNewNsibidiCharacter(nsibidiCharacterData);
       expect(nsibidiCharacterRes.status).toEqual(200);
       const res = await updateNsibidiCharacter({
-        id: nsibidiCharacterRes.body.id,
         ...nsibidiCharacterData,
         nsibidi: 'updated nsibidi',
+        id: nsibidiCharacterRes.body.id,
       });
       expect(res.status).toEqual(200);
       expect(res.body.nsibidi).toEqual('updated nsibidi');
@@ -54,9 +57,9 @@ describe('MongoDB Nsịbịdị Characters', () => {
       expect(nsibidiCharacterRes.status).toEqual(200);
       const res = await updateNsibidiCharacter(
         {
-          id: nsibidiCharacterRes.body.id,
           ...nsibidiCharacterData,
           nsibidi: 'updated nsibidi',
+          id: nsibidiCharacterRes.body.id,
         },
         { token: AUTH_TOKEN.MERGER_AUTH_TOKEN },
       );

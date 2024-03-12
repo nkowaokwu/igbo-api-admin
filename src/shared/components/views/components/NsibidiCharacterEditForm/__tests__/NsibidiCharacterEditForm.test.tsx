@@ -25,7 +25,7 @@ describe('NsibidiCharacterEditForm', () => {
 
     userEvent.click(await findByText('Update'));
     await waitFor(() =>
-      expect(mockSave).toBeCalledWith(
+      expect(mockSave).toHaveBeenCalledWith(
         {
           radicals: [{ id: 'resolved-nsibidi-987' }],
           nsibidi: 'nsibidi',
@@ -53,10 +53,10 @@ describe('NsibidiCharacterEditForm', () => {
     );
 
     userEvent.click(await findByText('Update'));
-    expect(mockSave).not.toBeCalled();
+    expect(mockSave).not.toHaveBeenCalled();
   });
 
-  it('renders the has legacy characters attribute', async () => {
+  it('renders all attributes', async () => {
     const mockSave = jest.fn(() => null);
 
     const { findByText } = render(
@@ -66,5 +66,9 @@ describe('NsibidiCharacterEditForm', () => {
     );
 
     await findByText('Has Legacy Characters');
+    await findByText('Is Compound');
+    await findByText('Is Simplified');
+    await findByText('Is New');
+    await findByText('Is Radical');
   });
 });
