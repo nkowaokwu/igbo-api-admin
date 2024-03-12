@@ -32,6 +32,7 @@ describe('Render List Actions', () => {
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     expect(await queryByText('Has Edited')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
@@ -69,6 +70,7 @@ describe('Render List Actions', () => {
     await findByText('Is Author');
     await findByText('Merged By You');
     await findByText('Has Pronunciation');
+    expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
@@ -99,6 +101,7 @@ describe('Render List Actions', () => {
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     expect(await queryByText('Has Edited')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
@@ -124,6 +127,7 @@ describe('Render List Actions', () => {
     await findByText('Is Biblical');
     await findByText('From Nkọwa okwu');
     await findByText('From Igbo API Editor Platform');
+    await findByText('From IgboSpeech');
     await findByText('From BBC');
     await findByText('Has Edited');
     await findByText('Is Author');

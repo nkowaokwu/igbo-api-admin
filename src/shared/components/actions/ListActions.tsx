@@ -247,6 +247,14 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                               From Igbo API Editor Platform
                             </MenuItemOption>,
                             isExampleResource ? (
+                              <MenuItemOption
+                                value={SuggestionSourceEnum.IGBO_SPEECH}
+                                key={SuggestionSourceEnum.IGBO_SPEECH}
+                              >
+                                From IgboSpeech
+                              </MenuItemOption>
+                            ) : null,
+                            isExampleResource ? (
                               <MenuItemOption value={SuggestionSourceEnum.BBC} key={SuggestionSourceEnum.BBC}>
                                 From BBC
                               </MenuItemOption>
