@@ -2,7 +2,7 @@ import React, { memo, ReactElement, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { AdminContext, AdminUI, Resource, usePermissions } from 'react-admin';
 import { Route } from 'react-router-dom';
-import { Dashboard, Layout, Error, NotFound, Loading } from 'src/Core';
+import { Dashboard, Layout, Error, Loading } from 'src/Core';
 import Login from 'src/Login';
 import dataProvider from 'src/utils/dataProvider';
 import authProvider from 'src/utils/authProvider';
@@ -34,7 +34,7 @@ const Resources = memo(
 const IgboAPIAdmin = (): ReactElement => (
   // @ts-expect-error Cypress
   <Box className={!!window.Cypress ? 'testing-app' : ''}>
-    <AdminContext dataProvider={dataProvider} authProvider={authProvider} catchAll={NotFound}>
+    <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
       <Resources />
     </AdminContext>
   </Box>
