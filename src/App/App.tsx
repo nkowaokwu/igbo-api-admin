@@ -1,15 +1,16 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import IgboAPIAdmin from './IgboAPIAdmin';
 import ChakraTheme from './ChakraTheme';
+import { ModalProvider } from '../shared/contexts/ModalContext';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import '../styles.css';
 
-const App = (): React.ReactElement => <IgboAPIAdmin />;
-
-export default (props: any): ReactElement => (
+export default (props: any): React.ReactElement => (
   <ChakraProvider theme={ChakraTheme}>
-    <App {...props} />
+    <ModalProvider>
+      <IgboAPIAdmin {...props} />
+    </ModalProvider>
   </ChakraProvider>
 );

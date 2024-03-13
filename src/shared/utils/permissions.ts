@@ -17,7 +17,7 @@ const AT_LEAST_CROWDSOURCER = [
 
 export const hasNoEditorPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | void => {
   if (!AT_LEAST_EDITOR.includes(permissions?.role)) {
     return returnWithPermission;
@@ -27,7 +27,7 @@ export const hasNoEditorPermissions = (
 
 export const hasEditorPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | void => {
   if (AT_LEAST_EDITOR.includes(permissions?.role)) {
     return returnWithPermission;
@@ -37,7 +37,7 @@ export const hasEditorPermissions = (
 
 export const hasAdminOrMergerPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | void => {
   if (AT_LEAST_MERGER.includes(permissions?.role)) {
     return returnWithPermission;
@@ -47,7 +47,7 @@ export const hasAdminOrMergerPermissions = (
 
 export const hasAdminPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | null => {
   if (AT_LEAST_ADMIN.includes(permissions?.role)) {
     return returnWithPermission;
@@ -57,7 +57,7 @@ export const hasAdminPermissions = (
 
 export const hasBetaPermissions = (
   permissions: { role?: UserRoles; email?: string } = { role: UserRoles.USER, email: '' },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | null => {
   if (AT_LEAST_ADMIN.includes(permissions?.role) || betaEmailList.includes(permissions?.email)) {
     return returnWithPermission;
@@ -67,7 +67,7 @@ export const hasBetaPermissions = (
 
 export const hasTranscriberPermissions = (
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: any,
 ): any | null => {
   if (permissions?.role === UserRoles.TRANSCRIBER || hasBetaPermissions(permissions, true)) {
     return returnWithPermission;
@@ -75,30 +75,30 @@ export const hasTranscriberPermissions = (
   return null;
 };
 
-export const hasAtLeastCrowdsourcerPermissions = (
+export const hasAtLeastCrowdsourcerPermissions = <T>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
-): any | null => {
+  returnWithPermission: T,
+): T | null => {
   if (AT_LEAST_CROWDSOURCER.includes(permissions?.role) || hasBetaPermissions(permissions, true)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasAccessToPlatformPermissions = (
+export const hasAccessToPlatformPermissions = <T>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
-): any | null => {
+  returnWithPermission: T,
+): T | null => {
   if (Object.values(UserRoles).includes(permissions?.role) && permissions?.role !== UserRoles.USER) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasCrowdsourcerPermission = (
+export const hasCrowdsourcerPermission = <T>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
-): any | null => {
+  returnWithPermission: T,
+): T | null => {
   if (permissions?.role === UserRoles.CROWDSOURCER) {
     return returnWithPermission;
   }
