@@ -73,7 +73,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
 
   const renderNestedAudioPronunciation = (
-    { audio, approvals, denials }: PronunciationData = {
+    { audio, approvals = [], denials = [] }: PronunciationData = {
       audio: '',
       speaker: '',
       approvals: [],
