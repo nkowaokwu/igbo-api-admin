@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { assign, compact, get, map, omit, uniqBy } from 'lodash';
+import { assign, compact, flow, get, map, omit, uniqBy } from 'lodash';
 import { Box, Button, Heading, Text, useToast } from '@chakra-ui/react';
 import { Record, useNotify } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
@@ -17,6 +17,7 @@ import ActionTypes from 'src/shared/constants/ActionTypes';
 import Collections from 'src/shared/constants/Collection';
 import TagsForm from 'src/shared/components/views/components/TagsForm';
 import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
+import cleanTenses from 'src/shared/utils/cleanTenses';
 import WordEditFormResolver from './WordEditFormResolver';
 import { sanitizeWith, sanitizeExamples, onCancel } from '../utils';
 import DefinitionsForm from './components/DefinitionsForm';
@@ -86,7 +87,7 @@ const WordEditForm = ({
   }
 
   const { handleSubmit, getValues, setValue, control, errors, watch } = useForm({
-    defaultValues: createDefaultWordFormValues(record),
+    defaultValues: createDefaultWordFormValues(record || { id: '' }),
     ...WordEditFormResolver(),
     mode: 'onChange',
   });
@@ -112,20 +113,22 @@ const WordEditForm = ({
     );
   };
 
+  const formDataWithCache = (data, record) =>
+    omit(
+      assign(createCacheWordData(data, record), {
+        approvals: map(record.approvals, (approval) => approval.uid),
+        denials: map(record.denials, (denial) => denial.uid),
+      }),
+      [view === View.CREATE ? 'id' : ''],
+    );
+
   /* Combines the approvals, denials, and cached form data to
    * send to the backend
    */
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const preparedData = omit(
-        assign(createCacheWordData(data, record), {
-          approvals: map(record.approvals, (approval) => approval.uid),
-          denials: map(record.denials, (denial) => denial.uid),
-        }),
-        [view === View.CREATE ? 'id' : ''],
-      );
-      const cleanedData = removePayloadFields(preparedData);
+      const cleanedData = flow([formDataWithCache, removePayloadFields, cleanTenses])(data, record);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
@@ -139,7 +142,6 @@ const WordEditForm = ({
         },
         onFailure: (error: any) => {
           const { body, message, error: errorMessage } = error;
-          // console.log('Saving error', error);
           toast({
             title: 'Error',
             description: body?.error || message || errorMessage || 'An error occurred while saving word suggestion',

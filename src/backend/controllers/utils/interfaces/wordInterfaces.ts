@@ -1,7 +1,7 @@
 import { Document, Types } from 'mongoose';
 import { ExampleData, ExampleClientData } from 'src/backend/controllers/utils/interfaces/exampleInterfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
-import Tense from 'src/backend/shared/constants/TenseEnum';
+import TenseEnum from 'src/backend/shared/constants/TenseEnum';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
@@ -48,7 +48,7 @@ export interface WordData {
   stems: string[];
   tags: WordTagEnum[];
   attributes: { [key in WordAttributeEnum]: boolean };
-  tenses: { [key in Tense]: boolean };
+  tenses: { [key in TenseEnum]: string };
   relatedTerms: string[];
   hypernyms: string[];
   hyponyms: string[];
