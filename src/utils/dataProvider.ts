@@ -1,4 +1,4 @@
-import { fetchUtils } from 'react-admin';
+import { DataProvider, fetchUtils } from 'react-admin';
 import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
 import Collection from 'src/shared/constants/Collection';
@@ -8,7 +8,11 @@ import authProvider from './authProvider';
 
 export const httpClient = async <T>(
   url: string,
-  options?: { headers?: any; method: string; body?: string | Record<string, unknown> },
+  options?: {
+    headers?: any;
+    method?: string;
+    body?: BodyInit;
+  },
 ): Promise<T> => {
   const updatedOptions = assign(options);
   try {
@@ -31,11 +35,11 @@ export const httpClient = async <T>(
 
 export default {
   ...restProvider(API_ROUTE, httpClient),
-  getOne: async (resource: Collection, params: any): Promise<{ data: any } | void> =>
+  getOne: async (resource: Collection, params: any) =>
     httpClient(`${API_ROUTE}/${resource}/${params.id}`).then(({ json }) => ({
       data: json,
     })),
-  create: (resource: Collection, params: any): Promise<{ data: any } | void> =>
+  create: (resource: Collection, params: any) =>
     httpClient(`${API_ROUTE}/${resource}`, {
       method: 'POST',
       body: JSON.stringify(params.data),
@@ -47,7 +51,7 @@ export default {
         data: { ...params.data, id: json.id },
       };
     }),
-  update: (resource: Collection, params: any): Promise<{ data: any } | void> =>
+  update: (resource: Collection, params: any) =>
     httpClient(`${API_ROUTE}/${resource}/${params.id}`, {
       method: 'PUT',
       body: JSON.stringify(params.data),
@@ -57,14 +61,14 @@ export default {
       }
       return { data: json };
     }),
-  delete: (resource: Collection, params: any): Promise<{ data: any } | void> =>
+  delete: (resource: Collection, params: any) =>
     httpClient(`${API_ROUTE}/${resource}/${params.id}`, {
       method: 'DELETE',
       headers: new Headers({
         'Content-Type': 'text/plain',
       }),
     }).then(async ({ json }) => ({ data: json })),
-  deleteMany: (resource: Collection, params: any): Promise<{ data: any } | void> =>
+  deleteMany: (resource: Collection, params: any) =>
     Promise.all(
       params.ids.map((id) =>
         httpClient(`${API_ROUTE}/${resource}/${id}`, {
@@ -77,4 +81,4 @@ export default {
     ).then((responses) => ({
       data: responses.map(({ json }) => json.id),
     })),
-};
+} as DataProvider;

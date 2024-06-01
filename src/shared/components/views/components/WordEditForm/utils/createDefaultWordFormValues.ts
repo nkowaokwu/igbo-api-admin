@@ -42,7 +42,7 @@ const createDefaultWordFormValues = (record: Record): any => {
     attributes: Object.entries(WordAttributeEnum).reduce(
       (finalAttributes, [key, value]) => ({
         ...finalAttributes,
-        [value]: record?.attributes[key] || false,
+        [value]: record?.attributes?.[key] || false,
       }),
       {},
     ),
