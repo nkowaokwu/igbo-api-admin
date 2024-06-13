@@ -17,7 +17,7 @@ const createExampleSuggestion = async (
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
-  const queryData = { igbo: data.igbo || '' };
+  const queryData = { igbo: data.igbo || '', merged: null };
   const query = searchPreExistingExampleSuggestionsRegexQuery(queryData);
   const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
