@@ -24,6 +24,7 @@ import {
   onCopyFirebaseUsers,
   onCreateUserAccount,
   onDeleteUser,
+  onDeleteUserAccount,
   onUpdatePermissions,
 } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
@@ -68,6 +69,7 @@ server.get('**', (_, res) => {
 server.use(errorHandler);
 
 // Firebase Functions
+export const deleteUserAccount = onDeleteUserAccount;
 export const createUserAccount = onCreateUserAccount;
 export const updatePermissions = onUpdatePermissions;
 export const requestDeleteDocument = onRequestDeleteDocument;
