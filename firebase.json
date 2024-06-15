@@ -8,15 +8,13 @@
   },
   "hosting": {
     "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
     ],
-    "rewrites": [{
-      "source": "**",
-      "function": "app"
-    }],
     "headers": [
       {
         "source": "/",
@@ -37,7 +35,7 @@
       "port": 5002
     },
     "firestore": {
-      "port": 8081
+      "port": 8384
     },
     "hosting": {
       "port": 3030
@@ -46,7 +44,7 @@
       "enabled": true
     },
     "pubsub": {
-      "port": 8085
+      "port": 8777
     }
   }
 }
