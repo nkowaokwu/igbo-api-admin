@@ -1,7 +1,10 @@
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+
 export interface MergedOrRejectedEmailData {
   to: [string];
   suggestionType: string;
   submissionLink?: string;
+  source: SuggestionSourceEnum;
   [key: string]: any;
 }
 

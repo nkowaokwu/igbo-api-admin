@@ -15,6 +15,7 @@ import {
   AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
 } from 'src/backend/config';
 import constructMessage from 'src/backend/controllers/email/utils/constructMessage';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { findAdminUserEmails } from '../users';
 import * as Interfaces from '../utils/interfaces';
 
@@ -60,6 +61,10 @@ export const sendDeniedEmail = (data): Promise<void> => {
 
 /* Email sent when suggestion gets merged */
 export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
+  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+    return Promise.resolve();
+  }
+
   const message = constructMessage({
     to: data.to,
     templateId: MERGED_SUGGESTION_TEMPLATE,
@@ -77,6 +82,9 @@ export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Pro
 
 /* Email sent when a suggestion has been deleted without getting merged */
 export const sendRejectedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
+  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+    return Promise.resolve();
+  }
   const message = constructMessage({
     to: data.to,
     templateId: REJECTED_SUGGESTION_TEMPLATE,
