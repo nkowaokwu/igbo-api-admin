@@ -124,7 +124,14 @@ export const executeMergeExample = async (
 };
 
 /* Sends confirmation merged email to user if they provided an email */
-const handleSendingMergedEmail = async (result, mongooseConnection): Promise<void> => {
+const handleSendingMergedEmail = async (
+  result: Interfaces.ExampleSuggestionData & {
+    authorEmail: string;
+    word: Interfaces.WordData;
+    associatedWords: string[];
+  },
+  mongooseConnection,
+): Promise<void> => {
   try {
     const Word = mongooseConnection.model('Word', wordSchema);
     if (result.authorEmail) {

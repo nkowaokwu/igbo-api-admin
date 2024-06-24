@@ -14,6 +14,7 @@ import { DICTIONARY_APP_URL } from 'src/backend/config';
 import { assignExampleSuggestionToExampleData } from 'src/backend/controllers/utils/nestedExampleSuggestionUtils';
 import createExample from 'src/backend/controllers/examples/helpers/createExample';
 import findExampleByAssociatedWordId from 'src/backend/controllers/examples/helpers/findExampleByAssociatedWordId';
+import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { sortDocsBy, packageResponse, handleQueries, updateDocumentMerge } from '../utils';
 import {
   searchIgboTextSearch,
@@ -330,7 +331,9 @@ const createWordFromSuggestion = (
     });
 
 /* Sends confirmation merged email to user if they provided an email */
-const handleSendingMergedEmail = async (result: Interfaces.Word): Promise<void> => {
+const handleSendingMergedEmail = async (
+  result: Interfaces.WordData & { authorEmail: string; source: SuggestionSourceEnum; word: string },
+): Promise<void> => {
   try {
     if (result.authorEmail) {
       sendMergedEmail({
@@ -363,6 +366,7 @@ export const mergeWord = async (
     await handleSyncingAntonyms(mergedWord, mongooseConnection);
     await handleSendingMergedEmail({
       ...(mergedWord.toObject ? mergedWord.toObject() : mergedWord),
+      source: suggestionDoc.source,
       wordClass: WordClass[suggestionDoc.wordClass]?.label || 'No word class',
       authorEmail: suggestionDoc.authorEmail,
       authorId: suggestionDoc.authorId,
