@@ -89,7 +89,7 @@ const RecordSentenceAudio = ({
         title: 'Unable to save points',
         position: 'top-right',
         variant: 'left-accent',
-        description: 'Unable to upload example sentence recordings.',
+        description: `Unable to upload example sentence recordings.: ${err?.message || err?.details}`,
         status: 'error',
         duration: 4000,
         isClosable: true,
