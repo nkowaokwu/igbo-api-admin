@@ -94,7 +94,6 @@ const VerifySentenceAudio = ({
         isClosable: true,
       });
     } catch (err) {
-      console.log('Unable to upload submit review', err);
       toast({
         title: 'Unable to save points',
         position: 'top-right',

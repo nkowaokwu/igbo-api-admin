@@ -157,10 +157,10 @@ export const calculateRecordingExampleLeaderboard = async (
   next: NextFunction,
 ): Promise<any> => {
   const {
-    user: { uid },
+    // user,
     error,
     response,
-    mongooseConnection,
+    // mongooseConnection,
   } = req;
 
   if (error) {
@@ -168,13 +168,13 @@ export const calculateRecordingExampleLeaderboard = async (
   }
 
   try {
-    const user = (await findUser(uid)) as Interfaces.FormattedUser;
-    await updateUserLeaderboardStat({
-      leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-      mongooseConnection,
-      user,
-    });
-
+    // 🚨 Uncomment this section to start updating leaderboard stats. Be careful this code is broken. 🚨
+    // const user = (await findUser(uid)) as Interfaces.FormattedUser;
+    // await updateUserLeaderboardStat({
+    //   leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
+    //   mongooseConnection,
+    //   user,
+    // });
     return res.send(response);
   } catch (err) {
     return next(err);
