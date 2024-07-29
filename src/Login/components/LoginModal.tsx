@@ -65,7 +65,7 @@ const LoginModal = ({
   userLoginState: UserLoginState;
   setUserLoginState: (value: UserLoginState) => void;
 }): ReactElement => {
-  const [identifierType, setIdentifierType] = useState(IdentifierType.PHONE);
+  const [identifierType, setIdentifierType] = useState(IdentifierType.EMAIL);
   const [displayName, setDisplayName] = useState<string>('');
   const [userIdentifier, setUserIdentifier] = useState<string>('');
   const [password, setPassword] = useState<string>('');

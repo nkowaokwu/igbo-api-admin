@@ -632,7 +632,7 @@ export const putAudioForRandomExampleSuggestions = async (
           // console.log(`No example suggestion with the id: ${id}`);
           return null;
         }
-        const userInteractions = new Set(exampleSuggestion.userInteractions);
+        const userInteractions = new Set(exampleSuggestion.userInteractions || []);
         if (pronunciation) {
           // @ts-expect-error _id is missing
           exampleSuggestion.pronunciations.push({
