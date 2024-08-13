@@ -252,18 +252,21 @@ const Select = ({
             onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
           }
         : null,
-      resource === Collection.NSIBIDI_CHARACTERS
-        ? {
-            value: 'delete',
-            label: (() => (
-              <span className="text-red-500">
-                <DeleteIcon className="mr-2" />
-                Delete Nsịbịdị character
-              </span>
-            ))(),
-            onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE])),
-          }
-        : null,
+      hasAdminPermissions(
+        permissions,
+        resource === Collection.NSIBIDI_CHARACTERS
+          ? {
+              value: 'delete',
+              label: (() => (
+                <span className="text-red-500">
+                  <DeleteIcon className="mr-2" />
+                  Delete Nsịbịdị character
+                </span>
+              ))(),
+              onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE])),
+            }
+          : null,
+      ),
     ]),
   );
 
