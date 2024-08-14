@@ -1,73 +1,60 @@
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { betaEmailList } from 'src/shared/constants/emailList';
+import { adminRoles, mergerRoles, editorRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 
-const AT_LEAST_ADMIN = [UserRoles.ADMIN];
-
-const AT_LEAST_MERGER = [UserRoles.ADMIN, UserRoles.MERGER];
-
-const AT_LEAST_EDITOR = [UserRoles.ADMIN, UserRoles.MERGER, UserRoles.EDITOR];
-
-const AT_LEAST_CROWDSOURCER = [
-  UserRoles.ADMIN,
-  UserRoles.MERGER,
-  UserRoles.EDITOR,
-  UserRoles.TRANSCRIBER,
-  UserRoles.CROWDSOURCER,
-];
-
-export const hasNoEditorPermissions = (
+export const hasNoEditorPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | void => {
-  if (!AT_LEAST_EDITOR.includes(permissions?.role)) {
+  if (!editorRoles.includes(permissions?.role)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasEditorPermissions = (
+export const hasEditorPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | void => {
-  if (AT_LEAST_EDITOR.includes(permissions?.role)) {
+  if (editorRoles.includes(permissions?.role)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasAdminOrMergerPermissions = (
+export const hasAdminOrMergerPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | void => {
-  if (AT_LEAST_MERGER.includes(permissions?.role)) {
+  if (mergerRoles.includes(permissions?.role)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasAdminPermissions = (
+export const hasAdminPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
-  if (AT_LEAST_ADMIN.includes(permissions?.role)) {
+  if (adminRoles.includes(permissions?.role)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasBetaPermissions = (
+export const hasBetaPermissions = <T extends unknown>(
   permissions: { role?: UserRoles; email?: string } = { role: UserRoles.USER, email: '' },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
-  if (AT_LEAST_ADMIN.includes(permissions?.role) || betaEmailList.includes(permissions?.email)) {
+  if (adminRoles.includes(permissions?.role) || betaEmailList.includes(permissions?.email)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasTranscriberPermissions = (
+export const hasTranscriberPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
   if (permissions?.role === UserRoles.TRANSCRIBER || hasBetaPermissions(permissions, true)) {
     return returnWithPermission;
@@ -75,19 +62,19 @@ export const hasTranscriberPermissions = (
   return null;
 };
 
-export const hasAtLeastCrowdsourcerPermissions = (
+export const hasAtLeastCrowdsourcerPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
-  if (AT_LEAST_CROWDSOURCER.includes(permissions?.role) || hasBetaPermissions(permissions, true)) {
+  if (crowdsourcerRoles.includes(permissions?.role) || hasBetaPermissions(permissions, true)) {
     return returnWithPermission;
   }
   return null;
 };
 
-export const hasAccessToPlatformPermissions = (
+export const hasAccessToPlatformPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
   if (Object.values(UserRoles).includes(permissions?.role) && permissions?.role !== UserRoles.USER) {
     return returnWithPermission;
@@ -95,9 +82,9 @@ export const hasAccessToPlatformPermissions = (
   return null;
 };
 
-export const hasCrowdsourcerPermission = (
+export const hasCrowdsourcerPermission = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
-  returnWithPermission: any
+  returnWithPermission: T,
 ): any | null => {
   if (permissions?.role === UserRoles.CROWDSOURCER) {
     return returnWithPermission;

@@ -20,6 +20,7 @@ type AuthType = {
 type OptionsType = {
   isAdmin?: boolean;
   isMerger?: boolean;
+  isNsibidiMerger?: boolean;
   isEditor?: boolean;
 };
 
@@ -57,6 +58,8 @@ export const generateUserAuth = (options: OptionsType): AuthType => {
     ? `admin_${baseEmail}`
     : options?.isMerger
     ? `merger_${baseEmail}`
+    : options?.isNsibidiMerger
+    ? `nsibidi_merger_${baseEmail}`
     : options?.isEditor
     ? `editor_${baseEmail}`
     : `user_${baseEmail}`;

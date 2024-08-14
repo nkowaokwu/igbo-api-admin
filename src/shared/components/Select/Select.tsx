@@ -86,6 +86,11 @@ const Select = ({
     },
     { value: UserRoles.EDITOR, label: 'Set as Editor', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
     { value: UserRoles.MERGER, label: 'Set as Merger', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
+    {
+      value: UserRoles.NSIBIDI_MERGER,
+      label: 'Set as Nsịbịdị Merger',
+      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
+    },
     { value: UserRoles.ADMIN, label: 'Set as Admin', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
     hasAdminPermissions(permissions, {
       value: 'deleteUser',
@@ -230,28 +235,31 @@ const Select = ({
             ]
           : null,
       ),
-      resource !== Collection.NSIBIDI_CHARACTERS
-        ? {
-            value: 'requestDelete',
-            label: (() => (
-              <span className="text-red-500">
-                <DeleteIcon className="mr-2" />
-                {`Request to Delete ${
-                  resource === Collection.WORDS
-                    ? 'Word'
-                    : resource === Collection.EXAMPLES
-                    ? 'Example'
-                    : resource === Collection.CORPORA
-                    ? 'Corpus'
-                    : resource === Collection.TEXT_IMAGES
-                    ? 'Text Image'
-                    : ''
-                }`}
-              </span>
-            ))(),
-            onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
-          }
-        : null,
+      hasAdminOrMergerPermissions(
+        permissions,
+        resource !== Collection.NSIBIDI_CHARACTERS
+          ? {
+              value: 'requestDelete',
+              label: (() => (
+                <span className="text-red-500">
+                  <DeleteIcon className="mr-2" />
+                  {`Request to Delete ${
+                    resource === Collection.WORDS
+                      ? 'Word'
+                      : resource === Collection.EXAMPLES
+                      ? 'Example'
+                      : resource === Collection.CORPORA
+                      ? 'Corpus'
+                      : resource === Collection.TEXT_IMAGES
+                      ? 'Text Image'
+                      : ''
+                  }`}
+                </span>
+              ))(),
+              onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
+            }
+          : null,
+      ),
       hasAdminPermissions(
         permissions,
         resource === Collection.NSIBIDI_CHARACTERS

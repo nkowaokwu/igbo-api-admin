@@ -57,10 +57,10 @@ import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestio
 import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
 import validateBulkDeleteLimit from 'src/backend/middleware/validateBulkDeleteLimit';
 import Collection from 'src/shared/constants/Collection';
+import { editorRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const editorRouter = express.Router();
-const platformRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN];
-editorRouter.use(authentication, authorization(platformRoles));
+editorRouter.use(authentication, authorization(editorRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
 editorRouter.post(
@@ -146,7 +146,7 @@ editorRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}`, getExampleSuggestions);
 
 editorRouter.post(
   `/${Collection.EXAMPLE_SUGGESTIONS}`,
-  authorization(platformRoles),
+  authorization(editorRoles),
   validateExampleBody,
   interactWithSuggestion,
   postExampleSuggestion,
@@ -174,20 +174,20 @@ editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}`, getNsibidiCharacters);
 editorRouter.get(`/${Collection.NSIBIDI_CHARACTERS}/:id`, validId, getNsibidiCharacter);
 editorRouter.post(
   `/${Collection.NSIBIDI_CHARACTERS}`,
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  authorization([UserRoles.NSIBIDI_MERGER, UserRoles.MERGER, UserRoles.ADMIN]),
   validateNsibidiCharacterBody,
   postNsibidiCharacter,
 );
 editorRouter.put(
   `/${Collection.NSIBIDI_CHARACTERS}/:id`,
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  authorization([UserRoles.NSIBIDI_MERGER, UserRoles.MERGER, UserRoles.ADMIN]),
   validId,
   validateNsibidiCharacterBody,
   putNsibidiCharacter,
 );
 editorRouter.delete(
   `/${Collection.NSIBIDI_CHARACTERS}/:id`,
-  authorization([UserRoles.MERGER, UserRoles.ADMIN]),
+  authorization([UserRoles.ADMIN]),
   validId,
   deleteNsibidiCharacter,
 );

@@ -16,6 +16,11 @@ enum UserRoles {
   MERGER = 'merger',
 
   /**
+   * Nsibidi merger can only make merging edits to Nsibidi characters
+   */
+  NSIBIDI_MERGER = 'nsibidi_merger',
+
+  /**
    * Editors are people who make suggestions for new words or phrases
    * to be added to the API
    */
@@ -38,6 +43,6 @@ enum UserRoles {
    * but are recognized by the application.
    */
   USER = 'user',
-};
+}
 
 export default UserRoles;
