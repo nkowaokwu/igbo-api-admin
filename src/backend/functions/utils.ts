@@ -2,25 +2,31 @@ import { customAlphabet } from 'nanoid';
 import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
 import UserRoles from '../shared/constants/UserRoles';
 
-export const assignUserRole = (user: { email?: string }): { role: UserRoles } => ({
-  role:
-    process.env.NODE_ENV === 'production' && prodAdminEmailList.includes(user.email)
-      ? UserRoles.ADMIN
-      : process.env.NODE_ENV === 'production' && !prodAdminEmailList.includes(user.email)
-      ? UserRoles.CROWDSOURCER
-      : // Creates admin, merger, and editor accounts while using auth emulator
-      process.env.NODE_ENV !== 'production' && (adminEmailList.includes(user.email) || user.email.startsWith('admin'))
-      ? UserRoles.ADMIN
-      : process.env.NODE_ENV !== 'production' && user.email.startsWith('merge')
-      ? UserRoles.MERGER
-      : process.env.NODE_ENV !== 'production' && user.email.startsWith('editor')
-      ? UserRoles.EDITOR
-      : process.env.NODE_ENV !== 'production' && user.email.startsWith('transcriber')
-      ? UserRoles.TRANSCRIBER
-      : process.env.NODE_ENV !== 'production' && user.email.startsWith('user')
-      ? UserRoles.USER
-      : UserRoles.CROWDSOURCER,
-});
+export const assignUserRole = (user: { email?: string }): { role: UserRoles } => {
+  if (process.env.NODE_ENV === 'production') {
+    return {
+      role: prodAdminEmailList.includes(user.email) ? UserRoles.ADMIN : UserRoles.CROWDSOURCER,
+    };
+  }
+
+  // Creates admin, merger, nsibidi merger, editor, and crowdsourcer accounts while using auth emulator
+  return {
+    role:
+      adminEmailList.includes(user.email) || user.email.startsWith('admin')
+        ? UserRoles.ADMIN
+        : user.email.startsWith('merge')
+        ? UserRoles.MERGER
+        : user.email.startsWith('nsibidi_merger')
+        ? UserRoles.NSIBIDI_MERGER
+        : user.email.startsWith('editor')
+        ? UserRoles.EDITOR
+        : user.email.startsWith('transcriber')
+        ? UserRoles.TRANSCRIBER
+        : user.email.startsWith('user')
+        ? UserRoles.USER
+        : UserRoles.CROWDSOURCER,
+  };
+};
 
 /**
  * Generates a unique id

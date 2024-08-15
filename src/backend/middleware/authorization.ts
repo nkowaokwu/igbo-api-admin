@@ -14,10 +14,16 @@ const authorization =
       return next();
     }
 
-    if ((user && permittedRoles.includes(user.role)) || user.role === UserRoles.ADMIN) {
-      /* If the user's role is found in the array of permitted roles,
-       * the user is granted access
-       */
+    /** Admins are granted all access */
+    if (user.role === UserRoles.ADMIN) {
+      return next();
+    }
+
+    /**
+     * If the user's role is found in the array of permitted roles,
+     * the user is granted access
+     */
+    if (user && permittedRoles.includes(user.role)) {
       return next();
     }
 

@@ -16,10 +16,10 @@ import authorization from 'src/backend/middleware/authorization';
 import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
+import { transcriberRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const transcriberRouter = express.Router();
-const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER];
-transcriberRouter.use(authentication, authorization(allRoles));
+transcriberRouter.use(authentication, authorization(transcriberRoles));
 
 transcriberRouter.post(
   '/examples/upload',
@@ -32,12 +32,7 @@ transcriberRouter.get('/corpora', authorization([UserRoles.TRANSCRIBER, UserRole
 transcriberRouter.get('/corpora/:id', authorization([UserRoles.TRANSCRIBER, UserRoles.ADMIN]), validId, getCorpus);
 
 transcriberRouter.get('/corpusSuggestions', getCorpusSuggestions);
-transcriberRouter.post(
-  '/corpusSuggestions',
-  validateCorpusBody,
-  interactWithSuggestion,
-  postCorpusSuggestion,
-);
+transcriberRouter.post('/corpusSuggestions', validateCorpusBody, interactWithSuggestion, postCorpusSuggestion);
 transcriberRouter.put(
   '/corpusSuggestions/:id',
   validId,

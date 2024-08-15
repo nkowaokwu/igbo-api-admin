@@ -37,10 +37,10 @@ import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
 import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
+import { crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const crowdsourcerRouter = express.Router();
-const allRoles = [UserRoles.EDITOR, UserRoles.MERGER, UserRoles.ADMIN, UserRoles.TRANSCRIBER, UserRoles.CROWDSOURCER];
-crowdsourcerRouter.use(authentication, authorization(allRoles));
+crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
 
 crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/random`, getRandomWordSuggestions);
 crowdsourcerRouter.put(

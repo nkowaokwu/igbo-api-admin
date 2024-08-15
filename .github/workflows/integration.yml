@@ -37,7 +37,7 @@ jobs:
           docker pull $DOCKER_USERNAME/$DOCKER_IMAGE
           yarn start:docker:ci -d
       - name: Check Running Docker Containers ✅
-        run: docker-compose ps -a
+        run: docker compose ps -a
       - name: Setup Firebase Environment 🔥
         run: |
           firebase use staging --token $FIREBASE_TOKEN

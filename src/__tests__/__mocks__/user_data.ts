@@ -33,6 +33,16 @@ export const defaultMergerUser = cloneDeep(
   }),
 );
 
+export const defaultNsibidiMergerUser = cloneDeep(
+  merge(baseUser, {
+    displayName: 'Nsibidi merger name',
+    uid: AUTH_TOKEN.NSIBIDI_MERGER_AUTH_TOKEN,
+    id: AUTH_TOKEN.NSIBIDI_MERGER_AUTH_TOKEN,
+    email: 'nsibidi_merger@example.com',
+    customClaims: { role: UserRoles.NSIBIDI_MERGER },
+  }),
+);
+
 export const defaultEditorUser = cloneDeep(
   merge(baseUser, {
     displayName: 'Editor name',

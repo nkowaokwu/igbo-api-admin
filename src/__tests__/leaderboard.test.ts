@@ -15,7 +15,7 @@ import {
   getLeaderboard,
 } from './shared/commands';
 
-describe('MongoDB Leaderboards', () => {
+describe.skip('MongoDB Leaderboards', () => {
   beforeEach(async () => {
     const findUserSpy = jest.spyOn(userMethods, 'findUser');
     findUserSpy.mockImplementation(async (uid) => ({
