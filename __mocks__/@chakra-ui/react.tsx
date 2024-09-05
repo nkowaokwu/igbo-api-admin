@@ -7,6 +7,7 @@ export const {
   Drawer,
   DrawerBody,
   DrawerContent,
+  DrawerCloseButton,
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
