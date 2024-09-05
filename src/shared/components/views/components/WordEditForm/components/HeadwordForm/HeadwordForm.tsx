@@ -52,6 +52,23 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
           All necessary accented characters will appear in the letter popup`}
           color={Object.values(flags).length ? 'orange.600' : ''}
         />
+        <Controller
+          render={(props) => (
+            <Input
+              {...props}
+              onChange={(e) => {
+                onChange(e);
+                return props.onChange(e);
+              }}
+              placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
+              mb={2}
+              data-test="word-input"
+            />
+          )}
+          name="word"
+          control={control}
+          defaultValue={get(record, 'word') || get(getValues(), 'word')}
+        />
         <HeadwordAttributes
           record={record}
           errors={errors}
@@ -61,22 +78,6 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
           isConstructedPollTerm={isConstructedPollTerm}
         />
       </Box>
-      <Controller
-        render={(props) => (
-          <Input
-            {...props}
-            onChange={(e) => {
-              onChange(e);
-              return props.onChange(e);
-            }}
-            placeholder="i.e. ụgbo ala, biko, igwe, mmiri"
-            data-test="word-input"
-          />
-        )}
-        name="word"
-        control={control}
-        defaultValue={get(record, 'word') || get(getValues(), 'word')}
-      />
       <details className="mt-4 cursor-pointer">
         <summary>
           <chakra.span fontWeight="bold" fontFamily="Silka">

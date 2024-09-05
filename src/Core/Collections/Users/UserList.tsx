@@ -10,20 +10,18 @@ const UserList = (props: ListProps): ReactElement => {
       <Responsive
         small={
           <Datagrid>
-            <Select collection={Collection.USERS} label="Admin's Actions" permissions={permissions} />
+            <Select collection={Collection.USERS} permissions={permissions} />
             <TextField label="Name" source="displayName" defaultValue="No name" />
             <EmailField label="email" source="Email" />
             <TextField label="Role" source="role" />
-            <TextField label="Editing Group" source="editingGroup" />
           </Datagrid>
         }
         medium={
           <Datagrid>
-            <Select collection="user" label="Admin's Actions" permissions={permissions} />
+            <Select collection="user" permissions={permissions} />
             <TextField label="Name" source="displayName" defaultValue="No name" />
             <EmailField label="Email" source="email" />
             <TextField label="Role" source="role" />
-            <TextField label="Editing Group" source="editingGroup" />
             <TextField label="Id" source="uid" />
             <DateField
               label="Last Log In"

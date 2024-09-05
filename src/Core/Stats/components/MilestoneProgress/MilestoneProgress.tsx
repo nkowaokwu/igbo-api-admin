@@ -14,7 +14,7 @@ import {
   TOTAL_EXAMPLE_AUDIO_GOAL,
   TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL,
 } from 'src/Core/constants';
-import LinearProgressCard from '../LinearProgressCard';
+import LinearProgressCard from '../../../Dashboard/components/LinearProgressCard';
 
 const MilestoneProgress = ({
   sufficientWords,

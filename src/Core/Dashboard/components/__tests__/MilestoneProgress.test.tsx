@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import MilestoneProgress from 'src/Core/Dashboard/components/MilestoneProgress';
+import MilestoneProgress from 'src/Core/Stats/components/MilestoneProgress';
 import TestContext from 'src/__tests__/components/TestContext';
 
 it('MilestoneProgress', async () => {

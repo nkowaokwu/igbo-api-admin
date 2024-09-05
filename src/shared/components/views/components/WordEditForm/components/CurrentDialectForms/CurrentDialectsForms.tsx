@@ -17,7 +17,7 @@ const CurrentDialectsForms = ({
     <Box className="flex flex-row justify-between items-center">
       <FormHeader
         title="Dialectal Variations"
-        subtitle="Scroll to the bottom of this section to add a new dialectal variation 👇🏾"
+        subtitle="Click on 'Add Dialectal Variation' to create a new dialectal variation 👇🏾"
         tooltip="These are the dialectal (sound) variations with the current word."
       />
     </Box>

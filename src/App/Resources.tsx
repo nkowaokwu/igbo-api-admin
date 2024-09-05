@@ -40,14 +40,41 @@ const PollList = React.lazy(() => import('src/Core/Collections/Polls/PollList'))
 const PollCreate = React.lazy(() => import('src/Core/Collections/Polls/PollCreate'));
 const UserList = React.lazy(() => import('src/Core/Collections/Users/UserList'));
 const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'));
-const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
+// const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
 const IgboTextImages = React.lazy(() => import('src/Core/Collections/TextImages'));
 const TextImageList = React.lazy(() => import('src/Core/Collections/TextImages/TextImageList'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
+const Stats = React.lazy(() => import('src/Core/Stats'));
 const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
+
+export enum ResourceGroup {
+  UNSPECIFIED = 'UNSPECIFIED',
+  LEXICAL = 'LEXICAL',
+  DATA_COLLECTION = 'DATA_COLLECTION',
+  SETTINGS = 'SETTINGS',
+}
+
+export const ResourceGroupLabels = {
+  [ResourceGroup.UNSPECIFIED]: '',
+  [ResourceGroup.LEXICAL]: 'Published data',
+  [ResourceGroup.DATA_COLLECTION]: 'Draft data',
+  [ResourceGroup.SETTINGS]: 'Settings',
+};
+
+export interface Resource {
+  name: string;
+  key: string;
+  options: { label: string };
+  list: Promise<React.ReactElement>;
+  edit: Promise<React.ReactElement>;
+  create: Promise<React.ReactElement>;
+  show: Promise<React.ReactElement>;
+  icon: React.ReactElement;
+  group: ResourceGroup;
+}
 
 const defaultRoutes = (permissions) =>
   hasAccessToPlatformPermissions(permissions, [
@@ -56,17 +83,26 @@ const defaultRoutes = (permissions) =>
       options: { label: 'Dashboard' },
       icon: () => <>🏠</>,
       exact: true,
+      group: ResourceGroup.UNSPECIFIED,
     },
   ]) || [];
 
 const editorRoutes = (permissions) =>
   hasEditorPermissions(permissions, [
     {
+      name: 'stats',
+      key: 'stats',
+      list: withLastRoute(Stats),
+      icon: () => <>📈</>,
+      group: ResourceGroup.UNSPECIFIED,
+    },
+    {
       name: 'words',
       key: 'words',
       list: withLastRoute(WordList),
       show: withLastRoute(WordShow),
       icon: () => <>📗</>,
+      group: ResourceGroup.LEXICAL,
     },
     {
       name: 'examples',
@@ -74,6 +110,7 @@ const editorRoutes = (permissions) =>
       list: withLastRoute(ExampleList),
       show: withLastRoute(ExampleShow),
       icon: () => <>📘</>,
+      group: ResourceGroup.LEXICAL,
     },
     {
       name: 'nsibidiCharacters',
@@ -84,6 +121,7 @@ const editorRoutes = (permissions) =>
       create: withLastRoute(NsibidiCharacterCreate),
       show: withLastRoute(NsibidiCharacterShow),
       icon: () => <>〒</>,
+      group: ResourceGroup.LEXICAL,
     },
     {
       name: 'corpora',
@@ -93,6 +131,7 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(CorpusShow),
       create: null,
       icon: () => <>📚</>,
+      group: ResourceGroup.LEXICAL,
     },
     {
       name: 'wordSuggestions',
@@ -103,6 +142,7 @@ const editorRoutes = (permissions) =>
       create: withLastRoute(WordSuggestionCreate),
       show: withLastRoute(WordSuggestionShow),
       icon: () => <>📒</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'exampleSuggestions',
@@ -113,6 +153,7 @@ const editorRoutes = (permissions) =>
       create: withLastRoute(ExampleSuggestionCreate),
       show: withLastRoute(ExampleSuggestionShow),
       icon: () => <>📕</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'corpusSuggestions',
@@ -123,13 +164,7 @@ const editorRoutes = (permissions) =>
       create: withLastRoute(CorpusSuggestionCreate),
       show: withLastRoute(CorpusSuggestionShow),
       icon: () => <>📓</>,
-    },
-    {
-      name: 'notifications',
-      key: 'notifications',
-      options: { label: 'Platform Notifications' },
-      list: withLastRoute(NotificationList),
-      icon: () => <>🔔</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'polls',
@@ -138,6 +173,7 @@ const editorRoutes = (permissions) =>
       list: withLastRoute(PollList),
       create: withLastRoute(PollCreate),
       icon: () => <>🗳</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
 
@@ -149,6 +185,7 @@ const adminRoutes = (permissions) =>
       list: withLastRoute(UserList),
       show: withLastRoute(UserShow),
       icon: () => <>👩🏾</>,
+      group: ResourceGroup.SETTINGS,
     },
     {
       name: 'dataDump',
@@ -156,6 +193,7 @@ const adminRoutes = (permissions) =>
       options: { label: 'Data Dump' },
       list: withLastRoute(DataDump),
       icon: () => <>🏋🏾‍♂️</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'textImages',
@@ -163,6 +201,7 @@ const adminRoutes = (permissions) =>
       options: { label: 'Igbo Text Images' },
       list: withLastRoute(TextImageList),
       icon: () => <>📸</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'igboTextImages',
@@ -170,35 +209,39 @@ const adminRoutes = (permissions) =>
       options: { label: 'Upload Igbo Text Images' },
       list: withLastRoute(IgboTextImages),
       icon: () => <>📸</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
-  ]) || [];
-
-const crowdsourcerRoutes = (permissions) =>
-  hasAtLeastCrowdsourcerPermissions(permissions, [
-    {
-      name: 'leaderboard',
-      key: 'leaderboard',
-      options: { label: 'Leaderboard' },
-      list: withLastRoute(Leaderboard),
-      icon: () => <>🏆</>,
-    },
-    {
-      name: 'igboSoundbox',
-      key: 'igboSoundbox',
-      options: { label: 'Igbo Soundbox' },
-      list: withLastRoute(IgboSoundbox),
-      icon: () => <>🔊</>,
-    },
+    // {
+    //   name: 'igboSoundbox',
+    //   key: 'igboSoundbox',
+    //   options: { label: 'Igbo Soundbox' },
+    //   list: withLastRoute(IgboSoundbox),
+    //   icon: () => <>🔊</>,
+    //   group: ResourceGroup.DATA_COLLECTION,
+    // },
     {
       name: 'igboDefinitions',
       key: 'igboDefinitions',
       options: { label: 'Igbo Definitions' },
       list: withLastRoute(IgboDefinitions),
       icon: () => <>✍🏾</>,
+      group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
 
-export const getResourceObjects = (permissions: any): any => [
+const crowdsourcerRoutes = (permissions) =>
+  hasAtLeastCrowdsourcerPermissions(permissions, [
+    // {
+    //   name: 'leaderboard',
+    //   key: 'leaderboard',
+    //   options: { label: 'Leaderboard' },
+    //   list: withLastRoute(Leaderboard),
+    //   icon: () => <>🏆</>,
+    //   group: ResourceGroup.DATA_COLLECTION,
+    // },
+  ]) || [];
+
+export const getResourceObjects = (permissions: any): Resource[] => [
   ...defaultRoutes(permissions),
   ...editorRoutes(permissions),
   ...adminRoutes(permissions),
@@ -210,10 +253,28 @@ export const getCustomRouteObjects = (): any => [
     exact: true,
     path: '/profile',
     component: withLastRoute(Profile),
+    group: ResourceGroup.UNSPECIFIED,
   },
   {
     exact: true,
     path: '/translate',
     component: withLastRoute(TranslateIgboSentences),
+    group: ResourceGroup.UNSPECIFIED,
+  },
+  {
+    exact: true,
+    path: '/notifications',
+    component: withLastRoute(NotificationList),
+    group: ResourceGroup.UNSPECIFIED,
+  },
+  {
+    path: '/igboSoundbox',
+    component: withLastRoute(IgboSoundbox),
+    group: ResourceGroup.UNSPECIFIED,
+  },
+  {
+    path: '/igboDefinitions',
+    component: withLastRoute(IgboDefinitions),
+    group: ResourceGroup.UNSPECIFIED,
   },
 ];

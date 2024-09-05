@@ -53,6 +53,10 @@ main,
   width: 100vw;
 }
 
+.main-content {
+  @apply pb-0;
+}
+
 ::selection {
   @apply bg-green-400;
   @apply text-gray-800;
@@ -89,7 +93,7 @@ textarea,
 
 .MuiAppBar-root {
   @apply bg-gray-300 !important;
-  @apply shadow-sm !important;
+  @applyshadow-sm !important;
 }
 
 .MuiToolbar-root {
@@ -288,8 +292,8 @@ input#igbo {
 
 .form-header {
   @apply text-xl;
-  @apply mb-2;
-  @apply mt-5;
+  @apply mt-0 !important;
+  width: fit-content !important;
 }
 
 .error {
@@ -411,6 +415,10 @@ audio::-webkit-media-controls-timeline {
 @media (min-width: 1024px) {
   html {
     width: 100vw;
+  }
+
+  .main-content {
+    @apply pb-20 !important;
   }
 
   .lsf-topbar__group:first-child {

@@ -11,7 +11,6 @@ import {
   Pagination,
   ReviewPreview,
   Select,
-  WordPanel,
 } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collection';
 import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
@@ -31,16 +30,16 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
     >
       <Responsive
         small={
-          <Datagrid expand={<WordPanel />}>
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
+          <Datagrid>
+            <Select collection={Collection.WORDS} permissions={permissions} />
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
             <HeadwordField label="Headword" source="word" />
           </Datagrid>
         }
         medium={
-          <Datagrid expand={<WordPanel />}>
-            <Select collection={Collection.WORDS} label="Editor's Actions" permissions={permissions} />
+          <Datagrid>
+            <Select collection={Collection.WORDS} permissions={permissions} />
             <SourceField label="Source" source="source" />
             <CompleteWordPreview label="Word Status" />
             <ReviewPreview label="You Reviewed" />
@@ -56,7 +55,6 @@ const WordSuggestionList = (props: ListProps): ReactElement => {
               label="Denials"
               render={(record) => <span data-test="denial">{record.denials.length}</span>}
             />
-            <IdField label="Id" source="id" />
             <IdField label="Parent Word Id" source="originalWordId" />
           </Datagrid>
         }

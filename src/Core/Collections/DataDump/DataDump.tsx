@@ -263,7 +263,7 @@ const DataDump = (): ReactElement => {
                   </chakra.span>
                 </Text>
               ) : null}
-              <Box className="w-full flex flex-col space-y-4">
+              <Box className="w-full flex flex-col">
                 <Tooltip
                   label={
                     !textareaValue.length

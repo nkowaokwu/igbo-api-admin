@@ -19,7 +19,7 @@ const PollList = (props: ListProps): ReactElement => {
       sort={{ field: 'approvals', order: 'DESC' }}
     >
       <Datagrid>
-        <Select collection={Collection.POLLS} label="Editor's Actions" permissions={permissions} />
+        <Select collection={Collection.POLLS} permissions={permissions} />
         <TextField label="Igbo Word" source="igboWord" />
         <TextField label="Tweet body" source="text" />
       </Datagrid>

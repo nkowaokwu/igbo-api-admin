@@ -60,7 +60,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
           </AccordionItem>
         </Accordion>
       </Box>
-      <Box className="w-full flex flex-row justify-center items-center space-x-3">
+      <Box className="w-full flex flex-col lg:flex-row justify-center items-center space-y-3 lg:space-y-0 lg:space-x-3">
         <AddExampleButton append={append} />
         <SearchAndAddExampleButton append={append} />
       </Box>

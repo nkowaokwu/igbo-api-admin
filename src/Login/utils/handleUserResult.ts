@@ -1,10 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { getAuth } from 'firebase/auth';
-import {
-  hasTranscriberPermissions,
-  hasAccessToPlatformPermissions,
-  hasCrowdsourcerPermission,
-} from 'src/shared/utils/permissions';
+import { hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import authProvider from 'src/utils/authProvider';
@@ -66,12 +62,7 @@ export const handleUserResult = async ({
     });
   } else {
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    const hash =
-      hasTranscriberPermissions(permissions, '#/igboSoundbox') ||
-      hasCrowdsourcerPermission(permissions, '#/') ||
-      rawRedirectUrl ||
-      '#/' ||
-      '#/';
+    const hash = rawRedirectUrl || '#/';
     window.location.href = `${window.location.origin}/${hash}`;
   }
 };

@@ -38,7 +38,7 @@ const SuggestedWords = ({ word, id: wordId }: { word: string; id: string | Recor
       {filteredWords.length || filteredWordSuggestions.length ? (
         <Text color="orange.500" fontSize="sm" className="italic mt-4">
           {'⚠️ If you are seeing similar existing below, '}
-          <chakra.span fontWeight="bold">please consider deleting this suggestion document if necessary</chakra.span>
+          <chakra.span fontWeight="bold">please consider deleting this document</chakra.span>
           {' and edit those existing documents to avoid duplicates.'}
         </Text>
       ) : null}
@@ -50,11 +50,13 @@ const SuggestedWords = ({ word, id: wordId }: { word: string; id: string | Recor
             creating a new word.`}
           >
             <Box className="flex flex-row items-center">
-              <Text my={2}>Similar existing words:</Text>
+              <Text fontWeight="bold" my={2}>
+                Similar existing words:
+              </Text>
               <InfoOutlineIcon color="gray.600" boxSize={3} className="ml-2" />
             </Box>
           </Tooltip>
-          <Box className="flex flex-row flex-wrap relative">
+          <Box className="grid grid-cols-3 xl:grid-cols-4 gap-2 relative">
             {filteredWords.map(({ word, nsibidi, definitions, id }) => (
               <Box key={`suggested-word-${id}`} className="relative">
                 <Box className="flex flex-row items-center" mr={3}>
@@ -105,11 +107,13 @@ const SuggestedWords = ({ word, id: wordId }: { word: string; id: string | Recor
             creating a new word.`}
           >
             <Box className="flex flex-row items-center">
-              <Text my={2}>Similar existing word suggestions:</Text>
+              <Text fontWeight="bold" my={2}>
+                Similar existing word suggestions:
+              </Text>
               <InfoOutlineIcon color="gray.600" boxSize={3} className="ml-2" />
             </Box>
           </Tooltip>
-          <Box className="flex flex-row flex-wrap relative">
+          <Box className="grid grid-cols-3 xl:grid-cols-4 gap-2 relative">
             {filteredWordSuggestions.map(({ word, nsibidi, definitions, id }) => (
               <Box key={`suggested-word-${id}`} className="relative">
                 <Box className="flex flex-row items-center" mr={3}>

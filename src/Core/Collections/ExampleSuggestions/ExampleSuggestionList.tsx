@@ -3,7 +3,6 @@ import { List, Datagrid, TextField, FunctionField, Responsive, ListProps } from 
 import {
   CompleteExamplePreview,
   BulkSuggestionActions,
-  IdField,
   Select,
   ArrayPreview,
   ReviewPreview,
@@ -30,7 +29,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={
           <Datagrid>
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <ReviewPreview label="You Reviewed" />
             <TextField label="Igbo" source="igbo" />
@@ -39,7 +38,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         }
         medium={
           <Datagrid>
-            <Select collection={Collection.EXAMPLES} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.EXAMPLES} permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <SourceField label="Source" source="source" />
             <ReviewPreview label="You Reviewed" />
@@ -54,7 +53,6 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
               label="Denials"
               render={(record) => <span data-test="denial">{record.denials.length}</span>}
             />
-            <IdField label="Id" source="id" />
           </Datagrid>
         }
       />

@@ -13,74 +13,81 @@ describe("Editor's Actions", () => {
     beforeEach(() => {
       document.getElementsByTagName('html')[0].innerHTML = '';
     });
-    it('render the select dropdown menu', () => {
-      render(
+    it('render the select dropdown menu', async () => {
+      const { findByLabelText } = render(
         <TestContext>
           <Select />
         </TestContext>,
       );
+
+      await findByLabelText('Actions menu');
     });
 
     it('show all select options for words as editor', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select resource={Collections.WORDS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
-      await findByText('View');
-      await findByText('Suggest New Edit');
-      await findByText('Request to Delete Word');
+
       await findByText('Copy Document URL');
     });
 
     it('show all select options for words as admin', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.ADMIN }} resource={Collections.WORDS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
-      await findByText('View');
-      await findByText('Suggest New Edit');
+
       await findByText('Combine Word Into...');
       await findByText('Request to Delete Word');
       await findByText('Copy Document URL');
     });
 
     it('show all select options for word suggestions as editor', async () => {
-      const { findByTestId, findByText, queryByText } = render(
+      const { findByLabelText, findByText, queryByText } = render(
         <TestContext>
           <Select resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
     });
 
     it('show all select options for word suggestions as merger', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       await findByText('Merge');
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -88,64 +95,68 @@ describe("Editor's Actions", () => {
     });
 
     it('show all select options for corpora as editor', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select resource={Collections.CORPORA} />
         </TestContext>,
       );
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
 
-      const selectMenu = await findByTestId('actions-menu');
       userEvent.click(selectMenu);
-      await findByText('View');
-      await findByText('Suggest New Edit');
-      await findByText('Request to Delete Corpus');
+
       await findByText('Copy Document URL');
     });
 
     it('show all select options for corpora as admin', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.ADMIN }} resource={Collections.CORPORA} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
-      await findByText('View');
-      await findByText('Suggest New Edit');
+
       await findByText('Request to Delete Corpus');
       await findByText('Copy Document URL');
     });
 
     it('show all select options for corpus suggestions as editor', async () => {
-      const { findByTestId, findByText, queryByText } = render(
+      const { findByLabelText, findByText, queryByText } = render(
         <TestContext>
           <Select resource={Collections.CORPUS_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
     });
 
     it('show all select options for corpus suggestions as merger', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.CORPUS_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       await findByText('Merge');
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -153,49 +164,53 @@ describe("Editor's Actions", () => {
     });
 
     it('show all select options for examples as editor', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, queryByText, findByText } = render(
         <TestContext>
           <Select resource={Collections.EXAMPLES} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
-      await findByText('View');
-      await findByText('Suggest New Edit');
-      await findByText('Request to Delete Example');
+
+      expect(await queryByText('Request to Delete Example')).toBeNull();
       await findByText('Copy Document URL');
     });
 
     it('show all select options for example suggestions as editor', async () => {
-      const { findByTestId, findByText, queryByText } = render(
+      const { findByLabelText, findByText, queryByText } = render(
         <TestContext>
           <Select resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       expect(await queryByText('Merge')).toBeNull();
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
     });
 
     it('show all select options for example suggestions as merger', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       await findByText('Merge');
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -205,34 +220,62 @@ describe("Editor's Actions", () => {
 
   describe('Conditional Options', () => {
     it('disable merge when not enough approvals are present as merger', async () => {
-      const { findByTestId, findByText } = render(
+      const { findByLabelText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.WORD_SUGGESTIONS} />
         </TestContext>,
       );
 
-      const selectMenu = await findByTestId('actions-menu');
+      const selectMenu = await findByLabelText('Actions menu');
+      await findByLabelText('View entry button');
+      await findByLabelText('Edit entry button');
+
       userEvent.click(selectMenu);
       const mergeButton = await findByText('Merge');
       expect(mergeButton.parentNode).toHaveProperty('disabled', true);
-      await findByText('Edit');
-      await findByText('View');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
       await findByText('Copy Document URL');
     });
 
-    it('hide delete option for nsibidi characters', async () => {
-      const { queryByText, findByText } = render(
+    it('hide delete option for nsibidi characters as merger', async () => {
+      const { findByLabelText, queryByText, findByText } = render(
         <TestContext>
           <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.NSIBIDI_CHARACTERS} />
         </TestContext>,
       );
-      await findByText('View');
-      await findByText('Suggest New Edit');
+
+      await findByLabelText('Actions menu');
+
       expect(await queryByText(/Request to Delete/)).toBeNull();
       await findByText('Copy Document URL');
     });
+
+    it('hide delete option for nsibidi characters as nsibidi merger', async () => {
+      const { findByLabelText, queryByText, findByText } = render(
+        <TestContext>
+          <Select permissions={{ role: UserRoles.MERGER }} resource={Collections.NSIBIDI_CHARACTERS} />
+        </TestContext>,
+      );
+
+      await findByLabelText('Actions menu');
+
+      expect(await queryByText(/Request to Delete/)).toBeNull();
+      await findByText('Copy Document URL');
+    });
+  });
+
+  it('hide delete option for nsibidi characters as admin', async () => {
+    const { findByLabelText, findByText } = render(
+      <TestContext>
+        <Select permissions={{ role: UserRoles.ADMIN }} resource={Collections.NSIBIDI_CHARACTERS} />
+      </TestContext>,
+    );
+
+    await findByLabelText('Actions menu');
+
+    await findByText(/Delete Nsịbịdị character/);
+    await findByText('Copy Document URL');
   });
 });

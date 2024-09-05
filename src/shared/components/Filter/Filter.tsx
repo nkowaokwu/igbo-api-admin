@@ -6,7 +6,7 @@ import Collection from 'src/shared/constants/Collection';
 import Input from 'src/shared/primitives/Input';
 import FilterInterface from './FilterInterface';
 
-const CustomFilter = (props: FilterInterface): ReactElement => {
+const Filter = (props: FilterInterface): ReactElement => {
   const { setFilters, filterValues } = useListFilterContext(props);
   const { resource } = props;
   const filterKey =
@@ -28,22 +28,24 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
   );
 
   return (
-    <Box className="flex items-end">
+    <Box className="flex items-end w-full">
       <InputGroup>
         <InputLeftElement pointerEvents="none">
           <Search2Icon color="gray.300" />
         </InputLeftElement>
         <Input
           data-test="search-bar"
-          className="h-10 w-full lg:w-64 bg-gray-300 px-4 rounded-lg border-solid border-gray-400"
-          borderWidth="2px"
-          backgroundColor="gray.100"
+          className="h-10 w-full px-4 rounded-lg border-solid border-gray-400"
+          borderWidth="1px"
+          backgroundColor="white"
           outline="none"
+          autoFocus
           onChange={(e) => {
             const value = e.target.value.normalize('NFD');
             setFilters({ ...filterValues, [filterKey]: value }, null);
             setSearchValue(value);
           }}
+          _placeholder={{ color: 'var(--chakra-colors-gray-500)' }}
           placeholder={`Search by ${placeholderText}`}
           value={searchValue}
           style={{ paddingLeft: 34 }}
@@ -52,7 +54,5 @@ const CustomFilter = (props: FilterInterface): ReactElement => {
     </Box>
   );
 };
-
-const Filter = (props: any): ReactElement => <CustomFilter {...props} />;
 
 export default Filter;

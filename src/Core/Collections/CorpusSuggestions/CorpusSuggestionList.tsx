@@ -20,7 +20,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={
           <Datagrid>
-            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} permissions={permissions} />
             <ReviewPreview label="You Reviewed" />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
@@ -28,7 +28,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         }
         medium={
           <Datagrid>
-            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} permissions={permissions} />
             <ReviewPreview label="You Reviewed" />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />

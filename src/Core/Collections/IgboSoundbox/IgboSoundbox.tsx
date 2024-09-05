@@ -5,7 +5,6 @@ import useBeforeWindowUnload from 'src/hooks/useBeforeWindowUnload';
 import { Hide } from '@chakra-ui/react';
 import RecordSentenceAudio from './RecordSentenceAudio';
 import VerifySentenceAudio from './VerifySentenceAudio';
-import IgboSoundboxHome from './components/Home';
 import IgboSoundboxNavbar from './components/Navbar';
 
 const IgboSoundbox = (): ReactElement => {
@@ -14,6 +13,10 @@ const IgboSoundbox = (): ReactElement => {
 
   useEffect(() => {
     setIsDirty(false);
+
+    if (currentView === IgboSoundboxViews.HOME) {
+      window.location.hash = '#/';
+    }
   }, [currentView]);
 
   useEffect(() => {
@@ -28,12 +31,11 @@ const IgboSoundbox = (): ReactElement => {
 
   useBeforeWindowUnload();
 
-  return currentView ? (
+  return currentView !== IgboSoundboxViews.HOME ? (
     <>
       <Hide below="md">
         <IgboSoundboxNavbar currentView={currentView} setCurrentView={setCurrentView} isDirty={isDirty} />
       </Hide>
-      {currentView === IgboSoundboxViews.HOME ? <IgboSoundboxHome setCurrentView={setCurrentView} /> : null}
       {currentView === IgboSoundboxViews.RECORD ? <RecordSentenceAudio setIsDirty={setIsDirty} /> : null}
       {currentView === IgboSoundboxViews.VERIFY ? <VerifySentenceAudio setIsDirty={setIsDirty} /> : null}
     </>

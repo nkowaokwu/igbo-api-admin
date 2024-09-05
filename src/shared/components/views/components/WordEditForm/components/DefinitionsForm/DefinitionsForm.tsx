@@ -31,15 +31,13 @@ const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface):
   };
 
   return (
-    <Box className="w-full">
+    <Box className="w-full space-y-4">
       <Box className="flex items-start mt-12 w-full justify-between">
-        <Box className="flex flex-col">
-          <FormHeader
-            title={`Definition Groups (${definitions.length})`}
-            tooltip="Definition Groups are groups of definitions that apply to a
+        <FormHeader
+          title={`Definition Groups (${definitions.length})`}
+          tooltip="Definition Groups are groups of definitions that apply to a
              specific part of speech for the headword"
-          />
-        </Box>
+        />
         <Button
           colorScheme="purple"
           aria-label="Add Definition Group"
