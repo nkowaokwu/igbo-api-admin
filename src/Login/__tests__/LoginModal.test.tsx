@@ -23,7 +23,7 @@ describe('LoginModal', () => {
     );
     await findByText('Create an account');
     await findByText('Full name');
-    await findByText('Phone number');
+    await findByText('Email address');
     await findByText('Use phone instead');
     await findByText('Password');
   });

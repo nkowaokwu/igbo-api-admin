@@ -11,7 +11,7 @@ jest.mock('src/Core/Dashboard/network');
 
 describe('App', () => {
   beforeEach(() => {
-    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: 'admin' });
+    jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.ADMIN });
   });
 
   it('render the profile user menu', async () => {
@@ -40,12 +40,9 @@ describe('App', () => {
     await findByText('Word Suggestions');
     await findByText('Example Suggestions');
     await findByText('Corpus Suggestions');
-    await findByText('Platform Notifications');
     await findByText('Constructed Term Polls');
     await findByText('Users');
     await findByText('Data Dump');
-    await findByText('Leaderboard');
-    await findByText('Igbo Soundbox');
     await findByText('Igbo Definitions');
     await findByText('Igbo Text Images');
     await findByText('Upload Igbo Text Images');
@@ -65,13 +62,10 @@ describe('App', () => {
     await findByText('Word Suggestions');
     await findByText('Example Suggestions');
     await findByText('Corpus Suggestions');
-    await findByText('Platform Notifications');
     await findByText('Constructed Term Polls');
     expect(await queryByText('Users')).toBeNull();
     expect(await queryByText('Data Dump')).toBeNull();
-    await findByText('Leaderboard');
-    await findByText('Igbo Soundbox');
-    await findByText('Igbo Definitions');
+    expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
     expect(queryByText('Upload Igbo Text Images'));
@@ -91,13 +85,10 @@ describe('App', () => {
     await findByText('Word Suggestions');
     await findByText('Example Suggestions');
     await findByText('Corpus Suggestions');
-    await findByText('Platform Notifications');
     await findByText('Constructed Term Polls');
     expect(await queryByText('Users')).toBeNull();
     expect(await queryByText('Data Dump')).toBeNull();
-    await findByText('Leaderboard');
-    await findByText('Igbo Soundbox');
-    await findByText('Igbo Definitions');
+    expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
     expect(queryByText('Upload Igbo Text Images'));
@@ -107,7 +98,7 @@ describe('App', () => {
 
   it('render the Igbo API Editor Platform with transcriber role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.TRANSCRIBER });
-    const { queryByText, findByText, findAllByText } = render(<App />);
+    const { queryByText, findAllByText } = render(<App />);
 
     await findAllByText('Dashboard');
     expect(await queryByText('Words')).toBeNull();
@@ -117,13 +108,10 @@ describe('App', () => {
     expect(await queryByText('Word Suggestions')).toBeNull();
     expect(await queryByText('Example Suggestions')).toBeNull();
     expect(await queryByText('Corpus Suggestions')).toBeNull();
-    expect(await queryByText('Platform Notifications')).toBeNull();
     expect(await queryByText('Constructed Term Polls')).toBeNull();
     expect(await queryByText('Users')).toBeNull();
     expect(await queryByText('Data Dump')).toBeNull();
-    await findByText('Leaderboard');
-    await findByText('Igbo Soundbox');
-    await findByText('Igbo Definitions');
+    expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
     expect(queryByText('Upload Igbo Text Images'));
@@ -132,7 +120,7 @@ describe('App', () => {
   });
   it('render the Igbo API Editor Platform with editor crowdsourcer', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.CROWDSOURCER });
-    const { queryByText, findByText, findAllByText } = render(<App />);
+    const { queryByText, findAllByText } = render(<App />);
 
     await findAllByText('Dashboard');
     expect(await queryByText('Words')).toBeNull();
@@ -142,13 +130,10 @@ describe('App', () => {
     expect(await queryByText('Word Suggestions')).toBeNull();
     expect(await queryByText('Example Suggestions')).toBeNull();
     expect(await queryByText('Corpus Suggestions')).toBeNull();
-    expect(await queryByText('Platform Notifications')).toBeNull();
     expect(await queryByText('Constructed Term Polls')).toBeNull();
     expect(await queryByText('Users')).toBeNull();
     expect(await queryByText('Data Dump')).toBeNull();
-    await findByText('Leaderboard');
-    await findByText('Igbo Soundbox');
-    await findByText('Igbo Definitions');
+    expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
     expect(queryByText('Upload Igbo Text Images'));

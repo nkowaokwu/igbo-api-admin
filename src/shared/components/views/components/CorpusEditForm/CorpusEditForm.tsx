@@ -209,7 +209,7 @@ const CorpusEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={8} />}
+          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
           name="editorsNotes"
           defaultValue={record.editorsNotes || ''}
           control={control}

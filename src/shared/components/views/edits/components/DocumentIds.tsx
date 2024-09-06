@@ -37,7 +37,7 @@ const DocumentIds = ({
         <Heading fontSize="lg" className="text-l text-gray-600 mr-3">
           {title}
         </Heading>
-        <Text fontSize="lg" fontFamily={originalId ? 'monospace' : ''} className="text-l text-gray-800">
+        <Text fontFamily={originalId ? 'monospace' : ''} color="gray.800" fontSize="md">
           {originalId ? (
             <a className="link" href={`#/${collection}/${originalId}/show`}>
               {originalId}

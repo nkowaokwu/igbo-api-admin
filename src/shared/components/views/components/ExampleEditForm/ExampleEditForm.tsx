@@ -142,157 +142,161 @@ const ExampleEditForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Box className="flex flex-col">
-        {record.originalExampleId || (view === View.CREATE && record.id) ? (
-          <>
-            <h2 className="form-header">Parent Example Id:</h2>
-            <Input data-test="original-id" value={record.originalExampleId || record.id} isDisabled />
-          </>
-        ) : null}
-        <Box
-          className="w-full flex flex-col lg:flex-row justify-between
+      <Box className="space-y-4">
+        <Box className="flex flex-col">
+          {record.originalExampleId || (view === View.CREATE && record.id) ? (
+            <>
+              <h2 className="form-header">Parent Example Id:</h2>
+              <Input data-test="original-id" value={record.originalExampleId || record.id} isDisabled />
+            </>
+          ) : null}
+          <Box
+            className="w-full flex flex-col lg:flex-row justify-between
           items-center space-y-4 lg:space-y-0 lg:space-x-6"
-        >
-          <Box className="flex flex-col w-full">
-            <FormHeader
-              title="Sentence Style"
-              tooltip="Select the style or figure of speech that this sentence is using."
-            />
-            <Box data-test="sentence-style-input-container">
-              <Controller
-                render={(props) => <Select {...props} options={options} />}
-                name="style"
-                control={control}
-                defaultValue={style}
+          >
+            <Box className="flex flex-col w-full">
+              <FormHeader
+                title="Sentence Style"
+                tooltip="Select the style or figure of speech that this sentence is using."
               />
+              <Box data-test="sentence-style-input-container">
+                <Controller
+                  render={(props) => <Select {...props} options={options} />}
+                  name="style"
+                  control={control}
+                  defaultValue={style}
+                />
+              </Box>
+              {errors.style ? <p className="error">{errors.style.message}</p> : null}
             </Box>
-            {errors.style ? <p className="error">{errors.style.message}</p> : null}
           </Box>
-        </Box>
-        <FormHeader title="Igbo" tooltip="The example sentence in Standard Igbo" />
-        <Box
-          {...(exampleTranscriptionFeedback?.humanTranscription
-            ? {
-                rounded: 'md',
-                borderColor: 'green.300',
-                borderWidth: '1px',
-                backgroundColor: 'green.100',
-                padding: '4',
-                className: 'space-y-2',
-              }
-            : {})}
-        >
-          <Controller
-            render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
-            name="igbo"
-            control={control}
-            defaultValue={record.igbo || getValues().igbo || ''}
-          />
-          {exampleTranscriptionFeedback?.humanTranscription ? (
-            <Box className="flex flex-row justify-between items-center">
-              <Tooltip
-                placement="bottom-start"
-                label="The user who recorded the audio in this suggestion from the 
+          <FormHeader title="Igbo" tooltip="The example sentence in Standard Igbo" />
+          <Box
+            {...(exampleTranscriptionFeedback?.humanTranscription
+              ? {
+                  rounded: 'md',
+                  borderColor: 'green.300',
+                  borderWidth: '1px',
+                  backgroundColor: 'green.100',
+                  padding: '4',
+                  className: 'space-y-2',
+                }
+              : {})}
+          >
+            <Controller
+              render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
+              name="igbo"
+              control={control}
+              defaultValue={record.igbo || getValues().igbo || ''}
+            />
+            {exampleTranscriptionFeedback?.humanTranscription ? (
+              <Box className="flex flex-row justify-between items-center">
+                <Tooltip
+                  placement="bottom-start"
+                  label="The user who recorded the audio in this suggestion from the 
             IgboSpeech website also suggested this as the correct transcription. Before
             accepting, please review the Dictionary Editing Standards guide."
-              >
-                <Text className="flex flex-row items-center space-x-2" cursor="default">
-                  <PiMagicWandBold fill="var(--chakra-colors-purple-500)" />
-                  <chakra.span color="purple.600" fontWeight="bold">
-                    Suggested by human:
-                  </chakra.span>
-                  <chakra.span>{exampleTranscriptionFeedback.humanTranscription}</chakra.span>
-                </Text>
-              </Tooltip>
-              <Button
-                variant="ghost"
-                onClick={() => control.setValue('igbo', exampleTranscriptionFeedback.humanTranscription)}
-                _hover={{
-                  backgroundColor: 'transparent',
-                }}
-                _active={{
-                  backgroundColor: 'transparent',
-                }}
-                _focus={{
-                  backgroundColor: 'transparent',
-                }}
-              >
-                <Text color="purple.600" _hover={{ color: 'purple.700' }}>
-                  Use suggestion
-                </Text>
-              </Button>
-            </Box>
-          ) : null}
+                >
+                  <Text className="flex flex-row items-center space-x-2" cursor="default">
+                    <PiMagicWandBold fill="var(--chakra-colors-purple-500)" />
+                    <chakra.span color="purple.600" fontWeight="bold">
+                      Suggested by human:
+                    </chakra.span>
+                    <chakra.span>{exampleTranscriptionFeedback.humanTranscription}</chakra.span>
+                  </Text>
+                </Tooltip>
+                <Button
+                  variant="ghost"
+                  onClick={() => control.setValue('igbo', exampleTranscriptionFeedback.humanTranscription)}
+                  _hover={{
+                    backgroundColor: 'transparent',
+                  }}
+                  _active={{
+                    backgroundColor: 'transparent',
+                  }}
+                  _focus={{
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  <Text color="purple.600" _hover={{ color: 'purple.700' }}>
+                    Use suggestion
+                  </Text>
+                </Button>
+              </Box>
+            ) : null}
+          </Box>
+          {errors.igbo ? <p className="error">Igbo is required</p> : null}
         </Box>
-        {errors.igbo ? <p className="error">Igbo is required</p> : null}
-      </Box>
-      <Box className="flex flex-col">
-        <FormHeader
-          title="English"
-          tooltip="The example sentence in English. This is the the literal English translation of the Igbo sentence."
-        />
-        <Controller
-          render={(props) => <Input {...props} placeholder="Please" data-test="english-input" />}
-          name="english"
-          control={control}
-          defaultValue={record.english || getValues().english || ''}
-        />
-        {errors.english ? <p className="error">English is required</p> : null}
-      </Box>
-      <Box className="flex flex-col">
-        <FormHeader
-          title="Meaning"
-          tooltip="This field showcases the meaning of the sentence - typically for proverbs"
-        />
-        <Controller
-          render={(props) => <Input {...props} placeholder="Please" data-test="meaning-input" />}
-          name="meaning"
-          control={control}
-          defaultValue={record.meaning || getValues().meaning || ''}
-        />
-        {errors.meaning ? <p className="error">{errors.meaning.message}</p> : null}
-      </Box>
-      <NsibidiForm control={control} errors={errors} name="nsibidi" />
-      <ExampleAudioPronunciationsForm control={control} record={record} originalRecord={originalRecord} uid={uid} />
-      <Box className="mt-2">
-        <AssociatedWordsForm errors={errors} control={control} record={record} />
-      </Box>
-      <Box className="flex flex-col">
-        <FormHeader
-          title="Editor's Comments"
-          tooltip={`Leave a comment for other editors to read to 
+        <Box className="flex flex-col">
+          <FormHeader
+            title="English"
+            tooltip="The example sentence in English. This is the the literal English translation of the Igbo sentence."
+          />
+          <Controller
+            render={(props) => <Input {...props} placeholder="Please" data-test="english-input" />}
+            name="english"
+            control={control}
+            defaultValue={record.english || getValues().english || ''}
+          />
+          {errors.english ? <p className="error">English is required</p> : null}
+        </Box>
+        <Box className="flex flex-col">
+          <FormHeader
+            title="Meaning"
+            tooltip="This field showcases the meaning of the sentence - typically for proverbs"
+          />
+          <Controller
+            render={(props) => <Input {...props} placeholder="Please" data-test="meaning-input" />}
+            name="meaning"
+            control={control}
+            defaultValue={record.meaning || getValues().meaning || ''}
+          />
+          {errors.meaning ? <p className="error">{errors.meaning.message}</p> : null}
+        </Box>
+        <Box className="flex flex-col">
+          <NsibidiForm control={control} errors={errors} name="nsibidi" />
+          <ExampleAudioPronunciationsForm control={control} record={record} originalRecord={originalRecord} uid={uid} />
+          <Box className="mt-2">
+            <AssociatedWordsForm errors={errors} control={control} record={record} />
+          </Box>
+          <Box className="flex flex-col">
+            <FormHeader
+              title="Editor's Comments"
+              tooltip={`Leave a comment for other editors to read to 
           understand your reasoning behind your change. 
           Leave your name on your comment!`}
-        />
-        <Controller
-          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={8} />}
-          name="editorsNotes"
-          defaultValue={record.editorsNotes || ''}
-          control={control}
-        />
-      </Box>
-      <Box className="flex flex-row items-center form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
-        <Button
-          className="mt-3 lg:my-0"
-          backgroundColor="gray.300"
-          onClick={() => onCancel({ view, resource, history })}
-          isDisabled={isSubmitting}
-          width="full"
-        >
-          Cancel
-        </Button>
-        <Button
-          data-test="example-submit-button"
-          type="submit"
-          colorScheme="purple"
-          variant="solid"
-          className="m-0"
-          isLoading={isSubmitting}
-          loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
-          width="full"
-        >
-          {view === View.CREATE ? 'Submit' : 'Update'}
-        </Button>
+            />
+            <Controller
+              render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
+              name="editorsNotes"
+              defaultValue={record.editorsNotes || ''}
+              control={control}
+            />
+          </Box>
+          <Box className="flex flex-row items-center form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
+            <Button
+              className="mt-3 lg:my-0"
+              backgroundColor="gray.300"
+              onClick={() => onCancel({ view, resource, history })}
+              isDisabled={isSubmitting}
+              width="full"
+            >
+              Cancel
+            </Button>
+            <Button
+              data-test="example-submit-button"
+              type="submit"
+              colorScheme="purple"
+              variant="solid"
+              className="m-0"
+              isLoading={isSubmitting}
+              loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
+              width="full"
+            >
+              {view === View.CREATE ? 'Submit' : 'Update'}
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </form>
   );

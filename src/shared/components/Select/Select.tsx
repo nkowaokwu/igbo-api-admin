@@ -1,17 +1,9 @@
 import React, { ReactElement, useState } from 'react';
 import { compact, flatten, get, omit } from 'lodash';
 import pluralize from 'pluralize';
-import { Box, Button, Menu, MenuButton, MenuList, MenuItem, Spinner, Tooltip, useToast } from '@chakra-ui/react';
-import {
-  AddIcon,
-  AtSignIcon,
-  CheckCircleIcon,
-  ChevronDownIcon,
-  DeleteIcon,
-  EditIcon,
-  NotAllowedIcon,
-  ViewIcon,
-} from '@chakra-ui/icons';
+import { Box, Menu, MenuButton, MenuList, MenuItem, Spinner, Tooltip, useToast, IconButton } from '@chakra-ui/react';
+import { FiMoreVertical, FiEye, FiEdit3 } from 'react-icons/fi';
+import { AddIcon, AtSignIcon, CheckCircleIcon, DeleteIcon, NotAllowedIcon, ViewIcon } from '@chakra-ui/icons';
 import { MergeType, Person, Link as LinkIcon } from '@mui/icons-material';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
@@ -129,28 +121,6 @@ const Select = ({
         ? null
         : [
             {
-              value: 'edit',
-              label: (() => (
-                <span>
-                  <EditIcon className="mr-2" />
-                  Edit
-                </span>
-              ))(),
-              onSelect: ({ push, resource, id }) => push(actionsMap.Edit(resource, id)),
-            },
-            view === View.SHOW
-              ? null
-              : {
-                  value: 'view',
-                  label: (() => (
-                    <span>
-                      <ViewIcon className="mr-2" />
-                      View
-                    </span>
-                  ))(),
-                  onSelect: ({ push, resource, id }) => push(actionsMap.View(resource, id)),
-                },
-            {
               value: 'approve',
               label: (() => (
                 <span className="text-green-500">
@@ -203,26 +173,6 @@ const Select = ({
 
   const mergedCollectionOptions = compact(
     flatten([
-      {
-        value: 'view',
-        label: (() => (
-          <span>
-            <ViewIcon className="mr-2" />
-            View
-          </span>
-        ))(),
-        onSelect: ({ push, resource, id }) => push(actionsMap.View(resource, id)),
-      },
-      {
-        value: 'suggestNewEdit',
-        label: (() => (
-          <span>
-            <AddIcon className="mr-2" />
-            Suggest New Edit
-          </span>
-        ))(),
-        onSelect: ({ record, resource, push }) => determineCreateSuggestionRedirection({ record, resource, push }),
-      },
       hasAdminPermissions(
         permissions,
         resource === Collection.WORDS
@@ -326,6 +276,16 @@ const Select = ({
     },
   ];
 
+  const suggestionResources = [
+    Collection.WORD_SUGGESTIONS,
+    Collection.EXAMPLE_SUGGESTIONS,
+    Collection.CORPUS_SUGGESTIONS,
+  ];
+  const mergedResources = [Collection.WORDS, Collection.EXAMPLES, Collection.CORPORA];
+
+  const isSuggestionResource = suggestionResources.includes(resource as Collection);
+  const isMergedResource = mergedResources.includes(resource as Collection);
+
   const initialOptions =
     resource === Collection.USERS
       ? userCollectionOptions
@@ -371,63 +331,103 @@ const Select = ({
         setIsLoading={setIsLoading}
         isOpen={isConfirmOpen}
       />
-      {/* @ts-expect-error label */}
-      <Menu data-test="test-select-options" label="Editor's Action">
-        <MenuButton
-          as={Button}
-          maxWidth="160px"
-          rightIcon={<ChevronDownIcon />}
-          data-test="actions-menu"
-          role="button"
-          fontFamily="system-ui"
-          fontWeight="normal"
-          backgroundColor="white"
-          borderWidth="1px"
-          borderColor="gray.300"
-          borderRadius="md"
-          isDisabled={isLoading}
-          width="full"
-          _hover={{
-            backgroundColor: 'white',
-            color: 'gray.800',
-          }}
-          _active={{
-            backgroundColor: 'white',
-            color: 'gray.800',
-          }}
-        >
-          {isLoading ? <Spinner size="xs" /> : 'Actions'}
-        </MenuButton>
-        <MenuList boxShadow="xl">
-          {options.map(({ value = '', label, onSelect, props = {} }) => (
-            <Tooltip key={value} label={props.tooltipMessage}>
-              <Box px={2}>
-                <MenuItem
-                  value={value}
-                  outline="none"
-                  boxShadow="none"
-                  border="none"
-                  px={1}
-                  fontFamily="system-ui"
-                  borderRadius="md"
-                  onClick={() => {
-                    setValue(value);
-                    onSelect({
-                      push,
-                      resource,
-                      record,
-                      id: record.id,
-                    });
-                  }}
-                  {...omit(props, ['tooltipMessage'])}
-                >
-                  {label}
-                </MenuItem>
-              </Box>
+      <Box display="flex" flexDirection="row" alignItems="center" className="space-x-1">
+        {/* @ts-expect-error label */}
+        <Menu data-test="test-select-options" label="Editor's Action">
+          <Tooltip label="More options">
+            <MenuButton
+              as={IconButton}
+              maxWidth="160px"
+              aria-label="Actions menu"
+              icon={isLoading ? <Spinner size="xs" /> : <FiMoreVertical />}
+              data-test="actions-menu"
+              role="button"
+              fontFamily="system-ui"
+              fontWeight="normal"
+              isDisabled={isLoading}
+              backgroundColor="white"
+              _hover={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              _active={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              m={0}
+            />
+          </Tooltip>
+          <MenuList boxShadow="xl">
+            {options.map(({ value = '', label, onSelect, props = {} }) => (
+              <Tooltip key={value} label={props.tooltipMessage}>
+                <Box px={2}>
+                  <MenuItem
+                    value={value}
+                    outline="none"
+                    boxShadow="none"
+                    border="none"
+                    px={1}
+                    fontFamily="system-ui"
+                    borderRadius="md"
+                    onClick={() => {
+                      setValue(value);
+                      onSelect({
+                        push,
+                        resource,
+                        record,
+                        id: record.id,
+                      });
+                    }}
+                    {...omit(props, ['tooltipMessage'])}
+                  >
+                    {label}
+                  </MenuItem>
+                </Box>
+              </Tooltip>
+            ))}
+          </MenuList>
+        </Menu>
+        {isSuggestionResource || isMergedResource ? (
+          <>
+            <Tooltip label="View entry">
+              <IconButton
+                aria-label="View entry button"
+                icon={<FiEye style={{ width: 'var(--chakra-sizes-10)' }} />}
+                backgroundColor="white"
+                _hover={{
+                  backgroundColor: 'gray.200',
+                  color: 'gray.800',
+                }}
+                _active={{
+                  backgroundColor: 'gray.200',
+                  color: 'gray.800',
+                }}
+                onClick={() => push(actionsMap.View(resource, record.id))}
+              />
             </Tooltip>
-          ))}
-        </MenuList>
-      </Menu>
+            <Tooltip label="Edit entry">
+              <IconButton
+                aria-label="Edit entry button"
+                icon={<FiEdit3 style={{ width: 'var(--chakra-sizes-10)' }} />}
+                backgroundColor="white"
+                _hover={{
+                  backgroundColor: 'gray.200',
+                  color: 'gray.800',
+                }}
+                _active={{
+                  backgroundColor: 'gray.200',
+                  color: 'gray.800',
+                }}
+                onClick={() =>
+                  isMergedResource
+                    ? determineCreateSuggestionRedirection({ record, resource, push })
+                    : push(actionsMap.Edit(resource, record.id))
+                }
+              />
+            </Tooltip>
+          </>
+        ) : null}
+      </Box>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
-import { Box, Button, IconButton, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
-import { FiRefreshCw } from 'react-icons/fi';
+import { Box, IconButton, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
+import { FiRefreshCw, FiMic, FiStopCircle } from 'react-icons/fi';
 import useRecorder from 'src/hooks/useRecorder';
 import FormHeader from '../FormHeader';
 
@@ -37,18 +37,11 @@ const RecorderBase = ({
   const renderStatusLabel = () => (
     <Box className="text-center flex flex-row justify-center" data-test={`${path}-audio-playback-container`}>
       {pronunciationValue && !isRecording ? (
-        <Box className="flex flex-col" data-test={`${path}-audio-playback`}>
-          <ReactAudioPlayer style={{ height: '40px', width: '250px' }} id="audio" src={pronunciationValue} controls />
-          {shouldRenderNewPronunciationLabel() && (
-            <chakra.span className="text-green-500 mt-2" fontFamily="Silka">
-              New pronunciation recorded
-            </chakra.span>
-          )}
-        </Box>
-      ) : !isRecording ? (
-        <chakra.span className="text-gray-700 italic" fontFamily="Silka">
-          No audio pronunciation
-        </chakra.span>
+        <>
+          <Box className="flex flex-col justify-center items-center" data-test={`${path}-audio-playback`}>
+            <ReactAudioPlayer style={{ height: '40px', width: '150px' }} id="audio" src={pronunciationValue} controls />
+          </Box>
+        </>
       ) : null}
     </Box>
   );
@@ -75,70 +68,76 @@ const RecorderBase = ({
       <Box
         data-test="word-pronunciation-input-container"
         width="full"
-        className="flex flex-col justify-center items-center bg-gray-200 rounded p-3"
+        className="flex flex-col justify-center items-center rounded"
+        backgroundColor="gray.200"
         borderRadius="md"
-        minHeight="96px"
         p={3}
       >
         <Box className="flex flex-col justify-center items-center w-full lg:space-x-4">
           {!isRecording ? (
-            <Box
-              className={`flex flex-row justify-center
-            ${pronunciationValue ? 'items-start' : 'items-center'} space-x-3`}
-            >
-              <Tooltip label="Start recording">
-                <Button
-                  borderRadius="full"
-                  backgroundColor="white"
-                  height="44px"
-                  width="44px"
-                  _hover={{ backgroundColor: 'white' }}
-                  padding="0px"
-                  data-test={`start-recording-button${path === 'headword' ? '' : `-${path}`}`}
-                  className="flex justify-center items-start"
-                  onClick={startRecording}
-                >
-                  <Box height="10px" width="10px" borderRadius="full" backgroundColor="red.600" />
-                </Button>
-              </Tooltip>
-              {renderStatusLabel()}
-              <Tooltip label="Reset recording">
-                <IconButton
-                  aria-label="Reset recording"
-                  icon={<FiRefreshCw color="gray.600" />}
-                  data-test={`reset-recording-button${path === 'headword' ? '' : `-${path}`}`}
-                  backgroundColor="white"
-                  _hover={{ backgroundColor: 'white' }}
-                  onClick={onResetRecording}
-                  borderRadius="full"
-                  variant="ghost"
-                />
-              </Tooltip>
+            <Box className="flex flex-col justify-center items-center space-y-1">
+              <Box
+                className={`flex flex-row justify-center space-x-3
+            ${pronunciationValue ? 'items-start' : 'items-center'}`}
+              >
+                <Tooltip label="Start recording">
+                  <IconButton
+                    aria-label="Record"
+                    icon={<FiMic color="white" />}
+                    variant="ghost"
+                    borderRadius="full"
+                    backgroundColor="red.400"
+                    _hover={{ backgroundColor: 'red.400' }}
+                    _active={{ backgroundColor: 'red.400' }}
+                    _focus={{ backgroundColor: 'red.400' }}
+                    padding="0px"
+                    data-test={`start-recording-button${path === 'headword' ? '' : `-${path}`}`}
+                    className="flex justify-center items-start"
+                    onClick={startRecording}
+                  />
+                </Tooltip>
+                {renderStatusLabel()}
+                <Tooltip label="Reset recording">
+                  <IconButton
+                    aria-label="Reset recording"
+                    icon={<FiRefreshCw color="gray.600" />}
+                    data-test={`reset-recording-button${path === 'headword' ? '' : `-${path}`}`}
+                    backgroundColor="white"
+                    _hover={{ backgroundColor: 'white' }}
+                    onClick={onResetRecording}
+                    borderRadius="full"
+                    variant="ghost"
+                  />
+                </Tooltip>
+              </Box>
+              {!pronunciationValue && !isRecording ? (
+                <chakra.span className="italic" fontFamily="Silka" fontSize="sm" color="gray.700">
+                  No audio pronunciation
+                </chakra.span>
+              ) : null}
+              {shouldRenderNewPronunciationLabel() ? (
+                <chakra.span className="mt-2" fontFamily="Silka" fontSize="sm" color="green.700">
+                  New pronunciation recorded
+                </chakra.span>
+              ) : null}
             </Box>
           ) : (
             <Box>
               <Box className="flex flex-row justify-center items-center space-x-3">
-                <Button
+                <IconButton
+                  aria-label="Stop"
+                  icon={<FiStopCircle color="white" />}
                   borderRadius="full"
-                  borderColor="gray.300"
-                  borderWidth="3px"
-                  backgroundColor="white"
-                  height="50px"
-                  width="50px"
-                  _hover={{
-                    backgroundColor: 'gray.100',
-                  }}
-                  _active={{
-                    backgroundColor: 'gray.100',
-                  }}
+                  backgroundColor="red.400"
+                  _hover={{ backgroundColor: 'red.400' }}
+                  _active={{ backgroundColor: 'red.400' }}
+                  _focus={{ backgroundColor: 'red.400' }}
                   padding="0px"
                   data-test={`stop-recording-button${path === 'headword' ? '' : `-${path}`}`}
                   className="flex justify-center items-center"
                   onClick={stopRecording}
-                >
-                  <Box height="12px" width="12px" backgroundColor="gray.600" />
-                </Button>
-                <canvas id="canvas" height={20} width={150} />
+                />
+                <canvas id="canvas" height={20} width={100} />
                 <Box style={{ fontFamily: 'monospace' }} className="w-full flex flex-row justify-center items-center">
                   {convertToTime(recordingDuration)}
                 </Box>
@@ -149,7 +148,9 @@ const RecorderBase = ({
         </Box>
         {warningMessage ? (
           <Box mt={2} p={2} backgroundColor="yellow.100" borderRadius="md" data-test="audio-recording-warning-message">
-            <Text color="yellow.700">{warningMessage}</Text>
+            <Text color="yellow.700" fontSize="sm">
+              {warningMessage}
+            </Text>
           </Box>
         ) : null}
       </Box>

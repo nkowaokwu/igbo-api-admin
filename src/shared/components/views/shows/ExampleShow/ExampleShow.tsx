@@ -82,7 +82,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
       review: false,
     },
   ) => (
-    <>
+    <Box>
       <ReactAudioPlayer data-test="pronunciations" src={audio} style={{ height: '40px', width: '250px' }} controls />
       <Text className="space-x-4">
         <chakra.span fontStyle="italic" color={approvals.length >= 2 ? 'green' : 'gray'} fontSize="sm">
@@ -96,7 +96,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
           {pluralize('denial', denials.length, true)}
         </chakra.span>
       </Text>
-    </>
+    </Box>
   );
 
   /* Grabs the original word if it exists */
@@ -112,7 +112,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="bg-white shadow-sm p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10 mt-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}

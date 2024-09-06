@@ -16,6 +16,23 @@ const theme = createTheme({
         },
       },
     },
+    MuiDrawer: {
+      root: {
+        borderRight: '1px solid var(--chakra-colors-gray-300)',
+      },
+    },
+    MuiPaper: {
+      root: {
+        width: '100vw',
+      },
+    },
+    MuiPopover: {
+      paper: {
+        width: 'fit-content',
+        right: '16px !important',
+        left: 'auto',
+      },
+    },
     MuiTableRow: {
       root: {
         '&:hover': {
@@ -30,6 +47,7 @@ const theme = createTheme({
         paddingTop: '8px',
         paddingBottom: '8px',
         fontWeight: 700,
+        width: 'fit-content',
       },
     },
     MuiListItem: {
@@ -96,10 +114,19 @@ const theme = createTheme({
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
         overflowY: 'hidden',
-        padding: '0 !important',
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',
+      },
+    },
+    RaListToolbar: {
+      root: {
+        padding: '0 !important',
+        display: 'flex',
+        justifyContent: 'flex-end !important',
+      },
+      toolbar: {
+        padding: 'var(--chakra-sizes-2) var(--chakra-sizes-4) !important',
       },
     },
     RaSidebar: {

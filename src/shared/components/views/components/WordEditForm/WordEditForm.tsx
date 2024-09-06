@@ -193,11 +193,11 @@ const WordEditForm = ({
   }, [errors]);
 
   return (
-    <form data-test="word-edit-form" onSubmit={handleSubmit(onSubmit)}>
+    <form data-test="word-edit-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Box className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
         {record.originalWordId && view === View.CREATE ? (
           <Box>
-            <Heading as="h2" className="form-header">
+            <Heading as="h2" className="form-header" fontSize="lg">
               Parent Word Id:
             </Heading>
             <a className="link" data-test="original-id" href={`#/words/${record.originalWordId || record.id}/show`}>
@@ -208,8 +208,8 @@ const WordEditForm = ({
       </Box>
 
       <Box className="w-full">
-        <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4">
-          <Box className="flex flex-col w-full lg:w-1/2">
+        <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4">
+          <Box className="flex flex-col w-full lg:w-1/2 space-y-4">
             <HeadwordForm
               errors={errors}
               control={control}
@@ -277,7 +277,7 @@ const WordEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={8} />}
+          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
           name="editorsNotes"
           defaultValue={record.editorsNotes || getValues().editorsNotes || ''}
           control={control}

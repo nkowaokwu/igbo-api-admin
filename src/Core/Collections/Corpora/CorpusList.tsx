@@ -20,14 +20,14 @@ const CorpusSuggestionList = (props: ListProps): React.ReactElement => {
       <Responsive
         small={
           <Datagrid>
-            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} permissions={permissions} />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
           </Datagrid>
         }
         medium={
           <Datagrid>
-            <Select collection={Collection.CORPORA} label="Editor's Actions" permissions={permissions} />
+            <Select collection={Collection.CORPORA} permissions={permissions} />
             <TextField label="Title" source="title" />
             <UrlField label="Media URL" source="media" />
             <IdField label="Id" source="id" />

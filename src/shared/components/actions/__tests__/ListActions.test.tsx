@@ -14,15 +14,15 @@ describe('Render List Actions', () => {
     document.getElementsByTagName('html')[0].innerHTML = '';
   });
   it('render the list actions menu for words', async () => {
-    const { findByTestId, findByText, queryByText } = render(
+    const { findByLabelText, findByText, queryByText } = render(
       <TestContext isListView>
         <ListActions resource={Collections.WORDS} />
       </TestContext>,
     );
 
-    const wordAttributesFilter = await findByTestId('word-attributes-filter');
+    const wordAttributesFilter = await findByLabelText('Filter button');
     userEvent.click(wordAttributesFilter);
-    await findByText('Word Attributes');
+    userEvent.click(await findByText('Word Attributes'));
     await findByText('Is Standard Igbo');
     await findByText('Has No Pronunciation');
     await findByText('Has Nsịbịdị');
@@ -34,31 +34,31 @@ describe('Render List Actions', () => {
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
     expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
-    expect(await queryByText('Has Edited')).toBeNull();
+    expect(await queryByText('Has Edited By You')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
-    expect(await queryByText('Merged By You')).toBeNull();
+    expect(await queryByText('Is Merged By You')).toBeNull();
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
-    expect(
-      isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')),
-    ).toBe(true);
-    const partOfSpeechFilter = await findByTestId('part-of-speech-filter');
-    userEvent.click(partOfSpeechFilter);
+    expect(isStandardIgboOption.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
+
+    userEvent.click(await findByLabelText('Go back button'));
+    userEvent.click(await findByText('Parts of Speech'));
+
     const activeVerbOption = document.querySelector('[value="AV"]');
     userEvent.click(activeVerbOption);
-    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]'))).toBe(true);
+    expect(activeVerbOption.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
   });
 
   it('render the list actions menu for word suggestions', async () => {
-    const { findByTestId, findByText, queryByText } = render(
+    const { findByLabelText, findByText, queryByText } = render(
       <TestContext>
         <ListActions resource={Collections.WORD_SUGGESTIONS} />
       </TestContext>,
     );
 
-    const wordAttributesFilter = await findByTestId('word-attributes-filter');
+    const wordAttributesFilter = await findByLabelText('Filter button');
     userEvent.click(wordAttributesFilter);
-    await findByText('Word Attributes');
+    userEvent.click(await findByText('Word Attributes'));
     await findByText('Is Standard Igbo');
     await findByText('Has No Pronunciation');
     await findByText('Has Nsịbịdị');
@@ -66,34 +66,34 @@ describe('Render List Actions', () => {
     await findByText('Is Constructed Term');
     await findByText('From Nkọwa okwu');
     await findByText('From Igbo API Editor Platform');
-    await findByText('Has Edited');
+    await findByText('Has Edited By You');
     await findByText('Is Author');
-    await findByText('Merged By You');
+    await findByText('Is Merged By You');
     await findByText('Has Pronunciation');
     expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     const isStandardIgboOption = document.querySelector('[value="isStandardIgbo"]');
     userEvent.click(isStandardIgboOption);
-    expect(
-      isStandardIgboOption.isSameNode(document.querySelector('[aria-checked="true"][value="isStandardIgbo"]')),
-    ).toBe(true);
-    const partOfSpeechFilter = await findByTestId('part-of-speech-filter');
-    userEvent.click(partOfSpeechFilter);
+    expect(isStandardIgboOption.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
+
+    userEvent.click(await findByLabelText('Go back button'));
+    userEvent.click(await findByText('Parts of Speech'));
+
     const activeVerbOption = document.querySelector('[value="AV"]');
     userEvent.click(activeVerbOption);
-    expect(activeVerbOption.isSameNode(document.querySelector('[aria-checked="true"][value="AV"]'))).toBe(true);
+    expect(activeVerbOption.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
   });
 
   it('render the list actions menu for examples', async () => {
-    const { findByTestId, findByText, queryByText } = render(
+    const { findByLabelText, findByText, queryByText } = render(
       <TestContext>
         <ListActions resource={Collections.EXAMPLES} />
       </TestContext>,
     );
 
-    const exampleAttributesFilter = await findByTestId('example-attributes-filter');
+    const exampleAttributesFilter = await findByLabelText('Filter button');
     userEvent.click(exampleAttributesFilter);
-    await findByText('Example Attributes');
+    userEvent.click(await findByText('Example Attributes'));
     await findByText('Is Proverb');
     await findByText('Is Data Collection');
     await findByText('Is Biblical');
@@ -103,25 +103,25 @@ describe('Render List Actions', () => {
     expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
     expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
-    expect(await queryByText('Has Edited')).toBeNull();
+    expect(await queryByText('Has Edited By You')).toBeNull();
     expect(await queryByText('Is Author')).toBeNull();
-    expect(await queryByText('Merged By You')).toBeNull();
+    expect(await queryByText('Is Merged By You')).toBeNull();
 
     const isProverb = document.querySelector('[value="proverb"]');
     userEvent.click(isProverb);
-    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="proverb"]'))).toBe(true);
+    expect(isProverb.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
   });
 
   it('render the list actions menu for example suggestions', async () => {
-    const { findByTestId, findByText } = render(
+    const { findByLabelText, findByText } = render(
       <TestContext>
         <ListActions resource={Collections.EXAMPLE_SUGGESTIONS} />
       </TestContext>,
     );
 
-    const exampleAttributesFilter = await findByTestId('example-attributes-filter');
+    const exampleAttributesFilter = await findByLabelText('Filter button');
     userEvent.click(exampleAttributesFilter);
-    await findByText('Example Attributes');
+    userEvent.click(await findByText('Example Attributes'));
     await findByText('Is Proverb');
     await findByText('Is Data Collection');
     await findByText('Is Biblical');
@@ -129,13 +129,15 @@ describe('Render List Actions', () => {
     await findByText('From Igbo API Editor Platform');
     await findByText('From IgboSpeech');
     await findByText('From BBC');
-    await findByText('Has Edited');
+    await findByText('Has Edited By You');
     await findByText('Is Author');
-    await findByText('Merged By You');
+    await findByText('Is Merged By You');
+    await findByText('From IgboSpeech');
+    await findByText('From BBC');
     await findByText('Has Pronunciation');
     const isProverb = document.querySelector('[value="proverb"]');
     userEvent.click(isProverb);
-    expect(isProverb.isSameNode(document.querySelector('[aria-checked="true"][value="proverb"]'))).toBe(true);
+    expect(isProverb.parentNode.isSameNode(document.querySelector('label[data-checked]'))).toBe(true);
   });
 
   it('render the Delete old Word Suggestions button for only admins', async () => {

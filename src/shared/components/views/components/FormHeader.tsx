@@ -24,7 +24,11 @@ const FormHeader = ({
     }
   };
   return (
-    <Box className={`flex flex-row items-center${onClick ? ' cursor-pointer' : ''}`} onClick={onClick || noop}>
+    <Box
+      className={`flex flex-row items-center${onClick ? ' cursor-pointer' : ''}`}
+      onClick={onClick || noop}
+      my={title ? 2 : 0}
+    >
       <Box>
         <Heading
           as="h2"
@@ -32,9 +36,8 @@ const FormHeader = ({
           fontSize="xl"
           fontWeight="normal"
           color={color}
-          margin={title ? '20px' : 0}
           width="min-content"
-          mx={0}
+          m={0}
         >
           {title}
         </Heading>

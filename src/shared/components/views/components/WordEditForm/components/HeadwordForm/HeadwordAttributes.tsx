@@ -22,7 +22,7 @@ const HeadwordAttributes = ({
 }): ReactElement => {
   const { getValues } = control;
   return (
-    <Box className="w-full grid grid-flow-row grid-cols-2 gap-4 px-3">
+    <Box className="w-full grid grid-flow-row grid-cols-2 gap-2 px-3">
       <Controller
         render={({ onChange, value, ref }) => (
           <Checkbox
@@ -31,7 +31,7 @@ const HeadwordAttributes = ({
             defaultChecked={record.attributes?.[WordAttributeEnum.IS_STANDARD_IGBO]}
             ref={ref}
             data-test={`${WordAttributeEnum.IS_STANDARD_IGBO}-checkbox`}
-            size="lg"
+            size="md"
           >
             <chakra.span className="font-bold" fontFamily="Silka">
               {WordAttributes[WordAttributeEnum.IS_STANDARD_IGBO].label}
@@ -57,7 +57,7 @@ const HeadwordAttributes = ({
                 defaultChecked={!!(isHeadwordAccented || record.attributes?.[WordAttributeEnum.IS_ACCENTED])}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_ACCENTED}-checkbox`}
-                size="lg"
+                size="md"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
                   {WordAttributes[WordAttributeEnum.IS_ACCENTED].label}
@@ -87,7 +87,7 @@ const HeadwordAttributes = ({
                 defaultChecked={record.attributes?.[WordAttributeEnum.IS_SLANG]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_SLANG}-checkbox`}
-                size="lg"
+                size="md"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
                   {WordAttributes[WordAttributeEnum.IS_SLANG].label}
@@ -119,7 +119,7 @@ const HeadwordAttributes = ({
                 isDisabled={isConstructedPollTerm}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_CONSTRUCTED_TERM}-checkbox`}
-                size="lg"
+                size="md"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
                   {WordAttributes[WordAttributeEnum.IS_CONSTRUCTED_TERM].label}
@@ -146,7 +146,7 @@ const HeadwordAttributes = ({
                 defaultChecked={record.attributes?.[WordAttributeEnum.IS_BORROWED_TERM]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_BORROWED_TERM}-checkbox`}
-                size="lg"
+                size="md"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
                   {WordAttributes[WordAttributeEnum.IS_BORROWED_TERM].label}
@@ -175,7 +175,7 @@ const HeadwordAttributes = ({
                 defaultChecked={record.attributes?.[WordAttributeEnum.IS_STEM]}
                 ref={ref}
                 data-test={`${WordAttributeEnum.IS_STEM}-checkbox`}
-                size="lg"
+                size="md"
               >
                 <chakra.span className="font-bold" fontFamily="Silka">
                   {WordAttributes[WordAttributeEnum.IS_STEM].label}

@@ -73,7 +73,7 @@ const NsibidiInput = React.forwardRef(
     };
 
     return (
-      <Box>
+      <Box className="space-y-4">
         <Input
           {...props}
           ref={ref}

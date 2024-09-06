@@ -1,8 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, Responsive, ListProps } from 'react-admin';
-import { BulkSuggestionActions, Select, ListActions, Pagination, ArrayPreview } from 'src/shared/components';
+import { Select, ListActions, Pagination, ArrayPreview } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collection';
-import { hasAdminOrMergerPermissions } from 'src/shared/utils/permissions';
 import Empty from '../../Empty';
 
 const NsibidiCharacterList = (props: ListProps): React.ReactElement => {
@@ -13,7 +12,7 @@ const NsibidiCharacterList = (props: ListProps): React.ReactElement => {
         {...props}
         title="Nsịbịdị Characters"
         actions={<ListActions />}
-        bulkActionButtons={hasAdminOrMergerPermissions(permissions, <BulkSuggestionActions />)}
+        bulkActionButtons={false}
         pagination={<Pagination />}
         empty={<Empty />}
         sort={{ field: 'approvals', order: 'DESC' }}
@@ -21,13 +20,13 @@ const NsibidiCharacterList = (props: ListProps): React.ReactElement => {
         <Responsive
           small={
             <Datagrid>
-              <Select collection={Collection.NSIBIDI_CHARACTERS} label="Editor's Actions" permissions={permissions} />
+              <Select collection={Collection.NSIBIDI_CHARACTERS} permissions={permissions} />
               <TextField label="Nsịbịdị" source="nsibidi" className="akagu" />
             </Datagrid>
           }
           medium={
             <Datagrid>
-              <Select collection={Collection.NSIBIDI_CHARACTERS} label="Editor's Actions" permissions={permissions} />
+              <Select collection={Collection.NSIBIDI_CHARACTERS} permissions={permissions} />
               <TextField label="Nsịbịdị" source="nsibidi" className="akagu" />
               <ArrayPreview label="Radicals" source="radicals" />
             </Datagrid>
