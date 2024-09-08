@@ -130,6 +130,7 @@ export const wordSuggestionSchema = new Schema(
         {},
       ),
     },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

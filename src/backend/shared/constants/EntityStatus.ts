@@ -1,0 +1,11 @@
+enum EntityStatus {
+  UNSPECIFIED = 'UNSPECIFIED',
+  INACTIVE = 'INACTIVE',
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  PAUSED = 'PAUSED',
+  DELETED = 'DELETED',
+}
+
+export default EntityStatus;
