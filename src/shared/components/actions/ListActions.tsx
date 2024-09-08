@@ -84,7 +84,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
           isSuggestionResource
             ? [
                 { value: SuggestionSourceEnum.COMMUNITY, label: 'From Nkọwa okwu' },
-                { value: SuggestionSourceEnum.INTERNAL, label: 'From Igbo API Editor Platform' },
+                { value: SuggestionSourceEnum.INTERNAL, label: 'From Nkọwa okwu Data Platform' },
                 { value: 'userInteractions', label: 'Has Edited By You' },
                 { value: 'authorId', label: 'Is Author' },
                 { value: 'mergedBy', label: 'Is Merged By You' },

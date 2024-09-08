@@ -5,7 +5,7 @@ import UserLoginState from 'src/backend/shared/constants/UserLoginState';
 const AlreadyHaveAnAccount = ({ onClick }: { onClick: (value: UserLoginState) => () => void }): ReactElement => (
   <Box className="w-full">
     <Text mt={2} fontWeight="bold">
-      Already have an account?
+      Login with email or phone
     </Text>
     <Button
       borderColor="gray.300"

@@ -14,7 +14,7 @@ export const isAWSProduction = isProduction;
 export const IGBO_API_ROOT =
   !isTesting && isProduction ? 'https://www.igboapi.com/api/v1' : 'http://localhost:8080/api/v1';
 
-// Igbo API Editor Platform
+// Nkọwa okwu Data Platform
 export const IGBO_API_EDITOR_PLATFORM_ROOT =
   !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://127.0.0.1:3030';
 

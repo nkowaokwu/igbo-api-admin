@@ -43,6 +43,8 @@ const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'))
 // const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
+const SignIn = React.lazy(() => import('src/Core/Collections/SignIn'));
+const GettingStarted = React.lazy(() => import('src/Core/Collections/GettingStarted'));
 const IgboTextImages = React.lazy(() => import('src/Core/Collections/TextImages'));
 const TextImageList = React.lazy(() => import('src/Core/Collections/TextImages/TextImageList'));
 const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
@@ -74,6 +76,7 @@ export interface Resource {
   show: Promise<React.ReactElement>;
   icon: React.ReactElement;
   group: ResourceGroup;
+  noLayout?: boolean;
 }
 
 const defaultRoutes = (permissions) =>
@@ -276,5 +279,20 @@ export const getCustomRouteObjects = (): any => [
     path: '/igboDefinitions',
     component: withLastRoute(IgboDefinitions),
     group: ResourceGroup.UNSPECIFIED,
+  },
+];
+
+export const getUnauthenticatedRoutes = (): any => [
+  {
+    path: '/sign-in',
+    component: SignIn,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
+  },
+  {
+    path: '/getting-started',
+    component: GettingStarted,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
   },
 ];

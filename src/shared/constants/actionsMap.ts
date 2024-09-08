@@ -176,7 +176,7 @@ export default {
     title: 'Delete Poll',
     content:
       'Deleting a poll is an irreversible action that will delete the poll ' +
-      'in the Igbo API Editor Platform along with associated tweets and Slack bot posts',
+      'in the Nkọwa okwu Data Platform along with associated tweets and Slack bot posts',
     executeAction: ({ record: { id } }: { record: Record }): Promise<any> =>
       handleDeleteConstructedTermPoll({ pollId: id }),
     successMessage: 'You have deleted the poll',

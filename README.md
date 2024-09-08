@@ -1,6 +1,6 @@
-# Igbo API Editor Platform
+# Nkọwa okwu Data Platform
 
-The Igbo API Editor Platform is the admin platform used by our Igbo lexicographers to directly input word and example data into the [Igbo API](https://igboapi.com)
+The Nkọwa okwu Data Platform is the admin platform used by our Igbo lexicographers to directly input word and example data into the [Igbo API](https://igboapi.com)
 
 ![](./docs/igbo_api_editor_platform.png)
 
@@ -23,7 +23,7 @@ To run this project locally, the following tools need to be installed:
 - [MongoDB](https://docs.mongodb.com/manual/administration/install-community/)
 - [Firebase](https://console.firebase.google.com/)
 
-### Step 1: Set up the Igbo API Editor Platform
+### Step 1: Set up the Nkọwa okwu Data Platform
 
 Clone the repo:
 
@@ -85,7 +85,7 @@ Download the service account for your Firebase project by going to **Project Set
 
 Save the service account that you downloaded from Firebase as `prod-firebase-service-account.json` and `staging-firebase-service-account.json` in the top-level `/functions`.
 
-Once you save those files in `/functions`, you're own Igbo API Editor Platform is ready to go!
+Once you save those files in `/functions`, you're own Nkọwa okwu Data Platform is ready to go!
 
 ### Step 4: Start the Backend API
 
@@ -135,7 +135,7 @@ There you will see a link to verify the email within the auth emulator. Click on
 
 ### Step 7: (Optional) Seeding the Database
 
-You will need local word suggestion and example suggestion data to see how the Igbo API Editor Platform works.
+You will need local word suggestion and example suggestion data to see how the Nkọwa okwu Data Platform works.
 
 Setup a local working version of the [Igbo API](https://github.com/nkowaokwu/igbo_api#seeding-) and follow the `Seeding 🌱` step.
 

@@ -50,16 +50,17 @@ export const handleUserResult = async ({
   setErrorMessage('');
 
   if (isNewUser) {
-    authProvider.logout();
-    toast({
-      title: 'Account created',
-      description: 'Please refresh the page and log in to access the platform',
-      status: 'success',
-      duration: 90000,
-      isClosable: true,
-      position: 'top-right',
-      variant: 'left-accent',
-    });
+    window.location.hash = '#/getting-started';
+    // authProvider.logout();
+    // toast({
+    //   title: 'Account created',
+    //   description: 'Please refresh the page and log in to access the platform',
+    //   status: 'success',
+    //   duration: 90000,
+    //   isClosable: true,
+    //   position: 'top-right',
+    //   variant: 'left-accent',
+    // });
   } else {
     const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
     const hash = rawRedirectUrl || '#/';

@@ -28,7 +28,7 @@ const sourceFieldConfig = {
   },
   [SuggestionSourceEnum.INTERNAL]: {
     badge: 'Igbo API Editor',
-    description: 'This suggestion came from the internal Igbo API Editor Platform',
+    description: 'This suggestion came from the internal Nkọwa okwu Data Platform',
     color: 'gray',
   },
 };

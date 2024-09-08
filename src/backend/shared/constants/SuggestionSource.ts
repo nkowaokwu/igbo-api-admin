@@ -3,7 +3,7 @@ import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceE
 const SuggestionSource = {
   [SuggestionSourceEnum.INTERNAL]: {
     value: SuggestionSourceEnum.INTERNAL,
-    label: 'Igbo API Editor Platform',
+    label: 'Nkọwa okwu Data Platform',
     isSelectable: true,
   },
   [SuggestionSourceEnum.COMMUNITY]: {

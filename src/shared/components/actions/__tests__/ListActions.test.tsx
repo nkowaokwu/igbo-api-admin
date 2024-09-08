@@ -31,7 +31,7 @@ describe('Render List Actions', () => {
     await findByText('Has Pronunciation');
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
-    expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('From Nkọwa okwu Data Platform')).toBeNull();
     expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     expect(await queryByText('Has Edited By You')).toBeNull();
@@ -65,7 +65,7 @@ describe('Render List Actions', () => {
     await findByText('Has No Nsịbịdị');
     await findByText('Is Constructed Term');
     await findByText('From Nkọwa okwu');
-    await findByText('From Igbo API Editor Platform');
+    await findByText('From Nkọwa okwu Data Platform');
     await findByText('Has Edited By You');
     await findByText('Is Author');
     await findByText('Is Merged By You');
@@ -100,7 +100,7 @@ describe('Render List Actions', () => {
     await findByText('Has Pronunciation');
 
     expect(await queryByText('From Nkọwa okwu')).toBeNull();
-    expect(await queryByText('From Igbo API Editor Platform')).toBeNull();
+    expect(await queryByText('From Nkọwa okwu Data Platform')).toBeNull();
     expect(await queryByText('From IgboSpeech')).toBeNull();
     expect(await queryByText('From BBC')).toBeNull();
     expect(await queryByText('Has Edited By You')).toBeNull();
@@ -126,7 +126,7 @@ describe('Render List Actions', () => {
     await findByText('Is Data Collection');
     await findByText('Is Biblical');
     await findByText('From Nkọwa okwu');
-    await findByText('From Igbo API Editor Platform');
+    await findByText('From Nkọwa okwu Data Platform');
     await findByText('From IgboSpeech');
     await findByText('From BBC');
     await findByText('Has Edited By You');

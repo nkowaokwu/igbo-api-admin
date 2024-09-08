@@ -29,7 +29,7 @@ describe('App', () => {
     await findByText('0 new notifications');
     await findByText('No new notifications');
   });
-  it('render the Igbo API Editor Platform with admin role', async () => {
+  it('render the Nkọwa okwu Data Platform with admin role', async () => {
     const { queryByText, findByText, findAllByText } = render(<App />);
 
     await findAllByText('Dashboard');
@@ -50,7 +50,7 @@ describe('App', () => {
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
-  it('render the Igbo API Editor Platform with merger role', async () => {
+  it('render the Nkọwa okwu Data Platform with merger role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.MERGER });
     const { queryByText, findByText, findAllByText } = render(<App />);
 
@@ -73,7 +73,7 @@ describe('App', () => {
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
 
-  it('render the Igbo API Editor Platform with editor role', async () => {
+  it('render the Nkọwa okwu Data Platform with editor role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.EDITOR });
     const { queryByText, findByText, findAllByText } = render(<App />);
 
@@ -96,7 +96,7 @@ describe('App', () => {
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
 
-  it('render the Igbo API Editor Platform with transcriber role', async () => {
+  it('render the Nkọwa okwu Data Platform with transcriber role', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.TRANSCRIBER });
     const { queryByText, findAllByText } = render(<App />);
 
@@ -118,7 +118,7 @@ describe('App', () => {
 
     expect(await queryByText('Loading the page, please wait a moment')).toBeNull();
   });
-  it('render the Igbo API Editor Platform with editor crowdsourcer', async () => {
+  it('render the Nkọwa okwu Data Platform with editor crowdsourcer', async () => {
     jest.spyOn(reactAdmin, 'usePermissions').mockReturnValue({ role: UserRoles.CROWDSOURCER });
     const { queryByText, findAllByText } = render(<App />);
 
