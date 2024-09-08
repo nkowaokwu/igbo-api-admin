@@ -33,7 +33,7 @@ const sourceFieldConfig = {
   },
 };
 
-const SourceField = ({
+const OriginField = ({
   record,
   source,
 }: {
@@ -55,8 +55,4 @@ const SourceField = ({
   );
 };
 
-SourceField.defaultProps = {
-  record: { id: null },
-};
-
-export default SourceField;
+export default OriginField;

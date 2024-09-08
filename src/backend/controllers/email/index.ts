@@ -61,7 +61,7 @@ export const sendDeniedEmail = (data): Promise<void> => {
 
 /* Email sent when suggestion gets merged */
 export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
-  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+  if (data.origin !== SuggestionSourceEnum.COMMUNITY) {
     return Promise.resolve();
   }
 
@@ -82,7 +82,7 @@ export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Pro
 
 /* Email sent when a suggestion has been deleted without getting merged */
 export const sendRejectedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
-  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+  if (data.origin !== SuggestionSourceEnum.COMMUNITY) {
     return Promise.resolve();
   }
   const message = constructMessage({

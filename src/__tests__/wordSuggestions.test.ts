@@ -383,10 +383,10 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.body.error).not.toEqual(undefined);
     });
 
-    it('should throw an error for providing a source field', async () => {
+    it('should throw an error for providing a origin field', async () => {
       const wordRes = await suggestNewWord(wordSuggestionData);
       const res = await updateWordSuggestion(
-        { ...wordRes.body, source: SuggestionSourceEnum.COMMUNITY },
+        { ...wordRes.body, origin: SuggestionSourceEnum.COMMUNITY },
         { cleanData: false },
       );
       expect(res.status).toEqual(400);

@@ -4,7 +4,7 @@ export interface MergedOrRejectedEmailData {
   to: [string];
   suggestionType: string;
   submissionLink?: string;
-  source: SuggestionSourceEnum;
+  origin: SuggestionSourceEnum;
   [key: string]: any;
 }
 

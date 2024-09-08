@@ -332,7 +332,7 @@ const createWordFromSuggestion = (
 
 /* Sends confirmation merged email to user if they provided an email */
 const handleSendingMergedEmail = async (
-  result: Interfaces.WordData & { authorEmail: string; source: SuggestionSourceEnum; word: string },
+  result: Interfaces.WordData & { authorEmail: string; origin: SuggestionSourceEnum; word: string },
 ): Promise<void> => {
   try {
     if (result.authorEmail) {
@@ -366,7 +366,7 @@ export const mergeWord = async (
     await handleSyncingAntonyms(mergedWord, mongooseConnection);
     await handleSendingMergedEmail({
       ...(mergedWord.toObject ? mergedWord.toObject() : mergedWord),
-      source: suggestionDoc.source,
+      origin: suggestionDoc.origin,
       wordClass: WordClass[suggestionDoc.wordClass]?.label || 'No word class',
       authorEmail: suggestionDoc.authorEmail,
       authorId: suggestionDoc.authorId,

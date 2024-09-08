@@ -124,10 +124,10 @@ describe('DataCollectionAPI', () => {
     const requestSpy = jest.spyOn(requestModule, 'request');
     const payload = {
       sentences: [
-        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
-        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
-        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
-        { igbo: `igbo-${uuidv4()}`, source: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, origin: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, origin: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, origin: SuggestionSourceEnum.IGBO_SPEECH },
+        { igbo: `igbo-${uuidv4()}`, origin: SuggestionSourceEnum.IGBO_SPEECH },
       ],
     };
     // @ts-expect-error

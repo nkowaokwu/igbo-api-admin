@@ -109,7 +109,6 @@ export const wordSuggestionSchema = new Schema(
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
-    source: { type: String },
     merged: { type: Types.ObjectId, ref: 'Word', default: null },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [] },

@@ -47,7 +47,7 @@ const isValidCSV = (data) => {
 
 type SentenceData = {
   igbo: string;
-  source?: SuggestionSourceEnum;
+  origin?: SuggestionSourceEnum;
   type?: SentenceTypeEnum;
 };
 
@@ -148,7 +148,7 @@ const DataDump = (): ReactElement => {
               finalData.push({
                 ...data,
                 type: sentenceType,
-                source: suggestionSource,
+                origin: suggestionSource,
               });
             } else {
               omittedData.push(data);
@@ -207,7 +207,7 @@ const DataDump = (): ReactElement => {
   useEffect(() => {
     const updatedFileData = [...fileData].map((sentence) => ({
       ...sentence,
-      source: suggestionSource,
+      origin: suggestionSource,
       type: sentenceType,
     }));
     setFileData(updatedFileData);
@@ -346,8 +346,8 @@ const DataDump = (): ReactElement => {
                   onChange={handleSelectSuggestionSource}
                   defaultValue={suggestionSource}
                   title="Suggestion Source"
-                  description="The digital source the text originated from"
-                  data-test="suggestion-source-dropdown"
+                  description="The digital origin the text originated from"
+                  data-test="suggestion-origin-dropdown"
                 />
                 <SentenceMetaDataDropdown
                   values={Object.values(SentenceType).filter(({ isSelectable }) => isSelectable)}

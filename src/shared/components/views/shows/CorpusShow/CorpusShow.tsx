@@ -7,7 +7,6 @@ import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
 import { getWord } from 'src/shared/API';
-import SourceField from 'src/shared/components/SourceField';
 import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
 import { EditDocumentTopBar, ShowDocumentStats, Comments } from '../../components';
 import DiffField from '../diffFields/DiffField';
@@ -152,7 +151,6 @@ const CorpusShow = (props: ShowProps): ReactElement => {
           <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
             {resource !== Collection.CORPORA && (
               <>
-                <SourceField record={record} source="source" />
                 <ShowDocumentStats
                   approvals={approvals}
                   denials={denials}

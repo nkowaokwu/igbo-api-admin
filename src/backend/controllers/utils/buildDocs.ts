@@ -27,33 +27,28 @@ const removeKeysInNestedDoc = (docs: Interfaces.Word[], nestedDocsKey: string): 
 /* Performs a outer left lookup to append associated examples
  * and returns a plain word object, not a Mongoose Query
  */
-export const findWordsWithMatch = async (
-  {
-    match,
-    examples,
-    skip = 0,
-    limit = 10,
-    Word,
-  }:
-  {
-    match: any,
-    examples?: boolean,
-    skip?: number,
-    limit?: number,
-    Word: any,
-  },
-): Promise<Interfaces.Word[]> => {
-  let words = Word.aggregate()
-    .match(match);
+export const findWordsWithMatch = async ({
+  match,
+  examples,
+  skip = 0,
+  limit = 10,
+  Word,
+}: {
+  match: any;
+  examples?: boolean;
+  skip?: number;
+  limit?: number;
+  Word: any;
+}): Promise<Interfaces.Word[]> => {
+  let words = Word.aggregate().match(match);
 
   if (examples) {
-    words = words
-      .lookup({
-        from: 'examples',
-        localField: '_id',
-        foreignField: 'associatedWords',
-        as: 'examples',
-      });
+    words = words.lookup({
+      from: 'examples',
+      localField: '_id',
+      foreignField: 'associatedWords',
+      as: 'examples',
+    });
   }
   words = words
     .project({
@@ -75,7 +70,6 @@ export const findWordsWithMatch = async (
       nsibidi: 1,
       tags: 1,
       tenses: 1,
-      source: 1,
       ...(examples ? { examples: 1 } : {}),
     })
     .skip(skip)
@@ -87,22 +81,18 @@ export const findWordsWithMatch = async (
 /* Performs a outer left lookup to append associated examples
  * and returns a plain corpus object, not a Mongoose Query
  */
-export const findCorporaWithMatch = async (
-  {
-    match,
-    skip = 0,
-    limit = 10,
-    Corpus,
-  }:
-  {
-    match: any,
-    skip?: number,
-    limit?: number,
-    Corpus: any,
-  },
-): Promise<Interfaces.Corpus[]> => {
-  let corpora = Corpus.aggregate()
-    .match(match);
+export const findCorporaWithMatch = async ({
+  match,
+  skip = 0,
+  limit = 10,
+  Corpus,
+}: {
+  match: any;
+  skip?: number;
+  limit?: number;
+  Corpus: any;
+}): Promise<Interfaces.Corpus[]> => {
+  let corpora = Corpus.aggregate().match(match);
 
   corpora = corpora
     .project({

@@ -66,7 +66,7 @@ export const exampleDataSchema = Joi.object().keys({
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),
   authorId: Joi.string().allow('').optional(),
-  source: Joi.string()
+  origin: Joi.string()
     .valid(...Object.values(SuggestionSourceEnum))
     .optional(),
 });

@@ -46,6 +46,8 @@ export const handleUserResult = async ({
   localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, token);
   localStorage.setItem(LocalStorageKeys.UID, userId as string);
   localStorage.setItem(LocalStorageKeys.PERMISSIONS, userRole);
+  // TODO: change to real id
+  localStorage.setItem(LocalStorageKeys.PROJECT_INFO, 'igbo-api');
 
   setErrorMessage('');
 

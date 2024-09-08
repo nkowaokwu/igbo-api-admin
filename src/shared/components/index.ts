@@ -3,7 +3,7 @@ import ArrayInput from './ArrayInput';
 import BulkSuggestionActions from './BulkSuggestionActions';
 import CompleteExamplePreview from './CompleteExamplePreview';
 import CompleteWordPreview from './CompleteWordPreview';
-import SourceField from './SourceField';
+import SourceField from './OriginField';
 import StyleField from './StyleField';
 import Confirmation from './Confirmation';
 import StandardIgboPreview from './StandardIgboPreview';
@@ -14,12 +14,7 @@ import {
   NsibidiCharacterCreate,
   PollsCreate,
 } from './views/creates';
-import {
-  CorpusSuggestionEdit,
-  ExampleSuggestionEdit,
-  NsibidiCharacterEdit,
-  WordSuggestionEdit,
-} from './views/edits';
+import { CorpusSuggestionEdit, ExampleSuggestionEdit, NsibidiCharacterEdit, WordSuggestionEdit } from './views/edits';
 import Filter from './Filter';
 import HeadwordField from './HeadwordField';
 import IdField from './IdField';
@@ -30,13 +25,7 @@ import ListActions from './actions/ListActions';
 import Pagination from './toolbars/Pagination';
 import Select from './Select';
 import LabelStudioReact from './LabelStudioReact';
-import {
-  CorpusShow,
-  ExampleShow,
-  NsibidiCharacterShow,
-  UserShow,
-  WordShow,
-} from './views/shows';
+import { CorpusShow, ExampleShow, NsibidiCharacterShow, UserShow, WordShow } from './views/shows';
 import NewLineText from './NewLineText';
 import WordPanel from './WordPanel';
 import ShowNotificationButtonField from './ShowNotificationButtonField';

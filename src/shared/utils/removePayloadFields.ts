@@ -27,7 +27,7 @@ const OMIT_KEYS = [
   'hypernyms',
   'hyponyms',
   'duration',
-  'source',
+  'origin',
   'twitterPollId',
   'crowdsourcing',
 ];

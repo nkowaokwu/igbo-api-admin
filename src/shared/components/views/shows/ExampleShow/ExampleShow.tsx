@@ -8,7 +8,7 @@ import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
 import { getExample } from 'src/shared/API';
-import SourceField from 'src/shared/components/SourceField';
+import SourceField from 'src/shared/components/OriginField';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
@@ -246,7 +246,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
           </Box>
           {resource !== Collection.EXAMPLES && (
             <Box className="mb-10 lg:mb-0 flex flex-col items-end">
-              <SourceField record={record} source="source" />
+              <SourceField record={record} source="origin" />
               <ShowDocumentStats
                 approvals={approvals}
                 denials={denials}

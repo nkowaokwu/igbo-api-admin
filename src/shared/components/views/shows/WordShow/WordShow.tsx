@@ -13,7 +13,6 @@ import { getWord } from 'src/shared/API';
 import CompleteWordPreview from 'src/shared/components/CompleteWordPreview';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
-import SourceField from 'src/shared/components/SourceField';
 import generateFlags from 'src/shared/utils/flagHeadword';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import isVerb from 'src/backend/shared/utils/isVerb';
@@ -386,7 +385,6 @@ const WordShow = (props: ShowProps): ReactElement => {
             <CompleteWordPreview record={record} showFull={false} className="my-5 lg:my-0" />
             {resource !== Collection.WORDS && (
               <>
-                <SourceField record={record} source="source" />
                 <ShowDocumentStats
                   approvals={approvals}
                   denials={denials}

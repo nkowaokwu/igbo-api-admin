@@ -21,7 +21,7 @@ type Filters = {
   attributes?: {
     isStandardIgbo?: { $eq: boolean };
   };
-  source?: any;
+  origin?: any;
   authorId?: any;
   mergedBy?: any;
   style?: any;
@@ -76,36 +76,36 @@ export const generateSearchFilters = (filters: { [key: string]: string }, uid: s
           case SuggestionSourceEnum.COMMUNITY:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSourceEnum.COMMUNITY } },
-              { source: { $exists: false } },
+              { origin: { $eq: SuggestionSourceEnum.COMMUNITY } },
+              { origin: { $exists: false } },
             ];
             break;
           case SuggestionSourceEnum.INTERNAL:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSourceEnum.INTERNAL } },
-              { source: { $exists: false } },
+              { origin: { $eq: SuggestionSourceEnum.INTERNAL } },
+              { origin: { $exists: false } },
             ];
             break;
           case SuggestionSourceEnum.IGBO_SPEECH:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSourceEnum.IGBO_SPEECH } },
-              { source: { $exists: false } },
+              { origin: { $eq: SuggestionSourceEnum.IGBO_SPEECH } },
+              { origin: { $exists: false } },
             ];
             break;
           case SuggestionSourceEnum.IGBO_WIKIMEDIANS:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSourceEnum.IGBO_WIKIMEDIANS } },
-              { source: { $exists: false } },
+              { origin: { $eq: SuggestionSourceEnum.IGBO_WIKIMEDIANS } },
+              { origin: { $exists: false } },
             ];
             break;
           case SuggestionSourceEnum.BBC:
             allFilters.$or = [
               ...allFilters.$or,
-              { source: { $eq: SuggestionSourceEnum.BBC } },
-              { source: { $exists: false } },
+              { origin: { $eq: SuggestionSourceEnum.BBC } },
+              { origin: { $exists: false } },
             ];
             break;
           case 'authorId':
@@ -186,7 +186,7 @@ export const searchExamplesRegexQuery = (
   regex: SearchRegExp,
   filters: { [key: string]: string },
 ): { $or: ExampleSearchQuery; archived: { [key: string]: boolean } } => ({
-  $or: [{ igbo: regex.wordReg }, { english: regex.definitionsReg }],
+  $or: [{ source: { text: regex.wordReg } }, { 'translations.text': regex.definitionsReg }],
   archived: { $ne: true },
   ...(filters ? generateSearchFilters(filters, uid) : {}),
 });
@@ -244,7 +244,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   igbo: { $exists: boolean; $type: string };
   $expr: { $gt: ({ $strLenCP: string } | number)[] };
   type: SentenceTypeEnum.DATA_COLLECTION;
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   // @ts-expect-error
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
@@ -256,7 +256,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   igbo: { $exists: true, $type: 'string' },
   $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
   type: SentenceTypeEnum.DATA_COLLECTION,
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
   [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
@@ -284,7 +284,7 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   exampleForSuggestion: { $ne: true };
   'pronunciations.review': true;
   type: SentenceTypeEnum.DATA_COLLECTION;
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   'pronunciations.speaker': { $nin: [string] };
   pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
@@ -293,7 +293,7 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   exampleForSuggestion: { $ne: true },
   'pronunciations.review': true,
   type: SentenceTypeEnum.DATA_COLLECTION,
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
 
   // TODO: 🚨 remove this section after the project is over 🚨
 
@@ -325,14 +325,14 @@ export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
   merged: null;
   english: string;
   exampleForSuggestion: { $ne: true };
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   'pronunciations.0.audio': { $exists: boolean; $type: string; $ne: string };
   pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
 } => ({
   merged: null,
   english: '',
   exampleForSuggestion: { $ne: true },
-  source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
   'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   pronunciations: {
@@ -451,7 +451,7 @@ export const searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth = (): {
   [key: string]: { $exists: boolean } | { $gte: number } | { $ne: string } | null;
 } => ({
   'definitions.0.igboDefinitions.0': { $exists: false },
-  source: { $ne: SuggestionSourceEnum.COMMUNITY },
+  origin: { $ne: SuggestionSourceEnum.COMMUNITY },
   updatedAt: { $gte: moment().subtract(1, 'months').startOf('month').valueOf() },
   merged: null,
 });
@@ -459,7 +459,7 @@ export const searchWordSuggestionsOlderThanAYear = (): {
   [key: string]: { $lte: number } | { $ne: SuggestionSourceEnum } | null;
 } => ({
   createdAt: { $lte: moment().subtract(1, 'year').valueOf() },
-  source: { $ne: SuggestionSourceEnum.COMMUNITY }, // Do not delete Word Suggestions from Nkọwa okwu users
+  origin: { $ne: SuggestionSourceEnum.COMMUNITY }, // Do not delete Word Suggestions from Nkọwa okwu users
   merged: null,
 });
 /**
