@@ -1,5 +1,4 @@
 import express from 'express';
-import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
 import {
   getRandomExampleSuggestionsToRecord,
@@ -21,7 +20,6 @@ import {
 } from 'src/backend/controllers/leaderboard';
 import { getTextImages, postTextImage } from 'src/backend/controllers/textImages';
 import { sendReportUserNotification } from 'src/backend/controllers/email';
-import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
 // eslint-disable-next-line max-len
@@ -37,7 +35,8 @@ import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
 import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
-import { crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
+import { adminRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
+import authentication from 'src/backend/middleware/authentication';
 
 const crowdsourcerRouter = express.Router();
 crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
@@ -75,7 +74,7 @@ crowdsourcerRouter.put(
 // Uploads new example suggestions to record and review
 crowdsourcerRouter.post(
   `/${Collection.EXAMPLE_SUGGESTIONS}/upload`,
-  authorization([UserRoles.ADMIN]),
+  authorization(adminRoles),
   validateBulkUploadExampleSuggestionBody,
   postBulkUploadExampleSuggestions,
 );
