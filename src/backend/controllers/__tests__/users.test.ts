@@ -38,7 +38,7 @@ describe('Users', () => {
       photoURL: 'photoURL',
       email: 'email@example.com',
       displayName: 'Full name',
-      customClaims: { role: UserRoles.ADMIN, editingGroup: 1 },
+      customClaims: { role: UserRoles.ADMIN },
       metadata: { lastSignInTime, creationTime },
       emailVerified: false,
       disabled: false,
@@ -53,7 +53,6 @@ describe('Users', () => {
       email: unformattedUser.email,
       displayName: unformattedUser.displayName,
       role: unformattedUser.customClaims.role,
-      editingGroup: unformattedUser.customClaims.editingGroup,
       lastSignInTime,
       creationTime,
     });

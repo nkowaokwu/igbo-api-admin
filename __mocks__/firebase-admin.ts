@@ -7,6 +7,7 @@ export const firestore = jest.fn(() => ({
 export const auth = jest.fn(() => ({
   listUsers: jest.fn(async () => ({ users: allUsers })),
   getUser: jest.fn(async (uid: string) => allUsers.find(({ uid: userId }) => userId === uid)),
+  verifyIdToken: jest.fn(() => ({})),
 }));
 export const credential = {
   cert: jest.fn(),

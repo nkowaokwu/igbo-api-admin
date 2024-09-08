@@ -13,10 +13,6 @@ import {
 } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import apiRouter from './src/backend/routers/apiRouter';
-import editorRouter from './src/backend/routers/editorRouter';
-import crowdsourcerRouter from './src/backend/routers/crowdsourcerRouter';
-import transcriberRouter from './src/backend/routers/transcriberRouter';
-import adminRouter from './src/backend/routers/adminRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
@@ -28,6 +24,7 @@ import {
 } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
 import { onTwitterAuth, onTwitterCallback, onDeleteConstructedTermPoll } from './src/backend/controllers/polls';
+import platformRouters from './src/backend/routers/platformRouters';
 import { onMediaSignedRequest } from './src/backend/controllers/media';
 import {
   CORS_CONFIG,
@@ -55,10 +52,7 @@ server.get('/twitter_auth', onTwitterAuth);
 server.get('/twitter_callback', onTwitterCallback);
 server.get('/stats/login', getLoginStats);
 server.use(apiRouter);
-server.use(crowdsourcerRouter);
-server.use(transcriberRouter);
-server.use(editorRouter);
-server.use(adminRouter);
+server.use(platformRouters);
 server.get('**', (_, res) => {
   const html = '';
   const finalHtml = index.replace('<!-- ::APP:: -->', html);

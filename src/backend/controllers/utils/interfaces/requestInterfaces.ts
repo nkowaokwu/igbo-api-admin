@@ -6,6 +6,7 @@ import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRa
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
 import { Suggestion } from 'src/backend/controllers/utils/interfaces/suggestionInterfaces';
 import { Word } from 'src/backend/controllers/utils/interfaces/wordInterfaces';
+import { ProjectData } from 'src/backend/controllers/utils/interfaces/projectInterfaces';
 
 export interface HandleQueries {
   searchWord: string;
@@ -42,6 +43,7 @@ export interface EditorRequest extends Request {
     leaderboard?: LeaderboardType;
     timeRange?: LeaderboardTimeRange;
     referralCode?: string;
+    projectId?: string;
   };
   suggestionDoc?: Suggestion;
   body: any;
@@ -49,6 +51,7 @@ export interface EditorRequest extends Request {
   response?: any;
   error?: Error;
   mongooseConnection: Connection;
+  project: ProjectData;
 }
 
 export interface SearchRegExp {

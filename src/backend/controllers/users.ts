@@ -25,7 +25,6 @@ export const formatUser = (user: Interfaces.FirebaseUser): Interfaces.FormattedU
     email: user.email || '',
     displayName: user.displayName || '',
     role: customClaims?.role || '',
-    editingGroup: customClaims?.editingGroup || '',
     lastSignInTime: metadata?.lastSignInTime,
     creationTime: metadata?.creationTime,
   };
