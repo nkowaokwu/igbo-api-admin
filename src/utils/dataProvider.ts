@@ -3,8 +3,15 @@ import restProvider from 'ra-data-simple-rest';
 import { assign } from 'lodash';
 import Collection from 'src/shared/constants/Collection';
 import { createAuthorizationHeader } from 'src/shared/utils/request';
+import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import { API_ROUTE } from '../shared/constants';
-import authProvider from './authProvider';
+
+export const generateUrlWithCustomQueryParams = (url: string): string => {
+  const updatedUrl = url.includes('?') ? url : `${url}?`;
+  return `${updatedUrl}&${new URLSearchParams({
+    projectId: window.localStorage.getItem(LocalStorageKeys.PROJECT_ID),
+  })}`;
+};
 
 export const httpClient = async <T>(
   url: string,
@@ -21,11 +28,10 @@ export const httpClient = async <T>(
     }
     const authToken = await createAuthorizationHeader();
     updatedOptions.headers.set('Authorization', authToken);
-    const res = await fetchUtils.fetchJson(url, updatedOptions).catch((err) => err);
+    const res = await fetchUtils.fetchJson(generateUrlWithCustomQueryParams(url), updatedOptions).catch((err) => err);
 
     if (res.status === 403) {
       console.error(`Unauthenticated to view resource: ${res.body?.error || ''}`);
-      authProvider.logout();
     }
     return res;
   } catch (err) {
