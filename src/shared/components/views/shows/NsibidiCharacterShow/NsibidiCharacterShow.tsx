@@ -25,7 +25,7 @@ const NsibidiCharacterShow = (props: ShowProps): ReactElement => {
   };
 
   return (
-    <Box className="shadow-sm p-4 lg:p-10 mt-10">
+    <Box className="shadow-sm p-4 lg:p-10">
       <EditDocumentTopBar
         record={record}
         resource={resource}

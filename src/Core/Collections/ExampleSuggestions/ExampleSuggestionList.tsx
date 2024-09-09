@@ -42,8 +42,8 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
             <CompleteExamplePreview label="Example Status" />
             <SourceField label="Source" source="origin" />
             <ReviewPreview label="You Reviewed" />
-            <TextField label="Igbo" source="igbo" />
-            <TextField label="English" source="english" />
+            <TextField label="Igbo" source="source.text" />
+            <TextField label="English" source="translations.0.text" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
             <FunctionField
               label="Approvals"

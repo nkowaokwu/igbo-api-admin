@@ -131,7 +131,7 @@ const WordShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}
@@ -442,8 +442,8 @@ const WordShow = (props: ShowProps): ReactElement => {
             <>
               <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
               <Box>
-                <Text>{archivedExample.igbo}</Text>
-                <Text>{archivedExample.english}</Text>
+                <Text>{get(archivedExample, 'source.text')}</Text>
+                <Text>{get(archivedExample, 'translations.0.text')}</Text>
                 <Text>{archivedExample.nsibidi}</Text>
                 <Text>{archivedExample.meaning}</Text>
                 <ReactAudioPlayer

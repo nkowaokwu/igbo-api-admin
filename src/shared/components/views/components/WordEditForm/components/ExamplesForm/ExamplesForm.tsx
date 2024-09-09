@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
+import { get } from 'lodash';
 import { useFieldArray } from 'react-hook-form';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import ReactAudioPlayer from 'react-audio-player';
@@ -71,8 +72,8 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
           <>
             <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
             <Box>
-              <Text>{archivedExample.igbo}</Text>
-              <Text>{archivedExample.english}</Text>
+              <Text>{get(archivedExample, 'source.text')}</Text>
+              <Text>{get(archivedExample, 'translations.0.text')}</Text>
               <Text>{archivedExample.nsibidi}</Text>
               <Text>{archivedExample.meaning}</Text>
               <ReactAudioPlayer

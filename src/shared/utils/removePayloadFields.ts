@@ -8,9 +8,13 @@ type RemovePayload = {
   pronunciations?: Partial<{ audio: string; speaker: string }>[];
 };
 
+/**
+ * Keys to remove from the payload
+ */
 const OMIT_KEYS = [
   '_id',
   'id',
+  'english',
   'archived',
   'updatedAt',
   'createdAt',
@@ -30,6 +34,7 @@ const OMIT_KEYS = [
   'origin',
   'twitterPollId',
   'crowdsourcing',
+  'projectId',
 ];
 
 const removePayloadFields = (payload: RemovePayload): any => {

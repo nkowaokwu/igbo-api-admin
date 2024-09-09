@@ -17,7 +17,6 @@ export const WordList = (props: ListProps): ReactElement => {
     <List {...props} actions={<ListActions />} bulkActionButtons={false} pagination={<Pagination />} empty={<Empty />}>
       <Responsive
         small={
-          // <Datagrid expand={<WordPanel />} />
           <Datagrid>
             <Select collection={Collection.WORDS} permissions={permissions} />
             <HeadwordField label="Headword" source="word" />

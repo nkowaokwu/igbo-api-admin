@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
 import { Box, Heading, Skeleton, Text, chakra } from '@chakra-ui/react';
+import { get } from 'lodash';
 import pluralize from 'pluralize';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
@@ -16,6 +17,7 @@ import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManag
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
 import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -30,8 +32,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const { permissions } = props;
   const {
     id,
-    igbo,
-    english,
+    source,
+    translations,
     meaning,
     nsibidi,
     style,
@@ -47,6 +49,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   } = record || DEFAULT_EXAMPLE_RECORD;
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
 
   const DIFF_FILTER_KEYS = [
     'id',
@@ -112,7 +115,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}
@@ -149,21 +152,21 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 </ArrayDiffField>
               </Box>
               <Heading fontSize="lg" className="text-xl text-gray-600">
-                Igbo
+                {sourceLanguage}
               </Heading>
               <DiffField
-                path="igbo"
+                path="source.text"
                 diffRecord={diffRecord}
-                fallbackValue={igbo}
+                fallbackValue={get(source, 'text')}
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
               <Heading fontSize="lg" className="text-xl text-gray-600">
-                English
+                {destinationLanguage}
               </Heading>
               <DiffField
-                path="english"
+                path="translations.0.text"
                 diffRecord={diffRecord}
-                fallbackValue={english}
+                fallbackValue={get(translations, '0.text')}
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
               <Heading fontSize="lg" className="text-xl text-gray-600">

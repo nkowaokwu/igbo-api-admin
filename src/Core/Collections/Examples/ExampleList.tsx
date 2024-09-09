@@ -20,8 +20,8 @@ const ExampleList = (props: ListProps): ReactElement => {
           <Datagrid>
             <Select collection={Collection.EXAMPLES} permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
-            <TextField label="Igbo" source="igbo" />
-            <TextField label="English" source="english" />
+            <TextField label="Igbo" source="source.text" />
+            <TextField label="English" source="translations.0.text" />
           </Datagrid>
         }
         medium={
@@ -29,8 +29,8 @@ const ExampleList = (props: ListProps): ReactElement => {
             <Select collection={Collection.EXAMPLES} permissions={permissions} />
             <CompleteExamplePreview label="Example Status" />
             <StyleField label="Style" source="style" />
-            <TextField label="Igbo" source="igbo" />
-            <TextField label="English" source="english" />
+            <TextField label="Igbo" source="source.text" />
+            <TextField label="English" source="translations.0.text" />
             <ArrayPreview label="Associated Words" source="associatedWords" />
           </Datagrid>
         }

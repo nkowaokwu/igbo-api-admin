@@ -119,7 +119,7 @@ const WordEditForm = ({
         approvals: map(record.approvals, (approval) => approval.uid),
         denials: map(record.denials, (denial) => denial.uid),
       }),
-      [view === View.CREATE ? 'id' : ''],
+      [view === View.CREATE ? 'id' : ''].concat(['source']),
     );
 
   /* Combines the approvals, denials, and cached form data to

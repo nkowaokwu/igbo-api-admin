@@ -27,7 +27,6 @@ import Select from './Select';
 import LabelStudioReact from './LabelStudioReact';
 import { CorpusShow, ExampleShow, NsibidiCharacterShow, UserShow, WordShow } from './views/shows';
 import NewLineText from './NewLineText';
-import WordPanel from './WordPanel';
 import ShowNotificationButtonField from './ShowNotificationButtonField';
 
 export {
@@ -65,6 +64,5 @@ export {
   UserShow,
   WordShow,
   NewLineText,
-  WordPanel,
   ShowNotificationButtonField,
 };

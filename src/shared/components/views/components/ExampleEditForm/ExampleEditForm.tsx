@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { assign, map, omit, pick } from 'lodash';
+import { merge, get, omit, pick, flow, assign } from 'lodash';
 import { Box, Button, Text, chakra, useToast, Tooltip } from '@chakra-ui/react';
 import { PiMagicWandBold } from 'react-icons/pi';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -18,6 +18,8 @@ import useFirebaseUid from 'src/hooks/useFirebaseUid';
 // eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces';
+import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -50,6 +52,7 @@ const ExampleEditForm = ({
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
   const uid = useFirebaseUid();
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -71,40 +74,39 @@ const ExampleEditForm = ({
     })();
   }, []);
 
-  /* Grabs the user form data that will be cached */
-  const createCacheExampleData = (data: any, record: Record = { id: null }) => {
-    const cleanedData = {
-      ...record,
-      ...data,
-      associatedDefinitionsSchemas: sanitizeArray(record.associatedDefinitionsSchemas || []),
-      style: data.style.value,
-      associatedWords: sanitizeWith(data.associatedWords || []),
-      nsibidiCharacters: sanitizeWith(data.nsibidiCharacters || []),
+  /** Sanitizes the data to match the form data schema */
+  const sanitizeData = (rawData: Record) => {
+    const data = assign(rawData);
+    data.source = {
+      language: get(data, 'source.language') || LanguageEnum.UNSPECIFIED,
+      text: get(data, 'source.text') || '',
     };
-    return cleanedData;
+    data.translations = (get(data, 'translations') || []).map(({ language = LanguageEnum.UNSPECIFIED, text = '' }) => ({
+      language,
+      text,
+    }));
+    data.pronunciations = (get(data, 'pronunciations') || []).map((pronunciation) =>
+      omit(pronunciation, ['review', 'id', 'approvals', 'denials']),
+    );
+    data.associatedDefinitionsSchemas = sanitizeArray(record.associatedDefinitionsSchemas || []);
+    data.style = data.style.value;
+    data.associatedWords = sanitizeWith(data.associatedWords || []);
+    data.nsibidiCharacters = sanitizeWith(data.nsibidiCharacters || []);
+
+    return data;
   };
 
-  /* Combines the approvals, denials, and cached form data to
-   * send to the backend
-   */
+  /** Pipeline that handles cleaning data before sending to backend */
+  const cleanDataPipeline = flow([removePayloadFields, sanitizeData]);
+
+  /** Combines the approvals, denials, and cached form data to send to the backend */
   const onSubmit = (data) => {
     try {
       setIsSubmitting(true);
-      const preparedData = omit(
-        assign(
-          {
-            ...record,
-            ...data,
-          },
-          createCacheExampleData(data, record),
-          {
-            approvals: map(record.approvals, (approval) => approval.uid),
-            denials: map(record.denials, (denial) => denial.uid),
-          },
-        ),
-        [view === View.CREATE ? 'id' : '', 'type'],
-      );
-      const cleanedData = removePayloadFields(preparedData);
+      const omitKeys = [view === View.CREATE ? 'id' : '', 'type'];
+
+      const preparedData = omit(merge(record, data), omitKeys);
+      const cleanedData = cleanDataPipeline(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
         onSuccess: ({ data }) => {
@@ -170,7 +172,7 @@ const ExampleEditForm = ({
               {errors.style ? <p className="error">{errors.style.message}</p> : null}
             </Box>
           </Box>
-          <FormHeader title="Igbo" tooltip="The example sentence in Standard Igbo" />
+          <FormHeader title={sourceLanguage} tooltip={`The example sentence in ${sourceLanguage}`} />
           <Box
             {...(exampleTranscriptionFeedback?.humanTranscription
               ? {
@@ -185,9 +187,9 @@ const ExampleEditForm = ({
           >
             <Controller
               render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
-              name="igbo"
+              name="source.text"
               control={control}
-              defaultValue={record.igbo || getValues().igbo || ''}
+              defaultValue={get(record, 'source.text') || get(getValues(), 'source.text') || ''}
             />
             {exampleTranscriptionFeedback?.humanTranscription ? (
               <Box className="flex flex-row justify-between items-center">
@@ -225,20 +227,23 @@ const ExampleEditForm = ({
               </Box>
             ) : null}
           </Box>
-          {errors.igbo ? <p className="error">Igbo is required</p> : null}
+          {get(errors, 'source.text') ? <p className="error">{`${sourceLanguage} is required`}</p> : null}
         </Box>
         <Box className="flex flex-col">
           <FormHeader
-            title="English"
-            tooltip="The example sentence in English. This is the the literal English translation of the Igbo sentence."
+            title={destinationLanguage}
+            // eslint-disable-next-line max-len
+            tooltip={`The example sentence in ${destinationLanguage}. This is the the literal ${destinationLanguage} translation of the ${sourceLanguage} sentence.`}
           />
           <Controller
-            render={(props) => <Input {...props} placeholder="Please" data-test="english-input" />}
-            name="english"
+            render={(props) => (
+              <Input {...props} placeholder="Destination language translation" data-test="english-input" />
+            )}
+            name="translations.0.text"
             control={control}
-            defaultValue={record.english || getValues().english || ''}
+            defaultValue={get(record, 'translations.0.text') || get(getValues(), 'translations.0.text') || ''}
           />
-          {errors.english ? <p className="error">English is required</p> : null}
+          {get(errors, 'translations.0.text') ? <p className="error">{`${destinationLanguage} is required`}</p> : null}
         </Box>
         <Box className="flex flex-col">
           <FormHeader
@@ -246,7 +251,9 @@ const ExampleEditForm = ({
             tooltip="This field showcases the meaning of the sentence - typically for proverbs"
           />
           <Controller
-            render={(props) => <Input {...props} placeholder="Please" data-test="meaning-input" />}
+            render={(props) => (
+              <Input {...props} placeholder="Conceptual meaning of the original text" data-test="meaning-input" />
+            )}
             name="meaning"
             control={control}
             defaultValue={record.meaning || getValues().meaning || ''}

@@ -8,6 +8,7 @@ import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConn
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
+import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
 import AddAudioPronunciationButton from './AddAudioPronunciationButton';
 import FormHeader from '../../FormHeader';
 import AudioRecorder from '../../AudioRecorder';
@@ -36,6 +37,7 @@ const ExampleAudioPronunciationsForm = ({
   const permissions = usePermissions();
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
+  const { sourceLanguage } = getRecordLanguages(record);
 
   const { getValues, setValue } = control;
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
@@ -73,7 +75,7 @@ const ExampleAudioPronunciationsForm = ({
   return (
     <Box>
       <FormHeader
-        title="Igbo Sentence Recordings"
+        title={`${sourceLanguage} Sentence Recordings`}
         tooltip="An example can have multiple audio recorded for it. One on unique
         speaker can record a version for this sentence."
       />

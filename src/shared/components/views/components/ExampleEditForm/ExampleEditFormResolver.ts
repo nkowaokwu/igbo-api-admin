@@ -1,10 +1,16 @@
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+
+const TranslationFormSchema = Joi.object({
+  language: Joi.alternatives().try(...Object.values(LanguageEnum)),
+  text: Joi.string(),
+});
 
 export const ExampleEditFormSchema = Joi.object({
-  igbo: Joi.string().required(),
-  english: Joi.string(),
+  source: TranslationFormSchema.required(),
+  translations: Joi.array().min(0).items(TranslationFormSchema),
   meaning: Joi.string().allow('').optional(),
   nsibidi: Joi.string().allow('').optional(),
   nsibidiCharacters: Joi.array()
@@ -34,8 +40,6 @@ export const ExampleEditFormSchema = Joi.object({
     Joi.object({
       audio: Joi.string().allow(''),
       speaker: Joi.string().allow('').optional(),
-      approvals: Joi.string().optional(),
-      denials: Joi.string().optional(),
       archived: Joi.boolean(),
     }),
   ),

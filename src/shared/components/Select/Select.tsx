@@ -41,7 +41,6 @@ const Select = ({
   const toast = useToast();
   useFirebaseUid(setUid);
   const hasEnoughApprovals =
-    !!window.Cypress ||
     resource !== Collection.WORD_SUGGESTIONS ||
     (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
 
