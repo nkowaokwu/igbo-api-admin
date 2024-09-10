@@ -1,20 +1,13 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "eslint-plugin-jsx-a11y", "eslint-plugin-react", "cypress"],
-  "extends": [
-    "airbnb",
-    "airbnb-typescript",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:cypress/recommended",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "eslint-plugin-jsx-a11y", "eslint-plugin-react"],
+  "extends": ["airbnb", "airbnb-typescript", "plugin:@typescript-eslint/recommended", "prettier"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
   "ignorePatterns": ["**/dist/*.js"],
   "rules": {
-    "cypress/no-unnecessary-waiting": "warn",
     "import/extensions": ["error", "never", { "svg": "always" }],
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",

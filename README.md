@@ -168,45 +168,6 @@ is helpful to use for local testing purposes.
 
 You should now be able to access the editor platform at [http://localhost:3030](http://localhost:3030)
 
-## Cypress Testing
-
-This project uses [Cypress](https://cypress.io) for frontend tests.
-
-Start the frontend and backend server by running:
-
-```bash
-yarn dev:cypress
-```
-
-Running `yarn dev:cypress` will start th development server with Cypress in mind, which will mock audio URIs and bypass approval minimums.
-
-Run the Igbo API locally:
-
-```bash
-cd igbo_api
-yarn dev
-```
-
-### Option 1: Cypress Open Mode
-
-If you would like to watch your Cypress tests run in browser, run:
-
-```
-yarn cypress:open
-```
-
-### Option 2: Cypress Headless Mode
-
-If you want your Cypress tests to run in the terminal, run:
-
-```bash
-yarn cypress:run
-```
-
-[`http://localhost:8081`](http://localhost:8081) - The test result **Dashboard** to show all passing and failing tests
-
-**All tests run against a built development project, make sure that you've built your project with `yarn build:dev` when testing.**
-
 ## Jest Testing
 
 This project uses [Jest](https://jestjs.io) for unit frontend and backend tests.
