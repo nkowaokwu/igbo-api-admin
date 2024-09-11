@@ -141,7 +141,7 @@ describe('queries', () => {
     const query = searchRandomExampleSuggestionsToTranslateRegexQuery(uid);
     expect(query).toStrictEqual({
       merged: null,
-      english: '',
+      translations: { $elemMatch: { text: '' } },
       exampleForSuggestion: { $ne: true },
       origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
       'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },

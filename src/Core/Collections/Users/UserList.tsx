@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
-import { List, Datagrid, DateField, EmailField, TextField, Responsive, ListProps } from 'react-admin';
+import { List, Datagrid, DateField, EmailField, TextField, Responsive, ListProps, FunctionField } from 'react-admin';
+import UserRoleLabels from 'src/backend/shared/constants/UserRoleLabels';
 import { ListActions, Pagination, Select } from 'src/shared/components';
 import Collection from 'src/shared/constants/Collection';
 
@@ -12,8 +13,8 @@ const UserList = (props: ListProps): ReactElement => {
           <Datagrid>
             <Select collection={Collection.USERS} permissions={permissions} />
             <TextField label="Name" source="displayName" defaultValue="No name" />
-            <EmailField label="email" source="Email" />
-            <TextField label="Role" source="role" />
+            <EmailField label="Email" source="email" />
+            <FunctionField label="Role" source="role" render={(record) => UserRoleLabels[record.role] || record.role} />
           </Datagrid>
         }
         medium={
@@ -21,7 +22,7 @@ const UserList = (props: ListProps): ReactElement => {
             <Select collection="user" permissions={permissions} />
             <TextField label="Name" source="displayName" defaultValue="No name" />
             <EmailField label="Email" source="email" />
-            <TextField label="Role" source="role" />
+            <FunctionField label="Role" source="role" render={(record) => UserRoleLabels[record.role] || record.role} />
             <TextField label="Id" source="uid" />
             <DateField
               label="Last Log In"

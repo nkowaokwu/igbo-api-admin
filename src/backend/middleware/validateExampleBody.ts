@@ -5,8 +5,15 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 const { Types } = mongoose;
+
+const TranslationFormSchema = Joi.object({
+  language: Joi.alternatives().try(...Object.values(LanguageEnum)),
+  text: Joi.string(),
+});
+
 export const exampleDataSchema = Joi.object().keys({
   originalExampleId: Joi.string()
     .external(async (value) => {
@@ -17,8 +24,8 @@ export const exampleDataSchema = Joi.object().keys({
     })
     .allow(null)
     .optional(),
-  igbo: Joi.string(),
-  english: Joi.string().allow(''),
+  source: TranslationFormSchema.required(),
+  translations: Joi.array().min(0).items(TranslationFormSchema),
   meaning: Joi.string().allow('').optional(),
   nsibidi: Joi.string().allow('').optional(),
   nsibidiCharacters: Joi.array().min(0).items(Joi.string()).optional(),

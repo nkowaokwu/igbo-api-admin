@@ -8,6 +8,7 @@ enum Collection {
   EXAMPLE_TRANSCRIPTION_FEEDBACK = 'exampleTranscriptionFeedbacks',
   CORPUS_SUGGESTIONS = 'corpusSuggestions',
   USERS = 'users',
+  USER_PROJECT_PERMISSIONS = 'userProjectPermissions',
   POLLS = 'polls',
   NOTIFICATIONS = 'notifications',
   NSIBIDI_CHARACTERS = 'nsibidiCharacters',
@@ -15,6 +16,7 @@ enum Collection {
   LEADERBOARDS = 'leaderboards',
   TEXT_IMAGES = 'textImages',
   STATS = 'stats',
+  PROJECTS = 'projects',
 }
 
 export default Collection;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { compact } from 'lodash';
 import {
   hasAdminPermissions,
   hasEditorPermissions,
@@ -40,6 +41,7 @@ const PollList = React.lazy(() => import('src/Core/Collections/Polls/PollList'))
 const PollCreate = React.lazy(() => import('src/Core/Collections/Polls/PollCreate'));
 const UserList = React.lazy(() => import('src/Core/Collections/Users/UserList'));
 const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'));
+const ProjectSettings = React.lazy(() => import('src/Core/Collections/ProjectSettings'));
 // const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
@@ -61,7 +63,7 @@ export const ResourceGroupLabels = {
   [ResourceGroup.UNSPECIFIED]: '',
   [ResourceGroup.LEXICAL]: 'Published data',
   [ResourceGroup.DATA_COLLECTION]: 'Draft data',
-  [ResourceGroup.SETTINGS]: 'Settings',
+  [ResourceGroup.SETTINGS]: 'Project',
 };
 
 export interface Resource {
@@ -180,6 +182,14 @@ const editorRoutes = (permissions) =>
 const adminRoutes = (permissions) =>
   hasAdminPermissions(permissions, [
     {
+      name: 'settings',
+      key: 'settings',
+      noLayout: true,
+      list: ProjectSettings,
+      icon: () => <>🔩</>,
+      group: ResourceGroup.SETTINGS,
+    },
+    {
       name: 'users',
       key: 'users',
       list: withLastRoute(UserList),
@@ -248,33 +258,34 @@ export const getResourceObjects = (permissions: any): Resource[] => [
   ...crowdsourcerRoutes(permissions),
 ];
 
-export const getCustomRouteObjects = (): any => [
-  {
-    exact: true,
-    path: '/profile',
-    component: withLastRoute(Profile),
-    group: ResourceGroup.UNSPECIFIED,
-  },
-  {
-    exact: true,
-    path: '/translate',
-    component: withLastRoute(TranslateIgboSentences),
-    group: ResourceGroup.UNSPECIFIED,
-  },
-  {
-    exact: true,
-    path: '/notifications',
-    component: withLastRoute(NotificationList),
-    group: ResourceGroup.UNSPECIFIED,
-  },
-  {
-    path: '/igboSoundbox',
-    component: withLastRoute(IgboSoundbox),
-    group: ResourceGroup.UNSPECIFIED,
-  },
-  {
-    path: '/igboDefinitions',
-    component: withLastRoute(IgboDefinitions),
-    group: ResourceGroup.UNSPECIFIED,
-  },
-];
+export const getCustomRouteObjects = (): any =>
+  compact([
+    {
+      exact: true,
+      path: '/profile',
+      component: withLastRoute(Profile),
+      group: ResourceGroup.UNSPECIFIED,
+    },
+    {
+      exact: true,
+      path: '/translate',
+      component: withLastRoute(TranslateIgboSentences),
+      group: ResourceGroup.UNSPECIFIED,
+    },
+    {
+      exact: true,
+      path: '/notifications',
+      component: withLastRoute(NotificationList),
+      group: ResourceGroup.UNSPECIFIED,
+    },
+    {
+      path: '/igboSoundbox',
+      component: withLastRoute(IgboSoundbox),
+      group: ResourceGroup.UNSPECIFIED,
+    },
+    {
+      path: '/igboDefinitions',
+      component: withLastRoute(IgboDefinitions),
+      group: ResourceGroup.UNSPECIFIED,
+    },
+  ]).flat();

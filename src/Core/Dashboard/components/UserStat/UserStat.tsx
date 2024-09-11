@@ -10,7 +10,6 @@ import {
 } from 'src/shared/DataCollectionAPI';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserCard from 'src/shared/components/UserCard';
-import ReferralCode from 'src/Core/Dashboard/components/ReferralCode';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
@@ -18,10 +17,8 @@ import IgboSoundboxStats from '../IgboSoundboxStats';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const UserStat = ({
-  isEditing = false,
   user,
 }: {
-  isEditing?: boolean;
   user: UserProfile;
   dialectalVariations: number;
   completeExamples: number;
@@ -72,13 +69,10 @@ const UserStat = ({
   return (
     <Box m={4}>
       <Skeleton isLoaded={Boolean(user?.firebaseId || user?.uid)}>
-        <UserCard {...user} isEditing={isEditing} />
+        <UserCard {...user} />
       </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">
         <Box className="w-full">
-          <Skeleton isLoaded={Boolean(user?.referralCode)}>
-            <ReferralCode referralCode={user.referralCode} />
-          </Skeleton>
           <Heading as="h2" mb={4}>
             Contributions
           </Heading>

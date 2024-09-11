@@ -3,10 +3,9 @@ import * as functions from 'firebase-functions';
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;
 export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
-export const isCypress = config?.runtime?.env === 'cypress';
 export const isJest = config?.runtime?.env === 'jest' || NODE_ENV === 'jest';
 export const isTest = config?.runtime?.env === 'test' || NODE_ENV === 'test';
-export const isTesting = isCypress || isJest || isTest;
+export const isTesting = isJest || isTest;
 export const isDevelopment = config?.runtime?.env === 'development' || isTesting;
 export const isAWSProduction = isProduction;
 
@@ -75,8 +74,9 @@ export const GET_MAIN_KEY = (): string => {
   if (config?.runtime?.env === 'production') {
     return config?.env?.main_key;
   }
-  return CI || config?.runtime?.env === 'cypress' || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
+  return CI || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
 };
+export const PROJECT_ID = '66de0ffee848d30f37403402';
 
 // Twitter API
 export const TWITTER_CLIENT_ID = config?.twitter?.client_id;

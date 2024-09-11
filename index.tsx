@@ -5,14 +5,12 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import './src/backend/shared/utils/wrapConsole';
-import { sendWeeklyStats, onSendEditorReminderEmail } from './src/backend/services/emailJobs';
 import {
   onUpdateDashboardStats,
   onUpdateTotalAudioDashboardStats,
   getLoginStats,
 } from './src/backend/controllers/stats';
 import triggersRouter from './src/backend/routers/triggersRouter';
-import apiRouter from './src/backend/routers/apiRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
@@ -51,7 +49,6 @@ server.use('/triggers', triggersRouter);
 server.get('/twitter_auth', onTwitterAuth);
 server.get('/twitter_callback', onTwitterCallback);
 server.get('/stats/login', getLoginStats);
-server.use(apiRouter);
 server.use(platformRouters);
 server.get('**', (_, res) => {
   const html = '';
@@ -69,17 +66,6 @@ export const deleteConstructedTermPoll = onDeleteConstructedTermPoll;
 export const deleteUser = onDeleteUser;
 export const updateDocument = onUpdateDocument;
 export const generateMediaSignedRequest = onMediaSignedRequest;
-
-/* Runs every Monday at 6AM PST */
-export const sendEditorStatsEmail = functions.pubsub
-  .schedule('0 6 * * 1')
-  .timeZone('America/Los_Angeles')
-  .onRun(sendWeeklyStats);
-
-export const sendEditorReminderEmail = functions.pubsub
-  .schedule('0 6 */4 * *')
-  .timeZone('America/Los_Angeles')
-  .onRun(onSendEditorReminderEmail);
 
 /* Runs at 6AM PST on October 11 */
 export const copyFirebaseUsers = functions.pubsub

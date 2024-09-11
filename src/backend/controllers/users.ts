@@ -1,7 +1,8 @@
 /* Get all users from Firebase */
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
-import { filter, compact, reduce, merge } from 'lodash';
+import { filter, compact, reduce, merge, assign } from 'lodash';
+import { getUserProjectPermissionsByProjectHelper } from 'src/backend/controllers/userProjectPermissions';
 import { createMongoUser } from 'src/backend/functions/users';
 import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';
 import cleanDocument from 'src/backend/shared/utils/cleanDocument';
@@ -36,7 +37,18 @@ export const formatUser = (user: Interfaces.FirebaseUser): Interfaces.FormattedU
  */
 export const findUsers = async (): Promise<Interfaces.FormattedUser[]> => {
   const result = await admin.auth().listUsers();
-  const users = result.users.map((user) => formatUser(user));
+  const users = result.users.map(formatUser);
+  return users;
+};
+
+/**
+ *
+ * @param param0 List of uids to fetch
+ * @returns Fetches specified Firebase users
+ */
+const findUsersByUid = async ({ uids }: { uids: string[] }): Promise<Interfaces.FormattedUser[]> => {
+  const result = await Promise.all(uids.map((uid) => admin.auth().getUser(uid)));
+  const users = result.map(formatUser);
   return users;
 };
 
@@ -105,16 +117,58 @@ export const getUsers = async (
 ): Promise<Response<any> | void> => {
   try {
     const { skip, limit, filters } = await handleQueries(req);
-    const users = (await findUsers()).filter((user) =>
-      Object.values(filters).every((value: string) => {
-        const displayName = (user.displayName || '').toLowerCase();
-        const { email, uid } = user;
-        // Finds users where the value matches their name, email, or Firebase id
-        return displayName.includes(value?.toLowerCase?.()) || email.includes(value?.toLowerCase?.()) || uid === value;
-      }),
-    );
-    const paginatedUsers = users.slice(skip, skip + 1 + limit);
-    return res.setHeader('Content-Range', users.length).status(200).send(paginatedUsers);
+    const { mongooseConnection } = req;
+    const { projectId } = req.query;
+    let users = [];
+
+    // If the client is searching for a user use the following logic
+    if (Object.values(filters).length) {
+      users = (await findUsers()).filter((user) =>
+        Object.values(filters).every((value: string) => {
+          const displayName = (user.displayName || '').toLowerCase();
+          const { email, uid } = user;
+          // Finds users where the value matches their name, email, or Firebase id
+          return (
+            displayName.includes(value?.toLowerCase?.()) || email.includes(value?.toLowerCase?.()) || uid === value
+          );
+        }),
+      );
+      users = users.slice(skip, skip + 1 + limit);
+
+      const userProjectPermissions = await getUserProjectPermissionsByProjectHelper({
+        mongooseConnection,
+        projectId,
+        uids: users.map(({ uid }) => uid),
+        skip,
+        limit,
+      });
+
+      userProjectPermissions.forEach((userProjectPermission) => {
+        const userIndex = users.findIndex(({ uid }) => uid === userProjectPermission.toJSON().firebaseId);
+        if (userIndex !== -1) {
+          users[userIndex] = assign(users[userIndex], userProjectPermission.toJSON());
+        }
+      });
+    } else {
+      // Else we'll look at user permission documents first
+      const userProjectPermissions = (
+        await getUserProjectPermissionsByProjectHelper({
+          mongooseConnection,
+          projectId,
+          skip,
+          limit,
+        })
+      )
+        .map((userProjectPermission) => userProjectPermission.toJSON())
+        // Only includes UserProjectPermissions that have truthy Firebase Id
+        .filter(({ firebaseId }) => Boolean(firebaseId));
+
+      const uids = userProjectPermissions.map(({ firebaseId }) => firebaseId);
+
+      users = await findUsersByUid({ uids });
+    }
+
+    return res.setHeader('Content-Range', users.length).status(200).send(users);
   } catch (err) {
     return next(new Error(`An error occurred while grabbing all users: ${err.message}`));
   }

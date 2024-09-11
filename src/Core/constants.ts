@@ -2,6 +2,7 @@
 export const IGBO_API_VOLUNTEER_HOME_BASE = 'https://editor.igboapi.com/gettingstarted';
 export const DICTIONARY_EDITING_STANDARDS_URL = 'https://editor.igboapi.com/checklist';
 export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
+export const NKOWAOKWU_EMAIL = 'kedu@nkowaokwu.com';
 export const TWITTER_APP_URL = 'https://twitter.com/nkowaokwu/status';
 
 export const BUG_REPORT_URL = 'https://notionforms.io/forms/bug-reports-llbpnk';

@@ -113,7 +113,9 @@ const theme = createTheme({
       content: {
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
-        overflowY: 'hidden',
+        padding: '0 0 var(--chakra-sizes-12) 0 !important',
+        overflowY: 'scroll',
+        height: '100vh',
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',
@@ -139,6 +141,7 @@ const theme = createTheme({
       },
       drawerPaper: {
         width: 'auto',
+        backgroundColor: 'white !important',
       },
     },
     RaMenu: {

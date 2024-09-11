@@ -6,16 +6,12 @@ import * as Interfaces from './interfaces';
  * Removes _id and __v from nested documents
  * Normalizes (removes accent marks) from word and example's igbo
  */
-const removeKeysInNestedDoc = (docs: Interfaces.Word[], nestedDocsKey: string): Interfaces.Word[] => {
+const removeKeysInNestedDoc = (docs: Interfaces.WordData[], nestedDocsKey: string): Interfaces.WordData[] => {
   forEach(docs, (doc) => {
     // Handles removing accent marks for word
     doc.word = accents.remove(doc.word);
     doc[nestedDocsKey] = map(doc[nestedDocsKey], (nestedDoc) => {
       const updatedNestedDoc = assign(nestedDoc, { id: nestedDoc._id });
-      if (nestedDocsKey === 'examples') {
-        // Handles remove accent marks for example's igbo
-        updatedNestedDoc.igbo = accents.remove(updatedNestedDoc.igbo);
-      }
       delete updatedNestedDoc._id;
       delete updatedNestedDoc.__v;
       return updatedNestedDoc;

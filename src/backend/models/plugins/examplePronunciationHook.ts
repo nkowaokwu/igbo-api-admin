@@ -6,7 +6,7 @@ import {
   renameAudioPronunciation,
   createAudioPronunciation,
 } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
-import { isCypress, isAWSProduction } from 'src/backend/config';
+import { isAWSProduction } from 'src/backend/config';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 /* If the client sent over blob data for pronunciation, it will be uploaded to AWS S3 */
@@ -20,11 +20,10 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
           this.pronunciations.map(async (pronunciation: { audio: string; speaker: string }, index) => {
             const newId = `${id}-${uuidv4()}`;
             if (
-              // Going to mock creating and saving audio pronunciation while testing in Cypress
-              (isCypress && this.pronunciations[index].audio) ||
+              // Going to mock creating and saving audio pronunciation while testing
+              this.pronunciations[index].audio ||
               this.pronunciations[index].audio.startsWith('data:audio/mp3') ||
-              (!isCypress &&
-                !isAWSProduction &&
+              (!isAWSProduction &&
                 this.pronunciations[index].audio &&
                 !this.pronunciations[index].audio.startsWith('https://'))
             ) {

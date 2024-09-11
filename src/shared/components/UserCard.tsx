@@ -2,6 +2,7 @@ import React, { useState, ReactElement } from 'react';
 import moment from 'moment';
 import {
   Avatar,
+  Button,
   Box,
   Heading,
   Input,
@@ -13,6 +14,9 @@ import {
   useToast,
   useBreakpointValue,
 } from '@chakra-ui/react';
+import { EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
+import { merge } from 'lodash';
+import { updateUserProfile } from 'src/shared/UserAPI';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import DatePicker from 'react-date-picker';
 import { usePermissions } from 'react-admin';
@@ -25,7 +29,6 @@ import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 
 const UserCard = ({
-  isEditing = false,
   displayName,
   photoURL,
   email,
@@ -33,16 +36,63 @@ const UserCard = ({
   gender,
   dialects,
 }: Partial<FormattedUser> & {
-  isEditing?: boolean;
   age: number;
   gender: GenderEnum;
   dialects: DialectEnum[];
 }): ReactElement => {
   const [birthday, setBirthday] = useState(age);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEditingUserProfile, setIsEditingUserProfile] = useState(false);
   const permissions = usePermissions();
   const toast = useToast();
   const isAdmin = hasAdminPermissions(permissions.permissions, true);
   const avatarSize = useBreakpointValue({ base: 'lg', lg: 'xl' });
+
+  const handleEditButton = async () => {
+    if (isEditingUserProfile) {
+      setIsLoading(true);
+      const displayName = (document.querySelector('#user-profile-display-name-input') as HTMLInputElement).value;
+      const age = moment((document.querySelector('#user-profile-age-input') as HTMLInputElement).value).toDate();
+      const dialect = (document.querySelector('#user-dialect-input') as HTMLSelectElement).value as DialectEnum;
+      const gender = (document.querySelector('#user-gender-input') as HTMLSelectElement).value as GenderEnum;
+
+      const payload = { displayName, age, dialects: [dialect], gender };
+      try {
+        // Save the user profile
+        const savedProfile = await updateUserProfile({ userId: uid, userProfile: payload });
+        setUser(merge(user, savedProfile));
+        toast({
+          title: 'Saved changes',
+          position: 'top-right',
+          variant: 'left-accent',
+          description: 'Your profile has been updated',
+          status: 'success',
+          duration: 4000,
+          isClosable: true,
+        });
+      } catch (err) {
+        toast({
+          title: 'Unable to save',
+          position: 'top-right',
+          variant: 'left-accent',
+          description: 'An error occurred while updating user profile',
+          status: 'error',
+          duration: 4000,
+          isClosable: true,
+        });
+      } finally {
+        setIsLoading(false);
+        setIsEditingUserProfile(false);
+      }
+    } else {
+      setIsEditingUserProfile(true);
+    }
+  };
+
+  // Does not save the user's profile changes
+  const handleOnCancel = () => {
+    setIsEditingUserProfile(false);
+  };
 
   const handleCopyId = () => {
     copyToClipboard(
@@ -56,9 +106,37 @@ const UserCard = ({
 
   return (
     <Box className="flex flex-col md:flex-row items-center text-center md:text-left space-y-4 md:space-x-4 mb-4 p-6">
+      <Box className="flex flex-row space-x-3 items-center">
+        <Tooltip label={isEditingUserProfile ? 'Save your changes' : 'Edit your profile'}>
+          <Button
+            variant="primary"
+            backgroundColor="primary"
+            color="white"
+            leftIcon={<EditIcon boxSize={4} />}
+            onClick={handleEditButton}
+            isLoading={isLoading}
+          >
+            {isEditingUserProfile ? 'Save' : 'Edit'}
+          </Button>
+        </Tooltip>
+        <Tooltip label="Discard your changes">
+          <>
+            {isEditingUserProfile ? (
+              <Button
+                variant="ghost"
+                leftIcon={<SmallCloseIcon boxSize={4} />}
+                onClick={handleOnCancel}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+            ) : null}
+          </>
+        </Tooltip>
+      </Box>
       <Avatar name={displayName} src={photoURL} size={avatarSize} />
       <Box>
-        {isEditing ? (
+        {isEditingUserProfile ? (
           <Box className="flex flex-col space-y-3">
             <Box className="flex flex-col lg:flex-row space-x-3">
               <Box>

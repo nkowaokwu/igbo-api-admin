@@ -16,7 +16,7 @@ const ReferralCode = ({ referralCode }: { referralCode: string }): React.ReactEl
   };
 
   return (
-    <Box bg="gray.100" borderRadius="lg" w="100%" p={4} color="gray.700" mb={3}>
+    <Box bg="gray.50" borderRadius="lg" w="100%" p={4} color="gray.700" mb={3}>
       <Flex justifyContent="space-between">
         <Flex direction="column" rowGap="2">
           <Text fontWeight="700" fontFamily="heading">

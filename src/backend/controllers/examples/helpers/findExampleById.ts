@@ -8,12 +8,17 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
  * @param mongooseConnection
  * @returns Example
  */
-const findExampleById = (
-  id: string,
-  mongooseConnection: Connection,
-): Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
+const findExampleById = ({
+  id,
+  projectId,
+  mongooseConnection,
+}: {
+  id: string;
+  projectId;
+  mongooseConnection: Connection;
+}): Query<Document<Interfaces.Example>, Document<Interfaces.Example>> => {
   const Example = mongooseConnection.model('Example', exampleSchema);
-  return Example.findById(id);
+  return Example.findOne({ _id: id, projectId });
 };
 
 export default findExampleById;

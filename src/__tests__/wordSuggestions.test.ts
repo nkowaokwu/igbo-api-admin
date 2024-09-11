@@ -41,7 +41,6 @@ describe('MongoDB Word Suggestions', () => {
   beforeAll(() => {
     jest.mock('src/backend/config', () => ({
       isAWSProduction: false,
-      isCypress: false,
       TEST_MONGO_URI: 'mongodb://127.0.0.1:27017/test_igbo_api',
       AWS_BUCKET: 'test_bucket',
       AWS_REGION: 'test_region',

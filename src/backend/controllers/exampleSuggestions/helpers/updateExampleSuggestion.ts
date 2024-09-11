@@ -11,10 +11,12 @@ import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/
  */
 const updateExampleSuggestion = ({
   id,
+  projectId,
   data: clientData,
   mongooseConnection,
 }: {
   id: string;
+  projectId: string;
   data: Partial<Interfaces.ExampleClientData>;
   mongooseConnection: Connection;
 }): Promise<(Interfaces.ExampleSuggestion & Omit<Partial<Interfaces.ExampleClientData>, 'crowdsourcing'>) | void> => {
@@ -24,7 +26,7 @@ const updateExampleSuggestion = ({
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
-  const exampleSuggestion = ExampleSuggestion.findById(id).then(
+  const exampleSuggestion = ExampleSuggestion.findOne({ _id: id, projectId }).then(
     async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
       if (!exampleSuggestion) {
         throw new Error("Example suggestion doesn't exist");

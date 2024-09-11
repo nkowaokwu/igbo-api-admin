@@ -1,5 +1,5 @@
 import removeAccents from 'src/backend/utils/removeAccents';
-import { isAWSProduction, isCypress } from 'src/backend/config';
+import { isAWSProduction } from 'src/backend/config';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
 import { getUploadSignature } from 'src/backend/controllers/utils/MediaAPIs/BaseMediaAPI';
 import { SignedMediaResponse } from 'src/backend/controllers/utils/types/mediaTypes';
@@ -13,7 +13,7 @@ export const createMedia = async (id: string, mediaData: string, mediaType: Medi
     throw new Error('id and media must be provided');
   }
   const mediaId = removeAccents.remove(id);
-  if (isCypress || !isAWSProduction) {
+  if (!isAWSProduction) {
     return `${dummyUriPath}${mediaId}`;
   }
   const base64Data = Buffer.from(mediaData.replace(/^data:.+;base64,/, ''), 'base64');
@@ -37,7 +37,7 @@ export const copyMedia = async (oldDocId: string, newDocId: string): Promise<any
   const oldMediaId = removeAccents.remove(oldDocId);
   const newMediaId = removeAccents.remove(newDocId);
   try {
-    if (isCypress || !isAWSProduction) {
+    if (!isAWSProduction) {
       return `${dummyUriPath}${newMediaId}`;
     }
 
@@ -68,7 +68,7 @@ export const deleteMedia = async (id: string): Promise<any> => {
   }
   try {
     const mediaId = removeAccents.remove(id);
-    if (isCypress || !isAWSProduction) {
+    if (!isAWSProduction) {
       return `${dummyUriPath}${mediaId}`;
     }
     const params = {
@@ -84,7 +84,7 @@ export const deleteMedia = async (id: string): Promise<any> => {
 
 /* Takes an old and new media id and renames it (copies and deletes) */
 export const renameMedia = async (oldDocId: string, newDocId: string): Promise<any> => {
-  if (isCypress || !isAWSProduction) {
+  if (!isAWSProduction) {
     if (!oldDocId) {
       return '';
     }

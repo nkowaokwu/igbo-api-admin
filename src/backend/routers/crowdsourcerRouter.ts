@@ -37,6 +37,9 @@ import Collection from 'src/shared/constants/Collection';
 import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
 import { adminRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 import authentication from 'src/backend/middleware/authentication';
+import { getProjects, getProjectById } from 'src/backend/controllers/projects';
+import validId from 'src/backend/middleware/validId';
+import { getUserProjectPermission } from 'src/backend/controllers/userProjectPermissions';
 
 const crowdsourcerRouter = express.Router();
 crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
@@ -119,5 +122,10 @@ crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 crowdsourcerRouter.post(`/${Collection.USERS}/referral`, createReferral);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
 crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
+
+// Project
+crowdsourcerRouter.get(`/${Collection.PROJECTS}`, getProjects);
+crowdsourcerRouter.get(`/${Collection.PROJECTS}/:id`, validId, getProjectById);
+crowdsourcerRouter.get(`/${Collection.USER_PROJECT_PERMISSIONS}`, getUserProjectPermission);
 
 export default crowdsourcerRouter;

@@ -8,14 +8,14 @@ import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 export interface ExampleClientData {
   id?: string;
-  igbo?: string;
-  english?: string;
+  source?: Translation;
+  translations?: Translation[];
   meaning?: string;
   nsibidi?: string;
   nsibidiCharacters?: string[];
   type?: SentenceTypeEnum;
   style?: ExampleStyleEnum;
-  source?: SuggestionSourceEnum;
+  origin?: SuggestionSourceEnum;
   pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];

@@ -188,20 +188,8 @@ export default extendTheme({
         field: {
           backgroundColor: 'white',
           transition: 'all .2s ease',
-          borderColor: 'gray.200',
+          borderColor: 'gray.400',
           borderWidth: '1px',
-          ':focus': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
-          ':active': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
-          ':hover': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
           '::placeholder': {
             color: 'gray.400',
           },
@@ -242,20 +230,8 @@ export default extendTheme({
       baseStyle: {
         backgroundColor: 'white',
         transition: 'all .2s ease',
-        borderColor: 'gray.200',
+        borderColor: 'gray.400',
         borderWidth: '1px',
-        ':focus': {
-          borderColor: 'gray.200',
-          borderWidth: '1px',
-        },
-        ':active': {
-          borderColor: 'gray.200',
-          borderWidth: '1px',
-        },
-        ':hover': {
-          borderColor: 'green.200',
-          borderWidth: '1px',
-        },
         '::placeholder': {
           color: 'gray.400',
         },
@@ -265,7 +241,6 @@ export default extendTheme({
         variant: '',
       },
     },
-    Toast: {},
     Icon: {
       baseStyle: {
         ':hover': {
@@ -298,6 +273,16 @@ export default extendTheme({
             borderRadius: 'md',
           },
         },
+      },
+    },
+    Divider: {
+      baseStyle: {
+        borderColor: 'gray.400',
+      },
+    },
+    StackDivider: {
+      baseStyle: {
+        borderColor: 'gray.400',
       },
     },
   },

@@ -1,5 +1,4 @@
 import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
 import { forIn } from 'lodash';
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -9,10 +8,10 @@ import {
 } from 'src/backend/controllers/userProjectPermissions';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import Author from 'src/backend/shared/constants/Author';
+import { PROJECT_ID } from 'src/backend/config';
 import AUTH_TOKEN from '../shared/constants/testAuthTokens';
 import UserRoles from '../shared/constants/UserRoles';
 
-const config = functions.config();
 /* Validates the user-provided auth token */
 const authentication = async (
   req: Interfaces.EditorRequest,
@@ -24,7 +23,7 @@ const authentication = async (
     const authHeader = req.headers.authorization;
 
     /* Overrides user role for local development and testing purposes */
-    if (!authHeader && (config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test')) {
+    if (!authHeader && process.env.NODE_ENV === 'test') {
       const { role = UserRoles.ADMIN, uid = AUTH_TOKEN.ADMIN_AUTH_TOKEN } = req.query;
       req.user = { role, uid };
       return next();
@@ -61,12 +60,12 @@ const authentication = async (
 
         // If a user doesn't have a project permission for the Igbo API project
         // create one on the fly
-        if (!userProjectPermission && project.title === 'Igbo API') {
+        if (!userProjectPermission && project.id === PROJECT_ID) {
           userProjectPermission = await postUserProjectPermissionHelper({
             mongooseConnection,
             projectId: project.id.toString(),
             body: {
-              firebaseId: '',
+              firebaseId: decoded.uid,
               email: decoded.email,
               role: decoded.role, // Use existing role
               grantingAdmin: Author.SYSTEM,

@@ -42,7 +42,6 @@ export const exampleSuggestionSchema = new Schema(
     },
     source: { type: translationSchema, default: { language: LanguageEnum.UNSPECIFIED, text: '' } },
     translations: { type: [{ type: translationSchema }], default: [] },
-    english: { type: String, default: '', trim: true },
     meaning: { type: String, default: '', trim: true },
     nsibidi: { type: String, default: '' },
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },

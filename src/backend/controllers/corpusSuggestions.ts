@@ -19,15 +19,16 @@ export const postCorpusSuggestion = async (
 ): Promise<Response | void> => {
   try {
     const { body: data, user, mongooseConnection } = req;
+    const { projectId } = req.query;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
     let corpus = null;
     data.authorId = user.uid;
     if (data.originalCorpusId) {
-      corpus = await Corpus.findById(data.originalCorpusId);
+      corpus = await Corpus.findOne({ _id: data.originalCorpusId, projectId });
     }
     // Apply media link on the backend for child corpus suggestions
-    const newCorpusSuggestion = new CorpusSuggestion({ ...data, media: (corpus || {}).media });
+    const newCorpusSuggestion = new CorpusSuggestion({ ...data, media: (corpus || {}).media, projectId });
     const savedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await newCorpusSuggestion.save();
     return res.send(savedCorpusSuggestion);
   } catch (err) {
@@ -37,18 +38,11 @@ export const postCorpusSuggestion = async (
 
 export const findCorpusSuggestionById = (
   id: string | Types.ObjectId,
+  projectId: string,
   mongooseConnection,
 ): Query<any, Document<Interfaces.CorpusSuggestion>> => {
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-  return CorpusSuggestion.findById(id);
-};
-
-export const deleteCorpusSuggestionByOriginalCorpusId = (
-  id: string | Types.ObjectId,
-  mongooseConnection,
-): Query<any, Document<Interfaces.CorpusSuggestion>> => {
-  const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-  return CorpusSuggestion.deleteMany({ originalWordId: id });
+  return CorpusSuggestion.findOne({ _id: id, projectId });
 };
 
 /* Grabs CorpusSuggestions */
@@ -80,9 +74,10 @@ export const putCorpusSuggestion = (
     const {
       body: data,
       params: { id },
+      query: { projectId },
       mongooseConnection,
     } = req;
-    return findCorpusSuggestionById(id, mongooseConnection)
+    return findCorpusSuggestionById(id, projectId, mongooseConnection)
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
           throw new Error("Corpus suggestion doesn't exist");
@@ -110,8 +105,9 @@ export const getCorpusSuggestions = (
 ): Promise<Response | void> | void => {
   try {
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
+    const { projectId } = req.query;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(user.uid, regexKeyword, filters);
+    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
     return findCorpusSuggestions({
       regexMatch,
       skip,
@@ -140,15 +136,17 @@ export const getCorpusSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-    const populatedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await CorpusSuggestion.findById(id).then(
-      async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
-        if (!corpusSuggestion) {
-          throw new Error('No corpus suggestion exists with the provided id.');
-        }
-        return corpusSuggestion;
-      },
-    );
+    const populatedCorpusSuggestion: Document<Interfaces.CorpusSuggestion> = await CorpusSuggestion.findOne({
+      _id: id,
+      projectId,
+    }).then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
+      if (!corpusSuggestion) {
+        throw new Error('No corpus suggestion exists with the provided id.');
+      }
+      return corpusSuggestion;
+    });
     return res.send(populatedCorpusSuggestion);
   } catch (err) {
     return next(err);
@@ -164,9 +162,10 @@ export const deleteCorpusSuggestion = (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
-    return CorpusSuggestion.findByIdAndDelete(id)
+    return CorpusSuggestion.findOneAndDelete({ _id: id, projectId })
       .then(async (corpusSuggestion: Interfaces.CorpusSuggestion) => {
         if (!corpusSuggestion) {
           throw new Error('No corpus suggestion exists with the provided id.');
@@ -199,13 +198,14 @@ export const approveCorpusSuggestion = async (
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
   const {
     params: { id },
+    query: { projectId },
     user,
     mongooseConnection,
   } = req;
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
   try {
-    const corpusSuggestion = await CorpusSuggestion.findById(id);
+    const corpusSuggestion = await CorpusSuggestion.findOne({ _id: id, projectId });
     if (!corpusSuggestion) {
       throw new Error("Corpus suggestion doesn't exist");
     }
@@ -228,13 +228,14 @@ export const denyCorpusSuggestion = async (
 ): Promise<Response<Interfaces.CorpusSuggestion> | void> => {
   const {
     params: { id },
+    query: { projectId },
     user,
     mongooseConnection,
   } = req;
   const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
 
   try {
-    const corpusSuggestion = await CorpusSuggestion.findById(id);
+    const corpusSuggestion = await CorpusSuggestion.findOne({ _id: id, projectId });
     if (!corpusSuggestion) {
       throw new Error("Corpus suggestion doesn't exist");
     }

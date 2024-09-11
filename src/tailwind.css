@@ -54,7 +54,13 @@ main,
 }
 
 .main-content {
-  @apply pb-0;
+  height: 100vh;
+  overflow-y: scroll;
+  @apply p-0 !important;
+}
+
+body {
+  overflow: hidden !important;
 }
 
 ::selection {
@@ -261,10 +267,6 @@ input#igbo {
   @apply h-8 !important;
   @apply w-64 !important;
   @apply rounded-lg !important;
-}
-
-#react-admin-title {
-  @apply text-white !important;
 }
 
 .form-textarea {

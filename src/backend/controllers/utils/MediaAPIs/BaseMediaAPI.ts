@@ -1,4 +1,4 @@
-import { isAWSProduction, isCypress } from 'src/backend/config';
+import { isAWSProduction } from 'src/backend/config';
 import { SignedMediaResponse } from 'src/backend/controllers/utils/types/mediaTypes';
 import MediaTypes from 'src/backend/shared/constants/MediaTypes';
 import initializeAPI from './initializeAPI';
@@ -20,7 +20,7 @@ export const getUploadSignature = async ({
   id: string;
   params: BaseParams;
 }): Promise<SignedMediaResponse> => {
-  if (isCypress || !isAWSProduction) {
+  if (!isAWSProduction) {
     return {
       signedRequest: `mock-signed-request/${id}`,
       mediaUrl: `mock-url/${id}`,

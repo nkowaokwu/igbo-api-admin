@@ -35,6 +35,7 @@ export const getCorpora = async (
   try {
     const { searchWord, regexKeyword, skip, limit, strict, filters, user, mongooseConnection, ...rest } =
       handleQueries(req);
+    const { projectId } = req.query;
     const searchQueries = {
       searchWord,
       skip,
@@ -44,7 +45,7 @@ export const getCorpora = async (
     };
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
-    const query = searchCorpusTextSearch(searchWord, regexKeyword);
+    const query = searchCorpusTextSearch(searchWord, regexKeyword, projectId);
     const corpora = await searchCorpus({ query, mongooseConnection, ...searchQueries });
     return await packageResponse<Interfaces.Corpus>({
       res,
@@ -67,10 +68,11 @@ export const getCorpus = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const Corpus = mongooseConnection.model('Corpus', corpusSchema);
 
     const updatedCorpus = await findCorporaWithMatch({
-      match: { _id: new mongoose.Types.ObjectId(id) },
+      match: { _id: new mongoose.Types.ObjectId(id), projectId },
       limit: 1,
       Corpus,
     }).then(async ([corpus]: Interfaces.Corpus[]) => {
@@ -87,6 +89,7 @@ export const getCorpus = async (
 
 const findAndUpdateCorpus = (
   id: string,
+  projectId: string,
   mongooseConnection: Connection,
   cb: (any) => Interfaces.Corpus,
 ): Promise<Interfaces.Corpus> => {
@@ -113,9 +116,10 @@ export const putCorpus = async (
     const {
       body: data,
       params: { id },
+      query: { projectId },
       mongooseConnection,
     } = req;
-    const savedCorpus: Interfaces.Corpus = await findAndUpdateCorpus(id, mongooseConnection, (corpus) => {
+    const savedCorpus: Interfaces.Corpus = await findAndUpdateCorpus(id, projectId, mongooseConnection, (corpus) => {
       const updatedCorpus = assign(corpus, data);
       return updatedCorpus.save();
     });
@@ -237,7 +241,7 @@ export const mergeCorpus = async (
     const mergedCorpus: Document<Interfaces.Corpus> | any =
       (suggestionDoc.originalCorpusId
         ? await mergeIntoCorpus(suggestionDoc, user.uid, mongooseConnection)
-        : await createCorpusFromSuggestion(suggestionDoc, user.uid, mongooseConnection)) || {};
+        : await createCorpusFromSuggestion(suggestionDoc, user.uid, projectId, mongooseConnection)) || {};
     return res.send(mergedCorpus);
   } catch (err) {
     return next(err);

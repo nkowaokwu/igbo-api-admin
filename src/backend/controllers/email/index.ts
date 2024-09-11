@@ -111,6 +111,7 @@ export const sendMergedStats = (data: Interfaces.MergedOrRejectedEmailData): Pro
   return sendEmail(message);
 };
 
+// TODO: LEGACY
 /* Email editors, mergers, and admins to remind them about remaining suggestions */
 export const sendSuggestionsReminder = async (data: Interfaces.SuggestionsReminderData): Promise<void> => {
   const message = constructMessage({
