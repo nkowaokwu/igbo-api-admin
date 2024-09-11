@@ -37,9 +37,10 @@ import Collection from 'src/shared/constants/Collection';
 import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
 import { adminRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 import authentication from 'src/backend/middleware/authentication';
-import { getProjects, getProjectById } from 'src/backend/controllers/projects';
 import validId from 'src/backend/middleware/validId';
-import { getUserProjectPermission } from 'src/backend/controllers/userProjectPermissions';
+import validateUserProjectPermissionBody from 'src/backend/middleware/validateUserProjectPermissionBody';
+import { getProjects, getProjectById, postProject } from 'src/backend/controllers/projects';
+import { getUserProjectPermission, putUserProjectPermission } from 'src/backend/controllers/userProjectPermissions';
 
 const crowdsourcerRouter = express.Router();
 crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
@@ -125,7 +126,13 @@ crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
 
 // Project
 crowdsourcerRouter.get(`/${Collection.PROJECTS}`, getProjects);
+crowdsourcerRouter.post(`/${Collection.PROJECTS}`, postProject);
 crowdsourcerRouter.get(`/${Collection.PROJECTS}/:id`, validId, getProjectById);
 crowdsourcerRouter.get(`/${Collection.USER_PROJECT_PERMISSIONS}`, getUserProjectPermission);
+crowdsourcerRouter.put(
+  `/${Collection.USER_PROJECT_PERMISSIONS}`,
+  validateUserProjectPermissionBody,
+  putUserProjectPermission,
+);
 
 export default crowdsourcerRouter;

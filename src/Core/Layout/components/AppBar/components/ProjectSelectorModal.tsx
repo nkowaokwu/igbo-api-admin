@@ -62,7 +62,15 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
         <ModalHeader>
           <HStack>
             <chakra.span>Choose a project</chakra.span>
-            <Button variant="ghost" color="purple.500" leftIcon={<PlusSquareIcon />}>
+            <Button
+              variant="ghost"
+              color="purple.500"
+              leftIcon={<PlusSquareIcon />}
+              backgroundColor="transparent"
+              _hover={{ backgroundColor: 'transparent' }}
+              _active={{ backgroundColor: 'transparent' }}
+              _focus={{ backgroundColor: 'transparent' }}
+            >
               New Project
             </Button>
           </HStack>
@@ -74,7 +82,7 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
             {isLoading
               ? 'Loading...'
               : projects.map((project) => (
-                  <HStack width="full" justifyContent="space-between">
+                  <HStack width="full" justifyContent="space-between" key={project.id.toString()}>
                     <Button
                       key={project.id.toString()}
                       backgroundColor="transparent"

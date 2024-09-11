@@ -7,26 +7,36 @@ import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermis
 import UserRoleLabels from 'src/backend/shared/constants/UserRoleLabels';
 
 const auth = getAuth();
-const UserSection = (): React.ReactElement => {
+const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.ReactElement => {
   const { currentUser } = auth;
   const userProjectPermission = React.useContext(UserProjectPermissionContext);
   const logout = useLogout();
+
+  const handleNavigateToProfile = () => {
+    window.location.href = '#/profile';
+    if (toggleSidebar) {
+      toggleSidebar();
+    }
+  };
 
   return (
     <VStack alignItems="start" px={4} width="full">
       <Divider />
       <HStack justifyContent="space-between" py={2} gap={2} width="full">
-        <HStack gap={2} flex={8}>
-          <Avatar src={currentUser?.photoURL} name={currentUser?.displayName} />
-          <VStack alignItems="start" spacing={0}>
-            <Text fontWeight="bold" fontSize="sm">
-              {currentUser?.displayName}
-            </Text>
-            <Text fontSize="sm" color="gray.500" mt={0}>
-              {UserRoleLabels[userProjectPermission?.role]}
-            </Text>
-          </VStack>
-        </HStack>
+        <Tooltip label="View profile">
+          <HStack gap={2} flex={8} onClick={handleNavigateToProfile} cursor="pointer">
+            <Avatar src={currentUser?.photoURL} name={currentUser?.displayName} />
+            <VStack alignItems="start" spacing={0}>
+              <Text fontWeight="bold" fontSize="sm">
+                {currentUser?.displayName}
+              </Text>
+              <Text fontSize="sm" color="gray.500" mt={0}>
+                {UserRoleLabels[userProjectPermission?.role]}
+              </Text>
+            </VStack>
+          </HStack>
+        </Tooltip>
+
         <Tooltip label="Logout">
           <IconButton
             flex={2}

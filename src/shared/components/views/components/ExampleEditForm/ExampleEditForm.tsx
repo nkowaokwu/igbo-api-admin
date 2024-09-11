@@ -19,6 +19,7 @@ import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces';
 import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
@@ -52,7 +53,8 @@ const ExampleEditForm = ({
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
   const uid = useFirebaseUid();
-  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
+  const project = React.useContext(ProjectContext);
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record, project);
 
   useEffect(() => {
     if (isPreExistingSuggestion) {

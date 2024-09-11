@@ -79,6 +79,24 @@ export const getProjectById = async (
   }
 };
 
+export const postProject = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ project: Interfaces.ProjectData }> | void> => {
+  const { mongooseConnection, body } = req;
+
+  try {
+    const Project = mongooseConnection.model<Interfaces.Project>('Project', projectSchema);
+
+    const project = new Project(body);
+
+    return res.send({ project: await project.save() });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 /**
  *
  * @param req

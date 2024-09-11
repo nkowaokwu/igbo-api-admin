@@ -9,6 +9,7 @@ import SummaryList from 'src/shared/components/views/shows/components/SummaryLis
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import AddAudioPronunciationButton from './AddAudioPronunciationButton';
 import FormHeader from '../../FormHeader';
 import AudioRecorder from '../../AudioRecorder';
@@ -37,7 +38,8 @@ const ExampleAudioPronunciationsForm = ({
   const permissions = usePermissions();
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
-  const { sourceLanguage } = getRecordLanguages(record);
+  const project = React.useContext(ProjectContext);
+  const { sourceLanguage } = getRecordLanguages(record, project);
 
   const { getValues, setValue } = control;
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);

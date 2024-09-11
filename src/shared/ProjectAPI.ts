@@ -7,6 +7,15 @@ import authProvider from '../utils/authProvider';
 
 const FIREBASE_AUTH_ERROR = 'Firebase ID token has expired.';
 
+export const postProject = async (project: Partial<ProjectData>): Promise<ProjectData> => {
+  const { data: result } = await request<{ project: ProjectData }>({
+    method: 'GET',
+    url: `${Collection.PROJECTS}`,
+    data: project,
+  });
+  return result.project;
+};
+
 export const getCurrentProject = async (): Promise<ProjectData> => {
   const projectId = window.localStorage.getItem(LocalStorageKeys.PROJECT_ID);
 
@@ -46,6 +55,17 @@ export const getUserProjectPermission = async (): Promise<UserProjectPermission>
   const { data: result } = await request<{ userProjectPermission: UserProjectPermission }>({
     method: 'GET',
     url: `${Collection.USER_PROJECT_PERMISSIONS}`,
+  });
+  return result.userProjectPermission;
+};
+
+export const putUserProjectPermission = async (
+  userProjectPermission: Partial<UserProjectPermission>,
+): Promise<UserProjectPermission> => {
+  const { data: result } = await request<{ userProjectPermission: UserProjectPermission }>({
+    method: 'PUT',
+    url: `${Collection.USER_PROJECT_PERMISSIONS}`,
+    data: userProjectPermission,
   });
   return result.userProjectPermission;
 };

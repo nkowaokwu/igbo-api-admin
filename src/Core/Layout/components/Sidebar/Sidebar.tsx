@@ -84,7 +84,7 @@ const Sidebar = (props: SidebarProps): ReactElement => {
       {...rest}
     >
       {children}
-      <UserSection />
+      <UserSection toggleSidebar={toggleSidebar} />
     </Drawer>
   ) : isSmall ? (
     <Drawer
@@ -98,7 +98,6 @@ const Sidebar = (props: SidebarProps): ReactElement => {
       {...rest}
     >
       <div className={fixed}>{children}</div>
-      <UserSection />
     </Drawer>
   ) : (
     <Drawer
@@ -112,7 +111,6 @@ const Sidebar = (props: SidebarProps): ReactElement => {
       {...rest}
     >
       <div className={fixed}>{children}</div>
-      <UserSection />
     </Drawer>
   );
 };

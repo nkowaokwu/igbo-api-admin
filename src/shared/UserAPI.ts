@@ -3,7 +3,6 @@ import { camelCase, merge, pick } from 'lodash';
 import network from 'src/Core/Dashboard/network';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
-import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
@@ -21,12 +20,11 @@ export const updateUserProfile = async ({
   userProfile,
 }: {
   userId: string;
-  userProfile: {
+  userProfile: Partial<{
     displayName: string;
     age: Date;
     dialects: DialectEnum[];
-    gender: GenderEnum;
-  };
+  }>;
 }): Promise<UserProfile> => {
   const auth = getAuth();
   const firebaseProfile = pick(userProfile, ['displayName']);

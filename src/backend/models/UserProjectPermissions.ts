@@ -4,6 +4,7 @@ import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { toJSONPlugin, toObjectPlugin } from 'src/backend/models/plugins';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 
 const { Schema, Types } = mongoose;
 
@@ -16,7 +17,8 @@ export const userProjectPermissionSchema = new Schema(
     role: { type: String, enum: Object.values(UserRoles), required: UserRoles.CROWDSOURCER },
     activateBy: { type: Date, default: moment().add(1, 'week').toDate() },
     grantingAdmin: { type: String, required: true },
-    languages: [{ type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED }],
+    languages: { type: [{ type: String, enum: Object.values(LanguageEnum) }], default: [] },
+    gender: { type: String, enum: Object.values(GenderEnum), default: GenderEnum.UNSPECIFIED },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

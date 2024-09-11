@@ -188,20 +188,20 @@ export const postUserProjectPermission = async (
  * @param next
  * @returns Updates an existing UserProjectPermission object
  */
-export const updateUserProjectPermission = async (
+export const putUserProjectPermission = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
 ): Promise<Response<Interfaces.UserProjectPermission> | void> => {
   try {
-    const { mongooseConnection, body, params } = req;
-    const { id } = params;
+    const { mongooseConnection, body, user } = req;
+
     const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
       'UserProjectPermission',
       userProjectPermissionSchema,
     );
 
-    const userProjectPermission = await UserProjectPermission.findById(id);
+    const userProjectPermission = await UserProjectPermission.findOne({ firebaseId: user.uid });
 
     if (!userProjectPermission) {
       throw new Error('User project permission not found.');

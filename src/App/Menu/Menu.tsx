@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
 import { getResourceObjects, Resource, ResourceGroup, ResourceGroupLabels } from 'src/App/Resources';
+import UserSection from 'src/Core/Layout/components/Sidebar/components/UserSection';
 
 const Menu = ({ onMenuClick }: MenuProps) => {
   const permissions = usePermissions();
@@ -28,11 +29,17 @@ const Menu = ({ onMenuClick }: MenuProps) => {
       hidden={!isOpen}
       initial={false}
       animate={{ width: isOpen ? '' : 0 }}
-      style={{ minWidth: '280px' }}
+      style={{
+        height: '100%',
+        minWidth: '280px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
     >
       <Accordion defaultIndex={[0, 1]} allowMultiple>
         {Object.entries(routesByResourceGroups).map(([key, routes], index) => (
-          <AccordionItem borderTopWidth={index ? '1px' : '0px'}>
+          <AccordionItem borderTopWidth={index ? '1px' : '0px'} key={key}>
             <Box className="flex flex-row justify-between items-center" position={index ? '' : 'absolute'}>
               <AccordionButton width="full" pointerEvents={index ? 'auto' : 'none'} height={index ? '' : 0}>
                 <Text fontWeight="bold" width="full" textAlign="left" fontFamily="Silka">
@@ -57,6 +64,7 @@ const Menu = ({ onMenuClick }: MenuProps) => {
           </AccordionItem>
         ))}
       </Accordion>
+      <UserSection />
     </motion.div>
   );
 };

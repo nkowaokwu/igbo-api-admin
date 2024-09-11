@@ -166,6 +166,17 @@ export const getUsers = async (
       const uids = userProjectPermissions.map(({ firebaseId }) => firebaseId);
 
       users = await findUsersByUid({ uids });
+
+      // Joins Firebase users and UserProjectPermissions
+      users = users.map((user) => {
+        const userProjectPermissionIndex = userProjectPermissions.findIndex(
+          ({ firebaseId }) => firebaseId === user.uid,
+        );
+        if (userProjectPermissionIndex !== -1) {
+          return assign(user, userProjectPermissions[userProjectPermissionIndex]);
+        }
+        return user;
+      });
     }
 
     return res.setHeader('Content-Range', users.length).status(200).send(users);

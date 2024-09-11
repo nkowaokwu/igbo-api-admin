@@ -1,15 +1,18 @@
-import React, { ReactElement } from 'react';
-import { Textarea } from '@chakra-ui/react';
+import React, { ReactElement, useState } from 'react';
+import { Textarea, useToast } from '@chakra-ui/react';
 import Select from 'react-select';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import SettingsLayout from 'src/Core/components/SettingsLayout';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import LicenseType from 'src/backend/shared/constants/LicenseType';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
-import { compact } from 'lodash';
+import { assign, compact, flow } from 'lodash';
+import { putCurrentProject } from 'src/shared/ProjectAPI';
 
 const GeneralSettings = (): ReactElement => {
+  const [isLoading, setIsLoading] = useState(false);
   const project = React.useContext(ProjectContext);
+  const toast = useToast();
 
   const formOptions = [
     {
@@ -29,7 +32,7 @@ const GeneralSettings = (): ReactElement => {
       name: 'license',
       title: 'License',
       subtitle: 'Copyright license',
-      defaultValue: project?.license,
+      defaultValue: { label: project?.license, value: project?.license },
       CustomComponent: (props) => (
         <Select
           {...props}
@@ -45,7 +48,7 @@ const GeneralSettings = (): ReactElement => {
       name: 'languages',
       title: 'Languages',
       subtitle: 'Select the relevant languages for your project',
-      defaultValue: [],
+      defaultValue: project?.languages?.map((language) => LanguageLabels[language] || LanguageLabels.UNSPECIFIED),
       CustomComponent: (props) => (
         <Select
           {...props}
@@ -62,8 +65,41 @@ const GeneralSettings = (): ReactElement => {
     },
   ];
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const transformLicense = (data) => assign(data, { license: data?.license?.value || LicenseType.UNSPECIFIED });
+
+  const transformLanguages = (data) =>
+    assign(data, { languages: (data?.languages || []).map((language) => language.value || LanguageEnum.UNSPECIFIED) });
+
+  const cleanedDataPipeline = flow([transformLicense, transformLanguages]);
+
+  const onSubmit = async (rawData) => {
+    console.log(rawData);
+    const data = cleanedDataPipeline(rawData);
+    try {
+      await putCurrentProject(data);
+
+      toast({
+        title: 'Saved changes',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: 'Project settings saved',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: 'Error',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: 'Unable to save project settings',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return project ? (
@@ -72,6 +108,7 @@ const GeneralSettings = (): ReactElement => {
       subtitle="Configure your project settings"
       formOptions={formOptions}
       onSubmit={onSubmit}
+      isLoading={isLoading}
     />
   ) : null;
 };

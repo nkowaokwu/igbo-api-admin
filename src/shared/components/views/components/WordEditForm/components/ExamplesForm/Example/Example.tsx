@@ -11,6 +11,7 @@ import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -29,7 +30,8 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
     originalExampleId,
   } = example;
   const [isExistingExample, setIsExistingExample] = useState(!!originalExampleId);
-  const { sourceLanguage, destinationLanguage } = getRecordLanguages(example);
+  const project = React.useContext(ProjectContext);
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(example, project);
   const deleteMessage = isExistingExample
     ? `This is an existing example suggestion that is being updated. Clicking this button will NOT
     permanently delete the example sentence, rather it will be archived (saved) but hidden.`

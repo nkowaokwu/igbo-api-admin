@@ -76,6 +76,7 @@ export interface Resource {
   show: Promise<React.ReactElement>;
   icon: React.ReactElement;
   group: ResourceGroup;
+  generalProject?: boolean; // Routes visible for any general project
 }
 
 const defaultRoutes = (permissions) =>
@@ -86,6 +87,7 @@ const defaultRoutes = (permissions) =>
       icon: () => <>🏠</>,
       exact: true,
       group: ResourceGroup.UNSPECIFIED,
+      generalProject: true,
     },
   ]) || [];
 
@@ -113,6 +115,7 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(ExampleShow),
       icon: () => <>📘</>,
       group: ResourceGroup.LEXICAL,
+      generalProject: true,
     },
     {
       name: 'nsibidiCharacters',
@@ -156,6 +159,7 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(ExampleSuggestionShow),
       icon: () => <>📕</>,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: true,
     },
     {
       name: 'corpusSuggestions',
@@ -185,9 +189,10 @@ const adminRoutes = (permissions) =>
       name: 'settings',
       key: 'settings',
       noLayout: true,
-      list: ProjectSettings,
+      list: withLastRoute(ProjectSettings),
       icon: () => <>🔩</>,
       group: ResourceGroup.SETTINGS,
+      generalProject: true,
     },
     {
       name: 'users',
@@ -196,6 +201,7 @@ const adminRoutes = (permissions) =>
       show: withLastRoute(UserShow),
       icon: () => <>👩🏾</>,
       group: ResourceGroup.SETTINGS,
+      generalProject: true,
     },
     {
       name: 'dataDump',
@@ -204,6 +210,7 @@ const adminRoutes = (permissions) =>
       list: withLastRoute(DataDump),
       icon: () => <>🏋🏾‍♂️</>,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: true,
     },
     {
       name: 'textImages',
@@ -265,12 +272,14 @@ export const getCustomRouteObjects = (): any =>
       path: '/profile',
       component: withLastRoute(Profile),
       group: ResourceGroup.UNSPECIFIED,
+      generalProject: true,
     },
     {
       exact: true,
       path: '/translate',
       component: withLastRoute(TranslateIgboSentences),
       group: ResourceGroup.UNSPECIFIED,
+      generalProject: true,
     },
     {
       exact: true,
@@ -282,6 +291,7 @@ export const getCustomRouteObjects = (): any =>
       path: '/igboSoundbox',
       component: withLastRoute(IgboSoundbox),
       group: ResourceGroup.UNSPECIFIED,
+      generalProject: true,
     },
     {
       path: '/igboDefinitions',

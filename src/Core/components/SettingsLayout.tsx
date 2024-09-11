@@ -16,11 +16,13 @@ const SettingsLayout = ({
   subtitle,
   formOptions,
   onSubmit,
+  isLoading,
 }: {
   title: string;
   subtitle: string;
   formOptions: FormOption[];
   onSubmit: (data: any) => void;
+  isLoading: boolean;
 }): ReactElement => {
   const { register, handleSubmit, control } = useForm();
 
@@ -32,7 +34,7 @@ const SettingsLayout = ({
             <Heading fontSize="2xl">{title}</Heading>
             <Text fontWeight="medium">{subtitle}</Text>
           </VStack>
-          <Button type="submit" leftIcon={<EditIcon />}>
+          <Button type="submit" leftIcon={<EditIcon />} isLoading={isLoading}>
             Save
           </Button>
         </HStack>
@@ -51,7 +53,7 @@ const SettingsLayout = ({
                   name={name}
                   control={control}
                   defaultValue={defaultValue}
-                  render={({ onChange, ref }) => CustomComponent({ ref, name, onChange })}
+                  render={({ onChange, ref }) => CustomComponent({ ref, name, onChange, defaultValue })}
                 />
               ) : (
                 <Input flex={1} placeholder="Full name" defaultValue={defaultValue} ref={register} name={name} />

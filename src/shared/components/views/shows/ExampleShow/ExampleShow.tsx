@@ -18,6 +18,7 @@ import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
 import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
 import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -49,7 +50,8 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   } = record || DEFAULT_EXAMPLE_RECORD;
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
-  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
+  const project = React.useContext(ProjectContext);
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record, project);
 
   const DIFF_FILTER_KEYS = [
     'id',
