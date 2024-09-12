@@ -186,6 +186,7 @@ export default extendTheme({
     Input: {
       baseStyle: {
         field: {
+          boxShadow: 'sm',
           backgroundColor: 'white',
           transition: 'all .2s ease',
           borderColor: 'gray.400',
@@ -223,11 +224,21 @@ export default extendTheme({
     },
     Button: {
       baseStyle: {
+        borderWidth: '1px',
+        borderColor: 'gray.400',
         fontFamily: 'heading',
+        boxShadow: 'sm',
+      },
+      variants: {
+        ghost: {
+          borderWidth: '0px',
+          boxShadow: 'none',
+        },
       },
     },
     Textarea: {
       baseStyle: {
+        boxShadow: 'sm',
         backgroundColor: 'white',
         transition: 'all .2s ease',
         borderColor: 'gray.400',

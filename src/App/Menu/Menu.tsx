@@ -48,7 +48,7 @@ const Menu = ({ onMenuClick }: MenuProps) => {
               </AccordionButton>
               {index ? <AccordionIcon mx={2} /> : null}
             </Box>
-            <AccordionPanel padding={index ? '' : '0px'}>
+            <AccordionPanel padding={0}>
               {routes.map(({ name, options = { label: '' }, icon, exact = false }) => (
                 <MenuItemLink
                   key={name}

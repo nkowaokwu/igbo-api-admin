@@ -336,6 +336,7 @@ const Select = ({
           <Tooltip label="More options">
             <MenuButton
               as={IconButton}
+              variant="ghost"
               maxWidth="160px"
               aria-label="Actions menu"
               icon={isLoading ? <Spinner size="xs" /> : <FiMoreVertical />}
@@ -390,6 +391,7 @@ const Select = ({
           <>
             <Tooltip label="View entry">
               <IconButton
+                variant="ghost"
                 aria-label="View entry button"
                 icon={<FiEye style={{ width: 'var(--chakra-sizes-10)' }} />}
                 backgroundColor="white"
@@ -406,6 +408,7 @@ const Select = ({
             </Tooltip>
             <Tooltip label="Edit entry">
               <IconButton
+                variant="ghost"
                 aria-label="Edit entry button"
                 icon={<FiEdit3 style={{ width: 'var(--chakra-sizes-10)' }} />}
                 backgroundColor="white"

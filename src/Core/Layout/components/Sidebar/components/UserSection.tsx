@@ -20,7 +20,7 @@ const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.R
   };
 
   return (
-    <VStack alignItems="start" px={4} width="full">
+    <VStack alignItems="start" px={4} width="full" position="absolute" bottom={0}>
       <Divider />
       <HStack justifyContent="space-between" py={2} gap={2} width="full">
         <Tooltip label="View profile">
@@ -40,6 +40,8 @@ const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.R
         <Tooltip label="Logout">
           <IconButton
             flex={2}
+            height="fit-content"
+            variant="ghost"
             aria-label="Logout button"
             icon={<FiLogOut size="22px" />}
             boxSize={3}

@@ -140,7 +140,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         {isPollResource || isNotificationResource || isNsibidiResource ? null : <Filter {...props} />}
         <Box
           className="flex flex-row justify-end items-end
-        lg:items-center space-y-2 lg:space-y-0 space-x-3"
+        lg:items-center space-y-0 space-x-3"
         >
           <Tooltip label="Filter entries">
             <Box className="flex flex-row items-center space-x-3">

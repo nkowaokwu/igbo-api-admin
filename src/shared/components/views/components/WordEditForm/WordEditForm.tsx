@@ -83,7 +83,7 @@ const WordEditForm = ({
     record.dialects = [];
   }
   if (record.examples) {
-    record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+    record.examples.sort((prev, next) => prev.source?.text?.localeCompare?.(next.source?.text));
   }
 
   const { handleSubmit, getValues, setValue, control, errors, watch } = useForm({

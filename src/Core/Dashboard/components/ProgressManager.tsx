@@ -45,7 +45,7 @@ const lexicographerOptions: LexicographerOption[] = [
     title: 'Edit an Existing Example Sentence',
     subtitle: 'See a mistake in a translation? Want to add more metadata? Search for a sentence and edit it.',
     hash: `#/examples/${Views.LIST}`,
-    buttonLabel: 'Search for example',
+    buttonLabel: 'Search for example sentence',
   },
   {
     icon: '✍🏾',

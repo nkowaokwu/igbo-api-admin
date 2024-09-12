@@ -22,7 +22,15 @@ import { ProjectData } from 'src/backend/controllers/utils/interfaces';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 
-const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }): ReactElement => {
+const ProjectSelectorModal = ({
+  isOpen,
+  onClose,
+  onCreateProject,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onCreateProject: () => void;
+}): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
   const [projects, setProjects] = useState<(ProjectData & { role: UserRoles })[]>([]);
 
@@ -39,6 +47,11 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
   const handleProjectSelect = (projectId: string) => {
     setProjectInLocalStorage(projectId);
     window.location.reload();
+  };
+
+  const handleCreateProject = () => {
+    onCreateProject();
+    onClose();
   };
 
   useEffect(() => {
@@ -70,6 +83,7 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
               _hover={{ backgroundColor: 'transparent' }}
               _active={{ backgroundColor: 'transparent' }}
               _focus={{ backgroundColor: 'transparent' }}
+              onClick={handleCreateProject}
             >
               New Project
             </Button>
@@ -85,6 +99,7 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
                   <HStack width="full" justifyContent="space-between" key={project.id.toString()}>
                     <Button
                       key={project.id.toString()}
+                      variant="ghost"
                       backgroundColor="transparent"
                       _hover={{ backgroundColor: 'transparent' }}
                       _active={{ backgroundColor: 'transparent' }}
@@ -98,6 +113,7 @@ const ProjectSelectorModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
                     {project.role === UserRoles.ADMIN ? (
                       <Tooltip label="Project settings">
                         <IconButton
+                          variant="ghost"
                           aria-label="Project settings button"
                           icon={<FiSettings />}
                           backgroundColor="transparent"
