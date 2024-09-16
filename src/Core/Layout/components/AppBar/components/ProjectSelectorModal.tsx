@@ -15,7 +15,7 @@ import {
   IconButton,
   Tooltip,
 } from '@chakra-ui/react';
-import { PlusSquareIcon } from '@chakra-ui/icons';
+import { PlusSquareIcon, StarIcon } from '@chakra-ui/icons';
 import { FiSettings } from 'react-icons/fi';
 import { getAllProjects } from 'src/shared/ProjectAPI';
 import { ProjectData } from 'src/backend/controllers/utils/interfaces';
@@ -42,6 +42,7 @@ const ProjectSelectorModal = ({
     setProjectInLocalStorage(projectId);
     onClose();
     window.location.hash = '#/settings';
+    window.location.reload();
   };
 
   const handleProjectSelect = (projectId: string) => {
@@ -95,37 +96,45 @@ const ProjectSelectorModal = ({
             <Divider />
             {isLoading
               ? 'Loading...'
-              : projects.map((project) => (
-                  <HStack width="full" justifyContent="space-between" key={project.id.toString()}>
-                    <Button
-                      key={project.id.toString()}
-                      variant="ghost"
-                      backgroundColor="transparent"
-                      _hover={{ backgroundColor: 'transparent' }}
-                      _active={{ backgroundColor: 'transparent' }}
-                      _focus={{ backgroundColor: 'transparent' }}
-                      color="blue.400"
-                      textDecoration="underline"
-                      onClick={() => handleProjectSelect(project.id.toString())}
-                    >
-                      {project.title}
-                    </Button>
-                    {project.role === UserRoles.ADMIN ? (
-                      <Tooltip label="Project settings">
-                        <IconButton
+              : projects.map((project) => {
+                  const isCurrentProject =
+                    project.id.toString() === window.localStorage.getItem(LocalStorageKeys.PROJECT_ID);
+
+                  return (
+                    <HStack width="full" justifyContent="space-between" key={project.id.toString()}>
+                      <HStack gap={0}>
+                        <StarIcon opacity={isCurrentProject ? 1 : 0} pointerEvents="none" />
+                        <Button
+                          key={project.id.toString()}
                           variant="ghost"
-                          aria-label="Project settings button"
-                          icon={<FiSettings />}
                           backgroundColor="transparent"
                           _hover={{ backgroundColor: 'transparent' }}
                           _active={{ backgroundColor: 'transparent' }}
                           _focus={{ backgroundColor: 'transparent' }}
-                          onClick={() => handleProjectSettingsSelect(project.id.toString())}
-                        />
-                      </Tooltip>
-                    ) : null}
-                  </HStack>
-                ))}
+                          color="blue.400"
+                          textDecoration="underline"
+                          onClick={() => handleProjectSelect(project.id.toString())}
+                        >
+                          {project.title}
+                        </Button>
+                      </HStack>
+                      {project.role === UserRoles.ADMIN ? (
+                        <Tooltip label="Project settings">
+                          <IconButton
+                            variant="ghost"
+                            aria-label="Project settings button"
+                            icon={<FiSettings />}
+                            backgroundColor="transparent"
+                            _hover={{ backgroundColor: 'transparent' }}
+                            _active={{ backgroundColor: 'transparent' }}
+                            _focus={{ backgroundColor: 'transparent' }}
+                            onClick={() => handleProjectSettingsSelect(project.id.toString())}
+                          />
+                        </Tooltip>
+                      ) : null}
+                    </HStack>
+                  );
+                })}
           </VStack>
         </ModalBody>
 

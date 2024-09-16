@@ -106,6 +106,10 @@ textarea,
   @apply bg-white !important;
 }
 
+.MuiButtonBase-root {
+  color: var(--chakra-colors-gray-700);
+}
+
 [class*='RaLayout-appFrame'] {
   width: 100vw;
 }

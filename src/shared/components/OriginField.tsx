@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
-import { Badge, Tooltip } from '@chakra-ui/react';
+import { Tag, Tooltip } from '@chakra-ui/react';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 
@@ -48,9 +48,16 @@ const OriginField = ({
 
   return (
     <Tooltip label={label}>
-      <Badge cursor="default" variant="outline" colorScheme={colorScheme}>
+      <Tag
+        cursor="default"
+        variant="outline"
+        colorScheme={colorScheme}
+        borderRadius="full"
+        backgroundColor={`${colorScheme}.50`}
+        whiteSpace="nowrap"
+      >
         {badgeLabel}
-      </Badge>
+      </Tag>
     </Tooltip>
   );
 };

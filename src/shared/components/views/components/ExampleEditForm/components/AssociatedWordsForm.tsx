@@ -5,6 +5,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Control, useFieldArray } from 'react-hook-form';
 import { Input, WordPills } from 'src/shared/primitives';
 import { resolveWord, getWord, getWords } from 'src/shared/API';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import FormHeader from '../../FormHeader';
 import AssociatedWordsFormInterface from './AssociatedWordFormInterface';
 
@@ -75,6 +76,7 @@ const AssociatedWords = ({
 const AssociatedWordsForm = ({ errors, control, record }: AssociatedWordsFormInterface): ReactElement => {
   const [input, setInput] = useState('');
   const toast = useToast();
+  const isIgboAPIProject = useIsIgboAPIProject();
 
   const {
     fields: associatedWords,
@@ -108,7 +110,8 @@ const AssociatedWordsForm = ({ errors, control, record }: AssociatedWordsFormInt
       setInput('');
     }
   };
-  return (
+
+  return !isIgboAPIProject ? null : (
     <Box className="w-full bg-gray-200 rounded-lg p-2 mb-2">
       <Box className="flex items-center my-5 w-full justify-between">
         <FormHeader title="Associated Words" tooltip="Associated words of the current Igbo example sentence." />

@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, Text, VStack } from '@chakra-ui/react';
 import { DEFAULT_NSIBIDI_CHARACTER_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
@@ -9,6 +9,8 @@ import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiChara
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import LegacyAkaguFont from 'src/backend/shared/constants/LegacyAkaguFont';
 import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
+import { LuArchive, LuFileAudio, LuFileType, LuPin, LuRatio } from 'react-icons/lu';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -32,84 +34,69 @@ const NsibidiCharacterShow = (props: ShowProps): ReactElement => {
         view={View.SHOW}
         id={id}
         permissions={permissions}
-        title={`${resourceTitle[resource]} Document Details`}
+        title={resourceTitle[resource]}
       />
       <Box className="flex flex-col-reverse lg:flex-row mt-1">
         <Box className="flex flex-col flex-auto justify-between items-start">
           <DocumentStats collection={Collection.EXAMPLES} record={record} id={id} />
-          <Box className="w-full flex flex-col lg:flex-row-reverse justify-between items-start space-y-4 lg:space-y-0">
+          <VStack alignItems="start" width="full" gap={2}>
             <Attributes
               attributeType={Collection.NSIBIDI_CHARACTERS}
               title="Nsịbịdị Character Attributes"
               record={record}
-              diffRecord={{}}
             />
-            <Box>
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Nsịbịdị
-              </Heading>
+            <ShowTextRenderer title="Nsịbịdị" icon={<>〒</>}>
               <DiffField
                 path="nsibidi"
                 diffRecord={{}}
                 fallbackValue={nsibidi}
                 renderNestedObject={(value) => <span className="akagu">{String(value || false)}</span>}
               />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Pronunciation
-              </Heading>
+            </ShowTextRenderer>
+            <ShowTextRenderer title="Pronunciation" icon={<LuFileAudio />}>
               <DiffField
                 path="pronunciation"
                 diffRecord={{}}
                 fallbackValue={pronunciation}
                 renderNestedObject={(value) => <span>{String(value || false)}</span>}
               />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Part of Speech
-              </Heading>
+            </ShowTextRenderer>
+            <ShowTextRenderer title="Part of Speech" icon={<LuRatio />}>
               <DiffField
                 path="wordClass"
                 diffRecord={{}}
                 fallbackValue={wordClass}
                 renderNestedObject={(value) => <span className="akagu">{String(value || false)}</span>}
               />
-              <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">
-                  Definitions
-                </Heading>
-                <ArrayDiffField recordField="definitions" record={record}>
-                  <ArrayDiff diffRecord={{}} renderNestedObject={(definition) => <Text>{definition.text}</Text>} />
-                </ArrayDiffField>
-              </Box>
-              <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">
-                  Radicals
-                </Heading>
-                <ArrayDiffField recordField="radicals" record={record}>
-                  <ArrayDiff
-                    diffRecord={{}}
-                    renderNestedObject={(radical) => <ResolvedNsibidiCharacter nsibidiCharacterId={radical.id} />}
-                  />
-                </ArrayDiffField>
-              </Box>
-              {get(record, `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`) ? (
-                <Box className="flex flex-col mt-5">
-                  <Heading fontSize="lg" className="text-xl text-gray-600">
-                    Legacy characters
-                  </Heading>
-                  <DiffField
-                    path="nsibidi"
-                    diffRecord={{}}
-                    fallbackValue={nsibidi}
-                    renderNestedObject={(value) =>
-                      Object.values(LegacyAkaguFont).map((fontVersion) => (
-                        <span className={fontVersion}>{String(value || false)}</span>
-                      ))
-                    }
-                  />
-                </Box>
-              ) : null}
-            </Box>
-          </Box>
+            </ShowTextRenderer>
+            <ShowTextRenderer title="Definitions" icon={<LuFileType />}>
+              <ArrayDiffField recordField="definitions" record={record}>
+                <ArrayDiff diffRecord={{}} renderNestedObject={(definition) => <Text>{definition.text}</Text>} />
+              </ArrayDiffField>
+            </ShowTextRenderer>
+            <ShowTextRenderer title="Radicals" icon={<LuPin />}>
+              <ArrayDiffField recordField="radicals" record={record}>
+                <ArrayDiff
+                  diffRecord={{}}
+                  renderNestedObject={(radical) => <ResolvedNsibidiCharacter nsibidiCharacterId={radical.id} />}
+                />
+              </ArrayDiffField>
+            </ShowTextRenderer>
+            {get(record, `attributes.${NsibidiCharacterAttributeEnum.HAS_LEGACY_CHARACTERS}`) ? (
+              <ShowTextRenderer title="Legacy characters" icon={<LuArchive />}>
+                <DiffField
+                  path="nsibidi"
+                  diffRecord={{}}
+                  fallbackValue={nsibidi}
+                  renderNestedObject={(value) =>
+                    Object.values(LegacyAkaguFont).map((fontVersion) => (
+                      <span className={fontVersion}>{String(value || false)}</span>
+                    ))
+                  }
+                />
+              </ShowTextRenderer>
+            ) : null}
+          </VStack>
         </Box>
       </Box>
     </Box>

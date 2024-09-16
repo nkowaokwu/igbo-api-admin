@@ -19,6 +19,7 @@ const ProjectSelector = (): ReactElement => {
         backgroundColor="transparent"
         borderWidth="1px"
         borderColor="blue.400"
+        color="gray.700"
         _hover={{ backgroundColor: 'transparent' }}
         _active={{ backgroundColor: 'transparent' }}
         _focus={{ backgroundColor: 'transparent' }}

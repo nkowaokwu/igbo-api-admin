@@ -1,5 +1,6 @@
 import React from 'react';
 import { List, Datagrid, TextField, FunctionField, Responsive, ListProps } from 'react-admin';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import {
   CompleteExamplePreview,
   BulkSuggestionActions,
@@ -16,6 +17,7 @@ import Empty from '../../Empty';
 
 const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
   const { permissions } = props;
+  const isIgboAPIProject = useIsIgboAPIProject();
   return (
     <List
       {...props}
@@ -30,21 +32,21 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         small={
           <Datagrid>
             <Select collection={Collection.EXAMPLES} permissions={permissions} />
-            <CompleteExamplePreview label="Example Status" />
+            {isIgboAPIProject ? <CompleteExamplePreview label="Example Status" /> : null}
             <ReviewPreview label="You Reviewed" />
-            <TextField label="Igbo" source="igbo" />
-            <TextField label="English" source="english" />
+            <TextField label="Source" source="source.text" />
+            <TextField label="Destination" source="translations.0.text" />
           </Datagrid>
         }
         medium={
           <Datagrid>
             <Select collection={Collection.EXAMPLES} permissions={permissions} />
-            <CompleteExamplePreview label="Example Status" />
+            {isIgboAPIProject ? <CompleteExamplePreview label="Example Status" /> : null}
             <SourceField label="Source" source="origin" />
             <ReviewPreview label="You Reviewed" />
-            <TextField label="Igbo" source="source.text" />
-            <TextField label="English" source="translations.0.text" />
-            <ArrayPreview label="Associated Words" source="associatedWords" />
+            <TextField label="Source" source="source.text" />
+            <TextField label="Destination" source="translations.0.text" />
+            {isIgboAPIProject ? <ArrayPreview label="Associated Words" source="associatedWords" /> : null}
             <FunctionField
               label="Approvals"
               render={(record) => <span data-test="approval">{record.approvals.length}</span>}

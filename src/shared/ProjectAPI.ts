@@ -9,7 +9,7 @@ const FIREBASE_AUTH_ERROR = 'Firebase ID token has expired.';
 
 export const postProject = async (project: Partial<ProjectData>): Promise<ProjectData> => {
   const { data: result } = await request<{ project: ProjectData }>({
-    method: 'GET',
+    method: 'POST',
     url: `${Collection.PROJECTS}`,
     data: project,
   });

@@ -8,8 +8,6 @@ import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConn
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
-import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
-import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import AddAudioPronunciationButton from './AddAudioPronunciationButton';
 import FormHeader from '../../FormHeader';
 import AudioRecorder from '../../AudioRecorder';
@@ -19,12 +17,16 @@ const ExampleAudioPronunciationsForm = ({
   record,
   originalRecord,
   uid,
+  name = '',
 }: {
   control: Control;
   record: Record;
   originalRecord: Record | null;
   uid: string;
+  name?: string;
 }): ReactElement => {
+  const prependedName = name ? `${name}.` : '';
+  const formName = `${prependedName}pronunciations`;
   const [isLoadingSpeakers, setIsLoadingSpeakers] = useState(false);
   const [, setInternalPronunciations] = useState([]);
   const {
@@ -33,13 +35,11 @@ const ExampleAudioPronunciationsForm = ({
     remove,
   } = useFieldArray({
     control,
-    name: 'pronunciations',
+    name: formName,
   });
   const permissions = usePermissions();
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
-  const project = React.useContext(ProjectContext);
-  const { sourceLanguage } = getRecordLanguages(record, project);
 
   const { getValues, setValue } = control;
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
@@ -68,7 +68,7 @@ const ExampleAudioPronunciationsForm = ({
       const currentPronunciations = assign(pronunciations);
       currentPronunciation.archived = true;
       currentPronunciations[index] = currentPronunciation;
-      setValue(`pronunciations[${index}]`, currentPronunciation);
+      setValue(`${formName}[${index}]`, currentPronunciation);
       setInternalPronunciations(currentPronunciations);
     } else {
       remove(index);
@@ -77,13 +77,13 @@ const ExampleAudioPronunciationsForm = ({
   return (
     <Box>
       <FormHeader
-        title={`${sourceLanguage} Sentence Recordings`}
+        title="Sentence Recordings"
         tooltip="An example can have multiple audio recorded for it. One on unique
         speaker can record a version for this sentence."
       />
       {pronunciations?.length ? (
         pronunciations.map((pronunciation, index) => {
-          const isExistingPronunciation = get(record, `pronunciations[${index}].audio`);
+          const isExistingPronunciation = get(record, `${formName}[${index}].audio`);
           const deleteMessage = generateDeleteMessage(isExistingPronunciation);
           return (
             <Box className="flex flex-col" key={isExistingPronunciation}>
@@ -100,28 +100,28 @@ const ExampleAudioPronunciationsForm = ({
               >
                 <Controller
                   render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].audio`}
+                  name={`${formName}[${index}].audio`}
                   control={control}
                   defaultValue={pronunciation.audio}
                 />
                 <Controller
                   render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].speaker`}
+                  name={`${formName}[${index}].speaker`}
                   control={control}
                   defaultValue={pronunciation.speaker}
                 />
                 <Controller
                   render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].archived`}
+                  name={`${formName}[${index}].archived`}
                   control={control}
                   defaultValue={pronunciation.archived}
                 />
                 <AudioRecorder
-                  path={`pronunciations.${index}.audio`}
-                  getFormValues={() => get(getValues(), `pronunciations.${index}.audio`)}
+                  path={`${formName}.${index}.audio`}
+                  getFormValues={() => get(getValues(), `${formName}.${index}.audio`)}
                   setPronunciation={(_, value) => {
-                    setValue(`pronunciations[${index}].audio`, value);
-                    setValue(`pronunciations[${index}].speaker`, uid);
+                    setValue(`${formName}[${index}].audio`, value);
+                    setValue(`${formName}[${index}].speaker`, uid);
                   }}
                   record={record}
                   originalRecord={originalRecord}

@@ -2,13 +2,6 @@ import * as admin from 'firebase-admin';
 import { forIn } from 'lodash';
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import {
-  getUserProjectPermissionHelper,
-  postUserProjectPermissionHelper,
-} from 'src/backend/controllers/userProjectPermissions';
-import EntityStatus from 'src/backend/shared/constants/EntityStatus';
-import Author from 'src/backend/shared/constants/Author';
-import { PROJECT_ID } from 'src/backend/config';
 import AUTH_TOKEN from '../shared/constants/testAuthTokens';
 import UserRoles from '../shared/constants/UserRoles';
 
@@ -19,7 +12,6 @@ const authentication = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { mongooseConnection, project } = req;
     const authHeader = req.headers.authorization;
 
     /* Overrides user role for local development and testing purposes */
@@ -52,37 +44,9 @@ const authentication = async (
       try {
         const decoded = await admin.auth().verifyIdToken(token);
 
-        let userProjectPermission = await getUserProjectPermissionHelper({
-          mongooseConnection,
-          uid: decoded.uid,
-          projectId: project.id.toString(),
-        });
-
-        // If a user doesn't have a project permission for the Igbo API project
-        // create one on the fly
-        if (!userProjectPermission && project.id === PROJECT_ID) {
-          userProjectPermission = await postUserProjectPermissionHelper({
-            mongooseConnection,
-            projectId: project.id.toString(),
-            body: {
-              firebaseId: decoded.uid,
-              email: decoded.email,
-              role: decoded.role, // Use existing role
-              grantingAdmin: Author.SYSTEM,
-            },
-          });
-        }
-
-        if (!userProjectPermission || userProjectPermission.toJSON().status !== EntityStatus.ACTIVE) {
-          return res.status(403).send({ error: "User does not have permission to view this project's resources" });
-        }
-
-        const userProjectPermissionObject = userProjectPermission.toJSON();
-
         if (decoded && !req.user) {
           req.user = {
             ...decoded,
-            role: userProjectPermissionObject.role,
             uid: decoded.uid,
           };
         }

@@ -13,10 +13,8 @@ import {
   bulkDeleteDocuments,
 } from 'src/shared/API';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import ActionTypes from './ActionTypes';
 import Collections from './Collection';
 
@@ -193,7 +191,7 @@ export default {
   },
   [ActionTypes.BULK_UPLOAD_EXAMPLES]: {
     type: 'BulkUploadExamples',
-    title: 'Bulk Upload Sentences',
+    title: 'Bulk Upload Example Sentences',
     content: 'Are you sure you want to upload multiple sentences at once? This will take a few minutes to complete.',
     executeAction: async ({
       data,
@@ -204,26 +202,20 @@ export default {
       onProgressSuccess: (value: any) => any;
       onProgressFailure: (value: any) => any;
     }): Promise<any> => {
-      let payload = [];
-      const { file, text, isExample } = data;
+      const { text, isExample } = data;
       const trimmedTextareaValue = text.trim();
       const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
 
       // Combines the data from both the uploaded file and text area input
-      payload = payload.concat(
-        separatedSentences.map((sentenceText) => ({
-          igbo: sentenceText.trim(),
-          english: '',
-          style: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
-          type: SentenceTypeEnum.DATA_COLLECTION,
-        })),
-        file,
-      );
+      const payload = separatedSentences.map((sentenceText) => ({
+        source: {
+          language: LanguageEnum.UNSPECIFIED,
+          text: sentenceText.trim(),
+        },
+      }));
 
-      // Validating the body of the bulk sentences
       bulkSentencesSchema.validate(payload);
       await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
-      // console.log('Data validation for bulk sentence upload failed.');
     },
   },
 };

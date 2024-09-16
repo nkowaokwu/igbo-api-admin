@@ -17,17 +17,20 @@ const Input = React.forwardRef(
       onChange,
       width,
       className,
+      wrapperClassName,
       type,
       onSelect,
       searchApi,
       collection,
       hideDiacritics,
+      flex,
       ...rest
     }: {
       value?: string;
       onChange: (value: any) => void;
       width?: string;
       className?: string;
+      wrapperClassName?: string;
       placeholder?: string;
       type?: string;
       onBlur?: () => void;
@@ -125,7 +128,7 @@ const Input = React.forwardRef(
     }, []);
 
     return (
-      <Box className="relative w-full">
+      <Box className={wrapperClassName || 'relative w-full'} flex={flex}>
         <ChakraInput
           ref={inputRef}
           value={value}

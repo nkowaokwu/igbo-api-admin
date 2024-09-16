@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Button, Show, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Show, Image, Text, HStack } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 
@@ -11,7 +11,7 @@ const handleNavigation = ({ hash, state }: { hash: string; state?: IgboSoundboxV
 const DataEntryFlow = ({
   title,
   subtitle,
-  icon,
+  icon: Icon,
   hash,
   state,
   buttonLabel,
@@ -26,55 +26,42 @@ const DataEntryFlow = ({
   backgroundImage?: string;
 }): ReactElement => (
   <Box
-    className="bg-gray-100 lg:bg-white space-y-4 flex flex-col justify-start items-start relative"
+    className="space-y-4 flex flex-col justify-between items-start relative"
+    backgroundColor={{ base: 'gray.50', md: 'white' }}
     borderWidth="1px"
-    borderColor={{ base: 'gray.200', md: 'white' }}
+    borderColor="gray.300"
     borderRadius="md"
-    p={2}
-    width={{ base: 'full', lg: '326px' }}
+    p={4}
+    width="full"
   >
     {backgroundImage ? (
       <Show below="md">
         <Image src={backgroundImage} userSelect="none" className="absolute bottom-0 right-0" />
       </Show>
     ) : null}
-    <Box
-      className={`flex flex-row lg:flex-col justify-start items-center 
-                lg:items-start space-y-0 lg:space-y-4 space-x-2 lg:space-x-0`}
-    >
-      <Box
-        className="bg-gray-200 rounded-md flex flex-row justify-center items-center"
-        width={{ base: '64px', md: '94px' }}
-        height={{ base: '64px', md: '94px' }}
-      >
-        {typeof icon === 'string' ? <Text fontSize={{ base: '3xl', lg: '5xl' }}>{icon}</Text> : icon}
-      </Box>
-      <Text fontWeight="bold" fontFamily="Silka" fontSize={{ base: 'md', md: 'lg' }}>
+    <HStack justifyContent="space-between" width="full">
+      <Text flex={9} fontWeight="bold" fontFamily="Silka" fontSize={{ base: 'md', md: 'lg' }}>
         {title}
       </Text>
-    </Box>
-    <Text fontFamily="Silka" fontSize={{ base: 'md', md: 'lg' }} className=" w-8/12 md:w-full">
+      <Box flex={1} display="flex" width="full" justifyContent="flex-end">
+        {typeof Icon === 'string' ? (
+          <Text pointerEvents="none" fontSize="3xl">
+            {Icon}
+          </Text>
+        ) : (
+          <Icon size="24px" />
+        )}
+      </Box>
+    </HStack>
+    <Text fontFamily="Silka" fontSize={{ base: 'sm', md: 'md' }} className=" w-8/12 md:w-full" color="gray.500">
       {subtitle}
     </Text>
     <Button
       cursor="pointer"
       borderRadius="md"
-      height={{ base: 12, md: 14 }}
-      px={3}
-      backgroundColor="primary"
-      color="white"
       textAlign="center"
       onClick={() => handleNavigation({ hash, state })}
-      rightIcon={<ArrowForwardIcon color="white" />}
-      _hover={{
-        backgroundColor: 'primary',
-      }}
-      _active={{
-        backgroundColor: 'primary',
-      }}
-      _focus={{
-        backgroundColor: 'primary',
-      }}
+      rightIcon={<ArrowForwardIcon />}
     >
       {buttonLabel || 'Start here'}
     </Button>

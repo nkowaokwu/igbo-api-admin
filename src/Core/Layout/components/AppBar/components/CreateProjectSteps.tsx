@@ -1,17 +1,55 @@
-import React, { ReactElement } from 'react';
-import { Button, Heading, Input, Text, Textarea, VStack } from '@chakra-ui/react';
+import React, { ReactElement, useState } from 'react';
+import { Button, Heading, Input, Text, Textarea, useToast, VStack } from '@chakra-ui/react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller, useForm } from 'react-hook-form';
-import { compact } from 'lodash';
+import { assign, compact, flow } from 'lodash';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import { postProject } from 'src/shared/ProjectAPI';
+import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
+import { ProjectData } from 'src/backend/controllers/utils/interfaces';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import VisibilityType from 'src/backend/shared/constants/VisibilityType';
+import LicenseType from 'src/backend/shared/constants/LicenseType';
 
 const CreateProjectSteps = (): ReactElement => {
+  const [isLoading, setIsLoading] = useState(false);
   const { register, control, handleSubmit } = useForm();
+  const toast = useToast();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const transformLanguage = (data) => assign(data, { languages: [data.languages.value || LanguageEnum.UNSPECIFIED] });
+
+  const injectDefaultValues = (data) =>
+    assign(data, { status: EntityStatus.ACTIVE, visibility: VisibilityType.PRIVATE, license: LicenseType.UNSPECIFIED });
+
+  const cleanedDataPipeline = flow([transformLanguage, injectDefaultValues]);
+
+  const handleNavigatingToProject = (project: ProjectData) => {
+    window.localStorage.setItem(LocalStorageKeys.PROJECT_ID, project.id.toString());
+    window.location.href = '#/';
+    window.location.reload();
+  };
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    const cleanedData = cleanedDataPipeline(data);
+    try {
+      const project = await postProject(cleanedData);
+      handleNavigatingToProject(project);
+    } catch (err) {
+      toast({
+        title: 'Error',
+        position: 'top-right',
+        variant: 'left-accent',
+        description: 'Unable to create your project',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,7 +75,7 @@ const CreateProjectSteps = (): ReactElement => {
                 <Select
                   {...props}
                   className="w-full"
-                  placeholder="Select a copyright license"
+                  placeholder="Select a language"
                   options={compact(
                     Object.values(LanguageLabels).map((value) => value.value !== LanguageEnum.UNSPECIFIED && value),
                   )}
@@ -45,7 +83,7 @@ const CreateProjectSteps = (): ReactElement => {
               )}
             />
           </VStack>
-          <Button type="submit" rightIcon={<ArrowForwardIcon />}>
+          <Button type="submit" rightIcon={<ArrowForwardIcon />} isLoading={isLoading}>
             Create project
           </Button>
         </VStack>

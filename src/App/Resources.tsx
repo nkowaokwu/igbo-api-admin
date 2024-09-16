@@ -1,5 +1,16 @@
 import React from 'react';
-import { compact } from 'lodash';
+import { FiHome, FiBarChart, FiBook, FiBookOpen } from 'react-icons/fi';
+import {
+  LuSettings,
+  LuHardDriveUpload,
+  LuFileStack,
+  LuFileEdit,
+  LuUserCheck,
+  LuCamera,
+  LuText,
+  LuVote,
+} from 'react-icons/lu';
+
 import {
   hasAdminPermissions,
   hasEditorPermissions,
@@ -54,6 +65,7 @@ const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSe
 
 export enum ResourceGroup {
   UNSPECIFIED = 'UNSPECIFIED',
+  GET_STARTED = 'GET_STARTED',
   LEXICAL = 'LEXICAL',
   DATA_COLLECTION = 'DATA_COLLECTION',
   SETTINGS = 'SETTINGS',
@@ -61,6 +73,7 @@ export enum ResourceGroup {
 
 export const ResourceGroupLabels = {
   [ResourceGroup.UNSPECIFIED]: '',
+  [ResourceGroup.GET_STARTED]: 'Get started',
   [ResourceGroup.LEXICAL]: 'Published data',
   [ResourceGroup.DATA_COLLECTION]: 'Draft data',
   [ResourceGroup.SETTINGS]: 'Project',
@@ -84,7 +97,7 @@ const defaultRoutes = (permissions) =>
     {
       name: '#',
       options: { label: 'Dashboard' },
-      icon: () => <>🏠</>,
+      icon: () => <FiHome />,
       exact: true,
       group: ResourceGroup.UNSPECIFIED,
       generalProject: true,
@@ -97,7 +110,7 @@ const editorRoutes = (permissions) =>
       name: 'stats',
       key: 'stats',
       list: withLastRoute(Stats),
-      icon: () => <>📈</>,
+      icon: () => <FiBarChart />,
       group: ResourceGroup.UNSPECIFIED,
     },
     {
@@ -105,15 +118,16 @@ const editorRoutes = (permissions) =>
       key: 'words',
       list: withLastRoute(WordList),
       show: withLastRoute(WordShow),
-      icon: () => <>📗</>,
+      icon: () => <FiBook />,
       group: ResourceGroup.LEXICAL,
     },
     {
       name: 'examples',
       key: 'examples',
+      options: { label: 'Sentences' },
       list: withLastRoute(ExampleList),
       show: withLastRoute(ExampleShow),
-      icon: () => <>📘</>,
+      icon: () => <FiBookOpen />,
       group: ResourceGroup.LEXICAL,
       generalProject: true,
     },
@@ -135,42 +149,44 @@ const editorRoutes = (permissions) =>
       list: withLastRoute(CorpusList),
       show: withLastRoute(CorpusShow),
       create: null,
-      icon: () => <>📚</>,
+      icon: () => <LuFileStack />,
       group: ResourceGroup.LEXICAL,
+      generalProject: true,
     },
     {
       name: 'wordSuggestions',
       key: 'wordSuggestions',
-      options: { label: 'Word Suggestions' },
+      options: { label: 'Word Drafts' },
       list: withLastRoute(WordSuggestionList),
       edit: withLastRoute(WordSuggestionEdit),
       create: withLastRoute(WordSuggestionCreate),
       show: withLastRoute(WordSuggestionShow),
-      icon: () => <>📒</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'exampleSuggestions',
       key: 'exampleSuggestions',
-      options: { label: 'Example Suggestions' },
+      options: { label: 'Sentence Drafts' },
       list: withLastRoute(ExampleSuggestionList),
       edit: withLastRoute(ExampleSuggestionEdit),
       create: withLastRoute(ExampleSuggestionCreate),
       show: withLastRoute(ExampleSuggestionShow),
-      icon: () => <>📕</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
       generalProject: true,
     },
     {
       name: 'corpusSuggestions',
       key: 'corpusSuggestions',
-      options: { label: 'Corpus Suggestions' },
+      options: { label: 'Corpus Drafts' },
       list: withLastRoute(CorpusSuggestionList),
       edit: withLastRoute(CorpusSuggestionEdit),
       create: withLastRoute(CorpusSuggestionCreate),
       show: withLastRoute(CorpusSuggestionShow),
-      icon: () => <>📓</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: true,
     },
     {
       name: 'polls',
@@ -178,38 +194,43 @@ const editorRoutes = (permissions) =>
       options: { label: 'Constructed Term Polls' },
       list: withLastRoute(PollList),
       create: withLastRoute(PollCreate),
-      icon: () => <>🗳</>,
+      icon: () => <LuVote />,
       group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
 
-const adminRoutes = (permissions) =>
+const getStartedRoutes = (permissions) =>
+  hasAdminPermissions(permissions, [
+    {
+      name: 'dataDump',
+      key: 'dataDump',
+      options: { label: 'Data Dump' },
+      list: withLastRoute(DataDump),
+      icon: () => <LuHardDriveUpload />,
+      group: ResourceGroup.GET_STARTED,
+      generalProject: true,
+    },
+  ]) || [];
+
+const settingsRoutes = (permissions) =>
   hasAdminPermissions(permissions, [
     {
       name: 'settings',
       key: 'settings',
       noLayout: true,
       list: withLastRoute(ProjectSettings),
-      icon: () => <>🔩</>,
+      icon: () => <LuSettings />,
       group: ResourceGroup.SETTINGS,
       generalProject: true,
     },
     {
       name: 'users',
       key: 'users',
+      options: { label: 'Members' },
       list: withLastRoute(UserList),
       show: withLastRoute(UserShow),
-      icon: () => <>👩🏾</>,
+      icon: () => <LuUserCheck />,
       group: ResourceGroup.SETTINGS,
-      generalProject: true,
-    },
-    {
-      name: 'dataDump',
-      key: 'dataDump',
-      options: { label: 'Data Dump' },
-      list: withLastRoute(DataDump),
-      icon: () => <>🏋🏾‍♂️</>,
-      group: ResourceGroup.DATA_COLLECTION,
       generalProject: true,
     },
     {
@@ -217,7 +238,7 @@ const adminRoutes = (permissions) =>
       key: 'textImages',
       options: { label: 'Igbo Text Images' },
       list: withLastRoute(TextImageList),
-      icon: () => <>📸</>,
+      icon: () => <LuCamera />,
       group: ResourceGroup.DATA_COLLECTION,
     },
     {
@@ -225,23 +246,23 @@ const adminRoutes = (permissions) =>
       key: 'igboTextImages',
       options: { label: 'Upload Igbo Text Images' },
       list: withLastRoute(IgboTextImages),
-      icon: () => <>📸</>,
+      icon: () => <LuCamera />,
       group: ResourceGroup.DATA_COLLECTION,
     },
-    // {
-    //   name: 'igboSoundbox',
-    //   key: 'igboSoundbox',
-    //   options: { label: 'Igbo Soundbox' },
-    //   list: withLastRoute(IgboSoundbox),
-    //   icon: () => <>🔊</>,
-    //   group: ResourceGroup.DATA_COLLECTION,
-    // },
+    /* {
+      name: 'igboSoundbox',
+      key: 'igboSoundbox',
+      options: { label: 'Igbo Soundbox' },
+      list: withLastRoute(IgboSoundbox),
+      icon: () => <>🔊</>,
+      group: ResourceGroup.DATA_COLLECTION,
+    }, */
     {
       name: 'igboDefinitions',
       key: 'igboDefinitions',
       options: { label: 'Igbo Definitions' },
       list: withLastRoute(IgboDefinitions),
-      icon: () => <>✍🏾</>,
+      icon: () => <LuText />,
       group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
@@ -260,42 +281,42 @@ const crowdsourcerRoutes = (permissions) =>
 
 export const getResourceObjects = (permissions: any): Resource[] => [
   ...defaultRoutes(permissions),
+  ...getStartedRoutes(permissions),
   ...editorRoutes(permissions),
-  ...adminRoutes(permissions),
+  ...settingsRoutes(permissions),
   ...crowdsourcerRoutes(permissions),
 ];
 
-export const getCustomRouteObjects = (): any =>
-  compact([
-    {
-      exact: true,
-      path: '/profile',
-      component: withLastRoute(Profile),
-      group: ResourceGroup.UNSPECIFIED,
-      generalProject: true,
-    },
-    {
-      exact: true,
-      path: '/translate',
-      component: withLastRoute(TranslateIgboSentences),
-      group: ResourceGroup.UNSPECIFIED,
-      generalProject: true,
-    },
-    {
-      exact: true,
-      path: '/notifications',
-      component: withLastRoute(NotificationList),
-      group: ResourceGroup.UNSPECIFIED,
-    },
-    {
-      path: '/igboSoundbox',
-      component: withLastRoute(IgboSoundbox),
-      group: ResourceGroup.UNSPECIFIED,
-      generalProject: true,
-    },
-    {
-      path: '/igboDefinitions',
-      component: withLastRoute(IgboDefinitions),
-      group: ResourceGroup.UNSPECIFIED,
-    },
-  ]).flat();
+export const getCustomRouteObjects = (): any => [
+  {
+    exact: true,
+    path: '/profile',
+    component: withLastRoute(Profile),
+    group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
+  },
+  {
+    exact: true,
+    path: '/translate',
+    component: withLastRoute(TranslateIgboSentences),
+    group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
+  },
+  {
+    exact: true,
+    path: '/notifications',
+    component: withLastRoute(NotificationList),
+    group: ResourceGroup.UNSPECIFIED,
+  },
+  {
+    path: '/igboSoundbox',
+    component: withLastRoute(IgboSoundbox),
+    group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
+  },
+  {
+    path: '/igboDefinitions',
+    component: withLastRoute(IgboDefinitions),
+    group: ResourceGroup.UNSPECIFIED,
+  },
+];

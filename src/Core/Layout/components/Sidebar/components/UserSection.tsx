@@ -20,12 +20,17 @@ const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.R
   };
 
   return (
-    <VStack alignItems="start" px={4} width="full" position="absolute" bottom={0}>
+    <VStack alignItems="start" px={4} width="full" position="absolute" bottom={0} backgroundColor="white">
       <Divider />
       <HStack justifyContent="space-between" py={2} gap={2} width="full">
         <Tooltip label="View profile">
           <HStack gap={2} flex={8} onClick={handleNavigateToProfile} cursor="pointer">
-            <Avatar src={currentUser?.photoURL} name={currentUser?.displayName} />
+            <Avatar
+              src={currentUser?.photoURL}
+              size="sm"
+              bgGradient="linear(to-br, yellow.200, orange.500)"
+              icon={<></>}
+            />
             <VStack alignItems="start" spacing={0}>
               <Text fontWeight="bold" fontSize="sm">
                 {currentUser?.displayName}

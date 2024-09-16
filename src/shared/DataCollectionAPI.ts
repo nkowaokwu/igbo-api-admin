@@ -2,7 +2,7 @@
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
-import { UserRanking } from 'src/backend/controllers/utils/interfaces';
+import { Translation, UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import Collections from 'src/shared/constants/Collection';
 import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
@@ -75,7 +75,7 @@ export const putReviewForRandomExampleSuggestions = (data: ExampleReviewsPayload
   });
 
 export const bulkUploadExampleSuggestions = async (
-  payload: { sentences: { igbo: string }[]; isExample: boolean },
+  payload: { sentences: { source: Translation }[]; isExample: boolean },
   onProgressSuccess: (value: any) => void,
   onProgressFailure: (err: Error) => void,
 ): Promise<any> => {
@@ -90,7 +90,7 @@ export const bulkUploadExampleSuggestions = async (
     dataChunks.push(dataChunk);
     chunkIndex += groupSize;
   }
-  // console.time(`Bulk upload time for ${dataChunks.length} chunks`);
+
   const result = await dataChunks.reduce(
     (chain, dataChunk) =>
       chain
@@ -105,7 +105,6 @@ export const bulkUploadExampleSuggestions = async (
         .catch(onProgressFailure),
     Promise.resolve(),
   );
-  // console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
   return result;
 };
 

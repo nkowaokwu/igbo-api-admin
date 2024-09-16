@@ -118,7 +118,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-router-redux": "^4.0.8",
-    "react-select": "^3.1.0",
+    "react-select": "^5.8.0",
     "remove-accents": "^0.4.2",
     "string-similarity": "^4.0.3",
     "tailwindcss": "^1.9.6",

@@ -5,10 +5,7 @@ const theme = createTheme({
   overrides: {
     RaAppBar: {
       toolbar: {
-        backgroundColor: '#417453 !important',
-        backgroundImage:
-          "url('https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/pattern.png')",
-        backgroundSize: 'contain',
+        borderBottom: '1px solid var(--chakra-colors-gray-300)',
       },
       menuButton: {
         '*': {
@@ -19,6 +16,9 @@ const theme = createTheme({
     MuiAppBar: {
       root: {
         boxShadow: 'none',
+      },
+      toolbar: {
+        backgroundColor: 'white',
       },
     },
     MuiDrawer: {
@@ -59,7 +59,7 @@ const theme = createTheme({
       button: {
         color: 'var(--chakra-colors-gray-800)',
         '&:hover': {
-          backgroundColor: 'var(--chakra-colors-gray-100)',
+          backgroundColor: 'var(--chakra-colors-gray-200)',
           color: 'var(--chakra-colors-gray-800)',
         },
       },
@@ -104,6 +104,11 @@ const theme = createTheme({
         fontFamily: silkaFontFamily,
       },
     },
+    MuiSvgIcon: {
+      root: {
+        fill: '',
+      },
+    },
     RaUserMenu: {
       userButton: {
         border: 'none',
@@ -145,17 +150,19 @@ const theme = createTheme({
     RaMenuItemLink: {
       root: {
         color: 'var(--chakra-colors-gray-600)',
-        margin: 'var(--chakra-sizes-2)',
+        margin: 'var(--chakra-sizes-2) 0',
         borderRadius: '10px',
         '&:focus': {
-          color: 'var(--chakra-colors-green-500)',
+          color: 'var(--chakra-colors-blue-500)',
         },
+        fontWeight: 'normal',
+        width: '100%',
       },
       active: {
-        color: 'var(--chakra-colors-green-500)',
-        backgroundColor: 'var(--chakra-colors-green-100)',
+        color: 'var(--chakra-colors-blue-500)',
+        backgroundColor: 'var(--chakra-colors-blue-100)',
         '&:hover': {
-          color: 'var(--chakra-colors-green-500)',
+          color: 'var(--chakra-colors-blue-500)',
         },
       },
       icon: {

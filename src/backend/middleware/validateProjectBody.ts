@@ -7,21 +7,14 @@ import LicenseType from 'src/backend/shared/constants/LicenseType';
 import VisibilityType from 'src/backend/shared/constants/VisibilityType';
 
 export const projectDataSchema = Joi.object().keys({
-  title: Joi.string().optional(),
-  description: Joi.string().optional(),
-  status: Joi.alternatives()
-    .try(...Object.values(EntityStatus))
-    .optional(),
-  visibility: Joi.alternatives()
-    .try(...Object.values(VisibilityType))
-    .optional(),
-  license: Joi.alternatives()
-    .try(...Object.values(LicenseType))
-    .optional(),
+  title: Joi.string(),
+  description: Joi.string(),
+  status: Joi.alternatives().try(...Object.values(EntityStatus)),
+  visibility: Joi.alternatives().try(...Object.values(VisibilityType)),
+  license: Joi.alternatives().try(...Object.values(LicenseType)),
   languages: Joi.array()
     .min(0)
-    .items(Joi.alternatives().try(...Object.values(LanguageEnum)))
-    .optional(),
+    .items(Joi.alternatives().try(...Object.values(LanguageEnum))),
 });
 
 export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<Response | void> => {

@@ -1,7 +1,9 @@
+import moment from 'moment';
+
 /* Renders the date in a correct format */
-export const determineDate = (updatedAt: string | number | Date): string | Date => {
-  if (!updatedAt) {
+export const determineDate = (date: string | number | Date): string | Date => {
+  if (!date) {
     return 'N/A';
   }
-  return new Date(updatedAt).toLocaleString();
+  return moment(date).format('MMMM DD, YYYY @ H:mm a');
 };

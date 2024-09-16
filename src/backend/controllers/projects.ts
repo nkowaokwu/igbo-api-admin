@@ -1,9 +1,17 @@
 import { Response, NextFunction } from 'express';
 import { Connection } from 'mongoose';
+import { assign } from 'lodash';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { getUserProjectPermissionsHelper } from 'src/backend/controllers/userProjectPermissions';
+import {
+  getUserProjectPermissionsHelper,
+  postUserProjectPermissionHelper,
+} from 'src/backend/controllers/userProjectPermissions';
 import { projectSchema } from 'src/backend/models/Project';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
+import Author from 'src/backend/shared/constants/Author';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import LicenseType from 'src/backend/shared/constants/LicenseType';
+import VisibilityType from 'src/backend/shared/constants/VisibilityType';
 
 /**
  *
@@ -84,14 +92,33 @@ export const postProject = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<{ project: Interfaces.ProjectData }> | void> => {
-  const { mongooseConnection, body } = req;
+  const { mongooseConnection, body, user } = req;
 
   try {
     const Project = mongooseConnection.model<Interfaces.Project>('Project', projectSchema);
 
-    const project = new Project(body);
+    const project = new Project(
+      assign(body, {
+        status: EntityStatus.ACTIVE,
+        license: LicenseType.UNSPECIFIED,
+        visibility: VisibilityType.PRIVATE,
+      }),
+    );
+    const savedProject = await project.save();
+    const userProjectPermissionBody = {
+      role: UserRoles.ADMIN,
+      firebaseId: user.uid,
+      email: user.email,
+      grantingAdmin: Author.SYSTEM,
+    };
 
-    return res.send({ project: await project.save() });
+    await postUserProjectPermissionHelper({
+      mongooseConnection,
+      projectId: project.id.toString(),
+      body: userProjectPermissionBody,
+    });
+
+    return res.send({ project: savedProject });
   } catch (err) {
     return next(err);
   }

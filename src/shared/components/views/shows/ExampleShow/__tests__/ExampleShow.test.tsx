@@ -6,6 +6,7 @@ import TestContext from 'src/__tests__/components/TestContext';
 import Collections from 'src/shared/constants/Collection';
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import { exampleSuggestionFixture } from 'src/__tests__/shared/fixtures';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import ExampleShow from '../ExampleShow';
 
 describe('Example Show', () => {
@@ -16,8 +17,16 @@ describe('Example Show', () => {
   const record = exampleSuggestionFixture({
     id: '123',
     originalExampleId: 'original-example-id',
-    igbo: 'first igbo example',
-    english: 'first english example',
+    source: {
+      text: 'first igbo example',
+      language: LanguageEnum.IGBO,
+    },
+    translations: [
+      {
+        text: 'first english example',
+        language: LanguageEnum.ENGLISH,
+      },
+    ],
     pronunciations: [
       {
         _id: 'pronunciation-123',
@@ -49,7 +58,7 @@ describe('Example Show', () => {
       </TestContext>,
     );
 
-    await findByText('Example Document Details');
+    await findByText('Example');
     await findByText('Audio Pronunciations');
     await findByText('2 approvals');
     await findByText('1 denial');
@@ -83,7 +92,7 @@ describe('Example Show', () => {
       </TestContext>,
     );
 
-    await findByText('Example Suggestion Document Details');
+    await findByText('Sentence Draft');
     await findByText('Audio Pronunciations');
     await findByText('Igbo');
     await findByText('first igbo example');

@@ -1,10 +1,5 @@
 import React, { useState, ReactElement } from 'react';
-import {
-  Box,
-  Button,
-  Heading,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import ConfirmModal from 'src/shared/components/ConfirmModal';
 import { ArrowBackIcon } from '@chakra-ui/icons';
@@ -14,10 +9,10 @@ const Navbar = ({
   currentView,
   setCurrentView,
   isDirty,
-} : {
-  currentView: IgboSoundboxViews,
-  setCurrentView: React.Dispatch<React.SetStateAction<IgboSoundboxViews>>,
-  isDirty: boolean,
+}: {
+  currentView: IgboSoundboxViews;
+  setCurrentView: React.Dispatch<React.SetStateAction<IgboSoundboxViews>>;
+  isDirty: boolean;
 }): ReactElement => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [nextView, setNextView] = useState(null);
@@ -50,11 +45,11 @@ const Navbar = ({
       >
         <Text>Leaving this page without submitting your work will lead to your current work to be lost.</Text>
       </ConfirmModal>
-      <NavbarWrapper
-        className={currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'}
-      >
+      <NavbarWrapper className={currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'}>
         {currentView === IgboSoundboxViews.HOME ? (
-          <Heading fontFamily="Silka" textAlign="center">Igbo Soundbox</Heading>
+          <Heading fontFamily="Silka" textAlign="center">
+            Igbo Soundbox
+          </Heading>
         ) : (
           <Box className="flex flex-row justify-start items-center space-x-4 h-full">
             <Button
@@ -77,6 +72,7 @@ const Navbar = ({
               Back
             </Button>
             <Button
+              variant="ghost"
               fontFamily="Silka"
               fontWeight="bold"
               color={currentView === IgboSoundboxViews.RECORD ? 'green.300' : 'gray'}
@@ -101,6 +97,7 @@ const Navbar = ({
               Record audio
             </Button>
             <Button
+              variant="ghost"
               fontFamily="Silka"
               fontWeight="bold"
               color={currentView === IgboSoundboxViews.VERIFY ? 'green.300' : 'gray'}
