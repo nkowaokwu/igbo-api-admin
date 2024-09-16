@@ -43,6 +43,7 @@ const Menu = ({ onMenuClick }: MenuProps) => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        overflowY: 'auto',
       }}
     >
       <Accordion

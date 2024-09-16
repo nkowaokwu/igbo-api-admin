@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { Connection, Document } from 'mongoose';
+import mongoose, { Connection, Document } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
@@ -13,16 +13,47 @@ import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 export const getUserProjectPermissionsHelper = async ({
   mongooseConnection,
   uid,
+  status = EntityStatus.ACTIVE,
 }: {
   mongooseConnection: Connection;
   uid: string;
+  status?: EntityStatus.ACTIVE;
 }): Promise<UserProjectPermission[]> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
   );
 
-  return UserProjectPermission.find({ firebaseId: uid });
+  return UserProjectPermission.find({ firebaseId: uid, ...(status === EntityStatus.UNSPECIFIED ? {} : { status }) });
+};
+
+/**
+ *
+ * @param param0
+ * @returns Returns a UserProjectPermission associated with the specified user
+ * with the MongoDB doc Id
+ */
+export const getUserProjectPermissionByDocIdHelper = async ({
+  mongooseConnection,
+  id,
+  projectId,
+  status = EntityStatus.ACTIVE,
+}: {
+  mongooseConnection: Connection;
+  id: string;
+  projectId: string;
+  status?: EntityStatus;
+}): Promise<Document<UserProjectPermission>> => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission',
+    userProjectPermissionSchema,
+  );
+
+  return UserProjectPermission.findOne({
+    projectId,
+    _id: id,
+    ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
+  });
 };
 
 /**
@@ -34,17 +65,23 @@ export const getUserProjectPermissionHelper = async ({
   mongooseConnection,
   uid,
   projectId,
+  status = EntityStatus.ACTIVE,
 }: {
   mongooseConnection: Connection;
   uid: string;
   projectId: string;
+  status?: EntityStatus;
 }): Promise<Document<UserProjectPermission, any, any>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
   );
 
-  return UserProjectPermission.findOne({ projectId, firebaseId: uid });
+  return UserProjectPermission.findOne({
+    projectId,
+    firebaseId: uid,
+    ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
+  });
 };
 
 /**
@@ -91,20 +128,55 @@ export const getUserProjectPermissionsByProjectHelper = async ({
   uids = [],
   skip,
   limit,
+  status = EntityStatus.ACTIVE,
 }: {
   mongooseConnection: Connection;
   projectId: string;
   uids?: string[];
   skip: number;
   limit: number;
+  status?: EntityStatus;
 }): Promise<Document<UserProjectPermission, any, UserProjectPermission>[]> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
   );
-  return UserProjectPermission.find({ projectId, firebaseId: uids?.length ? { $in: uids } : { $exists: true } })
+  return UserProjectPermission.find({
+    projectId,
+    firebaseId: uids?.length ? { $in: uids } : { $exists: true },
+    ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
+  })
     .skip(skip)
     .limit(limit);
+};
+
+/**
+ *
+ * @param param0
+ * @returns Returns a UserProjectPermission associated with the specified user using
+ * their email
+ */
+export const getUserProjectPermissionByEmailHelper = ({
+  mongooseConnection,
+  projectId,
+  email,
+  status = EntityStatus.ACTIVE,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  email: string;
+  status?: EntityStatus;
+}): Promise<Document<UserProjectPermission>> => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission',
+    userProjectPermissionSchema,
+  );
+
+  return UserProjectPermission.findOne({
+    projectId,
+    email,
+    ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
+  });
 };
 
 /**
@@ -119,18 +191,18 @@ export const postUserProjectPermissionHelper = ({
 }: {
   mongooseConnection: Connection;
   projectId: string;
-  body: Pick<UserProjectPermission, 'email' | 'role' | 'firebaseId' | 'grantingAdmin'>;
-}): Promise<Document<UserProjectPermission, any, any>> => {
+  body: Pick<UserProjectPermission, 'email' | 'role' | 'firebaseId' | 'grantingAdmin' | 'status'>;
+}): Promise<Document<UserProjectPermission>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
   );
-  const { email, role, firebaseId, grantingAdmin } = body;
+  const { email, role, firebaseId, grantingAdmin, status } = body;
 
   const userProjectPermission = new UserProjectPermission({
-    status: EntityStatus.ACTIVE,
+    status: status || EntityStatus.ACTIVE,
     firebaseId: firebaseId || '',
-    projectId,
+    projectId: new mongoose.Types.ObjectId(projectId),
     email,
     role,
     grantingAdmin,
@@ -217,6 +289,50 @@ export const putUserProjectPermission = async (
   } catch (err) {
     return next(err);
   }
+};
+
+/**
+ *
+ * @param param0
+ * @returns Deletes a UserProjectPermission with the user uid
+ */
+export const deleteUserProjectPermissionHelper = async ({
+  mongooseConnection,
+  projectId,
+  uid,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  uid: string;
+}): Promise<Document<UserProjectPermission>> => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission.t',
+    userProjectPermissionSchema,
+  );
+
+  return UserProjectPermission.findOneAndDelete({ projectId, firebaseId: uid });
+};
+
+/**
+ *
+ * @param param0
+ * @returns Deletes a UserProjectPermission with the user email
+ */
+export const deleteUserProjectPermissionByEmailHelper = async ({
+  mongooseConnection,
+  projectId,
+  email,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  email: string;
+}): Promise<Document<UserProjectPermission>> => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission.t',
+    userProjectPermissionSchema,
+  );
+
+  return UserProjectPermission.findOneAndDelete({ projectId, email });
 };
 
 /**

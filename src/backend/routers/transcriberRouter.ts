@@ -15,10 +15,9 @@ import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
 import { adminRoles, transcriberOnlyRoles, transcriberRoles } from 'src/backend/shared/constants/RolePermissions';
-import authentication from 'src/backend/middleware/authentication';
 
 const transcriberRouter = express.Router();
-transcriberRouter.use(authentication, authorization(transcriberRoles));
+transcriberRouter.use(authorization(transcriberRoles));
 
 transcriberRouter.post(
   '/examples/upload',

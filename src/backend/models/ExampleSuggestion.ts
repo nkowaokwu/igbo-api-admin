@@ -25,6 +25,10 @@ const audioPronunciationSuggestionSchema = new Schema(
 const translationSchema = new Schema({
   language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
   text: { type: String, default: '', trim: true },
+  pronunciations: {
+    type: [{ type: audioPronunciationSuggestionSchema }],
+    default: [],
+  },
 });
 
 export const exampleSuggestionSchema = new Schema(
@@ -52,10 +56,6 @@ export const exampleSuggestionSchema = new Schema(
     },
     associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
-    pronunciations: {
-      type: [{ type: audioPronunciationSuggestionSchema }],
-      default: [],
-    },
     exampleForSuggestion: { type: Boolean, default: false },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },

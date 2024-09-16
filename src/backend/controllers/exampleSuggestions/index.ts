@@ -133,7 +133,6 @@ export const getExampleSuggestions = (
     const { projectId } = req.query;
     const query = searchExampleSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
 
-    console.log(query, 'towe');
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,

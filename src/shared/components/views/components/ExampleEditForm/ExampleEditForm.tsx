@@ -1,6 +1,6 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { merge, get, omit, pick, flow, assign } from 'lodash';
-import { Box, Button, Text, chakra, useToast, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Text, chakra, useToast, Tooltip, HStack } from '@chakra-ui/react';
 import { PiMagicWandBold } from 'react-icons/pi';
 import { Record, useNotify, useRedirect } from 'react-admin';
 import { useForm, Controller } from 'react-hook-form';
@@ -19,8 +19,9 @@ import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import { ExampleTranscriptionFeedbackData } from 'src/backend/controllers/utils/interfaces';
 import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
-import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -52,9 +53,10 @@ const ExampleEditForm = ({
   const redirect = useRedirect();
   const toast = useToast();
   const options = Object.values(ExampleStyle).map(({ value, label }) => ({ value, label }));
+  const languageOptions = Object.values(LanguageLabels).filter(({ value }) => value !== LanguageEnum.UNSPECIFIED);
   const uid = useFirebaseUid();
-  const project = React.useContext(ProjectContext);
-  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record, project);
+  const isIgboAPIProject = useIsIgboAPIProject();
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -80,18 +82,23 @@ const ExampleEditForm = ({
   const sanitizeData = (rawData: Record) => {
     const data = assign(rawData);
     data.source = {
-      language: get(data, 'source.language') || LanguageEnum.UNSPECIFIED,
+      language: get(data, 'source.language.value') || LanguageEnum.UNSPECIFIED,
       text: get(data, 'source.text') || '',
+      pronunciations: (get(data, 'source.pronunciations') || []).map((pronunciation) =>
+        omit(pronunciation, ['review', 'id', 'approvals', 'denials']),
+      ),
     };
-    data.translations = (get(data, 'translations') || []).map(({ language = LanguageEnum.UNSPECIFIED, text = '' }) => ({
-      language,
-      text,
-    }));
-    data.pronunciations = (get(data, 'pronunciations') || []).map((pronunciation) =>
-      omit(pronunciation, ['review', 'id', 'approvals', 'denials']),
+    data.translations = (get(data, 'translations') || []).map(
+      ({ language = LanguageLabels.UNSPECIFIED, text = '', pronunciations }) => ({
+        language: language.value,
+        text,
+        pronunciations: (pronunciations || []).map((pronunciation) =>
+          omit(pronunciation, ['review', 'id', 'approvals', 'denials']),
+        ),
+      }),
     );
     data.associatedDefinitionsSchemas = sanitizeArray(record.associatedDefinitionsSchemas || []);
-    data.style = data.style.value;
+    data.style = data.style?.value;
     data.associatedWords = sanitizeWith(data.associatedWords || []);
     data.nsibidiCharacters = sanitizeWith(data.nsibidiCharacters || []);
 
@@ -130,7 +137,13 @@ const ExampleEditForm = ({
         },
       });
     } catch (err) {
-      // console.log(err);
+      toast({
+        title: 'Error',
+        description: 'Unable to submit sentence',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
       setIsSubmitting(false);
     }
   };
@@ -154,27 +167,7 @@ const ExampleEditForm = ({
               <Input data-test="original-id" value={record.originalExampleId || record.id} isDisabled />
             </>
           ) : null}
-          <Box
-            className="w-full flex flex-col lg:flex-row justify-between
-          items-center space-y-4 lg:space-y-0 lg:space-x-6"
-          >
-            <Box className="flex flex-col w-full">
-              <FormHeader
-                title="Sentence Style"
-                tooltip="Select the style or figure of speech that this sentence is using."
-              />
-              <Box data-test="sentence-style-input-container">
-                <Controller
-                  render={(props) => <Select {...props} options={options} />}
-                  name="style"
-                  control={control}
-                  defaultValue={style}
-                />
-              </Box>
-              {errors.style ? <p className="error">{errors.style.message}</p> : null}
-            </Box>
-          </Box>
-          <FormHeader title={sourceLanguage} tooltip={`The example sentence in ${sourceLanguage}`} />
+          <FormHeader title="Source text" tooltip={`The example sentence in ${sourceLanguage}`} />
           <Box
             {...(exampleTranscriptionFeedback?.humanTranscription
               ? {
@@ -187,12 +180,38 @@ const ExampleEditForm = ({
                 }
               : {})}
           >
-            <Controller
-              render={(props) => <Input {...props} placeholder="Biko" data-test="igbo-input" />}
-              name="source.text"
+            <HStack display="flex" justifyContent="space-between" width="full" gap={2}>
+              <Controller
+                render={(props) => (
+                  <Input {...props} placeholder={`Text in ${sourceLanguage}`} data-test="igbo-input" flex={8} />
+                )}
+                name="source.text"
+                control={control}
+                defaultValue={get(record, 'source.text') || get(getValues(), 'source.text') || ''}
+              />
+              <Controller
+                render={(props) => (
+                  <Select
+                    {...props}
+                    options={languageOptions}
+                    styles={{ container: (styles) => ({ ...styles, flex: 2 }) }}
+                  />
+                )}
+                name="source.language"
+                control={control}
+                defaultValue={LanguageLabels[get(record, 'source.language') || get(getValues(), 'source.language')]}
+              />
+            </HStack>
+            <ExampleAudioPronunciationsForm
               control={control}
-              defaultValue={get(record, 'source.text') || get(getValues(), 'source.text') || ''}
+              record={record}
+              originalRecord={originalRecord}
+              uid={uid}
+              name="source"
             />
+            {get(errors, 'source.pronunciations') ? (
+              <p className="error">{get(errors, 'source.pronunciations.message')}</p>
+            ) : null}
             {exampleTranscriptionFeedback?.humanTranscription ? (
               <Box className="flex flex-row justify-between items-center">
                 <Tooltip
@@ -233,55 +252,90 @@ const ExampleEditForm = ({
         </Box>
         <Box className="flex flex-col">
           <FormHeader
-            title={destinationLanguage}
+            title="Translated text"
             // eslint-disable-next-line max-len
             tooltip={`The example sentence in ${destinationLanguage}. This is the the literal ${destinationLanguage} translation of the ${sourceLanguage} sentence.`}
           />
           <Controller
             render={(props) => (
-              <Input {...props} placeholder="Destination language translation" data-test="english-input" />
+              <Input {...props} placeholder={`Text in ${destinationLanguage}`} data-test="english-input" />
             )}
             name="translations.0.text"
             control={control}
             defaultValue={get(record, 'translations.0.text') || get(getValues(), 'translations.0.text') || ''}
           />
           {get(errors, 'translations.0.text') ? <p className="error">{`${destinationLanguage} is required`}</p> : null}
-        </Box>
-        <Box className="flex flex-col">
-          <FormHeader
-            title="Meaning"
-            tooltip="This field showcases the meaning of the sentence - typically for proverbs"
-          />
-          <Controller
-            render={(props) => (
-              <Input {...props} placeholder="Conceptual meaning of the original text" data-test="meaning-input" />
-            )}
-            name="meaning"
+          <ExampleAudioPronunciationsForm
             control={control}
-            defaultValue={record.meaning || getValues().meaning || ''}
+            record={record}
+            originalRecord={originalRecord}
+            uid={uid}
+            name="translations.0"
           />
-          {errors.meaning ? <p className="error">{errors.meaning.message}</p> : null}
+          {get(errors, 'source.translations.0') ? (
+            <p className="error">{get(errors, 'source.translations.0.message')}</p>
+          ) : null}
         </Box>
+        {isIgboAPIProject ? (
+          <Box className="flex flex-col">
+            <FormHeader
+              title="Meaning"
+              tooltip="This field showcases the meaning of the sentence - typically for proverbs"
+            />
+            <Controller
+              render={(props) => (
+                <Input {...props} placeholder="Conceptual meaning of the original text" data-test="meaning-input" />
+              )}
+              name="meaning"
+              control={control}
+              defaultValue={record.meaning || getValues().meaning || ''}
+            />
+            {errors.meaning ? <p className="error">{errors.meaning.message}</p> : null}
+          </Box>
+        ) : null}
+        {isIgboAPIProject ? (
+          <Box
+            className="w-full flex flex-col lg:flex-row justify-between
+          items-center space-y-4 lg:space-y-0 lg:space-x-6"
+          >
+            <Box className="flex flex-col w-full">
+              <FormHeader
+                title="Sentence Style"
+                tooltip="Select the style or figure of speech that this sentence is using."
+              />
+              <Box data-test="sentence-style-input-container">
+                <Controller
+                  render={(props) => <Select {...props} options={options} />}
+                  name="style"
+                  control={control}
+                  defaultValue={style}
+                />
+              </Box>
+              {errors.style ? <p className="error">{errors.style.message}</p> : null}
+            </Box>
+          </Box>
+        ) : null}
         <Box className="flex flex-col">
           <NsibidiForm control={control} errors={errors} name="nsibidi" />
-          <ExampleAudioPronunciationsForm control={control} record={record} originalRecord={originalRecord} uid={uid} />
           <Box className="mt-2">
             <AssociatedWordsForm errors={errors} control={control} record={record} />
           </Box>
-          <Box className="flex flex-col">
-            <FormHeader
-              title="Editor's Comments"
-              tooltip={`Leave a comment for other editors to read to 
+          {isIgboAPIProject ? (
+            <Box className="flex flex-col">
+              <FormHeader
+                title="Editor's Comments"
+                tooltip={`Leave a comment for other editors to read to 
           understand your reasoning behind your change. 
           Leave your name on your comment!`}
-            />
-            <Controller
-              render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
-              name="editorsNotes"
-              defaultValue={record.editorsNotes || ''}
-              control={control}
-            />
-          </Box>
+              />
+              <Controller
+                render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
+                name="editorsNotes"
+                defaultValue={record.editorsNotes || ''}
+                control={control}
+              />
+            </Box>
+          ) : null}
           <Box className="flex flex-row items-center form-buttons-container space-y-4 lg:space-y-0 lg:space-x-4">
             <Button
               className="mt-3 lg:my-0"

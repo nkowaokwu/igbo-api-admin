@@ -151,7 +151,7 @@ const editorRoutes = (permissions) =>
       create: null,
       icon: () => <LuFileStack />,
       group: ResourceGroup.LEXICAL,
-      generalProject: true,
+      generalProject: false,
     },
     {
       name: 'wordSuggestions',
@@ -186,7 +186,7 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(CorpusSuggestionShow),
       icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
-      generalProject: true,
+      generalProject: false,
     },
     {
       name: 'polls',

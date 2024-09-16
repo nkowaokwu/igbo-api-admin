@@ -7,6 +7,9 @@ import { successResponse, errorResponse } from 'src/shared/server-validation';
 import { adminEmailList } from 'src/shared/constants/emailList';
 import Collections from 'src/shared/constants/Collection';
 import cleanDocument from 'src/backend/shared/utils/cleanDocument';
+import { isProduction, PROJECT_ID } from 'src/backend/config';
+import { postUserProjectPermissionHelper } from 'src/backend/controllers/userProjectPermissions';
+import Author from 'src/backend/shared/constants/Author';
 import { sendNewUserNotification, sendUpdatedRoleNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { findUsers } from '../controllers/users';
@@ -17,6 +20,61 @@ import { crowdsourcerSchema } from '../models/Crowdsourcer';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const db = admin.firestore();
+
+/**
+ *
+ * @param email
+ * @returns Determines the desired user role while developing based on the email
+ */
+const determineUserRoleFromEmail = (email: string) =>
+  email.startsWith(UserRoles.ADMIN)
+    ? UserRoles.ADMIN
+    : email.startsWith(UserRoles.MERGER)
+    ? UserRoles.MERGER
+    : email.startsWith(UserRoles.NSIBIDI_MERGER)
+    ? UserRoles.NSIBIDI_MERGER
+    : email.startsWith(UserRoles.EDITOR)
+    ? UserRoles.EDITOR
+    : email.startsWith(UserRoles.TRANSCRIBER)
+    ? UserRoles.TRANSCRIBER
+    : email.startsWith(UserRoles.CROWDSOURCER)
+    ? UserRoles.CROWDSOURCER
+    : email.startsWith(UserRoles.USER)
+    ? UserRoles.USER
+    : UserRoles.CROWDSOURCER;
+
+/**
+ *
+ * @param param0
+ * @returns Creates a UserProjectPermission for the Igbo API default project
+ */
+const handleCreateDefaultUserProjectPermission = async ({
+  firebaseId,
+  email,
+}: {
+  firebaseId: string;
+  email: string;
+}): Promise<void> => {
+  if (!isProduction) {
+    return;
+  }
+  try {
+    const mongooseConnection = await connectDatabase();
+    // Create a UserProjectPermission on the fly based on user role
+    await postUserProjectPermissionHelper({
+      mongooseConnection,
+      projectId: PROJECT_ID,
+      body: {
+        firebaseId,
+        email,
+        role: determineUserRoleFromEmail(email),
+        grantingAdmin: Author.SYSTEM,
+      },
+    });
+  } catch (err) {
+    console.log('Unable to create user project permission for the default project');
+  }
+};
 
 /**
  * Creates an associated mongodb User document
@@ -45,6 +103,7 @@ export const onCreateUserAccount = functions.auth.user().onCreate(async (user) =
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
     await incrementTotalUserStat();
+    await handleCreateDefaultUserProjectPermission();
     await createMongoUser(user.uid);
 
     return successResponse({ uid: user.uid });

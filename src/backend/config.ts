@@ -15,7 +15,7 @@ export const IGBO_API_ROOT =
 
 // Igbo API Editor Platform
 export const IGBO_API_EDITOR_PLATFORM_ROOT =
-  !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://127.0.0.1:3030';
+  !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://localhost:3030';
 
 // SendGrid API
 export const SENDGRID_API_KEY = config?.sendgrid?.api_key;
@@ -29,6 +29,7 @@ export const DOCUMENT_DELETION_REQUEST_NOTIFICATION = config?.sendgrid?.document
 export const DOCUMENT_UPDATE_NOTIFICATION = config?.sendgrid?.document_update_notification;
 export const REPORT_USER_NOTIFICATION = config?.sendgrid?.report_user_notification;
 export const AUDIO_PRONUNCIATION_DELETION_NOTIFICATION = config?.sendgrid?.audio_pronunciation_deletion_notification;
+export const MEMBER_INVITE = config?.sendgrid?.member_invite;
 export const API_FROM_EMAIL = config?.sendgrid?.sender_email;
 export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email;
 

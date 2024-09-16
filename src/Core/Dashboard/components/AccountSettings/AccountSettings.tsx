@@ -34,7 +34,7 @@ const AccountSettings = ({
       name: 'languages',
       title: 'Languages',
       subtitle: 'Select all the languages you speak',
-      defaultValue: userProjectPermission.languages?.map?.((language) => LanguageLabels[language]),
+      defaultValue: userProjectPermission?.languages?.map?.((language) => LanguageLabels[language]),
       CustomComponent: (props) => (
         <Select
           {...props}
@@ -53,7 +53,7 @@ const AccountSettings = ({
       name: 'gender',
       title: 'Gender',
       subtitle: 'Select your gender',
-      defaultValue: Gender[userProjectPermission.gender] || Gender.UNSPECIFIED,
+      defaultValue: Gender[userProjectPermission?.gender] || Gender.UNSPECIFIED,
       CustomComponent: (props) => (
         <Select
           {...props}

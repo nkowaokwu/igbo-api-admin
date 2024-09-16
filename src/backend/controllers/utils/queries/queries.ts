@@ -207,7 +207,7 @@ export const searchExampleSuggestionsRegexQuery = (
   projectId: { $eq: string };
   merged: null;
 } => ({
-  $or: [{ source: { text: regex.wordReg } }, { 'translations.text': regex.definitionsReg }],
+  $or: [{ 'source.text': regex.wordReg }, { 'translations.text': regex.definitionsReg }],
   exampleForSuggestion: false,
   merged: null,
   projectId: { $eq: projectId },

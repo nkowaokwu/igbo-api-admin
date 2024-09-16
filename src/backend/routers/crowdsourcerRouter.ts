@@ -2,7 +2,6 @@ import express from 'express';
 import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
 import {
   getRandomExampleSuggestionsToRecord,
-  postBulkUploadExampleSuggestions,
   getRandomExampleSuggestionsToReview,
   getRandomExampleSuggestionsToTranslate,
   putRandomExampleSuggestionsToTranslate,
@@ -25,7 +24,6 @@ import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/val
 // eslint-disable-next-line max-len
 import validateReviewRandomExampleSuggestionBody from 'src/backend/middleware/validateReviewRandomExampleSuggestionBody';
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
-import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 // eslint-disable-next-line max-len
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import validateTextImages from 'src/backend/middleware/validateTextImages';
@@ -35,15 +33,10 @@ import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
 import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
-import { adminRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
-import authentication from 'src/backend/middleware/authentication';
-import validId from 'src/backend/middleware/validId';
-import validateUserProjectPermissionBody from 'src/backend/middleware/validateUserProjectPermissionBody';
-import { getProjects, getProjectById, postProject } from 'src/backend/controllers/projects';
-import { getUserProjectPermission, putUserProjectPermission } from 'src/backend/controllers/userProjectPermissions';
+import { crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const crowdsourcerRouter = express.Router();
-crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
+crowdsourcerRouter.use(authorization(crowdsourcerRoles));
 
 crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/random`, getRandomWordSuggestions);
 crowdsourcerRouter.put(
@@ -75,13 +68,7 @@ crowdsourcerRouter.put(
   putReviewForRandomExampleSuggestions,
   calculateReviewingExampleLeaderboard,
 );
-// Uploads new example suggestions to record and review
-crowdsourcerRouter.post(
-  `/${Collection.EXAMPLE_SUGGESTIONS}/upload`,
-  authorization(adminRoles),
-  validateBulkUploadExampleSuggestionBody,
-  postBulkUploadExampleSuggestions,
-);
+
 // Gets example suggestions to review
 crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/review`, getRandomExampleSuggestionsToReview);
 // Gets user's stats on how many examples suggestions they have reviewed
@@ -123,16 +110,5 @@ crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 crowdsourcerRouter.post(`/${Collection.USERS}/referral`, createReferral);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
 crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
-
-// Project
-crowdsourcerRouter.get(`/${Collection.PROJECTS}`, getProjects);
-crowdsourcerRouter.post(`/${Collection.PROJECTS}`, postProject);
-crowdsourcerRouter.get(`/${Collection.PROJECTS}/:id`, validId, getProjectById);
-crowdsourcerRouter.get(`/${Collection.USER_PROJECT_PERMISSIONS}`, getUserProjectPermission);
-crowdsourcerRouter.put(
-  `/${Collection.USER_PROJECT_PERMISSIONS}`,
-  validateUserProjectPermissionBody,
-  putUserProjectPermission,
-);
 
 export default crowdsourcerRouter;

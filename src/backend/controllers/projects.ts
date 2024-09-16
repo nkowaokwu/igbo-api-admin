@@ -24,7 +24,7 @@ export const getProjectByIdHelper = async ({
 }: {
   mongooseConnection: Connection;
   projectId: string;
-}): Promise<Interfaces.Project | void> => {
+}): Promise<Interfaces.Project> => {
   const Project = mongooseConnection.model<Interfaces.Project>('Project', projectSchema);
 
   return Project.findById(projectId);
@@ -44,6 +44,7 @@ export const getProjects = async (
 ): Promise<Response<{ projects: Interfaces.ProjectData & { role: UserRoles }[] }> | void> => {
   try {
     const { mongooseConnection, user } = req;
+    console.log('>>>>>>>>>> hihihihihihi', user);
     const Project = mongooseConnection.model<Interfaces.ProjectData>('Project', projectSchema);
     const userProjectPermissions = await getUserProjectPermissionsHelper({ mongooseConnection, uid: user.uid });
     const projectIds = userProjectPermissions.map(({ projectId }) => projectId);

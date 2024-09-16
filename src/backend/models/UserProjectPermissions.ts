@@ -13,7 +13,7 @@ export const userProjectPermissionSchema = new Schema(
     status: { type: String, enum: Object.values(EntityStatus), required: true },
     firebaseId: { type: String, default: '', index: true },
     projectId: { type: Types.ObjectId, ref: 'Project', required: true, index: true },
-    email: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, index: true },
     role: { type: String, enum: Object.values(UserRoles), required: UserRoles.CROWDSOURCER },
     activateBy: { type: Date, default: moment().add(1, 'week').toDate() },
     grantingAdmin: { type: String, required: true },
@@ -25,4 +25,4 @@ export const userProjectPermissionSchema = new Schema(
 
 toJSONPlugin(userProjectPermissionSchema);
 
-mongoose.model('ProjectUserPermission', userProjectPermissionSchema);
+mongoose.model('UserProjectPermission', userProjectPermissionSchema);

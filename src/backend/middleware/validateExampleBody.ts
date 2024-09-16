@@ -9,9 +9,20 @@ import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 const { Types } = mongoose;
 
+const PronunciationsSchema = Joi.array().items(
+  Joi.object().keys({
+    audio: Joi.string().allow(''),
+    speaker: Joi.string().allow('').optional(),
+    createdAt: Joi.string().optional(),
+    updatedAt: Joi.string().optional(),
+    archived: Joi.boolean().optional(),
+  }),
+);
+
 const TranslationFormSchema = Joi.object({
   language: Joi.alternatives().try(...Object.values(LanguageEnum)),
   text: Joi.string(),
+  pronunciations: PronunciationsSchema,
 });
 
 export const exampleDataSchema = Joi.object().keys({
@@ -60,15 +71,6 @@ export const exampleDataSchema = Joi.object().keys({
     })
     .allow(null)
     .optional(),
-  pronunciations: Joi.array().items(
-    Joi.object().keys({
-      audio: Joi.string().allow(''),
-      speaker: Joi.string().allow('').optional(),
-      createdAt: Joi.string().optional(),
-      updatedAt: Joi.string().optional(),
-      archived: Joi.boolean().optional(),
-    }),
-  ),
   exampleForSuggestion: Joi.boolean().optional(),
   editorsNotes: Joi.string().allow('').optional(),
   userComments: Joi.string().allow('').optional(),

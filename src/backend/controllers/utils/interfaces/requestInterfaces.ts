@@ -45,6 +45,8 @@ export interface EditorRequest extends Request {
     timeRange?: LeaderboardTimeRange;
     referralCode?: string;
     projectId?: string;
+    permissionId?: string;
+    invitingProjectId?: string;
   };
   suggestionDoc?: Suggestion;
   body: any;

@@ -30,7 +30,7 @@ export interface ExampleClientData {
 
 export interface Example extends Document<ExampleData, any, any> {}
 
-interface Translation {
+export interface Translation {
   language: LanguageEnum;
   text: string;
 }

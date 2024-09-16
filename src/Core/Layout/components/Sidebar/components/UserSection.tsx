@@ -36,7 +36,7 @@ const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.R
                 {currentUser?.displayName}
               </Text>
               <Text fontSize="sm" color="gray.500" mt={0}>
-                {UserRoleLabels[userProjectPermission?.role]}
+                {UserRoleLabels[userProjectPermission?.role]?.label}
               </Text>
             </VStack>
           </HStack>

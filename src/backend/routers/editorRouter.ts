@@ -56,10 +56,9 @@ import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
 import validateBulkDeleteLimit from 'src/backend/middleware/validateBulkDeleteLimit';
 import Collection from 'src/shared/constants/Collection';
 import { adminRoles, editorRoles, mergerRoles, nsibidiMergerRoles } from 'src/backend/shared/constants/RolePermissions';
-import authentication from 'src/backend/middleware/authentication';
 
 const editorRouter = express.Router();
-editorRouter.use(authentication, authorization(editorRoles));
+editorRouter.use(authorization(editorRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
 editorRouter.post(`/${Collection.WORDS}`, authorization(mergerRoles), validateWordMerge, validateApprovals, mergeWord);

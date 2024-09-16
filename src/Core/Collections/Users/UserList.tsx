@@ -15,7 +15,7 @@ const UserList = (props: ListProps): ReactElement => {
           <Datagrid>
             <Select collection={Collection.USERS} permissions={permissions} />
             <TextField label="Name" source="displayName" defaultValue="No name" />
-            <FunctionField label="Role" source="role" render={(_, source) => UserRoleLabels[source] || source} />
+            <FunctionField label="Role" source="role" render={(_, source) => UserRoleLabels[source]?.label || source} />
             <FunctionField
               label="Status"
               source="status"
@@ -33,7 +33,7 @@ const UserList = (props: ListProps): ReactElement => {
             <FunctionField
               label="Role"
               source="role"
-              render={(record, source) => UserRoleLabels[record[source]] || record[source]}
+              render={(record, source) => UserRoleLabels[record[source]]?.label || record[source]}
             />
             <FunctionField
               label="Status"

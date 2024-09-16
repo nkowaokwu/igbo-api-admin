@@ -1,10 +1,16 @@
 /* Get all users from Firebase */
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
+import { UserRecord } from 'firebase-functions/v1/auth';
 import { filter, compact, reduce, merge, assign } from 'lodash';
-import { getUserProjectPermissionsByProjectHelper } from 'src/backend/controllers/userProjectPermissions';
+import { Connection } from 'mongoose';
+import {
+  deleteUserProjectPermissionHelper,
+  getUserProjectPermissionsByProjectHelper,
+} from 'src/backend/controllers/userProjectPermissions';
 import { createMongoUser } from 'src/backend/functions/users';
 import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import UserRoles from '../shared/constants/UserRoles';
 import { handleQueries } from './utils';
@@ -46,9 +52,26 @@ export const findUsers = async (): Promise<Interfaces.FormattedUser[]> => {
  * @param param0 List of uids to fetch
  * @returns Fetches specified Firebase users
  */
-const findUsersByUid = async ({ uids }: { uids: string[] }): Promise<Interfaces.FormattedUser[]> => {
-  const result = await Promise.all(uids.map((uid) => admin.auth().getUser(uid)));
-  const users = result.map(formatUser);
+const findUsersByUid = async ({
+  uids,
+  mongooseConnection,
+  projectId,
+}: {
+  uids: string[];
+  mongooseConnection: Connection;
+  projectId: string;
+}): Promise<Interfaces.FormattedUser[]> => {
+  const result = await Promise.all(
+    uids.map((uid) =>
+      admin
+        .auth()
+        .getUser(uid)
+        .catch(async () => {
+          await deleteUserProjectPermissionHelper({ mongooseConnection, projectId, uid });
+        }),
+    ),
+  );
+  const users = compact(result).map(formatUser);
   return users;
 };
 
@@ -139,6 +162,7 @@ export const getUsers = async (
         mongooseConnection,
         projectId,
         uids: users.map(({ uid }) => uid),
+        status: EntityStatus.UNSPECIFIED,
         skip,
         limit,
       });
@@ -155,28 +179,39 @@ export const getUsers = async (
         await getUserProjectPermissionsByProjectHelper({
           mongooseConnection,
           projectId,
+          status: EntityStatus.UNSPECIFIED,
           skip,
           limit,
         })
-      )
-        .map((userProjectPermission) => userProjectPermission.toJSON())
-        // Only includes UserProjectPermissions that have truthy Firebase Id
-        .filter(({ firebaseId }) => Boolean(firebaseId));
+      ).map((userProjectPermission) => userProjectPermission.toJSON());
+
+      const userProjectPermissionsWithoutFirebase = userProjectPermissions.filter(({ firebaseId }) => !firebaseId);
 
       const uids = userProjectPermissions.map(({ firebaseId }) => firebaseId);
 
-      users = await findUsersByUid({ uids });
+      users = await findUsersByUid({ uids, mongooseConnection, projectId });
 
       // Joins Firebase users and UserProjectPermissions
-      users = users.map((user) => {
-        const userProjectPermissionIndex = userProjectPermissions.findIndex(
-          ({ firebaseId }) => firebaseId === user.uid,
+      users = users
+        .map((user) => {
+          const userProjectPermissionIndex = userProjectPermissions.findIndex(
+            ({ firebaseId }) => firebaseId === user.uid,
+          );
+          if (userProjectPermissionIndex !== -1) {
+            return assign(user, userProjectPermissions[userProjectPermissionIndex]);
+          }
+          return user;
+        })
+        .concat(
+          userProjectPermissionsWithoutFirebase.map(({ email, role, status }) => ({
+            displayName: '',
+            email,
+            role,
+            status,
+            uid: '',
+            lastSignInTime: null,
+          })),
         );
-        if (userProjectPermissionIndex !== -1) {
-          return assign(user, userProjectPermissions[userProjectPermissionIndex]);
-        }
-        return user;
-      });
     }
 
     return res.setHeader('Content-Range', users.length).status(200).send(users);
@@ -299,4 +334,19 @@ export const putUserProfile = async (
   } catch (err) {
     return next(new Error(`An error occurred while updating the user profile: ${err.message}`));
   }
+};
+
+/**
+ *
+ * @param param0
+ * @returns Creates a new Firebase user
+ */
+export const postUserHelper = async ({ email }: { email: string }): Promise<UserRecord> => {
+  const user = await admin.auth().createUser({
+    email,
+    emailVerified: true,
+    disabled: false,
+  });
+  console.log(`Successfully created a new user: ${user.uid}`);
+  return user;
 };

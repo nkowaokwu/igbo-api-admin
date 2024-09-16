@@ -48,7 +48,7 @@ export const handleUserResult = async ({
   localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, token);
   localStorage.setItem(LocalStorageKeys.UID, userId as string);
   localStorage.setItem(LocalStorageKeys.PERMISSIONS, userRole);
-  localStorage.setItem(LocalStorageKeys.PROJECT_ID, PROJECT_ID);
+  localStorage.setItem(LocalStorageKeys.PROJECT_ID, '');
 
   setErrorMessage('');
 

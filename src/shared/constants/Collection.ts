@@ -17,6 +17,7 @@ enum Collection {
   TEXT_IMAGES = 'textImages',
   STATS = 'stats',
   PROJECTS = 'projects',
+  INVITES = 'invites',
 }
 
 export default Collection;
