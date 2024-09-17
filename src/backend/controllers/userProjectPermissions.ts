@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import mongoose, { Connection, Document } from 'mongoose';
+import { Connection, Document } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
@@ -202,7 +202,7 @@ export const postUserProjectPermissionHelper = ({
   const userProjectPermission = new UserProjectPermission({
     status: status || EntityStatus.ACTIVE,
     firebaseId: firebaseId || '',
-    projectId: new mongoose.Types.ObjectId(projectId),
+    projectId,
     email,
     role,
     grantingAdmin,
@@ -248,6 +248,32 @@ export const postUserProjectPermission = async (
     const savedUserProjectPermission = await userProjectPermission.save();
 
     return res.send({ userProjectPermission: savedUserProjectPermission.toJSON() });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const putUserProjectPermissionAsAdmin = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ userProjectPermission: UserProjectPermission }> | void> => {
+  try {
+    const { mongooseConnection } = req;
+    const { role } = req.body;
+    const { uid } = req.params;
+    const { projectId } = req.query;
+    const userProjectPermission = await getUserProjectPermissionHelper({ mongooseConnection, projectId, uid });
+
+    if (!userProjectPermission) {
+      throw new Error('No user is associated with the project');
+    }
+
+    userProjectPermission.role = role;
+
+    const savedUserProjectPermission = await userProjectPermission.save();
+
+    return res.send({ userProjectPermission: savedUserProjectPermission });
   } catch (err) {
     return next(err);
   }

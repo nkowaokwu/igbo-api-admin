@@ -1,9 +1,10 @@
 import { getAuth, updateProfile } from 'firebase/auth';
 import { camelCase, merge, pick } from 'lodash';
 import network from 'src/Core/Dashboard/network';
-import { UserProfile } from 'src/backend/controllers/utils/interfaces';
+import { UserProfile, UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
 
@@ -50,4 +51,19 @@ export const getUserStats = async (): Promise<{ [key: string]: number }> => {
     {} as { [key: string]: number },
   );
   return stats;
+};
+
+export const putUserRole = async ({
+  data,
+  uid,
+}: {
+  data: { role: UserRoles };
+  uid: string;
+}): Promise<UserProjectPermission> => {
+  const { data: result } = await request<{ userProjectPermission: UserProjectPermission }>({
+    method: 'PUT',
+    url: `${Collection.USERS}/${uid}/roles`,
+    data,
+  });
+  return result.userProjectPermission;
 };

@@ -250,8 +250,8 @@ const settingsRoutes = (permissions) =>
       group: ResourceGroup.DATA_COLLECTION,
     },
     /* {
-      name: 'igboSoundbox',
-      key: 'igboSoundbox',
+      name: 'soundbox',
+      key: 'soundbox',
       options: { label: 'Igbo Soundbox' },
       list: withLastRoute(IgboSoundbox),
       icon: () => <>🔊</>,
@@ -309,7 +309,7 @@ export const getCustomRouteObjects = (): any => [
     group: ResourceGroup.UNSPECIFIED,
   },
   {
-    path: '/igboSoundbox',
+    path: '/soundbox',
     component: withLastRoute(IgboSoundbox),
     group: ResourceGroup.UNSPECIFIED,
     generalProject: true,

@@ -18,6 +18,7 @@ import { FiEye, FiEdit3 } from 'react-icons/fi';
 import { LuMoreHorizontal, LuMoreVertical } from 'react-icons/lu';
 import { AddIcon, AtSignIcon, CheckCircleIcon, DeleteIcon, NotAllowedIcon, ViewIcon } from '@chakra-ui/icons';
 import { MergeType, Link as LinkIcon } from '@mui/icons-material';
+import { useRefresh } from 'ra-core';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
@@ -52,6 +53,8 @@ const Select = ({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const refresh = useRefresh();
+
   useFirebaseUid(setUid);
   const hasEnoughApprovals =
     resource !== Collection.WORD_SUGGESTIONS ||
@@ -66,7 +69,9 @@ const Select = ({
     return value;
   };
 
-  const userCollectionOptions = [{ value: 'roles', label: 'Change role', onSelect: onOpen }];
+  const userCollectionOptions = [
+    record?.uid !== uid ? { value: 'roles', label: 'Change role', onSelect: onOpen } : null,
+  ];
 
   const suggestionCollectionOptions = compact(
     flatten([
@@ -276,7 +281,7 @@ const Select = ({
       ? pollCollectionOptions
       : mergedCollectionOptions;
 
-  const options = [
+  const options = compact([
     ...initialOptions,
     {
       value: 'copyURL',
@@ -295,7 +300,7 @@ const Select = ({
           toast,
         ),
     },
-  ];
+  ]);
 
   const FullButton = showButtonLabels ? Button : IconButton;
 
@@ -314,11 +319,12 @@ const Select = ({
         action={action}
         selectionValue={value}
         onClose={clearConfirmOpen}
+        onConfirm={refresh}
         view={view}
         setIsLoading={setIsLoading}
         isOpen={isConfirmOpen}
       />
-      <RolesDrawer isOpen={isOpen} onSave={onSaveUserRole} onClose={onClose} defaultRole={resource?.role} />
+      <RolesDrawer isOpen={isOpen} onSave={onSaveUserRole} onClose={onClose} defaultRole={record?.role} />
       <Box display="flex" flexDirection="row" alignItems="center" className="space-x-1">
         {/* @ts-expect-error label */}
         <Menu data-test="test-select-options" label="Editor's Action">
@@ -347,7 +353,7 @@ const Select = ({
             />
           </Tooltip>
           <MenuList boxShadow="xl">
-            {options.map(({ value = '', label, onSelect, props = {} }) => (
+            {options.map(({ value = '', label, onSelect, props = {} } = {}) => (
               <Tooltip key={value} label={props.tooltipMessage}>
                 <Box px={2}>
                   <MenuItem

@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import { noop } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import { PronunciationSchema } from 'src/backend/controllers/utils/interfaces';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
@@ -15,7 +15,7 @@ const SandboxAudioReviewer = ({
   onApprove,
   onDeny,
 }: {
-  pronunciations: ExampleSuggestion['pronunciations'];
+  pronunciations: PronunciationSchema[];
   review?: SentenceVerification;
   onApprove?: (pronunciationId: string) => void;
   onDeny?: (pronunciationId: string) => void;

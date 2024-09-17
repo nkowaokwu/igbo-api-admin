@@ -5,7 +5,7 @@ import { hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import authProvider from 'src/utils/authProvider';
-import { PROJECT_ID } from 'src/Core/constants';
+import { IGBO_API_PROJECT_ID } from 'src/Core/constants';
 import { acceptIgboAPIRequest } from 'src/shared/InviteAPI';
 
 const auth = getAuth();
@@ -53,7 +53,7 @@ export const handleUserResult = async ({
   setErrorMessage('');
 
   const { invitingProjectId } = queryString.parse(window.location.search) || {};
-  if (invitingProjectId === PROJECT_ID) {
+  if (invitingProjectId === IGBO_API_PROJECT_ID) {
     await acceptIgboAPIRequest();
   }
   const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);

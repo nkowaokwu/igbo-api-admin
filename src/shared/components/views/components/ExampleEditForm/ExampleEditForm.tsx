@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { merge, get, omit, pick, flow, assign } from 'lodash';
+import { get, omit, pick, flow, assign } from 'lodash';
 import { Box, Button, Text, chakra, useToast, Tooltip, HStack } from '@chakra-ui/react';
 import { PiMagicWandBold } from 'react-icons/pi';
 import { Record, useNotify, useRedirect } from 'react-admin';
@@ -114,7 +114,7 @@ const ExampleEditForm = ({
       setIsSubmitting(true);
       const omitKeys = [view === View.CREATE ? 'id' : '', 'type'];
 
-      const preparedData = omit(merge(record, data), omitKeys);
+      const preparedData = omit(assign(record, data), omitKeys);
       const cleanedData = cleanDataPipeline(preparedData);
       localStorage.removeItem('igbo-api-admin-form');
       save(cleanedData, View.SHOW, {
@@ -199,7 +199,6 @@ const ExampleEditForm = ({
                 )}
                 name="source.language"
                 control={control}
-                defaultValue={LanguageLabels[get(record, 'source.language') || get(getValues(), 'source.language')]}
               />
             </HStack>
             <ExampleAudioPronunciationsForm
@@ -248,7 +247,8 @@ const ExampleEditForm = ({
               </Box>
             ) : null}
           </Box>
-          {get(errors, 'source.text') ? <p className="error">{`${sourceLanguage} is required`}</p> : null}
+          {get(errors, 'source.text') ? <p className="error">Source text is required</p> : null}
+          {get(errors, 'source.language') ? <p className="error">{`${sourceLanguage} is required`}</p> : null}
         </Box>
         <Box className="flex flex-col">
           <FormHeader
@@ -256,15 +256,31 @@ const ExampleEditForm = ({
             // eslint-disable-next-line max-len
             tooltip={`The example sentence in ${destinationLanguage}. This is the the literal ${destinationLanguage} translation of the ${sourceLanguage} sentence.`}
           />
-          <Controller
-            render={(props) => (
-              <Input {...props} placeholder={`Text in ${destinationLanguage}`} data-test="english-input" />
-            )}
-            name="translations.0.text"
-            control={control}
-            defaultValue={get(record, 'translations.0.text') || get(getValues(), 'translations.0.text') || ''}
-          />
-          {get(errors, 'translations.0.text') ? <p className="error">{`${destinationLanguage} is required`}</p> : null}
+          <HStack display="flex" justifyContent="space-between" width="full" gap={2}>
+            <Controller
+              render={(props) => (
+                <Input {...props} placeholder={`Text in ${destinationLanguage}`} data-test="english-input" flex={8} />
+              )}
+              name="translations.0.text"
+              control={control}
+              defaultValue={get(record, 'translations.0.text') || get(getValues(), 'translations.0.text') || ''}
+            />
+            <Controller
+              render={(props) => (
+                <Select
+                  {...props}
+                  options={languageOptions}
+                  styles={{ container: (styles) => ({ ...styles, flex: 2 }) }}
+                />
+              )}
+              name="translations.0.language"
+              control={control}
+            />
+          </HStack>
+          {get(errors, 'translations.0.text') ? <p className="error">Translation text is required</p> : null}
+          {get(errors, 'translations.0.language') ? (
+            <p className="error">{`${destinationLanguage} is required`}</p>
+          ) : null}
           <ExampleAudioPronunciationsForm
             control={control}
             record={record}

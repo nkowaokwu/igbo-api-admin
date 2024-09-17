@@ -1,9 +1,10 @@
 import React, { ReactElement, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
+import { User } from '@firebase/auth';
 import Select from 'react-select';
 import { assign, compact, pick, flow } from 'lodash';
 // import DatePicker from 'react-date-picker';
-import { UserProfile, UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
+import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import SettingsLayout from 'src/Core/components/SettingsLayout';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import Gender from 'src/backend/shared/constants/Gender';
@@ -18,7 +19,7 @@ const AccountSettings = ({
   user,
   userProjectPermission,
 }: {
-  user: UserProfile;
+  user: User;
   userProjectPermission: UserProjectPermission;
 }): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);

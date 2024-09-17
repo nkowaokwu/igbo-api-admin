@@ -151,36 +151,6 @@ export const getLeaderboard = async (
   }
 };
 
-export const calculateRecordingExampleLeaderboard = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<any> => {
-  const {
-    // user,
-    error,
-    response,
-    // mongooseConnection,
-  } = req;
-
-  if (error) {
-    return next(error);
-  }
-
-  try {
-    // 🚨 Uncomment this section to start updating leaderboard stats. Be careful this code is broken. 🚨
-    // const user = (await findUser(uid)) as Interfaces.FormattedUser;
-    // await updateUserLeaderboardStat({
-    //   leaderboardType: LeaderboardType.RECORD_EXAMPLE_AUDIO,
-    //   mongooseConnection,
-    //   user,
-    // });
-    return res.send(response);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 export const calculateTranslatingExampleLeaderboard = async (
   req: Interfaces.EditorRequest,
   res: Response,
@@ -201,36 +171,6 @@ export const calculateTranslatingExampleLeaderboard = async (
     const user = (await findUser(uid)) as Interfaces.FormattedUser;
     await updateUserLeaderboardStat({
       leaderboardType: LeaderboardType.TRANSLATE_IGBO_SENTENCE,
-      mongooseConnection,
-      user,
-    });
-
-    return res.send(response);
-  } catch (err) {
-    return next(err);
-  }
-};
-
-export const calculateReviewingExampleLeaderboard = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<any> => {
-  const {
-    user: { uid },
-    error,
-    response,
-    mongooseConnection,
-  } = req;
-
-  if (error) {
-    return next(error);
-  }
-
-  try {
-    const user = (await findUser(uid)) as Interfaces.FormattedUser;
-    await updateUserLeaderboardStat({
-      leaderboardType: LeaderboardType.VERIFY_EXAMPLE_AUDIO,
       mongooseConnection,
       user,
     });

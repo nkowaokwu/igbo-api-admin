@@ -12,7 +12,12 @@ const ProjectSelector = (): ReactElement => {
 
   return (
     <>
-      <CreateProjectDrawer isOpen={isCreateProjectOpen} onClose={onCreateProjectClose} />
+      {/* If the user is not apart of a project, the create project drawer will automatically open */}
+      <CreateProjectDrawer
+        isOpen={isCreateProjectOpen || !project?.id}
+        onClose={onCreateProjectClose}
+        showCloseButton={Boolean(project?.id)}
+      />
       <ProjectSelectorModal isOpen={isOpen} onClose={onClose} onCreateProject={onCreateProjectOpen} />
       <Button
         rightIcon={<ChevronDownIcon />}

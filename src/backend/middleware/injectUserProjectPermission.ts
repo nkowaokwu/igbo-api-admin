@@ -16,12 +16,12 @@ const injectUserProjectPermission = async (
   next: NextFunction,
 ): Promise<Response<{ error: string }> | void> => {
   const { mongooseConnection, query, user } = req;
-  const { projectId } = query;
+  const { projectId, invitingProjectId } = query;
 
   const userProjectPermission = await getUserProjectPermissionHelper({
     mongooseConnection,
     uid: user.uid,
-    projectId: projectId.toString(),
+    projectId: projectId?.toString() || invitingProjectId?.toString(),
   });
 
   if (!userProjectPermission || userProjectPermission.toJSON().status !== EntityStatus.ACTIVE) {

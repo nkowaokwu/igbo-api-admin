@@ -12,6 +12,8 @@ import {
 import Select from 'react-select';
 import UserRoleLabels from 'src/backend/shared/constants/UserRoleLabels';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import ProjectUserRoles from 'src/backend/shared/constants/ProjectUserRoles';
 
 const RolesDrawer = ({
   isOpen,
@@ -25,15 +27,21 @@ const RolesDrawer = ({
   defaultRole: UserRoles;
 }): ReactElement => {
   const [userRole, setUserRole] = useState(UserRoleLabels[defaultRole]);
+
+  const isIgboAPIProject = useIsIgboAPIProject();
+  const options = Object.values(UserRoleLabels).filter(({ value }) =>
+    !isIgboAPIProject ? ProjectUserRoles[value] : true,
+  );
+
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose} onEsc={onClose}>
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} onEsc={onClose} size="lg">
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerHeader>Change user role</DrawerHeader>
 
         <DrawerBody>
-          <Select options={UserRoleLabels} defaultValue={UserRoleLabels[defaultRole]} onChange={setUserRole} />
+          <Select options={options} defaultValue={UserRoleLabels[defaultRole]} onChange={setUserRole} />
         </DrawerBody>
 
         <DrawerFooter>

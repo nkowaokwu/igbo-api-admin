@@ -15,9 +15,9 @@ const injectProject = async (
   next: NextFunction,
 ): Promise<Response<{ error: string }> | void> => {
   const { mongooseConnection, query } = req;
-  const { projectId } = query;
+  const { projectId, invitingProjectId } = query;
 
-  const project = await getProjectByIdHelper({ mongooseConnection, projectId });
+  const project = await getProjectByIdHelper({ mongooseConnection, projectId: projectId || invitingProjectId });
 
   if (!project) {
     return res.status(404).send({ error: 'Requested project not found' });

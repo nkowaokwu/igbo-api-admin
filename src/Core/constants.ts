@@ -5,7 +5,7 @@ export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
 export const NKOWAOKWU_EMAIL = 'kedu@nkowaokwu.com';
 export const TWITTER_APP_URL = 'https://twitter.com/nkowaokwu/status';
 
-export const PROJECT_ID = '66de0ffee848d30f37403402';
+export const IGBO_API_PROJECT_ID = '66de0ffee848d30f37403402';
 
 export const BUG_REPORT_URL = 'https://notionforms.io/forms/bug-reports-llbpnk';
 export const FEATURE_REQUEST_FORM_URL =

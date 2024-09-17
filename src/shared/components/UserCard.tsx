@@ -35,7 +35,13 @@ const UserCard = ({
 
   return (
     <Box className="flex flex-col md:flex-row items-center text-center md:text-left space-y-4 md:space-x-4 mb-4 p-6">
-      <Avatar name={displayName} src={photoURL} size={avatarSize} />
+      <Avatar
+        name=""
+        icon={<></>}
+        src={photoURL}
+        size={avatarSize}
+        bgGradient="linear(to-br, yellow.200, orange.500)"
+      />
       <Box>
         <Heading className={!displayName ? 'text-gray-500' : ''} fontSize={{ base: '2xl', lg: '3xl' }}>
           {displayName || 'No display name'}

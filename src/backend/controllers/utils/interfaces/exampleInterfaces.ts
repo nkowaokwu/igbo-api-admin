@@ -16,7 +16,6 @@ export interface ExampleClientData {
   type?: SentenceTypeEnum;
   style?: ExampleStyleEnum;
   origin?: SuggestionSourceEnum;
-  pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];
   exampleForSuggestion?: boolean;
@@ -33,6 +32,7 @@ export interface Example extends Document<ExampleData, any, any> {}
 export interface Translation {
   language: LanguageEnum;
   text: string;
+  pronunciations: PronunciationSchema[];
 }
 export interface ExampleData {
   id: Types.ObjectId | string;
@@ -46,6 +46,5 @@ export interface ExampleData {
   type: SentenceTypeEnum;
   style?: ExampleStyleEnum;
   origin?: SuggestionSourceEnum;
-  pronunciations: PronunciationSchema[];
   updatedAt: Date;
 }

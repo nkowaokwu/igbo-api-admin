@@ -7,13 +7,13 @@ import { motion } from 'framer-motion';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
 import { getResourceObjects, Resource, ResourceGroup, ResourceGroupLabels } from 'src/App/Resources';
 import UserSection from 'src/Core/Layout/components/Sidebar/components/UserSection';
-import { PROJECT_ID } from 'src/Core/constants';
+import { IGBO_API_PROJECT_ID } from 'src/Core/constants';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 
 const Menu = ({ onMenuClick }: MenuProps) => {
   const permissions = usePermissions();
   const project = React.useContext(ProjectContext);
-  const isIgboAPIProject = project?.id?.toString() === PROJECT_ID;
+  const isIgboAPIProject = project?.id?.toString() === IGBO_API_PROJECT_ID;
   const isOpen = useSelector((state) => state.admin.ui.sidebarOpen);
   const resourceRoutes = useMemo(
     () =>

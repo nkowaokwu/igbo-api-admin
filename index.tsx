@@ -14,12 +14,7 @@ import triggersRouter from './src/backend/routers/triggersRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
 import afterRes from './src/backend/middleware/afterRes';
-import {
-  onCopyFirebaseUsers,
-  onCreateUserAccount,
-  onDeleteUser,
-  onUpdatePermissions,
-} from './src/backend/functions/users';
+import { onCopyFirebaseUsers, onCreateUserAccount, onDeleteUser } from './src/backend/functions/users';
 import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functions/documents';
 import { onTwitterAuth, onTwitterCallback, onDeleteConstructedTermPoll } from './src/backend/controllers/polls';
 import platformRouters from './src/backend/routers/platformRouters';
@@ -60,7 +55,6 @@ server.use(errorHandler);
 
 // Firebase Functions
 export const createUserAccount = onCreateUserAccount;
-export const updatePermissions = onUpdatePermissions;
 export const requestDeleteDocument = onRequestDeleteDocument;
 export const deleteConstructedTermPoll = onDeleteConstructedTermPoll;
 export const deleteUser = onDeleteUser;

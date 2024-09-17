@@ -18,6 +18,7 @@ import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -129,7 +130,11 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               path="source.text"
               diffRecord={diffRecord}
               fallbackValue={get(source, 'text')}
-              renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              renderNestedObject={(value) => (
+                <span>
+                  {String(value || false)} ({LanguageLabels[get(record, 'source.language')]?.label})
+                </span>
+              )}
             />
           </ShowTextRenderer>
           <ShowTextRenderer title="Source text pronunciations" icon={<LuFileAudio />}>
@@ -142,7 +147,11 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               path="translations.0.text"
               diffRecord={diffRecord}
               fallbackValue={get(translations, '0.text')}
-              renderNestedObject={(value) => <span>{String(value || false)}</span>}
+              renderNestedObject={(value) => (
+                <span>
+                  {String(value || false)} ({LanguageLabels[get(record, 'translations.0.language')]?.label})
+                </span>
+              )}
             />
           </ShowTextRenderer>
           <ShowTextRenderer title="Translate text pronunciations" icon={<LuFileAudio />}>
@@ -150,40 +159,40 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
             </ArrayDiffField>
           </ShowTextRenderer>
-          <ShowTextRenderer title="Meaning" icon={<LuBrain />}>
-            <DiffField
-              path="meaning"
-              diffRecord={diffRecord}
-              fallbackValue={meaning}
-              renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
-            />
-          </ShowTextRenderer>
-          <ShowTextRenderer title="Nsịbịdị" icon={<>〒</>}>
-            <DiffField
-              path="nsibidi"
-              diffRecord={diffRecord}
-              fallbackValue={nsibidi}
-              renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
-            />
-          </ShowTextRenderer>
-          <ShowTextRenderer title="Nsịbịdị characters" icon={<>〒</>}>
-            <ArrayDiffField
-              recordField="nsibidiCharacters"
-              recordFieldSingular="nsibidiCharacter"
-              record={record}
-              originalRecord={originalExampleRecord}
-            >
-              <ArrayDiff
-                diffRecord={diffRecord}
-                recordField="nsibidiCharacters"
-                renderNestedObject={(nsibidiCharacterId) => (
-                  <ResolvedNsibidiCharacter nsibidiCharacterId={nsibidiCharacterId} />
-                )}
-              />
-            </ArrayDiffField>
-          </ShowTextRenderer>
           {isIgboAPIProject ? (
             <>
+              <ShowTextRenderer title="Meaning" icon={<LuBrain />}>
+                <DiffField
+                  path="meaning"
+                  diffRecord={diffRecord}
+                  fallbackValue={meaning}
+                  renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
+                />
+              </ShowTextRenderer>
+              <ShowTextRenderer title="Nsịbịdị" icon={<>〒</>}>
+                <DiffField
+                  path="nsibidi"
+                  diffRecord={diffRecord}
+                  fallbackValue={nsibidi}
+                  renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
+                />
+              </ShowTextRenderer>
+              <ShowTextRenderer title="Nsịbịdị characters" icon={<>〒</>}>
+                <ArrayDiffField
+                  recordField="nsibidiCharacters"
+                  recordFieldSingular="nsibidiCharacter"
+                  record={record}
+                  originalRecord={originalExampleRecord}
+                >
+                  <ArrayDiff
+                    diffRecord={diffRecord}
+                    recordField="nsibidiCharacters"
+                    renderNestedObject={(nsibidiCharacterId) => (
+                      <ResolvedNsibidiCharacter nsibidiCharacterId={nsibidiCharacterId} />
+                    )}
+                  />
+                </ArrayDiffField>
+              </ShowTextRenderer>
               <SummaryList
                 items={archivedPronunciations}
                 title="Archived Example Pronunciations 🗄"

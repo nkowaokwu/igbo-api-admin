@@ -15,6 +15,7 @@ import {
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import { putUserRole } from 'src/shared/UserAPI';
 import ActionTypes from './ActionTypes';
 import Collections from './Collection';
 
@@ -32,7 +33,6 @@ const prepareRecord = (record) => {
   };
 };
 
-const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
 const handleDeleteConstructedTermPoll = useCallable<any, EmptyResponse>('deleteConstructedTermPoll');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
@@ -151,12 +151,12 @@ export default {
     type: 'Convert',
     title: 'Change User UserRoles',
     content: "Are you sure you want to change this user's role?",
-    executeAction: ({ record, value: role }: { record: Record; value: string }): Promise<any> => {
+    executeAction: ({ record, value: role }: { record: Record; value: UserRoles }): Promise<any> => {
       // @ts-ignore
       if (!Object.values(UserRoles).includes(role)) {
         Promise.reject(new Error('Invalid user role'));
       }
-      handleUpdatePermissions({ ...record, role });
+      putUserRole({ data: { role }, uid: record.uid });
       return Promise.resolve();
     },
     successMessage: 'User role has been updated 👩🏾‍💻',

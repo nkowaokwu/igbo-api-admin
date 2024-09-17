@@ -53,7 +53,7 @@ const CreateProjectSteps = (): ReactElement => {
   };
 
   return (
-    <VStack alignItems="start" maxWidth="700px">
+    <VStack alignItems="start" width="full">
       <Heading>Let&apos;s create a new project</Heading>
       <Text>A project is your own private workspace where you can collect your own data with your team.</Text>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">

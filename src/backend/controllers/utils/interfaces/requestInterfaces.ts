@@ -47,6 +47,7 @@ export interface EditorRequest extends Request {
     projectId?: string;
     permissionId?: string;
     invitingProjectId?: string;
+    languages?: string;
   };
   suggestionDoc?: Suggestion;
   body: any;

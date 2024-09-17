@@ -8,6 +8,8 @@ import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/vali
 import { postBulkUploadExampleSuggestions } from 'src/backend/controllers/exampleSuggestions';
 import { cancelMemberInvite, inviteMember } from 'src/backend/controllers/invites';
 import validateMemberInviteBody from 'src/backend/middleware/validateMemberInviteBody';
+import { putUserProjectPermissionAsAdmin } from 'src/backend/controllers/userProjectPermissions';
+import validatePutUserRoleBody from 'src/backend/middleware/validatePutUserRoleBody';
 import { getUsers, testGetUsers } from '../controllers/users';
 import { putProject } from '../controllers/projects';
 import { onSubmitConstructedTermPoll } from '../controllers/polls';
@@ -17,6 +19,7 @@ adminRouter.use(authorization(adminRoles));
 
 const userController = process.env.NODE_ENV === 'test' ? testGetUsers : getUsers;
 adminRouter.get('/users', userController);
+adminRouter.put('/users/:uid/roles', validatePutUserRoleBody, putUserProjectPermissionAsAdmin);
 adminRouter.post('/twitter_poll', onSubmitConstructedTermPoll);
 
 // Uploads new example suggestions to record and review

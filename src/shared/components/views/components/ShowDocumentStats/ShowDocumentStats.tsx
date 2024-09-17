@@ -48,7 +48,7 @@ const ShowDocumentStats = ({ record, showFull }: DocumentStatsInterface): ReactE
       value: author?.displayName || 'No author',
       href: `mailto:${author?.email || ''}`,
       options: {
-        color: Boolean(author?.displayName) ? 'gray.400' : '',
+        color: !Boolean(author?.displayName) ? 'gray.400' : '',
       },
     },
     {

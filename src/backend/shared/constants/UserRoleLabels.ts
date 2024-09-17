@@ -6,7 +6,7 @@ const UserRoleLabels = {
     value: UserRoles.ADMIN,
   },
   [UserRoles.MERGER]: {
-    label: 'Merger',
+    label: 'Manager',
     value: UserRoles.MERGER,
   },
   [UserRoles.NSIBIDI_MERGER]: {
@@ -18,7 +18,7 @@ const UserRoleLabels = {
     value: UserRoles.EDITOR,
   },
   [UserRoles.CROWDSOURCER]: {
-    label: 'Crowdsourcer',
+    label: 'Contributor',
     value: UserRoles.CROWDSOURCER,
   },
   [UserRoles.TRANSCRIBER]: {

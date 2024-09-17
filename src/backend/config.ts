@@ -77,7 +77,7 @@ export const GET_MAIN_KEY = (): string => {
   }
   return CI || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
 };
-export const PROJECT_ID = '66de0ffee848d30f37403402';
+export const IGBO_API_PROJECT_ID = '66de0ffee848d30f37403402';
 
 // Twitter API
 export const TWITTER_CLIENT_ID = config?.twitter?.client_id;

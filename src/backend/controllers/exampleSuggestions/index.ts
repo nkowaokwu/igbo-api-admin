@@ -176,17 +176,21 @@ export const getRandomExampleSuggestionsToRecord = async (
 ): Promise<any | void> => {
   try {
     const { limit, user, mongooseConnection } = await handleQueries(req);
-    const { projectId } = req.query;
+    const { projectId, languages: rawLanguages = '' } = req.query;
+    const languages = rawLanguages.split(',');
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
 
     // First searches for ExampleSuggestions that should be returned
-    const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid, projectId);
+    const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid, projectId, languages);
+
+    console.log(query, 'this is it');
+
     const dbExampleSuggestions = await ExampleSuggestion.aggregate()
       .match(query)
-      .addFields({ pronunciationsSize: { $size: '$pronunciations' } })
+      .addFields({ pronunciationsSize: { $size: '$source.pronunciations' } })
       .sample(limit);
 
     const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
@@ -200,7 +204,6 @@ export const getRandomExampleSuggestionsToRecord = async (
       query,
     });
   } catch (err) {
-    // console.log(err);
     // console.error('An error has occurred while returning random example suggestions to edit');
     return next(err);
   }
@@ -240,7 +243,7 @@ export const postBulkUploadExampleSuggestions = async (
     const preparedExampleSuggestions = uniqueExampleSuggestions.map((sentenceData: Interfaces.ExampleClientData) => ({
       ...sentenceData,
       projectId,
-      type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
+      type: SentenceTypeEnum.DATA_COLLECTION,
     }));
     // Bulk inserts all the example sentences
     const bulkInsertedExampleSuggestions = await ExampleSuggestion.insertMany(preparedExampleSuggestions);
@@ -281,7 +284,8 @@ export const getRandomExampleSuggestionsToReview = async (
 ): Promise<any | void> => {
   try {
     const { limit, user, mongooseConnection } = await handleQueries(req);
-    const { projectId } = req.query;
+    const { projectId, languages: rawLanguages = '' } = req.query;
+    const languages = rawLanguages.split(',');
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
@@ -290,64 +294,13 @@ export const getRandomExampleSuggestionsToReview = async (
     const query = searchRandomExampleSuggestionsToReviewRegexQuery({
       uid: user.uid,
       projectId,
+      languages,
     });
 
     try {
-      const dbExampleSuggestions = await ExampleSuggestion.aggregate()
-        .match(query)
-        .unwind('$pronunciations')
-        .group({
-          _id: '$_id',
-          id: { $first: '$_id' },
-          originalExampleId: { $first: '$originalExampleId' },
-          source: { $first: '$source' },
-          translations: { $first: '$translations' },
-          meaning: { $first: '$meaning' },
-          nsibidi: { $first: '$nsibidi' },
-          nsibidiCharacters: { $first: '$nsibidiCharacters' },
-          associatedWords: { $first: '$associatedWords' },
-          associatedDefinitionsSchemas: { $first: '$associatedDefinitionsSchemas' },
-          type: { $first: '$type' },
-          style: { $first: '$style' },
-          pronunciations: { $push: '$pronunciations' },
-          editorsNotes: { $first: '$editorsNotes' },
-          userComments: { $first: '$userComments' },
-          authorEmail: { $first: '$authorEmail' },
-          authorId: { $first: '$authorId' },
-          approvals: { $first: '$approvals' },
-          denials: { $first: '$denials' },
-          origin: { $first: '$origin' },
-          merged: { $first: '$merged' },
-          mergedBy: { $first: '$mergedBy' },
-          userInteractions: { $first: '$userInteractions' },
-          crowdsourcing: { $first: '$crowdsourcing' },
-          updatedAt: { $first: '$updatedAt' },
-          createdAt: { $first: '$createdAt' },
-          missingPronunciationApprovals: {
-            $sum: {
-              $cond: {
-                if: { $lt: [{ $size: '$pronunciations.approvals' }, 2] },
-                then: { $subtract: [2, { $size: '$pronunciations.approvals' }] },
-                else: 0,
-              },
-            },
-          },
-          pronunciationApprovals: { $sum: { $size: '$pronunciations.approvals' } },
-          pronunciationDenials: { $sum: { $size: '$pronunciations.denials' } },
-        })
-        .sort({ missingPronunciationApprovals: 1, updatedAt: 1 })
-        .limit(limit);
+      const dbExampleSuggestions = await ExampleSuggestion.find(query).limit(limit);
+      const exampleSuggestions = dbExampleSuggestions.map((dbExampleSuggestion) => dbExampleSuggestion.toJSON());
 
-      // console.log(dbExampleSuggestions[0]);
-      // removes the field that don't live on the Example Suggestion model
-      const exampleSuggestions = dbExampleSuggestions.map((exampleSuggestion) =>
-        omit(exampleSuggestion, [
-          'missingPronunciationApprovals',
-          'pronunciationApprovals',
-          'pronunciationsDenials',
-          '_id',
-        ]),
-      );
       return await packageResponse({
         res,
         docs: exampleSuggestions,
@@ -355,7 +308,6 @@ export const getRandomExampleSuggestionsToReview = async (
         query,
       });
     } catch (err) {
-      // console.log(err);
       throw new Error('An error has occurred while returning random example suggestions to review');
     }
   } catch (err) {
@@ -436,7 +388,6 @@ export const getRandomExampleSuggestionsToTranslate = async (
         }),
       )
       .catch(() => {
-        // console.log(err);
         throw new Error('An error has occurred while returning random example suggestions to translate');
       });
   } catch (err) {
@@ -639,7 +590,7 @@ export const putAudioForRandomExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<any | void> => {
+): Promise<Response<{ ids: string[] }> | void> => {
   try {
     const { user, body, mongooseConnection } = await handleQueries(req);
     const { projectId } = req.query;
@@ -652,13 +603,12 @@ export const putAudioForRandomExampleSuggestions = async (
       body.map(async ({ id, pronunciation }) => {
         const exampleSuggestion = await ExampleSuggestion.findOne({ _id: id, projectId });
         if (!exampleSuggestion) {
-          // console.log(`No example suggestion with the id: ${id}`);
           return null;
         }
         const userInteractions = new Set(exampleSuggestion.userInteractions || []);
         if (pronunciation) {
           // @ts-expect-error _id is missing
-          exampleSuggestion.pronunciations.push({
+          exampleSuggestion.source.pronunciations.push({
             audio: pronunciation,
             speaker: user.uid,
             review: true,
@@ -675,9 +625,7 @@ export const putAudioForRandomExampleSuggestions = async (
         return exampleSuggestion.save();
       }),
     );
-    req.response = body.map(({ id }) => id);
-
-    return next();
+    return res.send({ id: body.map(({ id }) => id) });
   } catch (err) {
     req.error = err;
     return next(err);
@@ -695,7 +643,7 @@ export const putReviewForRandomExampleSuggestions = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<any | void> => {
+): Promise<Response<{ ids: string[] }> | void> => {
   try {
     const { user, body, mongooseConnection } = await handleQueries(req);
     const { projectId } = req.query;
@@ -713,21 +661,21 @@ export const putReviewForRandomExampleSuggestions = async (
         }
 
         Object.entries(reviews).forEach(([pronunciationId, review]) => {
-          const pronunciationIndex = exampleSuggestion.pronunciations.findIndex(
+          const pronunciationIndex = exampleSuggestion.source.pronunciations.findIndex(
             (pronunciation) => pronunciation._id.toString() === pronunciationId,
           );
           if (pronunciationIndex === -1) {
             return null;
           }
 
-          const audioPronunciation = exampleSuggestion.pronunciations[pronunciationIndex];
+          const audioPronunciation = exampleSuggestion.source.pronunciations[pronunciationIndex];
 
           // Handle approving the Example Suggestion audio pronunciations
           if (review === ReviewActions.APPROVE) {
             const approvals = new Set(audioPronunciation.approvals);
             approvals.add(user.uid);
-            exampleSuggestion.pronunciations[pronunciationIndex].approvals = Array.from(approvals);
-            exampleSuggestion.pronunciations[pronunciationIndex].denials = audioPronunciation.denials.filter(
+            exampleSuggestion.source.pronunciations[pronunciationIndex].approvals = Array.from(approvals);
+            exampleSuggestion.source.pronunciations[pronunciationIndex].denials = audioPronunciation.denials.filter(
               (denial) => denial !== user.uid,
             );
             exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
@@ -736,8 +684,8 @@ export const putReviewForRandomExampleSuggestions = async (
           if (review === ReviewActions.DENY) {
             const denials = new Set(audioPronunciation.denials);
             denials.add(user.uid);
-            exampleSuggestion.pronunciations[pronunciationIndex].denials = Array.from(denials);
-            exampleSuggestion.pronunciations[pronunciationIndex].approvals = audioPronunciation.approvals.filter(
+            exampleSuggestion.source.pronunciations[pronunciationIndex].denials = Array.from(denials);
+            exampleSuggestion.source.pronunciations[pronunciationIndex].approvals = audioPronunciation.approvals.filter(
               (approval) => approval !== user.uid,
             );
             exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
@@ -759,8 +707,7 @@ export const putReviewForRandomExampleSuggestions = async (
         return null;
       }),
     );
-    req.response = body.map(({ id }) => id);
-    return next();
+    return res.send({ ids: body.map(({ id }) => id) });
   } catch (err) {
     req.error = err;
     return next(err);

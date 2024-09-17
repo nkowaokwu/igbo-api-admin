@@ -11,12 +11,7 @@ import {
   putReviewForRandomExampleSuggestions,
   getTotalMergedRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
-import {
-  calculateReviewingExampleLeaderboard,
-  calculateRecordingExampleLeaderboard,
-  calculateTranslatingExampleLeaderboard,
-  getLeaderboard,
-} from 'src/backend/controllers/leaderboard';
+import { calculateTranslatingExampleLeaderboard, getLeaderboard } from 'src/backend/controllers/leaderboard';
 import { getTextImages, postTextImage } from 'src/backend/controllers/textImages';
 import { sendReportUserNotification } from 'src/backend/controllers/email';
 import authorization from 'src/backend/middleware/authorization';
@@ -59,14 +54,12 @@ crowdsourcerRouter.put(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/audio`,
   validateAudioRandomExampleSuggestionBody,
   putAudioForRandomExampleSuggestions,
-  calculateRecordingExampleLeaderboard,
 );
 // Reviews audio for example suggestion
 crowdsourcerRouter.put(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/review`,
   validateReviewRandomExampleSuggestionBody,
   putReviewForRandomExampleSuggestions,
-  calculateReviewingExampleLeaderboard,
 );
 
 // Gets example suggestions to review

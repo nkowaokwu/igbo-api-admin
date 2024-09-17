@@ -7,6 +7,7 @@ import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRa
 import Collections from 'src/shared/constants/Collection';
 import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -37,19 +38,23 @@ export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPaylo
     data: rawData,
   });
 
-export const getRandomExampleSuggestionsToRecord = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionsToRecord = (
+  { count = 5, languages }: { count?: number; languages: LanguageEnum[] } = { count: 5, languages: [] },
+): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio?languages=${languages}`,
     params: {
       range: `[0, ${count - 1}]`,
     },
   });
 
-export const getRandomExampleSuggestionsToReview = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionsToReview = (
+  { count = 5, languages }: { count?: number; languages: LanguageEnum[] } = { count: 5, languages: [] },
+): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review?languages=${languages}`,
     params: {
       range: `[0, ${count - 1}]`,
     },

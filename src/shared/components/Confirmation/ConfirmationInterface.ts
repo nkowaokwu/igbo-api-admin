@@ -12,6 +12,7 @@ export interface ConfirmationButtonInterface extends UpdateButtonProps {
   selectionValue: string;
   action: any;
   onClose?: () => any;
+  onConfirm?: () => any;
   isOpen: boolean;
   view: Views;
   setIsLoading?: React.Dispatch<React.SetStateAction<boolean>>;

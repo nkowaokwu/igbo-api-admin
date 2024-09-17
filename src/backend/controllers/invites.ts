@@ -1,11 +1,12 @@
 import { Response, NextFunction } from 'express';
-import { IGBO_API_EDITOR_PLATFORM_ROOT, PROJECT_ID } from 'src/backend/config';
+import { IGBO_API_EDITOR_PLATFORM_ROOT, IGBO_API_PROJECT_ID } from 'src/backend/config';
 import { sendMemberInvite } from 'src/backend/controllers/email';
 import { getProjectByIdHelper } from 'src/backend/controllers/projects';
 import {
   deleteUserProjectPermissionByEmailHelper,
   getUserProjectPermissionByDocIdHelper,
   getUserProjectPermissionByEmailHelper,
+  getUserProjectPermissionHelper,
   postUserProjectPermissionHelper,
 } from 'src/backend/controllers/userProjectPermissions';
 import { postUserHelper } from 'src/backend/controllers/users';
@@ -22,7 +23,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
  * @returns Redirects the request to the login page while including the main inviting project
  */
 export const inviteMemberForIgboAPI = async (_: Interfaces.EditorRequest, res: Response): Promise<void> => {
-  const redirectUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}/?invitingProject=${PROJECT_ID}`;
+  const redirectUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}/?invitingProjectId=${IGBO_API_PROJECT_ID}`;
   return res.redirect(redirectUrl);
 };
 
@@ -42,7 +43,7 @@ export const acceptMemberInviteForIgboAPI = async (
     const { mongooseConnection, user } = req;
     const { invitingProjectId } = req.query;
 
-    if (invitingProjectId !== PROJECT_ID) {
+    if (invitingProjectId !== IGBO_API_PROJECT_ID) {
       throw new Error("You don't have access to this resource");
     }
 
@@ -52,6 +53,17 @@ export const acceptMemberInviteForIgboAPI = async (
       firebaseId: user.uid,
       grantingAdmin: Author.SYSTEM,
     };
+
+    const existingUserProjectPermission = await getUserProjectPermissionHelper({
+      mongooseConnection,
+      projectId: invitingProjectId,
+      uid: user.uid,
+      status: EntityStatus.ACTIVE,
+    });
+
+    if (existingUserProjectPermission) {
+      return res.send({ userProjectPermission: existingUserProjectPermission });
+    }
 
     const userProjectPermission = await postUserProjectPermissionHelper({
       mongooseConnection,

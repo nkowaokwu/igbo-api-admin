@@ -8,7 +8,7 @@ import {
   getTotalMergedRecordedExampleSuggestions,
   getTotalReviewedExampleSuggestions,
 } from 'src/shared/DataCollectionAPI';
-import { UserProfile } from 'src/backend/controllers/utils/interfaces';
+import { User } from '@firebase/auth';
 import UserCard from 'src/shared/components/UserCard';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
@@ -16,13 +16,7 @@ import IgboSoundboxStats from '../IgboSoundboxStats';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const UserStat = ({
-  user,
-}: {
-  user: UserProfile;
-  dialectalVariations: number;
-  completeExamples: number;
-}): ReactElement => {
+const UserStat = ({ user }: { user: User; dialectalVariations: number; completeExamples: number }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: {}, verified: {}, mergedRecorded: {} });
   const [audioStats, setAudioStats] = useState({ timestampedAudioApprovals: {}, timestampedAudioDenials: {} });

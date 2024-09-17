@@ -1,7 +1,5 @@
-import React, { useState, ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { getAuth } from 'firebase/auth';
-import { getUserProfile } from 'src/shared/UserAPI';
-import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserStat from 'src/Core/Dashboard/components/UserStat';
 import AccountSettings from 'src/Core/Dashboard/components/AccountSettings';
 import ContactSupport from 'src/Core/Dashboard/components/ContactSupport';
@@ -10,16 +8,8 @@ import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermis
 
 const auth = getAuth();
 const Profile = (): ReactElement => {
-  const [user, setUser] = useState<UserProfile>();
   const userProjectPermission = React.useContext(UserProjectPermissionContext);
-
-  const {
-    currentUser: { uid },
-  } = auth;
-
-  useEffect(() => {
-    getUserProfile(uid).then(setUser);
-  }, []);
+  const user = auth.currentUser;
 
   const tabLabels = ['General', 'Account', 'Support'];
   const tabPanels = [

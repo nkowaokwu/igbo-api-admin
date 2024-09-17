@@ -247,30 +247,31 @@ export const searchExamplesWithoutEnoughAudioRegexQuery = (
 export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   uid: string,
   projectId: string,
+  languages: string[],
 ): {
   merged: null;
   exampleForSuggestion: { $ne: true };
-  igbo: { $exists: boolean; $type: string };
+  'source.text': { $exists: boolean; $type: string };
+  'source.language': { $in: string[] };
   $expr: { $gt: ({ $strLenCP: string } | number)[] };
-  type: SentenceTypeEnum.DATA_COLLECTION;
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   // @ts-expect-error
-  [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
-  'pronunciations.speaker': { $nin: [string] };
-  projectId: { $eq: string };
+  [`source.pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
+  'source.pronunciations.speaker': { $nin: [string] };
+  projectId: { $eq: Types.ObjectId };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
-  igbo: { $exists: true, $type: 'string' },
-  $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
-  type: SentenceTypeEnum.DATA_COLLECTION,
+  'source.text': { $exists: true, $type: 'string' },
+  'source.language': { $in: languages },
+  $expr: { $gt: [{ $strLenCP: '$source.text' }, 6] },
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
-  [`pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
+  [`source.pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false },
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
-  'pronunciations.speaker': { $nin: [uid] },
-  projectId: { $eq: projectId },
+  'source.pronunciations.speaker': { $nin: [uid] },
+  projectId: { $eq: new Types.ObjectId(projectId) },
 });
 
 /**
@@ -281,36 +282,37 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
 export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   uid,
   projectId,
+  languages,
 }: {
   uid: string;
   projectId: string;
+  languages: string[];
 }): {
   merged: null;
   exampleForSuggestion: { $ne: true };
-  'pronunciations.review': true;
-  type: SentenceTypeEnum.DATA_COLLECTION;
+  'source.pronunciations.review': true;
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
-  'pronunciations.speaker': { $nin: [string] };
-  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
-  projectId: { $eq: string };
+  'source.language': { $in: string[] };
+  'source.pronunciations.speaker': { $nin: [string] };
+  'source.pronunciations': { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
+  projectId: { $eq: Types.ObjectId };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
-  'pronunciations.review': true,
-  type: SentenceTypeEnum.DATA_COLLECTION,
+  'source.pronunciations.review': true,
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
-
   // Only looks at the data collection sentences uploaded starting from 2023
   updatedAt: { $gte: moment('2023-01-01').toDate() },
-  'pronunciations.speaker': { $nin: [uid] },
+  'source.language': { $in: languages },
+  'source.pronunciations.speaker': { $nin: [uid] },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
-  pronunciations: {
+  'source.pronunciations': {
     $elemMatch: {
       $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
     },
   },
-  projectId: { $eq: projectId },
+  projectId: { $eq: new Types.ObjectId(projectId) },
 });
 
 /**

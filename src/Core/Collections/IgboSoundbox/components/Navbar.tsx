@@ -48,7 +48,7 @@ const Navbar = ({
       <NavbarWrapper className={currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'}>
         {currentView === IgboSoundboxViews.HOME ? (
           <Heading fontFamily="Silka" textAlign="center">
-            Igbo Soundbox
+            Soundbox
           </Heading>
         ) : (
           <Box className="flex flex-row justify-start items-center space-x-4 h-full">

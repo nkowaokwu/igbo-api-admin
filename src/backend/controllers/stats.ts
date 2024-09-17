@@ -6,7 +6,7 @@ import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation'
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
 import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
-import { PROJECT_ID } from 'src/backend/config';
+import { IGBO_API_PROJECT_ID } from 'src/backend/config';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
@@ -68,7 +68,7 @@ const calculateTotalHeadwordsWithAudioPronunciations = async (
   Stat,
 ): Promise<{ audioPronunciationWords: number } | void> => {
   const audioPronunciationWords = await Word.countDocuments(
-    searchForAllWordsWithAudioPronunciations({ projectId: PROJECT_ID }),
+    searchForAllWordsWithAudioPronunciations({ projectId: IGBO_API_PROJECT_ID }),
   );
   await updateStat({ type: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords, Stat });
   return { audioPronunciationWords };
@@ -76,7 +76,9 @@ const calculateTotalHeadwordsWithAudioPronunciations = async (
 
 /* Returns all the Words that's in Standard Igbo */
 const calculateTotalWordsInStandardIgbo = async (Word, Stat): Promise<{ isStandardIgboWords: number } | void> => {
-  const isStandardIgboWords = await Word.countDocuments(searchForAllWordsWithIsStandardIgbo({ projectId: PROJECT_ID }));
+  const isStandardIgboWords = await Word.countDocuments(
+    searchForAllWordsWithIsStandardIgbo({ projectId: IGBO_API_PROJECT_ID }),
+  );
   await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords, Stat });
   return { isStandardIgboWords };
 };
