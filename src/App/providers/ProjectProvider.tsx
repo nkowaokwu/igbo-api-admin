@@ -12,7 +12,6 @@ const auth = getAuth();
 export const ProjectProvider = ({ children }: React.PropsWithChildren): React.ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentProject, setCurrentProject] = useState<ProjectData | null>(null);
-  const localProjectId = localStorage.getItem(LocalStorageKeys.PROJECT_ID);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -21,7 +20,7 @@ export const ProjectProvider = ({ children }: React.PropsWithChildren): React.Re
         try {
           // Gets all projects to get the default project
           const userProjects = await getAllProjects();
-          if (!localProjectId) {
+          if (!localStorage.getItem(LocalStorageKeys.PROJECT_ID)) {
             localStorage.setItem(LocalStorageKeys.PROJECT_ID, userProjects[0]?.id?.toString() || '');
           }
 

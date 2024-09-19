@@ -17,7 +17,7 @@ const ExampleSuggestionCreate = (props: HistoryProps): ReactElement => {
   return (
     <Box className="shadow-sm p-4 lg:p-10">
       <Heading as="h1" className="text-3xl text-gray-800 mb-3" fontFamily="Silka">
-        Create New Example Suggestion
+        Create New Sentence Draft
       </Heading>
       {record ? (
         <ExampleEditForm

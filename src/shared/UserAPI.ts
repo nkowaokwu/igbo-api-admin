@@ -1,5 +1,5 @@
-import { getAuth, updateProfile } from 'firebase/auth';
-import { camelCase, merge, pick } from 'lodash';
+import { getAuth, updateProfile, User } from 'firebase/auth';
+import { camelCase, pick } from 'lodash';
 import network from 'src/Core/Dashboard/network';
 import { UserProfile, UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
@@ -17,26 +17,19 @@ export const getUserProfile = async (userId: string): Promise<UserProfile> => {
 };
 
 export const updateUserProfile = async ({
-  userId,
   userProfile,
 }: {
-  userId: string;
   userProfile: Partial<{
     displayName: string;
     age: Date;
     dialects: DialectEnum[];
   }>;
-}): Promise<UserProfile> => {
+}): Promise<User> => {
   const auth = getAuth();
   const firebaseProfile = pick(userProfile, ['displayName']);
   await updateProfile(auth.currentUser, firebaseProfile);
 
-  const { data: result } = await request({
-    method: 'PUT',
-    url: `${Collection.USERS}/${userId}`,
-    data: userProfile,
-  });
-  return merge(userProfile, result);
+  return auth.currentUser;
 };
 
 export const getUserStats = async (): Promise<{ [key: string]: number }> => {

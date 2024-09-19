@@ -29,7 +29,7 @@ export const searchExampleAudioPronunciationsReviewedByUser = ({
   projectId: string;
   timeRange?: LeaderboardTimeRange;
 }): {
-  pronunciations: {
+  'source.pronunciations': {
     $elemMatch: {
       $or: { [key: string]: { $in: [string] } }[];
     };
@@ -39,7 +39,7 @@ export const searchExampleAudioPronunciationsReviewedByUser = ({
 } => {
   const { startDate, endDate } = LeaderboardTimeRanges[timeRange];
   return {
-    pronunciations: {
+    'source.pronunciations': {
       $elemMatch: {
         $or: [{ approvals: { $in: [uid] } }, { denials: { $in: [uid] } }],
       },
@@ -78,14 +78,14 @@ export const searchExampleAudioPronunciationsRecordedByUser = ({
   uid: string;
   timeRange?: LeaderboardTimeRange;
 }): {
-  pronunciations: {
+  'source.pronunciations': {
     $elemMatch: { [key: string]: { $eq: string } };
   };
   updatedAt?: { $gte: number | null; $lte: number | null };
 } => {
   const { startDate, endDate } = LeaderboardTimeRanges[timeRange] || { startDate: null, endDate: null };
   return {
-    pronunciations: {
+    'source.pronunciations': {
       $elemMatch: { speaker: { $eq: uid } },
     },
     ...(startDate ? { updatedAt: { $gte: startDate, $lte: endDate } } : {}),

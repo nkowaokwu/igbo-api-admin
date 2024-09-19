@@ -16,4 +16,5 @@ export interface UserProjectPermission {
   grantingAdmin: string;
   languages: LanguageEnum[];
   gender: GenderEnum;
+  age: Date;
 }

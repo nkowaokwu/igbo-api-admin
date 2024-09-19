@@ -48,7 +48,6 @@ export const handleUserResult = async ({
   localStorage.setItem(LocalStorageKeys.ACCESS_TOKEN, token);
   localStorage.setItem(LocalStorageKeys.UID, userId as string);
   localStorage.setItem(LocalStorageKeys.PERMISSIONS, userRole);
-  localStorage.setItem(LocalStorageKeys.PROJECT_ID, '');
 
   setErrorMessage('');
 
@@ -56,7 +55,7 @@ export const handleUserResult = async ({
   if (invitingProjectId === IGBO_API_PROJECT_ID) {
     await acceptIgboAPIRequest();
   }
-  const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-  const hash = rawRedirectUrl || '#/';
+
+  const hash = '#/';
   window.location.href = `${window.location.origin}/${hash}`;
 };

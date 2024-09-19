@@ -44,25 +44,24 @@ const GoogleLogin = ({
       display="flex"
       className="font-bold"
       justifyContent="space-between"
-      leftIcon={<Image className="mr-4" width="18px" src={GoogleImage} alt="Google logo" />}
       width="full"
       px={4}
       h="48px"
-      border="1px"
+      borderWidth="1px"
       borderRadius="lg"
-      borderColor="gray.300"
       onClick={signInWithGoogle}
-      backgroundColor="#FFFFFF"
+      backgroundColor="white"
       _hover={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'white',
       }}
       _active={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'white',
       }}
       _focus={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'white',
       }}
     >
+      <Image className="mr-4" width="18px" src={GoogleImage} alt="Google logo" />
       <Text flex={1} fontSize="md" color="gray.500" ml={-6}>
         {userLoginState === UserLoginState.SIGN_UP ? 'Sign up with Google' : 'Sign in with Google'}
       </Text>

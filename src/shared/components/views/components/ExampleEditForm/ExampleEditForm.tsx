@@ -180,7 +180,13 @@ const ExampleEditForm = ({
                 }
               : {})}
           >
-            <HStack display="flex" justifyContent="space-between" width="full" gap={2}>
+            <HStack
+              display="flex"
+              flexDirection={{ base: 'column', md: 'row' }}
+              justifyContent="space-between"
+              width="full"
+              gap={2}
+            >
               <Controller
                 render={(props) => (
                   <Input {...props} placeholder={`Text in ${sourceLanguage}`} data-test="igbo-input" flex={8} />
@@ -194,7 +200,7 @@ const ExampleEditForm = ({
                   <Select
                     {...props}
                     options={languageOptions}
-                    styles={{ container: (styles) => ({ ...styles, flex: 2 }) }}
+                    styles={{ container: (styles) => ({ ...styles, flex: 2, width: '100%' }) }}
                   />
                 )}
                 name="source.language"
@@ -256,7 +262,13 @@ const ExampleEditForm = ({
             // eslint-disable-next-line max-len
             tooltip={`The example sentence in ${destinationLanguage}. This is the the literal ${destinationLanguage} translation of the ${sourceLanguage} sentence.`}
           />
-          <HStack display="flex" justifyContent="space-between" width="full" gap={2}>
+          <HStack
+            display="flex"
+            flexDirection={{ base: 'column', md: 'row' }}
+            justifyContent="space-between"
+            width="full"
+            gap={2}
+          >
             <Controller
               render={(props) => (
                 <Input {...props} placeholder={`Text in ${destinationLanguage}`} data-test="english-input" flex={8} />
@@ -270,7 +282,7 @@ const ExampleEditForm = ({
                 <Select
                   {...props}
                   options={languageOptions}
-                  styles={{ container: (styles) => ({ ...styles, flex: 2 }) }}
+                  styles={{ container: (styles) => ({ ...styles, flex: 2, width: '100%' }) }}
                 />
               )}
               name="translations.0.language"

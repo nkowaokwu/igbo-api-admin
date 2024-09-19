@@ -59,10 +59,6 @@ main,
   @apply p-0 !important;
 }
 
-body {
-  overflow: hidden !important;
-}
-
 ::selection {
   @apply bg-green-400;
   @apply text-gray-800;
@@ -297,7 +293,6 @@ input#igbo {
 }
 
 .form-header {
-  @apply text-xl;
   @apply mt-0 !important;
   width: fit-content !important;
 }

@@ -8,10 +8,8 @@ import {
   deleteUserProjectPermissionHelper,
   getUserProjectPermissionsByProjectHelper,
 } from 'src/backend/controllers/userProjectPermissions';
-import { createMongoUser } from 'src/backend/functions/users';
-import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';
+import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
-import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import UserRoles from '../shared/constants/UserRoles';
 import { handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
@@ -198,7 +196,8 @@ export const getUsers = async (
             ({ firebaseId }) => firebaseId === user.uid,
           );
           if (userProjectPermissionIndex !== -1) {
-            return assign(user, userProjectPermissions[userProjectPermissionIndex]);
+            const currentUserProjectPermission = userProjectPermissions[userProjectPermissionIndex];
+            return assign(user, currentUserProjectPermission, { id: user.uid, _id: currentUserProjectPermission.id });
           }
           return user;
         })
@@ -274,65 +273,41 @@ export const getUserProfile = async (
 ): Promise<Response | void> => {
   try {
     const {
-      user: { uid: userId, role },
-      params: { uid },
+      user: { uid, role },
+      params: { uid: firebaseId },
       mongooseConnection,
     } = await handleQueries(req);
-    const id = role === UserRoles.ADMIN ? uid : userId;
-    const user = await findUser(id);
-    const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-    let crowdsourcer: Partial<Interfaces.Crowdsourcer> = await Crowdsourcer.findOne({
-      firebaseId: uid,
-    });
-    if (!crowdsourcer) {
-      crowdsourcer = cleanDocument<Partial<Interfaces.Crowdsourcer>>(await createMongoUser(uid));
+    const { projectId } = req.query;
+    const { userProjectPermission } = req;
+    const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+      'UserProjectPermission',
+      userProjectPermissionSchema,
+    );
+    let userProfile = {};
+    const firebaseUser = await findUser(firebaseId);
+
+    if (role === UserRoles.ADMIN) {
+      const userProjectPermission = await UserProjectPermission.findOne({ firebaseId, projectId });
+
+      if (!userProjectPermission) {
+        throw new Error('No user exists with this project');
+      }
+      userProfile = merge({
+        ...firebaseUser,
+        id: firebaseId,
+        _id: userProjectPermission.id,
+      });
     } else {
-      crowdsourcer = crowdsourcer.toJSON();
+      const firebaseUser = await findUser(uid);
+      userProfile = merge({
+        ...firebaseUser,
+        id: uid,
+        _id: userProjectPermission.id,
+      });
     }
-
-    const userProfile = merge({
-      ...(typeof user !== 'string' ? user : {}),
-      ...(crowdsourcer ?? {}),
-      // id must match :uid in UI to show the user profile after refreshing
-      id: crowdsourcer.firebaseId,
-      _id: crowdsourcer.id,
-    });
-
     return res.status(200).send(userProfile);
   } catch (err) {
-    // console.log(err);
     return next(new Error(`An error occurred while getting the user profile: ${err.message}`));
-  }
-};
-
-/**
- * Updates the user profile in MongoDB
- * @param req
- * @param res
- * @param next
- * @returns MongoDB user
- */
-export const putUserProfile = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    const {
-      user: { uid },
-      body,
-      mongooseConnection,
-    } = await handleQueries(req);
-    const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-    const crowdsourcer = await Crowdsourcer.findOne({ firebaseId: uid });
-    crowdsourcer.age = body.age;
-    crowdsourcer.dialects = body.dialects;
-    crowdsourcer.gender = body.gender;
-    const savedCrowdsourcer = await crowdsourcer.save();
-
-    return res.status(200).send(cleanDocument<Interfaces.Crowdsourcer>(savedCrowdsourcer.toJSON()));
-  } catch (err) {
-    return next(new Error(`An error occurred while updating the user profile: ${err.message}`));
   }
 };
 

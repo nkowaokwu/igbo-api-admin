@@ -27,7 +27,7 @@ import { createReferral } from 'src/backend/controllers/crowdsourcer';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
-import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
+import { getUserProfile } from 'src/backend/controllers/users';
 import { crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const crowdsourcerRouter = express.Router();
@@ -102,6 +102,5 @@ crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 // Crowdsourcer
 crowdsourcerRouter.post(`/${Collection.USERS}/referral`, createReferral);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
-crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
 
 export default crowdsourcerRouter;

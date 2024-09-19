@@ -9,8 +9,12 @@ import editorRouter from 'src/backend/routers/editorRouter';
 import crowdsourcerRouter from 'src/backend/routers/crowdsourcerRouter';
 import transcriberRouter from 'src/backend/routers/transcriberRouter';
 import adminRouter from 'src/backend/routers/adminRouter';
+import openRouter from 'src/backend/routers/openRouter';
 
 const platformRouters = express.Router();
+
+// Open routes for presentational pages
+platformRouters.use(openRouter);
 
 // Before authentication middleware to openly accept invites
 platformRouters.use(invitesRouter);

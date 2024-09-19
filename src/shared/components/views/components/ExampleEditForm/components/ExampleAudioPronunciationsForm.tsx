@@ -81,6 +81,7 @@ const ExampleAudioPronunciationsForm = ({
         tooltip="An example can have multiple audio recorded for it. One on unique
         speaker can record a version for this sentence."
       />
+      <AddAudioPronunciationButton onClick={handleAppend} />
       {pronunciations?.length ? (
         pronunciations.map((pronunciation, index) => {
           const isExistingPronunciation = get(record, `${formName}[${index}].audio`);
@@ -94,7 +95,7 @@ const ExampleAudioPronunciationsForm = ({
                 </Text>
               ) : null}
               <Box
-                className={`flex flex-row justify-between items-center p-4 rounded ${
+                className={`flex flex-row justify-between items-center rounded ${
                   pronunciation.archived ? 'bg-orange-200 pointer' : ''
                 }`}
               >
@@ -144,7 +145,6 @@ const ExampleAudioPronunciationsForm = ({
           </Text>
         </Box>
       )}
-      <AddAudioPronunciationButton onClick={handleAppend} />
       <SummaryList
         items={archivedPronunciations}
         title="Archived Example Pronunciations 🗄"

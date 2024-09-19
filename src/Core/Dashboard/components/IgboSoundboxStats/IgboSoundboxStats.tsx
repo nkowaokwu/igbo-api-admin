@@ -7,6 +7,8 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import { PRICE_PER_RECORDING, PRICE_PER_REVIEW } from 'src/Core/constants';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import LinearProgressCard from '../LinearProgressCard';
 
 const GOAL = 4000;
@@ -44,8 +46,10 @@ const IgboSoundboxStats = ({
   };
 }): ReactElement => {
   const permissions = usePermissions();
-  const showPaymentCalculations = hasAdminPermissions(permissions?.permissions, true);
+  const isIgboAPIProject = useIsIgboAPIProject();
+  const showPaymentCalculations = isIgboAPIProject && hasAdminPermissions(permissions?.permissions, true);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
+
   const contributedStats = [
     {
       totalCount: recordingStats.recorded[currentMonth],
@@ -102,10 +106,13 @@ const IgboSoundboxStats = ({
       <Box className="w-full">
         <Box className="space-y-2" mb={2}>
           <Box className="flex flex-row justify-between items-center w-full">
-            <Button onClick={handlePreviousMonth}>Previous month</Button>
+            <Button onClick={handlePreviousMonth} leftIcon={<ArrowBackIcon />}>
+              Previous month
+            </Button>
             <Button
               onClick={handleNextMonth}
               isDisabled={moment().startOf('month').format('MMM, YYYY') === currentMonth}
+              rightIcon={<ArrowForwardIcon />}
             >
               Next month
             </Button>
@@ -116,7 +123,7 @@ const IgboSoundboxStats = ({
         </Box>
         <Box className="flex flex-col lg:flex-row space-y-3 lg:space-x-3 lg:space-y-0">
           <LinearProgressCard
-            heading="Igbo Soundbox Contributions"
+            heading="Contributions"
             description="Contributions that you have made on the platform"
             stats={contributedStats}
             isLoaded
@@ -140,13 +147,15 @@ const IgboSoundboxStats = ({
           />
         </Box>
       </Box>
-      <LinearProgressCard
-        heading="Monthly merged recorded audio"
-        description="The number of merged (verified) recorded audio for each month"
-        stats={monthlyRecordedStat}
-        isLoaded
-        isGeneric
-      />
+      {isIgboAPIProject ? (
+        <LinearProgressCard
+          heading="Monthly merged recorded audio"
+          description="The number of merged (verified) recorded audio for each month"
+          stats={monthlyRecordedStat}
+          isLoaded
+          isGeneric
+        />
+      ) : null}
     </Box>
   );
 };

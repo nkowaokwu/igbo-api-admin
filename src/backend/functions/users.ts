@@ -5,7 +5,6 @@ import { UpdatePermissions } from 'src/shared/constants/firestore-types';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { successResponse, errorResponse } from 'src/shared/server-validation';
 import Collections from 'src/shared/constants/Collection';
-import cleanDocument from 'src/backend/shared/utils/cleanDocument';
 import { isProduction, IGBO_API_PROJECT_ID } from 'src/backend/config';
 import { postUserProjectPermissionHelper } from 'src/backend/controllers/userProjectPermissions';
 import Author from 'src/backend/shared/constants/Author';
@@ -75,25 +74,6 @@ const handleCreateDefaultUserProjectPermission = async ({
   }
 };
 
-/**
- * Creates an associated mongodb User document
- * @param {FirebaseUser['uid']} firebaseId firebase user id
- *
- * @returns Created Crowdsourcer user
- */
-export const createMongoUser = async (firebaseId: string): Promise<Partial<Interfaces.Crowdsourcer>> => {
-  const characters = `${alphabet}${new Date().valueOf()}`;
-
-  const connection = await connectDatabase();
-  const Crowdsourcer = connection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-  const crowdsourcer = new Crowdsourcer({
-    firebaseId,
-    referralCode: generateId(characters),
-  });
-  const savedCrowdsourcer = await crowdsourcer.save();
-  return cleanDocument(savedCrowdsourcer.toJSON());
-};
-
 /* Creates a user account and assigns the role to 'user' */
 export const onCreateUserAccount = functions.auth.user().onCreate(async (user) => {
   try {
@@ -103,7 +83,6 @@ export const onCreateUserAccount = functions.auth.user().onCreate(async (user) =
     await sendNewUserNotification({ newUserEmail: user.email });
     await incrementTotalUserStat();
     await handleCreateDefaultUserProjectPermission();
-    await createMongoUser(user.uid);
 
     return successResponse({ uid: user.uid });
   } catch (err) {

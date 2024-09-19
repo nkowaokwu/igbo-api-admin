@@ -8,12 +8,12 @@ const omitPronunciationFields = (pronunciation) => omit(pronunciation, ['id']);
 const createDefaultExampleFormValues = (record: Record): any => {
   const data = assign(record, {
     source: assign(record.source || {}, {
-      language: LanguageLabels[record.source.language] || LanguageLabels.UNSPECIFIED,
+      language: LanguageLabels[record.source?.language] || LanguageLabels.UNSPECIFIED,
       pronunciations: (record.source?.pronunciations || []).map(omitPronunciationFields),
     }),
     translations: (record.translations || []).map((translation) =>
       assign(translation, {
-        language: LanguageLabels[translation.language] || LanguageLabels.UNSPECIFIED,
+        language: LanguageLabels[translation?.language] || LanguageLabels.UNSPECIFIED,
         pronunciations: (translation?.pronunciations || []).map(omitPronunciationFields),
       }),
     ),

@@ -10,6 +10,7 @@ import {
 } from 'src/shared/DataCollectionAPI';
 import { User } from '@firebase/auth';
 import UserCard from 'src/shared/components/UserCard';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
@@ -24,6 +25,7 @@ const UserStat = ({ user }: { user: User; dialectalVariations: number; completeE
   const { permissions } = usePermissions();
   const toast = useToast();
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
+  const isIgboAPIProject = useIsIgboAPIProject();
 
   useEffect(() => {
     (async () => {
@@ -75,7 +77,7 @@ const UserStat = ({ user }: { user: User; dialectalVariations: number; completeE
               <Skeleton isLoaded={!isLoading}>
                 <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               </Skeleton>
-              {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
+              {isIgboAPIProject && !isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
           </Box>
         </Box>

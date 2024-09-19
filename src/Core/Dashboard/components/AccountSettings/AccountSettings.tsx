@@ -80,7 +80,7 @@ const AccountSettings = ({
 
     setIsLoading(false);
     try {
-      await updateUserProfile({ userId: user.uid, userProfile: firebasePayload });
+      await updateUserProfile({ userProfile: firebasePayload });
     } catch (err) {
       setIsLoading(false);
       toast({

@@ -17,6 +17,7 @@ import {
   hasAtLeastCrowdsourcerPermissions,
   hasAccessToPlatformPermissions,
 } from 'src/shared/utils/permissions';
+import Home from 'src/Core/Home';
 import withLastRoute from './withLastRoute';
 
 const WordList = React.lazy(() => import('src/Core/Collections/Words/WordList'));
@@ -288,6 +289,22 @@ export const getResourceObjects = (permissions: any): Resource[] => [
 ];
 
 export const getCustomRouteObjects = (): any => [
+  {
+    exact: true,
+    path: '/home',
+    component: () => <Home />,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
+    generalProject: true,
+  },
+  {
+    exact: true,
+    path: '/pricing',
+    component: () => <>pricing page</>,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
+    generalProject: true,
+  },
   {
     exact: true,
     path: '/profile',

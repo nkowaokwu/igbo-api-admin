@@ -293,13 +293,14 @@ export const putUserProjectPermission = async (
 ): Promise<Response<Interfaces.UserProjectPermission> | void> => {
   try {
     const { mongooseConnection, body, user } = req;
+    const { projectId } = req.query;
 
     const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
       'UserProjectPermission',
       userProjectPermissionSchema,
     );
 
-    const userProjectPermission = await UserProjectPermission.findOne({ firebaseId: user.uid });
+    const userProjectPermission = await UserProjectPermission.findOne({ firebaseId: user.uid, projectId });
 
     if (!userProjectPermission) {
       throw new Error('User project permission not found.');

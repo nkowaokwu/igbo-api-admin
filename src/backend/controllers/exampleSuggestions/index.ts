@@ -429,7 +429,7 @@ export const getTotalReviewedExampleSuggestions = async (
               finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
             }
 
-            exampleSuggestion.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
+            exampleSuggestion.source.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
               // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
               const pronunciation = leanPronunciation(dbPronunciation);
               const isUserReviewed = isUserReviewedAudioPronunciation({ pronunciation, uid });
@@ -445,7 +445,7 @@ export const getTotalReviewedExampleSuggestions = async (
         return res.send({ timestampedReviewedExampleSuggestions });
       })
       .catch(() => {
-        // console.log(err);
+        console.log(err);
         throw new Error('An error has occurred while returning all total verified example suggestions');
       });
   } catch (err) {
@@ -469,14 +469,11 @@ export const getTotalMergedRecordedExampleSuggestions = async (
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
   const query = {
-    'pronunciations.audio': { $regex: /^http/, $type: 'string' },
-    'pronunciations.speaker': uid,
-    'pronunciations.review': true,
-    type: SentenceTypeEnum.DATA_COLLECTION,
+    'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+    'source.pronunciations.speaker': uid,
+    'source.pronunciations.review': true,
     merged: { $ne: null },
     projectId: { $eq: projectId },
-    // TODO: Remove updatedAt after fixing bug
-    updatedAt: { $gte: moment('2024-01-01') },
   };
 
   try {
@@ -492,7 +489,7 @@ export const getTotalMergedRecordedExampleSuggestions = async (
             const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
             const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
 
-            exampleSuggestion.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
+            exampleSuggestion.source.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
               // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
               const pronunciation = leanPronunciation(dbPronunciation);
               const isMergeable = isMergeableAudioPronunciation({ pronunciation, uid });
@@ -534,13 +531,10 @@ export const getTotalRecordedExampleSuggestions = async (
   const uid = uidQuery || user.uid;
   const query = {
     'denials.1': { $exists: false },
-    'pronunciations.audio': { $regex: /^http/, $type: 'string' },
-    'pronunciations.speaker': uid,
-    'pronunciations.review': true,
-    type: SentenceTypeEnum.DATA_COLLECTION,
+    'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+    'source.pronunciations.speaker': uid,
+    'source.pronunciations.review': true,
     projectId: { $eq: projectId },
-    // TODO: Remove updatedAt after fixing bug
-    updatedAt: { $gte: moment('2024-01-01') },
   };
 
   try {
@@ -556,7 +550,7 @@ export const getTotalRecordedExampleSuggestions = async (
             const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
             const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
 
-            exampleSuggestion.pronunciations.forEach((dbPronunciation) => {
+            exampleSuggestion.source.pronunciations.forEach((dbPronunciation) => {
               const pronunciation = leanPronunciation(dbPronunciation);
               const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
               if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {

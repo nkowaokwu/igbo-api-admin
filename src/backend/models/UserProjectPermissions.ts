@@ -19,6 +19,7 @@ export const userProjectPermissionSchema = new Schema(
     grantingAdmin: { type: String, required: true },
     languages: { type: [{ type: String, enum: Object.values(LanguageEnum) }], default: [] },
     gender: { type: String, enum: Object.values(GenderEnum), default: GenderEnum.UNSPECIFIED },
+    age: { type: Date },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
