@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Heading, VStack, Text, Button, Grid } from '@chakra-ui/react';
 import { LuDiamond, LuDownloadCloud, LuFilter, LuLayers, LuUser, LuZap } from 'react-icons/lu';
+import { REQUEST_ACCESS_URL } from 'src/Core/constants';
 
 const largeSections = [
   {
@@ -36,7 +37,7 @@ const largeSections = [
 ];
 
 const DetailedFeatures = (): ReactElement => (
-  <VStack alignItems="center" width="full" gap={4} backgroundColor="gray.900" py={32}>
+  <VStack alignItems="center" width="full" gap={4} backgroundColor="black" py={32}>
     <VStack alignItems="center" className="w-10/12" gap={32}>
       <VStack alignItems="center" className="w-1/2" gap={4}>
         <Text color="white">All-in-one data platform</Text>
@@ -44,9 +45,16 @@ const DetailedFeatures = (): ReactElement => (
           Invite, Collect, Build.
         </Heading>
         <Text lineHeight="1.6" color="gray.400">
-          Track data growth, manage your team, scale your business.
+          Track data growth, manage your team, scale your work.
         </Text>
-        <Button color="gray.200">Request access</Button>
+        <Button
+          color="black"
+          onClick={() => {
+            window.location.href = REQUEST_ACCESS_URL;
+          }}
+        >
+          Request access
+        </Button>
       </VStack>
       <Grid templateColumns="repeat(3, 1fr)" gap={6}>
         {largeSections.map(({ title, description, icon: Icon }) => (

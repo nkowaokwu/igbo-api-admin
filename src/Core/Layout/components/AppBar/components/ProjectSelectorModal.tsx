@@ -15,12 +15,13 @@ import {
   IconButton,
   Tooltip,
 } from '@chakra-ui/react';
-import { PlusSquareIcon, StarIcon } from '@chakra-ui/icons';
+import { StarIcon } from '@chakra-ui/icons';
 import { FiSettings } from 'react-icons/fi';
 import { getAllProjects } from 'src/shared/ProjectAPI';
 import { ProjectData } from 'src/backend/controllers/utils/interfaces';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
+import { LuPlus } from 'react-icons/lu';
 
 const ProjectSelectorModal = ({
   isOpen,
@@ -76,16 +77,7 @@ const ProjectSelectorModal = ({
         <ModalHeader>
           <HStack>
             <chakra.span>Choose a project</chakra.span>
-            <Button
-              variant="ghost"
-              color="purple.500"
-              leftIcon={<PlusSquareIcon />}
-              backgroundColor="transparent"
-              _hover={{ backgroundColor: 'transparent' }}
-              _active={{ backgroundColor: 'transparent' }}
-              _focus={{ backgroundColor: 'transparent' }}
-              onClick={handleCreateProject}
-            >
+            <Button variant="primary" leftIcon={<LuPlus />} onClick={handleCreateProject}>
               New Project
             </Button>
           </HStack>

@@ -1,10 +1,13 @@
 import React, { ReactElement } from 'react';
-import { Box, VStack } from '@chakra-ui/react';
+import { Image, VStack } from '@chakra-ui/react';
+import getAWSAsset from 'src/utils/getAWSAsset';
+
+const Dashboard = getAWSAsset('/images/igboAPIEditorPlatform/dashboard.png');
 
 const ProductPreview = (): ReactElement => (
-  <VStack width="full">
+  <VStack width="full" pb={32}>
     <VStack className="w-10/12">
-      <Box backgroundColor="green.200" height="600px" width="900px" borderRadius="lg" />
+      <Image src={Dashboard} alt="Dashboard" />
     </VStack>
   </VStack>
 );

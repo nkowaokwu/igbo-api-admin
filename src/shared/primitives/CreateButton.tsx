@@ -8,8 +8,8 @@ const CreateButton = ({ basePath }: { basePath: string }): ReactElement => (
     onClick={() => {
       window.location.hash = `#${basePath}/create`;
     }}
-    colorScheme="purple"
     aria-label="Create"
+    variant="primary"
   >
     Create
   </Button>

@@ -56,7 +56,7 @@ const CurrentDialectsForms = ({
           ]);
         }}
         width="full"
-        colorScheme="purple"
+        variant="primary"
         leftIcon={<AddIcon color="white" boxSize={5} />}
       >
         Add Dialectal Variation

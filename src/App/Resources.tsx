@@ -18,6 +18,7 @@ import {
   hasAccessToPlatformPermissions,
 } from 'src/shared/utils/permissions';
 import Home from 'src/Core/Home';
+import Pricing from 'src/Core/Pricing';
 import withLastRoute from './withLastRoute';
 
 const WordList = React.lazy(() => import('src/Core/Collections/Words/WordList'));
@@ -300,7 +301,7 @@ export const getCustomRouteObjects = (): any => [
   {
     exact: true,
     path: '/pricing',
-    component: () => <>pricing page</>,
+    component: () => <Pricing />,
     group: ResourceGroup.UNSPECIFIED,
     noLayout: true,
     generalProject: true,

@@ -73,7 +73,7 @@ const ConfirmModal = ({
             {cancel}
           </Button>
           <Button
-            variant="ghost"
+            variant="primary"
             colorScheme={confirmColorScheme}
             onClick={isDisabled ? noop : onConfirm}
             isLoading={isConfirming}

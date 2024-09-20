@@ -73,7 +73,6 @@ const GeneralSettings = (): ReactElement => {
   const cleanedDataPipeline = flow([transformLicense, transformLanguages]);
 
   const onSubmit = async (rawData) => {
-    console.log(rawData);
     const data = cleanedDataPipeline(rawData);
     try {
       await putCurrentProject(data);

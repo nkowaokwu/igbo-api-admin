@@ -376,9 +376,7 @@ const ExampleEditForm = ({
             </Button>
             <Button
               data-test="example-submit-button"
-              type="submit"
-              colorScheme="purple"
-              variant="solid"
+              variant="primary"
               className="m-0"
               isLoading={isSubmitting}
               loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}

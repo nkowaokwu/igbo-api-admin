@@ -12,7 +12,7 @@ const JoinIgboAPIProject = (): ReactElement => {
     <VStack alignItems="start" width="full">
       <Heading>Want to contribute to open-source?</Heading>
       <Text>Contribute directly to the open-source Igbo API project, the largest Igbo-English dataset.</Text>
-      <Button onClick={handleJoinIgboAPI} rightIcon={<ArrowForwardIcon />}>
+      <Button onClick={handleJoinIgboAPI} rightIcon={<ArrowForwardIcon />} variant="primary">
         Join Igbo API
       </Button>
     </VStack>

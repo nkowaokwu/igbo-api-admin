@@ -287,13 +287,14 @@ export const getUserProfile = async (
     const firebaseUser = await findUser(firebaseId);
 
     if (role === UserRoles.ADMIN) {
-      const userProjectPermission = await UserProjectPermission.findOne({ firebaseId, projectId });
+      const nonAdminUserProjectPermission = await UserProjectPermission.findOne({ firebaseId, projectId });
 
       if (!userProjectPermission) {
         throw new Error('No user exists with this project');
       }
       userProfile = merge({
         ...firebaseUser,
+        ...nonAdminUserProjectPermission.toJSON(),
         id: firebaseId,
         _id: userProjectPermission.id,
       });
@@ -301,6 +302,7 @@ export const getUserProfile = async (
       const firebaseUser = await findUser(uid);
       userProfile = merge({
         ...firebaseUser,
+        ...userProjectPermission,
         id: uid,
         _id: userProjectPermission.id,
       });

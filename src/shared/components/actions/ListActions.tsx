@@ -200,15 +200,16 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   onChange={handleOnJumpToPageChange}
                   placeholder="Page #"
                   name="page"
+                  variant="primary"
                 />
-                <Button type="submit" className="px-3" minWidth={24} colorScheme="purple">
+                <Button type="submit" className="px-3" minWidth={24}>
                   Jump to page
                 </Button>
               </Box>
             </form>
           )}
           {isUserResource && isAdmin ? (
-            <Button rightIcon={<LuPlus />} onClick={onOpenInviteMemberModal}>
+            <Button rightIcon={<LuPlus />} onClick={onOpenInviteMemberModal} variant="primary">
               Invite Member
             </Button>
           ) : null}

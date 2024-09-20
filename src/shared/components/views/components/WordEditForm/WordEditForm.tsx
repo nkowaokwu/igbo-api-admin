@@ -301,8 +301,7 @@ const WordEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="purple"
-          variant="solid"
+          variant="primary"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
           width="full"

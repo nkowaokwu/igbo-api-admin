@@ -1,13 +1,33 @@
 import React, { ReactElement } from 'react';
-import { Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { HStack, Image, Text, VStack } from '@chakra-ui/react';
+import getAWSAsset from 'src/utils/getAWSAsset';
+
+const LacunaFund = getAWSAsset('/images/igboAPIEditorPlatform/lacunafund.svg');
+const Spitch = getAWSAsset('/images/igboAPIEditorPlatform/spitch.svg');
+
+const clients = [
+  {
+    image: Spitch,
+    alt: 'Spitch',
+    height: '44px',
+  },
+  {
+    image: LacunaFund,
+    alt: 'Lacuna Fund',
+    height: '30px',
+  },
+];
 
 const Clients = (): ReactElement => (
-  <VStack width="full" py={32}>
+  <VStack width="full" py={32} backgroundColor="black">
     <VStack className="w-10/12" gap={12}>
-      <Text fontWeight="bold">Loved by AI teams</Text>
+      <Text fontWeight="bold" color="gray.400" fontSize="xl">
+        Loved by teams
+      </Text>
       <HStack gap={12} width="full" justifyContent="center">
-        <Box backgroundColor="orange.300" borderRadius="lg" height="100px" width="200px" />
-        <Box backgroundColor="orange.300" borderRadius="lg" height="100px" width="200px" />
+        {clients.map(({ image, alt, height }) => (
+          <Image src={image} alt={alt} height={height} />
+        ))}
       </HStack>
     </VStack>
   </VStack>

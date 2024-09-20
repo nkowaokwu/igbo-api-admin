@@ -7,7 +7,7 @@ const AddAudioPronunciationButton = ({
 }: {
   onClick: (value: Partial<Record<string, any>> | Partial<Record<string, any>>[], shouldFocus?: boolean) => void;
 }): ReactElement => (
-  <Button aria-label="Add audio pronunciation" onClick={onClick} leftIcon={<AddIcon />} my={6}>
+  <Button aria-label="Add audio pronunciation" onClick={onClick} leftIcon={<AddIcon />} my={6} variant="primary">
     Add Audio Pronunciation
   </Button>
 );

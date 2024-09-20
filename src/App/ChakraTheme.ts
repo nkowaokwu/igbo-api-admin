@@ -1,7 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { createBreakpoints } from '@chakra-ui/theme-tools';
 
-const primaryColor = '#149E46';
 const primaryExtraLightColor = '#EBF6F0';
 const grayColor = '#4F4F4F';
 const lightGrayColor = '#F7FAFC';
@@ -21,7 +20,7 @@ const breakpoints = createBreakpoints({
 export default extendTheme({
   breakpoints,
   colors: {
-    primary: primaryColor,
+    primary: 'black',
     teal: {
       50: '#E6FFFA',
       100: '#F2F9FF',
@@ -112,7 +111,7 @@ export default extendTheme({
       50: '#F0FFF4',
       100: '#F0FCF6',
       200: '#E0EBE5',
-      300: primaryColor,
+      300: '#149E46',
       400: '#366145',
       500: '#38A169',
       600: '#2F855A',
@@ -233,6 +232,11 @@ export default extendTheme({
         ghost: {
           borderWidth: '0px',
           boxShadow: 'none',
+        },
+        primary: {
+          backgroundColor: 'black',
+          color: 'white',
+          borderColor: 'gray.900',
         },
       },
     },

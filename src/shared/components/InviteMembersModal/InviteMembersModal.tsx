@@ -38,7 +38,13 @@ const InviteMembersModal = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button mr={3} onClick={() => onInviteMember({ email })} isDisabled={!email} isLoading={isLoading}>
+          <Button
+            mr={3}
+            onClick={() => onInviteMember({ email })}
+            isDisabled={!email}
+            isLoading={isLoading}
+            variant="primary"
+          >
             Invite Member
           </Button>
         </ModalFooter>

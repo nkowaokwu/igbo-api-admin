@@ -104,7 +104,7 @@ const ProgressManager = (): ReactElement => {
   const isIgboAPIProject = useIsIgboAPIProject();
   const options = getDashboardOptions(isIgboAPIProject);
   return (
-    <VStack py={6} px={12} gap={4} alignItems="start">
+    <VStack py={6} px={{ base: 6, md: 12 }} gap={4} alignItems="start">
       <VStack alignItems="left">
         <Heading as="h1">{generateGreetings()}</Heading>
         <Text fontWeight="medium" color="gray.500" fontFamily="Silka">

@@ -7,18 +7,19 @@ import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import Gender from 'src/backend/shared/constants/Gender';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
-import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 
 const UserCard = ({
   displayName,
   photoURL,
   email,
+  gender,
 }: Partial<FormattedUser> & {
   age: number;
   dialects: DialectEnum[];
+  gender: GenderEnum;
 }): ReactElement => {
   const permissions = usePermissions();
-  const userProjectPermission = React.useContext(UserProjectPermissionContext);
   const toast = useToast();
   const isAdmin = hasAdminPermissions(permissions.permissions, true);
   const avatarSize = useBreakpointValue({ base: 'lg', lg: 'xl' });
@@ -52,8 +53,7 @@ const UserCard = ({
               <chakra.span mr={1} fontWeight="bold">
                 Gender:
               </chakra.span>
-              {(Gender[userProjectPermission?.gender]?.value !== 'UNSPECIFIED' &&
-                Gender[userProjectPermission?.gender]?.label) || (
+              {(Gender[gender]?.value !== 'UNSPECIFIED' && Gender[gender]?.label) || (
                 <chakra.span fontStyle="italic" color="gray.400">
                   Not selected
                 </chakra.span>

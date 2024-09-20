@@ -1,30 +1,55 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, VStack, Text, HStack, Button } from '@chakra-ui/react';
+import { Box, Heading, VStack, Text, HStack, Button, Image } from '@chakra-ui/react';
 import { LuChevronRight } from 'react-icons/lu';
+import getAWSAsset from 'src/utils/getAWSAsset';
+import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+
+const Bulk = getAWSAsset('/images/igboAPIEditorPlatform/bulk.png');
+const UserProgress = getAWSAsset('/images/igboAPIEditorPlatform/user-progress.png');
+const Rbac = getAWSAsset('/images/igboAPIEditorPlatform/rbac.png');
+const MobileMock = getAWSAsset('/images/igboAPIEditorPlatform/mobile-mock.png');
 
 const largeSections = [
   {
-    title: "Track your team's data collection progress",
-    description: "Invite team members to your workspace to quickly onboard them into your team's workflow.",
+    title: "Bulk upload your team's starter data",
+    description: 'Get your project started off right by uploading data in batches.',
+    image: Bulk,
     button: {
       label: 'Request access',
-      href: '#/',
+      href: REQUEST_ACCESS_URL,
     },
+    styles: {},
+  },
+  {
+    title: "Track your team's data collection progress",
+    description: "Invite team members to your workspace to quickly onboard them into your team's workflow.",
+    image: UserProgress,
+    button: {
+      label: 'Request access',
+      href: REQUEST_ACCESS_URL,
+    },
+    styles: {},
   },
   {
     title: 'Assign user based role access',
     description: 'Allow certain team members specific access to your dataset.',
+    image: Rbac,
     button: {
       label: 'Request access',
-      href: '#/',
+      href: REQUEST_ACCESS_URL,
     },
+    styles: {},
   },
   {
-    title: 'Export your data for future work',
-    description: 'Easily export your data onto popular platforms to train or fine-tune AI models.',
+    title: 'Collect on the go',
+    description: 'Collect data on mobile devices in low-internet access regions.',
+    image: MobileMock,
     button: {
       label: 'Request access',
-      href: '#/',
+      href: REQUEST_ACCESS_URL,
+    },
+    styles: {
+      height: '400px',
     },
   },
 ];
@@ -41,9 +66,19 @@ const Introductions = (): ReactElement => (
           and spend more time on building AI.
         </Text>
       </VStack>
-      {largeSections.map(({ title, description, button }, index) => (
+      {largeSections.map(({ title, description, image, styles, button }, index) => (
         <HStack flexDirection={index % 2 ? 'row' : 'row-reverse'} justifyContent="space-between" gap={24} width="full">
-          <Box height="600px" backgroundColor="blue.200" borderRadius="lg" flex={1} />
+          <Box
+            height="600px"
+            backgroundColor="gray.50"
+            borderRadius="lg"
+            flex={1}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Image src={image} {...styles} />
+          </Box>
           <VStack alignItems="start" gap={4} flex={1}>
             <Heading lineHeight="1.2">{title}</Heading>
             <Text lineHeight="1.6">{description}</Text>
