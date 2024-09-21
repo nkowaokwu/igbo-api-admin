@@ -7,26 +7,26 @@ import { getUserProjectPermission } from 'src/shared/ProjectAPI';
 
 export const UserProjectPermissionProvider = ({ children }: React.PropsWithChildren): React.ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [userProjectPermission, setUserProjectPermission] = useState<UserProjectPermission | null>({});
+  const [userProjectPermission, setUserProjectPermission] = useState<UserProjectPermission | null>(null);
   const project = React.useContext(ProjectContext);
 
   // Waits for project to be fetched to avoid duplicating UserProjectPermission object for user
   const refetch = async () => {
-    setIsLoading(true);
-    try {
-      if (project) {
-        const currentUserProjectPermission = await getUserProjectPermission();
-        setUserProjectPermission(currentUserProjectPermission);
-        localStorage.setItem(LocalStorageKeys.PERMISSIONS, currentUserProjectPermission.role);
-      }
-    } finally {
-      setIsLoading(false);
+    if (project) {
+      const currentUserProjectPermission = await getUserProjectPermission();
+      setUserProjectPermission(currentUserProjectPermission);
+      localStorage.setItem(LocalStorageKeys.PERMISSIONS, currentUserProjectPermission.role);
     }
   };
 
   useEffect(() => {
     (async () => {
-      await refetch();
+      setIsLoading(true);
+      try {
+        await refetch();
+      } finally {
+        setIsLoading(false);
+      }
     })();
   }, [project]);
 

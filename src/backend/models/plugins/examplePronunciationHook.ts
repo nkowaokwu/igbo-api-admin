@@ -5,62 +5,116 @@ import {
   copyAudioPronunciation,
   renameAudioPronunciation,
   createAudioPronunciation,
+  deleteAudioPronunciation,
 } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
-import { isAWSProduction } from 'src/backend/config';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
+import { PronunciationSchema } from 'src/backend/controllers/utils/interfaces';
+
+/**
+ * Parses out the Key in the URI an determines if it's an mp3 or not
+ */
+const getOldPronunciationId = (audio: string) => {
+  const isMp3 = audio.includes('mp3');
+  const oldId: string = last(
+    compact(
+      audio
+        .split(/.mp3|.webm/)
+        .join('')
+        .split('/'),
+    ),
+  );
+  return { isMp3, oldId };
+};
+
+/* Helper function to handle uploading audio files */
+const handleUploadingAudio = async (
+  id: string,
+  // Incoming document about to by saved. We want to edit this document to save.
+  incomingPronunciations: PronunciationSchema[],
+  currentPronunciations: PronunciationSchema[],
+  isNew: boolean,
+) => {
+  const deletedAudioPronunciations = currentPronunciations.length > incomingPronunciations.length;
+  // Handle deleting audio pronunciations
+  if (deletedAudioPronunciations) {
+    const deletedPronunciations = currentPronunciations.filter(
+      (pronunciation) => !incomingPronunciations.find(({ _id }) => pronunciation._id === _id),
+    );
+    await Promise.all(
+      deletedPronunciations.map(async (pronunciation) => {
+        if (pronunciation.audio.startsWith('https://')) {
+          const { isMp3, oldId } = getOldPronunciationId(pronunciation.audio);
+          await deleteAudioPronunciation(oldId, isMp3);
+        }
+
+        // If the audio pronunciation is a base64 string, we don't have to do anything
+      }),
+    );
+  }
+
+  // After deleting current audio pronunciations, now handle the incoming pronunciations
+  return incomingPronunciations.map(async (_, index) => {
+    const newId = `${id}-${uuidv4()}`;
+
+    if (
+      incomingPronunciations[index].audio?.startsWith('data:audio/mp3') &&
+      !currentPronunciations[index]?.audio?.startsWith('https://')
+    ) {
+      // Create a new audio pronunciation if a previous pronunciation doesn't exist in the same spot
+      incomingPronunciations[index].audio = await createAudioPronunciation(newId, incomingPronunciations[index].audio);
+    } else if (
+      incomingPronunciations[index].audio?.startsWith('data:audio/mp3') &&
+      currentPronunciations[index]?.audio?.startsWith('https://')
+    ) {
+      // Update contents of existing audio pronunciation if the UI provides a new base64
+      const { isMp3, oldId } = getOldPronunciationId(currentPronunciations[index].audio);
+      await deleteAudioPronunciation(oldId, isMp3);
+      incomingPronunciations[index].audio = await createAudioPronunciation(newId, incomingPronunciations[index].audio);
+    } else if (
+      incomingPronunciations[index].audio.startsWith('https://') &&
+      !incomingPronunciations[index].audio.includes(`${id}`)
+    ) {
+      // When merging or moving documents, new Ids will be introduced. But these Ids
+      // need to match with their audio pronunciation uris.
+      const { isMp3, oldId } = getOldPronunciationId(incomingPronunciations[index].audio);
+
+      /* If we are saving a new word suggestion, then we want to copy all the original audio files */
+      incomingPronunciations[index].audio = await (isNew
+        ? copyAudioPronunciation(oldId, newId, isMp3)
+        : renameAudioPronunciation(oldId, newId, isMp3));
+    }
+  });
+};
 
 /* If the client sent over blob data for pronunciation, it will be uploaded to AWS S3 */
 export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): void => {
   schema.pre('save', async function (next) {
     try {
+      const id = (this._id || this.id).toString();
+      const currentDocument = await this.model().findById(this.id);
+
       if (!this.skipPronunciationHook) {
-        const id = (this._id || this.id).toString();
-
         await Promise.all(
-          this.pronunciations.map(async (pronunciation: { audio: string; speaker: string }, index) => {
-            const newId = `${id}-${uuidv4()}`;
-            if (
-              // Going to mock creating and saving audio pronunciation while testing
-              this.pronunciations[index].audio ||
-              this.pronunciations[index].audio.startsWith('data:audio/mp3') ||
-              (!isAWSProduction &&
-                this.pronunciations[index].audio &&
-                !this.pronunciations[index].audio.startsWith('https://'))
-            ) {
-              this.pronunciations[index].audio = await createAudioPronunciation(
-                newId,
-                this.pronunciations[index].audio,
-              );
-            } else if (
-              this.pronunciations[index].audio.startsWith('https://') &&
-              !this.pronunciations[index].audio.includes(`${id}`)
-            ) {
-              // If the pronunciation data for the headword is a uri, we will duplicate the uri
-              // so that the new uri will only be associated with the suggestion
-              const isMp3 = this.pronunciations[index].audio.includes('mp3');
-              const oldId: string = last(
-                compact(
-                  this.pronunciations[index].audio
-                    .split(/.mp3|.webm/)
-                    .join('')
-                    .split('/'),
-                ),
-              );
-
-              /* If we are saving a new word suggestion, then we want to copy all the original audio files */
-              this.pronunciations[index].audio = await (this.isNew
-                ? copyAudioPronunciation(oldId, newId, isMp3)
-                : renameAudioPronunciation(oldId, newId, isMp3));
-            }
-          }),
+          await handleUploadingAudio(id, this.source.pronunciations, currentDocument.source.pronunciations, this.isNew),
+        );
+        await Promise.all(
+          this.translations.map(async ({ pronunciations }, index) =>
+            Promise.all(
+              await handleUploadingAudio(
+                id,
+                pronunciations,
+                currentDocument.translations[index].pronunciations || [],
+                this.isNew,
+              ),
+            ),
+          ),
         );
       }
 
       next();
       return this;
     } catch (err) {
-      // console.log('Error caught in pre save Example schema hook', err.message);
-      this.invalidate('pronunciation', err.message);
+      this.invalidate('source.pronunciations', err.message);
       return null;
     }
   });

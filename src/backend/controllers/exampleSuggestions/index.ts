@@ -10,6 +10,8 @@ import {
   searchExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
+  searchTotalMergedRecordedExampleSuggestionsForUser,
+  searchTotalRecordedExampleSuggestionsForUser,
 } from 'src/backend/controllers/utils/queries';
 import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
@@ -185,8 +187,6 @@ export const getRandomExampleSuggestionsToRecord = async (
 
     // First searches for ExampleSuggestions that should be returned
     const query = searchRandomExampleSuggestionsToRecordRegexQuery(user.uid, projectId, languages);
-
-    console.log(query, 'this is it');
 
     const dbExampleSuggestions = await ExampleSuggestion.aggregate()
       .match(query)
@@ -468,13 +468,7 @@ export const getTotalMergedRecordedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
-  const query = {
-    'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
-    'source.pronunciations.speaker': uid,
-    'source.pronunciations.review': true,
-    merged: { $ne: null },
-    projectId: { $eq: projectId },
-  };
+  const query = searchTotalMergedRecordedExampleSuggestionsForUser({ uid, projectId });
 
   try {
     return await findExampleSuggestions({
@@ -529,13 +523,7 @@ export const getTotalRecordedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
-  const query = {
-    'denials.1': { $exists: false },
-    'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
-    'source.pronunciations.speaker': uid,
-    'source.pronunciations.review': true,
-    projectId: { $eq: projectId },
-  };
+  const query = searchTotalRecordedExampleSuggestionsForUser({ uid, projectId });
 
   try {
     return await findExampleSuggestions({

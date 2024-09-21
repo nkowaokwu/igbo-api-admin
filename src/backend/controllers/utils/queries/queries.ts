@@ -294,7 +294,6 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
   updatedAt: { $gte: Date };
   'source.language': { $in: string[] };
-  'source.pronunciations.speaker': { $nin: [string] };
   'source.pronunciations': { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
   projectId: { $eq: Types.ObjectId };
 } => ({
@@ -305,7 +304,6 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   // Only looks at the data collection sentences uploaded starting from 2023
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   'source.language': { $in: languages },
-  'source.pronunciations.speaker': { $nin: [uid] },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   'source.pronunciations': {
     $elemMatch: {
@@ -551,4 +549,54 @@ export const searchDeniedExampleSuggestionAudioPronunciations = (
       $and: [{ speaker: uid }, { 'denials.0': { $exists: true } }],
     },
   },
+});
+
+/**
+ * Gets information for total merged recorded Example suggestions for user
+ * @param param0
+ * @returns Query
+ */
+export const searchTotalMergedRecordedExampleSuggestionsForUser = ({
+  uid,
+  projectId,
+}: {
+  uid: string;
+  projectId: string;
+}): {
+  'source.pronunciations.audio': { $regex: RegExp; $type: string };
+  'source.pronunciations.speaker': string;
+  'source.pronunciations.review': boolean;
+  merged: { $ne: null };
+  projectId: { $eq: string };
+} => ({
+  'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+  'source.pronunciations.speaker': uid,
+  'source.pronunciations.review': true,
+  merged: { $ne: null },
+  projectId: { $eq: projectId },
+});
+
+/**
+ * Gets information for total recorded Example suggestions for user
+ * @param param0
+ * @returns Query
+ */
+export const searchTotalRecordedExampleSuggestionsForUser = ({
+  uid,
+  projectId,
+}: {
+  uid: string;
+  projectId: string;
+}): {
+  'denials.1': { $exists: boolean };
+  'source.pronunciations.audio': { $regex: RegExp; $type: string };
+  'source.pronunciations.speaker': string;
+  'source.pronunciations.review': boolean;
+  projectId: { $eq: string };
+} => ({
+  'denials.1': { $exists: false },
+  'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+  'source.pronunciations.speaker': uid,
+  'source.pronunciations.review': true,
+  projectId: { $eq: projectId },
 });

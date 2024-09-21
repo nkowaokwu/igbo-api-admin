@@ -76,7 +76,7 @@ const GeneralSettings = (): ReactElement => {
     const data = cleanedDataPipeline(rawData);
     try {
       await putCurrentProject(data);
-
+      await project.triggerRefetch();
       toast({
         title: 'Saved changes',
         position: 'top-right',

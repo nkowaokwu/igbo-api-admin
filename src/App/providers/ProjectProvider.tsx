@@ -13,19 +13,23 @@ export const ProjectProvider = ({ children }: React.PropsWithChildren): React.Re
   const [isLoading, setIsLoading] = useState(true);
   const [currentProject, setCurrentProject] = useState<ProjectData | null>(null);
 
+  const refetch = async () => {
+    // Gets all projects to get the default project
+    const userProjects = await getAllProjects();
+    if (!localStorage.getItem(LocalStorageKeys.PROJECT_ID)) {
+      localStorage.setItem(LocalStorageKeys.PROJECT_ID, userProjects[0]?.id?.toString() || '');
+    }
+
+    const project = await getCurrentProject();
+    setCurrentProject(project);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setIsLoading(true);
         try {
-          // Gets all projects to get the default project
-          const userProjects = await getAllProjects();
-          if (!localStorage.getItem(LocalStorageKeys.PROJECT_ID)) {
-            localStorage.setItem(LocalStorageKeys.PROJECT_ID, userProjects[0]?.id?.toString() || '');
-          }
-
-          const project = await getCurrentProject();
-          setCurrentProject(project);
+          await refetch();
         } finally {
           setIsLoading(false);
         }
@@ -38,7 +42,7 @@ export const ProjectProvider = ({ children }: React.PropsWithChildren): React.Re
   }, []);
 
   return (
-    <ProjectContext.Provider value={currentProject}>
+    <ProjectContext.Provider value={{ ...(currentProject ?? {}), triggerRefetch: refetch }}>
       {isLoading ? <Loading setPermissions={noop} /> : children}
     </ProjectContext.Provider>
   );

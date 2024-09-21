@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Skeleton, Text, chakra, VStack } from '@chakra-ui/react';
-import { LuPaintbrush, LuScrollText, LuFileAudio, LuBrain, LuLink } from 'react-icons/lu';
+import { Box, Skeleton, Text, chakra, VStack, HStack } from '@chakra-ui/react';
+import { LuPaintbrush, LuScrollText, LuFileAudio, LuBrain, LuLink, LuArchive } from 'react-icons/lu';
 import { get } from 'lodash';
 import pluralize from 'pluralize';
 import diff from 'deep-diff';
@@ -12,7 +12,6 @@ import Collection from 'src/shared/constants/Collection';
 import { getExample } from 'src/shared/API';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
-import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
@@ -31,19 +30,9 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const [diffRecord, setDiffRecord] = useState(null);
   const { record, resource } = useShowController(props);
   const { permissions } = props;
-  const {
-    id,
-    source,
-    translations,
-    meaning,
-    nsibidi,
-    style,
-    associatedWords,
-    pronunciations = [],
-    editorsNotes,
-    userComments,
-  } = record || DEFAULT_EXAMPLE_RECORD;
-  const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
+  const { id, source, translations, meaning, nsibidi, style, associatedWords, editorsNotes, userComments } =
+    record || DEFAULT_EXAMPLE_RECORD;
+  const speakerIds = source.pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
   const isIgboAPIProject = useIsIgboAPIProject();
 
@@ -68,10 +57,13 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     exampleSuggestions: 'Sentence Draft',
     examples: 'Sentence',
   };
-  const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
+  const archivedSourcePronunciations = source.pronunciations.filter(({ archived = false }) => archived);
+  const archivedTranslationPronunciations = translations.flatMap(({ pronunciations }) =>
+    pronunciations.filter(({ archived = false }) => archived),
+  );
 
   const renderNestedAudioPronunciation = (
-    { audio, approvals = [], denials = [] }: PronunciationData = {
+    { audio, approvals = [], denials = [], archived }: PronunciationData = {
       audio: '',
       speaker: '',
       approvals: [],
@@ -80,7 +72,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
       review: false,
     },
   ) => (
-    <Box>
+    <Box p={2} backgroundColor={archived ? 'orange.200' : ''}>
       <ReactAudioPlayer data-test="pronunciations" src={audio} style={{ height: '40px', width: '250px' }} controls />
       <Text className="space-x-4">
         <chakra.span fontStyle="italic" color={approvals.length >= 2 ? 'green' : 'gray'} fontSize="sm">
@@ -154,11 +146,49 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               )}
             />
           </ShowTextRenderer>
+          {archivedSourcePronunciations.length ? (
+            <ShowTextRenderer title="Archived source text pronunciations" icon={<LuArchive />}>
+              {archivedSourcePronunciations.map((archivedPronunciation, archivedPronunciationIndex) => (
+                <HStack gap={0} justifyContent="start">
+                  <Text color="gray.600" mr={3}>{`${archivedPronunciationIndex + 1}.`}</Text>
+                  <Box>
+                    <ReactAudioPlayer
+                      src={archivedPronunciation.audio}
+                      style={{ height: '40px', width: '250px' }}
+                      controls
+                    />
+                    <SpeakerNameManager
+                      isLoading={isLoadingSpeakers}
+                      speakers={speakers}
+                      index={archivedPronunciationIndex}
+                    />
+                  </Box>
+                </HStack>
+              ))}
+            </ShowTextRenderer>
+          ) : null}
           <ShowTextRenderer title="Translate text pronunciations" icon={<LuFileAudio />}>
             <ArrayDiffField recordField="translations.0.pronunciations" record={record}>
               <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
             </ArrayDiffField>
           </ShowTextRenderer>
+          {archivedTranslationPronunciations.length ? (
+            <ShowTextRenderer title="Archived translated text pronunciations" icon={<LuArchive />}>
+              {archivedTranslationPronunciations.map((archivedPronunciation, index) => (
+                <HStack gap={0} justifyContent="start">
+                  <Text color="gray.600" mr={3}>{`${index + 1}.`}</Text>
+                  <Box>
+                    <ReactAudioPlayer
+                      src={archivedPronunciation.audio}
+                      style={{ height: '40px', width: '250px' }}
+                      controls
+                    />
+                    <SpeakerNameManager isLoading={isLoadingSpeakers} speakers={speakers} index={index} />
+                  </Box>
+                </HStack>
+              ))}
+            </ShowTextRenderer>
+          ) : null}
           {isIgboAPIProject ? (
             <>
               <ShowTextRenderer title="Meaning" icon={<LuBrain />}>
@@ -193,27 +223,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   />
                 </ArrayDiffField>
               </ShowTextRenderer>
-              <SummaryList
-                items={archivedPronunciations}
-                title="Archived Example Pronunciations 🗄"
-                render={(archivedPronunciation, archivedPronunciationIndex) => (
-                  <>
-                    <Text color="gray.600" mr={3}>{`${archivedPronunciationIndex + 1}.`}</Text>
-                    <Box>
-                      <ReactAudioPlayer
-                        src={archivedPronunciation.audio}
-                        style={{ height: '40px', width: '250px' }}
-                        controls
-                      />
-                      <SpeakerNameManager
-                        isLoading={isLoadingSpeakers}
-                        speakers={speakers}
-                        index={archivedPronunciationIndex}
-                      />
-                    </Box>
-                  </>
-                )}
-              />
               <ShowTextRenderer title="Associated words" icon={<LuLink />}>
                 {associatedWords?.length ? (
                   associatedWords?.map((associatedWord, index) => (

@@ -2,8 +2,9 @@ import React, { ReactElement } from 'react';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
 import { get } from 'lodash';
 import { useFieldArray } from 'react-hook-form';
-import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
+import { LuArchive } from 'react-icons/lu';
 import ReactAudioPlayer from 'react-audio-player';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
 import AddExampleButton from './AddExampleButton';
 import SearchAndAddExampleButton from './SearchAndAddExampleButton';
 import FormHeader from '../../../FormHeader';
@@ -65,10 +66,8 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
         <AddExampleButton append={append} />
         <SearchAndAddExampleButton append={append} />
       </Box>
-      <SummaryList
-        items={archivedExamples}
-        title="Archived Examples 🗄"
-        render={(archivedExample, archivedExampleIndex) => (
+      <ShowTextRenderer title="Archived sentences" icon={<LuArchive />}>
+        {archivedExamples.map((archivedExample, archivedExampleIndex) => (
           <>
             <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
             <Box>
@@ -83,8 +82,8 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
               />
             </Box>
           </>
-        )}
-      />
+        ))}
+      </ShowTextRenderer>
     </>
   );
 };

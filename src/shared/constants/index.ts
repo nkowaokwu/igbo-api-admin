@@ -46,23 +46,23 @@ export const DEFAULT_WORD_RECORD: WordData = {
 
 export const DEFAULT_EXAMPLE_RECORD: ExampleData = {
   id: '',
-  source: { language: LanguageEnum.UNSPECIFIED, text: '' },
-  translations: [{ language: LanguageEnum.UNSPECIFIED, text: '' }],
+  source: { language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] },
+  translations: [{ language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] }],
   meaning: '',
   nsibidi: '',
   type: undefined,
   style: undefined,
-  pronunciations: [],
   nsibidiCharacters: [],
   associatedWords: [],
   associatedDefinitionsSchemas: [],
   updatedAt: new Date(),
+  editorsNotes: '',
+  userComments: '',
 };
 
 export const DEFAULT_NSIBIDI_CHARACTER_RECORD: NsibidiCharacter = {
   id: '',
   nsibidi: '',
-  pronunciation: '',
   definitions: [],
   wordClass: WordClassEnum.NNC,
 };

@@ -13,11 +13,21 @@ import {
   IconButton,
   Button,
   useDisclosure,
+  chakra,
 } from '@chakra-ui/react';
 import { FiEye, FiEdit3 } from 'react-icons/fi';
-import { LuMoreHorizontal, LuMoreVertical } from 'react-icons/lu';
-import { AddIcon, AtSignIcon, CheckCircleIcon, DeleteIcon, NotAllowedIcon, ViewIcon } from '@chakra-ui/icons';
-import { MergeType, Link as LinkIcon } from '@mui/icons-material';
+import {
+  LuAtSign,
+  LuBan,
+  LuCheckCircle2,
+  LuEye,
+  LuLink,
+  LuMerge,
+  LuMoreHorizontal,
+  LuMoreVertical,
+  LuPlus,
+  LuTrash2,
+} from 'react-icons/lu';
 import { useRefresh } from 'ra-core';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
@@ -125,10 +135,10 @@ const Select = ({
               {
                 value: 'merge',
                 label: (() => (
-                  <span>
-                    <MergeType className="-ml-1 mr-0" />
+                  <chakra.span display="flex" alignItems="center">
+                    <LuMerge className="mr-2 inline" />
                     Merge
-                  </span>
+                  </chakra.span>
                 ))(),
                 onSelect: () => withConfirm(setAction(actionsMap.Merge)),
                 props: {
@@ -147,30 +157,30 @@ const Select = ({
             {
               value: 'approve',
               label: (() => (
-                <span className="text-green-500">
-                  <CheckCircleIcon className="mr-2" />
+                <chakra.span display="flex" alignItems="center" className="text-green-500">
+                  <LuCheckCircle2 className="mr-2 inline" />
                   {record?.approvals?.includes(uid) ? 'Approved' : 'Approve'}
-                </span>
+                </chakra.span>
               ))(),
               onSelect: () => withConfirm(setAction(actionsMap.Approve)),
             },
             {
               value: 'deny',
               label: (() => (
-                <span className="text-yellow-800">
-                  <NotAllowedIcon className="mr-2" />
+                <chakra.span display="flex" alignItems="center" className="text-yellow-800">
+                  <LuBan className="mr-2 inline" />
                   {record?.denials?.includes(uid) ? 'Denied' : 'Deny'}
-                </span>
+                </chakra.span>
               ))(),
               onSelect: () => withConfirm(setAction(actionsMap.Deny)),
             },
             {
               value: 'notify',
               label: (() => (
-                <span>
-                  <AtSignIcon className="mr-2" />
+                <chakra.span display="flex" alignItems="center">
+                  <LuAtSign className="mr-2 inline" />
                   Notify Editors
-                </span>
+                </chakra.span>
               ))(),
               onSelect: () => withConfirm(setAction(actionsMap.Notify)),
             },
@@ -183,10 +193,10 @@ const Select = ({
               {
                 value: 'delete',
                 label: (() => (
-                  <span className="text-red-500">
-                    <DeleteIcon className="mr-2" />
+                  <chakra.span display="flex" alignItems="center" className="text-red-500">
+                    <LuTrash2 className="mr-2 inline" />
                     Delete
-                  </span>
+                  </chakra.span>
                 ))(),
                 onSelect: () => withConfirm(setAction(actionsMap.Delete)),
               },
@@ -215,8 +225,8 @@ const Select = ({
           ? {
               value: 'requestDelete',
               label: (() => (
-                <span className="text-red-500">
-                  <DeleteIcon className="mr-2" />
+                <chakra.span display="flex" alignItems="center" className="text-red-500">
+                  <LuTrash2 className="mr-2 inline" />
                   {`Request to Delete ${
                     resource === Collection.WORDS
                       ? 'Word'
@@ -228,7 +238,7 @@ const Select = ({
                       ? 'Text Image'
                       : ''
                   }`}
-                </span>
+                </chakra.span>
               ))(),
               onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.REQUEST_DELETE])),
             }
@@ -240,10 +250,10 @@ const Select = ({
           ? {
               value: 'delete',
               label: (() => (
-                <span className="text-red-500">
-                  <DeleteIcon className="mr-2" />
+                <chakra.span display="flex" alignItems="center" className="text-red-500">
+                  <LuTrash2 className="mr-2 inline" />
                   Delete Nsịbịdị character
-                </span>
+                </chakra.span>
               ))(),
               onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE])),
             }
@@ -256,10 +266,10 @@ const Select = ({
     {
       value: 'createConstructedTerm',
       label: (() => (
-        <span>
-          <AddIcon className="mr-2" />
+        <chakra.span display="flex" alignItems="center">
+          <LuPlus className="mr-2 inline" />
           Create Constructed Term
-        </span>
+        </chakra.span>
       ))(),
       onSelect: ({ push }) =>
         determineCreateSuggestionRedirection({
@@ -279,10 +289,10 @@ const Select = ({
     {
       value: 'viewPoll',
       label: (() => (
-        <span>
-          <ViewIcon className="mr-2" />
+        <chakra.span display="flex" alignItems="center">
+          <LuEye className="mr-2 inline" />
           Go to Tweet
-        </span>
+        </chakra.span>
       ))(),
       onSelect: () => {
         window.location.href = `${TWITTER_APP_URL}/${get(record, 'id')}`;
@@ -291,10 +301,10 @@ const Select = ({
     {
       value: 'deletePoll',
       label: (() => (
-        <span className="text-red-500">
-          <DeleteIcon className="mr-2" />
+        <chakra.span display="flex" alignItems="center" className="text-red-500">
+          <LuTrash2 className="mr-2 inline" />
           Delete Poll
-        </span>
+        </chakra.span>
       ))(),
       onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE_POLL])),
     },
@@ -316,10 +326,10 @@ const Select = ({
     {
       value: 'copyURL',
       label: (() => (
-        <span>
-          <LinkIcon className="mr-2" />
+        <chakra.span display="flex" alignItems="center">
+          <LuLink className="mr-2 inline" />
           Copy Document URL
-        </span>
+        </chakra.span>
       ))(),
       onSelect: () =>
         copyToClipboard(

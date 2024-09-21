@@ -179,7 +179,7 @@ const FiltersDrawer = ({
             </Button>
             <Button
               flex={1}
-              colorScheme="purple"
+              variant="primary"
               isDisabled={!currentFilters.length && !currentPartOfSpeechFilter.length}
               onClick={handleShowAllMatches}
             >

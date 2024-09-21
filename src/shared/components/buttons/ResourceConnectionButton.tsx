@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { IconButton, Tooltip } from '@chakra-ui/react';
+import { LuArchive, LuPlug2, LuTrash2 } from 'react-icons/lu';
 
 const ResourceConnectionButton = ({
   tooltip,
@@ -21,7 +22,7 @@ const ResourceConnectionButton = ({
       aria-label={shouldArchive ? 'Archive' : shouldDetach ? 'Detach' : 'Delete'}
       onClick={onClick}
       className="ml-3"
-      icon={shouldArchive ? <>🗄</> : shouldDetach ? <>🔌</> : <>🗑</>}
+      icon={shouldArchive ? <LuArchive /> : shouldDetach ? <LuPlug2 /> : <LuTrash2 />}
     />
   </Tooltip>
 );
