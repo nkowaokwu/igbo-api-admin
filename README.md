@@ -6,9 +6,9 @@ The Igbo API Editor Platform is the admin platform used by our Igbo lexicographe
 
 The platform is deployed at [https://editor.igboapi.com](https://editor.igboapi.com/)
 
-### Contributing
+### Join our Community
 
-Contributions are always welcome. Please first join the Nkọwa okwu volunteer community before jumping in: [join here](https://nkowaokwu.com/volunteer)
+Would you like to contribute with a team? Join our Slack community: [join here](https://nkowaokwu.com/volunteer)
 
 ## Get Started
 
@@ -109,7 +109,7 @@ You should now be able to access the editor platform at [http://localhost:3030](
 
 **Note**: This will spin up a local version of the Firebase project `igbo-api-admin-staging` which
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
-that any users that create accounts and log in are stored in the project real Authentication.
+that any users that create accounts and login are stored in the project real Authentication.
 
 ### Common Error
 
