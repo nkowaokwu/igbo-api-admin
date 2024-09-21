@@ -376,6 +376,7 @@ const ExampleEditForm = ({
             </Button>
             <Button
               data-test="example-submit-button"
+              type="submit"
               variant="primary"
               className="m-0"
               isLoading={isSubmitting}

@@ -13,7 +13,7 @@ const Profile = (): ReactElement => {
 
   const tabLabels = ['General', 'Account', 'Support'];
   const tabPanels = [
-    user ? <UserStat user={user} /> : null,
+    user ? <UserStat user={{ ...user, ...userProjectPermission }} /> : null,
     user ? <AccountSettings user={user} userProjectPermission={userProjectPermission} /> : null,
     <ContactSupport />,
   ];

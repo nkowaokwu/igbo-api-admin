@@ -33,6 +33,7 @@ import { TWITTER_APP_URL } from 'src/Core/constants';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import RolesDrawer from 'src/shared/components/Select/components/RolesDrawer';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -269,6 +270,7 @@ const Select = ({
   const isSuggestionResource = suggestionResources.includes(resource as Collection);
   const isMergedResource = mergedResources.includes(resource as Collection);
   const isUserResource = Collection.USERS === resource;
+  const isPendingResource = record?.status === EntityStatus.PENDING;
 
   const initialOptions =
     resource === Collection.USERS
@@ -382,7 +384,7 @@ const Select = ({
             ))}
           </MenuList>
         </Menu>
-        {isSuggestionResource || isMergedResource || isUserResource ? (
+        {(isSuggestionResource || isMergedResource || isUserResource) && !isPendingResource ? (
           <Tooltip label="View entry">
             <FullButton
               variant={showButtonLabels ? '' : 'ghost'}
