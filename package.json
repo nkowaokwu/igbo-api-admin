@@ -147,6 +147,7 @@
     "@types/lodash": "^4.14.162",
     "@types/mocha": "^8.2.0",
     "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.3.3",
     "@types/webpack": "^4.41.22",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",

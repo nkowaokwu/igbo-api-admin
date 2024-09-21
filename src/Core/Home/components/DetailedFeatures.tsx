@@ -39,7 +39,7 @@ const largeSections = [
 const DetailedFeatures = (): ReactElement => (
   <VStack alignItems="center" width="full" gap={4} backgroundColor="black" py={32}>
     <VStack alignItems="center" className="w-10/12" gap={32}>
-      <VStack alignItems="center" className="w-1/2" gap={4}>
+      <VStack alignItems="center" className="w-10/12 lg:w-1/2" gap={4}>
         <Text color="white">All-in-one data platform</Text>
         <Heading lineHeight="1.2" color="white">
           Invite, Collect, Build.
@@ -56,7 +56,7 @@ const DetailedFeatures = (): ReactElement => (
           Request access
         </Button>
       </VStack>
-      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+      <Grid templateColumns={{ base: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>
         {largeSections.map(({ title, description, icon: Icon }) => (
           <VStack alignItems="start" gap={2}>
             <Icon size="32px" color="white" />

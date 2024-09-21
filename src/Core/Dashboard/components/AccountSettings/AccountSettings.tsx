@@ -4,7 +4,7 @@ import { User } from '@firebase/auth';
 import Select from 'react-select';
 import { assign, compact, pick, flow } from 'lodash';
 // import DatePicker from 'react-date-picker';
-import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
+import { ContextUserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import SettingsLayout from 'src/Core/components/SettingsLayout';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import Gender from 'src/backend/shared/constants/Gender';
@@ -20,7 +20,7 @@ const AccountSettings = ({
   userProjectPermission,
 }: {
   user: User;
-  userProjectPermission: UserProjectPermission;
+  userProjectPermission: ContextUserProjectPermission;
 }): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
@@ -95,6 +95,7 @@ const AccountSettings = ({
     }
     try {
       await putUserProjectPermission(cleanedUserProjectPermissionPayload);
+      await userProjectPermission.triggerRefetch();
       toast({
         title: 'Success',
         position: 'top-right',

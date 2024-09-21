@@ -47,6 +47,7 @@ const UseCases = (): ReactElement => (
               transform: 'scale(1.03)',
             }}
             gap={6}
+            p={8}
           >
             <Heading color="white">{title}</Heading>
             <Text color="gray.300">{description}</Text>

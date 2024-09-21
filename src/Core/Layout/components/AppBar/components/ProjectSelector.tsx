@@ -4,6 +4,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import ProjectSelectorModal from 'src/Core/Layout/components/AppBar/components/ProjectSelectorModal';
 import CreateProjectDrawer from 'src/Core/Layout/components/AppBar/components/CreateProjectDrawer';
+import { truncate } from 'lodash';
 
 const ProjectSelector = (): ReactElement => {
   const project = React.useContext(ProjectContext);
@@ -30,7 +31,7 @@ const ProjectSelector = (): ReactElement => {
         _focus={{ backgroundColor: 'transparent' }}
         onClick={isOpen ? onClose : onOpen}
       >
-        {project?.title || '...'}
+        {truncate(project?.title, { length: 16 }) || '...'}
       </Button>
     </>
   );

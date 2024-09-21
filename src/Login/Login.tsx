@@ -6,6 +6,7 @@ import FacebookLogin from 'src/Login/components/FacebookLogin';
 import TermsAndPrivacyMessage from 'src/Login/components/TermsAndPrivacyMessage';
 import OrDivider from 'src/Login/components/OrDivider';
 import AlreadyHaveAnAccount from 'src/Login/components/AlreadyHaveAnAccount';
+import NavBar from 'src/Core/Home/components/NavBar';
 import UserRoles from '../backend/shared/constants/UserRoles';
 
 export interface SignupInfo {
@@ -27,7 +28,8 @@ const Login = (): ReactElement => {
     setUserLoginState(loginState);
   };
   return (
-    <Box display="flex" flexDirection="row" height="100vh">
+    <Box display="flex" flexDirection="row" height="100vh" justifyContent="center" alignItems="center">
+      <NavBar hideButtons />
       <Box
         display="flex"
         flexDirection="column"
@@ -39,7 +41,7 @@ const Login = (): ReactElement => {
         height="full"
         padding={12}
       >
-        <VStack width="full" gap={4} height="100vw" overflow="hidden" maxWidth="400px" justifyContent="center">
+        <VStack width="full" gap={4} height="100vh" overflow="hidden" maxWidth="400px" justifyContent="center">
           <Heading>Igbo API Editor Platform</Heading>
           <GoogleLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />
           <FacebookLogin setErrorMessage={setErrorMessage} userLoginState={userLoginState} />

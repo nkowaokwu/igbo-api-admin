@@ -4,6 +4,8 @@ import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 export const UserProjectPermissionContext = React.createContext({
+  _id: '',
+  id: '',
   status: EntityStatus.UNSPECIFIED,
   firebaseId: '',
   projectId: '',
@@ -13,4 +15,6 @@ export const UserProjectPermissionContext = React.createContext({
   grantingAdmin: '',
   languages: [],
   gender: GenderEnum.UNSPECIFIED,
+  age: new Date(),
+  triggerRefetch: () => null,
 });

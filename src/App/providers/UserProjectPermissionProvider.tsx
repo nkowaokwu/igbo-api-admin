@@ -7,27 +7,31 @@ import { getUserProjectPermission } from 'src/shared/ProjectAPI';
 
 export const UserProjectPermissionProvider = ({ children }: React.PropsWithChildren): React.ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
-  const [userProjectPermission, setUserProjectPermission] = useState<UserProjectPermission | null>(null);
+  const [userProjectPermission, setUserProjectPermission] = useState<UserProjectPermission | null>({});
   const project = React.useContext(ProjectContext);
 
-  useEffect(() => {
+  // Waits for project to be fetched to avoid duplicating UserProjectPermission object for user
+  const refetch = async () => {
     setIsLoading(true);
     try {
-      // Waits for project to be fetched to avoid duplicating UserProjectPermission object for user
       if (project) {
-        (async () => {
-          const currentUserProjectPermission = await getUserProjectPermission();
-          setUserProjectPermission(currentUserProjectPermission);
-          localStorage.setItem(LocalStorageKeys.PERMISSIONS, currentUserProjectPermission.role);
-        })();
+        const currentUserProjectPermission = await getUserProjectPermission();
+        setUserProjectPermission(currentUserProjectPermission);
+        localStorage.setItem(LocalStorageKeys.PERMISSIONS, currentUserProjectPermission.role);
       }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await refetch();
+    })();
   }, [project]);
 
   return (
-    <UserProjectPermissionContext.Provider value={userProjectPermission}>
+    <UserProjectPermissionContext.Provider value={{ ...(userProjectPermission ?? {}), triggerRefetch: refetch }}>
       {!isLoading ? children : null}
     </UserProjectPermissionContext.Provider>
   );

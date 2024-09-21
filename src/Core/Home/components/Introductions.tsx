@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, VStack, Text, HStack, Button, Image } from '@chakra-ui/react';
+import { Box, Heading, VStack, Text, Button, Image, Flex } from '@chakra-ui/react';
 import { LuChevronRight } from 'react-icons/lu';
 import getAWSAsset from 'src/utils/getAWSAsset';
 import { REQUEST_ACCESS_URL } from 'src/Core/constants';
@@ -57,7 +57,7 @@ const largeSections = [
 const Introductions = (): ReactElement => (
   <VStack alignItems="center" width="full" gap={4} py={32}>
     <VStack alignItems="start" className="w-10/12" gap={32}>
-      <VStack alignItems="start" className="w-1/2" gap={4}>
+      <VStack alignItems="start" className="w-full lg:w-1/2" gap={4}>
         <Text fontWeight="bold">The Igbo API Editor Platform Highlights</Text>
         <Heading lineHeight="1.2">Start saving money and time for data collecting</Heading>
         <Text lineHeight="1.6">
@@ -67,7 +67,12 @@ const Introductions = (): ReactElement => (
         </Text>
       </VStack>
       {largeSections.map(({ title, description, image, styles, button }, index) => (
-        <HStack flexDirection={index % 2 ? 'row' : 'row-reverse'} justifyContent="space-between" gap={24} width="full">
+        <Flex
+          flexDirection={{ base: 'column', lg: index % 2 ? 'row' : 'row-reverse' }}
+          justifyContent="space-between"
+          gap={24}
+          width="full"
+        >
           <Box
             height="600px"
             backgroundColor="gray.50"
@@ -93,7 +98,7 @@ const Introductions = (): ReactElement => (
               {button.label}
             </Button>
           </VStack>
-        </HStack>
+        </Flex>
       ))}
     </VStack>
   </VStack>

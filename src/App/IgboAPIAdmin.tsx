@@ -1,5 +1,4 @@
 import React, { memo, ReactElement, useState } from 'react';
-import { Box } from '@chakra-ui/react';
 import { AdminContext, AdminUI, Resource, usePermissions } from 'react-admin';
 import { Route } from 'react-router-dom';
 import { Dashboard, Layout, Error, Loading } from 'src/Core';
@@ -26,29 +25,25 @@ const Resources = memo(() => {
     .map((customRoute) => <Route key={customRoute.path} {...customRoute} />);
 
   return (
-    <AdminUI
-      layout={(props) => <Layout {...props} error={Error} />}
-      dashboard={Dashboard}
-      loginPage={Login}
-      loading={() => <Loading setPermissions={setPermissions} />}
-      theme={Theme}
-      customRoutes={customRoutes}
-    >
-      {resources}
-    </AdminUI>
-  );
-});
-
-const IgboAPIAdmin = (): ReactElement => (
-  <Box>
     <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
       <ProjectProvider>
         <UserProjectPermissionProvider>
-          <Resources />
+          <AdminUI
+            layout={(props) => <Layout {...props} error={Error} />}
+            dashboard={Dashboard}
+            loginPage={Login}
+            loading={() => <Loading setPermissions={setPermissions} />}
+            theme={Theme}
+            customRoutes={customRoutes}
+          >
+            {resources}
+          </AdminUI>
         </UserProjectPermissionProvider>
       </ProjectProvider>
     </AdminContext>
-  </Box>
-);
+  );
+});
+
+const IgboAPIAdmin = (): ReactElement => <Resources />;
 
 export default IgboAPIAdmin;

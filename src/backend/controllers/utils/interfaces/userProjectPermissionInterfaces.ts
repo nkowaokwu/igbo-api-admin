@@ -18,3 +18,7 @@ export interface UserProjectPermission {
   gender: GenderEnum;
   age: Date;
 }
+
+export interface ContextUserProjectPermission extends UserProjectPermission {
+  triggerRefetch: () => void;
+}
