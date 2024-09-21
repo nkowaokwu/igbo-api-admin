@@ -355,7 +355,7 @@ export const deleteUserProjectPermissionByEmailHelper = async ({
   email: string;
 }): Promise<Document<UserProjectPermission>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
-    'UserProjectPermission.t',
+    'UserProjectPermission',
     userProjectPermissionSchema,
   );
 

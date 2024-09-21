@@ -34,6 +34,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import RolesDrawer from 'src/shared/components/Select/components/RolesDrawer';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import { deleteMemberInvite } from 'src/shared/InviteAPI';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -55,11 +56,23 @@ const Select = ({
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const refresh = useRefresh();
-
   useFirebaseUid(setUid);
   const hasEnoughApprovals =
     resource !== Collection.WORD_SUGGESTIONS ||
     (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
+
+  const suggestionResources = [
+    Collection.WORD_SUGGESTIONS,
+    Collection.EXAMPLE_SUGGESTIONS,
+    Collection.CORPUS_SUGGESTIONS,
+    Collection.NSIBIDI_CHARACTERS,
+  ];
+  const mergedResources = [Collection.WORDS, Collection.EXAMPLES, Collection.CORPORA];
+
+  const isSuggestionResource = suggestionResources.includes(resource as Collection);
+  const isMergedResource = mergedResources.includes(resource as Collection);
+  const isUserResource = Collection.USERS === resource;
+  const isPendingResource = record?.status === EntityStatus.PENDING;
 
   const clearConfirmOpen = () => {
     setIsConfirmOpen(false);
@@ -70,8 +83,36 @@ const Select = ({
     return value;
   };
 
+  const onDeleteMemberInvite = async ({ record }) => {
+    try {
+      await deleteMemberInvite({ email: record.email });
+      toast({
+        title: 'Deleted member invite',
+        description: 'The member invite has been deleted.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: 'An error occurred',
+        description: 'Unable to submit bulk upload example sentences request.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    }
+  };
+
   const userCollectionOptions = [
-    record?.uid !== uid ? { value: 'roles', label: 'Change role', onSelect: onOpen } : null,
+    !isPendingResource && record?.uid !== uid ? { value: 'roles', label: 'Change role', onSelect: onOpen } : null,
+    isPendingResource
+      ? {
+          value: 'delete invite',
+          label: 'Delete invite',
+          onSelect: onDeleteMemberInvite,
+        }
+      : null,
   ];
 
   const suggestionCollectionOptions = compact(
@@ -258,19 +299,6 @@ const Select = ({
       onSelect: () => withConfirm(setAction(actionsMap[ActionTypes.DELETE_POLL])),
     },
   ];
-
-  const suggestionResources = [
-    Collection.WORD_SUGGESTIONS,
-    Collection.EXAMPLE_SUGGESTIONS,
-    Collection.CORPUS_SUGGESTIONS,
-    Collection.NSIBIDI_CHARACTERS,
-  ];
-  const mergedResources = [Collection.WORDS, Collection.EXAMPLES, Collection.CORPORA];
-
-  const isSuggestionResource = suggestionResources.includes(resource as Collection);
-  const isMergedResource = mergedResources.includes(resource as Collection);
-  const isUserResource = Collection.USERS === resource;
-  const isPendingResource = record?.status === EntityStatus.PENDING;
 
   const initialOptions =
     resource === Collection.USERS

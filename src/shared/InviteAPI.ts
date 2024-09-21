@@ -12,6 +12,15 @@ export const postMemberInvite = async ({ email }: { email: string }): Promise<{ 
   return result;
 };
 
+export const deleteMemberInvite = async ({ email }: { email: string }): Promise<{ success: boolean }> => {
+  const { data: result } = await request<{ success: boolean }>({
+    method: 'DELETE',
+    url: `${Collection.INVITES}/cancel`,
+    data: { email },
+  });
+  return result;
+};
+
 export const acceptIgboAPIRequest = async (): Promise<UserProjectPermission> => {
   const { data: result } = await request<{ userProjectPermission: UserProjectPermission }>({
     method: 'POST',
