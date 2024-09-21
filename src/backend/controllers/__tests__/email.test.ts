@@ -25,7 +25,7 @@ describe('email', () => {
     // @ts-expect-error
     await sendReportUserNotification(mockReq, mockRes);
     expect(constructMessage).toHaveBeenCalledWith({
-      from: { email: API_FROM_EMAIL, name: 'Igbo API' },
+      from: { email: API_FROM_EMAIL, name: 'Igbo API Editor Platform' },
       to: ['admin@example.com'],
       templateId: REPORT_USER_NOTIFICATION,
       dynamic_template_data: body,

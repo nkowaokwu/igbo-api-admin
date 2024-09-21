@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import determineIsAsCompleteAsPossible from '../determineIsAsCompleteAsPossible';
 
 const word = {
@@ -7,9 +8,12 @@ const word = {
   pronunciation: 'https://igbo-api-test-local.com/audio-file',
   examples: [
     {
-      igbo: 'igbo',
-      english: 'english',
-      pronunciations: [{ audio: 'https://igbo-api-test-local.com/audio-file-example', speaker: '' }],
+      source: {
+        text: 'igbo',
+        language: LanguageEnum.IGBO,
+        pronunciations: [{ audio: 'https://igbo-api-test-local.com/audio-file-example', speaker: '' }],
+      },
+      english: { text: 'english', language: LanguageEnum.ENGLISH, pronunciations: [] },
     },
   ],
   attributes: {
@@ -31,7 +35,7 @@ describe('determineIsAsCompleteAsPossible', () => {
   });
   it("determines if word is not as complete as possible because example doesn't have pronunciations", () => {
     const testWord = cloneDeep(word);
-    testWord.examples[0].pronunciations = [];
+    testWord.examples[0].source.pronunciations = [];
     // @ts-expect-error
     expect(determineIsAsCompleteAsPossible(testWord)).toBe(false);
   });

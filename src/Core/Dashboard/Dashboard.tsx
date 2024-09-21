@@ -13,7 +13,7 @@ const Dashboard = (): ReactElement => {
 
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions?.permissions, true);
   return (
-    <Box>
+    <Box data-test="dashboard">
       <Box style={{ minHeight: '100vh' }} className="w-full">
         {isCrowdsourcer ? <CrowdsourcingProgressManager /> : <ProgressManager />}
       </Box>

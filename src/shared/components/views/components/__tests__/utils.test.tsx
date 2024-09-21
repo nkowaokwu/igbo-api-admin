@@ -1,3 +1,4 @@
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { sanitizeArray, sanitizeExamples, sanitizeWith } from '../utils';
 
 describe('Word Edit Form utils', () => {
@@ -53,8 +54,8 @@ describe('Word Edit Form utils', () => {
     const mockData = [
       {
         exampleId: '5f90c35f49f7e863e92b8b31',
-        igbo: 'igbo',
-        english: 'english',
+        source: { text: 'igbo', language: LanguageEnum.IGBO, pronunciations: [] },
+        translations: [{ text: 'english', language: LanguageEnum.ENGLISH, pronunciations: [] }],
         meaning: 'meaning',
         nsibidi: 'nsibidi',
         nsibidiCharacters: [{ id: 'first' }],
@@ -62,20 +63,18 @@ describe('Word Edit Form utils', () => {
       },
     ];
 
-    expect(sanitizeExamples(mockData)).toEqual([{
-      igbo: 'igbo',
-      english: 'english',
-      meaning: 'meaning',
-      nsibidi: 'nsibidi',
-      nsibidiCharacters: ['first'],
-      pronunciations: [],
-      associatedWords: [
-        '5f90c35f49f7e863e92b8b33',
-        '5f90c35f49f7e863e92b8b34',
-      ],
-      id: '5f90c35f49f7e863e92b8b31',
-      originalExampleId: '5f90c35f49f7e863e92b8b32',
-    }]);
+    expect(sanitizeExamples(mockData)).toEqual([
+      {
+        source: { text: 'igbo', language: LanguageEnum.IGBO, pronunciations: [] },
+        translations: [{ text: 'english', language: LanguageEnum.ENGLISH, pronunciations: [] }],
+        meaning: 'meaning',
+        nsibidi: 'nsibidi',
+        nsibidiCharacters: ['first'],
+        associatedWords: ['5f90c35f49f7e863e92b8b33', '5f90c35f49f7e863e92b8b34'],
+        id: '5f90c35f49f7e863e92b8b31',
+        originalExampleId: '5f90c35f49f7e863e92b8b32',
+      },
+    ]);
   });
 
   it('sanitizes an array of examples with incorrect example ids by removing them', () => {
@@ -103,27 +102,24 @@ describe('Word Edit Form utils', () => {
 
     const mockData = [
       {
-        igbo: 'igbo',
-        english: 'english',
+        source: { text: 'igbo', language: LanguageEnum.IGBO, pronunciations: [] },
+        translations: [{ text: 'english', language: LanguageEnum.ENGLISH, pronunciations: [] }],
         meaning: 'meaning',
         nsibidi: 'nsibidi',
         nsibidiCharacters: [{ id: 'first' }],
-        pronunciations: [],
       },
     ];
 
-    expect(sanitizeExamples(mockData)).toEqual([{
-      igbo: 'igbo',
-      english: 'english',
-      meaning: 'meaning',
-      nsibidi: 'nsibidi',
-      nsibidiCharacters: ['first'],
-      pronunciations: [],
-      associatedWords: [
-        '5f90c35f49f7e863e92b8b33',
-        '5f90c35f49f7e863e92b8b34',
-      ],
-      originalExampleId: '5f90c35f49f7e863e92b8b32',
-    }]);
+    expect(sanitizeExamples(mockData)).toEqual([
+      {
+        source: { text: 'igbo', language: LanguageEnum.IGBO, pronunciations: [] },
+        translations: [{ text: 'english', language: LanguageEnum.ENGLISH, pronunciations: [] }],
+        meaning: 'meaning',
+        nsibidi: 'nsibidi',
+        nsibidiCharacters: ['first'],
+        associatedWords: ['5f90c35f49f7e863e92b8b33', '5f90c35f49f7e863e92b8b34'],
+        originalExampleId: '5f90c35f49f7e863e92b8b32',
+      },
+    ]);
   });
 });

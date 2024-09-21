@@ -30,19 +30,22 @@ export const sanitizeExamples = (examples = []): ExampleClientData[] => {
 
   // @ts-expect-error
   return examples
-    .map(({ source, translations, meaning, nsibidi, nsibidiCharacters, pronunciations, exampleId }, index) => {
+    .map(({ source, translations, meaning, nsibidi, nsibidiCharacters, exampleId }, index) => {
       const { originalExampleId } = originalExamplesFromIds[index]?.dataset || {};
       return {
         source: {
           language: get(source, 'language') || LanguageEnum.UNSPECIFIED,
           text: get(source, 'text') || '',
+          pronunciations: (get(source, 'pronunciations') || []).filter(({ audio }) => audio),
         },
-        translations: (translations || []).map(({ language = LanguageEnum.UNSPECIFIED, text = '' }) => ({
-          language,
-          text,
-        })),
+        translations: (translations || []).map(
+          ({ language = LanguageEnum.UNSPECIFIED, pronunciations = [], text = '' }) => ({
+            language,
+            text,
+            pronunciations: pronunciations.filter(({ audio }) => audio),
+          }),
+        ),
         nsibidi,
-        pronunciations: (pronunciations || []).filter(({ audio }) => audio),
         meaning,
         ...(originalExampleId ? { originalExampleId } : {}),
         ...(exampleId ? { id: exampleId } : {}),

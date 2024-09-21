@@ -7,10 +7,10 @@ jest.mock('src/shared/DataCollectionAPI');
 jest.mock('src/Core/Dashboard/network');
 
 it('render the dashboard', async () => {
-  const { findByText } = render(
+  const { findByTestId } = render(
     <TestContext>
       <Dashboard />
     </TestContext>,
   );
-  await findByText('Dashboard');
+  await findByTestId('dashboard');
 });
