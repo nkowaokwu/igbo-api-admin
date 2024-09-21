@@ -9,7 +9,7 @@ import {
   getUserProjectPermissionHelper,
   postUserProjectPermissionHelper,
 } from 'src/backend/controllers/userProjectPermissions';
-import { postUserHelper } from 'src/backend/controllers/users';
+import { findUserByEmail, postUserHelper } from 'src/backend/controllers/users';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import Author from 'src/backend/shared/constants/Author';
@@ -158,8 +158,13 @@ export const acceptMemberInvite = async (
     userProjectPermission.status = EntityStatus.ACTIVE;
 
     if (!userProjectPermission.toJSON().firebaseId) {
-      const user = await postUserHelper({ email: userProjectPermission.email });
-      userProjectPermission.firebaseId = user.uid;
+      const existingFirebaseUser = await findUserByEmail(userProjectPermission.email);
+      if (!existingFirebaseUser) {
+        const user = await postUserHelper({ email: userProjectPermission.email });
+        userProjectPermission.firebaseId = user.uid;
+      } else {
+        userProjectPermission.firebaseId = existingFirebaseUser.uid;
+      }
     }
 
     const savedUserProjectPermission = await userProjectPermission.save();

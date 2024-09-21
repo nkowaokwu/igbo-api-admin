@@ -208,6 +208,7 @@ export const getUsers = async (
             role,
             status,
             uid: '',
+            id: email,
             lastSignInTime: null,
           })),
         );
@@ -231,6 +232,17 @@ export const findUser = async (uid: string): Promise<Interfaces.FormattedUser> =
   const user = await admin.auth().getUser(uid);
   const formattedUser = formatUser(user);
   cachedUsers[uid] = formattedUser;
+  return formattedUser;
+};
+
+/**
+ * Finds a single Firebase user by looking with their email
+ * @param email
+ * @returns Firebase user
+ */
+export const findUserByEmail = async (email: string): Promise<Interfaces.FormattedUser> => {
+  const user = await admin.auth().getUserByEmail(email);
+  const formattedUser = formatUser(user);
   return formattedUser;
 };
 
