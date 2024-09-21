@@ -11,9 +11,9 @@ const ExampleResult = ({
   'data-test': string;
 }): ReactElement => (
   <Box data-test={dataTest}>
-    <Text fontWeight="bold">{get(result, 'igbo')}</Text>
+    <Text fontWeight="bold">{get(result, 'source.text')}</Text>
     <Text fontStyle="italic" color="gray.400" fontSize="sm" fontWeight="normal" ml={3}>
-      {get(result, 'english')}
+      {get(result, 'translations.0.text')}
     </Text>
   </Box>
 );

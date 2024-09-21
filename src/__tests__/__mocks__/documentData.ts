@@ -1,5 +1,6 @@
 import { WordData } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
@@ -107,8 +108,8 @@ export const wordRecord: WordData = {
   examples: [
     exampleSuggestionFixture({
       id: 'example-id',
-      igbo: 'igbo',
-      english: 'english',
+      igbo: { language: LanguageEnum.IGBO, text: 'igbo' },
+      english: [{ language: LanguageEnum.ENGLISH, text: 'english' }],
     }),
   ],
   frequency: 1,
@@ -123,16 +124,16 @@ export const wordRecord: WordData = {
 };
 
 export const exampleSuggestionData = {
-  igbo: 'igbo text',
-  english: 'english text',
+  igbo: { language: LanguageEnum.IGBO, text: 'igbo text' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'english text' }],
   type: SentenceTypeEnum.DATA_COLLECTION,
   pronunciations: [],
   associatedWords: [],
 };
 
 export const exampleSuggestionApprovedData = {
-  igbo: 'igbo text',
-  english: 'english text',
+  igbo: { language: LanguageEnum.IGBO, text: 'igbo text' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'english text' }],
   nsibidi: '人',
   approvals: ['first user', 'second user'],
   associatedWords: [],
@@ -143,24 +144,23 @@ export const malformedExampleSuggestionData = {
 };
 
 export const bulkUploadExampleSuggestionData = {
-  english: '',
   type: SentenceTypeEnum.DATA_COLLECTION,
 };
 
 export const updatedExampleSuggestionData = {
-  igbo: 'updated igbo',
-  english: 'updated english',
+  igbo: { language: LanguageEnum.IGBO, text: 'updated igbo' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'updated english' }],
   associatedWords: ['5f864d7401203866b6546dd3'],
 };
 
 export const exampleData = {
-  igbo: 'igbo text',
-  english: 'english text',
+  igbo: { language: LanguageEnum.IGBO, text: 'igbo text' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'english text' }],
 };
 
 export const updatedExampleData = {
-  igbo: 'updated igbo text',
-  english: 'updated english text',
+  igbo: { language: LanguageEnum.IGBO, text: 'updated igbo text' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'updated english text' }],
   associatedWords: ['5f864d7401203866b6546dd3'],
 };
 export const corpusSuggestionData = {

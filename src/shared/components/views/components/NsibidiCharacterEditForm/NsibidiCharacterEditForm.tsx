@@ -128,8 +128,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         </Button>
         <Button
           type="submit"
-          colorScheme="purple"
-          variant="solid"
+          variant="primary"
           isDisabled={!isDirty}
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}

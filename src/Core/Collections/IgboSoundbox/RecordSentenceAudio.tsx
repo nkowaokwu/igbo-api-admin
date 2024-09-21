@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { Box, Heading, Text, Tooltip, useToast, chakra } from '@chakra-ui/react';
+import { Box, Heading, Text, useToast, chakra } from '@chakra-ui/react';
 import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
@@ -10,7 +10,8 @@ import ResourceNavigationController from 'src/Core/Collections/components/Resour
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
-import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
+import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
 
@@ -29,6 +30,7 @@ const RecordSentenceAudio = ({
   const isCompleteEnabled =
     !isUploading && pronunciations.some((pronunciation) => pronunciation) && visitedLastExampleIndex;
   const toast = useToast();
+  const userProjectPermission = React.useContext(UserProjectPermissionContext);
 
   const handlePronunciation = (audioData) => {
     const updatedPronunciations = [...pronunciations];
@@ -121,7 +123,9 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestionsToRecord();
+          const { data: randomExamples } = await getRandomExampleSuggestionsToRecord({
+            languages: userProjectPermission.languages,
+          });
           setExamples(randomExamples);
           setExampleIndex(0);
           setPronunciations(new Array(randomExamples.length).fill(''));
@@ -154,7 +158,10 @@ const RecordSentenceAudio = ({
 
   const shouldRenderExamples = !isLoading && exampleIndex !== -1 && examples?.length && !isComplete;
   const noExamples = !isLoading && !examples?.length && !isComplete;
-  const currentExample = examples?.[exampleIndex] || { igbo: '', id: '' };
+  const currentExample = examples?.[exampleIndex] || {
+    source: { text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [] },
+    id: '',
+  };
   // eslint-disable-next-line max-len
   const currentExampleHref = `${API_ROUTE}/#/${Collections.EXAMPLE_SUGGESTIONS}/${examples?.[exampleIndex]?.id}/${Views.SHOW}`;
 
@@ -171,18 +178,9 @@ const RecordSentenceAudio = ({
           </chakra.span>
           Sentence may contain grammatical and spelling errors. Record audio to match the exact spelling of each word.
         </Text>
-        <Card text={currentExample.igbo} href={currentExampleHref} />
+        <Card text={currentExample.source.text} href={currentExampleHref} />
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
-        <Tooltip label={!isCompleteEnabled ? 'Please record at least one audio to complete this section' : ''}>
-          <SubmitBatchButton
-            isLoading={isLoading}
-            isClickEnabled={isCompleteEnabled}
-            onClick={handleComplete}
-            isDisabled={!isCompleteEnabled}
-            aria-label="Complete recordings"
-          />
-        </Tooltip>
         <RecorderBase
           path="pronunciation"
           hideTitle
@@ -197,6 +195,9 @@ const RecordSentenceAudio = ({
           onBack={handleBack}
           onNext={handleNext}
           onSkip={handleSkip}
+          onComplete={handleComplete}
+          isCompleteEnabled={isCompleteEnabled}
+          isLoading={isLoading}
         />
       </Box>
     </Box>

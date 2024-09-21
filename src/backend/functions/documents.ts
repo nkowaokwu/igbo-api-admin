@@ -17,7 +17,13 @@ export const onRequestDeleteDocument = functions.https.onCall(
     }: {
       note: string;
       resource: Collections;
-      record: { id: string; word?: string; igbo?: string; english: string; definitions?: [string] };
+      record: {
+        id: string;
+        word?: string;
+        source?: { text: string };
+        translations: { text: string }[];
+        definitions?: [string];
+      };
     },
     context,
   ): Promise<Error | { redirect: boolean }> => {
@@ -28,8 +34,8 @@ export const onRequestDeleteDocument = functions.https.onCall(
         note,
         resource,
         id: record.id,
-        word: record.word || record.igbo,
-        definition: get(record, 'definitions[0].definitions[0]') || record.english,
+        word: record.word || record.source?.text,
+        definition: get(record, 'definitions[0].definitions[0]') || record.translations?.[0]?.text,
       });
       return { redirect: false };
     } catch (err) {

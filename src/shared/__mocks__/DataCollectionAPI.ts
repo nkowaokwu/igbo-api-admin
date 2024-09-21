@@ -1,8 +1,10 @@
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+
 const exampleSuggestions = [
   {
-    igbo: 'igbo 1',
+    source: { language: LanguageEnum.IGBO, text: 'igbo 1' },
+    translations: [{ language: LanguageEnum.ENGLISH, text: 'english 1' }],
     id: 'first id',
-    english: 'english 1',
     nsibidi: 'nsibidi 1',
     pronunciations: [
       {
@@ -16,9 +18,9 @@ const exampleSuggestions = [
     ],
   },
   {
-    igbo: 'igbo 2',
+    igbo: { language: LanguageEnum.IGBO, text: 'igbo 2' },
+    english: [{ language: LanguageEnum.ENGLISH, text: 'english 2' }],
     id: 'second id',
-    english: 'english 2',
     nsibidi: 'nsibidi 2',
     pronunciations: [
       {
@@ -32,9 +34,9 @@ const exampleSuggestions = [
     ],
   },
   {
-    igbo: 'igbo 3',
+    igbo: { language: LanguageEnum.IGBO, text: 'igbo 3' },
+    english: [{ language: LanguageEnum.ENGLISH, text: 'english 3' }],
     id: 'third id',
-    english: 'english 3',
     nsibidi: 'nsibidi 3',
     pronunciations: [
       {
@@ -48,9 +50,9 @@ const exampleSuggestions = [
     ],
   },
   {
-    igbo: 'igbo 4',
+    igbo: { language: LanguageEnum.IGBO, text: 'igbo 4' },
+    english: [{ language: LanguageEnum.ENGLISH, text: 'english 4' }],
     id: 'fourth id',
-    english: 'english 4',
     nsibidi: 'nsibidi 4',
     pronunciations: [
       {
@@ -64,9 +66,9 @@ const exampleSuggestions = [
     ],
   },
   {
-    igbo: 'igbo 5',
+    igbo: { language: LanguageEnum.IGBO, text: 'igbo 5' },
+    english: [{ language: LanguageEnum.ENGLISH, text: 'english 5' }],
     id: 'fifth id',
-    english: 'english 5',
     nsibidi: 'nsibidi 5',
     pronunciations: [
       {

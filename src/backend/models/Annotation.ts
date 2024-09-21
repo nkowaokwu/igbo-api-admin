@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
+/**
+ * Annotation used in Corpora schema
+ */
 const AnnotationSchema = new Schema({
   from_name: { type: String },
   id: { type: String },

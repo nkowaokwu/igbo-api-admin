@@ -5,15 +5,20 @@ const theme = createTheme({
   overrides: {
     RaAppBar: {
       toolbar: {
-        backgroundColor: '#417453 !important',
-        backgroundImage:
-          "url('https://nkowaokwu.s3.us-west-1.amazonaws.com/assets/images/igboAPIEditorPlatform/pattern.png')",
-        backgroundSize: 'contain',
+        borderBottom: '1px solid var(--chakra-colors-gray-300)',
       },
       menuButton: {
         '*': {
           fill: 'white',
         },
+      },
+    },
+    MuiAppBar: {
+      root: {
+        boxShadow: 'none',
+      },
+      toolbar: {
+        backgroundColor: 'white',
       },
     },
     MuiDrawer: {
@@ -54,7 +59,7 @@ const theme = createTheme({
       button: {
         color: 'var(--chakra-colors-gray-800)',
         '&:hover': {
-          backgroundColor: 'var(--chakra-colors-gray-100)',
+          backgroundColor: 'var(--chakra-colors-gray-200)',
           color: 'var(--chakra-colors-gray-800)',
         },
       },
@@ -99,6 +104,11 @@ const theme = createTheme({
         fontFamily: silkaFontFamily,
       },
     },
+    MuiSvgIcon: {
+      root: {
+        fill: '',
+      },
+    },
     RaUserMenu: {
       userButton: {
         border: 'none',
@@ -113,32 +123,23 @@ const theme = createTheme({
       content: {
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
-        overflowY: 'hidden',
+        padding: '0 0 var(--chakra-sizes-12) 0 !important',
+        overflowY: 'scroll',
+        height: '100vh',
       },
       contentWithSidebar: {
         backgroundColor: 'var(--chakra-colors-white)',
       },
     },
-    RaListToolbar: {
-      root: {
-        padding: '0 !important',
-        display: 'flex',
-        justifyContent: 'flex-end !important',
-      },
-      toolbar: {
-        padding: 'var(--chakra-sizes-2) var(--chakra-sizes-4) !important',
-      },
-    },
     RaSidebar: {
       fixed: {
-        paddingTop: 'var(--chakra-sizes-6)',
-        paddingLeft: 'var(--chakra-sizes-1)',
-        paddingRight: 'var(--chakra-sizes-0)',
+        padding: 'var(--chakra-sizes-0)',
         backgroundColor: 'var(--chakra-colors-white)',
         position: 'relative',
       },
       drawerPaper: {
         width: 'auto',
+        backgroundColor: 'white !important',
       },
     },
     RaMenu: {
@@ -149,17 +150,19 @@ const theme = createTheme({
     RaMenuItemLink: {
       root: {
         color: 'var(--chakra-colors-gray-600)',
-        margin: 'var(--chakra-sizes-2)',
+        margin: 'var(--chakra-sizes-2) 0',
         borderRadius: '10px',
         '&:focus': {
-          color: 'var(--chakra-colors-green-500)',
+          color: 'var(--chakra-colors-blue-500)',
         },
+        fontWeight: 'normal',
+        width: '100%',
       },
       active: {
-        color: 'var(--chakra-colors-green-500)',
-        backgroundColor: 'var(--chakra-colors-green-100)',
+        color: 'var(--chakra-colors-blue-500)',
+        backgroundColor: 'var(--chakra-colors-blue-100)',
         '&:hover': {
-          color: 'var(--chakra-colors-green-500)',
+          color: 'var(--chakra-colors-blue-500)',
         },
       },
       icon: {

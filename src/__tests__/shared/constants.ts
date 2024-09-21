@@ -6,11 +6,11 @@ export const API_URL = 'https://igboapi.com';
 
 export const SAVE_DOC_DELAY = 2000;
 
-export const EXAMPLE_KEYS = ['igbo', 'english', 'associatedWords', 'id', 'updatedAt'];
+export const EXAMPLE_KEYS = ['source', 'translations', 'associatedWords', 'id', 'updatedAt'];
 export const EXAMPLE_SUGGESTION_KEYS = [
   'originalExampleId',
-  'igbo',
-  'english',
+  'source',
+  'translations',
   'exampleForSuggestion',
   'associatedWords',
   'associatedDefinitionsSchemas',
@@ -25,7 +25,7 @@ export const EXAMPLE_SUGGESTION_KEYS = [
   'nsibidi',
   'nsibidiCharacters',
   'style',
-  'source',
+  'origin',
   'userInteractions',
   'pronunciations',
   'createdAt',

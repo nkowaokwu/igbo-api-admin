@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { noop } from 'lodash';
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import { LuHome, LuRefreshCcw } from 'react-icons/lu';
 
 const CrowdsourcingSubtitle = {
   [CrowdsourcingType.RECORD_EXAMPLE_AUDIO]: 'Your sentence recordings have been submitted.',
@@ -12,11 +13,11 @@ const CrowdsourcingSubtitle = {
 };
 
 const CrowdsourcingNextStep = {
-  [CrowdsourcingType.RECORD_EXAMPLE_AUDIO]: 'Record more sentences 🎙',
-  [CrowdsourcingType.VERIFY_EXAMPLE_AUDIO]: 'Review more sentences ✅',
-  [CrowdsourcingType.INPUT_IGBO_DEFINITION]: 'Add more Igbo definitions ✍🏾',
-  [CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]: 'Add more English translations ➡️',
-  [CrowdsourcingType.UPLOAD_TEXT_IMAGE]: 'Upload more Igbo text images ⬆️',
+  [CrowdsourcingType.RECORD_EXAMPLE_AUDIO]: 'Record more sentences',
+  [CrowdsourcingType.VERIFY_EXAMPLE_AUDIO]: 'Review more sentences',
+  [CrowdsourcingType.INPUT_IGBO_DEFINITION]: 'Add more Igbo definitions',
+  [CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]: 'Add more English translations',
+  [CrowdsourcingType.UPLOAD_TEXT_IMAGE]: 'Upload more Igbo text images ',
 };
 
 const Completed = ({
@@ -58,11 +59,17 @@ const Completed = ({
         className="space-x-3 w-full flex flex-col lg:flex-row 
       justify-center items-center flex-wrap space-y-4 lg:space-y-0"
       >
-        <Button colorScheme="purple" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={handleMore}>
-          {CrowdsourcingNextStep[type] || 'Review more Igbo definitions ✅'}
+        <Button
+          colorScheme="purple"
+          fontFamily="Silka"
+          fontWeight="bold"
+          onClick={handleMore}
+          rightIcon={<LuRefreshCcw />}
+        >
+          {CrowdsourcingNextStep[type] || 'Review more Igbo definitions'}
         </Button>
-        <Button colorScheme="gray" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={goHome}>
-          Go back home 🏡
+        <Button colorScheme="gray" fontFamily="Silka" fontWeight="bold" onClick={goHome} rightIcon={<LuHome />}>
+          Go back home
         </Button>
       </Box>
     </Box>

@@ -45,9 +45,9 @@ export const countTranslateIgboSentence = ({
   uid: string;
 }): number =>
   // Count all individual translated Igbo sentences reviews
-  exampleSuggestions.reduce((finalCount, { igbo, english, userInteractions }) => {
+  exampleSuggestions.reduce((finalCount, { source, translations, userInteractions }) => {
     let currentCount = 0;
-    if (igbo && english && userInteractions.includes(uid)) {
+    if (source?.text && translations?.[0]?.text && userInteractions.includes(uid)) {
       currentCount += 1;
     }
     return finalCount + currentCount;

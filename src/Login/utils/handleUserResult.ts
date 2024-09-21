@@ -1,15 +1,17 @@
 /* eslint-disable import/prefer-default-export */
+import queryString from 'query-string';
 import { getAuth } from 'firebase/auth';
 import { hasAccessToPlatformPermissions } from 'src/shared/utils/permissions';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import authProvider from 'src/utils/authProvider';
+import { IGBO_API_PROJECT_ID } from 'src/Core/constants';
+import { acceptIgboAPIRequest } from 'src/shared/InviteAPI';
 
 const auth = getAuth();
 export const handleUserResult = async ({
   toast,
   setErrorMessage,
-  isNewUser = false,
 }: {
   toast: any;
   setErrorMessage: (err: string) => void;
@@ -49,20 +51,11 @@ export const handleUserResult = async ({
 
   setErrorMessage('');
 
-  if (isNewUser) {
-    authProvider.logout();
-    toast({
-      title: 'Account created',
-      description: 'Please refresh the page and log in to access the platform',
-      status: 'success',
-      duration: 90000,
-      isClosable: true,
-      position: 'top-right',
-      variant: 'left-accent',
-    });
-  } else {
-    const rawRedirectUrl = localStorage.getItem(LocalStorageKeys.REDIRECT_URL);
-    const hash = rawRedirectUrl || '#/';
-    window.location.href = `${window.location.origin}/${hash}`;
+  const { invitingProjectId } = queryString.parse(window.location.search) || {};
+  if (invitingProjectId === IGBO_API_PROJECT_ID) {
+    await acceptIgboAPIRequest();
   }
+
+  const hash = '#/';
+  window.location.href = `${window.location.origin}/${hash}`;
 };

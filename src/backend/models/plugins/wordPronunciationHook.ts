@@ -5,7 +5,7 @@ import {
   renameAudioPronunciation,
   createAudioPronunciation,
 } from 'src/backend/controllers/utils/MediaAPIs/AudioAPI';
-import { isCypress, isAWSProduction } from 'src/backend/config';
+import { isAWSProduction } from 'src/backend/config';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import removeAccents from 'src/backend/utils/removeAccents';
 
@@ -21,10 +21,10 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
         const id = (this._id || this.id).toString();
 
         if (
-          // Going to mock creating and saving audio pronunciation while testing in Cypress
-          (isCypress && this.pronunciation) ||
+          // Going to mock creating and saving audio pronunciation while testing
+          this.pronunciation ||
           this.pronunciation.startsWith('data:audio/mp3') ||
-          (!isCypress && !isAWSProduction && this.pronunciation)
+          (!isAWSProduction && this.pronunciation)
         ) {
           this.pronunciation = await createAudioPronunciation(id, this.pronunciation);
         } else if (this.pronunciation.startsWith('https://') && !this.pronunciation.includes(`${id}.`)) {
@@ -64,10 +64,10 @@ export const uploadWordPronunciation = (schema: mongoose.Schema<Interfaces.WordS
               };
             }
             if (
-              // Going to mock creating and saving audio pronunciation while testing in Cypress (ref. !isCypress check)
-              (isCypress && pronunciation) ||
+              // Going to mock creating and saving audio pronunciation while testing
+              pronunciation ||
               pronunciation.startsWith('data:audio/mp3') ||
-              (!isCypress && !isAWSProduction && this.dialects[rawDialectalWord].pronunciation)
+              (!isAWSProduction && this.dialects[rawDialectalWord].pronunciation)
             ) {
               this.dialects[index].pronunciation = await createAudioPronunciation(
                 `${id}-${dialectalWordId}`,

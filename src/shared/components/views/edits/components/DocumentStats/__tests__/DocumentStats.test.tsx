@@ -25,7 +25,6 @@ describe('DocumentStats', () => {
         />
       </TestContext>,
     );
-    await findByText('Id:');
     await findByText('word-id');
     await findByText('Parent Word Id:');
     await findByText('original-word-id');
@@ -51,7 +50,6 @@ describe('DocumentStats', () => {
         />
       </TestContext>,
     );
-    await findByText('Id:');
     await findByText('word-id');
     await findByText('Parent Word Id:');
     await findByText('original-word-id');

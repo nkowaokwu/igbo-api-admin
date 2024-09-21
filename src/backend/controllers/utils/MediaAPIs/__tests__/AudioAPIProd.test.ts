@@ -9,7 +9,6 @@ jest.mock('aws-sdk');
 jest.mock('src/backend/controllers/utils/MediaAPIs/initializeAPI');
 jest.mock('src/backend/config', () => ({
   isAWSProduction: true,
-  isCypress: false,
   TEST_MONGO_URI: 'mongodb://127.0.0.1:27017/test_igbo_api',
 }));
 jest.mock('src/backend/controllers/utils/MediaAPIs/utils');

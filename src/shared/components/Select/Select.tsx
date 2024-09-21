@@ -1,13 +1,26 @@
 import React, { ReactElement, useState } from 'react';
 import { compact, flatten, get, omit } from 'lodash';
 import pluralize from 'pluralize';
-import { Box, Menu, MenuButton, MenuList, MenuItem, Spinner, Tooltip, useToast, IconButton } from '@chakra-ui/react';
-import { FiMoreVertical, FiEye, FiEdit3 } from 'react-icons/fi';
+import {
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Spinner,
+  Tooltip,
+  useToast,
+  IconButton,
+  Button,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { FiEye, FiEdit3 } from 'react-icons/fi';
+import { LuMoreHorizontal, LuMoreVertical } from 'react-icons/lu';
 import { AddIcon, AtSignIcon, CheckCircleIcon, DeleteIcon, NotAllowedIcon, ViewIcon } from '@chakra-ui/icons';
-import { MergeType, Person, Link as LinkIcon } from '@mui/icons-material';
+import { MergeType, Link as LinkIcon } from '@mui/icons-material';
+import { useRefresh } from 'ra-core';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import { useRedirect } from 'react-admin';
 import { push } from 'react-router-redux';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ActionTypes from 'src/shared/constants/ActionTypes';
@@ -15,11 +28,11 @@ import { hasAdminOrMergerPermissions, hasAdminPermissions } from 'src/shared/uti
 import { determineCreateSuggestionRedirection } from 'src/shared/utils';
 import actionsMap from 'src/shared/constants/actionsMap';
 import Collection from 'src/shared/constants/Collection';
-import View from 'src/shared/constants/Views';
 import Requirements from 'src/backend/shared/constants/Requirements';
 import { TWITTER_APP_URL } from 'src/Core/constants';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
+import RolesDrawer from 'src/shared/components/Select/components/RolesDrawer';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -30,6 +43,7 @@ const Select = ({
   resource = '',
   push,
   view,
+  showButtonLabels,
 }: SelectInterface): ReactElement => {
   const [value, setValue] = useState(null);
   const [action, setAction] = useState(null);
@@ -37,11 +51,12 @@ const Select = ({
   const [isLoading, setIsLoading] = useState(false);
   /* Required to determine when to render the confirmation model */
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const redirect = useRedirect();
   const toast = useToast();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const refresh = useRefresh();
+
   useFirebaseUid(setUid);
   const hasEnoughApprovals =
-    !!window.Cypress ||
     resource !== Collection.WORD_SUGGESTIONS ||
     (record?.approvals?.length || 0) >= Requirements.MINIMUM_REQUIRED_APPROVALS;
 
@@ -55,40 +70,7 @@ const Select = ({
   };
 
   const userCollectionOptions = [
-    {
-      value: 'view',
-      label: (() => (
-        <span>
-          <Person className="-ml-1 mr-0" />
-          View User
-        </span>
-      ))(),
-      onSelect: () => redirect(View.SHOW, '/users', record.uid),
-    },
-    { value: UserRoles.USER, label: 'Set as User', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    {
-      value: UserRoles.CROWDSOURCER,
-      label: 'Set as Crowdsourcer',
-      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
-    },
-    {
-      value: UserRoles.TRANSCRIBER,
-      label: 'Set as Transcriber',
-      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
-    },
-    { value: UserRoles.EDITOR, label: 'Set as Editor', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    { value: UserRoles.MERGER, label: 'Set as Merger', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    {
-      value: UserRoles.NSIBIDI_MERGER,
-      label: 'Set as Nsịbịdị Merger',
-      onSelect: () => withConfirm(setAction(actionsMap.Convert)),
-    },
-    { value: UserRoles.ADMIN, label: 'Set as Admin', onSelect: () => withConfirm(setAction(actionsMap.Convert)) },
-    hasAdminPermissions(permissions, {
-      value: 'deleteUser',
-      label: 'Delete User',
-      onSelect: () => withConfirm(setAction(actionsMap.DeleteUser)),
-    }),
+    record?.uid !== uid ? { value: 'roles', label: 'Change role', onSelect: onOpen } : null,
   ];
 
   const suggestionCollectionOptions = compact(
@@ -280,11 +262,13 @@ const Select = ({
     Collection.WORD_SUGGESTIONS,
     Collection.EXAMPLE_SUGGESTIONS,
     Collection.CORPUS_SUGGESTIONS,
+    Collection.NSIBIDI_CHARACTERS,
   ];
   const mergedResources = [Collection.WORDS, Collection.EXAMPLES, Collection.CORPORA];
 
   const isSuggestionResource = suggestionResources.includes(resource as Collection);
   const isMergedResource = mergedResources.includes(resource as Collection);
+  const isUserResource = Collection.USERS === resource;
 
   const initialOptions =
     resource === Collection.USERS
@@ -297,7 +281,7 @@ const Select = ({
       ? pollCollectionOptions
       : mergedCollectionOptions;
 
-  const options = [
+  const options = compact([
     ...initialOptions,
     {
       value: 'copyURL',
@@ -316,7 +300,15 @@ const Select = ({
           toast,
         ),
     },
-  ];
+  ]);
+
+  const FullButton = showButtonLabels ? Button : IconButton;
+
+  const onSaveUserRole = ({ value }: { value: UserRoles; label: string }) => {
+    setValue(value);
+    withConfirm(setAction(actionsMap.Convert));
+    onClose();
+  };
 
   return (
     <>
@@ -327,19 +319,22 @@ const Select = ({
         action={action}
         selectionValue={value}
         onClose={clearConfirmOpen}
+        onConfirm={refresh}
         view={view}
         setIsLoading={setIsLoading}
         isOpen={isConfirmOpen}
       />
+      <RolesDrawer isOpen={isOpen} onSave={onSaveUserRole} onClose={onClose} defaultRole={record?.role} />
       <Box display="flex" flexDirection="row" alignItems="center" className="space-x-1">
         {/* @ts-expect-error label */}
         <Menu data-test="test-select-options" label="Editor's Action">
           <Tooltip label="More options">
             <MenuButton
               as={IconButton}
+              variant={showButtonLabels ? '' : 'ghost'}
               maxWidth="160px"
               aria-label="Actions menu"
-              icon={isLoading ? <Spinner size="xs" /> : <FiMoreVertical />}
+              icon={isLoading ? <Spinner size="xs" /> : showButtonLabels ? <LuMoreHorizontal /> : <LuMoreVertical />}
               data-test="actions-menu"
               role="button"
               fontFamily="system-ui"
@@ -358,7 +353,7 @@ const Select = ({
             />
           </Tooltip>
           <MenuList boxShadow="xl">
-            {options.map(({ value = '', label, onSelect, props = {} }) => (
+            {options.map(({ value = '', label, onSelect, props = {} } = {}) => (
               <Tooltip key={value} label={props.tooltipMessage}>
                 <Box px={2}>
                   <MenuItem
@@ -387,45 +382,56 @@ const Select = ({
             ))}
           </MenuList>
         </Menu>
+        {isSuggestionResource || isMergedResource || isUserResource ? (
+          <Tooltip label="View entry">
+            <FullButton
+              variant={showButtonLabels ? '' : 'ghost'}
+              aria-label="View entry button"
+              {...{
+                [showButtonLabels ? 'leftIcon' : 'icon']: <FiEye style={{ width: 'var(--chakra-sizes-10)' }} />,
+              }}
+              backgroundColor="white"
+              _hover={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              _active={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              onClick={() => push(actionsMap.View(resource, record.id))}
+            >
+              {showButtonLabels ? 'View entry' : ''}
+            </FullButton>
+          </Tooltip>
+        ) : null}
         {isSuggestionResource || isMergedResource ? (
-          <>
-            <Tooltip label="View entry">
-              <IconButton
-                aria-label="View entry button"
-                icon={<FiEye style={{ width: 'var(--chakra-sizes-10)' }} />}
-                backgroundColor="white"
-                _hover={{
-                  backgroundColor: 'gray.200',
-                  color: 'gray.800',
-                }}
-                _active={{
-                  backgroundColor: 'gray.200',
-                  color: 'gray.800',
-                }}
-                onClick={() => push(actionsMap.View(resource, record.id))}
-              />
-            </Tooltip>
-            <Tooltip label="Edit entry">
-              <IconButton
-                aria-label="Edit entry button"
-                icon={<FiEdit3 style={{ width: 'var(--chakra-sizes-10)' }} />}
-                backgroundColor="white"
-                _hover={{
-                  backgroundColor: 'gray.200',
-                  color: 'gray.800',
-                }}
-                _active={{
-                  backgroundColor: 'gray.200',
-                  color: 'gray.800',
-                }}
-                onClick={() =>
-                  isMergedResource
-                    ? determineCreateSuggestionRedirection({ record, resource, push })
-                    : push(actionsMap.Edit(resource, record.id))
-                }
-              />
-            </Tooltip>
-          </>
+          <Tooltip label="Edit entry">
+            <FullButton
+              variant={showButtonLabels ? '' : 'ghost'}
+              aria-label="Edit entry button"
+              {...{
+                [showButtonLabels ? 'leftIcon' : 'icon']: <FiEdit3 style={{ width: 'var(--chakra-sizes-10)' }} />,
+              }}
+              icon={<FiEdit3 style={{ width: 'var(--chakra-sizes-10)' }} />}
+              backgroundColor="white"
+              _hover={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              _active={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              onClick={() =>
+                isMergedResource
+                  ? determineCreateSuggestionRedirection({ record, resource, push })
+                  : push(actionsMap.Edit(resource, record.id))
+              }
+            >
+              {showButtonLabels ? 'Edit' : ''}
+            </FullButton>
+          </Tooltip>
         ) : null}
       </Box>
     </>

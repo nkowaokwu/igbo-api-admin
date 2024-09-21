@@ -14,6 +14,7 @@ export const nsibidiCharacterSchema = new Schema({
     }),
     {},
   ),
+  projectId: { type: Types.ObjectId, ref: 'Project', required: true },
 });
 
 toJSONPlugin(nsibidiCharacterSchema);

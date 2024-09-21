@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
 const AddAudioPronunciationButton = ({
@@ -7,11 +7,9 @@ const AddAudioPronunciationButton = ({
 }: {
   onClick: (value: Partial<Record<string, any>> | Partial<Record<string, any>>[], shouldFocus?: boolean) => void;
 }): ReactElement => (
-  <Box className="w-full flex flex-row justify-end" my={6}>
-    <Button width="full" colorScheme="purple" aria-label="Add Example" onClick={onClick} leftIcon={<AddIcon />}>
-      Add Audio Pronunciation
-    </Button>
-  </Box>
+  <Button aria-label="Add audio pronunciation" onClick={onClick} leftIcon={<AddIcon />} my={6} variant="primary">
+    Add Audio Pronunciation
+  </Button>
 );
 
 export default AddAudioPronunciationButton;

@@ -5,7 +5,6 @@ import {
   MERGED_SUGGESTION_TEMPLATE,
   REJECTED_SUGGESTION_TEMPLATE,
   MERGED_STATS_TEMPLATE,
-  API_FROM_EMAIL,
   SUGGESTIONS_REVIEW_REMINDER_TEMPLATE,
   NEW_USER_NOTIFICATION_TEMPLATE,
   UPDATED_ROLE_NOTIFICATION,
@@ -13,6 +12,7 @@ import {
   DOCUMENT_UPDATE_NOTIFICATION,
   REPORT_USER_NOTIFICATION,
   AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
+  MEMBER_INVITE,
 } from 'src/backend/config';
 import constructMessage from 'src/backend/controllers/email/utils/constructMessage';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
@@ -61,7 +61,7 @@ export const sendDeniedEmail = (data): Promise<void> => {
 
 /* Email sent when suggestion gets merged */
 export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
-  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+  if (data.origin !== SuggestionSourceEnum.COMMUNITY) {
     return Promise.resolve();
   }
 
@@ -82,7 +82,7 @@ export const sendMergedEmail = (data: Interfaces.MergedOrRejectedEmailData): Pro
 
 /* Email sent when a suggestion has been deleted without getting merged */
 export const sendRejectedEmail = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
-  if (data.source !== SuggestionSourceEnum.COMMUNITY) {
+  if (data.origin !== SuggestionSourceEnum.COMMUNITY) {
     return Promise.resolve();
   }
   const message = constructMessage({
@@ -103,7 +103,6 @@ export const sendRejectedEmail = (data: Interfaces.MergedOrRejectedEmailData): P
 /* Email sent every week to editors, mergers, and admins */
 export const sendMergedStats = (data: Interfaces.MergedOrRejectedEmailData): Promise<void> => {
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: data.to,
     templateId: MERGED_STATS_TEMPLATE,
     dynamic_template_data: omit(data, ['to']),
@@ -111,10 +110,10 @@ export const sendMergedStats = (data: Interfaces.MergedOrRejectedEmailData): Pro
   return sendEmail(message);
 };
 
+// TODO: LEGACY
 /* Email editors, mergers, and admins to remind them about remaining suggestions */
 export const sendSuggestionsReminder = async (data: Interfaces.SuggestionsReminderData): Promise<void> => {
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: data.to,
     templateId: SUGGESTIONS_REVIEW_REMINDER_TEMPLATE,
     dynamic_template_data: omit(data, ['to']),
@@ -126,7 +125,6 @@ export const sendSuggestionsReminder = async (data: Interfaces.SuggestionsRemind
 export const sendNewUserNotification = async (data: Interfaces.NewUserData): Promise<void> => {
   const adminEmails = (await findAdminUserEmails()) as [string];
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: adminEmails,
     templateId: NEW_USER_NOTIFICATION_TEMPLATE,
     dynamic_template_data: omit(data, ['to']),
@@ -136,7 +134,6 @@ export const sendNewUserNotification = async (data: Interfaces.NewUserData): Pro
 
 export const sendUpdatedRoleNotification = async (data: Interfaces.UpdatedRoleNotificationData): Promise<void> => {
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: data.to,
     templateId: UPDATED_ROLE_NOTIFICATION,
     dynamic_template_data: omit(data, ['to']),
@@ -149,7 +146,6 @@ export const sendDocumentDeletionRequestNotification = async (
 ): Promise<void> => {
   const adminEmails = (await findAdminUserEmails()) as [string];
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: adminEmails,
     templateId: DOCUMENT_DELETION_REQUEST_NOTIFICATION,
     dynamic_template_data: omit(data, ['to']),
@@ -160,7 +156,6 @@ export const sendDocumentDeletionRequestNotification = async (
 export const sendDocumentUpdateNotification = async (data: Interfaces.DocumentUpdateNotification): Promise<void> => {
   const adminEmails = (await findAdminUserEmails()) as [string];
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: adminEmails.concat(data.to),
     templateId: DOCUMENT_UPDATE_NOTIFICATION,
     dynamic_template_data: omit(data, ['to']),
@@ -175,7 +170,6 @@ export const sendReportUserNotification = async (
   const { body } = req;
   const adminEmails = (await findAdminUserEmails()) as [string];
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: adminEmails,
     templateId: REPORT_USER_NOTIFICATION,
     dynamic_template_data: body,
@@ -188,9 +182,17 @@ export const sendAudioPronunciationDeletionNotification = async (
   data: Interfaces.AudioPronunciationDeletionNotification,
 ): Promise<void> => {
   const message = constructMessage({
-    from: { email: API_FROM_EMAIL, name: 'Igbo API' },
     to: [data.to],
     templateId: AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
+    dynamic_template_data: omit(data, ['to']),
+  });
+  return sendEmail(message);
+};
+
+export const sendMemberInvite = async (data: Interfaces.MemberInvite): Promise<void> => {
+  const message = constructMessage({
+    to: [data.to],
+    templateId: MEMBER_INVITE,
     dynamic_template_data: omit(data, ['to']),
   });
   return sendEmail(message);

@@ -38,7 +38,7 @@ describe('automaticallyMergeExampleSuggestion', () => {
   it('merges the exampleSuggestion into a new example', async () => {
     const exampleSuggestion = cloneDeep({
       ...topLevelExampleSuggestion,
-      source: SuggestionSourceEnum.BBC,
+      origin: SuggestionSourceEnum.BBC,
       type: SentenceTypeEnum.DATA_COLLECTION,
     });
     const mongooseConnection = {};

@@ -7,7 +7,7 @@ const config = functions.config();
 const isProduction = config?.runtime?.env === 'production';
 
 export const MONGO_URI =
-  config?.runtime?.env === 'cypress' || process.env.NODE_ENV === 'test'
+  process.env.NODE_ENV === 'test'
     ? TEST_MONGO_URI
     : config?.runtime?.env === 'development'
     ? LOCAL_MONGO_URI

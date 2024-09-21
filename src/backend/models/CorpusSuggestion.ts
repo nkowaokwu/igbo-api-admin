@@ -26,6 +26,7 @@ export const corpusSuggestionSchema = new Schema(
     merged: { type: Types.ObjectId, ref: 'Corpus', default: null },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [] },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

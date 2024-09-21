@@ -4,7 +4,7 @@ export interface MergedOrRejectedEmailData {
   to: [string];
   suggestionType: string;
   submissionLink?: string;
-  source: SuggestionSourceEnum;
+  origin: SuggestionSourceEnum;
   [key: string]: any;
 }
 
@@ -16,10 +16,6 @@ export interface SuggestionsReminderData {
 }
 
 export interface EmailMessage {
-  from?: {
-    email: string;
-    name: string;
-  };
   to: string[];
   templateId: string;
   dynamic_template_data: any;
@@ -30,6 +26,7 @@ export interface NewUserData {
 }
 
 export interface ConstructedMessage extends EmailMessage {
+  from: { email: string; name: string };
   reply_to: {
     email: string;
     name: string;

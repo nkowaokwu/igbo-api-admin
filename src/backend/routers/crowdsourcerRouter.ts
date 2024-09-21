@@ -1,9 +1,7 @@
 import express from 'express';
-import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { getRandomWordSuggestions, putRandomWordSuggestions } from 'src/backend/controllers/wordSuggestions';
 import {
   getRandomExampleSuggestionsToRecord,
-  postBulkUploadExampleSuggestions,
   getRandomExampleSuggestionsToReview,
   getRandomExampleSuggestionsToTranslate,
   putRandomExampleSuggestionsToTranslate,
@@ -13,21 +11,14 @@ import {
   putReviewForRandomExampleSuggestions,
   getTotalMergedRecordedExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
-import {
-  calculateReviewingExampleLeaderboard,
-  calculateRecordingExampleLeaderboard,
-  calculateTranslatingExampleLeaderboard,
-  getLeaderboard,
-} from 'src/backend/controllers/leaderboard';
+import { calculateTranslatingExampleLeaderboard, getLeaderboard } from 'src/backend/controllers/leaderboard';
 import { getTextImages, postTextImage } from 'src/backend/controllers/textImages';
 import { sendReportUserNotification } from 'src/backend/controllers/email';
-import authentication from 'src/backend/middleware/authentication';
 import authorization from 'src/backend/middleware/authorization';
 import validateAudioRandomExampleSuggestionBody from 'src/backend/middleware/validateAudioRandomExampleSuggestionBody';
 // eslint-disable-next-line max-len
 import validateReviewRandomExampleSuggestionBody from 'src/backend/middleware/validateReviewRandomExampleSuggestionBody';
 import validateRandomWordSuggestionBody from 'src/backend/middleware/validateRandomWordSuggestionBody';
-import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
 // eslint-disable-next-line max-len
 import validateRandomExampleSuggestionTranslationBody from 'src/backend/middleware/validateRandomExampleSuggestionTranslationBody';
 import validateTextImages from 'src/backend/middleware/validateTextImages';
@@ -36,11 +27,11 @@ import { createReferral } from 'src/backend/controllers/crowdsourcer';
 import { getUserStats, getUserMergeStats, getUserAudioStats } from 'src/backend/controllers/stats';
 import cacheControl from 'src/backend/middleware/cacheControl';
 import Collection from 'src/shared/constants/Collection';
-import { getUserProfile, putUserProfile } from 'src/backend/controllers/users';
+import { getUserProfile } from 'src/backend/controllers/users';
 import { crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const crowdsourcerRouter = express.Router();
-crowdsourcerRouter.use(authentication, authorization(crowdsourcerRoles));
+crowdsourcerRouter.use(authorization(crowdsourcerRoles));
 
 crowdsourcerRouter.get(`/${Collection.WORD_SUGGESTIONS}/random`, getRandomWordSuggestions);
 crowdsourcerRouter.put(
@@ -63,22 +54,14 @@ crowdsourcerRouter.put(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/audio`,
   validateAudioRandomExampleSuggestionBody,
   putAudioForRandomExampleSuggestions,
-  calculateRecordingExampleLeaderboard,
 );
 // Reviews audio for example suggestion
 crowdsourcerRouter.put(
   `/${Collection.EXAMPLE_SUGGESTIONS}/random/review`,
   validateReviewRandomExampleSuggestionBody,
   putReviewForRandomExampleSuggestions,
-  calculateReviewingExampleLeaderboard,
 );
-// Uploads new example suggestions to record and review
-crowdsourcerRouter.post(
-  `/${Collection.EXAMPLE_SUGGESTIONS}/upload`,
-  authorization([UserRoles.ADMIN]),
-  validateBulkUploadExampleSuggestionBody,
-  postBulkUploadExampleSuggestions,
-);
+
 // Gets example suggestions to review
 crowdsourcerRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/random/review`, getRandomExampleSuggestionsToReview);
 // Gets user's stats on how many examples suggestions they have reviewed
@@ -119,6 +102,5 @@ crowdsourcerRouter.post('/email/report', sendReportUserNotification);
 // Crowdsourcer
 crowdsourcerRouter.post(`/${Collection.USERS}/referral`, createReferral);
 crowdsourcerRouter.get(`/${Collection.USERS}/:uid`, getUserProfile);
-crowdsourcerRouter.put(`/${Collection.USERS}/:uid`, putUserProfile);
 
 export default crowdsourcerRouter;

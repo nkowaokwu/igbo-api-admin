@@ -43,7 +43,7 @@ describe('Corpus Show', () => {
       </TestContext>,
     );
 
-    await findByText('Corpus Document Details');
+    await findByText('Corpus');
     await findByText('Title');
     await findByText('Media');
     expect(await queryByText("Editor's Note")).toBeNull();
@@ -60,7 +60,7 @@ describe('Corpus Show', () => {
       </TestContext>,
     );
 
-    await findByText('Corpus Suggestion Document Details');
+    await findByText('Corpus Suggestion');
     await findByText('Title');
     await findByText('Media');
     await findByText("Editor's Note");

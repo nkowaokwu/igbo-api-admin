@@ -1,10 +1,15 @@
 /* Get all users from Firebase */
 import { Request, Response, NextFunction } from 'express';
 import * as admin from 'firebase-admin';
-import { filter, compact, reduce, merge } from 'lodash';
-import { createMongoUser } from 'src/backend/functions/users';
-import { crowdsourcerSchema } from 'src/backend/models/Crowdsourcer';
-import cleanDocument from 'src/backend/shared/utils/cleanDocument';
+import { UserRecord } from 'firebase-functions/v1/auth';
+import { filter, compact, reduce, merge, assign } from 'lodash';
+import { Connection } from 'mongoose';
+import {
+  deleteUserProjectPermissionHelper,
+  getUserProjectPermissionsByProjectHelper,
+} from 'src/backend/controllers/userProjectPermissions';
+import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import UserRoles from '../shared/constants/UserRoles';
 import { handleQueries } from './utils';
 import * as Interfaces from './utils/interfaces';
@@ -25,7 +30,6 @@ export const formatUser = (user: Interfaces.FirebaseUser): Interfaces.FormattedU
     email: user.email || '',
     displayName: user.displayName || '',
     role: customClaims?.role || '',
-    editingGroup: customClaims?.editingGroup || '',
     lastSignInTime: metadata?.lastSignInTime,
     creationTime: metadata?.creationTime,
   };
@@ -37,7 +41,35 @@ export const formatUser = (user: Interfaces.FirebaseUser): Interfaces.FormattedU
  */
 export const findUsers = async (): Promise<Interfaces.FormattedUser[]> => {
   const result = await admin.auth().listUsers();
-  const users = result.users.map((user) => formatUser(user));
+  const users = result.users.map(formatUser);
+  return users;
+};
+
+/**
+ *
+ * @param param0 List of uids to fetch
+ * @returns Fetches specified Firebase users
+ */
+const findUsersByUid = async ({
+  uids,
+  mongooseConnection,
+  projectId,
+}: {
+  uids: string[];
+  mongooseConnection: Connection;
+  projectId: string;
+}): Promise<Interfaces.FormattedUser[]> => {
+  const result = await Promise.all(
+    uids.map((uid) =>
+      admin
+        .auth()
+        .getUser(uid)
+        .catch(async () => {
+          await deleteUserProjectPermissionHelper({ mongooseConnection, projectId, uid });
+        }),
+    ),
+  );
+  const users = compact(result).map(formatUser);
   return users;
 };
 
@@ -106,16 +138,82 @@ export const getUsers = async (
 ): Promise<Response<any> | void> => {
   try {
     const { skip, limit, filters } = await handleQueries(req);
-    const users = (await findUsers()).filter((user) =>
-      Object.values(filters).every((value: string) => {
-        const displayName = (user.displayName || '').toLowerCase();
-        const { email, uid } = user;
-        // Finds users where the value matches their name, email, or Firebase id
-        return displayName.includes(value?.toLowerCase?.()) || email.includes(value?.toLowerCase?.()) || uid === value;
-      }),
-    );
-    const paginatedUsers = users.slice(skip, skip + 1 + limit);
-    return res.setHeader('Content-Range', users.length).status(200).send(paginatedUsers);
+    const { mongooseConnection } = req;
+    const { projectId } = req.query;
+    let users = [];
+
+    // If the client is searching for a user use the following logic
+    if (Object.values(filters).length) {
+      users = (await findUsers()).filter((user) =>
+        Object.values(filters).every((value: string) => {
+          const displayName = (user.displayName || '').toLowerCase();
+          const { email, uid } = user;
+          // Finds users where the value matches their name, email, or Firebase id
+          return (
+            displayName.includes(value?.toLowerCase?.()) || email.includes(value?.toLowerCase?.()) || uid === value
+          );
+        }),
+      );
+      users = users.slice(skip, skip + 1 + limit);
+
+      const userProjectPermissions = await getUserProjectPermissionsByProjectHelper({
+        mongooseConnection,
+        projectId,
+        uids: users.map(({ uid }) => uid),
+        status: EntityStatus.UNSPECIFIED,
+        skip,
+        limit,
+      });
+
+      userProjectPermissions.forEach((userProjectPermission) => {
+        const userIndex = users.findIndex(({ uid }) => uid === userProjectPermission.toJSON().firebaseId);
+        if (userIndex !== -1) {
+          users[userIndex] = assign(users[userIndex], userProjectPermission.toJSON());
+        }
+      });
+    } else {
+      // Else we'll look at user permission documents first
+      const userProjectPermissions = (
+        await getUserProjectPermissionsByProjectHelper({
+          mongooseConnection,
+          projectId,
+          status: EntityStatus.UNSPECIFIED,
+          skip,
+          limit,
+        })
+      ).map((userProjectPermission) => userProjectPermission.toJSON());
+
+      const userProjectPermissionsWithoutFirebase = userProjectPermissions.filter(({ firebaseId }) => !firebaseId);
+
+      const uids = userProjectPermissions.map(({ firebaseId }) => firebaseId);
+
+      users = await findUsersByUid({ uids, mongooseConnection, projectId });
+
+      // Joins Firebase users and UserProjectPermissions
+      users = users
+        .map((user) => {
+          const userProjectPermissionIndex = userProjectPermissions.findIndex(
+            ({ firebaseId }) => firebaseId === user.uid,
+          );
+          if (userProjectPermissionIndex !== -1) {
+            const currentUserProjectPermission = userProjectPermissions[userProjectPermissionIndex];
+            return assign(user, currentUserProjectPermission, { id: user.uid, _id: currentUserProjectPermission.id });
+          }
+          return user;
+        })
+        .concat(
+          userProjectPermissionsWithoutFirebase.map(({ email, role, status }) => ({
+            displayName: '',
+            email,
+            role,
+            status,
+            uid: '',
+            lastSignInTime: null,
+          })),
+        );
+    }
+
+    return res.setHeader('Content-Range', users.length).status(200).send(users);
   } catch (err) {
     return next(new Error(`An error occurred while grabbing all users: ${err.message}`));
   }
@@ -175,64 +273,57 @@ export const getUserProfile = async (
 ): Promise<Response | void> => {
   try {
     const {
-      user: { uid: userId, role },
-      params: { uid },
+      user: { uid, role },
+      params: { uid: firebaseId },
       mongooseConnection,
     } = await handleQueries(req);
-    const id = role === UserRoles.ADMIN ? uid : userId;
-    const user = await findUser(id);
-    const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-    let crowdsourcer: Partial<Interfaces.Crowdsourcer> = await Crowdsourcer.findOne({
-      firebaseId: uid,
-    });
-    if (!crowdsourcer) {
-      crowdsourcer = cleanDocument<Partial<Interfaces.Crowdsourcer>>(await createMongoUser(uid));
+    const { projectId } = req.query;
+    const { userProjectPermission } = req;
+    const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+      'UserProjectPermission',
+      userProjectPermissionSchema,
+    );
+    let userProfile = {};
+    const firebaseUser = await findUser(firebaseId);
+
+    if (role === UserRoles.ADMIN) {
+      const nonAdminUserProjectPermission = await UserProjectPermission.findOne({ firebaseId, projectId });
+
+      if (!userProjectPermission) {
+        throw new Error('No user exists with this project');
+      }
+      userProfile = merge({
+        ...firebaseUser,
+        ...nonAdminUserProjectPermission.toJSON(),
+        id: firebaseId,
+        _id: userProjectPermission.id,
+      });
     } else {
-      crowdsourcer = crowdsourcer.toJSON();
+      const firebaseUser = await findUser(uid);
+      userProfile = merge({
+        ...firebaseUser,
+        ...userProjectPermission,
+        id: uid,
+        _id: userProjectPermission.id,
+      });
     }
-
-    const userProfile = merge({
-      ...(typeof user !== 'string' ? user : {}),
-      ...(crowdsourcer ?? {}),
-      // id must match :uid in UI to show the user profile after refreshing
-      id: crowdsourcer.firebaseId,
-      _id: crowdsourcer.id,
-    });
-
     return res.status(200).send(userProfile);
   } catch (err) {
-    // console.log(err);
     return next(new Error(`An error occurred while getting the user profile: ${err.message}`));
   }
 };
 
 /**
- * Updates the user profile in MongoDB
- * @param req
- * @param res
- * @param next
- * @returns MongoDB user
+ *
+ * @param param0
+ * @returns Creates a new Firebase user
  */
-export const putUserProfile = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    const {
-      user: { uid },
-      body,
-      mongooseConnection,
-    } = await handleQueries(req);
-    const Crowdsourcer = mongooseConnection.model<Interfaces.Crowdsourcer>('Crowdsourcer', crowdsourcerSchema);
-    const crowdsourcer = await Crowdsourcer.findOne({ firebaseId: uid });
-    crowdsourcer.age = body.age;
-    crowdsourcer.dialects = body.dialects;
-    crowdsourcer.gender = body.gender;
-    const savedCrowdsourcer = await crowdsourcer.save();
-
-    return res.status(200).send(cleanDocument<Interfaces.Crowdsourcer>(savedCrowdsourcer.toJSON()));
-  } catch (err) {
-    return next(new Error(`An error occurred while updating the user profile: ${err.message}`));
-  }
+export const postUserHelper = async ({ email }: { email: string }): Promise<UserRecord> => {
+  const user = await admin.auth().createUser({
+    email,
+    emailVerified: true,
+    disabled: false,
+  });
+  console.log(`Successfully created a new user: ${user.uid}`);
+  return user;
 };

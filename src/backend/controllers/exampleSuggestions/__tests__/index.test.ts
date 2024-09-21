@@ -298,7 +298,6 @@ describe('exampleSuggestions controller', () => {
       times(5, async () =>
         suggestNewExample({
           ...exampleSuggestionData,
-          english: '',
           pronunciations: [
             {
               audio: 'first audio',

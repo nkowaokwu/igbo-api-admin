@@ -1,3 +1,4 @@
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { exampleTranscriptionFeedbackFixture } from 'src/__tests__/shared/fixtures';
 
 export const getWord = jest.fn(async () => ({
@@ -67,8 +68,8 @@ export const resolveNsibidiCharacter = jest.fn(async () => ({
 }));
 
 export const getExample = jest.fn(async () => ({
-  igbo: 'igbo',
-  english: 'english',
+  igbo: { language: LanguageEnum.IGBO, text: 'igbo' },
+  english: [{ language: LanguageEnum.ENGLISH, text: 'english' }],
   meaning: '',
   nsibidi: '',
   associatedWords: [],

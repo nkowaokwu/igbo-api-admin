@@ -8,15 +8,11 @@ const AlreadyHaveAnAccount = ({ onClick }: { onClick: (value: UserLoginState) =>
       Already have an account?
     </Text>
     <Button
-      borderColor="gray.300"
-      borderWidth="1px"
       width="full"
-      variant="primary"
-      backgroundColor="white"
-      color="gray.500"
+      height="48px"
       data-test="open-login-modal"
       onClick={onClick(UserLoginState.LOGIN)}
-      mt={2}
+      variant="primary"
     >
       Log into account
     </Button>

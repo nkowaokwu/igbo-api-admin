@@ -7,7 +7,11 @@ import UserRoles from '../shared/constants/UserRoles';
 const authorization =
   (permittedRoles = []) =>
   (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
-    const { user = {} } = req;
+    const { user } = req;
+
+    if (!user) {
+      return res.status(404).send({ message: 'No user exists on this request.' });
+    }
 
     /* As long as the user has a valid Firebase uid then they have access */
     if (!permittedRoles.length && user.uid) {

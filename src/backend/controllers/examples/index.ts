@@ -26,8 +26,10 @@ export const getExamples = async (
 ): Promise<Response | void> => {
   try {
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
+    const { query } = req;
+    const { projectId } = query;
     const Example = mongooseConnection.model('Example', exampleSchema);
-    const regexMatch = searchExamplesRegexQuery(user.uid, regexKeyword, filters);
+    const regexMatch = searchExamplesRegexQuery(user.uid, regexKeyword, filters, projectId);
     const examples = await searchExamples({
       query: regexMatch,
       skip,
@@ -56,7 +58,8 @@ export const getExample = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
-    const foundExample = await findExampleById(id, mongooseConnection).then((example) => {
+    const { projectId } = req.query;
+    const foundExample = await findExampleById({ id, projectId, mongooseConnection }).then((example) => {
       if (!example) {
         throw new Error('No example exists with the provided id.');
       }
@@ -98,7 +101,7 @@ export const executeMergeExample = async (
     throw new Error('There is no associated example suggestion, double check your provided data');
   }
 
-  if (!exampleSuggestion.igbo && !exampleSuggestion.english) {
+  if (!exampleSuggestion.source && !exampleSuggestion.translations) {
     throw new Error('Required information is missing, double check your provided data');
   }
 
@@ -161,8 +164,9 @@ export const mergeExample = async (
 ): Promise<Response | void> => {
   try {
     const { body: data, user, mongooseConnection } = req;
+    const { projectId } = req.query;
 
-    const exampleSuggestion = await findExampleSuggestionById(data.id, mongooseConnection);
+    const exampleSuggestion = await findExampleSuggestionById({ id: data.id, projectId, mongooseConnection });
     const result: Interfaces.Example = await executeMergeExample(exampleSuggestion, user.uid, mongooseConnection);
     await handleSendingMergedEmail(
       {
@@ -189,10 +193,11 @@ export const putExample = async (
     const {
       body: data,
       params: { id },
+      query: { projectId },
       mongooseConnection,
     } = req;
 
-    if (!data.igbo && !data.english) {
+    if (!data.source?.text && !data.translations?.[0]?.text) {
       return next(new Error('Required information is missing, double check your provided data'));
     }
 
@@ -208,13 +213,15 @@ export const putExample = async (
       return next(new Error('Duplicates are not allows in associated words'));
     }
 
-    const savedExample = await findExampleById(id, mongooseConnection).then(async (example: Interfaces.Example) => {
-      if (!example) {
-        throw new Error("Example doesn't exist");
-      }
-      const updatedExample = assign(example, data);
-      return updatedExample.save();
-    });
+    const savedExample = await findExampleById({ id, projectId, mongooseConnection }).then(
+      async (example: Interfaces.Example) => {
+        if (!example) {
+          throw new Error("Example doesn't exist");
+        }
+        const updatedExample = assign(example, data);
+        return updatedExample.save();
+      },
+    );
     return res.send(savedExample);
   } catch (err) {
     return next(err);
@@ -230,8 +237,9 @@ export const getAssociatedExampleSuggestions = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const ExampleSuggestion = mongooseConnection.model('ExampleSuggestion', exampleSuggestionSchema);
-    const exampleSuggestions = await ExampleSuggestion.find(searchForAssociatedExampleSuggestions(id));
+    const exampleSuggestions = await ExampleSuggestion.find(searchForAssociatedExampleSuggestions(id, projectId));
     return res.send(exampleSuggestions);
   } catch (err) {
     return next(err);
@@ -247,8 +255,9 @@ export const deleteExample = async (
   try {
     const { mongooseConnection } = req;
     const { id: exampleId } = req.params;
+    const { projectId } = req.query;
     const Example = mongooseConnection.model('Example', exampleSchema);
-    const example = (await Example.findById(exampleId)) as Interfaces.Example;
+    const example = (await Example.findOne({ _id: exampleId, projectId })) as Interfaces.Example;
     await Promise.all(
       example.pronunciations.map(async (pronunciation) => {
         const isAudioMp3 = isPronunciationMp3(pronunciation.audio);
@@ -270,22 +279,24 @@ export const postBulkUploadExamples = async (
 ): Promise<any | void> => {
   try {
     const { body: data, mongooseConnection } = req;
+    const { projectId } = req.query;
 
     const Example = mongooseConnection.model('Example', exampleSchema);
 
     const result = await Promise.all(
       data.map(async (sentenceData: Interfaces.ExampleClientData) => {
-        const existingExample = await Example.findOne({ igbo: sentenceData.igbo });
+        const existingExample = await Example.findOne({ igbo: sentenceData.igbo, projectId });
         if (existingExample) {
           return {
             success: false,
-            message: 'There is an example with identical Igbo text',
+            message: 'There is an pre-existing, identical Igbo sentence in this project',
             meta: { sentenceData },
           };
         }
         const example = new Example({
           ...sentenceData,
           type: sentenceData?.type || SentenceTypeEnum.DATA_COLLECTION,
+          projectId,
         });
         const savedExample = await example.save();
         return {

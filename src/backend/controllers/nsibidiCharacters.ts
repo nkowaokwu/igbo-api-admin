@@ -19,11 +19,17 @@ export const getNsibidiCharacters = (
 ): Promise<any> | void => {
   try {
     const { searchWord, regexKeyword, mongooseConnection, skip, limit, ...rest } = handleQueries(req);
+    const {
+      query: { projectId },
+    } = req;
 
     // Loosely matches with an included Nsibidi character
     const regex = createRegExp(searchWord).wordReg;
     const query = {
-      $or: [{ nsibidi: { $regex: regex } }, { pronunciation: { $regex: regex } }],
+      $and: [
+        { projectId: { $eq: projectId } },
+        { $or: [{ nsibidi: { $regex: regex } }, { pronunciation: { $regex: regex } }] },
+      ],
     };
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
 
@@ -57,11 +63,12 @@ export const getNsibidiCharacter = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
       'NsibidiCharacter',
       nsibidiCharacterSchema,
     );
-    const nsibidiCharacter = await NsibidiCharacter.findById(id);
+    const nsibidiCharacter = await NsibidiCharacter.findOne({ _id: id, projectId });
     if (!nsibidiCharacter) {
       throw new Error("Nsibidi character doesn't exist");
     }
@@ -79,11 +86,15 @@ export const postNsibidiCharacter = async (
 ): Promise<any | void> => {
   try {
     const { mongooseConnection, body } = req;
+    const { projectId } = req.query;
     const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
       'NsibidiCharacter',
       nsibidiCharacterSchema,
     );
-    const nsibidiCharacter = new NsibidiCharacter(body);
+    const nsibidiCharacter = new NsibidiCharacter({
+      ...body,
+      projectId,
+    });
     const savedNsibidiCharacter = await nsibidiCharacter.save();
     return res.send(savedNsibidiCharacter);
   } catch (err) {
@@ -101,10 +112,11 @@ export const putNsibidiCharacter = async (
     const {
       mongooseConnection,
       params: { id },
+      query: { projectId },
       body,
     } = req;
     const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
-    const nsibidiCharacter = await NsibidiCharacter.findById(id);
+    const nsibidiCharacter = await NsibidiCharacter.findOne({ _id: id, projectId });
     const updatedNsibidiCharacter = assign(nsibidiCharacter, body);
     Object.entries(body).forEach(([key, value]) => {
       updatedNsibidiCharacter[key] = value;
@@ -119,9 +131,11 @@ export const putNsibidiCharacter = async (
 const deleteNsibidiCharactersHelper = async ({
   mongooseConnection,
   ids,
+  projectId,
 }: {
   mongooseConnection: Connection;
   ids: string[];
+  projectId;
 }) => {
   const NsibidiCharacter = mongooseConnection.model('NsibidiCharacter', nsibidiCharacterSchema);
   const nestedModels = [
@@ -137,7 +151,7 @@ const deleteNsibidiCharactersHelper = async ({
   const objectIds = ids.map((id) => new Types.ObjectId(id));
   await Promise.all([
     ...nestedModels.map(async (Model) => {
-      const docs = await Model.find({ 'definitions.nsibidiCharacters': { $in: objectIds } });
+      const docs = await Model.find({ 'definitions.nsibidiCharacters': { $in: objectIds }, projectId });
       await Promise.all(
         docs.map(async (doc) => {
           doc.definitions.forEach((_, index) => {
@@ -150,7 +164,7 @@ const deleteNsibidiCharactersHelper = async ({
       );
     }),
     ...flatModels.map(async (Model) => {
-      const docs = await Model.find({ nsibidiCharacters: { $in: objectIds } });
+      const docs = await Model.find({ nsibidiCharacters: { $in: objectIds }, projectId });
       await Promise.all(
         docs.map(async (doc) => {
           doc.nsibidiCharacters = doc.nsibidiCharacters.filter(
@@ -178,10 +192,11 @@ export const deleteNsibidiCharacter = async (
   try {
     const {
       params: { id },
+      query: { projectId },
       mongooseConnection,
     } = req;
 
-    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: [id] });
+    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: [id], projectId });
     return res.send({ message: `Deleted Nsibidi character: ${id}` });
   } catch (err) {
     return next(err);
@@ -202,7 +217,10 @@ export const deleteInvalidNsibidiCharacters = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response<any> | void> => {
-  const { mongooseConnection } = req;
+  const {
+    mongooseConnection,
+    query: { projectId },
+  } = req;
   try {
     const NsibidiCharacter = mongooseConnection.model<Interfaces.NsibidiCharacter>(
       'NsibidiCharacter',
@@ -220,7 +238,7 @@ export const deleteInvalidNsibidiCharacters = async (
       ({ nsibidi }) => nsibidi.length === 1 && nsibidi.match(cjk),
     );
     // Deletes all the invalid Nsibidi Characters
-    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: invalidNsibidiCharacterIds });
+    await deleteNsibidiCharactersHelper({ mongooseConnection, ids: invalidNsibidiCharacterIds, projectId });
 
     const newNsibidiCharacters = compact(
       staticNsibidiCharacters.map((nsibidi) => {

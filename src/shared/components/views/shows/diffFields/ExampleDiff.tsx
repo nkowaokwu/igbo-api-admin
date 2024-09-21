@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box } from '@chakra-ui/react';
+import { get } from 'lodash';
 import { Record } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
@@ -29,9 +30,17 @@ const ExampleDiff = ({
         className="akagu"
         fontSize="xs"
       />
-      <DiffField path={`examples[${index}].igbo`} diffRecord={diffRecord} fallbackValue={value.igbo} />
-      <DiffField path={`examples[${index}].english`} diffRecord={diffRecord} fallbackValue={value.english} />
-      <DiffField path={`examples[${index}].meaning`} diffRecord={diffRecord} fallbackValue={value.meaning} />
+      <DiffField
+        path={`examples[${index}].source.text`}
+        diffRecord={diffRecord}
+        fallbackValue={get(value, 'source.text')}
+      />
+      <DiffField
+        path={`examples[${index}].translations.0.text`}
+        diffRecord={diffRecord}
+        fallbackValue={get(value, 'translations.0.text')}
+      />
+      <DiffField path={`examples[${index}].meaning`} diffRecord={diffRecord} fallbackValue={get(value, 'meaning')} />
       <ArrayDiffField recordField={`examples[${index}].pronunciations`} record={record}>
         <ArrayDiff
           diffRecord={diffRecord}

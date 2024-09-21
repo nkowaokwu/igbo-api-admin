@@ -83,7 +83,7 @@ const WordEditForm = ({
     record.dialects = [];
   }
   if (record.examples) {
-    record.examples.sort((prev, next) => prev.igbo.localeCompare(next.igbo));
+    record.examples.sort((prev, next) => prev.source?.text?.localeCompare?.(next.source?.text));
   }
 
   const { handleSubmit, getValues, setValue, control, errors, watch } = useForm({
@@ -119,7 +119,7 @@ const WordEditForm = ({
         approvals: map(record.approvals, (approval) => approval.uid),
         denials: map(record.denials, (denial) => denial.uid),
       }),
-      [view === View.CREATE ? 'id' : ''],
+      [view === View.CREATE ? 'id' : ''].concat(['source']),
     );
 
   /* Combines the approvals, denials, and cached form data to
@@ -301,8 +301,7 @@ const WordEditForm = ({
         </Button>
         <Button
           type="submit"
-          colorScheme="purple"
-          variant="solid"
+          variant="primary"
           isLoading={isSubmitting}
           loadingText={view === View.CREATE ? 'Submitting' : 'Updating'}
           width="full"

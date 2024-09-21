@@ -13,10 +13,9 @@ import {
   bulkDeleteDocuments,
 } from 'src/shared/API';
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import { putUserRole } from 'src/shared/UserAPI';
 import ActionTypes from './ActionTypes';
 import Collections from './Collection';
 
@@ -34,7 +33,6 @@ const prepareRecord = (record) => {
   };
 };
 
-const handleUpdatePermissions = useCallable<string, EmptyResponse>('updatePermissions');
 const handleRequestDeleteDocument = useCallable<any, EmptyResponse>('requestDeleteDocument');
 const handleDeleteConstructedTermPoll = useCallable<any, EmptyResponse>('deleteConstructedTermPoll');
 const handleDeleteUser = useCallable<any, EmptyResponse>('deleteUser');
@@ -153,12 +151,12 @@ export default {
     type: 'Convert',
     title: 'Change User UserRoles',
     content: "Are you sure you want to change this user's role?",
-    executeAction: ({ record, value: role }: { record: Record; value: string }): Promise<any> => {
+    executeAction: ({ record, value: role }: { record: Record; value: UserRoles }): Promise<any> => {
       // @ts-ignore
       if (!Object.values(UserRoles).includes(role)) {
         Promise.reject(new Error('Invalid user role'));
       }
-      handleUpdatePermissions({ ...record, role });
+      putUserRole({ data: { role }, uid: record.uid });
       return Promise.resolve();
     },
     successMessage: 'User role has been updated 👩🏾‍💻',
@@ -193,7 +191,7 @@ export default {
   },
   [ActionTypes.BULK_UPLOAD_EXAMPLES]: {
     type: 'BulkUploadExamples',
-    title: 'Bulk Upload Sentences',
+    title: 'Bulk Upload Example Sentences',
     content: 'Are you sure you want to upload multiple sentences at once? This will take a few minutes to complete.',
     executeAction: async ({
       data,
@@ -204,26 +202,20 @@ export default {
       onProgressSuccess: (value: any) => any;
       onProgressFailure: (value: any) => any;
     }): Promise<any> => {
-      let payload = [];
-      const { file, text, isExample } = data;
+      const { text, isExample } = data;
       const trimmedTextareaValue = text.trim();
       const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
 
       // Combines the data from both the uploaded file and text area input
-      payload = payload.concat(
-        separatedSentences.map((sentenceText) => ({
-          igbo: sentenceText.trim(),
-          english: '',
-          style: ExampleStyle[ExampleStyleEnum.NO_STYLE].value,
-          type: SentenceTypeEnum.DATA_COLLECTION,
-        })),
-        file,
-      );
+      const payload = separatedSentences.map((sentenceText) => ({
+        source: {
+          language: LanguageEnum.UNSPECIFIED,
+          text: sentenceText.trim(),
+        },
+      }));
 
-      // Validating the body of the bulk sentences
       bulkSentencesSchema.validate(payload);
       await bulkUploadExampleSuggestions({ sentences: payload, isExample }, onProgressSuccess, onProgressFailure);
-      // console.log('Data validation for bulk sentence upload failed.');
     },
   },
 };

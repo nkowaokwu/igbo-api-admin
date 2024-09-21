@@ -8,24 +8,16 @@ import {
   getTotalMergedRecordedExampleSuggestions,
   getTotalReviewedExampleSuggestions,
 } from 'src/shared/DataCollectionAPI';
-import { UserProfile } from 'src/backend/controllers/utils/interfaces';
+import { User } from '@firebase/auth';
 import UserCard from 'src/shared/components/UserCard';
-import ReferralCode from 'src/Core/Dashboard/components/ReferralCode';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import network from '../../network';
 import PersonalStats from '../PersonalStats/PersonalStats';
 import IgboSoundboxStats from '../IgboSoundboxStats';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const UserStat = ({
-  isEditing = false,
-  user,
-}: {
-  isEditing?: boolean;
-  user: UserProfile;
-  dialectalVariations: number;
-  completeExamples: number;
-}): ReactElement => {
+const UserStat = ({ user }: { user: User; dialectalVariations: number; completeExamples: number }): ReactElement => {
   const [userStats, setUserStats] = useState(null);
   const [recordingStats, setRecordingStats] = useState({ recorded: {}, verified: {}, mergedRecorded: {} });
   const [audioStats, setAudioStats] = useState({ timestampedAudioApprovals: {}, timestampedAudioDenials: {} });
@@ -33,6 +25,7 @@ const UserStat = ({
   const { permissions } = usePermissions();
   const toast = useToast();
   const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
+  const isIgboAPIProject = useIsIgboAPIProject();
 
   useEffect(() => {
     (async () => {
@@ -72,13 +65,10 @@ const UserStat = ({
   return (
     <Box m={4}>
       <Skeleton isLoaded={Boolean(user?.firebaseId || user?.uid)}>
-        <UserCard {...user} isEditing={isEditing} />
+        <UserCard {...user} />
       </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">
         <Box className="w-full">
-          <Skeleton isLoaded={Boolean(user?.referralCode)}>
-            <ReferralCode referralCode={user.referralCode} />
-          </Skeleton>
           <Heading as="h2" mb={4}>
             Contributions
           </Heading>
@@ -87,7 +77,7 @@ const UserStat = ({
               <Skeleton isLoaded={!isLoading}>
                 <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
               </Skeleton>
-              {!isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
+              {isIgboAPIProject && !isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
           </Box>
         </Box>

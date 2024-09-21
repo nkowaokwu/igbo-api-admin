@@ -1,6 +1,8 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Heading, Skeleton, Text, chakra } from '@chakra-ui/react';
+import { Box, Skeleton, Text, chakra, VStack } from '@chakra-ui/react';
+import { LuPaintbrush, LuScrollText, LuFileAudio, LuBrain, LuLink } from 'react-icons/lu';
+import { get } from 'lodash';
 import pluralize from 'pluralize';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
@@ -8,14 +10,15 @@ import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
 import { getExample } from 'src/shared/API';
-import SourceField from 'src/shared/components/SourceField';
 import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
 import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
-import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -30,23 +33,19 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   const { permissions } = props;
   const {
     id,
-    igbo,
-    english,
+    source,
+    translations,
     meaning,
     nsibidi,
     style,
     associatedWords,
     pronunciations = [],
-    originalExampleId,
     editorsNotes,
     userComments,
-    approvals,
-    denials,
-    merged,
-    author,
   } = record || DEFAULT_EXAMPLE_RECORD;
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
+  const isIgboAPIProject = useIsIgboAPIProject();
 
   const DIFF_FILTER_KEYS = [
     'id',
@@ -66,10 +65,9 @@ const ExampleShow = (props: ShowProps): ReactElement => {
   ];
 
   const resourceTitle = {
-    exampleSuggestions: 'Example Suggestion',
-    examples: 'Example',
+    exampleSuggestions: 'Sentence Draft',
+    examples: 'Sentence',
   };
-  const notArchivedPronunciations = pronunciations.filter(({ archived = false }) => !archived);
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
 
   const renderNestedAudioPronunciation = (
@@ -112,82 +110,74 @@ const ExampleShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}
           view={View.SHOW}
           id={id}
           permissions={permissions}
-          title={`${resourceTitle[resource]} Document Details`}
+          title={resourceTitle[resource]}
         />
-        <Box className="flex flex-col-reverse lg:flex-row mt-1">
-          <Box className="flex flex-col flex-auto justify-between items-start">
-            <DocumentStats
-              collection={Collection.EXAMPLES}
-              originalId={originalExampleId}
-              record={record}
-              id={id}
-              title="Parent Example Id:"
+        <ShowDocumentStats
+          record={record}
+          collection={Collection.EXAMPLES}
+          showFull={resource !== Collection.EXAMPLES}
+        />
+        <VStack className="flex flex-col flex-auto justify-between items-start">
+          <ShowTextRenderer title="Source text" icon={<LuScrollText />}>
+            <DiffField
+              path="source.text"
+              diffRecord={diffRecord}
+              fallbackValue={get(source, 'text')}
+              renderNestedObject={(value) => (
+                <span>
+                  {String(value || false)} ({LanguageLabels[get(record, 'source.language')]?.label})
+                </span>
+              )}
             />
-            <Box>
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Sentence Style
-              </Heading>
-              <DiffField
-                path="style"
-                diffRecord={diffRecord}
-                fallbackValue={style}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
-              />
-              <Box className="flex flex-col mt-5">
-                <Heading fontSize="lg" className="text-xl text-gray-600">
-                  Audio Pronunciations
-                </Heading>
-                <ArrayDiffField recordField="pronunciations" record={{ pronunciations: notArchivedPronunciations }}>
-                  <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
-                </ArrayDiffField>
-              </Box>
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Igbo
-              </Heading>
-              <DiffField
-                path="igbo"
-                diffRecord={diffRecord}
-                fallbackValue={igbo}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                English
-              </Heading>
-              <DiffField
-                path="english"
-                diffRecord={diffRecord}
-                fallbackValue={english}
-                renderNestedObject={(value) => <span>{String(value || false)}</span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Meaning
-              </Heading>
-              <DiffField
-                path="meaning"
-                diffRecord={diffRecord}
-                fallbackValue={meaning}
-                renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
-              />
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Nsịbịdị
-              </Heading>
-              <DiffField
-                path="nsibidi"
-                diffRecord={diffRecord}
-                fallbackValue={nsibidi}
-                renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
-              />
-              <Box className="flex flex-col">
-                <Heading fontSize="lg" className="text-xl text-gray-600">
-                  Nsịbịdị Characters
-                </Heading>
+          </ShowTextRenderer>
+          <ShowTextRenderer title="Source text pronunciations" icon={<LuFileAudio />}>
+            <ArrayDiffField recordField="source.pronunciations" record={record}>
+              <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
+            </ArrayDiffField>
+          </ShowTextRenderer>
+          <ShowTextRenderer title="Translated text" icon={<LuScrollText />}>
+            <DiffField
+              path="translations.0.text"
+              diffRecord={diffRecord}
+              fallbackValue={get(translations, '0.text')}
+              renderNestedObject={(value) => (
+                <span>
+                  {String(value || false)} ({LanguageLabels[get(record, 'translations.0.language')]?.label})
+                </span>
+              )}
+            />
+          </ShowTextRenderer>
+          <ShowTextRenderer title="Translate text pronunciations" icon={<LuFileAudio />}>
+            <ArrayDiffField recordField="translations.0.pronunciations" record={record}>
+              <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
+            </ArrayDiffField>
+          </ShowTextRenderer>
+          {isIgboAPIProject ? (
+            <>
+              <ShowTextRenderer title="Meaning" icon={<LuBrain />}>
+                <DiffField
+                  path="meaning"
+                  diffRecord={diffRecord}
+                  fallbackValue={meaning}
+                  renderNestedObject={(value) => <chakra.span>{String(value || false)}</chakra.span>}
+                />
+              </ShowTextRenderer>
+              <ShowTextRenderer title="Nsịbịdị" icon={<>〒</>}>
+                <DiffField
+                  path="nsibidi"
+                  diffRecord={diffRecord}
+                  fallbackValue={nsibidi}
+                  renderNestedObject={(value) => <chakra.span className="akagu">{String(value || false)}</chakra.span>}
+                />
+              </ShowTextRenderer>
+              <ShowTextRenderer title="Nsịbịdị characters" icon={<>〒</>}>
                 <ArrayDiffField
                   recordField="nsibidiCharacters"
                   recordFieldSingular="nsibidiCharacter"
@@ -202,7 +192,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                     )}
                   />
                 </ArrayDiffField>
-              </Box>
+              </ShowTextRenderer>
               <SummaryList
                 items={archivedPronunciations}
                 title="Archived Example Pronunciations 🗄"
@@ -224,10 +214,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   </>
                 )}
               />
-              <Box className="flex flex-col mt-5">
-                <Text fontWeight="bold" className="text-xl text-gray-600">
-                  Associated Words
-                </Text>
+              <ShowTextRenderer title="Associated words" icon={<LuLink />}>
                 {associatedWords?.length ? (
                   associatedWords?.map((associatedWord, index) => (
                     <Box className="flex flex-row items-center space-x-2">
@@ -238,25 +225,21 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                 ) : (
                   <span className="text-gray-500 italic">No associated word Ids</span>
                 )}
-              </Box>
-              {resource !== Collection.EXAMPLES ? (
-                <Comments editorsNotes={editorsNotes} userComments={userComments} />
-              ) : null}
-            </Box>
-          </Box>
-          {resource !== Collection.EXAMPLES && (
-            <Box className="mb-10 lg:mb-0 flex flex-col items-end">
-              <SourceField record={record} source="source" />
-              <ShowDocumentStats
-                approvals={approvals}
-                denials={denials}
-                merged={merged}
-                author={author}
-                collection={Collection.EXAMPLES}
-              />
-            </Box>
-          )}
-        </Box>
+              </ShowTextRenderer>
+              <ShowTextRenderer title="Sentence style" icon={<LuPaintbrush />}>
+                <DiffField
+                  path="style"
+                  diffRecord={diffRecord}
+                  fallbackValue={style}
+                  renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                />
+              </ShowTextRenderer>
+            </>
+          ) : null}
+          {resource !== Collection.EXAMPLES && isIgboAPIProject ? (
+            <Comments editorsNotes={editorsNotes} userComments={userComments} />
+          ) : null}
+        </VStack>
       </Box>
     </Skeleton>
   );

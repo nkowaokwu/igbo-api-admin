@@ -12,7 +12,7 @@ describe('ExampleAudioPronunciationsForm', () => {
         <ExampleAudioPronunciationsForm />
       </TestContext>,
     );
-    await findByText('Igbo Sentence Recordings');
+    await findByText('Sentence Recordings');
     await findByText('Add Audio Pronunciation');
   });
 
@@ -26,7 +26,7 @@ describe('ExampleAudioPronunciationsForm', () => {
       </TestContext>,
     );
     await findByTestId('pronunciations.0.audio-audio-playback-container');
-    await findByText('Igbo Sentence Recordings');
+    await findByText('Sentence Recordings');
     userEvent.click(await findByText('Add Audio Pronunciation'));
     await findByTestId('pronunciations.1.audio-audio-playback-container');
     expect(queryByTestId('pronunciations.1.audio-audio-playback')).toBeNull();

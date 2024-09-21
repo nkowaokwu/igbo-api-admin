@@ -88,7 +88,7 @@ describe('Word Show', () => {
       </TestContext>,
     );
 
-    await findByText('Word Document Details');
+    await findByText('Word');
     await findByText('Audio Pronunciation');
     await findByText('Is Standard Igbo');
     await findAllByText('Is Accented');
@@ -119,7 +119,7 @@ describe('Word Show', () => {
       </TestContext>,
     );
 
-    await findByText('Word Suggestion Document Details');
+    await findByText('Word Draft');
     await findByText('Audio Pronunciation');
     await findByText('Is Standard Igbo');
     await findAllByText('Is Accented');

@@ -60,9 +60,10 @@ const CorpusEditForm = ({
     })();
   }, []);
 
-  const handleFileSelect = ({ file, duration }: { file?: File; duration: number }) => {
+  const handleFileSelect = ({ base64, file, duration }: { base64: string; file?: File; duration: number }) => {
     if (file?.name) {
       setValue('title', file.name);
+      setValue('media', base64);
       setMediaFile(file);
     }
     if (duration) {
@@ -127,7 +128,7 @@ const CorpusEditForm = ({
           const { body, message } = error;
           toast({
             title: 'Error',
-            description: body?.error || message || 'An error occurred while corpus example suggestion',
+            description: body?.error || message || 'An error occurred while corpus suggestion',
             status: 'error',
             duration: 4000,
             isClosable: true,

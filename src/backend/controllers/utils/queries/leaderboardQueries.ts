@@ -22,25 +22,29 @@ const LeaderboardTimeRanges = {
 
 export const searchExampleAudioPronunciationsReviewedByUser = ({
   uid,
+  projectId,
   timeRange = LeaderboardTimeRange.ALL_TIME,
 }: {
   uid: string;
+  projectId: string;
   timeRange?: LeaderboardTimeRange;
 }): {
-  pronunciations: {
+  'source.pronunciations': {
     $elemMatch: {
       $or: { [key: string]: { $in: [string] } }[];
     };
   };
+  projectId: { $eq: string };
   updatedAt?: { $gte: number | null; $lte: number | null };
 } => {
   const { startDate, endDate } = LeaderboardTimeRanges[timeRange];
   return {
-    pronunciations: {
+    'source.pronunciations': {
       $elemMatch: {
         $or: [{ approvals: { $in: [uid] } }, { denials: { $in: [uid] } }],
       },
     },
+    projectId: { $eq: projectId },
     ...(startDate ? { updatedAt: { $gte: startDate, $lte: endDate } } : {}),
   };
 };
@@ -74,14 +78,14 @@ export const searchExampleAudioPronunciationsRecordedByUser = ({
   uid: string;
   timeRange?: LeaderboardTimeRange;
 }): {
-  pronunciations: {
+  'source.pronunciations': {
     $elemMatch: { [key: string]: { $eq: string } };
   };
   updatedAt?: { $gte: number | null; $lte: number | null };
 } => {
   const { startDate, endDate } = LeaderboardTimeRanges[timeRange] || { startDate: null, endDate: null };
   return {
-    pronunciations: {
+    'source.pronunciations': {
       $elemMatch: { speaker: { $eq: uid } },
     },
     ...(startDate ? { updatedAt: { $gte: startDate, $lte: endDate } } : {}),

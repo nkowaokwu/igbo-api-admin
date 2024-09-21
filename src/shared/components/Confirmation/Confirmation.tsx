@@ -23,6 +23,7 @@ const Confirmation = ({
   selectionValue,
   isOpen,
   onClose,
+  onConfirm = () => null,
   view,
   setIsLoading = () => null,
   actionHelpers = {},
@@ -206,6 +207,7 @@ const Confirmation = ({
       onClose();
     }
     setIdValue('');
+    onConfirm();
   };
 
   const determineConfirmColorScheme = () => (action?.type === 'Delete' ? 'red' : 'blue');

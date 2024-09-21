@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Button, Image, Text, useToast } from '@chakra-ui/react';
+import { Button, Text, useToast } from '@chakra-ui/react';
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,11 +8,9 @@ import {
   fetchSignInMethodsForEmail,
   linkWithPopup,
 } from 'firebase/auth';
-import getAWSAsset from 'src/utils/getAWSAsset';
 import UserLoginState from 'src/backend/shared/constants/UserLoginState';
+import { LuFacebook } from 'react-icons/lu';
 import { handleUserResult } from '../utils/handleUserResult';
-
-const FacebookImage = getAWSAsset('/icons/facebook.svg');
 
 const auth = getAuth();
 const facebookProvider = new FacebookAuthProvider();
@@ -71,25 +69,24 @@ const FacebookLogin = ({
       display="flex"
       className="font-bold"
       justifyContent="space-between"
-      leftIcon={<Image className="mr-4" width="24px" src={FacebookImage} alt="Facebook logo" />}
       width="full"
-      h="48px"
-      px={4}
-      pl={3}
+      height="48px"
+      borderWidth="1px"
       borderRadius="lg"
       onClick={signInWithFacebook}
-      backgroundColor="#4267B2"
+      backgroundColor="white"
       _hover={{
-        backgroundColor: '#4267B2',
+        backgroundColor: 'white',
       }}
       _active={{
-        backgroundColor: '#4267B2',
+        backgroundColor: 'white',
       }}
       _focus={{
-        backgroundColor: '#4267B2',
+        backgroundColor: 'white',
       }}
     >
-      <Text flex={1} color="white" ml={-6}>
+      <LuFacebook />
+      <Text flex={1} ml={-6} color="gray.500">
         {userLoginState === UserLoginState.SIGN_UP ? 'Sign up with Facebook' : 'Sign in with Facebook'}
       </Text>
     </Button>

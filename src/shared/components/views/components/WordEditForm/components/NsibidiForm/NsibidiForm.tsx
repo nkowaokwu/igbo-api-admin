@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Box } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import FormHeader from '../../../FormHeader';
 import NsibidiFormInterface from './NsibidiFormInterface';
 import NsibidiInput from './NsibidiInput';
@@ -12,8 +13,9 @@ const NsibidiForm = React.forwardRef(
     ref,
   ): ReactElement => {
     const { getValues } = control;
+    const isIgboAPIProject = useIsIgboAPIProject();
     const nsibidiCharactersName = `${name}Characters` || 'nsibidiCharacters';
-    return (
+    return isIgboAPIProject ? (
       <Box ref={ref} className="flex flex-col w-full">
         {!hideFormHeader ? (
           <FormHeader
@@ -43,7 +45,7 @@ const NsibidiForm = React.forwardRef(
           <p className="error">{errors.nsibidi?.message || errors[name]?.message}</p>
         ) : null}
       </Box>
-    );
+    ) : null;
   },
 );
 

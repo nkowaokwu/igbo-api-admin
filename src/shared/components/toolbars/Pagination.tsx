@@ -17,7 +17,7 @@ const Pagination = (): ReactElement => {
       >
         <Box className="flex flex-row justify-start items-center space-x-3 my-4 px-3">
           <IconButton
-            colorScheme="purple"
+            variant="primary"
             key="prev"
             isDisabled={page <= 1}
             onClick={() => setPage(page - 1)}
@@ -36,7 +36,7 @@ const Pagination = (): ReactElement => {
           {page + 1 < nbPages ? <Button onClick={() => setPage(page + 1)}>{page + 1}</Button> : null}
           {page !== nbPages ? <Button onClick={() => setPage(nbPages)}>{nbPages}</Button> : null}
           <IconButton
-            colorScheme="purple"
+            variant="primary"
             key="next"
             isDisabled={page === nbPages}
             onClick={() => setPage(page + 1)}

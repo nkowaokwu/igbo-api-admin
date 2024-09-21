@@ -2,11 +2,12 @@
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
-import { UserRanking } from 'src/backend/controllers/utils/interfaces';
+import { Translation, UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import Collections from 'src/shared/constants/Collection';
 import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -37,19 +38,23 @@ export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPaylo
     data: rawData,
   });
 
-export const getRandomExampleSuggestionsToRecord = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionsToRecord = (
+  { count = 5, languages }: { count?: number; languages: LanguageEnum[] } = { count: 5, languages: [] },
+): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio?languages=${languages}`,
     params: {
       range: `[0, ${count - 1}]`,
     },
   });
 
-export const getRandomExampleSuggestionsToReview = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionsToReview = (
+  { count = 5, languages }: { count?: number; languages: LanguageEnum[] } = { count: 5, languages: [] },
+): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review?languages=${languages}`,
     params: {
       range: `[0, ${count - 1}]`,
     },
@@ -75,7 +80,7 @@ export const putReviewForRandomExampleSuggestions = (data: ExampleReviewsPayload
   });
 
 export const bulkUploadExampleSuggestions = async (
-  payload: { sentences: { igbo: string }[]; isExample: boolean },
+  payload: { sentences: { source: Translation }[]; isExample: boolean },
   onProgressSuccess: (value: any) => void,
   onProgressFailure: (err: Error) => void,
 ): Promise<any> => {
@@ -90,7 +95,7 @@ export const bulkUploadExampleSuggestions = async (
     dataChunks.push(dataChunk);
     chunkIndex += groupSize;
   }
-  // console.time(`Bulk upload time for ${dataChunks.length} chunks`);
+
   const result = await dataChunks.reduce(
     (chain, dataChunk) =>
       chain
@@ -105,7 +110,6 @@ export const bulkUploadExampleSuggestions = async (
         .catch(onProgressFailure),
     Promise.resolve(),
   );
-  // console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
   return result;
 };
 

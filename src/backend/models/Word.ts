@@ -92,6 +92,7 @@ export const wordSchema = new Schema(
     relatedTerms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hypernyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     hyponyms: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

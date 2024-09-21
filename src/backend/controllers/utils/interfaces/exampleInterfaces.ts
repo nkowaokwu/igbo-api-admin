@@ -4,18 +4,18 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import { PronunciationSchema } from 'src/backend/controllers/utils/interfaces/pronunciationInterfaces';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 export interface ExampleClientData {
   id?: string;
-  igbo?: string;
-  english?: string;
+  source?: Translation;
+  translations?: Translation[];
   meaning?: string;
   nsibidi?: string;
   nsibidiCharacters?: string[];
   type?: SentenceTypeEnum;
   style?: ExampleStyleEnum;
-  source?: SuggestionSourceEnum;
-  pronunciations?: { audio: string; speaker: string; createdAt?: string; updatedAt?: string }[];
+  origin?: SuggestionSourceEnum;
   associatedWords: string[];
   associatedDefinitionsSchemas?: string[];
   exampleForSuggestion?: boolean;
@@ -29,10 +29,15 @@ export interface ExampleClientData {
 
 export interface Example extends Document<ExampleData, any, any> {}
 
+export interface Translation {
+  language: LanguageEnum;
+  text: string;
+  pronunciations: PronunciationSchema[];
+}
 export interface ExampleData {
   id: Types.ObjectId | string;
-  igbo?: string;
-  english?: string;
+  source?: Translation;
+  translations?: Translation[];
   meaning?: string;
   nsibidi?: string;
   nsibidiCharacters: (Types.ObjectId | string)[];
@@ -40,7 +45,6 @@ export interface ExampleData {
   associatedDefinitionsSchemas: string[];
   type: SentenceTypeEnum;
   style?: ExampleStyleEnum;
-  source?: SuggestionSourceEnum;
-  pronunciations: PronunciationSchema[];
+  origin?: SuggestionSourceEnum;
   updatedAt: Date;
 }

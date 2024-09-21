@@ -25,7 +25,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 
@@ -56,7 +56,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 
@@ -85,7 +85,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 
@@ -127,7 +127,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 
@@ -164,7 +164,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 
@@ -200,7 +200,7 @@ describe('Submit ExampleEditForm', () => {
     delete finalExample.createdAt;
     delete finalExample.crowdsourcing;
     delete finalExample.id;
-    delete finalExample.source;
+    delete finalExample.origin;
     delete finalExample.type;
     delete finalExample.updatedAt;
 

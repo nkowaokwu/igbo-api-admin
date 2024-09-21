@@ -101,7 +101,13 @@ const updateExistingExampleSuggestion = async (
       if (!exampleSuggestion) {
         throw new Error('No example suggestion exists with the provided id.');
       }
-      return updateExampleSuggestion({ id: example.id, data: example, mongooseConnection });
+      return updateExampleSuggestion({
+        id: example.id,
+        data: example,
+        mongooseConnection,
+        // TODO: this is unsafe and should be provided by the backend
+        projectId: example.projectId,
+      });
     })
     .catch((error) => {
       throw new Error(error.message || 'An error occurred while finding nested example suggestion.');

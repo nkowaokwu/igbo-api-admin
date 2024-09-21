@@ -98,7 +98,7 @@ describe('queries', () => {
     const query = searchWordSuggestionsOlderThanAYear();
     expect(query).toStrictEqual({
       createdAt: query.createdAt,
-      source: { $ne: SuggestionSourceEnum.COMMUNITY },
+      origin: { $ne: SuggestionSourceEnum.COMMUNITY },
       merged: null,
     });
   });
@@ -111,7 +111,7 @@ describe('queries', () => {
       igbo: { $exists: true, $type: 'string' },
       $expr: { $gt: [{ $strLenCP: '$igbo' }, 6] },
       type: SentenceTypeEnum.DATA_COLLECTION,
-      source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+      origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
       'pronunciations.3.audio': { $exists: false },
       updatedAt: { $gte: moment('2023-01-01').toDate() },
       'pronunciations.speaker': { $nin: [uid] },
@@ -125,7 +125,7 @@ describe('queries', () => {
       exampleForSuggestion: { $ne: true },
       'pronunciations.review': true,
       type: SentenceTypeEnum.DATA_COLLECTION,
-      source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+      origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
       'pronunciations.3.audio': { $exists: false },
       updatedAt: { $gte: moment('2023-01-01').toDate() },
       'pronunciations.speaker': { $nin: [uid] },
@@ -141,9 +141,9 @@ describe('queries', () => {
     const query = searchRandomExampleSuggestionsToTranslateRegexQuery(uid);
     expect(query).toStrictEqual({
       merged: null,
-      english: '',
+      translations: { $elemMatch: { text: '' } },
       exampleForSuggestion: { $ne: true },
-      source: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+      origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
       'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
       pronunciations: {
         $elemMatch: {

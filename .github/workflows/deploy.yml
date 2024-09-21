@@ -39,7 +39,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --project=igbo-api-admin-staging --only "functions:app,createUserAccount,updatePermissions"
+          args: deploy --project=igbo-api-admin-staging --only "functions:app,createUserAccount"
         env:
           FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
       - name: Build Production Project

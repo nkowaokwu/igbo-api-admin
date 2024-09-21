@@ -5,7 +5,6 @@ on:
   pull_request:
 
 env:
-  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   FIREBASE_TOKEN: ${{ secrets.STAGING_TOKEN }}
   FIREBASE_STAGING_PROJECT_ID: ${{ secrets.FIREBASE_STAGING_PROJECT_ID }}
   FIREBASE_STAGING_PRIVATE_KEY: ${{ secrets.FIREBASE_STAGING_PRIVATE_KEY }}
@@ -44,15 +43,10 @@ jobs:
           yarn build:dev
       - name: Set Environment Variables 📟
         run: |
-          firebase functions:config:set runtime.env="cypress" --token $FIREBASE_TOKEN
           firebase functions:config:set runtime.staging.project_id=$FIREBASE_STAGING_PROJECT_ID runtime.staging.private_key="$FIREBASE_STAGING_PRIVATE_KEY" runtime.staging.client_email=$FIREBASE_STAGING_CLIENT_EMAIL --token $FIREBASE_TOKEN
           yarn functions:env
       - name: Wait for Docker ⏱
         run: sleep 10
-      # - name: Run Cypress Tests 🎨
-      #   run: yarn test:ci
-      #   env:
-      #     NODE_ENV: development
       - name: Run Backend Jest Tests 🔩
         run: yarn jest:backend
         env:

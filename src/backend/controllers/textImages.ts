@@ -12,11 +12,12 @@ export const getTextImages = (
 ): Promise<any> | void => {
   try {
     const { searchWord, regexKeyword, mongooseConnection, skip, limit, ...rest } = handleQueries(req);
+    const { projectId } = req.query;
 
     // Loosely matches with an included Nsibidi character
     const regex = createRegExp(searchWord).wordReg;
     const query = {
-      $or: [{ igbo: { $regex: regex } }],
+      $and: [{ $or: [{ igbo: { $regex: regex } }] }, { projectId: { $eq: projectId } }],
     };
     const TextImage = mongooseConnection.model<Interfaces.TextImage>('TextImage', textImageSchema);
 

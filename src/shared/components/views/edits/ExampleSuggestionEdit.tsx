@@ -22,14 +22,8 @@ const ExampleSuggestionEdit = (props: HistoryProps): ReactElement => {
   setOnFailure(() => {});
 
   return record ? (
-    <Box className="shadow-sm p-4 lg:p-10 mt-10">
-      <EditDocumentTopBar
-        record={record}
-        resource={resource}
-        view={View.EDIT}
-        title="Edit Example Suggestion"
-        id={id}
-      />
+    <Box className="shadow-sm p-4 lg:p-10">
+      <EditDocumentTopBar record={record} resource={resource} view={View.EDIT} title="Edit Sentence Draft" id={id} />
       <DocumentStats
         collection={Collection.EXAMPLES}
         originalId={originalExampleId}

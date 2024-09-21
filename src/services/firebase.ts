@@ -24,7 +24,7 @@ export const app = currentApp;
 
 if (shouldUseEmulator) {
   /* Use Firebase Emulators */
-  connectAuthEmulator(auth, `http://localhost:${firebaseJson.emulators.auth.port}`);
+  connectAuthEmulator(auth, `http://localhost:${firebaseJson.emulators.auth.port}`, { disableWarnings: true });
   connectFirestoreEmulator(db, 'localhost', firebaseJson.emulators.firestore.port);
   connectFunctionsEmulator(functions, 'localhost', firebaseJson.emulators.functions.port);
   console.debug(`Using Firestore emulator: http://localhost:${firebaseJson.emulators.firestore.port}`);

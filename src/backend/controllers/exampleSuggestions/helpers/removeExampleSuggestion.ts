@@ -11,16 +11,21 @@ import SuggestionTypeEnum from 'src/backend/shared/constants/SuggestionTypeEnum'
  * @param mongooseConnection
  * @returns Delete confirmation message
  */
-export const removeExampleSuggestion = (
-  id: string,
-  mongooseConnection: Connection,
-): Promise<Interfaces.ExampleSuggestion> => {
+export const removeExampleSuggestion = ({
+  id,
+  projectId,
+  mongooseConnection,
+}: {
+  id: string;
+  projectId: string;
+  mongooseConnection: Connection;
+}): Promise<Interfaces.ExampleSuggestion> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
 
-  return ExampleSuggestion.findByIdAndDelete(id)
+  return ExampleSuggestion.findOneAndDelete({ _id: id, projectId })
     .then(async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
       if (!exampleSuggestion) {
         throw new Error('No example suggestion exists with the provided id.');

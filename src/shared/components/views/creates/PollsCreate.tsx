@@ -107,7 +107,7 @@ const PollsCreate = (): ReactElement => {
 
   return (
     <form onSubmit={handlePostingPoll}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <Box className="flex flex-col-reverse lg:flex-row justify-between lg:items-center">
           <Heading>Create a new Constructed Term Poll</Heading>
           <Box className="flex flex-row space-x-4 items-center">
