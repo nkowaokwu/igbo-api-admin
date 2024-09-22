@@ -27,8 +27,6 @@
     "dev:server": "nodemon --watch ./src --watch ./index.tsx --ext js,ts,tsx --exec 'yarn build:dev'",
     "prestart": "node_modules/.bin/firebase functions:config:set runtime.env=\"production\" && yarn functions:env",
     "start": "node_modules/.bin/firebase emulators:start",
-    "prestart:database": "[ ! -d \"./db\" ] && shx mkdir ./db || echo 'Database directory exists'",
-    "start:database": "mongod --dbpath ./db",
     "mocha": "cross-env NODE_ENV=test mocha --require ts-node/register --require @babel/register --timeout 10000 --exit --retries 2 -r esm ./src/tests",
     "start:docker": "docker compose -f docker-compose-dev.yml up",
     "start:docker:ci": "docker compose up",

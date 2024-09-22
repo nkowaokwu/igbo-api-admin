@@ -26,24 +26,26 @@ const Resources = memo(() => {
 
   return (
     <AdminContext dataProvider={dataProvider} authProvider={authProvider}>
-      <ProjectProvider>
-        <UserProjectPermissionProvider>
-          <AdminUI
-            layout={(props) => <Layout {...props} error={Error} />}
-            dashboard={Dashboard}
-            loginPage={Login}
-            loading={() => <Loading setPermissions={setPermissions} />}
-            theme={Theme}
-            customRoutes={customRoutes}
-          >
-            {resources}
-          </AdminUI>
-        </UserProjectPermissionProvider>
-      </ProjectProvider>
+      <AdminUI
+        layout={(props) => <Layout {...props} error={Error} />}
+        dashboard={Dashboard}
+        loginPage={Login}
+        loading={() => <Loading setPermissions={setPermissions} />}
+        theme={Theme}
+        customRoutes={customRoutes}
+      >
+        {resources}
+      </AdminUI>
     </AdminContext>
   );
 });
 
-const IgboAPIAdmin = (): ReactElement => <Resources />;
+const IgboAPIAdmin = (): ReactElement => (
+  <ProjectProvider>
+    <UserProjectPermissionProvider>
+      <Resources />
+    </UserProjectPermissionProvider>
+  </ProjectProvider>
+);
 
 export default IgboAPIAdmin;
