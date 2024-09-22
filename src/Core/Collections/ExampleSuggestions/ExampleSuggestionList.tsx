@@ -41,7 +41,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
         medium={
           <Datagrid>
             <Select collection={Collection.EXAMPLES} permissions={permissions} />
-            {isIgboAPIProject ? <CompleteExamplePreview label="Example Status" /> : null}
+            {isIgboAPIProject ? <CompleteExamplePreview label="Sentence Status" /> : null}
             <SourceField label="Origin" source="origin" />
             <ReviewPreview label="You Reviewed" />
             <TextField label="Source" source="source.text" />
