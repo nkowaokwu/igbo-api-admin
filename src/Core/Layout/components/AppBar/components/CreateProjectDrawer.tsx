@@ -24,11 +24,11 @@ const CreateProjectDrawer = ({
     <DrawerOverlay />
     <DrawerContent>
       {showCloseButton ? <DrawerCloseButton /> : null}
-      <DrawerHeader>Create a project</DrawerHeader>
+      <DrawerHeader>Join or create a project</DrawerHeader>
       <DrawerBody>
         <VStack alignItems="start" maxWidth="700px" gap={6}>
-          <CreateProjectSteps />
           <JoinIgboAPIProject />
+          <CreateProjectSteps />
         </VStack>
       </DrawerBody>
     </DrawerContent>
