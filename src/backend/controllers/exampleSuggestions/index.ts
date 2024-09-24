@@ -222,23 +222,26 @@ export const postBulkUploadExampleSuggestions = async (
   next: NextFunction,
 ): Promise<any | void> => {
   try {
-    const { body: data, mongooseConnection } = req;
+    const { body, mongooseConnection } = req;
     const { projectId } = req.query;
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
+    const data: { source: { text: string; language: LanguageEnum } }[] = body;
 
-    const rawClientIgboSentences = data.map(({ igbo }) => igbo);
+    const rawClientSentences = data.map(({ source }) => source.text);
     const existingExampleSuggestions = await ExampleSuggestion.find({
-      igbo: { $in: rawClientIgboSentences },
+      'source.text': { $in: rawClientSentences },
       projectId,
     });
-    const rawExistingExampleSuggestions = existingExampleSuggestions.map(({ igbo }) => igbo);
+    const rawExistingExampleSuggestions = existingExampleSuggestions.map(({ source }) => source.text);
 
     // Separate duplicated vs unique example sentences from UI
-    const duplicatedExampleSuggestions = data.filter(({ igbo }) => rawExistingExampleSuggestions.includes(igbo));
-    const uniqueExampleSuggestions = data.filter(({ igbo }) => !rawExistingExampleSuggestions.includes(igbo));
+    const duplicatedExampleSuggestions = data.filter(({ source }) =>
+      rawExistingExampleSuggestions.includes(source.text),
+    );
+    const uniqueExampleSuggestions = data.filter(({ source }) => !rawExistingExampleSuggestions.includes(source.text));
 
     const preparedExampleSuggestions = uniqueExampleSuggestions.map((sentenceData: Interfaces.ExampleClientData) => ({
       ...sentenceData,
@@ -250,17 +253,17 @@ export const postBulkUploadExampleSuggestions = async (
 
     // Creates the result object to show detailed status to UI about success/failure while
     // bulk uploading
-    const result: BulkUploadResult = bulkInsertedExampleSuggestions.map(({ _id, igbo }) => ({
+    const result: BulkUploadResult = bulkInsertedExampleSuggestions.map(({ _id, source }) => ({
       success: true,
       message: 'Success',
-      meta: { sentenceData: igbo, id: _id },
+      meta: { sentenceData: source.text, id: _id },
     }));
 
-    duplicatedExampleSuggestions.forEach(({ igbo }) => {
+    duplicatedExampleSuggestions.forEach(({ source }) => {
       result.push({
         success: false,
         message: 'There is an example suggestion with identical Igbo text',
-        meta: { sentenceData: igbo },
+        meta: { sentenceData: { text: source.text } },
       });
     });
 
