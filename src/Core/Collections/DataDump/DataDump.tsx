@@ -1,4 +1,4 @@
-import React, { FormEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { compact } from 'lodash';
 import {
   Accordion,
@@ -11,14 +11,14 @@ import {
   Heading,
   Text,
   Tooltip,
-  Progress,
   Link,
   useToast,
-  chakra,
   VStack,
 } from '@chakra-ui/react';
-import { WarningIcon } from '@chakra-ui/icons';
-import { LuHardDriveUpload } from 'react-icons/lu';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Controller, useForm } from 'react-hook-form';
+import { LuHardDriveUpload, LuTrash2 } from 'react-icons/lu';
+import Select from 'react-select';
 import { FilePicker, Textarea } from 'src/shared/primitives';
 import { Confirmation } from 'src/shared/components';
 import Collections from 'src/shared/constants/Collection';
@@ -27,8 +27,12 @@ import actionsMap from 'src/shared/constants/actionsMap';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { FileDataType } from 'src/Core/Collections/TextImages/types';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import { JOIN_SLACK_URL } from 'src/Core/constants';
 import UploadStatus from './UploadStats';
 import type StatusType from './StatusType';
+import DataDumpResolver from './DataDumpResolver';
 
 type SentenceData = {
   igbo: string;
@@ -40,6 +44,7 @@ const isDataCollectionLink = 'http://localhost:3030/#/exampleSuggestions';
 
 const DataDump = (): ReactElement => {
   const [textareaValue, setTextareaValue] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageEnum>();
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [successes, setSuccesses] = useState<StatusType[][]>([]);
   const [failures, setFailures] = useState([]);
@@ -52,21 +57,40 @@ const DataDump = (): ReactElement => {
   const action = {
     ...actionsMap.BulkUploadExamples,
     content:
-      `Are you sure you want to upload ${totalSentences} example suggestions at once? ` +
+      `Are you sure you want to upload ${totalSentences} sentences at once? ` +
       'This will take a few minutes to complete.',
     executeAction: async ({ data, onProgressSuccess, onProgressFailure }) => {
       setIsUploading(true);
-      await actionsMap.BulkUploadExamples.executeAction({
-        data,
-        onProgressSuccess,
-        onProgressFailure,
-      });
-      setIsUploading(false);
+      try {
+        await actionsMap.BulkUploadExamples.executeAction({
+          data,
+          onProgressSuccess,
+          onProgressFailure,
+        });
+      } finally {
+        setIsUploading(false);
+      }
     },
   };
 
+  const { control, errors, handleSubmit } = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      types: [],
+      languages: [],
+      license: null,
+    },
+    ...DataDumpResolver(),
+    mode: 'onChange',
+  });
+
   const handleFileSelect = (e: FileDataType) => {
     setTextareaValue(e.fileContent || '');
+  };
+
+  const handleClearFile = () => {
+    setTextareaValue('');
   };
 
   const handleChangeTextarea = (e) => {
@@ -109,14 +133,13 @@ const DataDump = (): ReactElement => {
     setFailures([]);
   };
 
-  const handleFormSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (e) => {
     try {
       setIsConfirmationOpen(true);
     } catch (err) {
       toast({
         title: 'An error occurred',
-        description: 'Unable to submit bulk upload example sentences request.',
+        description: 'Unable to submit bulk upload sentences request.',
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -143,43 +166,87 @@ const DataDump = (): ReactElement => {
         isOpen={isConfirmationOpen}
         view={Views.SHOW}
         actionHelpers={{
-          data: { file: fileData, text: textareaValue },
+          data: { file: fileData, text: textareaValue, language: selectedLanguage },
           onProgressFailure,
           onProgressSuccess,
         }}
       />
       <Box className="space-y-3" width="700px" p={4}>
-        <Heading>Bulk Upload Example Sentences</Heading>
+        <Heading>Bulk Upload Sentences</Heading>
         <Text fontFamily="Silka">
           Upload a new-line separated text file or copy and paste your text. Each line will be uploaded as a unique
-          Example sentence.
+          sentence.
         </Text>
 
         <Text fontSize="sm" fontWeight="bold" fontFamily="Silka">
           View all uploaded sentences by viewing the{' '}
           <Link href={isDataCollectionLink} color="blue.500">
-            Example Suggestions list
+            Sentence Drafts list
           </Link>
           .
         </Text>
-        <form onSubmit={handleFormSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <VStack alignItems="start" width="full" gap={4}>
-            {/* TODO: toggle between copy and paste, select a language or default to project language */}
-            <FilePicker type="text" onFileSelect={handleFileSelect} className="w-full" />
-            {isCopyAndPasteVisible ? (
-              <Textarea
-                data-test="data-dump-textarea"
-                value={textareaValue}
-                onChange={handleChangeTextarea}
-                placeholder="Copy and paste new-line separated sentences"
-              />
-            ) : null}
-            {totalSentences ? (
-              <Text fontSize="sm" color="gray.500" fontStyle="italic">
-                Total sentences to be uploaded: {totalSentences}
+            <VStack alignItems="start" gap={0} width="full">
+              <FilePicker type="text" onFileSelect={handleFileSelect} className="w-full" />
+
+              {isCopyAndPasteVisible ? (
+                <Textarea
+                  data-test="data-dump-textarea"
+                  value={textareaValue}
+                  onChange={handleChangeTextarea}
+                  placeholder="Copy and paste new-line separated sentences"
+                />
+              ) : null}
+              {totalSentences ? (
+                <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                  Total sentences to be uploaded: {totalSentences}
+                </Text>
+              ) : null}
+            </VStack>
+            <VStack alignItems="start" gap={4} width="full">
+              <Text fontWeight="medium">Options</Text>
+              <VStack alignItems="start" gap={0} width="full">
+                <Controller
+                  name="language"
+                  control={control}
+                  render={(props) => (
+                    <Select
+                      {...props}
+                      className="w-full"
+                      isDisabled={!isDataPresent}
+                      placeholder="Select the sentences' language"
+                      options={Object.values(LanguageLabels).filter(
+                        (label) => label.value !== LanguageEnum.UNSPECIFIED,
+                      )}
+                      onChange={({ value }) => setSelectedLanguage(value)}
+                    />
+                  )}
+                />
+              </VStack>
+              <Text fontSize="xs" color="gray.600">
+                Don&apos;t see your language? Request to support a new language via our{' '}
+                <Link href={JOIN_SLACK_URL} target="_blank" textDecoration="underline">
+                  Slack
+                  <ExternalLinkIcon />
+                </Link>
+                .
               </Text>
-            ) : null}
-            <Box className="w-full flex flex-col lg:flex-row justify-between items-start space-y-4 lg:space-y-0">
+              {errors.language && <Text className="error">Language is required.</Text>}
+            </VStack>
+            <Button
+              type="submit"
+              variant="primary"
+              _hover={{ backgroundColor: 'black' }}
+              _active={{ backgroundColor: 'black' }}
+              _focus={{ backgroundColor: 'black' }}
+              isDisabled={!isDataPresent}
+              isLoading={isUploading}
+              rightIcon={<LuHardDriveUpload />}
+            >
+              Upload sentences
+            </Button>
+            {/* <Box className="w-full flex flex-col lg:flex-row justify-between items-start space-y-4 lg:space-y-0">
               <Box className="w-full lg:w-8/12">
                 {textareaValue && fileData?.length ? (
                   <Text className="space-x-2 mb-2">
@@ -191,27 +258,9 @@ const DataDump = (): ReactElement => {
                   </Text>
                 ) : null}
                 <Box className="w-full flex flex-col">
-                  <Tooltip
-                    label={
-                      !textareaValue.length
-                        ? 'Each Igbo sentence will be uploaded to the Igbo API data set as an example sentence'
-                        : 'Disabled because there are not example sentences to upload'
-                    }
-                  >
-                    <Box className="w-full lg:w-4/12">
-                      <Button
-                        type="submit"
-                        isDisabled={!isDataPresent}
-                        isLoading={isUploading}
-                        rightIcon={<LuHardDriveUpload />}
-                      >
-                        Upload sentences
-                      </Button>
-                    </Box>
-                  </Tooltip>
                   {totalSentences ? (
                     <Box className="w-full lg:w-6/12">
-                      <Text fontWeight="bold">Uploaded examples</Text>
+                      <Text fontWeight="bold">Uploaded sentences</Text>
                       <Box className="w-full flex flex-row space-x-6 items-center">
                         <Progress
                           value={!totalSentences ? 0 : Math.floor((successes.flat().length / totalSentences) * 100)}
@@ -229,7 +278,7 @@ const DataDump = (): ReactElement => {
                   ) : null}
                 </Box>
               </Box>
-            </Box>
+            </Box> */}
           </VStack>
         </form>
         {Boolean(totalSentences) ? (
@@ -238,7 +287,7 @@ const DataDump = (): ReactElement => {
               <Tooltip label="Result statues statuses from the bulk upload.">
                 <AccordionButton>
                   <Box className="w-full flex flex-row items-center">
-                    <Text fontWeight="bold">Bulk example sentence upload results</Text>
+                    <Text fontWeight="bold">Bulk sentence upload results</Text>
                     <AccordionIcon />
                   </Box>
                 </AccordionButton>
