@@ -198,18 +198,22 @@ export default {
       onProgressSuccess,
       onProgressFailure,
     }: {
-      data: { file: ExampleClientData[]; text: string; isExample: boolean };
+      data: { file: ExampleClientData[]; text: string; language: LanguageEnum; isExample: boolean };
       onProgressSuccess: (value: any) => any;
       onProgressFailure: (value: any) => any;
     }): Promise<any> => {
-      const { text, isExample } = data;
+      const { text, language, isExample } = data;
       const trimmedTextareaValue = text.trim();
       const separatedSentences = compact(trimmedTextareaValue.split(/\n/));
+
+      if (!language) {
+        throw new Error('A language is required.');
+      }
 
       // Combines the data from both the uploaded file and text area input
       const payload = separatedSentences.map((sentenceText) => ({
         source: {
-          language: LanguageEnum.UNSPECIFIED,
+          language,
           text: sentenceText.trim(),
         },
       }));
