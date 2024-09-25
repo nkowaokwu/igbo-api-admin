@@ -120,6 +120,8 @@ export const inviteMember = async (
     // eslint-disable-next-line max-len
     const acceptUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}/invites/accept?projectId=${projectId}&permissionId=${userProjectPermission.id}`;
 
+    console.log({ acceptUrl });
+
     await sendMemberInvite({
       to: email,
       projectId,
@@ -158,7 +160,10 @@ export const acceptMemberInvite = async (
     userProjectPermission.status = EntityStatus.ACTIVE;
 
     if (!userProjectPermission.toJSON().firebaseId) {
-      const existingFirebaseUser = await findUserByEmail(userProjectPermission.email);
+      const existingFirebaseUser = await findUserByEmail(userProjectPermission.email).catch((err) => {
+        console.log(err);
+        return null;
+      });
       if (!existingFirebaseUser) {
         const user = await postUserHelper({ email: userProjectPermission.email });
         userProjectPermission.firebaseId = user.uid;
