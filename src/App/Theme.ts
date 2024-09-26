@@ -18,6 +18,9 @@ const theme = createTheme({
         boxShadow: 'none',
         position: 'relative',
       },
+      positionFixed: {
+        position: 'relative',
+      },
       toolbar: {
         backgroundColor: 'white',
       },
@@ -120,6 +123,9 @@ const theme = createTheme({
     RaLayout: {
       root: {
         backgroundColor: 'var(--chakra-colors-white)',
+      },
+      appFrame: {
+        marginTop: '0 !important',
       },
       content: {
         backgroundColor: 'var(--chakra-colors-white) !important',
