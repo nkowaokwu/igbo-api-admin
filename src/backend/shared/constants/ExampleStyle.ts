@@ -2,6 +2,12 @@ import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 
 /* Different example sentence styles */
 export default {
+  [ExampleStyleEnum.APOSTROPHE]: {
+    value: ExampleStyleEnum.APOSTROPHE,
+    label: 'Apostrophe',
+    description: 'This is a sentence represents an apostrophe.',
+    colorScheme: 'green',
+  },
   [ExampleStyleEnum.BIBLICAL]: {
     value: ExampleStyleEnum.BIBLICAL,
     label: 'Biblical',
