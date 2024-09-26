@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 import getAWSAsset from 'src/utils/getAWSAsset';
 
-const LacunaFund = getAWSAsset('/images/igboAPIEditorPlatform/lacunafund.svg');
+// const LacunaFund = getAWSAsset('/images/igboAPIEditorPlatform/lacunafund.svg');
 const Spitch = getAWSAsset('/images/igboAPIEditorPlatform/spitch.svg');
 
 const clients = [
@@ -11,11 +11,11 @@ const clients = [
     alt: 'Spitch',
     height: '44px',
   },
-  {
-    image: LacunaFund,
-    alt: 'Lacuna Fund',
-    height: '30px',
-  },
+  // {
+  //   image: LacunaFund,
+  //   alt: 'Lacuna Fund',
+  //   height: '30px',
+  // },
 ];
 
 const Clients = (): ReactElement => (
