@@ -53,10 +53,6 @@ main,
   width: 100vw;
 }
 
-body {
-  overflow: hidden;
-}
-
 .main-content {
   height: calc(100vh - 56px);
   overflow-y: scroll;
