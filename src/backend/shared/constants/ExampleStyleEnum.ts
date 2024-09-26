@@ -1,4 +1,5 @@
 enum ExampleStyleEnum {
+  APOSTROPHE = 'apostrophe',
   BIBLICAL = 'biblical',
   EMPTY = '',
   EUPHEMISM = 'euphemism',
