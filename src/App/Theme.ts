@@ -16,6 +16,7 @@ const theme = createTheme({
     MuiAppBar: {
       root: {
         boxShadow: 'none',
+        position: 'relative',
       },
       toolbar: {
         backgroundColor: 'white',
