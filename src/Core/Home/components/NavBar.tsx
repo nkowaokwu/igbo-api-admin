@@ -15,7 +15,7 @@ const NavBar = ({ hideButtons }: { hideButtons?: boolean }): ReactElement => {
       p={4}
       borderBottomWidth={hideButtons ? '0px' : '1px'}
       borderBottomColor="gray.300"
-      width="full"
+      width="100vw"
       backgroundColor="white"
       position="fixed"
       justifyContent="center"
