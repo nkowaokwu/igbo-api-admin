@@ -10,7 +10,7 @@ import WordClass from 'src/backend/shared/constants/WordClass';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import { DefinitionSchema, ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
+import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SoundboxInterfaces';
 // eslint-disable-next-line max-len
 import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 import { wordFixture } from 'src/__tests__/shared/fixtures';
