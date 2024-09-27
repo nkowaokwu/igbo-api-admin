@@ -287,8 +287,10 @@ export const getRandomExampleSuggestionsToReview = async (
 ): Promise<any | void> => {
   try {
     const { limit, user, mongooseConnection } = await handleQueries(req);
-    const { projectId, languages: rawLanguages = '' } = req.query;
-    const languages = rawLanguages.split(',');
+   const { projectId } = req.query;
+    const {
+      userProjectPermission: { languages },
+    } = req;
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
