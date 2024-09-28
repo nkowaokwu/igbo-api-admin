@@ -1,10 +1,9 @@
 import { getAuth, updateProfile, User } from 'firebase/auth';
 import { camelCase, pick } from 'lodash';
 import network from 'src/Core/Dashboard/network';
-import { UserProfile, UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
+import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
-import UserRoles from 'src/backend/shared/constants/UserRoles';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
 
@@ -46,17 +45,22 @@ export const getUserStats = async (): Promise<{ [key: string]: number }> => {
   return stats;
 };
 
-export const putUserRole = async ({
-  data,
-  uid,
-}: {
-  data: { role: UserRoles };
-  uid: string;
-}): Promise<UserProjectPermission> => {
-  const { data: result } = await request<{ userProjectPermission: UserProjectPermission }>({
-    method: 'PUT',
-    url: `${Collection.USERS}/${uid}/roles`,
-    data,
+// User Stats on Profile
+
+export const getUserExampleSuggestionRecordings = async (uid: string): Promise<{ [key: string]: number }> => {
+  const { data: result } = await request<{ timestampedExampleSuggestions: { [key: string]: number } }>({
+    method: 'GET',
+    url: `${Collection.STATS}/users/${uid}/${Collection.EXAMPLE_SUGGESTIONS}/recorded`,
+    params: { uid },
   });
-  return result.userProjectPermission;
+  return result.timestampedExampleSuggestions;
+};
+
+export const getUserExampleSuggestionTranslations = async (uid: string): Promise<{ [key: string]: number }> => {
+  const { data: result } = await request<{ timestampedExampleSuggestions: { [key: string]: number } }>({
+    method: 'GET',
+    url: `${Collection.STATS}/users/${uid}/${Collection.EXAMPLE_SUGGESTIONS}/translated`,
+    params: { uid },
+  });
+  return result.timestampedExampleSuggestions;
 };

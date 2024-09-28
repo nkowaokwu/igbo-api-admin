@@ -54,7 +54,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
               ) : (
                 <Box className="flex w-full justify-center mb-2">
                   <Text className="italic text-gray-700" fontFamily="Silka">
-                    No examples
+                    No sentences
                   </Text>
                 </Box>
               )}

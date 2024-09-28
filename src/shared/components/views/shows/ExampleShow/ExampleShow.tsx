@@ -1,9 +1,17 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Skeleton, Text, chakra, VStack, HStack } from '@chakra-ui/react';
-import { LuPaintbrush, LuScrollText, LuFileAudio, LuBrain, LuLink, LuArchive } from 'react-icons/lu';
+import { Box, Skeleton, Text, chakra, VStack, HStack, Tooltip } from '@chakra-ui/react';
+import {
+  LuPaintbrush,
+  LuScrollText,
+  LuFileAudio,
+  LuBrain,
+  LuLink,
+  LuArchive,
+  LuXCircle,
+  LuCheckCircle2,
+} from 'react-icons/lu';
 import { get } from 'lodash';
-import pluralize from 'pluralize';
 import diff from 'deep-diff';
 import ReactAudioPlayer from 'react-audio-player';
 import { DEFAULT_EXAMPLE_RECORD } from 'src/shared/constants';
@@ -72,21 +80,39 @@ const ExampleShow = (props: ShowProps): ReactElement => {
       review: false,
     },
   ) => (
-    <Box p={2} backgroundColor={archived ? 'orange.200' : ''}>
+    <VStack backgroundColor={archived ? 'orange.200' : ''} alignItems="start">
       <ReactAudioPlayer data-test="pronunciations" src={audio} style={{ height: '40px', width: '250px' }} controls />
-      <Text className="space-x-4">
-        <chakra.span fontStyle="italic" color={approvals.length >= 2 ? 'green' : 'gray'} fontSize="sm">
-          {pluralize('approval', approvals.length, true)}
-        </chakra.span>
-        <chakra.span
-          fontStyle="italic"
-          color={denials.length === 1 ? 'orange' : denials.length >= 2 ? 'red' : 'gray'}
-          fontSize="sm"
-        >
-          {pluralize('denial', denials.length, true)}
-        </chakra.span>
-      </Text>
-    </Box>
+      <HStack gap={2}>
+        <Text className="space-x-4" display="flex">
+          <Tooltip label="Total denials">
+            <chakra.span
+              fontStyle="italic"
+              color={approvals.length >= 2 ? 'green' : 'gray'}
+              fontSize="sm"
+              display="flex"
+              alignItems="center"
+              gap={1}
+            >
+              <LuXCircle />
+              {approvals.length}
+            </chakra.span>
+          </Tooltip>
+          <Tooltip label="Total approvals">
+            <chakra.span
+              fontStyle="italic"
+              color={denials.length === 1 ? 'orange' : denials.length >= 2 ? 'red' : 'gray'}
+              fontSize="sm"
+              display="flex"
+              alignItems="center"
+              gap={1}
+            >
+              <LuCheckCircle2 />
+              {denials.length}
+            </chakra.span>
+          </Tooltip>
+        </Text>
+      </HStack>
+    </VStack>
   );
 
   /* Grabs the original word if it exists */
@@ -100,7 +126,9 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     })();
   }, [record]);
 
-  return (
+  console.log({ record });
+
+  return record?.id ? (
     <Skeleton isLoaded={!isLoading}>
       <Box className="shadow-sm p-4 lg:p-10">
         <EditDocumentTopBar
@@ -135,16 +163,18 @@ const ExampleShow = (props: ShowProps): ReactElement => {
             </ArrayDiffField>
           </ShowTextRenderer>
           <ShowTextRenderer title="Translated text" icon={<LuScrollText />}>
-            <DiffField
-              path="translations.0.text"
-              diffRecord={diffRecord}
-              fallbackValue={get(translations, '0.text')}
-              renderNestedObject={(value) => (
-                <span>
-                  {String(value || false)} ({LanguageLabels[get(record, 'translations.0.language')]?.label})
-                </span>
-              )}
-            />
+            {record.translations.map((_, index) => (
+              <DiffField
+                path={`translations.${index}.text`}
+                diffRecord={diffRecord}
+                fallbackValue={get(translations, `${index}.text`)}
+                renderNestedObject={(value) => (
+                  <span>
+                    {String(value || false)} ({LanguageLabels[get(record, `translations.${index}.language`)]?.label})
+                  </span>
+                )}
+              />
+            ))}
           </ShowTextRenderer>
           {archivedSourcePronunciations.length ? (
             <ShowTextRenderer title="Archived source text pronunciations" icon={<LuArchive />}>
@@ -168,9 +198,18 @@ const ExampleShow = (props: ShowProps): ReactElement => {
             </ShowTextRenderer>
           ) : null}
           <ShowTextRenderer title="Translate text pronunciations" icon={<LuFileAudio />}>
-            <ArrayDiffField recordField="translations.0.pronunciations" record={record}>
-              <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
-            </ArrayDiffField>
+            {record.translations
+              ? record.translations.map((_, index) => (
+                  <ArrayDiffField
+                    recordField={`translations.${index}.pronunciations`}
+                    record={record}
+                    hideEmpty
+                    hideBullets
+                  >
+                    <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
+                  </ArrayDiffField>
+                ))
+              : null}
           </ShowTextRenderer>
           {archivedTranslationPronunciations.length ? (
             <ShowTextRenderer title="Archived translated text pronunciations" icon={<LuArchive />}>
@@ -251,7 +290,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
         </VStack>
       </Box>
     </Skeleton>
-  );
+  ) : null;
 };
 
 export default ExampleShow;
