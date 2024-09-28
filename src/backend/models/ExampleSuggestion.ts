@@ -22,14 +22,19 @@ const audioPronunciationSuggestionSchema = new Schema(
   { toObject: toObjectPlugin, timestamps: true },
 );
 
-const translationSchema = new Schema({
-  language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
-  text: { type: String, default: '', trim: true },
-  pronunciations: {
-    type: [{ type: audioPronunciationSuggestionSchema }],
-    default: [],
+const translationSchema = new Schema(
+  {
+    language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
+    text: { type: String, default: '', trim: true },
+    pronunciations: {
+      type: [{ type: audioPronunciationSuggestionSchema }],
+      default: [],
+    },
+    approvals: { type: [{ type: String }], default: [] },
+    authorId: { type: String, default: '' },
   },
-});
+  { toObject: toObjectPlugin, timestamps: true },
+);
 
 export const exampleSuggestionSchema = new Schema(
   {
