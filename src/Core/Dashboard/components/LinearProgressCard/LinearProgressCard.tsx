@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Skeleton, Heading, Text, Divider } from '@chakra-ui/react';
+import { Skeleton, Heading, Text, Divider, VStack } from '@chakra-ui/react';
 import LinearProgressCardInterface from './LinearProgressCardInterface';
 import StatBody from './StatBody';
 
@@ -8,25 +8,31 @@ const LinearProgressCard = ({
   description,
   stats,
   isLoaded,
-  isGeneric = false,
   children,
 }: LinearProgressCardInterface): ReactElement => (
   <Skeleton isLoaded={isLoaded} width="full">
-    <Box className="border bg-white space-y-3 w-full" borderRadius="md" borderColor="gray.300" p={5}>
-      <Box className="space-y-3">
+    <VStack
+      width="full"
+      alignItems="start"
+      backgroundColor="white"
+      className="border"
+      borderRadius="md"
+      borderColor="gray.300"
+      gap={2}
+      p={5}
+    >
+      <VStack width="full" gap={1}>
         <Heading fontSize="lg" fontFamily="Silka">
           {heading}
         </Heading>
         <Text fontFamily="Silka">{description}</Text>
-      </Box>
-      <Box width="full">
-        <Divider backgroundColor="gray.100" />
-      </Box>
+      </VStack>
+      <Divider borderColor="gray.300" />
       {stats.map((stat) => (
-        <StatBody key={stat.heading} isGeneric={isGeneric} {...stat} />
+        <StatBody key={stat.heading} {...stat} />
       ))}
       {children}
-    </Box>
+    </VStack>
   </Skeleton>
 );
 

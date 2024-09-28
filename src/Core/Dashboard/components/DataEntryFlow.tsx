@@ -4,8 +4,8 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 
 const handleNavigation = ({ hash, state }: { hash: string; state?: IgboSoundboxViews }) => {
-  const handledState = state ? `?igboSoundboxView=${state}` : '';
-  window.location.href = `${window.location.origin}/${handledState}${hash}`;
+  const handledState = state ? `?soundboxView=${state}` : '';
+  window.location.href = `${window.location.origin}/${hash}${handledState}`;
 };
 
 const DataEntryFlow = ({
@@ -45,6 +45,7 @@ const DataEntryFlow = ({
       </Text>
       <Box flex={1} display="flex" width="full" justifyContent="flex-end">
         {typeof Icon === 'string' ? (
+          // Keeping for Nsibidi icon
           <Text pointerEvents="none" fontSize="3xl">
             {Icon}
           </Text>
