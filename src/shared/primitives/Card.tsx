@@ -29,7 +29,7 @@ const Card = ({ text, href, children }: { text?: string; href?: string; children
     >
       {text ? (
         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flex={8}>
-          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
+          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700" overflowWrap="break-word">
             {text}
           </Text>
           {React.Children.map(children, (child) => React.cloneElement(child))}

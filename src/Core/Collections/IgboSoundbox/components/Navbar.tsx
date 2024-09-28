@@ -1,5 +1,5 @@
 import React, { useState, ReactElement } from 'react';
-import { Box, Button, Heading, Text } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import IgboSoundboxViews from 'src/shared/constants/IgboSoundboxViews';
 import ConfirmModal from 'src/shared/components/ConfirmModal';
 import { ArrowBackIcon } from '@chakra-ui/icons';
@@ -45,38 +45,34 @@ const Navbar = ({
       >
         <Text>Leaving this page without submitting your work will lead to your current work to be lost.</Text>
       </ConfirmModal>
-      <NavbarWrapper className={currentView === IgboSoundboxViews.HOME ? 'justify-center' : 'justify-start'}>
-        {currentView === IgboSoundboxViews.HOME ? (
-          <Heading fontFamily="Silka" textAlign="center">
-            Soundbox
-          </Heading>
-        ) : (
-          <Box className="flex flex-row justify-start items-center space-x-4 h-full">
+      <NavbarWrapper className="justify-start">
+        <Box className="flex flex-row justify-start items-center space-x-4 h-full">
+          <Button
+            color="green.300"
+            variant="ghost"
+            leftIcon={<ArrowBackIcon color="green.300" boxSize={4} />}
+            onClick={withConfirmation(IgboSoundboxViews.HOME)}
+            fontWeight="bold"
+            fontFamily="Silka"
+            _hover={{
+              backgroundColor: 'white',
+            }}
+            _active={{
+              backgroundColor: 'white',
+            }}
+            _focus={{
+              backgroundColor: 'white',
+            }}
+          >
+            Back
+          </Button>
+          {currentView === IgboSoundboxViews.RECORD ? (
             <Button
+              variant="ghost"
+              fontFamily="Silka"
+              fontWeight="bold"
               color="green.300"
-              variant="ghost"
-              leftIcon={<ArrowBackIcon color="green.300" boxSize={4} />}
-              onClick={withConfirmation(IgboSoundboxViews.HOME)}
-              fontWeight="bold"
-              fontFamily="Silka"
-              _hover={{
-                backgroundColor: 'white',
-              }}
-              _active={{
-                backgroundColor: 'white',
-              }}
-              _focus={{
-                backgroundColor: 'white',
-              }}
-            >
-              Back
-            </Button>
-            <Button
-              variant="ghost"
-              fontFamily="Silka"
-              fontWeight="bold"
-              color={currentView === IgboSoundboxViews.RECORD ? 'green.300' : 'gray'}
-              borderBottomColor={currentView === IgboSoundboxViews.RECORD ? 'green.300' : 'white'}
+              borderBottomColor="green.300"
               borderBottomWidth="2px"
               height="full"
               backgroundColor="white"
@@ -96,12 +92,14 @@ const Navbar = ({
             >
               Record audio
             </Button>
+          ) : null}
+          {currentView === IgboSoundboxViews.VERIFY ? (
             <Button
               variant="ghost"
               fontFamily="Silka"
               fontWeight="bold"
-              color={currentView === IgboSoundboxViews.VERIFY ? 'green.300' : 'gray'}
-              borderBottomColor={currentView === IgboSoundboxViews.VERIFY ? 'green.300' : 'white'}
+              color="green.300"
+              borderBottomColor="green.300"
               borderBottomWidth="2px"
               height="full"
               backgroundColor="white"
@@ -121,8 +119,35 @@ const Navbar = ({
             >
               Verify
             </Button>
-          </Box>
-        )}
+          ) : null}
+          {currentView === IgboSoundboxViews.TRANSLATE ? (
+            <Button
+              variant="ghost"
+              fontFamily="Silka"
+              fontWeight="bold"
+              color="green.300"
+              borderBottomColor="green.300"
+              borderBottomWidth="2px"
+              height="full"
+              backgroundColor="white"
+              borderRadius="none"
+              outline="none"
+              boxShadow="none"
+              onClick={withConfirmation(IgboSoundboxViews.VERIFY)}
+              _hover={{
+                backgroundColor: 'white',
+              }}
+              _active={{
+                backgroundColor: 'white',
+              }}
+              _focus={{
+                backgroundColor: 'white',
+              }}
+            >
+              Translate
+            </Button>
+          ) : null}
+        </Box>
       </NavbarWrapper>
     </>
   );

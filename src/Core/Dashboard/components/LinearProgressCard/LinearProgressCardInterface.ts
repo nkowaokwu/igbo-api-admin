@@ -5,13 +5,11 @@ interface LinearProgressCard {
   description?: string;
   stats: {
     totalCount: number;
-    goal: number;
     heading: string;
     description: string;
     leftIcon?: ReactElement;
   }[];
   isLoaded: boolean;
-  isGeneric?: boolean;
   children?: JSX.Element;
 }
 

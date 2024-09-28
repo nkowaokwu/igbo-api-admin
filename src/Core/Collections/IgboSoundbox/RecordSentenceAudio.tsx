@@ -73,25 +73,15 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       await putAudioForRandomExampleSuggestions(payload);
       toast({
-        title: 'Gained points 🎉',
+        title: 'Completed 🎉',
         position: 'top-right',
         variant: 'left-accent',
-        description: `You have gained ${pluralize(
-          'point',
+        description: `You have recorded ${pluralize(
+          'sentence recording',
           payload.filter(({ pronunciation }) => pronunciation).length,
           true,
         )}`,
         status: 'success',
-        duration: 4000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: 'Unable to save points',
-        position: 'top-right',
-        variant: 'left-accent',
-        description: `Unable to upload example sentence recordings.: ${err?.message || err?.details}`,
-        status: 'error',
         duration: 4000,
         isClosable: true,
       });

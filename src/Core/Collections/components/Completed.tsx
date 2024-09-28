@@ -34,8 +34,7 @@ const Completed = ({
   };
 
   const goHome = () => {
-    window.location.search = '';
-    window.location.hash = '#/';
+    window.location.href = '#/';
   };
 
   useEffect(() => {
@@ -60,7 +59,7 @@ const Completed = ({
       justify-center items-center flex-wrap space-y-4 lg:space-y-0"
       >
         <Button
-          colorScheme="purple"
+          variant="primary"
           fontFamily="Silka"
           fontWeight="bold"
           onClick={handleMore}

@@ -1,32 +1,37 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { compact, cloneDeep, noop } from 'lodash';
-import { Box, Heading, Link, Text, useToast } from '@chakra-ui/react';
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Heading, Text, useToast } from '@chakra-ui/react';
 import pluralize from 'pluralize';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import {
-  getRandomExampleSuggestionsToReview,
-  putReviewForRandomExampleSuggestions,
+  getRandomExampleSuggestionForTranslationReview,
+  putRandomExampleSuggestionReviewsForTranslation,
 } from 'src/shared/DataCollectionAPI';
 import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
-import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
-import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
-import SandboxAudioReviewer from './SandboxAudioReviewer';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import TranslateSentenceReview from 'src/Core/Collections/IgboSoundbox/TranslateSentenceReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
-import { SentenceVerification } from './types/SoundboxInterfaces';
+import {
+  SentenceTranslationVerification,
+  SentenceTranslationVerificationPayload,
+  SentenceVerification,
+} from './types/SoundboxInterfaces';
 
-const DEFAULT_CURRENT_EXAMPLE = { source: { text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [] } };
+const DEFAULT_CURRENT_EXAMPLE = {
+  source: { text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [] },
+  translations: [],
+};
 
-const VerifySentenceAudio = ({
+const VerifyTranslateSentences = ({
   setIsDirty,
 }: {
   setIsDirty: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,15 +46,14 @@ const VerifySentenceAudio = ({
   const isCompleteEnabled =
     !isUploading && reviews.some(({ reviews }) => compact(Object.values(reviews)).length) && visitedLastReviewIndex;
   const toast = useToast();
-  const userProjectPermission = React.useContext(UserProjectPermissionContext);
   const currentExample = Array.isArray(examples)
     ? examples[exampleIndex] || DEFAULT_CURRENT_EXAMPLE
     : DEFAULT_CURRENT_EXAMPLE;
 
-  const updateReviews = (pronunciationId: string, action: ReviewActions) => {
+  const updateReviews = (translationId: string, action: ReviewActions) => {
     const clonedReviews = cloneDeep(reviews);
     const currentExampleReviews = clonedReviews[exampleIndex].reviews;
-    currentExampleReviews[pronunciationId] = action;
+    currentExampleReviews[translationId] = action;
     clonedReviews[exampleIndex].reviews = currentExampleReviews;
     setReviews(clonedReviews);
   };
@@ -66,31 +70,34 @@ const VerifySentenceAudio = ({
     }
   };
 
-  const handleOnDeny = (pronunciationId: string) => {
-    updateReviews(pronunciationId, ReviewActions.DENY);
+  const handleOnDeny = (translationId: string) => {
+    updateReviews(translationId, ReviewActions.DENY);
     setIsDirty(true);
   };
 
-  const handleOnApprove = (pronunciationId: string) => {
-    updateReviews(pronunciationId, ReviewActions.APPROVE);
+  const handleOnApprove = (translationId: string) => {
+    updateReviews(translationId, ReviewActions.APPROVE);
     setIsDirty(true);
   };
 
   const handleUploadReviews = async () => {
     try {
-      const payload: SentenceVerification[] = reviews;
+      const payload: SentenceTranslationVerificationPayload[] = reviews.map(({ id, reviews }) => ({
+        id,
+        translations: Object.entries(reviews).map(([translationId, review]) => ({ id: translationId, review })),
+      }));
       const totalReviewCount = reviews.reduce(
         (finalCount, { reviews }) =>
           finalCount + Object.values(reviews).filter((review) => review !== ReviewActions.SKIP).length,
         0,
       );
       setIsLoading(true);
-      await putReviewForRandomExampleSuggestions(payload);
+      await putRandomExampleSuggestionReviewsForTranslation(payload);
       toast({
         title: 'Completed 🎉',
         position: 'top-right',
         variant: 'left-accent',
-        description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
+        description: `You have reviewed ${pluralize('sentences', totalReviewCount, true)}`,
         status: 'success',
         duration: 4000,
         isClosable: true,
@@ -123,21 +130,13 @@ const VerifySentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestionsToReview({
-            languages: userProjectPermission.languages,
-          });
+          const randomExamples = await getRandomExampleSuggestionForTranslationReview();
           setExamples(randomExamples);
           setExampleIndex(0);
 
-          const defaultReviews: SentenceVerification[] = randomExamples.map(({ id, pronunciations = [] }) => ({
+          const defaultReviews: SentenceTranslationVerification[] = randomExamples.map(({ id }) => ({
             id: id.toString(),
-            reviews: pronunciations.reduce(
-              (reviews, { _id }) => ({
-                ...reviews,
-                [_id.toString()]: ReviewActions.SKIP,
-              }),
-              {},
-            ),
+            reviews: {},
           }));
           setReviews(defaultReviews);
         } catch (err) {
@@ -171,19 +170,17 @@ const VerifySentenceAudio = ({
     <Box className="flex flex-col justify-between items-center p-6 h-full">
       <Box className="flex flex-col items-center w-full space-y-4">
         <Heading as="h1" textAlign="center" fontSize="2xl" color="gray.600">
-          Listen to know if this sentence matches the audio
+          Read each translation and listen to each audio
         </Heading>
         <Text fontFamily="Silka">
-          Each audio should follow our{' '}
-          <Link textDecoration="underline" href={RECORDING_AUDIO_STANDARDS_DOC} target="_blank">
-            Recording Audio Standards
-            <ExternalLinkIcon boxSize="3" ml={1} />
-          </Link>{' '}
-          document.
+          Ensure that each translation is correct and each audio accurately matches the translated text.
         </Text>
         <Card text={currentExample.source.text} href={currentExampleHref}>
-          <SandboxAudioReviewer
-            pronunciations={currentExample.source.pronunciations}
+          <Text fontSize="sm" color="gray.600">
+            Language: {LanguageLabels[currentExample.source.language].label}
+          </Text>
+          <TranslateSentenceReview
+            translations={currentExample.translations}
             onApprove={handleOnApprove}
             onDeny={handleOnDeny}
             review={reviews[exampleIndex]}
@@ -212,4 +209,4 @@ const VerifySentenceAudio = ({
   );
 };
 
-export default VerifySentenceAudio;
+export default VerifyTranslateSentences;

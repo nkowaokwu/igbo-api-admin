@@ -4,10 +4,12 @@ import Select from 'react-select';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import SettingsLayout from 'src/Core/components/SettingsLayout';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import ProjectLabels from 'src/backend/shared/constants/ProjectLabels';
 import LicenseType from 'src/backend/shared/constants/LicenseType';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { assign, compact, flow } from 'lodash';
 import { putCurrentProject } from 'src/shared/ProjectAPI';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 
 const GeneralSettings = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,17 +31,20 @@ const GeneralSettings = (): ReactElement => {
       CustomComponent: (props) => <Textarea {...props} flex={1} placeholder="Describe your project" />,
     },
     {
-      name: 'license',
-      title: 'License',
-      subtitle: 'Copyright license',
-      defaultValue: { label: project?.license, value: project?.license },
+      name: 'types',
+      title: 'Project types',
+      subtitle: 'Select the types to allow your contributors to start collecting',
+      defaultValue: project?.types?.map((language) => ProjectLabels[language] || ProjectLabels.UNSPECIFIED),
       CustomComponent: (props) => (
         <Select
           {...props}
+          isMulti
           className="flex-1"
-          placeholder="Select a copyright license"
+          placeholder="Select relevant project data collection types"
           options={compact(
-            Object.values(LicenseType).map((value) => value !== LicenseType.UNSPECIFIED && { label: value, value }),
+            Object.entries(ProjectLabels).map(
+              ([key, value]) => key !== ProjectType.UNSPECIFIED && { label: value.label, value: key },
+            ),
           )}
         />
       ),
@@ -63,14 +68,33 @@ const GeneralSettings = (): ReactElement => {
         />
       ),
     },
+    {
+      name: 'license',
+      title: 'License',
+      subtitle: 'Copyright license',
+      defaultValue: { label: project?.license, value: project?.license },
+      CustomComponent: (props) => (
+        <Select
+          {...props}
+          className="flex-1"
+          placeholder="Select a copyright license"
+          options={compact(
+            Object.values(LicenseType).map((value) => value !== LicenseType.UNSPECIFIED && { label: value, value }),
+          )}
+        />
+      ),
+    },
   ];
+
+  const transformTypes = (data) =>
+    assign(data, { types: (data?.types || []).map((type) => type.value || ProjectType.UNSPECIFIED) });
 
   const transformLicense = (data) => assign(data, { license: data?.license?.value || LicenseType.UNSPECIFIED });
 
   const transformLanguages = (data) =>
     assign(data, { languages: (data?.languages || []).map((language) => language.value || LanguageEnum.UNSPECIFIED) });
 
-  const cleanedDataPipeline = flow([transformLicense, transformLanguages]);
+  const cleanedDataPipeline = flow([transformTypes, transformLicense, transformLanguages]);
 
   const onSubmit = async (rawData) => {
     const data = cleanedDataPipeline(rawData);

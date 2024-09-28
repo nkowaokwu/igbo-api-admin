@@ -18,6 +18,7 @@ const SubmitBatchButton = ({
 }): ReactElement => (
   <Button
     onClick={isLoading ? noop : isClickEnabled ? onClick : noop}
+    variant="primary"
     aria-label={ariaLabel}
     isDisabled={isDisabled}
     isLoading={isLoading}
