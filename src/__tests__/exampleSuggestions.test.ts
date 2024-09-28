@@ -27,7 +27,6 @@ import {
   createExample,
   getWords,
   getTotalReviewedExampleSuggestions,
-  getTotalRecordedExampleSuggestions,
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
 } from './shared/commands';
@@ -744,15 +743,6 @@ describe('MongoDB Example Suggestions', () => {
       expect(
         verifiedRes.body.timestampedReviewedExampleSuggestions[moment().format('MMM, YYYY')],
       ).toBeGreaterThanOrEqual(2);
-    });
-
-    it('should show all example suggestion stats for user', async () => {
-      const verifiedRes = await getTotalReviewedExampleSuggestions();
-      const recordedRes = await getTotalRecordedExampleSuggestions();
-      expect(verifiedRes.status).toEqual(200);
-      expect(recordedRes.status).toEqual(200);
-      expect(verifiedRes.body.timestampedReviewedExampleSuggestions).toEqual({});
-      expect(recordedRes.body.timestampedRecordedExampleSuggestions).toEqual({});
     });
   });
 

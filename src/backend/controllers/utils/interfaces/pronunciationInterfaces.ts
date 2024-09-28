@@ -16,7 +16,6 @@ export interface PronunciationSchema extends PronunciationData {
 }
 
 export interface AudioPronunciationData {
-  id: string;
   objectId: string;
   size: number;
   prevSize?: number;
@@ -24,4 +23,4 @@ export interface AudioPronunciationData {
   updatedAt: Date;
 }
 
-export interface AudioPronunciation extends Document<AudioPronunciationData, any, any> {}
+export interface AudioPronunciation extends AudioPronunciationData, Document {}

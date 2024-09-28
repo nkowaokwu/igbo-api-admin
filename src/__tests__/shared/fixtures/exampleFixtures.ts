@@ -1,9 +1,14 @@
 import { cloneDeep } from 'lodash';
-import { ExampleData, ExampleSuggestionData } from 'src/backend/controllers/utils/interfaces';
+import { ExampleData, ExampleSuggestionData, Translation } from 'src/backend/controllers/utils/interfaces';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import {
+  SentenceTranslation,
+  SentenceTranslationVerification,
+  SentenceTranslationVerificationPayload,
+} from 'src/Core/Collections/IgboSoundbox/types/SoundboxInterfaces';
 
 export const exampleFixture = (
   data?: Partial<ExampleData & { createdAt: Date }>,
@@ -36,5 +41,30 @@ export const exampleSuggestionFixture = (
     (finalCrowdsourcing, crowdsourcing) => ({ ...finalCrowdsourcing, crowdsourcing }),
     {} as { [key in CrowdsourcingType]: boolean },
   ),
+  ...cloneDeep(data),
+});
+
+export const exampleSuggestionTranslationFixture = (data?: Partial<SentenceTranslation>): SentenceTranslation => ({
+  id: '',
+  translations: [],
+  ...cloneDeep(data),
+});
+
+export const exampleSuggestionTranslationReviewFixture = (
+  data?: Partial<SentenceTranslationVerificationPayload>,
+): SentenceTranslationVerificationPayload => ({
+  id: '',
+  translations: [],
+  ...cloneDeep(data),
+});
+
+export const translationFixture = (data?: Partial<Translation>): Translation => ({
+  _id: '',
+  language: LanguageEnum.IGBO,
+  text: '',
+  pronunciations: [],
+  approvals: [],
+  denials: [],
+  authorId: '',
   ...cloneDeep(data),
 });

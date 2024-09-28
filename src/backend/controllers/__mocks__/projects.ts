@@ -11,3 +11,11 @@ export const getProjectByIdHelper = jest.fn(() => ({
   license: LicenseType.CC_BY,
   languages: [LanguageEnum.IGBO],
 }));
+
+export const getProjects = jest.fn();
+
+export const postProject = jest.fn();
+
+export const putProject = jest.fn();
+
+export const getProjectById = jest.fn();

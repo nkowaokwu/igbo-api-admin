@@ -16,3 +16,9 @@ export const getUserProjectPermissionHelper = jest.fn(() => ({
   gender: GenderEnum.FEMALE,
   age: new Date(),
 }));
+
+export const getUserProjectPermission = jest.fn();
+
+export const putUserProjectPermission = jest.fn();
+
+export const putUserProjectPermissionAsAdmin = jest.fn();

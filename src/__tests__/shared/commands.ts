@@ -93,12 +93,6 @@ export const getTotalReviewedExampleSuggestions = (query = {}, options: OptionsT
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
-export const getTotalRecordedExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
-  chaiServer
-    .get('/exampleSuggestions/random/stats/recorded')
-    .query(query)
-    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
-
 export const postTextImage = (data: { igbo: string }[], options: OptionsType = { token: '' }): Request =>
   chaiServer
     .post('/textImages')
@@ -400,11 +394,6 @@ export const getNsibidiCharacter = (
 export const getUserStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>
   chaiServer
     .get(`/stats/users/${uid}`)
-    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
-    .set('X-API-Key', options.apiKey || API_KEY);
-export const getUserMergeStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>
-  chaiServer
-    .get(`/stats/users/${uid}/merge`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .set('X-API-Key', options.apiKey || API_KEY);
 export const getUserAudioStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>
