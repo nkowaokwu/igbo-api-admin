@@ -3,7 +3,7 @@ import { Flex, Heading, Text, VStack } from '@chakra-ui/react';
 import PricingCard from 'src/Core/Pricing/components/PricingCard';
 import Footer from 'src/Core/Home/components/Footer';
 import NavBar from 'src/Core/Home/components/NavBar';
-import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+import { REQUEST_DEMO_URL } from 'src/Core/constants';
 import JoinCommunity from 'src/Core/Home/components/JoinCommunity';
 
 const pricingOptions = [
@@ -46,9 +46,9 @@ const pricingOptions = [
       },
     ],
     button: {
-      label: 'Request access',
+      label: 'Request demo',
       onClick: () => {
-        window.location.href = REQUEST_ACCESS_URL;
+        window.location.href = REQUEST_DEMO_URL;
       },
     },
     isPrimary: true,

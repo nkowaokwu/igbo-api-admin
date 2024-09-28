@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { Box, Heading, VStack, Text, Button, Image, Flex } from '@chakra-ui/react';
 import { LuChevronRight } from 'react-icons/lu';
 import getAWSAsset from 'src/utils/getAWSAsset';
-import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+import { REQUEST_DEMO_URL } from 'src/Core/constants';
 
 const Bulk = getAWSAsset('/images/igboAPIEditorPlatform/bulk.png');
 const UserProgress = getAWSAsset('/images/igboAPIEditorPlatform/user-progress.png');
@@ -15,8 +15,8 @@ const largeSections = [
     description: 'Get your project started off right by uploading data in batches.',
     image: Bulk,
     button: {
-      label: 'Request access',
-      href: REQUEST_ACCESS_URL,
+      label: 'Request demo',
+      href: REQUEST_DEMO_URL,
     },
     styles: {},
   },
@@ -25,8 +25,8 @@ const largeSections = [
     description: "Invite team members to your workspace to quickly onboard them into your team's workflow.",
     image: UserProgress,
     button: {
-      label: 'Request access',
-      href: REQUEST_ACCESS_URL,
+      label: 'Request demo',
+      href: REQUEST_DEMO_URL,
     },
     styles: {},
   },
@@ -35,8 +35,8 @@ const largeSections = [
     description: 'Allow certain team members specific access to your dataset.',
     image: Rbac,
     button: {
-      label: 'Request access',
-      href: REQUEST_ACCESS_URL,
+      label: 'Request demo',
+      href: REQUEST_DEMO_URL,
     },
     styles: {},
   },
@@ -45,8 +45,8 @@ const largeSections = [
     description: 'Collect data on mobile devices in low-internet access regions.',
     image: MobileMock,
     button: {
-      label: 'Request access',
-      href: REQUEST_ACCESS_URL,
+      label: 'Request demo',
+      href: REQUEST_DEMO_URL,
     },
     styles: {
       height: '400px',

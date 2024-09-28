@@ -77,13 +77,13 @@ export const putRandomWordSuggestions = (
 
 export const getRandomExampleSuggestionsToRecord = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random/audio')
+    .get('/exampleSuggestions/audio')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
 export const getRandomExampleSuggestionsToReview = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random/review')
+    .get('/exampleSuggestions/review')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
@@ -125,7 +125,7 @@ export const putAudioForRandomExampleSuggestions = (
   options: OptionsType = { token: '' },
 ): Request =>
   chaiServer
-    .put('/exampleSuggestions/random/audio')
+    .put('/exampleSuggestions/audio')
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 export const putReviewForRandomExampleSuggestions = (
@@ -137,7 +137,7 @@ export const putReviewForRandomExampleSuggestions = (
   options: OptionsType = { token: '' },
 ): Request =>
   chaiServer
-    .put('/exampleSuggestions/random/review')
+    .put('/exampleSuggestions/review')
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 

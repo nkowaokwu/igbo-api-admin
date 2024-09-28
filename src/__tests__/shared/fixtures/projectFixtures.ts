@@ -11,5 +11,7 @@ export const projectFixture = (data?: Partial<ProjectData>) => ({
   status: EntityStatus.ACTIVE,
   visibility: VisibilityType.PUBLIC,
   license: LicenseType.CC_BY,
+  languages: [],
+  types: [],
   ...cloneDeep(data),
 });

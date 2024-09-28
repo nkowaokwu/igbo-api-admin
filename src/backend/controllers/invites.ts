@@ -120,7 +120,7 @@ export const inviteMember = async (
     // eslint-disable-next-line max-len
     const acceptUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}/invites/accept?projectId=${projectId}&permissionId=${userProjectPermission.id}`;
 
-    console.log({ acceptUrl });
+    console.log({ acceptUrl, userProjectPermissionId: userProjectPermission.id });
 
     await sendMemberInvite({
       to: email,
