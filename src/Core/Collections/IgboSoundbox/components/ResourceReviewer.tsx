@@ -17,6 +17,7 @@ const DesktopView = ({ onDeny, onApprove, reviewAction, children }: ResourceRevi
         onClick={onDeny}
         aria-label={`Deny${reviewAction === ReviewActions.DENY ? ' selected' : ''}`}
         {...(reviewAction === ReviewActions.DENY ? { variant: 'primary' } : {})}
+        leftIcon={<LuBan />}
       >
         {reviewAction === ReviewActions.DENY ? 'Denied' : 'Deny'}
       </Button>
@@ -27,6 +28,7 @@ const DesktopView = ({ onDeny, onApprove, reviewAction, children }: ResourceRevi
         onClick={onApprove}
         aria-label={`Deny${reviewAction === ReviewActions.APPROVE ? ' selected' : ''}`}
         {...(reviewAction === ReviewActions.APPROVE ? { variant: 'primary' } : {})}
+        leftIcon={<LuCheck />}
       >
         {reviewAction === ReviewActions.APPROVE ? 'Approved' : 'Approve'}
       </Button>
