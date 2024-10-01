@@ -5,6 +5,12 @@ import { Box, Heading, Text } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
 import { startCase } from 'lodash';
 import { CreateButton } from 'src/shared/primitives';
+import Collection from 'src/shared/constants/Collection';
+
+const emptyMap = {
+  [Collection.EXAMPLES]: 'Sentences',
+  [Collection.EXAMPLE_SUGGESTIONS]: 'Sentence Drafts',
+};
 
 const Empty = ({ showCreate }: { showCreate: boolean }): ReactElement => {
   const { basePath, resource } = useListContext();
@@ -13,7 +19,7 @@ const Empty = ({ showCreate }: { showCreate: boolean }): ReactElement => {
       <Box className="flex flex-col justify-center items-center w-11/12 lg:w-8/12 lg:space-y-6 h-72">
         <InfoIcon w={12} h={12} color="gray.500" />
         <Box textAlign="center" m={1} className="lg:space-y-2">
-          <Heading fontSize="xl" fontFamily="Silka">{`No ${startCase(resource)}`}</Heading>
+          <Heading fontSize="xl" fontFamily="Silka">{`No ${startCase(emptyMap[resource] || resource)}`}</Heading>
           {showCreate ? (
             <>
               <Text fontSize="lg">Create one to get started</Text>
