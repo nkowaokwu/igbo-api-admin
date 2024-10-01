@@ -76,14 +76,14 @@ const ExampleAudioPronunciationsForm = ({
     }
   };
   return (
-    <Box>
+    <Box width="full">
       <FormHeader
         title="Sentence Recordings"
         tooltip="An example can have multiple audio recorded for it. One on unique
         speaker can record a version for this sentence."
       />
       <AddAudioPronunciationButton onClick={handleAppend} />
-      <Box mb={4}>
+      <Box mb={4} width="full">
         {pronunciations?.length ? (
           pronunciations.map((pronunciation, index) => {
             const isExistingPronunciation = get(record, `${formName}[${index}].audio`);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState, ReactElement } from 'react';
-import { compact, noop } from 'lodash';
+import { cloneDeep, compact, noop, omit } from 'lodash';
 import { Box, Heading, Text, chakra, useToast, Input, HStack, Button, VStack } from '@chakra-ui/react';
 import Select from 'react-select';
 import { LuPlus } from 'react-icons/lu';
+import { v4 as uuid } from 'uuid';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import {
   getRandomExampleSuggestionsToTranslate,
@@ -21,7 +22,7 @@ import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
-import { SentenceTranslation } from './types/SoundboxInterfaces';
+import { SentenceTranslation, SentenceTranslationPayload } from './types/SoundboxInterfaces';
 
 const DEFAULT_CURRENT_EXAMPLE = {
   id: '',
@@ -101,6 +102,7 @@ const TranslateSentences = ({
       text: '',
       language: LanguageEnum.UNSPECIFIED,
       pronunciations: [{ audio: '' }],
+      id: uuid(),
     });
     setTranslations(updatedTranslations);
   };
@@ -120,7 +122,13 @@ const TranslateSentences = ({
   const handleComplete = async () => {
     try {
       setIsUploading(true);
-      await putRandomExampleSuggestionsToTranslate(translations);
+      const payload: SentenceTranslationPayload[] = translations.map((translation) => ({
+        ...cloneDeep(translation),
+        translations: translation.translations
+          .map((nestedTranslation) => omit(nestedTranslation, ['id']))
+          .filter((nestedTranslation) => nestedTranslation.text),
+      }));
+      await putRandomExampleSuggestionsToTranslate(payload);
       setIsComplete(true);
       toast({
         title: 'Completed 🎉',
@@ -154,7 +162,14 @@ const TranslateSentences = ({
           setTranslations(
             randomExamples.map(({ id }) => ({
               id,
-              translations: [{ text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [{ audio: '' }] }],
+              translations: [
+                {
+                  text: '',
+                  language: LanguageEnum.UNSPECIFIED,
+                  pronunciations: [{ audio: '' }],
+                  id: uuid(),
+                },
+              ],
             })),
           );
           setExampleIndex(0);
@@ -202,8 +217,9 @@ const TranslateSentences = ({
         </Card>
       </Box>
       <VStack gap={2} width="full">
-        {translations[exampleIndex].translations.map(({ text, pronunciations }, index) => (
+        {translations[exampleIndex].translations.map(({ text, language, pronunciations, id }, index) => (
           <HStack
+            key={id}
             width="full"
             gap={2}
             spacing={0}
@@ -223,6 +239,7 @@ const TranslateSentences = ({
               <Select
                 className="w-full"
                 options={translationLanguageOptions}
+                defaultValue={language !== LanguageEnum.UNSPECIFIED ? LanguageLabels[language] : null}
                 onChange={(value: { value: LanguageEnum; label: string }) =>
                   handleSelectTranslationLanguage(value.value, index)
                 }

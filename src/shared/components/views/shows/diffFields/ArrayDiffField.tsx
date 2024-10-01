@@ -36,7 +36,7 @@ const ArrayDiffField = ({
       <Box
         // eslint-disable-next-line react/no-array-index-key
         key={`array-diff-field-${recordFieldSingular}-${index}`}
-        className="flex flex-row items-start space-x-2 mt-4"
+        className="flex flex-row items-start space-x-2"
         data-test={`${recordFieldSingular}-${index}`}
       >
         {!hideBullets ? <h2 className="text-xl text-gray-600">{`${index + 1}. `}</h2> : null}

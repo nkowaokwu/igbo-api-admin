@@ -42,17 +42,17 @@ const EditDocumentTopBar = ({
     resource !== Collection.EXAMPLES && resource !== Collection.WORDS && resource !== Collection.CORPORA;
 
   return (
-    <Box mb={12}>
+    <Box mb={{ base: 12, lg: 4 }}>
       <Box mb={6}>
         {view === View.EDIT ? (
           <Box className="flex flex-col lg:flex-row lg:justify-between">
-            <Heading as="h1" className="text-3xl text-gray-800 mb-3" fontFamily="Silka">
+            <Heading as="h1" fontSize="3xl" color="gray.800" mb={{ base: 3, lg: 0 }} fontFamily="Silka">
               {title}
             </Heading>
           </Box>
         ) : (
           <Box className="flex flex-col md:flex-row justify-between">
-            <Heading as="h1" className="text-3xl text-gray-800 mb-3 lg:mb-0" fontFamily="Silka">
+            <Heading as="h1" fontSize="3xl" color="gray.800" mb={{ base: 3, lg: 0 }} fontFamily="Silka">
               {title}
             </Heading>
             {shouldShowEditorActions ? (

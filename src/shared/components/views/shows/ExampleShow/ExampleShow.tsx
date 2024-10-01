@@ -22,7 +22,7 @@ import ResolvedWord from 'src/shared/components/ResolvedWord';
 import ResolvedNsibidiCharacter from 'src/shared/components/ResolvedNsibidiCharacter';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
-import { PronunciationData } from 'src/backend/controllers/utils/interfaces';
+import { PronunciationData, Translation } from 'src/backend/controllers/utils/interfaces';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
@@ -80,7 +80,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
       review: false,
     },
   ) => (
-    <VStack backgroundColor={archived ? 'orange.200' : ''} alignItems="start">
+    <VStack backgroundColor={archived ? 'orange.200' : ''} alignItems="start" my={2}>
       <ReactAudioPlayer data-test="pronunciations" src={audio} style={{ height: '40px', width: '250px' }} controls />
       <HStack gap={2}>
         <Text className="space-x-4" display="flex">
@@ -126,8 +126,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
     })();
   }, [record]);
 
-  console.log({ record });
-
   return record?.id ? (
     <Skeleton isLoaded={!isLoading}>
       <Box className="shadow-sm p-4 lg:p-10">
@@ -151,9 +149,10 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               diffRecord={diffRecord}
               fallbackValue={get(source, 'text')}
               renderNestedObject={(value) => (
-                <span>
-                  {String(value || false)} ({LanguageLabels[get(record, 'source.language')]?.label})
-                </span>
+                <chakra.span overflowWrap="anywhere">
+                  <chakra.span overflowWrap="anywhere">{String(value || false)}</chakra.span> (
+                  {LanguageLabels[get(record, 'source.language')]?.label})
+                </chakra.span>
               )}
             />
           </ShowTextRenderer>
@@ -162,16 +161,31 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
             </ArrayDiffField>
           </ShowTextRenderer>
-          <ShowTextRenderer title="Translated text" icon={<LuScrollText />}>
+          <ShowTextRenderer title="Sentence translations" icon={<LuScrollText />}>
             {record.translations.map((_, index) => (
               <DiffField
                 path={`translations.${index}.text`}
                 diffRecord={diffRecord}
-                fallbackValue={get(translations, `${index}.text`)}
-                renderNestedObject={(value) => (
-                  <span>
-                    {String(value || false)} ({LanguageLabels[get(record, `translations.${index}.language`)]?.label})
-                  </span>
+                fallbackValue={get(translations, `${index}`)}
+                renderNestedObject={(translation: Translation) => (
+                  <VStack alignItems="start" width="full" gap={2}>
+                    <details>
+                      <summary>
+                        <chakra.span overflowWrap="anywhere">
+                          <chakra.span overflowWrap="anywhere">{String(translation.text || false)}</chakra.span> (
+                          {LanguageLabels[get(translation, 'language')]?.label})
+                        </chakra.span>
+                      </summary>
+                      <ArrayDiffField
+                        recordField={`translations.${index}.pronunciations`}
+                        record={record}
+                        hideEmpty
+                        hideBullets
+                      >
+                        <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
+                      </ArrayDiffField>
+                    </details>
+                  </VStack>
                 )}
               />
             ))}
@@ -197,20 +211,6 @@ const ExampleShow = (props: ShowProps): ReactElement => {
               ))}
             </ShowTextRenderer>
           ) : null}
-          <ShowTextRenderer title="Translate text pronunciations" icon={<LuFileAudio />}>
-            {record.translations
-              ? record.translations.map((_, index) => (
-                  <ArrayDiffField
-                    recordField={`translations.${index}.pronunciations`}
-                    record={record}
-                    hideEmpty
-                    hideBullets
-                  >
-                    <ArrayDiff diffRecord={diffRecord} renderNestedObject={renderNestedAudioPronunciation} />
-                  </ArrayDiffField>
-                ))
-              : null}
-          </ShowTextRenderer>
           {archivedTranslationPronunciations.length ? (
             <ShowTextRenderer title="Archived translated text pronunciations" icon={<LuArchive />}>
               {archivedTranslationPronunciations.map((archivedPronunciation, index) => (

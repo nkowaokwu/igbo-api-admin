@@ -18,6 +18,11 @@ export interface SentenceTranslationVerificationPayload {
 
 export interface SentenceTranslation {
   id: string;
+  translations: (Translation & { id: string })[];
+}
+
+export interface SentenceTranslationPayload {
+  id: string;
   translations: Translation[];
 }
 

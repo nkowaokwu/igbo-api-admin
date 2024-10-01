@@ -9,7 +9,7 @@ import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import {
-  SentenceTranslation,
+  SentenceTranslationPayload,
   SentenceTranslationVerificationPayload,
 } from 'src/Core/Collections/IgboSoundbox/types/SoundboxInterfaces';
 import { request } from './utils/request';
@@ -22,7 +22,6 @@ interface ExampleReviewsPayload {
   id: any;
   reviews: { [pronunciationId: string]: ReviewActions };
 }
-interface TranslationPayload extends SentenceTranslation {}
 
 export const getRandomExampleSuggestionsToTranslate = async (count = 5): Promise<ExampleSuggestion[]> => {
   const { data: result } = await request<{ exampleSuggestions: ExampleSuggestion[] }>({
@@ -35,7 +34,7 @@ export const getRandomExampleSuggestionsToTranslate = async (count = 5): Promise
   return result.exampleSuggestions;
 };
 
-export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPayload[]): Promise<any> =>
+export const putRandomExampleSuggestionsToTranslate = (rawData: SentenceTranslationPayload[]): Promise<any> =>
   request({
     method: 'PUT',
     url: `${Collections.EXAMPLE_SUGGESTIONS}/translate`,
