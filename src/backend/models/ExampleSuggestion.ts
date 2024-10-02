@@ -31,6 +31,7 @@ const translationSchema = new Schema(
       default: [],
     },
     approvals: { type: [{ type: String }], default: [] },
+    denials: { type: [{ type: String }], default: [] },
     authorId: { type: String, default: '' },
   },
   { toObject: toObjectPlugin, timestamps: true },

@@ -423,10 +423,9 @@ export const getRandomExampleSuggestionForTranslationReview = async (
           exampleSuggestion.translations = exampleSuggestion.translations.filter(({ language }) =>
             userProjectPermission.languages.includes(language),
           );
-          return exampleSuggestion;
+          return exampleSuggestion.toJSON();
         })
         .filter((exampleSuggestion) => exampleSuggestion.translations.length)
-        .map((exampleSuggestion) => exampleSuggestion.toJSON())
         .map((exampleSuggestion) => {
           // Only show translations the user has not reviewed
           exampleSuggestion.translations = exampleSuggestion.translations.filter(
