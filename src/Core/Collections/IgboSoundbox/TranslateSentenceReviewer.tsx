@@ -20,17 +20,17 @@ const TranslateSentenceReview = ({
 }): ReactElement => (
   <VStack width="full" my={2}>
     {translations.map(({ text, language, pronunciations, _id }) => (
-      <VStack width="full">
+      <VStack width="full" backgroundColor="gray.200" borderRadius="md" pt={3}>
+        <Text>{text}</Text>
+        <Text fontSize="sm" color="gray.600">
+          Language: {LanguageLabels[language].label}
+        </Text>
         <ResourceReviewer
           onApprove={() => onApprove(_id.toString())}
           onDeny={() => onDeny(_id.toString())}
           reviewAction={exampleReview.reviews[_id.toString()]}
         >
           <VStack>
-            <Text>{text}</Text>
-            <Text fontSize="sm" color="gray.600">
-              {LanguageLabels[language].label}
-            </Text>
             <ReactAudioPlayer
               style={{ height: '40px', width: '150px' }}
               id="audio"

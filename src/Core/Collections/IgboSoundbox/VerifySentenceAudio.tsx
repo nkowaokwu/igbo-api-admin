@@ -11,8 +11,8 @@ import {
 import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
@@ -206,7 +206,12 @@ const VerifySentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TEXT_AUDIO_ANNOTATION}
+      isVerifying
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );

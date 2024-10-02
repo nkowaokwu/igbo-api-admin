@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { Card, Spinner } from 'src/shared/primitives';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import { API_ROUTE } from 'src/shared/constants';
@@ -194,7 +194,12 @@ const RecordSentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples recording setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TEXT_AUDIO_ANNOTATION}
+      isVerifying={false}
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );

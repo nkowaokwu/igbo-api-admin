@@ -11,7 +11,7 @@ interface ResourceReviewerInterface {
 }
 
 const DesktopView = ({ onDeny, onApprove, reviewAction, children }: ResourceReviewerInterface) => (
-  <HStack alignItems="center" gap={2} width="full">
+  <HStack justifyContent="center" alignItems="center" gap={2} width="full">
     <Tooltip label="Deny">
       <Button
         onClick={onDeny}
@@ -68,7 +68,10 @@ const MobileView = ({ onDeny, onApprove, reviewAction, children }: ResourceRevie
 
 const ResourceReviewer = (props: ResourceReviewerInterface): ReactElement => (
   <Box
-    className="text-center flex flex-row justify-center w-full"
+    display="flex"
+    justifyContent="center"
+    width="full"
+    textAlign="center"
     backgroundColor="gray.200"
     borderRadius="md"
     my={3}

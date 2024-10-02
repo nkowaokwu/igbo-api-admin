@@ -11,7 +11,7 @@ import {
 } from 'src/shared/DataCollectionAPI';
 import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
@@ -276,7 +276,12 @@ const TranslateSentences = ({
   ) : noExamples ? (
     <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TRANSLATION}
+      isVerifying={false}
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );
