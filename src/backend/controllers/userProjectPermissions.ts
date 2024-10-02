@@ -4,6 +4,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 /**
  *
@@ -43,7 +44,7 @@ export const getUserProjectPermissionByDocIdHelper = async ({
   id: string;
   projectId: string;
   status?: EntityStatus;
-}): Promise<Document<UserProjectPermission>> => {
+}): Promise<Document<UserProjectPermission, any, UserProjectPermission>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
@@ -71,7 +72,7 @@ export const getUserProjectPermissionHelper = async ({
   uid: string;
   projectId: string;
   status?: EntityStatus;
-}): Promise<Document<UserProjectPermission, any, any>> => {
+}): Promise<Document<UserProjectPermission, any, UserProjectPermission>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
@@ -80,6 +81,34 @@ export const getUserProjectPermissionHelper = async ({
   return UserProjectPermission.findOne({
     projectId,
     firebaseId: uid,
+    ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
+  });
+};
+
+/**
+ *
+ * @param param0
+ * @returns Gets all project by roles
+ */
+export const getUserProjectPermissionsByRoleHelper = async ({
+  mongooseConnection,
+  projectId,
+  role,
+  status = EntityStatus.ACTIVE,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  role: UserRoles;
+  status?: EntityStatus;
+}): Promise<Document<UserProjectPermission, any, UserProjectPermission>[]> => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission',
+    userProjectPermissionSchema,
+  );
+
+  return UserProjectPermission.find({
+    projectId,
+    role,
     ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
   });
 };

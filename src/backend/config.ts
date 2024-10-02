@@ -30,6 +30,7 @@ export const DOCUMENT_UPDATE_NOTIFICATION = config?.sendgrid?.document_update_no
 export const REPORT_USER_NOTIFICATION = config?.sendgrid?.report_user_notification;
 export const AUDIO_PRONUNCIATION_DELETION_NOTIFICATION = config?.sendgrid?.audio_pronunciation_deletion_notification;
 export const MEMBER_INVITE = config?.sendgrid?.member_invite;
+export const MEMBER_ACCEPTED_INVITE = config?.sendgrid?.member_accepted_invite;
 export const API_FROM_EMAIL = config?.sendgrid?.sender_email;
 export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email;
 

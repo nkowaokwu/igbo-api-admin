@@ -1,12 +1,14 @@
 import { Response, NextFunction } from 'express';
+import { Connection } from 'mongoose';
 import { IGBO_API_EDITOR_PLATFORM_ROOT, IGBO_API_PROJECT_ID } from 'src/backend/config';
-import { sendMemberInvite } from 'src/backend/controllers/email';
+import { sendMemberAcceptedInviteAdmin, sendMemberInvite } from 'src/backend/controllers/email';
 import { getProjectByIdHelper } from 'src/backend/controllers/projects';
 import {
   deleteUserProjectPermissionByEmailHelper,
   getUserProjectPermissionByDocIdHelper,
   getUserProjectPermissionByEmailHelper,
   getUserProjectPermissionHelper,
+  getUserProjectPermissionsByRoleHelper,
   postUserProjectPermissionHelper,
 } from 'src/backend/controllers/userProjectPermissions';
 import { findUserByEmail, postUserHelper } from 'src/backend/controllers/users';
@@ -15,6 +17,40 @@ import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces'
 import Author from 'src/backend/shared/constants/Author';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
+
+const sendAdminNotificationForMemberAcceptingInviteHelper = async ({
+  mongooseConnection,
+  projectId,
+  userEmail,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  userEmail: string;
+}) => {
+  try {
+    const project = await getProjectByIdHelper({
+      mongooseConnection,
+      projectId,
+    });
+    const adminUserProjectPermissions = await getUserProjectPermissionsByRoleHelper({
+      mongooseConnection,
+      projectId,
+      role: UserRoles.ADMIN,
+      status: EntityStatus.ACTIVE,
+    });
+
+    if (adminUserProjectPermissions?.length) {
+      await sendMemberAcceptedInviteAdmin({
+        to: adminUserProjectPermissions.map((userProjectPermission) => userProjectPermission.toJSON().email),
+        projectId,
+        userEmail,
+        projectTitle: project?.toJSON?.()?.title || 'Project',
+      });
+    }
+  } catch (err) {
+    console.log('Unable to send admin notification about new member joining Igbo API project:', err?.message);
+  }
+};
 
 /**
  *
@@ -59,6 +95,12 @@ export const acceptMemberInviteForIgboAPI = async (
       projectId: invitingProjectId,
       uid: user.uid,
       status: EntityStatus.ACTIVE,
+    });
+
+    await sendAdminNotificationForMemberAcceptingInviteHelper({
+      mongooseConnection,
+      projectId: invitingProjectId,
+      userEmail: user.email,
     });
 
     if (existingUserProjectPermission) {
@@ -173,6 +215,12 @@ export const acceptMemberInvite = async (
     }
 
     const savedUserProjectPermission = await userProjectPermission.save();
+
+    await sendAdminNotificationForMemberAcceptingInviteHelper({
+      mongooseConnection,
+      projectId,
+      userEmail: savedUserProjectPermission?.toJSON?.()?.email,
+    });
 
     // eslint-disable-next-line max-len
     const redirectUrl = `${IGBO_API_EDITOR_PLATFORM_ROOT}?invitingProjectId=${projectId}&uid=${savedUserProjectPermission.firebaseId}`;

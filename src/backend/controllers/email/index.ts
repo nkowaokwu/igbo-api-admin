@@ -13,6 +13,7 @@ import {
   REPORT_USER_NOTIFICATION,
   AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
   MEMBER_INVITE,
+  MEMBER_ACCEPTED_INVITE,
 } from 'src/backend/config';
 import constructMessage from 'src/backend/controllers/email/utils/constructMessage';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
@@ -193,6 +194,15 @@ export const sendMemberInvite = async (data: Interfaces.MemberInvite): Promise<v
   const message = constructMessage({
     to: [data.to],
     templateId: MEMBER_INVITE,
+    dynamic_template_data: omit(data, ['to']),
+  });
+  return sendEmail(message);
+};
+
+export const sendMemberAcceptedInviteAdmin = async (data: Interfaces.MemberAcceptedInvite): Promise<void> => {
+  const message = constructMessage({
+    to: data.to,
+    templateId: MEMBER_ACCEPTED_INVITE,
     dynamic_template_data: omit(data, ['to']),
   });
   return sendEmail(message);
