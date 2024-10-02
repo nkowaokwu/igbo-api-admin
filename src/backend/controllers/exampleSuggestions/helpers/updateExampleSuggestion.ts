@@ -2,7 +2,6 @@ import { Connection } from 'mongoose';
 import { assign, omit } from 'lodash';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
-import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 
 /**
  * Helper function that updates an Example Suggestion
@@ -34,8 +33,6 @@ const updateExampleSuggestion = ({
       if (exampleSuggestion.merged) {
         throw new Error('Unable to edit a merged example suggestion');
       }
-
-      await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
       // Properly handle merging
       Object.entries(data?.crowdsourcing || {}).forEach(([key, value]) => {
