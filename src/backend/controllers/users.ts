@@ -155,7 +155,7 @@ export const getUsers = async (
     ).length;
 
     // If the client is searching for a user use the following logic
-    if (Object.values(filters).length) {
+    if (Object.values(filters).length || Boolean(skip)) {
       users = (await findUsers()).filter((user) =>
         Object.values(filters).every((value: string) => {
           const displayName = (user.displayName || '').toLowerCase();
@@ -202,6 +202,7 @@ export const getUsers = async (
           }
           return user;
         })
+        .slice(skip, limit)
         .concat(
           userProjectPermissionsWithoutFirebase.map(({ email, role, status }) => ({
             displayName: '',
