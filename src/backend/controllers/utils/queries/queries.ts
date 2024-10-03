@@ -12,7 +12,7 @@ import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 3;
-type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
+type ExampleSearchQuery = [{ 'source.text': RegExp }, { 'translations.text': RegExp }];
 
 type Filters = {
   $expr?: any;
@@ -190,8 +190,8 @@ export const searchExamplesRegexQuery = (
   regex: SearchRegExp,
   filters: { [key: string]: string },
   projectId: string,
-): { $or: ExampleSearchQuery; archived: { [key: string]: boolean } } => ({
-  $or: [{ source: { text: regex.wordReg } }, { 'translations.text': regex.definitionsReg }],
+): { $or: ExampleSearchQuery; archived: { [key: string]: boolean }; projectId: { $eq: string } } => ({
+  $or: [{ 'source.text': regex.wordReg }, { 'translations.text': regex.definitionsReg }],
   archived: { $ne: true },
   projectId: { $eq: projectId },
   ...(filters ? generateSearchFilters(filters, uid) : {}),
