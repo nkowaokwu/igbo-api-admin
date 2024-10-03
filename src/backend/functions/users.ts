@@ -20,9 +20,9 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const db = admin.firestore();
 
 /**
- *
+ * Determines the desired user role while developing based on the email
  * @param email
- * @returns Determines the desired user role while developing based on the email
+ * @returns UserRole
  */
 const determineUserRoleFromEmail = (email: string) =>
   email.startsWith(UserRoles.ADMIN)
