@@ -17,7 +17,7 @@ export const DataEntryFlowGroupLabels = {
   },
   [DataEntryFlowGroup.CREATE_DATA]: {
     title: 'Create data',
-    subtitle: 'Use these options to add ad-hoc data after your initial data dump',
+    subtitle: 'Use these options to add ad-hoc data after your initial data import',
   },
   [DataEntryFlowGroup.EDIT_DATA]: {
     title: 'Edit data',

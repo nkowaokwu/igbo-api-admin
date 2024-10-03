@@ -42,7 +42,7 @@ describe('App', () => {
     await findByText('Corpus Suggestions');
     await findByText('Constructed Term Polls');
     await findByText('Users');
-    await findByText('Data Dump');
+    await findByText('Import Data');
     await findByText('Igbo Definitions');
     await findByText('Igbo Text Images');
     await findByText('Upload Igbo Text Images');
@@ -64,7 +64,7 @@ describe('App', () => {
     await findByText('Corpus Suggestions');
     await findByText('Constructed Term Polls');
     expect(await queryByText('Users')).toBeNull();
-    expect(await queryByText('Data Dump')).toBeNull();
+    expect(await queryByText('Import Data')).toBeNull();
     expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
@@ -87,7 +87,7 @@ describe('App', () => {
     await findByText('Corpus Suggestions');
     await findByText('Constructed Term Polls');
     expect(await queryByText('Users')).toBeNull();
-    expect(await queryByText('Data Dump')).toBeNull();
+    expect(await queryByText('Import Data')).toBeNull();
     expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
@@ -110,7 +110,7 @@ describe('App', () => {
     expect(await queryByText('Corpus Suggestions')).toBeNull();
     expect(await queryByText('Constructed Term Polls')).toBeNull();
     expect(await queryByText('Users')).toBeNull();
-    expect(await queryByText('Data Dump')).toBeNull();
+    expect(await queryByText('Import Data')).toBeNull();
     expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));
@@ -132,7 +132,7 @@ describe('App', () => {
     expect(await queryByText('Corpus Suggestions')).toBeNull();
     expect(await queryByText('Constructed Term Polls')).toBeNull();
     expect(await queryByText('Users')).toBeNull();
-    expect(await queryByText('Data Dump')).toBeNull();
+    expect(await queryByText('Import Data')).toBeNull();
     expect(await queryByText('Igbo Definitions')).toBeNull();
     expect(await queryByText('Profile')).toBeNull();
     expect(queryByText('Igbo Text Images'));

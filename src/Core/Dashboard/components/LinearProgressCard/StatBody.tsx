@@ -1,8 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Box, Divider, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
-
-const numberWithCommas = (x: number) => `${x}`.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+import numberWithCommas from 'src/utils/numberWithCommas';
 
 const StatBody = ({
   totalCount,

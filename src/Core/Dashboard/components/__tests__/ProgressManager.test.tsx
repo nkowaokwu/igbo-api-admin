@@ -12,10 +12,10 @@ describe('ProgressManager', () => {
     );
 
     await findByText('Create a New Word');
-    await findByText('Create a New Example Sentence');
+    await findByText('Create a New Sentence Draft');
     await findByText('Create a New Nsịbịdị Character');
     await findByText('Edit an Existing Word');
-    await findByText('Edit an Existing Example Sentence');
+    await findByText('Edit an Existing Sentence');
     await findByText('Edit an Existing Nsịbịdị Character');
   });
 });

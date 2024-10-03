@@ -206,7 +206,7 @@ const getStartedRoutes = (permissions) =>
     {
       name: 'dataDump',
       key: 'dataDump',
-      options: { label: 'Data Dump' },
+      options: { label: 'Import Data' },
       list: withLastRoute(DataDump),
       icon: () => <LuHardDriveUpload />,
       group: ResourceGroup.GET_STARTED,

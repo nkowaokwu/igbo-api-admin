@@ -34,7 +34,7 @@ export const getEditingOptions = ({ isIgboAPIProject }: { isIgboAPIProject: bool
     {
       key: Collection.EXAMPLE_SUGGESTIONS,
       icon: (props) => <FiBookOpen {...props} />,
-      title: 'Create a New Example Sentence',
+      title: 'Create a New Sentence Draft',
       subtitle: 'Create a new example Igbo sentence. Each sentence includes Igbo and English.',
       hash: `#/exampleSuggestions/${Views.CREATE}`,
       buttonLabel: 'Create example sentence',
@@ -61,7 +61,7 @@ export const getEditingOptions = ({ isIgboAPIProject }: { isIgboAPIProject: bool
     {
       key: Collection.EXAMPLES,
       icon: (props) => <LuFileEdit {...props} />,
-      title: 'Edit an Existing Example Sentence',
+      title: 'Edit an Existing Sentence',
       subtitle: 'See a mistake in a translation? Want to add more metadata? Search for a sentence and edit it.',
       hash: `#/examples/${Views.LIST}`,
       buttonLabel: 'Search for example sentence',
