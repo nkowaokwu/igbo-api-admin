@@ -142,6 +142,18 @@ export const getUsers = async (
     const { projectId } = req.query;
     let users = [];
 
+    const allUserProjectPermissions = await getUserProjectPermissionsByProjectHelper({
+      mongooseConnection,
+      projectId,
+      status: EntityStatus.UNSPECIFIED,
+      skip: 0,
+      limit: 10000,
+    });
+
+    const totalUsersCount = allUserProjectPermissions.map(
+      (userProjectPermission) => userProjectPermission.toJSON().firebaseId,
+    ).length;
+
     // If the client is searching for a user use the following logic
     if (Object.values(filters).length) {
       users = (await findUsers()).filter((user) =>
@@ -156,14 +168,9 @@ export const getUsers = async (
       );
       users = users.slice(skip, skip + 1 + limit);
 
-      const userProjectPermissions = await getUserProjectPermissionsByProjectHelper({
-        mongooseConnection,
-        projectId,
-        uids: users.map(({ uid }) => uid),
-        status: EntityStatus.UNSPECIFIED,
-        skip,
-        limit,
-      });
+      const userProjectPermissions = allUserProjectPermissions.filter((userProjectPermission) =>
+        users.find(({ uid }) => uid === userProjectPermission.toJSON().firebaseId),
+      );
 
       userProjectPermissions.forEach((userProjectPermission) => {
         const userIndex = users.findIndex(({ uid }) => uid === userProjectPermission.toJSON().firebaseId);
@@ -173,15 +180,9 @@ export const getUsers = async (
       });
     } else {
       // Else we'll look at user permission documents first
-      const userProjectPermissions = (
-        await getUserProjectPermissionsByProjectHelper({
-          mongooseConnection,
-          projectId,
-          status: EntityStatus.UNSPECIFIED,
-          skip,
-          limit,
-        })
-      ).map((userProjectPermission) => userProjectPermission.toJSON());
+      const userProjectPermissions = allUserProjectPermissions.map((userProjectPermission) =>
+        userProjectPermission.toJSON(),
+      );
 
       const userProjectPermissionsWithoutFirebase = userProjectPermissions.filter(({ firebaseId }) => !firebaseId);
 
@@ -214,7 +215,7 @@ export const getUsers = async (
         );
     }
 
-    return res.setHeader('Content-Range', users.length).status(200).send(users);
+    return res.setHeader('Content-Range', totalUsersCount).status(200).send(users);
   } catch (err) {
     return next(new Error(`An error occurred while grabbing all users: ${err.message}`));
   }
