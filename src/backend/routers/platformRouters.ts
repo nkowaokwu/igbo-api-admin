@@ -8,6 +8,7 @@ import apiRouter from 'src/backend/routers/apiRouter';
 import editorRouter from 'src/backend/routers/editorRouter';
 import crowdsourcerRouter from 'src/backend/routers/crowdsourcerRouter';
 import transcriberRouter from 'src/backend/routers/transcriberRouter';
+import mergerRouter from 'src/backend/routers/mergerRouter';
 import adminRouter from 'src/backend/routers/adminRouter';
 import openRouter from 'src/backend/routers/openRouter';
 
@@ -28,6 +29,7 @@ platformRouters.use(apiRouter);
 platformRouters.use(crowdsourcerRouter);
 platformRouters.use(transcriberRouter);
 platformRouters.use(editorRouter);
+platformRouters.use(mergerRouter);
 platformRouters.use(adminRouter);
 
 export default platformRouters;

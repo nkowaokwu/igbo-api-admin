@@ -14,30 +14,28 @@ const wordMergeDataSchema = Joi.object().keys({
   }),
 });
 
-export default async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response<any> | void> => {
+export default async (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<void> => {
   const { body: finalData, user, mongooseConnection } = req;
   const { projectId } = req.query;
   const suggestionDoc: any = await findWordSuggestionById(finalData.id, projectId, mongooseConnection);
   req.suggestionDoc = suggestionDoc;
 
   if (!user || (user && !user.uid)) {
-    res.status(400);
-    return res.send(new Error('User uid is required'));
+    res.status(400).send(new Error('User uid is required'));
+    return;
   }
 
   try {
     await wordMergeDataSchema.validateAsync(finalData, { abortEarly: false });
-    return next();
+    next();
+    return;
   } catch (err) {
     res.status(400);
     if (err.details) {
       const errorMessage = err.details.map(({ message }) => message).join('. ');
-      return res.send({ error: errorMessage });
+      res.send({ error: errorMessage });
+      return;
     }
-    return res.send({ error: err.message });
+    res.send({ error: err.message });
   }
 };

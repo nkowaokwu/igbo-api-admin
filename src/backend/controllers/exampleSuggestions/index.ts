@@ -287,7 +287,7 @@ export const getRandomExampleSuggestionsToReview = async (
 ): Promise<any | void> => {
   try {
     const { limit, user, mongooseConnection } = await handleQueries(req);
-   const { projectId } = req.query;
+    const { projectId } = req.query;
     const {
       userProjectPermission: { languages },
     } = req;
@@ -808,6 +808,36 @@ export const denyExampleSuggestion = async (
     const savedExampleSuggestion = await exampleSuggestion.save();
     // userInteractions doesn't get updated on denials to currently track data collection
     return res.send(savedExampleSuggestion);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Bulk deletes up to 100 Example Suggestions
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns Success message
+ */
+export const bulkDeleteExampleSuggestions = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ success: boolean }> | void> => {
+  try {
+    const { mongooseConnection } = req;
+    const { projectId } = req.query;
+    const ids = req.body;
+    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
+      'ExampleSuggestion',
+      exampleSuggestionSchema,
+    );
+
+    const result = await ExampleSuggestion.deleteMany({ _id: { $in: ids }, projectId, merged: null });
+    console.log('Deleted Example Suggestions: ', result);
+
+    return res.send({ success: true });
   } catch (err) {
     return next(err);
   }

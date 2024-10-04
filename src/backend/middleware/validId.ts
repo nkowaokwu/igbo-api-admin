@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
 import mongoose from 'mongoose';
-import * as Interfaces from '../controllers/utils/interfaces';
+import { EditorRequest } from '../controllers/utils/interfaces';
 
-export default (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
+export default async (req: EditorRequest, res: Response, next: NextFunction): Promise<any> => {
   try {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
