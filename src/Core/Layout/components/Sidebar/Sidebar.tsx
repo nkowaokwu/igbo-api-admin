@@ -5,7 +5,6 @@ import { Drawer, useMediaQuery, Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { setSidebarVisibility, ReduxState, useLocale } from 'ra-core';
 import { SidebarProps } from 'react-admin';
-import UserSection from 'src/Core/Layout/components/Sidebar/components/UserSection';
 
 const useStyles = makeStyles(
   (theme) => ({
@@ -84,7 +83,6 @@ const Sidebar = (props: SidebarProps): ReactElement => {
       {...rest}
     >
       {children}
-      <UserSection toggleSidebar={toggleSidebar} />
     </Drawer>
   ) : isSmall ? (
     <Drawer

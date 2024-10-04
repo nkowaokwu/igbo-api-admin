@@ -142,7 +142,6 @@ const theme = createTheme({
       fixed: {
         padding: 'var(--chakra-sizes-0)',
         backgroundColor: 'var(--chakra-colors-white)',
-        position: 'relative',
       },
       drawerPaper: {
         width: 'auto',

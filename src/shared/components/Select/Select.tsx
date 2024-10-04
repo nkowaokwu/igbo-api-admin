@@ -137,7 +137,7 @@ const Select = ({
                 label: (() => (
                   <chakra.span display="flex" alignItems="center">
                     <LuMerge className="mr-2 inline" />
-                    Merge
+                    Finalize
                   </chakra.span>
                 ))(),
                 onSelect: () => withConfirm(setAction(actionsMap.Merge)),

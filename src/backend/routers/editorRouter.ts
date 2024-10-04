@@ -1,7 +1,5 @@
 import express from 'express';
 import {
-  deleteWordSuggestion,
-  bulkDeleteWordSuggestions,
   deleteOldWordSuggestions,
   getWordSuggestion,
   getWordSuggestions,
@@ -9,20 +7,11 @@ import {
   postWordSuggestion,
   approveWordSuggestion,
   denyWordSuggestion,
-  postRandomWordSuggestionsForIgboDefinitions,
 } from 'src/backend/controllers/wordSuggestions';
-import { deleteCorpusSuggestion } from 'src/backend/controllers/corpusSuggestions';
-import {
-  deleteWord,
-  putWord,
-  mergeWord,
-  getAssociatedWordSuggestions,
-  getAssociatedWordSuggestionsByTwitterId,
-} from 'src/backend/controllers/words';
+import { getAssociatedWordSuggestions, getAssociatedWordSuggestionsByTwitterId } from 'src/backend/controllers/words';
 import { putCorpus, mergeCorpus } from 'src/backend/controllers/corpora';
-import { putExample, mergeExample, getAssociatedExampleSuggestions } from 'src/backend/controllers/examples';
+import { getAssociatedExampleSuggestions } from 'src/backend/controllers/examples';
 import {
-  deleteExampleSuggestion,
   getExampleSuggestion,
   getExampleSuggestions,
   putExampleSuggestion,
@@ -44,31 +33,22 @@ import { getNotifications, getNotification, deleteNotification } from 'src/backe
 import validId from 'src/backend/middleware/validId';
 import authorization from 'src/backend/middleware/authorization';
 import validateExampleBody from 'src/backend/middleware/validateExampleBody';
-import validateExampleMerge from 'src/backend/middleware/validateExampleMerge';
 import validateWordBody from 'src/backend/middleware/validateWordBody';
-import validateWordMerge from 'src/backend/middleware/validateWordMerge';
 import validateCorpusBody from 'src/backend/middleware/validateCorpusBody';
 import validateCorpusMerge from 'src/backend/middleware/validateCorpusMerge';
-import validateApprovals from 'src/backend/middleware/validateApprovals';
 import validateNsibidiCharacterBody from 'src/backend/middleware/validateNsibidiCharacterBody';
 import interactWithSuggestion from 'src/backend/middleware/interactWithSuggestion';
 import resolveWordDocument from 'src/backend/middleware/resolveWordDocument';
-import validateBulkDeleteLimit from 'src/backend/middleware/validateBulkDeleteLimit';
 import Collection from 'src/shared/constants/Collection';
-import { adminRoles, editorRoles, mergerRoles, nsibidiMergerRoles } from 'src/backend/shared/constants/RolePermissions';
+import { adminRoles, editorRoles, nsibidiMergerRoles } from 'src/backend/shared/constants/RolePermissions';
 
 const editorRouter = express.Router();
 editorRouter.use(authorization(editorRoles));
 
 /* These routes are used to allow users to suggest new words and examples */
-editorRouter.post(`/${Collection.WORDS}`, authorization(mergerRoles), validateWordMerge, validateApprovals, mergeWord);
-editorRouter.put(`/${Collection.WORDS}/:id`, authorization(mergerRoles), validId, putWord);
-editorRouter.delete(`/${Collection.WORDS}/:id`, authorization(mergerRoles), validId, deleteWord);
 editorRouter.get(`/${Collection.WORDS}/:id/wordSuggestions`, validId, getAssociatedWordSuggestions);
 editorRouter.get(`/${Collection.WORDS}/:id/twitterPolls`, getAssociatedWordSuggestionsByTwitterId);
 
-editorRouter.post(`/${Collection.EXAMPLES}`, authorization(mergerRoles), validateExampleMerge, mergeExample);
-editorRouter.put(`/${Collection.EXAMPLES}/:id`, authorization(mergerRoles), validId, putExample);
 editorRouter.get(`/${Collection.EXAMPLES}/:id/exampleSuggestions`, validId, getAssociatedExampleSuggestions);
 
 editorRouter.post(`/${Collection.CORPORA}`, authorization(adminRoles), validateCorpusMerge, mergeCorpus);
@@ -82,11 +62,7 @@ editorRouter.post(
   resolveWordDocument,
   postWordSuggestion,
 );
-editorRouter.post(
-  `/${Collection.WORD_SUGGESTIONS}/igbo-definitions`,
-  authorization(mergerRoles),
-  postRandomWordSuggestionsForIgboDefinitions,
-);
+
 editorRouter.put(
   `/${Collection.WORD_SUGGESTIONS}/:id`,
   validId,
@@ -98,14 +74,7 @@ editorRouter.put(
 editorRouter.get(`/${Collection.WORD_SUGGESTIONS}/:id`, validId, getWordSuggestion);
 editorRouter.put(`/${Collection.WORD_SUGGESTIONS}/:id/approve`, validId, approveWordSuggestion);
 editorRouter.put(`/${Collection.WORD_SUGGESTIONS}/:id/deny`, validId, denyWordSuggestion);
-editorRouter.delete(
-  `/${Collection.WORD_SUGGESTIONS}`,
-  authorization(mergerRoles),
-  validateBulkDeleteLimit,
-  bulkDeleteWordSuggestions,
-);
 editorRouter.delete(`/${Collection.WORD_SUGGESTIONS}/old`, authorization(adminRoles), deleteOldWordSuggestions);
-editorRouter.delete(`/${Collection.WORD_SUGGESTIONS}/:id`, authorization(mergerRoles), validId, deleteWordSuggestion);
 
 editorRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}`, getExampleSuggestions);
 
@@ -125,12 +94,6 @@ editorRouter.put(
 editorRouter.get(`/${Collection.EXAMPLE_SUGGESTIONS}/:id`, validId, getExampleSuggestion);
 editorRouter.put(`/${Collection.EXAMPLE_SUGGESTIONS}/:id/approve`, validId, approveExampleSuggestion);
 editorRouter.put(`/${Collection.EXAMPLE_SUGGESTIONS}/:id/deny`, validId, denyExampleSuggestion);
-editorRouter.delete(
-  `/${Collection.EXAMPLE_SUGGESTIONS}/:id`,
-  authorization(mergerRoles),
-  validId,
-  deleteExampleSuggestion,
-);
 
 editorRouter.get(`/${Collection.EXAMPLE_TRANSCRIPTION_FEEDBACK}/:id`, validId, getExampleTranscriptionFeedback);
 
@@ -154,13 +117,6 @@ editorRouter.delete(
   authorization(adminRoles),
   validId,
   deleteNsibidiCharacter,
-);
-
-editorRouter.delete(
-  `/${Collection.CORPUS_SUGGESTIONS}/:id`,
-  authorization(mergerRoles),
-  validId,
-  deleteCorpusSuggestion,
 );
 
 editorRouter.get(`/${Collection.POLLS}`, getPolls);

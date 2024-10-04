@@ -91,9 +91,9 @@ export default {
     successMessage: 'Notification has been sent 📬',
   },
   [ActionTypes.MERGE]: {
-    type: 'Merge',
-    title: 'Merge Document',
-    content: 'Are you sure you want to merge this document?',
+    type: 'Finalize',
+    title: 'Finalize Document',
+    content: 'Are you sure you want to finalize this document?',
     executeAction: async ({
       record,
       resource,
@@ -109,7 +109,7 @@ export default {
       ]);
       return res;
     },
-    successMessage: 'Document has been merged 🎉',
+    successMessage: 'Document has been finalized 🎉',
     hasLink: true,
   },
   [ActionTypes.DELETE]: {

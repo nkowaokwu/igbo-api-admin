@@ -4,7 +4,7 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
-import { uploadExamplePronunciation } from './plugins/examplePronunciationHook';
+import { removeAudioPronunciations, uploadExamplePronunciation } from './plugins/examplePronunciationHook';
 import { normalizeIgbo } from './plugins/normalizationHooks';
 import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
 
@@ -89,6 +89,7 @@ export const exampleSuggestionSchema = new Schema(
 
 toJSONPlugin(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
+removeAudioPronunciations(exampleSuggestionSchema);
 normalizeIgbo(exampleSuggestionSchema);
 
 exampleSuggestionSchema.index({

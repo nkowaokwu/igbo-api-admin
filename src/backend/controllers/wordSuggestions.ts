@@ -375,8 +375,8 @@ export const bulkDeleteWordSuggestions = async (
 ): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
-    const ids = req.body;
     const { projectId } = req.query;
+    const ids = req.body;
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,

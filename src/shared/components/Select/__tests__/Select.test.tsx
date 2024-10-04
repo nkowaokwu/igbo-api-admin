@@ -69,7 +69,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      expect(await queryByText('Merge')).toBeNull();
+      expect(await queryByText('Finalize')).toBeNull();
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
@@ -87,7 +87,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      await findByText('Merge');
+      await findByText('Finalize');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -138,7 +138,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      expect(await queryByText('Merge')).toBeNull();
+      expect(await queryByText('Finalize')).toBeNull();
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
@@ -156,7 +156,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      await findByText('Merge');
+      await findByText('Finalize');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -192,7 +192,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      expect(await queryByText('Merge')).toBeNull();
+      expect(await queryByText('Finalize')).toBeNull();
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Copy Document URL');
@@ -210,7 +210,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      await findByText('Merge');
+      await findByText('Finalize');
       await findByText('Approve');
       await findByText('Deny');
       await findByText('Delete');
@@ -231,7 +231,7 @@ describe("Editor's Actions", () => {
       await findByLabelText('Edit entry button');
 
       userEvent.click(selectMenu);
-      const mergeButton = await findByText('Merge');
+      const mergeButton = await findByText('Finalize');
       expect(mergeButton.parentNode).toHaveProperty('disabled', true);
       await findByText('Approve');
       await findByText('Deny');

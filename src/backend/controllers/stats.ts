@@ -592,7 +592,6 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
     await disconnectDatabase();
   } catch (err) {
     await disconnectDatabase();
-    // console.log(err);
   }
 };
 
@@ -622,7 +621,6 @@ export const onUpdateTotalAudioDashboardStats = async (): Promise<
     return result;
   } catch (err) {
     await disconnectDatabase();
-    // console.log(err);
     return null;
   }
 };
@@ -659,7 +657,6 @@ export const incrementTotalUserStat = async (): Promise<any> => {
     const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
     const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
     if (!stat) {
-      // console.log('There is no total user stat');
       return null;
     }
     stat.value = (stat?.value ?? 0) + 1;

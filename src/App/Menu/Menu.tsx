@@ -23,13 +23,15 @@ const Menu = ({ onMenuClick }: MenuProps) => {
     [permissions, isIgboAPIProject],
   );
 
-  const routesByResourceGroups = resourceRoutes.reduce((finalGroupedRoutes, route) => {
-    if (!finalGroupedRoutes[route.group]) {
-      finalGroupedRoutes[route.group] = [];
-    }
-    finalGroupedRoutes[route.group].push(route);
-    return finalGroupedRoutes;
-  }, {} as { [key in ResourceGroup]: Resource[] });
+  const groupedResourceRoutes = Object.entries(
+    resourceRoutes.reduce((finalGroupedRoutes, route) => {
+      if (!finalGroupedRoutes[route.group]) {
+        finalGroupedRoutes[route.group] = [];
+      }
+      finalGroupedRoutes[route.group].push(route);
+      return finalGroupedRoutes;
+    }, {} as { [key in ResourceGroup]: Resource[] }),
+  );
 
   return (
     <motion.div
@@ -38,7 +40,7 @@ const Menu = ({ onMenuClick }: MenuProps) => {
       initial={false}
       animate={{ width: isOpen ? '' : 0 }}
       style={{
-        height: '100%',
+        height: 'cal(100% - 67px - var(--chakra-sizes-2))',
         minWidth: '280px',
         display: 'flex',
         flexDirection: 'column',
@@ -50,11 +52,11 @@ const Menu = ({ onMenuClick }: MenuProps) => {
         defaultIndex={[0, 1, 2]}
         allowMultiple
         borderColor="transparent"
-        height="100vh"
+        height="full"
         overflowY="visible"
         pb={16}
       >
-        {Object.entries(routesByResourceGroups).map(([key, routes], index) => (
+        {groupedResourceRoutes.map(([key, routes], index) => (
           <AccordionItem borderTopWidth={0} key={key}>
             <Box className="flex flex-row justify-between items-center" position={index ? '' : 'absolute'}>
               <AccordionButton width="full" pointerEvents={index ? 'auto' : 'none'} height={index ? '' : 0}>

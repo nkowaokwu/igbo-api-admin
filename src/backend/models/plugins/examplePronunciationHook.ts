@@ -26,6 +26,14 @@ const getOldPronunciationId = (audio: string) => {
   return { isMp3, oldId };
 };
 
+/* Helper function to handle deleting audio files */
+const handleDeletingAudio = (pronunciations: PronunciationSchema[]) => {
+  pronunciations.map(async (pronunciation) => {
+    const { isMp3, oldId } = getOldPronunciationId(pronunciation.audio);
+    await deleteAudioPronunciation(oldId, isMp3);
+  });
+};
+
 /* Helper function to handle uploading audio files */
 const handleUploadingAudio = async (
   id: string,
@@ -87,7 +95,7 @@ const handleUploadingAudio = async (
 };
 
 /* If the client sent over blob data for pronunciation, it will be uploaded to AWS S3 */
-export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): void => {
+export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): any => {
   schema.pre('save', async function (next) {
     try {
       const id = (this._id || this.id).toString();
@@ -114,6 +122,30 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
       next();
       return this;
     } catch (err) {
+      this.invalidate('source.pronunciations', err.message);
+      return null;
+    }
+  });
+};
+
+export const removeAudioPronunciations = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): any => {
+  schema.pre(['deleteOne', 'deleteMany', 'findOneAndDelete'], async function (next) {
+    try {
+      const ExampleSuggestion = mongoose.model('ExampleSuggestion', schema);
+      const deletedExampleSuggestions = await ExampleSuggestion.find(this.getFilter());
+
+      await Promise.all(
+        deletedExampleSuggestions.map(async (exampleSuggestion) => {
+          await handleDeletingAudio(exampleSuggestion.source.pronunciations);
+          await Promise.all(
+            exampleSuggestion.translations.map((translation) => handleDeletingAudio(translation.pronunciations)),
+          );
+        }),
+      );
+      next();
+      return await this;
+    } catch (err) {
+      console.log('Unable to delete Example Suggestion audio pronunciations', err);
       this.invalidate('source.pronunciations', err.message);
       return null;
     }
