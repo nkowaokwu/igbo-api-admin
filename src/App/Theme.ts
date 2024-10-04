@@ -29,6 +29,14 @@ const theme = createTheme({
       root: {
         borderRight: '1px solid var(--chakra-colors-gray-300)',
       },
+      // Desktop
+      paperAnchorDockedLeft: {
+        paddingBottom: '0 !important',
+      },
+      // Mobile
+      paperAnchorLeft: {
+        paddingBottom: 'var(--chakra-sizes-16)',
+      },
     },
     MuiPaper: {
       root: {
@@ -142,6 +150,7 @@ const theme = createTheme({
       fixed: {
         padding: 'var(--chakra-sizes-0)',
         backgroundColor: 'var(--chakra-colors-white)',
+        position: 'unset',
       },
       drawerPaper: {
         width: 'auto',
