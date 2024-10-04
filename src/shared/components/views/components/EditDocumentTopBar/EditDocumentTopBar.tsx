@@ -20,7 +20,7 @@ const CreateSuggestion = ({
   push: (value: any) => void;
 }): ReactElement => (
   <Button onClick={() => determineCreateSuggestionRedirection({ record, resource, push })} leftIcon={<LuFilePlus />}>
-    Suggest an Edit
+    Create a draft
   </Button>
 );
 

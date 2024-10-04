@@ -20,7 +20,15 @@ const UserSection = ({ toggleSidebar }: { toggleSidebar?: () => void }): React.R
   };
 
   return (
-    <VStack alignItems="start" px={4} width="full" position="absolute" bottom={0} backgroundColor="white">
+    <VStack
+      alignItems="start"
+      px={4}
+      width="full"
+      position="absolute"
+      bottom={0}
+      backgroundColor="white"
+      maxHeight="67px"
+    >
       <Divider />
       <HStack justifyContent="space-between" py={2} gap={2} width="full">
         <Tooltip label="View profile">
