@@ -43,10 +43,10 @@ export const putCurrentProject = async (project: Partial<ProjectData>): Promise<
   return result.project;
 };
 
-export const getAllProjects = async (): Promise<(ProjectData & { role: UserRoles })[]> => {
+export const getAllUserProjects = async (): Promise<(ProjectData & { role: UserRoles })[]> => {
   const { data: result } = await request<{ projects: (ProjectData & { role: UserRoles })[] }>({
     method: 'GET',
-    url: `${Collection.PROJECTS}`,
+    url: `${Collection.PROJECTS}/user`,
   });
   return result.projects;
 };

@@ -21,7 +21,7 @@ const ExampleSuggestionList = (props: ListProps): React.ReactElement => {
   return (
     <List
       {...props}
-      title="Example Suggestions"
+      title="Sentence Drafts"
       actions={<ListActions />}
       bulkActionButtons={hasAdminOrMergerPermissions(permissions, <BulkSuggestionActions />)}
       pagination={<Pagination />}

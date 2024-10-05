@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
 import { FiSettings } from 'react-icons/fi';
-import { getAllProjects } from 'src/shared/ProjectAPI';
+import { getAllUserProjects } from 'src/shared/ProjectAPI';
 import { ProjectData } from 'src/backend/controllers/utils/interfaces';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
@@ -61,7 +61,7 @@ const ProjectSelectorModal = ({
     if (!projects.length) {
       (async () => {
         try {
-          const userProjects = await getAllProjects();
+          const userProjects = await getAllUserProjects();
           setProjects(userProjects);
         } finally {
           setIsLoading(false);
