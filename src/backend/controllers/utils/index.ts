@@ -35,7 +35,7 @@ const constructRegexQuery = ({
     ? createQueryRegex(queryValue)
     : queryValue
     ? createQueryRegex(queryValue)
-    : { wordReg: /^[.{0,}\n{0,}]/, definitionsReg: /^[.{0,}\n{0,}]/ };
+    : { wordReg: /^.{0,}/, definitionsReg: /^.{0,}/ };
 };
 
 const fallbackUser = {
@@ -143,8 +143,8 @@ export const packageResponse = async <T>({
 }: {
   res: Response;
   docs: any[];
-  model: Model<Document<T, any, any>>;
-  query: Query<Document<T, any, any> | Document<T, any, any>[], Document<T, any, any>>;
+  model: Model<T, any, any>;
+  query: Query<T | any | Document<T, any, any>[], Document<T, any, any>>;
   sort: { key: string; direction: boolean | 'asc' | 'desc' };
 }): Promise<Response> => {
   // Not handling sorting to preserve alphabetical order

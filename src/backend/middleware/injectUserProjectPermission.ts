@@ -1,7 +1,11 @@
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import { getUserProjectPermissionHelper } from 'src/backend/controllers/userProjectPermissions';
+import {
+  getUserProjectPermissionHelper,
+  postUserProjectPermissionPlatformAdminHelper,
+} from 'src/backend/controllers/userProjectPermissions';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import PlatformAdminUids from 'src/backend/shared/constants/PlatformAdminUids';
 
 /**
  *
@@ -17,6 +21,15 @@ const injectUserProjectPermission = async (
 ): Promise<Response<{ error: string }> | void> => {
   const { mongooseConnection, query, user } = req;
   const { projectId, invitingProjectId } = query;
+
+  // Short-circuits and allows a Platform Admin to view all resources as admin
+  if (PlatformAdminUids.includes(user.uid)) {
+    const body = { email: user.email, firebaseId: user.uid };
+    const userProjectPermission = postUserProjectPermissionPlatformAdminHelper({ mongooseConnection, projectId, body });
+    req.user.role = userProjectPermission.role;
+    req.userProjectPermission = userProjectPermission.toJSON();
+    return next();
+  }
 
   const userProjectPermission = await getUserProjectPermissionHelper({
     mongooseConnection,

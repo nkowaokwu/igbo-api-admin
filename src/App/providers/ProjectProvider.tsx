@@ -5,7 +5,7 @@ import Loading from 'src/Core/Loading';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import { ProjectData } from 'src/backend/controllers/utils/interfaces';
 import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
-import { getAllProjects, getCurrentProject } from 'src/shared/ProjectAPI';
+import { getAllUserProjects, getCurrentProject } from 'src/shared/ProjectAPI';
 
 const auth = getAuth();
 
@@ -15,7 +15,7 @@ export const ProjectProvider = ({ children }: React.PropsWithChildren): React.Re
 
   const refetch = async () => {
     // Gets all projects to get the default project
-    const userProjects = await getAllProjects();
+    const userProjects = await getAllUserProjects();
     if (!localStorage.getItem(LocalStorageKeys.PROJECT_ID)) {
       localStorage.setItem(LocalStorageKeys.PROJECT_ID, userProjects[0]?.id?.toString() || '');
     }

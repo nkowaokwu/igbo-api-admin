@@ -12,6 +12,7 @@ import Author from 'src/backend/shared/constants/Author';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import LicenseType from 'src/backend/shared/constants/LicenseType';
 import VisibilityType from 'src/backend/shared/constants/VisibilityType';
+import { handleQueries, packageResponse } from 'src/backend/controllers/utils';
 
 /**
  *
@@ -32,12 +33,42 @@ export const getProjectByIdHelper = async ({
 
 /**
  *
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns Paginated Projects
+ */
+export const getProjects = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<Interfaces.ProjectData[]> | void> => {
+  try {
+    const { skip, limit } = await handleQueries(req);
+    const { mongooseConnection } = req;
+    const Project = mongooseConnection.model<Interfaces.ProjectData>('Project', projectSchema);
+
+    const projects = (await Project.find({}, null, { skip, limit })).map((project) => project.toJSON());
+
+    return await packageResponse<Interfaces.ProjectData>({
+      res,
+      docs: projects,
+      model: Project,
+      query: {},
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ *
  * @param req
  * @param res
  * @param next
  * @returns Fetches all projects that the requesting user has access to
  */
-export const getProjects = async (
+export const getUserProjects = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,

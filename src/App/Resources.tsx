@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiHome, FiBarChart, FiBook, FiBookOpen } from 'react-icons/fi';
+import { FiHome, FiBarChart, FiBook, FiBookOpen, FiFolder } from 'react-icons/fi';
 import {
   LuSettings,
   LuHardDriveUpload,
@@ -16,6 +16,7 @@ import {
   hasEditorPermissions,
   hasAtLeastCrowdsourcerPermissions,
   hasAccessToPlatformPermissions,
+  hasPlatformAdminPermissions,
 } from 'src/shared/utils/permissions';
 import Home from 'src/Core/Home';
 import Pricing from 'src/Core/Pricing';
@@ -55,7 +56,6 @@ const PollCreate = React.lazy(() => import('src/Core/Collections/Polls/PollCreat
 const UserList = React.lazy(() => import('src/Core/Collections/Users/UserList'));
 const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'));
 const ProjectSettings = React.lazy(() => import('src/Core/Collections/ProjectSettings'));
-// const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
 const IgboTextImages = React.lazy(() => import('src/Core/Collections/TextImages'));
@@ -64,6 +64,7 @@ const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
 const Stats = React.lazy(() => import('src/Core/Stats'));
 const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
+const ProjectList = React.lazy(() => import('src/Core/Collections/Projects/ProjectList'));
 
 export enum ResourceGroup {
   UNSPECIFIED = 'UNSPECIFIED',
@@ -71,6 +72,7 @@ export enum ResourceGroup {
   LEXICAL = 'LEXICAL',
   DATA_COLLECTION = 'DATA_COLLECTION',
   SETTINGS = 'SETTINGS',
+  PLATFORM_ADMIN = 'PLATFORM_ADMIN',
 }
 
 export const ResourceGroupLabels = {
@@ -79,6 +81,7 @@ export const ResourceGroupLabels = {
   [ResourceGroup.LEXICAL]: 'Published data',
   [ResourceGroup.DATA_COLLECTION]: 'Draft data',
   [ResourceGroup.SETTINGS]: 'Project',
+  [ResourceGroup.PLATFORM_ADMIN]: 'Platform admin',
 };
 
 export interface Resource {
@@ -214,6 +217,19 @@ const getStartedRoutes = (permissions) =>
     },
   ]) || [];
 
+const platformAdminRoutes = (permissions) =>
+  hasPlatformAdminPermissions(permissions, [
+    {
+      name: 'projects',
+      key: 'projects',
+      options: { label: 'Projects' },
+      list: withLastRoute(ProjectList),
+      icon: () => <FiFolder />,
+      group: ResourceGroup.PLATFORM_ADMIN,
+      generalProject: true,
+    },
+  ]) || [];
+
 const settingsRoutes = (permissions) =>
   hasAdminPermissions(permissions, [
     {
@@ -287,6 +303,7 @@ export const getResourceObjects = (permissions: any): Resource[] => [
   ...editorRoutes(permissions),
   ...settingsRoutes(permissions),
   ...crowdsourcerRoutes(permissions),
+  ...platformAdminRoutes(permissions),
 ];
 
 export const getCustomRouteObjects = (): any => [
