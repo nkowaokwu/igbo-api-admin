@@ -8,6 +8,11 @@ enum UserRoles {
    *
    * Additionally, only they can approve new applications
    */
+  PLATFORM_ADMIN = 'platform_admin',
+
+  /**
+   * Admins are owners and high-level managers of projects
+   */
   ADMIN = 'admin',
 
   /**

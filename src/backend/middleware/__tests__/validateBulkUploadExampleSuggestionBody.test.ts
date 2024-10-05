@@ -1,31 +1,26 @@
 import validateBulkUploadExampleSuggestionBody from 'src/backend/middleware/validateBulkUploadExampleSuggestionBody';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
-import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
-import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 describe('validateBulkUploadExampleSuggestionBody', () => {
   it('passes validation for the provided bulk sentence data', async () => {
     const body = [
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: SuggestionSourceEnum.IGBO_SPEECH,
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          text: 'igbo',
+          language: LanguageEnum.IGBO,
+        },
       },
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: SuggestionSourceEnum.IGBO_SPEECH,
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          text: 'yoruba',
+          language: LanguageEnum.YORUBA,
+        },
       },
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: SuggestionSourceEnum.IGBO_SPEECH,
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          text: 'english',
+          language: LanguageEnum.ENGLISH,
+        },
       },
     ];
 
@@ -41,28 +36,23 @@ describe('validateBulkUploadExampleSuggestionBody', () => {
   it('fails validation for the provided bulk sentence data', async () => {
     const body = [
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: 'rubbish',
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          language: LanguageEnum.IGBO,
+        },
       },
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: SuggestionSourceEnum.IGBO_SPEECH,
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          yoruba: 'yoruba',
+          language: LanguageEnum.YORUBA,
+        },
       },
       {
-        igbo: 'testing',
-        english: 'testing',
-        style: ExampleStyleEnum.NO_STYLE,
-        origin: SuggestionSourceEnum.IGBO_SPEECH,
-        type: SentenceTypeEnum.DATA_COLLECTION,
+        source: {
+          text: 'english',
+          language: LanguageEnum.ENGLISH,
+        },
       },
     ];
-
     const mockReq = { body };
     const mockRes = { status: jest.fn(), send: jest.fn() };
     const mockNext = jest.fn();

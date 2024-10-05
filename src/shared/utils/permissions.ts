@@ -1,6 +1,12 @@
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { betaEmailList } from 'src/shared/constants/emailList';
-import { adminRoles, mergerRoles, editorRoles, crowdsourcerRoles } from 'src/backend/shared/constants/RolePermissions';
+import {
+  adminRoles,
+  mergerRoles,
+  editorRoles,
+  crowdsourcerRoles,
+  platformAdminRoles,
+} from 'src/backend/shared/constants/RolePermissions';
 
 export const hasNoEditorPermissions = <T extends unknown>(
   permissions: { role?: UserRoles } = { role: UserRoles.USER },
@@ -37,6 +43,16 @@ export const hasAdminPermissions = <T extends unknown>(
   returnWithPermission: T,
 ): any | null => {
   if (adminRoles.includes(permissions?.role)) {
+    return returnWithPermission;
+  }
+  return null;
+};
+
+export const hasPlatformAdminPermissions = <T extends unknown>(
+  permissions: { role?: UserRoles } = { role: UserRoles.USER },
+  returnWithPermission: T,
+): any | null => {
+  if (platformAdminRoles.includes(permissions?.role)) {
     return returnWithPermission;
   }
   return null;

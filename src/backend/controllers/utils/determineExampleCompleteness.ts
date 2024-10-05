@@ -17,16 +17,15 @@ export default async (
   const {
     associatedWords = [],
     style = '',
-    pronunciations = [],
-    source = { language: LanguageEnum.UNSPECIFIED, text: '' },
-    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '' }],
+    source = { language: LanguageEnum.UNSPECIFIED, pronunciations: [], text: '' },
+    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] }],
     meaning = '',
     archived = false,
   } = record;
 
   const isAudioAvailable = await new Promise((resolve) => {
     if (!skipAudioCheck) {
-      pronunciations.forEach(({ audio }) => {
+      source.pronunciations.forEach(({ audio }) => {
         axios
           .get(audio)
           .then(() => resolve(true))
@@ -38,7 +37,7 @@ export default async (
           });
       });
     }
-    return resolve(pronunciations[0]?.audio?.startsWith('https://'));
+    return resolve(source.pronunciations[0]?.audio?.startsWith('https://'));
   });
 
   const sufficientExampleRequirements = compact([
@@ -50,7 +49,8 @@ export default async (
 
   const completeExampleRequirements = compact([
     ...sufficientExampleRequirements,
-    (pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) || !pronunciations.length) &&
+    (source.pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) ||
+      !source.pronunciations.length) &&
       'An audio pronunciation is needed',
     style === ExampleStyle[ExampleStyleEnum.PROVERB].value && !meaning && 'Meaning is required for proverb',
   ]);

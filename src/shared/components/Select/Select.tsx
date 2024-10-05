@@ -15,7 +15,7 @@ import {
   useDisclosure,
   chakra,
 } from '@chakra-ui/react';
-import { FiEye, FiEdit3 } from 'react-icons/fi';
+import { FiEye, FiEdit3, FiExternalLink } from 'react-icons/fi';
 import {
   LuAtSign,
   LuBan,
@@ -45,6 +45,7 @@ import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import RolesDrawer from 'src/shared/components/Select/components/RolesDrawer';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import { deleteMemberInvite } from 'src/shared/InviteAPI';
+import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import Confirmation from '../Confirmation';
 import SelectInterface from './SelectInterface';
 
@@ -79,6 +80,7 @@ const Select = ({
   ];
   const mergedResources = [Collection.WORDS, Collection.EXAMPLES, Collection.CORPORA];
 
+  const isProjectResource = resource === Collection.PROJECTS;
   const isSuggestionResource = suggestionResources.includes(resource as Collection);
   const isMergedResource = mergedResources.includes(resource as Collection);
   const isUserResource = Collection.USERS === resource;
@@ -91,6 +93,11 @@ const Select = ({
   const withConfirm = (value: any) => {
     setIsConfirmOpen(true);
     return value;
+  };
+
+  const handleOnNavigateToProjectAsAdmin = () => {
+    window.localStorage.setItem(LocalStorageKeys.PROJECT_ID, record.id);
+    window.location.reload();
   };
 
   const onDeleteMemberInvite = async ({ record }) => {
@@ -470,6 +477,27 @@ const Select = ({
               }
             >
               {showButtonLabels ? 'Edit' : ''}
+            </FullButton>
+          </Tooltip>
+        ) : null}
+        {isProjectResource ? (
+          <Tooltip label="Go to project">
+            <FullButton
+              variant={showButtonLabels ? '' : 'ghost'}
+              aria-label="Go to project button"
+              icon={<FiExternalLink style={{ width: 'var(--chakra-sizes-10)' }} />}
+              backgroundColor="white"
+              _hover={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              _active={{
+                backgroundColor: 'gray.200',
+                color: 'gray.800',
+              }}
+              onClick={handleOnNavigateToProjectAsAdmin}
+            >
+              {showButtonLabels ? 'View entry' : ''}
             </FullButton>
           </Tooltip>
         ) : null}

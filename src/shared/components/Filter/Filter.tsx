@@ -11,7 +11,7 @@ const Filter = (props: FilterInterface): ReactElement => {
   const { resource } = props;
   const filterKey =
     resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
-      ? 'example'
+      ? 'sentence'
       : resource === Collection.WORDS ||
         resource === Collection.WORD_SUGGESTIONS ||
         resource === Collection.NSIBIDI_CHARACTERS
@@ -19,7 +19,7 @@ const Filter = (props: FilterInterface): ReactElement => {
       : 'displayName';
   const placeholderText =
     resource === Collection.EXAMPLES || resource === Collection.EXAMPLE_SUGGESTIONS
-      ? 'example'
+      ? 'sentence draft'
       : resource === Collection.WORDS || resource === Collection.WORD_SUGGESTIONS
       ? 'word'
       : 'name or email';

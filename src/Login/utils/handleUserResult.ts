@@ -7,6 +7,7 @@ import LocalStorageKeys from 'src/shared/constants/LocalStorageKeys';
 import authProvider from 'src/utils/authProvider';
 import { IGBO_API_PROJECT_ID } from 'src/Core/constants';
 import { acceptIgboAPIRequest } from 'src/shared/InviteAPI';
+import PlatformAdminUids from 'src/backend/shared/constants/PlatformAdminUids';
 
 const auth = getAuth();
 export const handleUserResult = async ({
@@ -22,11 +23,13 @@ export const handleUserResult = async ({
     return;
   }
   const idTokenResult = await currentUser.getIdTokenResult(true);
-  const userRole = (idTokenResult.claims.role as UserRoles) || UserRoles.CROWDSOURCER;
   const {
     token,
     claims: { user_id: userId },
   } = idTokenResult;
+  const userRole = PlatformAdminUids.includes(userId as string)
+    ? UserRoles.PLATFORM_ADMIN
+    : (idTokenResult.claims.role as UserRoles) || UserRoles.CROWDSOURCER;
 
   const permissions = { role: userRole };
   const hasPermission = hasAccessToPlatformPermissions(permissions, true);

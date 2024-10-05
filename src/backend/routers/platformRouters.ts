@@ -10,6 +10,7 @@ import crowdsourcerRouter from 'src/backend/routers/crowdsourcerRouter';
 import transcriberRouter from 'src/backend/routers/transcriberRouter';
 import mergerRouter from 'src/backend/routers/mergerRouter';
 import adminRouter from 'src/backend/routers/adminRouter';
+import platformAdminRouter from 'src/backend/routers/platformAdminRouter';
 import openRouter from 'src/backend/routers/openRouter';
 
 const platformRouters = express.Router();
@@ -31,5 +32,6 @@ platformRouters.use(transcriberRouter);
 platformRouters.use(editorRouter);
 platformRouters.use(mergerRouter);
 platformRouters.use(adminRouter);
+platformRouters.use(platformAdminRouter);
 
 export default platformRouters;

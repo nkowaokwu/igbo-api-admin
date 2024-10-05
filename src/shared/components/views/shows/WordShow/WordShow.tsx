@@ -154,7 +154,7 @@ const WordShow = (props: ShowProps): ReactElement => {
           title={resourceTitle[resource]}
         />
         <ShowDocumentStats record={record} collection={Collection.WORDS} showFull={resource !== Collection.WORDS} />
-        <Box className="flex flex-col lg:flex-row mb-1 space-y-2 lg:space-y-0 lg:space-x-4" width="full">
+        <Box className="flex flex-col lg:flex-row mb-1 space-y-2 lg:space-x-4" width="full">
           <VStack alignItems="start" gap={2} flex={1}>
             <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
               <DocumentStats

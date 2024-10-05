@@ -1,9 +1,10 @@
 import { Response, NextFunction } from 'express';
-import { Connection, Document } from 'mongoose';
+import { Connection, Document, Types } from 'mongoose';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import { userProjectPermissionSchema } from 'src/backend/models/UserProjectPermissions';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 
 /**
  *
@@ -209,6 +210,40 @@ export const postUserProjectPermissionHelper = ({
   });
 
   return userProjectPermission.save();
+};
+
+/**
+ * The UserProjectPermission returned from this helper is NOT saved in the database
+ * @param param0
+ * @returns Helper function to create a new UserProjectPermission with Platform Admin role
+ *
+ */
+export const postUserProjectPermissionPlatformAdminHelper = ({
+  mongooseConnection,
+  projectId,
+  body,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+  body: Pick<UserProjectPermission, 'email' | 'firebaseId'>;
+}): Document<unknown, any, Interfaces.UserProjectPermission> &
+  Interfaces.UserProjectPermission & { _id: Types.ObjectId } => {
+  const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
+    'UserProjectPermission',
+    userProjectPermissionSchema,
+  );
+  const { email, firebaseId } = body;
+
+  const userProjectPermission = new UserProjectPermission({
+    status: EntityStatus.ACTIVE,
+    firebaseId: firebaseId || '',
+    projectId,
+    email,
+    role: UserRoles.PLATFORM_ADMIN,
+    grantingAdmin: firebaseId || '',
+  });
+
+  return userProjectPermission;
 };
 
 /**
