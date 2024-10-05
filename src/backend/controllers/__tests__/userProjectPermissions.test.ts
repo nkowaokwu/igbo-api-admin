@@ -18,6 +18,7 @@ import UserRoles from 'src/backend/shared/constants/UserRoles';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 
 jest.mock('mongoose');
+jest.unmock('../userProjectPermissions');
 
 describe('userProjectPermissions', () => {
   it('gets a user project permission with helper', async () => {
