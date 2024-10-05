@@ -1,4 +1,4 @@
-import { Connection, Document, Query } from 'mongoose';
+import { Connection } from 'mongoose';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
@@ -8,7 +8,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
  * @param mongooseConnection Connection
  * @returns Single Example Suggestion
  */
-export const findExampleSuggestionById = ({
+export const findExampleSuggestionById = async ({
   id,
   projectId,
   mongooseConnection,
@@ -16,12 +16,13 @@ export const findExampleSuggestionById = ({
   id: string;
   projectId: string;
   mongooseConnection: Connection;
-}): Query<any, Document<Interfaces.ExampleSuggestion>> => {
+}): Promise<Interfaces.ExampleSuggestion> => {
   const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
-  return ExampleSuggestion.findOne({ _id: id, projectId });
+  const exampleSuggestion = await ExampleSuggestion.findOne({ _id: id, projectId });
+  return exampleSuggestion;
 };
 
 export default findExampleSuggestionById;

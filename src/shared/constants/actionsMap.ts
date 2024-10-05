@@ -3,7 +3,6 @@ import { Record } from 'react-admin';
 import { EmptyResponse } from 'src/shared/server-validation';
 import { useCallable } from 'src/hooks/useCallable';
 import { bulkUploadExampleSuggestions } from 'src/shared/DataCollectionAPI';
-import UserRoles from 'src/backend/shared/constants/UserRoles';
 import {
   approveDocument,
   denyDocument,
@@ -15,7 +14,6 @@ import {
 import { ExampleClientData } from 'src/backend/controllers/utils/interfaces';
 import { bulkSentencesSchema } from 'src/shared/schemas/buildSentencesSchema';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
-import { putUserRole } from 'src/shared/UserAPI';
 import ActionTypes from './ActionTypes';
 import Collections from './Collection';
 
@@ -146,20 +144,6 @@ export default {
     }): Promise<any> => combineDocument({ primaryWordId, resource, record }),
     successMessage: 'Document has been combined into another ☄️',
     hasLink: true,
-  },
-  [ActionTypes.CONVERT]: {
-    type: 'Convert',
-    title: 'Change User UserRoles',
-    content: "Are you sure you want to change this user's role?",
-    executeAction: ({ record, value: role }: { record: Record; value: UserRoles }): Promise<any> => {
-      // @ts-ignore
-      if (!Object.values(UserRoles).includes(role)) {
-        Promise.reject(new Error('Invalid user role'));
-      }
-      putUserRole({ data: { role }, uid: record.uid });
-      return Promise.resolve();
-    },
-    successMessage: 'User role has been updated 👩🏾‍💻',
   },
   [ActionTypes.REQUEST_DELETE]: {
     type: 'Send Delete Request',

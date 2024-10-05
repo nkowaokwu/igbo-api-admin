@@ -14,7 +14,7 @@ const ShowNotificationButtonField = ({ source, record }: { source: string; recor
   };
 
   return (
-    <Button onClick={handleViewNotification} colorScheme="purple" aria-label="Create">
+    <Button onClick={handleViewNotification} variant="primary" aria-label="Create">
       View
     </Button>
   );

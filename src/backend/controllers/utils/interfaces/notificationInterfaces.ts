@@ -52,6 +52,13 @@ export interface MemberInvite {
   grantingAdmin: string;
 }
 
+export interface MemberAcceptedInvite {
+  to: string[];
+  projectId: string;
+  projectTitle: string;
+  userEmail: string;
+}
+
 export interface DocumentUpdateNotification {
   author: string;
   to: string;

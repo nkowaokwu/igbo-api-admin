@@ -10,7 +10,7 @@ import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
 import ConfirmModal from '../ConfirmModal';
 import { ConfirmationButtonInterface } from './ConfirmationInterface';
-import { approveRecord, convertUser, denyRecord, mergeRecord } from '../UpdateRecord';
+import { approveRecord, denyRecord, mergeRecord } from '../UpdateRecord';
 import InputIdForm from './InputIdForm';
 import InputNoteForm from './InputNoteForm';
 
@@ -46,8 +46,6 @@ const Confirmation = ({
         return denyRecord({ uid, record });
       case ActionTypes.MERGE:
         return mergeRecord({ uid, record });
-      case ActionTypes.CONVERT:
-        return convertUser({ uid, record });
       default:
         return record;
     }

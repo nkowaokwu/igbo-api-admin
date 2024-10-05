@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Controller, useForm } from 'react-hook-form';
-import { LuHardDriveUpload, LuTrash2 } from 'react-icons/lu';
+import { LuHardDriveUpload } from 'react-icons/lu';
 import Select from 'react-select';
 import { FilePicker, Textarea } from 'src/shared/primitives';
 import { Confirmation } from 'src/shared/components';
@@ -89,10 +89,6 @@ const DataDump = (): ReactElement => {
     setTextareaValue(e.fileContent || '');
   };
 
-  const handleClearFile = () => {
-    setTextareaValue('');
-  };
-
   const handleChangeTextarea = (e) => {
     setTextareaValue(e.target.value);
   };
@@ -133,7 +129,7 @@ const DataDump = (): ReactElement => {
     setFailures([]);
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = async () => {
     try {
       setIsConfirmationOpen(true);
     } catch (err) {
@@ -246,39 +242,11 @@ const DataDump = (): ReactElement => {
             >
               Upload sentences
             </Button>
-            {/* <Box className="w-full flex flex-col lg:flex-row justify-between items-start space-y-4 lg:space-y-0">
-              <Box className="w-full lg:w-8/12">
-                {textareaValue && fileData?.length ? (
-                  <Text className="space-x-2 mb-2">
-                    <WarningIcon boxSize={3} color="orange.600" />
-                    <chakra.span color="orange.600" fontSize="xs">
-                      {`Both an uploaded file and text within the text area have been provided. 
-                    Both sources of data will be uploaded.`}
-                    </chakra.span>
-                  </Text>
-                ) : null}
-                <Box className="w-full flex flex-col">
-                  {totalSentences ? (
-                    <Box className="w-full lg:w-6/12">
-                      <Text fontWeight="bold">Uploaded sentences</Text>
-                      <Box className="w-full flex flex-row space-x-6 items-center">
-                        <Progress
-                          value={!totalSentences ? 0 : Math.floor((successes.flat().length / totalSentences) * 100)}
-                          colorScheme="blue"
-                          size="lg"
-                          width="full"
-                          height="8px"
-                          borderRadius="full"
-                        />
-                        <Text fontFamily="Silka" className="w-4/12">
-                          {`${successes.flat().length} / ${totalSentences}`}
-                        </Text>
-                      </Box>
-                    </Box>
-                  ) : null}
-                </Box>
-              </Box>
-            </Box> */}
+            {isUploading ? (
+              <Text fontSize="sm" color="gray.600">
+                Don&apos;t leave this page while uploading data.
+              </Text>
+            ) : null}
           </VStack>
         </form>
         {Boolean(totalSentences) ? (

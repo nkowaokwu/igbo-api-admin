@@ -9,9 +9,10 @@ import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 3;
-type ExampleSearchQuery = [{ igbo: RegExp }, { english: RegExp }];
+type ExampleSearchQuery = [{ 'source.text': RegExp }, { 'translations.text': RegExp }];
 
 type Filters = {
   $expr?: any;
@@ -189,8 +190,8 @@ export const searchExamplesRegexQuery = (
   regex: SearchRegExp,
   filters: { [key: string]: string },
   projectId: string,
-): { $or: ExampleSearchQuery; archived: { [key: string]: boolean } } => ({
-  $or: [{ source: { text: regex.wordReg } }, { 'translations.text': regex.definitionsReg }],
+): { $or: ExampleSearchQuery; archived: { [key: string]: boolean }; projectId: { $eq: string } } => ({
+  $or: [{ 'source.text': regex.wordReg }, { 'translations.text': regex.definitionsReg }],
   archived: { $ne: true },
   projectId: { $eq: projectId },
   ...(filters ? generateSearchFilters(filters, uid) : {}),
@@ -295,7 +296,7 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
   updatedAt: { $gte: Date };
   'source.language': { $in: string[] };
   'source.pronunciations': { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
-  projectId: { $eq: Types.ObjectId };
+  projectId: { $eq: string };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
@@ -310,41 +311,102 @@ export const searchRandomExampleSuggestionsToReviewRegexQuery = ({
       $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
     },
   },
-  projectId: { $eq: new Types.ObjectId(projectId) },
+  projectId: { $eq: projectId },
 });
 
 /**
- * Returns ExampleSuggestion documents that are marked for review
- * @param uid
- * @returns
+ * ProjectType.TRANSLATE
  */
-export const searchRandomExampleSuggestionsToTranslateRegexQuery = (
-  uid: string,
-  projectId: string,
-): {
+/**
+ * Returns ExampleSuggestion documents that need translations
+ * @param uid
+ * @returns ExampleSuggestions documents query
+ */
+export const searchRandomExampleSuggestionsToTranslateRegexQuery = ({
+  uid,
+  projectId,
+  languages,
+}: {
+  uid: string;
+  projectId: string;
+  languages: LanguageEnum[];
+}): {
   merged: null;
-  translations: { $elemMatch: { text: string } };
   exampleForSuggestion: { $ne: true };
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
-  'pronunciations.0.audio': { $exists: boolean; $type: string; $ne: string };
-  pronunciations: { $elemMatch: { $and: { [key: string]: { $nin: [string] } }[] } };
+  $or: {
+    [key: string]:
+      | { $in: LanguageEnum[] }
+      | { $exists: false }
+      | { $eq: LanguageEnum }
+      | { 'translations.language': { $ne: LanguageEnum } }[];
+  }[];
   projectId: { $eq: string };
 } => ({
   merged: null,
-  translations: {
-    $elemMatch: { text: '' },
-  },
   exampleForSuggestion: { $ne: true },
   origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
-  'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' },
-  // Returns an example where the user hasn't approved or denied an audio pronunciation
-  pronunciations: {
+  $or: [
+    // If the sentence has no translations, we want to match
+    {
+      'source.language': { $in: languages },
+      'translations.0': { $exists: false },
+    },
+    // If there are translations then we want to match when there
+    // is no existing translation for a language the user can translate
+    ...languages.map((language) => {
+      const otherLanguages = languages.filter((currentLanguage) => currentLanguage !== language);
+      return {
+        'source.language': { $eq: language },
+        $or: otherLanguages.map((otherLanguage) => ({
+          'translations.language': { $ne: otherLanguage },
+          'translations.authorId': { $ne: uid },
+        })),
+      };
+    }),
+  ],
+  projectId: { $eq: projectId },
+});
+
+/**
+ * Returns ExampleSuggestion documents that need to be reviewed for translation
+ * @param uid
+ * @returns ExampleSuggestion document query
+ */
+export const searchRandomExampleSuggestionsToReviewTranslationsRegexQuery = ({
+  uid,
+  projectId,
+  languages,
+}: {
+  uid: string;
+  projectId: string;
+  languages: LanguageEnum[];
+}): {
+  merged: null;
+  exampleForSuggestion: { $ne: true };
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH };
+  'source.language': { $in: LanguageEnum[] };
+  translations: {
     $elemMatch: {
+      language: { $in: LanguageEnum[] };
+      $and: { [key: string]: { $nin: [string] } }[];
+    };
+  };
+  projectId: { $eq: string };
+} => ({
+  merged: null,
+  exampleForSuggestion: { $ne: true },
+  origin: { $ne: SuggestionSourceEnum.IGBO_SPEECH },
+  'source.language': { $in: languages },
+  translations: {
+    $elemMatch: {
+      language: { $in: languages },
       $and: [{ approvals: { $nin: [uid] } }, { denials: { $nin: [uid] } }],
     },
   },
   projectId: { $eq: projectId },
 });
+
 export const searchPreExistingExampleSuggestionsRegexQuery = ({
   igbo,
 }: {
@@ -589,14 +651,49 @@ export const searchTotalRecordedExampleSuggestionsForUser = ({
   projectId: string;
 }): {
   'denials.1': { $exists: boolean };
-  'source.pronunciations.audio': { $regex: RegExp; $type: string };
-  'source.pronunciations.speaker': string;
-  'source.pronunciations.review': boolean;
+  $or: [
+    {
+      'source.pronunciations.audio': { $regex: RegExp; $type: string };
+      'source.pronunciations.speaker': string;
+      'source.pronunciations.review': boolean;
+    },
+    {
+      'translations.pronunciations.audio': { $regex: RegExp; $type: string };
+      'translations.pronunciations.speaker': string;
+    },
+  ];
   projectId: { $eq: string };
 } => ({
   'denials.1': { $exists: false },
-  'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
-  'source.pronunciations.speaker': uid,
-  'source.pronunciations.review': true,
+  $or: [
+    {
+      'source.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+      'source.pronunciations.speaker': uid,
+      'source.pronunciations.review': true,
+    },
+    {
+      'translations.pronunciations.audio': { $regex: /^http/, $type: 'string' },
+      'translations.pronunciations.speaker': uid,
+    },
+  ],
+  projectId: { $eq: projectId },
+});
+
+/**
+ * Gets documents that include current user as an author for a translation
+ * @param param0
+ * @returns
+ */
+export const searchTotalTranslationsOnExampleSuggestionsForUser = ({
+  uid,
+  projectId,
+}: {
+  uid: string;
+  projectId: string;
+}): {
+  'translations.authorId': { $eq: string };
+  projectId: { $eq: string };
+} => ({
+  'translations.authorId': { $eq: uid },
   projectId: { $eq: projectId },
 });

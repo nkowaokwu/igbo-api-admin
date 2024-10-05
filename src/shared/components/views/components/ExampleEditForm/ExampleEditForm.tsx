@@ -22,6 +22,7 @@ import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import ExampleTranslationsForm from 'src/shared/components/views/components/ExampleEditForm/components/ExampleTranslationsForm';
 import ExampleEditFormResolver from './ExampleEditFormResolver';
 import { onCancel, sanitizeArray, sanitizeWith } from '../utils';
 import FormHeader from '../FormHeader';
@@ -46,6 +47,7 @@ const ExampleEditForm = ({
     ...ExampleEditFormResolver,
     mode: 'onChange',
   });
+
   const [originalRecord, setOriginalRecord] = useState(null);
   const [exampleTranscriptionFeedback, setExampleTranscriptionFeedback] = useState<ExampleTranscriptionFeedbackData>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +58,7 @@ const ExampleEditForm = ({
   const languageOptions = Object.values(LanguageLabels).filter(({ value }) => value !== LanguageEnum.UNSPECIFIED);
   const uid = useFirebaseUid();
   const isIgboAPIProject = useIsIgboAPIProject();
-  const { sourceLanguage, destinationLanguage } = getRecordLanguages(record);
+  const { sourceLanguage } = getRecordLanguages(record);
 
   useEffect(() => {
     if (isPreExistingSuggestion) {
@@ -256,54 +258,13 @@ const ExampleEditForm = ({
           {get(errors, 'source.text') ? <p className="error">Source text is required</p> : null}
           {get(errors, 'source.language') ? <p className="error">{`${sourceLanguage} is required`}</p> : null}
         </Box>
-        <Box className="flex flex-col">
-          <FormHeader
-            title="Translated text"
-            // eslint-disable-next-line max-len
-            tooltip={`The example sentence in ${destinationLanguage}. This is the the literal ${destinationLanguage} translation of the ${sourceLanguage} sentence.`}
-          />
-          <HStack
-            display="flex"
-            flexDirection={{ base: 'column', md: 'row' }}
-            justifyContent="space-between"
-            width="full"
-            gap={2}
-          >
-            <Controller
-              render={(props) => (
-                <Input {...props} placeholder={`Text in ${destinationLanguage}`} data-test="english-input" flex={8} />
-              )}
-              name="translations.0.text"
-              control={control}
-              defaultValue={get(record, 'translations.0.text') || get(getValues(), 'translations.0.text') || ''}
-            />
-            <Controller
-              render={(props) => (
-                <Select
-                  {...props}
-                  options={languageOptions}
-                  styles={{ container: (styles) => ({ ...styles, flex: 2, width: '100%' }) }}
-                />
-              )}
-              name="translations.0.language"
-              control={control}
-            />
-          </HStack>
-          {get(errors, 'translations.0.text') ? <p className="error">Translation text is required</p> : null}
-          {get(errors, 'translations.0.language') ? (
-            <p className="error">{`${destinationLanguage} is required`}</p>
-          ) : null}
-          <ExampleAudioPronunciationsForm
-            control={control}
-            record={record}
-            originalRecord={originalRecord}
-            uid={uid}
-            name="translations.0"
-          />
-          {get(errors, 'source.translations.0') ? (
-            <p className="error">{get(errors, 'source.translations.0.message')}</p>
-          ) : null}
-        </Box>
+        <ExampleTranslationsForm
+          record={record}
+          originalRecord={originalRecord}
+          uid={uid}
+          errors={errors}
+          control={control}
+        />
         {isIgboAPIProject ? (
           <Box className="flex flex-col">
             <FormHeader

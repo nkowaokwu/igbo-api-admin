@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import WordTags from '../shared/constants/WordTags';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import WordTags from 'src/backend/shared/constants/WordTags';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import AnnotationSchema from './Annotation';
 
@@ -21,6 +22,7 @@ export const corpusSchema = new Schema(
       ],
       default: [],
     },
+    languages: { types: [{ type: String, enum: Object.values(LanguageEnum) }], default: [] },
     projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },

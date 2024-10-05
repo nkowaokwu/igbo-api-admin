@@ -180,7 +180,7 @@ const IgboDefinitions = (): ReactElement => {
           <ActivityButton
             tooltipLabel="Next Igbo definition"
             onClick={currentCardIndex === wordSuggestions.length - 1 ? noop : handleNext}
-            colorScheme="purple"
+            variant="primary"
             icon={<ArrowForwardIcon color="white" />}
             aria-label="Next Igbo definition"
             isDisabled={currentCardIndex === wordSuggestions.length - 1}

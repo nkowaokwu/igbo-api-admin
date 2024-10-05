@@ -49,28 +49,24 @@ const MilestoneProgress = ({
   const wordStats = [
     {
       totalCount: sufficientWords,
-      goal: SUFFICIENT_WORDS_GOAL,
       heading: '"Sufficient" Words',
       description: `There are currently ${sufficientWords} "sufficient" words on the platform.
       Our goal is reach a total of ${SUFFICIENT_WORDS_GOAL} "sufficient" words.`,
     },
     {
       totalCount: completeWords,
-      goal: COMPLETE_WORDS_GOAL,
       heading: '"Complete" Words',
       description: `There are currently ${completeWords} "complete" words on the platform.
       Our goal is reach a total of ${COMPLETE_WORDS_GOAL} "complete" words.`,
     },
     {
       totalCount: dialectalVariations,
-      goal: DIALECTAL_VARIATIONS_GOAL,
       heading: 'Dialectal Variations',
       description: `There are currently ${dialectalVariations} dialectal word variations on the platform.
       Our goal is reach a total of ${DIALECTAL_VARIATIONS_GOAL} "complete" words.`,
     },
     {
       totalCount: headwordAudioPronunciations,
-      goal: HEADWORD_AUDIO_PRONUNCIATION_GOAL,
       heading: 'Headwords with Audio Pronunciations',
       description: `There are currently ${headwordAudioPronunciations} headwords 
       with audio pronunciations on the platform.
@@ -78,14 +74,12 @@ const MilestoneProgress = ({
     },
     {
       totalCount: standardIgbo,
-      goal: IS_STANDARD_IGBO_GOAL,
       heading: 'Standard Igbo Words',
       description: `There are currently ${standardIgbo} words marked as Standard Igbo 
       on the platform. Our next goal is to mark a total of ${IS_STANDARD_IGBO_GOAL} words.`,
     },
     {
       totalCount: igboDefinitions,
-      goal: IGBO_DEFINITIONS_GOAL,
       heading: 'Words with Igbo Definitions',
       description: `There are currently ${igboDefinitions} words with at least one Igbo definition 
       on the platform. Our next goal is to mark a total of ${IGBO_DEFINITIONS_GOAL} words.`,
@@ -95,14 +89,12 @@ const MilestoneProgress = ({
   const nsibidiStats = [
     {
       totalCount: nsibidiWords,
-      goal: WORDS_WITH_NSIBIDI_GOAL,
       heading: 'Words with Nsịbịdị',
       description: `There are currently ${nsibidiWords} words with Nsịbịdị on the platform. 
       Our next goal is to record a total of ${WORDS_WITH_NSIBIDI_GOAL} words with Nsịbịdị.`,
     },
     {
       totalCount: nsibidiWordSuggestions,
-      goal: WORD_SUGGESTIONS_WITH_NSIBIDI_GOAL,
       heading: 'Word Suggestions with Nsịbịdị',
       description: `There are currently ${nsibidiWordSuggestions} word suggestions 
       with Nsịbịdị on the platform. Our next goal is to record a total of 
@@ -113,7 +105,6 @@ const MilestoneProgress = ({
   const exampleStats = [
     {
       totalCount: sufficientExamples,
-      goal: EXAMPLE_SENTENCES_GOAL,
       heading: 'Sufficient Igbo Example Sentences',
       description: `There are currently ${sufficientExamples} sufficient example 
       sentences on the platform. Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} 
@@ -121,14 +112,12 @@ const MilestoneProgress = ({
     },
     {
       totalCount: completeExamples,
-      goal: EXAMPLE_SENTENCES_GOAL,
       heading: 'Complete Igbo Example Sentences',
       description: `There are currently ${completeExamples} complete example sentences on the platform.
       Our next goal is to mark a total of ${EXAMPLE_SENTENCES_GOAL} complete example sentences.`,
     },
     {
       totalCount: proverbExamples,
-      goal: PROVERBS_GOAL,
       heading: 'Igbo Proverbs Example Sentences',
       description: `There are currently ${proverbExamples} complete example sentences on the platform.
       Our next goal is to mark a total of ${PROVERBS_GOAL} complete example sentences.`,
@@ -138,7 +127,6 @@ const MilestoneProgress = ({
   const audioStats = [
     {
       totalCount: Math.floor(totalExampleAudio),
-      goal: TOTAL_EXAMPLE_AUDIO_GOAL,
       heading: 'Hours of example audio',
       description: `There are currently ${Math.floor(
         totalExampleAudio,
@@ -147,7 +135,6 @@ const MilestoneProgress = ({
     },
     {
       totalCount: Math.floor(totalExampleSuggestionAudio),
-      goal: TOTAL_EXAMPLE_SUGGESTION_AUDIO_GOAL,
       heading: 'Hours of example suggestion audio',
       description: `There are currently ${Math.floor(
         totalExampleSuggestionAudio,
@@ -176,7 +163,7 @@ const MilestoneProgress = ({
           </Text>
           <Text fontFamily="Silka">Track the total progress of the Igbo API.</Text>
         </Box>
-        <Box className="space-y-3">
+        <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <LinearProgressCard heading="Audio Stats" stats={audioStats} isLoaded={isAudioStatsLoaded} />
           <LinearProgressCard heading="Word Stats" stats={wordStats} isLoaded={isWordStatsLoaded} />
           <LinearProgressCard heading="Nsịbịdị Stats" stats={nsibidiStats} isLoaded={isNsibidiStatsLoaded} />

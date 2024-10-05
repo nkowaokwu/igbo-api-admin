@@ -10,5 +10,7 @@ export const ProjectContext = React.createContext({
   status: EntityStatus.UNSPECIFIED,
   visibility: VisibilityType.UNSPECIFIED,
   license: LicenseType.UNSPECIFIED,
+  languages: [],
+  types: [],
   triggerRefetch: () => null,
 });

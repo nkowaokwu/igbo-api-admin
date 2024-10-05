@@ -7,44 +7,57 @@ import { PronunciationSchema } from 'src/backend/controllers/utils/interfaces/pr
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 export interface ExampleClientData {
-  id?: string;
-  source?: Translation;
-  translations?: Translation[];
-  meaning?: string;
-  nsibidi?: string;
-  nsibidiCharacters?: string[];
-  type?: SentenceTypeEnum;
-  style?: ExampleStyleEnum;
-  origin?: SuggestionSourceEnum;
+  source: Translation;
+  translations: Translation[];
+  meaning: string;
+  nsibidi: string;
+  nsibidiCharacters: string[];
+  type: SentenceTypeEnum;
+  style: ExampleStyleEnum;
+  origin: SuggestionSourceEnum;
   associatedWords: string[];
-  associatedDefinitionsSchemas?: string[];
-  exampleForSuggestion?: boolean;
-  authorId?: string;
-  originalExampleId?: string;
+  associatedDefinitionsSchemas: string[];
+  exampleForSuggestion: boolean;
+  authorId: string;
+  originalExampleId: string;
   crowdsourcing: {
-    [key in CrowdsourcingType]?: boolean;
+    [key in CrowdsourcingType]: boolean;
   };
-  userInteractions?: string[];
+  userInteractions: string[];
+  updatedAt: Date;
 }
 
-export interface Example extends Document<ExampleData, any, any> {}
+export interface Example extends Document, ExampleData {}
 
 export interface Translation {
+  _id: string;
   language: LanguageEnum;
   text: string;
   pronunciations: PronunciationSchema[];
+  approvals: string[];
+  denials: string[];
+  authorId: string;
 }
+
+export interface OutgoingTranslation {
+  language: LanguageEnum;
+  text: string;
+  pronunciations: PronunciationSchema[];
+  approvals: string[];
+  denials: string[];
+  authorId: string;
+}
+
 export interface ExampleData {
-  id: Types.ObjectId | string;
-  source?: Translation;
-  translations?: Translation[];
-  meaning?: string;
-  nsibidi?: string;
+  source: Translation;
+  translations: Translation[];
+  meaning: string;
+  nsibidi: string;
   nsibidiCharacters: (Types.ObjectId | string)[];
   associatedWords: string[];
   associatedDefinitionsSchemas: string[];
   type: SentenceTypeEnum;
-  style?: ExampleStyleEnum;
-  origin?: SuggestionSourceEnum;
+  style: ExampleStyleEnum;
+  origin: SuggestionSourceEnum;
   updatedAt: Date;
 }

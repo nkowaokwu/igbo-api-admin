@@ -16,14 +16,17 @@ const audioPronunciationSchema = new Schema(
   { toObject: toObjectPlugin, timestamps: true },
 );
 
-const translationSchema = new Schema({
-  language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
-  text: { type: String, default: '', trim: true },
-  pronunciations: {
-    type: [{ type: audioPronunciationSchema }],
-    default: [],
+const translationSchema = new Schema(
+  {
+    language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
+    text: { type: String, default: '', trim: true },
+    pronunciations: {
+      type: [{ type: audioPronunciationSchema }],
+      default: [],
+    },
   },
-});
+  { toObject: toObjectPlugin, timestamps: true },
+);
 
 export const exampleSchema = new Schema(
   {

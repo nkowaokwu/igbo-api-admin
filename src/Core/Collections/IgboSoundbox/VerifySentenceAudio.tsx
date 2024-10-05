@@ -11,8 +11,8 @@ import {
 import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
@@ -22,7 +22,7 @@ import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermis
 import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
-import { SentenceVerification } from './types/SentenceVerification';
+import { SentenceVerification } from './types/SoundboxInterfaces';
 
 const DEFAULT_CURRENT_EXAMPLE = { source: { text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [] } };
 
@@ -87,21 +87,11 @@ const VerifySentenceAudio = ({
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
       toast({
-        title: 'Gained points 🎉',
+        title: 'Completed 🎉',
         position: 'top-right',
         variant: 'left-accent',
         description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
         status: 'success',
-        duration: 4000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: 'Unable to save points',
-        position: 'top-right',
-        variant: 'left-accent',
-        description: 'Unable to upload example sentence reviews.',
-        status: 'error',
         duration: 4000,
         isClosable: true,
       });
@@ -118,7 +108,7 @@ const VerifySentenceAudio = ({
     } catch (err) {
       toast({
         title: 'An error occurred',
-        description: 'Unable to complete verifying example sentences.',
+        description: 'Unable to complete verifying sentence audio.',
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -216,7 +206,12 @@ const VerifySentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TEXT_AUDIO_ANNOTATION}
+      isVerifying
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );

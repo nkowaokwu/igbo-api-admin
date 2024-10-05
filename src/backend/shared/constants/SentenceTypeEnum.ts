@@ -1,6 +1,6 @@
 enum SentenceTypeEnum {
-  DATA_COLLECTION = 'data_collection',
   BIBLICAL = 'biblical',
+  DATA_COLLECTION = 'data_collection',
   DEFAULT = 'default',
 }
 

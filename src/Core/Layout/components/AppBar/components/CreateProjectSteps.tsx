@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
-import { Button, Heading, Input, Text, Textarea, useToast, VStack } from '@chakra-ui/react';
-import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { Button, Heading, Input, Link, Text, Textarea, useToast, VStack } from '@chakra-ui/react';
+import { ArrowForwardIcon, ExternalLinkIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { Controller, useForm } from 'react-hook-form';
 import { assign, compact, flow } from 'lodash';
@@ -12,18 +12,32 @@ import { ProjectData } from 'src/backend/controllers/utils/interfaces';
 import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import VisibilityType from 'src/backend/shared/constants/VisibilityType';
 import LicenseType from 'src/backend/shared/constants/LicenseType';
+import ProjectLabels from 'src/backend/shared/constants/ProjectLabels';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
+import CreateProjectResolver from './CreateProjectResolver';
+
+const transformTypes = (data) => assign(data, { types: compact(data.types.map((type) => type.value)) });
+const transformLanguage = (data) =>
+  assign(data, { languages: compact(data.languages.map((language) => language.value)) });
+const injectDefaultValues = (data) =>
+  assign(data, { status: EntityStatus.ACTIVE, visibility: VisibilityType.PRIVATE, license: LicenseType.UNSPECIFIED });
 
 const CreateProjectSteps = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, control, handleSubmit } = useForm();
+  const { register, control, errors, handleSubmit } = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      types: [],
+      languages: [],
+      license: null,
+    },
+    ...CreateProjectResolver(),
+    mode: 'onChange',
+  });
   const toast = useToast();
 
-  const transformLanguage = (data) => assign(data, { languages: [data.languages.value || LanguageEnum.UNSPECIFIED] });
-
-  const injectDefaultValues = (data) =>
-    assign(data, { status: EntityStatus.ACTIVE, visibility: VisibilityType.PRIVATE, license: LicenseType.UNSPECIFIED });
-
-  const cleanedDataPipeline = flow([transformLanguage, injectDefaultValues]);
+  const cleanedDataPipeline = flow([transformTypes, transformLanguage, injectDefaultValues]);
 
   const handleNavigatingToProject = (project: ProjectData) => {
     window.localStorage.setItem(LocalStorageKeys.PROJECT_ID, project.id.toString());
@@ -61,11 +75,33 @@ const CreateProjectSteps = (): ReactElement => {
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Title</Text>
             <Input name="title" ref={register} />
+            {errors.title && <Text className="error">Project title is required</Text>}
           </VStack>
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Description</Text>
             <Textarea name="description" ref={register} />
           </VStack>
+          {errors.description && <Text className="error">Project description is required</Text>}
+          <VStack alignItems="start" width="full" gap={2}>
+            <Text fontWeight="medium">Project types</Text>
+            <Controller
+              name="types"
+              control={control}
+              render={(props) => (
+                <Select
+                  {...props}
+                  isMulti
+                  className="w-full"
+                  placeholder="Select all relevant project types"
+                  defaultValue={ProjectLabels.TEXT_AUDIO_ANNOTATION}
+                  options={compact(
+                    Object.values(ProjectLabels).map((value) => value.value !== ProjectType.UNSPECIFIED && value),
+                  )}
+                />
+              )}
+            />
+          </VStack>
+          {errors.types && <Text className="error">At least one project type is required</Text>}
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Languages</Text>
             <Controller
@@ -74,6 +110,7 @@ const CreateProjectSteps = (): ReactElement => {
               render={(props) => (
                 <Select
                   {...props}
+                  isMulti
                   className="w-full"
                   placeholder="Select a language"
                   options={compact(
@@ -83,6 +120,35 @@ const CreateProjectSteps = (): ReactElement => {
               )}
             />
           </VStack>
+          {errors.languages && <Text className="error">At least one language type is required</Text>}
+          <VStack alignItems="start" width="full" gap={2}>
+            <Text fontWeight="medium">License</Text>
+            <Text fontSize="xs" color="gray.600">
+              Learn more about copyright licenses{' '}
+              <Link href="https://pitt.libguides.com/copyright/licenses" target="_blank" textDecoration="underline">
+                here
+                <ExternalLinkIcon />
+              </Link>
+              .
+            </Text>
+            <Controller
+              name="license"
+              control={control}
+              render={(props) => (
+                <Select
+                  {...props}
+                  className="w-full"
+                  placeholder="Select a language"
+                  options={compact(
+                    Object.values(LicenseType)
+                      .filter((license) => license !== LicenseType.UNSPECIFIED)
+                      .map((value) => ({ label: value, value })),
+                  )}
+                />
+              )}
+            />
+          </VStack>
+          {errors.license && <Text className="error">A license is required.</Text>}
           <Button type="submit" rightIcon={<ArrowForwardIcon />} isLoading={isLoading}>
             Create project
           </Button>

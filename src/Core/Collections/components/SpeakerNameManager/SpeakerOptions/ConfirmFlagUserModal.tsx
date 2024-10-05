@@ -75,7 +75,7 @@ const ConfirmFlagUserModal = ({
                 investigates all reports to ensure that we keep our platform safe.`}
                 </Text>
                 <FormLabel>Reason</FormLabel>
-                <RadioGroup aria-required colorScheme="purple" onChange={setReason}>
+                <RadioGroup aria-required variant="primary" onChange={setReason}>
                   {FlagReasons.map(({ reason }) => (
                     <Radio value={reason} key={reason}>
                       {reason}
@@ -94,7 +94,7 @@ const ConfirmFlagUserModal = ({
                 <Button variant="ghost" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button colorScheme="purple" mr={3} type="submit" onClick={onSubmit}>
+                <Button variant="primary" mr={3} type="submit" onClick={onSubmit}>
                   Submit report
                 </Button>
               </ModalFooter>

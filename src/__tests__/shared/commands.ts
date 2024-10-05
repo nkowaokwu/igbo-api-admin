@@ -77,25 +77,19 @@ export const putRandomWordSuggestions = (
 
 export const getRandomExampleSuggestionsToRecord = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random/audio')
+    .get('/exampleSuggestions/audio')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
 export const getRandomExampleSuggestionsToReview = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
-    .get('/exampleSuggestions/random/review')
+    .get('/exampleSuggestions/review')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
 export const getTotalReviewedExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
   chaiServer
     .get('/exampleSuggestions/random/stats/reviewed')
-    .query(query)
-    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
-
-export const getTotalRecordedExampleSuggestions = (query = {}, options: OptionsType = { token: '' }): Request =>
-  chaiServer
-    .get('/exampleSuggestions/random/stats/recorded')
     .query(query)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
@@ -125,7 +119,7 @@ export const putAudioForRandomExampleSuggestions = (
   options: OptionsType = { token: '' },
 ): Request =>
   chaiServer
-    .put('/exampleSuggestions/random/audio')
+    .put('/exampleSuggestions/audio')
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 export const putReviewForRandomExampleSuggestions = (
@@ -137,7 +131,7 @@ export const putReviewForRandomExampleSuggestions = (
   options: OptionsType = { token: '' },
 ): Request =>
   chaiServer
-    .put('/exampleSuggestions/random/review')
+    .put('/exampleSuggestions/review')
     .send(data)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`);
 
@@ -400,11 +394,6 @@ export const getNsibidiCharacter = (
 export const getUserStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>
   chaiServer
     .get(`/stats/users/${uid}`)
-    .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
-    .set('X-API-Key', options.apiKey || API_KEY);
-export const getUserMergeStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>
-  chaiServer
-    .get(`/stats/users/${uid}/merge`)
     .set('Authorization', `Bearer ${options.token || AUTH_TOKEN.ADMIN_AUTH_TOKEN}`)
     .set('X-API-Key', options.apiKey || API_KEY);
 export const getUserAudioStats = (uid: string, options: OptionsType = { apiKey: '', token: '' }): Request =>

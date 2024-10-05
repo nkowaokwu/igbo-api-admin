@@ -1,16 +1,14 @@
 import React, { ReactElement } from 'react';
 import { Box, Heading, VStack, Text } from '@chakra-ui/react';
-import Views from 'src/shared/constants/Views';
 import DataEntryFlow from 'src/Core/Dashboard/components/DataEntryFlow';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
-import Collection from 'src/shared/constants/Collection';
 import generateGreetings from 'src/Core/Dashboard/components/utils/generateGreetings';
-import {
-  DataEntryFlowOption,
-  DataEntryFlowGroup,
-} from 'src/Core/Dashboard/components/utils/DataEntryFlowOptionInterface';
-import { LuFileEdit, LuHardDriveUpload } from 'react-icons/lu';
-import { FiBook, FiBookOpen } from 'react-icons/fi';
+import { DataEntryFlowGroup } from 'src/Core/Dashboard/components/utils/DataEntryFlowOptionInterface';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
+import { getDashboardOptions } from 'src/Core/Dashboard/utils/getDashboardOptions';
+import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 
 export const DataEntryFlowGroupLabels = {
   [DataEntryFlowGroup.GET_STARTED]: {
@@ -19,7 +17,7 @@ export const DataEntryFlowGroupLabels = {
   },
   [DataEntryFlowGroup.CREATE_DATA]: {
     title: 'Create data',
-    subtitle: 'Use these options to add ad-hoc data after your initial data dump',
+    subtitle: 'Use these options to add ad-hoc data after your initial data import',
   },
   [DataEntryFlowGroup.EDIT_DATA]: {
     title: 'Edit data',
@@ -27,82 +25,18 @@ export const DataEntryFlowGroupLabels = {
   },
 };
 
-const getDashboardOptions = (isIgboAPIProject: boolean): DataEntryFlowOption[] => {
-  const excludeFromNonIgboAPIProjects = !isIgboAPIProject
-    ? [Collection.WORDS, Collection.WORD_SUGGESTIONS, Collection.NSIBIDI_CHARACTERS]
-    : [];
-  const defaultOptions = [
-    {
-      key: Collection.DATA_DUMP,
-      icon: (props) => <LuHardDriveUpload {...props} />,
-      title: 'Dump Data',
-      subtitle: 'Get your project started by dumping your initial data',
-      hash: `#/dataDump`,
-      buttonLabel: 'Dump data',
-      group: DataEntryFlowGroup.GET_STARTED,
-    },
-    {
-      key: Collection.WORD_SUGGESTIONS,
-      icon: (props) => <FiBook {...props} />,
-      title: 'Create a New Word',
-      subtitle: "Don't see a word in our database? Create a new word here. All words follow Igbo Izugbe standards.",
-      hash: `#/wordSuggestions/${Views.CREATE}`,
-      buttonLabel: 'Create word',
-      group: DataEntryFlowGroup.CREATE_DATA,
-    },
-    {
-      key: Collection.EXAMPLE_SUGGESTIONS,
-      icon: (props) => <FiBookOpen {...props} />,
-      title: 'Create a New Example Sentence',
-      subtitle: 'Create a new example Igbo sentence. Each sentence includes Igbo and English.',
-      hash: `#/exampleSuggestions/${Views.CREATE}`,
-      buttonLabel: 'Create example sentence',
-      group: DataEntryFlowGroup.CREATE_DATA,
-    },
-    {
-      key: Collection.NSIBIDI_CHARACTERS,
-      icon: '〒',
-      title: 'Create a New Nsịbịdị Character',
-      subtitle: 'Create a new Nsịbịdị character. Nsịbịdị characters represent a unique concept.',
-      hash: `#/nsibidiCharacters/${Views.CREATE}`,
-      buttonLabel: 'Create Nsịbịdị character',
-      group: DataEntryFlowGroup.CREATE_DATA,
-    },
-    {
-      key: Collection.WORDS,
-      icon: (props) => <LuFileEdit {...props} />,
-      title: 'Edit an Existing Word',
-      subtitle: 'See a typo in a definition? Want to add a new dialect? Search for a word and edit it.',
-      hash: `#/words/${Views.LIST}`,
-      buttonLabel: 'Search for word',
-      group: DataEntryFlowGroup.EDIT_DATA,
-    },
-    {
-      key: Collection.EXAMPLES,
-      icon: (props) => <LuFileEdit {...props} />,
-      title: 'Edit an Existing Example Sentence',
-      subtitle: 'See a mistake in a translation? Want to add more metadata? Search for a sentence and edit it.',
-      hash: `#/examples/${Views.LIST}`,
-      buttonLabel: 'Search for example sentence',
-      group: DataEntryFlowGroup.EDIT_DATA,
-    },
-    {
-      key: Collection.NSIBIDI_CHARACTERS,
-      icon: (props) => <LuFileEdit {...props} />,
-      title: 'Edit an Existing Nsịbịdị Character',
-      subtitle: 'Want to add more information to an existing character? Search for an Nsịbịdị character and edit it.',
-      hash: `#/nsibidiCharacters/${Views.LIST}`,
-      buttonLabel: 'Search for Nsịbịdị character',
-      group: DataEntryFlowGroup.EDIT_DATA,
-    },
-  ];
+const getShouldShowSelfIdentify = (userProjectPermission: UserProjectPermission) =>
+  !userProjectPermission.languages ||
+  !userProjectPermission.languages.length ||
+  userProjectPermission.gender === null ||
+  userProjectPermission.gender === GenderEnum.UNSPECIFIED;
 
-  return defaultOptions.filter(({ key }) => !excludeFromNonIgboAPIProjects.includes(key));
-};
-
-const ProgressManager = (): ReactElement => {
+const ProgressManager = ({ permissions }: { permissions: { permissions?: { role: UserRoles } } }): ReactElement => {
+  const userProjectPermission = React.useContext(UserProjectPermissionContext);
   const isIgboAPIProject = useIsIgboAPIProject();
-  const options = getDashboardOptions(isIgboAPIProject);
+  const showSelfIdentify = getShouldShowSelfIdentify(userProjectPermission);
+  const options = getDashboardOptions({ permissions, isIgboAPIProject, showSelfIdentify });
+
   return (
     <VStack py={6} px={{ base: 6, md: 12 }} gap={4} alignItems="start">
       <VStack alignItems="left">

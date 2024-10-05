@@ -30,7 +30,7 @@ describe('DataCollectionAPI', () => {
     putAudioForRandomExampleSuggestions(data);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
-      url: 'exampleSuggestions/random/audio',
+      url: 'exampleSuggestions/audio',
       data,
     });
   });
@@ -47,7 +47,7 @@ describe('DataCollectionAPI', () => {
     putAudioForRandomExampleSuggestions(data);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
-      url: 'exampleSuggestions/random/audio',
+      url: 'exampleSuggestions/audio',
       data: [
         { id: 'first id', pronunciation: 'first pronunciation' },
         { id: 'second id' },
@@ -70,7 +70,7 @@ describe('DataCollectionAPI', () => {
     putAudioForRandomExampleSuggestions(data);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
-      url: 'exampleSuggestions/random/audio',
+      url: 'exampleSuggestions/audio',
       data: [{ id: 'first id' }, { id: 'second id' }, { id: 'third id' }, { id: 'fourth id' }, { id: 'fifth id' }],
     });
   });
@@ -87,7 +87,7 @@ describe('DataCollectionAPI', () => {
     putReviewForRandomExampleSuggestions(data);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
-      url: 'exampleSuggestions/random/review',
+      url: 'exampleSuggestions/review',
       data: [
         { id: 'first id', review: ReviewActions.APPROVE },
         { id: 'second id', review: ReviewActions.DENY },
@@ -103,7 +103,7 @@ describe('DataCollectionAPI', () => {
     await getRandomExampleSuggestionsToTranslate();
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'exampleSuggestions/random/translate',
+      url: 'exampleSuggestions/translate',
       params: {
         range: '[0, 4]',
       },
@@ -115,7 +115,7 @@ describe('DataCollectionAPI', () => {
     await putRandomExampleSuggestionsToTranslate([]);
     expect(requestSpy).toHaveBeenCalledWith({
       method: 'PUT',
-      url: 'exampleSuggestions/random/translate',
+      url: 'exampleSuggestions/translate',
       data: [],
     });
   });

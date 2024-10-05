@@ -4,7 +4,7 @@ import pluralize from 'pluralize';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import { getRandomExampleSuggestionsToRecord, putAudioForRandomExampleSuggestions } from 'src/shared/DataCollectionAPI';
 import { Card, Spinner } from 'src/shared/primitives';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import RecorderBase from 'src/shared/components/views/components/AudioRecorder/RecorderBase';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
 import { API_ROUTE } from 'src/shared/constants';
@@ -73,25 +73,15 @@ const RecordSentenceAudio = ({
       setIsLoading(true);
       await putAudioForRandomExampleSuggestions(payload);
       toast({
-        title: 'Gained points 🎉',
+        title: 'Completed 🎉',
         position: 'top-right',
         variant: 'left-accent',
-        description: `You have gained ${pluralize(
-          'point',
+        description: `You have recorded ${pluralize(
+          'sentence recording',
           payload.filter(({ pronunciation }) => pronunciation).length,
           true,
         )}`,
         status: 'success',
-        duration: 4000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: 'Unable to save points',
-        position: 'top-right',
-        variant: 'left-accent',
-        description: `Unable to upload example sentence recordings.: ${err?.message || err?.details}`,
-        status: 'error',
         duration: 4000,
         isClosable: true,
       });
@@ -204,7 +194,12 @@ const RecordSentenceAudio = ({
   ) : noExamples ? (
     <EmptyExamples recording setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.RECORD_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TEXT_AUDIO_ANNOTATION}
+      isVerifying={false}
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );

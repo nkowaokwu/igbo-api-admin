@@ -1,54 +1,57 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Box, Heading, Skeleton, useToast } from '@chakra-ui/react';
-import { usePermissions } from 'react-admin';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { hasCrowdsourcerPermission } from 'src/shared/utils/permissions';
-import {
-  getTotalRecordedExampleSuggestions,
-  getTotalMergedRecordedExampleSuggestions,
-  getTotalReviewedExampleSuggestions,
-} from 'src/shared/DataCollectionAPI';
+import { getUserExampleSuggestionRecordings, getUserExampleSuggestionTranslations } from 'src/shared/UserAPI';
 import { User } from '@firebase/auth';
 import UserCard from 'src/shared/components/UserCard';
-import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
-import network from '../../network';
-import PersonalStats from '../PersonalStats/PersonalStats';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import IgboSoundboxStats from '../IgboSoundboxStats';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+interface StatInfo {
+  stats: Record<string, number>;
+  heading: string;
+  description: string;
+}
+
 const UserStat = ({ user }: { user: User; dialectalVariations: number; completeExamples: number }): ReactElement => {
-  const [userStats, setUserStats] = useState(null);
-  const [recordingStats, setRecordingStats] = useState({ recorded: {}, verified: {}, mergedRecorded: {} });
-  const [audioStats, setAudioStats] = useState({ timestampedAudioApprovals: {}, timestampedAudioDenials: {} });
+  const [stats, setStats] = useState<Record<string, StatInfo>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const { permissions } = usePermissions();
+  const project = React.useContext(ProjectContext);
   const toast = useToast();
-  const isCrowdsourcer = hasCrowdsourcerPermission(permissions, true);
-  const isIgboAPIProject = useIsIgboAPIProject();
 
   useEffect(() => {
     (async () => {
       try {
         const { uid } = user;
-        network(`/stats/users/${uid}`).then(({ json }) => setUserStats(json));
-        network<{
-          json: {
-            timestampedAudioApprovals: { [key: string]: number };
-            timestampedAudioDenials: { [key: string]: number };
-          };
-        }>(`/stats/users/${uid}/audio`).then(({ json }) => {
-          setAudioStats(json);
-        });
-        const { timestampedExampleSuggestions: mergedExampleSuggestion } =
-          await getTotalMergedRecordedExampleSuggestions(uid);
-        const { timestampedRecordedExampleSuggestions } = await getTotalRecordedExampleSuggestions(uid);
-        const { timestampedReviewedExampleSuggestions } = await getTotalReviewedExampleSuggestions(uid);
-        setRecordingStats({
-          recorded: timestampedRecordedExampleSuggestions,
-          verified: timestampedReviewedExampleSuggestions,
-          mergedRecorded: mergedExampleSuggestion, // Count of audio recordings by current user that have been merged
-        });
+        const fetchedStats: Record<string, StatInfo> = {};
+        await Promise.all(
+          project.types.map(async (type) => {
+            switch (type) {
+              case ProjectType.TEXT_AUDIO_ANNOTATION:
+                fetchedStats.recordings = {
+                  stats: await getUserExampleSuggestionRecordings(uid),
+                  heading: 'Recorded sentences',
+                  description: 'The number of sentence audio you have recorded',
+                };
+
+                break;
+              case ProjectType.TRANSLATION:
+                fetchedStats.translations = {
+                  stats: await getUserExampleSuggestionTranslations(uid),
+                  heading: 'Translated sentences',
+                  description: 'The number of sentence translations you have created',
+                };
+                break;
+              default:
+                break;
+            }
+          }),
+        );
+
+        setStats(fetchedStats);
         setIsLoading(false);
       } catch (err) {
         toast({
@@ -75,9 +78,8 @@ const UserStat = ({ user }: { user: User; dialectalVariations: number; completeE
           <Box className="flex flex-col lg:flex-row justify-between items-start space-y-3 lg:space-y-0">
             <Box className="space-y-3 w-full">
               <Skeleton isLoaded={!isLoading}>
-                <IgboSoundboxStats recordingStats={recordingStats} audioStats={audioStats} />
+                <IgboSoundboxStats stats={stats} />
               </Skeleton>
-              {isIgboAPIProject && !isCrowdsourcer ? <PersonalStats userStats={userStats} /> : null}
             </Box>
           </Box>
         </Box>

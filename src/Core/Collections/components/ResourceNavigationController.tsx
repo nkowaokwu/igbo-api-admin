@@ -4,7 +4,7 @@ import { Box, HStack, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ActivityButton } from 'src/shared/primitives';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
-import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SentenceVerification';
+import { SentenceVerification } from 'src/Core/Collections/IgboSoundbox/types/SoundboxInterfaces';
 import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
 
 const ResourceNavigationController = ({

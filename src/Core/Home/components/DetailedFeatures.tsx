@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Heading, VStack, Text, Button, Grid } from '@chakra-ui/react';
 import { LuDiamond, LuDownloadCloud, LuFilter, LuLayers, LuUser, LuZap } from 'react-icons/lu';
-import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+import { REQUEST_DEMO_URL } from 'src/Core/constants';
 
 const largeSections = [
   {
@@ -50,10 +50,10 @@ const DetailedFeatures = (): ReactElement => (
         <Button
           color="black"
           onClick={() => {
-            window.location.href = REQUEST_ACCESS_URL;
+            window.location.href = REQUEST_DEMO_URL;
           }}
         >
-          Request access
+          Request demo
         </Button>
       </VStack>
       <Grid templateColumns={{ base: 'repeat(1, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>

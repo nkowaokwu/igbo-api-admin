@@ -17,10 +17,6 @@ const Card = ({ text, href, children }: { text?: string; href?: string; children
 
   return (
     <VStack
-      backgroundColor="gray.50"
-      borderRadius="md"
-      borderColor="gray.300"
-      borderWidth="1px"
       minHeight="72"
       width={['full', 'lg']}
       my="8"
@@ -32,10 +28,11 @@ const Card = ({ text, href, children }: { text?: string; href?: string; children
       className="space-y-6"
     >
       {text ? (
-        <Box display="flex" justifyContent="center" alignItems="center" flex={8}>
-          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700">
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flex={8}>
+          <Text fontSize="xl" textAlign="center" fontFamily="Silka" color="gray.700" overflowWrap="anywhere">
             {text}
           </Text>
+          {React.Children.map(children, (child) => React.cloneElement(child))}
         </Box>
       ) : null}
       {href && isEditor ? (
@@ -57,7 +54,6 @@ const Card = ({ text, href, children }: { text?: string; href?: string; children
           </Text>
         </Box>
       ) : null}
-      {React.Children.map(children, (child) => React.cloneElement(child))}
     </VStack>
   );
 };

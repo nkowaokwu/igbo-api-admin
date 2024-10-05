@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Button, Hide, HStack, Image, Link } from '@chakra-ui/react';
 import getAWSAsset from 'src/utils/getAWSAsset';
-import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+import { REQUEST_DEMO_URL } from 'src/Core/constants';
 
 const NkowaokwuImage = getAWSAsset('/images/logo.svg');
 
@@ -35,10 +35,10 @@ const NavBar = ({ hideButtons }: { hideButtons?: boolean }): ReactElement => {
               <Button
                 variant="primary"
                 onClick={() => {
-                  window.location.href = REQUEST_ACCESS_URL;
+                  window.location.href = REQUEST_DEMO_URL;
                 }}
               >
-                Request access
+                Request demo
               </Button>
             </Hide>
           </HStack>

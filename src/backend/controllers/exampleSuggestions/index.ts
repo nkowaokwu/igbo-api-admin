@@ -1,19 +1,22 @@
 import { Response, NextFunction } from 'express';
-import { omit, map, merge } from 'lodash';
+import { Document } from 'mongoose';
+import { omit, map, merge, assign } from 'lodash';
 import moment from 'moment';
 import { wordSchema } from 'src/backend/models/Word';
 import { wordSuggestionSchema } from 'src/backend/models/WordSuggestion';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from 'src/backend/controllers/utils';
 import {
-  searchExampleAudioPronunciationsReviewedByUser,
   searchExampleSuggestionsRegexQuery,
   searchRandomExampleSuggestionsToRecordRegexQuery,
   searchRandomExampleSuggestionsToReviewRegexQuery,
-  searchTotalMergedRecordedExampleSuggestionsForUser,
   searchTotalRecordedExampleSuggestionsForUser,
 } from 'src/backend/controllers/utils/queries';
-import { searchRandomExampleSuggestionsToTranslateRegexQuery } from 'src/backend/controllers/utils/queries/queries';
+import {
+  searchRandomExampleSuggestionsToReviewTranslationsRegexQuery,
+  searchRandomExampleSuggestionsToTranslateRegexQuery,
+  searchTotalTranslationsOnExampleSuggestionsForUser,
+} from 'src/backend/controllers/utils/queries/queries';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
@@ -21,16 +24,19 @@ import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
 import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/leanPronunciation';
-import isMergeableAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isMergeableAudioPronunciation';
 import isEligibleAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleAudioPronunciation';
-import isUserReviewedAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/IsUserReviewedAudioPronunciation';
-import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
 import createExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/createExampleSuggestion';
 import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
 import removeExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/removeExampleSuggestion';
 import findExampleSuggestionById from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestionById';
+import { Translation } from 'src/backend/controllers/utils/interfaces';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import isEligibleTranslation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleTranslation';
+import leanTranslation from 'src/backend/controllers/exampleSuggestions/helpers/leanTranslation';
+import handleReviewingResources from 'src/backend/controllers/exampleSuggestions/helpers/handleReviewingResources';
 
 const NO_LIMIT = 20000;
+const TIMESTAMP_FORMAT = 'MMM, YYYY';
 
 type BulkUploadResult = {
   success: boolean;
@@ -321,6 +327,120 @@ export const getRandomExampleSuggestionsToReview = async (
 };
 
 /**
+ * ProjectType.TRANSLATE
+ */
+
+/**
+ * Returns at least five random Example Suggestion that need to be translated into a user's
+ * spoken languages
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns At least five random Example Suggestion that need to be reviewed by the current user
+ */
+export const getRandomExampleSuggestionsToTranslate = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<any | void> => {
+  try {
+    const { limit, user, mongooseConnection } = await handleQueries(req);
+    const { projectId } = req.query;
+    const { userProjectPermission } = req;
+
+    const query = searchRandomExampleSuggestionsToTranslateRegexQuery({
+      uid: user.uid,
+      projectId,
+      languages: userProjectPermission.languages,
+    });
+
+    return await findExampleSuggestions({
+      query,
+      limit,
+      mongooseConnection,
+    })
+      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+        const filteredExampleSuggestions = exampleSuggestions
+          .map((exampleSuggestion) => {
+            // Reduce translations to include translations that only the current user would understand
+            exampleSuggestion.translations = exampleSuggestion.translations.filter(({ language }) =>
+              userProjectPermission.languages.includes(language),
+            );
+            return exampleSuggestion;
+          })
+          .filter(
+            // If all the translations for the ExampleSuggestion match all the languages for the current user
+            // then don't return the ExampleSuggestion
+            (exampleSuggestion) => exampleSuggestion.translations.length !== userProjectPermission.languages.length,
+          )
+          .map((exampleSuggestion) => exampleSuggestion.toJSON());
+
+        return res.send({ exampleSuggestions: filteredExampleSuggestions });
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new Error('An error has occurred while returning random example suggestions to translate:', err.message);
+      });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
+ * Fetches up to five random ExampleSuggestions that the current user
+ * will review the translations for
+ * @param req Request
+ * @param res Response
+ * @param next NextFunction
+ * @returns
+ */
+export const getRandomExampleSuggestionForTranslationReview = async (
+  req: Interfaces.EditorRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<Response<{ exampleSuggestions: Interfaces.ExampleSuggestion[] }> | void> => {
+  try {
+    const {
+      user: { uid },
+      mongooseConnection,
+    } = req;
+    const { projectId } = req.query;
+    const { userProjectPermission } = req;
+
+    const query = searchRandomExampleSuggestionsToReviewTranslationsRegexQuery({
+      uid,
+      projectId,
+      languages: userProjectPermission.languages,
+    });
+
+    return await findExampleSuggestions({
+      query,
+      limit: 5,
+      mongooseConnection,
+    }).then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+      const filteredExampleSuggestions = exampleSuggestions
+        .map((exampleSuggestion) => {
+          exampleSuggestion.translations = exampleSuggestion.translations.filter(({ language }) =>
+            userProjectPermission.languages.includes(language),
+          );
+          return exampleSuggestion.toJSON();
+        })
+        .filter((exampleSuggestion) => exampleSuggestion.translations.length)
+        .map((exampleSuggestion) => {
+          // Only show translations the user has not reviewed
+          exampleSuggestion.translations = exampleSuggestion.translations.filter(
+            (translation) => !translation.approvals.includes(uid) && !translation.denials.includes(uid),
+          );
+          return exampleSuggestion;
+        });
+      return res.send({ exampleSuggestions: filteredExampleSuggestions });
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/**
  * Updates at least five random Example Suggestions with English translations
  * @param req Request
  * @param res Response
@@ -335,79 +455,88 @@ export const putRandomExampleSuggestionsToTranslate = async (
   try {
     const { body: data, mongooseConnection, user } = await handleQueries(req);
     const { projectId } = req.query;
-    const response = await Promise.all(
-      data.map(async ({ id, english }) => {
-        const res = await updateExampleSuggestion({
-          id,
-          projectId,
-          data: {
-            english,
-            userInteractions: [user.uid],
-            crowdsourcing: { [CrowdsourcingType.TRANSLATE_IGBO_SENTENCE]: true },
-          },
-          mongooseConnection,
+    const updatedExampleSuggestions = await Promise.all(
+      data.map(async ({ id, translations }: { id: string; translations: Translation[] }) => {
+        const exampleSuggestion = await findExampleSuggestionById({ id, projectId, mongooseConnection });
+        const exampleSuggestionTranslations = assign(exampleSuggestion.translations);
+
+        translations.forEach(({ text, language, pronunciations }) => {
+          exampleSuggestionTranslations.push({
+            text,
+            language,
+            pronunciations: pronunciations.map(({ audio }) => ({
+              audio,
+              speaker: user.uid,
+              review: true,
+              approvals: [],
+              denials: [],
+              archived: false,
+            })),
+            approvals: [],
+            denials: [],
+            authorId: user.uid,
+          });
         });
-        // console.log('how does this work?>>', res);
-        return res;
+        exampleSuggestion.translations = exampleSuggestionTranslations;
+        exampleSuggestion.markModified('translations');
+        return exampleSuggestion.save();
       }),
     );
-    req.response = response;
-    return next();
+
+    return res.send({ exampleSuggestions: updatedExampleSuggestions });
   } catch (err) {
     return next(err);
   }
 };
+
 /**
- * Returns at least five random Example Suggestion that need to be translated into English
+ * Updates all Example Suggestions with provided review for translations
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns At least five random Example Suggestion that need to be reviewed by the current user
+ * @returns Updated Example Suggestions
  */
-export const getRandomExampleSuggestionsToTranslate = async (
+export const putRandomExampleSuggestionReviewsForTranslation = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<any | void> => {
+): Promise<Response<{ exampleSuggestions: Interfaces.ExampleSuggestion[] }> | void> => {
   try {
-    const { limit, user, mongooseConnection } = await handleQueries(req);
+    const { mongooseConnection, user, body: data } = req;
     const { projectId } = req.query;
 
-    const query = searchRandomExampleSuggestionsToTranslateRegexQuery(user.uid, projectId);
-    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-      'ExampleSuggestion',
-      exampleSuggestionSchema,
+    const updatedExampleSuggestions = await Promise.all(
+      data.map(async ({ id, translations }: { id: string; translations: { id: string; review: ReviewActions }[] }) => {
+        const exampleSuggestion = await findExampleSuggestionById({ id, projectId, mongooseConnection });
+        Object.values(translations).forEach(({ id: translationId, review }) => {
+          const translation = exampleSuggestion.translations.find(
+            (translation) => translation?._id?.toString() === translationId,
+          );
+          if (!translation) {
+            throw new Error('Invalid translation Id has been used to find an existing translation Id on the sentence.');
+          }
+
+          handleReviewingResources({ uid: user.uid, resource: translation, review, documentId: id });
+        });
+        exampleSuggestion.markModified('translations');
+        return exampleSuggestion.save();
+      }),
     );
-
-    return await findExampleSuggestions({
-      query,
-      limit,
-      mongooseConnection,
-    })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) =>
-        packageResponse({
-          res,
-          docs: exampleSuggestions,
-          model: ExampleSuggestion,
-          query,
-        }),
-      )
-      .catch(() => {
-        throw new Error('An error has occurred while returning random example suggestions to translate');
-      });
+    return res.send({ exampleSuggestions: updatedExampleSuggestions });
   } catch (err) {
     return next(err);
   }
 };
 
 /**
- * Returns total number of Example Suggestions the user has approved or denied
+ * Returns total number of Example Suggestions the user has recorded
+ * per month
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns Total number of Example Suggestions the user has approved or denied
+ * @returns Total number of recorded audio on Example Suggestions
  */
-export const getTotalReviewedExampleSuggestions = async (
+export const getUserExampleSuggestionRecordings = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
@@ -415,65 +544,23 @@ export const getTotalReviewedExampleSuggestions = async (
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
-  const query = searchExampleAudioPronunciationsReviewedByUser({ uid, projectId });
+  const query = searchTotalRecordedExampleSuggestionsForUser({ uid, projectId });
 
-  try {
-    return await findExampleSuggestions({
-      query,
-      limit: NO_LIMIT,
-      mongooseConnection,
-    })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
-        const timestampedReviewedExampleSuggestions = exampleSuggestions.reduce(
-          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
-            // Gets the date and month of Example Suggestion
-            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
-            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
-
-            if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
-            }
-
-            exampleSuggestion.source.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
-              // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
-              const pronunciation = leanPronunciation(dbPronunciation);
-              const isUserReviewed = isUserReviewedAudioPronunciation({ pronunciation, uid });
-              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
-                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
-              }
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isUserReviewed);
-            });
-            return finalTimestampedExampleSuggestions;
-          },
-          {},
-        );
-        return res.send({ timestampedReviewedExampleSuggestions });
-      })
-      .catch(() => {
-        console.log(err);
-        throw new Error('An error has occurred while returning all total verified example suggestions');
-      });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-/**
- * Returns total number of Example Suggestions the user has recorded that have been merged
- * @param req Request
- * @param res Response
- * @param next NextFunction
- * @returns Total number of merged Example Suggestion the user has recorded that have been merged
- */
-export const getTotalMergedRecordedExampleSuggestions = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<any | void> => {
-  const { user, mongooseConnection, uidQuery } = await handleQueries(req);
-  const { projectId } = req.query;
-  const uid = uidQuery || user.uid;
-  const query = searchTotalMergedRecordedExampleSuggestionsForUser({ uid, projectId });
+  const incrementCount = ({
+    pronunciation: dbPronunciation,
+    final,
+  }: {
+    pronunciation: Interfaces.PronunciationSchema;
+    final: { [key: string]: number };
+  }) => {
+    const pronunciationMonth = moment(dbPronunciation.updatedAt).startOf('month').format(TIMESTAMP_FORMAT);
+    const pronunciation = leanPronunciation(dbPronunciation);
+    const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
+    if (!final[pronunciationMonth]) {
+      final[pronunciationMonth] = 0;
+    }
+    final[pronunciationMonth] += Number(isEligible);
+  };
 
   try {
     return await findExampleSuggestions({
@@ -484,28 +571,27 @@ export const getTotalMergedRecordedExampleSuggestions = async (
       .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
         const timestampedExampleSuggestions = exampleSuggestions.reduce(
           (finalTimestampedExampleSuggestions, exampleSuggestion) => {
-            // Gets the date and month of Example Suggestion
-            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
-            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
-
-            exampleSuggestion.source.pronunciations.forEach((dbPronunciation: Interfaces.PronunciationSchema) => {
-              // Checks if current Example Suggestion pronunciation is verified and adds to total count if it is
-              const pronunciation = leanPronunciation(dbPronunciation);
-              const isMergeable = isMergeableAudioPronunciation({ pronunciation, uid });
-              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
-                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
-              }
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isMergeable);
+            exampleSuggestion.source.pronunciations.forEach((pronunciation) => {
+              incrementCount({
+                pronunciation,
+                final: finalTimestampedExampleSuggestions,
+              });
             });
-
+            exampleSuggestion.translations.forEach((translation) => {
+              translation.pronunciations.forEach((pronunciation) => {
+                incrementCount({
+                  pronunciation,
+                  final: finalTimestampedExampleSuggestions,
+                });
+              });
+            });
             return finalTimestampedExampleSuggestions;
           },
-          {},
+          { [moment().startOf('month').format(TIMESTAMP_FORMAT)]: 0 },
         );
-        return res.send({ timestampedExampleSuggestions });
+        res.send({ timestampedExampleSuggestions });
       })
       .catch(() => {
-        // console.log(err);
         throw new Error('An error has occurred while returning all total recorded example suggestions');
       });
   } catch (err) {
@@ -514,53 +600,58 @@ export const getTotalMergedRecordedExampleSuggestions = async (
 };
 
 /**
- * Returns total number of Example Suggestions the user has recorded
+ * returns total number of Example Suggestion translations the user has recorded
+ * per month
  * @param req Request
  * @param res Response
  * @param next NextFunction
- * @returns Total number of merged Example Suggestion the user has recorded
+ * @returns Total number of translations on an Example Suggestion
  */
-export const getTotalRecordedExampleSuggestions = async (
+export const getUserExampleSuggestionTranslations = async (
   req: Interfaces.EditorRequest,
   res: Response,
   next: NextFunction,
-): Promise<any | void> => {
+): Promise<any> => {
   const { user, mongooseConnection, uidQuery } = await handleQueries(req);
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
-  const query = searchTotalRecordedExampleSuggestionsForUser({ uid, projectId });
+  const query = searchTotalTranslationsOnExampleSuggestionsForUser({ uid, projectId });
 
+  const incrementCount = ({
+    translation: dbTranslation,
+    final,
+  }: {
+    translation: Document<Interfaces.Translation>;
+    final: { [key: string]: number };
+  }) => {
+    const translationSuggestionMonth = moment(dbTranslation.updatedAt).startOf('month').format(TIMESTAMP_FORMAT);
+    const translation = leanTranslation(dbTranslation.toJSON());
+    const isEligible = isEligibleTranslation({ translation, uid });
+    if (!final[translationSuggestionMonth]) {
+      final[translationSuggestionMonth] = 0;
+    }
+    final[translationSuggestionMonth] += Number(isEligible);
+  };
   try {
     return await findExampleSuggestions({
       query,
       limit: NO_LIMIT,
       mongooseConnection,
-    })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
-        const timestampedRecordedExampleSuggestions = exampleSuggestions.reduce(
-          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
-            // Gets the date and month of Example Suggestion
-            const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
-            const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
-
-            exampleSuggestion.source.pronunciations.forEach((dbPronunciation) => {
-              const pronunciation = leanPronunciation(dbPronunciation);
-              const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
-              if (!finalTimestampedExampleSuggestions[exampleSuggestionMonth]) {
-                finalTimestampedExampleSuggestions[exampleSuggestionMonth] = 0;
-              }
-              finalTimestampedExampleSuggestions[exampleSuggestionMonth] += Number(isEligible);
+    }).then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+      const timestampedExampleSuggestions = exampleSuggestions.reduce(
+        (finalTimestampedExampleSuggestions, exampleSuggestion) => {
+          exampleSuggestion.translations.forEach((translation: Document<Interfaces.Translation>) => {
+            incrementCount({
+              translation,
+              final: finalTimestampedExampleSuggestions,
             });
-            return finalTimestampedExampleSuggestions;
-          },
-          {},
-        );
-        res.send({ timestampedRecordedExampleSuggestions });
-      })
-      .catch(() => {
-        // console.log(err);
-        throw new Error('An error has occurred while returning all total recorded example suggestions');
-      });
+          });
+          return finalTimestampedExampleSuggestions;
+        },
+        { [moment().startOf('month').format(TIMESTAMP_FORMAT)]: 0 },
+      );
+      res.send({ timestampedExampleSuggestions });
+    });
   } catch (err) {
     return next(err);
   }
@@ -657,29 +748,11 @@ export const putReviewForRandomExampleSuggestions = async (
 
           const audioPronunciation = exampleSuggestion.source.pronunciations[pronunciationIndex];
 
-          // Handle approving the Example Suggestion audio pronunciations
-          if (review === ReviewActions.APPROVE) {
-            const approvals = new Set(audioPronunciation.approvals);
-            approvals.add(user.uid);
-            exampleSuggestion.source.pronunciations[pronunciationIndex].approvals = Array.from(approvals);
-            exampleSuggestion.source.pronunciations[pronunciationIndex].denials = audioPronunciation.denials.filter(
-              (denial) => denial !== user.uid,
-            );
+          handleReviewingResources({ uid: user.uid, resource: audioPronunciation, review, documentId: id });
+          if (review === ReviewActions.APPROVE || review === ReviewActions.DENY) {
             exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
           }
-          // Handle denying the Example Suggestion audio pronunciations
-          if (review === ReviewActions.DENY) {
-            const denials = new Set(audioPronunciation.denials);
-            denials.add(user.uid);
-            exampleSuggestion.source.pronunciations[pronunciationIndex].denials = Array.from(denials);
-            exampleSuggestion.source.pronunciations[pronunciationIndex].approvals = audioPronunciation.approvals.filter(
-              (approval) => approval !== user.uid,
-            );
-            exampleSuggestion.crowdsourcing[CrowdsourcingType.VERIFY_EXAMPLE_AUDIO] = true;
-          }
-          if (review === ReviewActions.SKIP) {
-            // console.log(`The user ${user.uid} skipped reviewing the word suggestion ${id}`);
-          }
+
           return null;
         });
         const savedExampleSuggestion = await exampleSuggestion.save();

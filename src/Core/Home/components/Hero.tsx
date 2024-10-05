@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Button, Heading, Text, VStack } from '@chakra-ui/react';
-import { REQUEST_ACCESS_URL } from 'src/Core/constants';
+import { REQUEST_DEMO_URL } from 'src/Core/constants';
 
 const Hero = (): ReactElement => (
   <VStack width="full">
@@ -19,10 +19,10 @@ const Hero = (): ReactElement => (
         variant="primary"
         zIndex={0}
         onClick={() => {
-          window.location.href = REQUEST_ACCESS_URL;
+          window.location.href = REQUEST_DEMO_URL;
         }}
       >
-        Request access
+        Request demo
       </Button>
     </VStack>
   </VStack>
