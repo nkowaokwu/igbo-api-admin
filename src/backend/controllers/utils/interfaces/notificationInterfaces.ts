@@ -69,3 +69,9 @@ export interface DocumentUpdateNotification {
   id: string;
   word: string;
 }
+
+export interface ExportedData {
+  to: string;
+  exportFileName: string;
+  downloadUrl: string;
+}

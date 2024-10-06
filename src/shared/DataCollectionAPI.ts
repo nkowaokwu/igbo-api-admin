@@ -183,3 +183,8 @@ export const attachTextImages = async (data: DataPayload[]): Promise<{ id: strin
   );
   return result;
 };
+
+export const exportData = async (): Promise<boolean> => {
+  const { data: result } = await request<{ success: boolean }>({ method: 'POST', url: 'exports' });
+  return result.success;
+};

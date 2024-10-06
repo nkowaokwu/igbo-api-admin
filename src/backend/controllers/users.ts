@@ -150,9 +150,7 @@ export const getUsers = async (
       limit: 10000,
     });
 
-    const totalUsersCount = allUserProjectPermissions.map(
-      (userProjectPermission) => userProjectPermission.toJSON().firebaseId,
-    ).length;
+    const totalUsersCount = allUserProjectPermissions.length;
 
     // If the client is searching for a user use the following logic
     if (Object.values(filters).length || Boolean(skip)) {
@@ -180,9 +178,9 @@ export const getUsers = async (
       });
     } else {
       // Else we'll look at user permission documents first
-      const userProjectPermissions = allUserProjectPermissions.map((userProjectPermission) =>
-        userProjectPermission.toJSON(),
-      );
+      const userProjectPermissions = allUserProjectPermissions
+        .slice(skip, limit)
+        .map((userProjectPermission) => userProjectPermission.toJSON());
 
       const userProjectPermissionsWithoutFirebase = userProjectPermissions.filter(({ firebaseId }) => !firebaseId);
 
@@ -202,7 +200,6 @@ export const getUsers = async (
           }
           return user;
         })
-        .slice(skip, limit)
         .concat(
           userProjectPermissionsWithoutFirebase.map(({ email, role, status }) => ({
             displayName: '',

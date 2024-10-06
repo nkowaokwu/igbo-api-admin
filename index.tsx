@@ -10,6 +10,7 @@ import {
   onUpdateTotalAudioDashboardStats,
   getLoginStats,
 } from './src/backend/controllers/stats';
+import { onExportData } from './src/backend/controllers/exports';
 import triggersRouter from './src/backend/routers/triggersRouter';
 import testRouter from './src/backend/routers/testRouter';
 import errorHandler from './src/backend/middleware/errorHandler';
@@ -19,6 +20,7 @@ import { onRequestDeleteDocument, onUpdateDocument } from './src/backend/functio
 import { onTwitterAuth, onTwitterCallback, onDeleteConstructedTermPoll } from './src/backend/controllers/polls';
 import platformRouters from './src/backend/routers/platformRouters';
 import { onMediaSignedRequest } from './src/backend/controllers/media';
+import PubSubTopic from './src/backend/shared/constants/PubSubTopic';
 import {
   CORS_CONFIG,
   EXPRESS_PORT,
@@ -82,6 +84,13 @@ export const calculateTotalAudioHours = functions
   .timeZone('America/Los_Angeles')
   .onRun(onUpdateTotalAudioDashboardStats);
 
+/* Exports project data */
+export const exportData = functions.pubsub.topic(PubSubTopic.EXPORT_DATA).onPublish(async (message) => {
+  console.log('Starting to export data');
+  const payload: { projectId: string; adminEmail: string } = message.json;
+
+  await onExportData(payload);
+});
 /**
  * Determines whether or not in a backend testing environment or in a
  * frontend testing or development environment.

@@ -14,6 +14,7 @@ import {
   AUDIO_PRONUNCIATION_DELETION_NOTIFICATION,
   MEMBER_INVITE,
   MEMBER_ACCEPTED_INVITE,
+  DATASET_EXPORT,
 } from 'src/backend/config';
 import constructMessage from 'src/backend/controllers/email/utils/constructMessage';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
@@ -203,6 +204,15 @@ export const sendMemberAcceptedInviteAdmin = async (data: Interfaces.MemberAccep
   const message = constructMessage({
     to: data.to,
     templateId: MEMBER_ACCEPTED_INVITE,
+    dynamic_template_data: omit(data, ['to']),
+  });
+  return sendEmail(message);
+};
+
+export const sendExportedDataset = async (data: Interfaces.ExportedData): Promise<void> => {
+  const message = constructMessage({
+    to: [data.to],
+    templateId: DATASET_EXPORT,
     dynamic_template_data: omit(data, ['to']),
   });
   return sendEmail(message);

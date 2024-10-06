@@ -21,7 +21,8 @@ export const parseAWSKeyFromUri = (awsUri: string): string => awsUri.split(AWS_A
  * @param awsUri AWS URI
  * @returns Audio Id
  */
-export const parseAWSIdFromUri = (awsUri: string): string => parseAWSKeyFromUri(awsUri).split('.')[0];
+export const parseAWSIdFromUri = (awsUri: string): string =>
+  awsUri.split(AWS_AUDIO_PRONUNCIATIONS_DELIMITER)[1].split('.')[0];
 
 /**
  * Parses out the document path to the file (typically the path + ExampleSuggestion Id + file extension) in

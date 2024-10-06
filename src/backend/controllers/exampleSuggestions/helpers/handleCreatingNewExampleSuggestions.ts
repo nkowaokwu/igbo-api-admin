@@ -45,7 +45,7 @@ const handleCreatingNewExampleSuggestions = async ({
     await Promise.all(
       examplesWithoutSuggestions.map(async (exampleDoc) => {
         const example = exampleDoc.toJSON();
-        const query = searchPreExistingExampleSuggestionsRegexQuery(example);
+        const query = searchPreExistingExampleSuggestionsRegexQuery({ text: example?.source?.text || '' });
         const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
         if (identicalExampleSuggestions.length) {

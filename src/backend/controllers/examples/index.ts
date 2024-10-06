@@ -18,6 +18,23 @@ import createExampleFromSuggestion from 'src/backend/controllers/examples/helper
 import { packageResponse, handleQueries, updateDocumentMerge } from '../utils';
 import { sendMergedEmail } from '../email';
 
+/**
+ *
+ * @param param0
+ * @returns Returns all Examples in a given project
+ */
+export const getExamplesHelper = ({
+  mongooseConnection,
+  projectId,
+}: {
+  mongooseConnection: Connection;
+  projectId: string;
+}): Promise<Interfaces.Example[]> => {
+  const Example = mongooseConnection.model('Example', exampleSchema);
+
+  return Example.find({ projectId });
+};
+
 /* Returns examples from MongoDB */
 export const getExamples = async (
   req: Interfaces.EditorRequest,

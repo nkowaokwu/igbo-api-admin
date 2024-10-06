@@ -260,7 +260,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   // @ts-expect-error
   [`source.pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
   'source.pronunciations.speaker': { $nin: [string] };
-  projectId: { $eq: Types.ObjectId };
+  projectId: { $eq: string };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
@@ -272,7 +272,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   'source.pronunciations.speaker': { $nin: [uid] },
-  projectId: { $eq: new Types.ObjectId(projectId) },
+  projectId: { $eq: projectId },
 });
 
 /**
@@ -408,11 +408,11 @@ export const searchRandomExampleSuggestionsToReviewTranslationsRegexQuery = ({
 });
 
 export const searchPreExistingExampleSuggestionsRegexQuery = ({
-  igbo,
+  text,
 }: {
-  igbo: string;
-}): { igbo: string; merged: null } => ({
-  igbo,
+  text: string;
+}): { 'source.text': string; merged: null } => ({
+  'source.text': text,
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (
@@ -472,7 +472,7 @@ export const searchIgboTextSearch = (
 ): { [key: string]: any } => ({
   ...fullTextSearchQuery(keyword, regex),
   ...(filters ? generateSearchFilters(filters, uid) : {}),
-  projectId: { $eq: new Types.ObjectId(projectId) },
+  projectId: { $eq: projectId },
 });
 /* Since the word field is not non-accented yet,
  * a strict regex search for words has to be used as a workaround */
