@@ -7,7 +7,7 @@ import FormHeader from '../../../FormHeader';
 import DefinitionsFormInterface from './DefinitionsFormInterface';
 import DefinitionForm from './DefinitionForm';
 
-const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface): ReactElement => {
+const DefinitionsForm = ({ errors, control, getValues, record }: DefinitionsFormInterface): ReactElement => {
   const {
     fields: definitions,
     append,
@@ -69,7 +69,13 @@ const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface):
                 </Button>
               </Tooltip>
             ) : null}
-            <DefinitionForm errors={errors} control={control} groupIndex={index} record={record} />
+            <DefinitionForm
+              errors={errors}
+              control={control}
+              groupIndex={index}
+              record={record}
+              getValues={getValues}
+            />
             {(errors.definitions || [])[index] ? <p className="error relative">Definition is required</p> : null}
           </Box>
         ))}

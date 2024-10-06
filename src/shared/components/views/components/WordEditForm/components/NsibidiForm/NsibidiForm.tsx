@@ -9,10 +9,9 @@ import NsibidiInput from './NsibidiInput';
 
 const NsibidiForm = React.forwardRef(
   (
-    { control, name = 'nsibidi', errors, hideFormHeader, defaultValue, ...rest }: NsibidiFormInterface,
+    { control, getValues, name = 'nsibidi', errors, hideFormHeader, defaultValue, ...rest }: NsibidiFormInterface,
     ref,
   ): ReactElement => {
-    const { getValues } = control;
     const isIgboAPIProject = useIsIgboAPIProject();
     const nsibidiCharactersName = `${name}Characters` || 'nsibidiCharacters';
     return isIgboAPIProject ? (
@@ -27,7 +26,7 @@ const NsibidiForm = React.forwardRef(
           />
         ) : null}
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <NsibidiInput
               {...props}
               {...rest}

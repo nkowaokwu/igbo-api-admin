@@ -24,7 +24,7 @@ const PartOfSpeechForm = ({ errors, control, groupIndex, record }: PartOfSpeechF
       />
       <Box data-test="word-class-input-container">
         <Controller
-          render={(props) => <Select {...props} options={options} />}
+          render={({ field: props }) => <Select {...props} options={options} />}
           name={`definitions[${groupIndex}].wordClass`}
           defaultValue={defaultValue}
           control={control}

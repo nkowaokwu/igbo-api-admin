@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { get } from 'lodash';
 import { Record } from 'react-admin';
 import { Box } from '@chakra-ui/react';
-import { Control, useFieldArray } from 'react-hook-form';
+import { Control, useFieldArray, UseFormGetValues } from 'react-hook-form';
 import FormHeader from '../../../FormHeader';
 import NsibidiForm from '../NsibidiForm';
 import PartOfSpeechForm from '../PartOfSpeechForm';
@@ -12,11 +12,13 @@ import IgboDefinitions from './IgboDefinitions';
 const DefinitionForm = ({
   errors,
   control,
+  getValues,
   groupIndex,
   record,
 }: {
   errors: any;
   control: Control;
+  getValues: UseFormGetValues<any>;
   groupIndex: number;
   record: Record;
 }): ReactElement => {
@@ -54,6 +56,7 @@ const DefinitionForm = ({
         <PartOfSpeechForm errors={errors} control={control} groupIndex={groupIndex} record={record} />
         <NsibidiForm
           control={control}
+          getValues={getValues}
           name={`definitions[${groupIndex}].nsibidi`}
           errors={errors}
           defaultValue={get(record, `definitions[${groupIndex}].nsibidi`)}
@@ -81,6 +84,7 @@ const DefinitionForm = ({
           handleDeleteGroupIgboDefinition={handleDeleteGroupIgboDefinition}
           handleAddGroupIgboDefinition={handleAddGroupIgboDefinition}
           errors={errors}
+          getValues={getValues}
         />
       </Box>
     </>

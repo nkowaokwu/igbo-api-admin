@@ -30,7 +30,7 @@ const TensesForm = ({ record, errors, control }: TensesFormInterface): ReactElem
       {Object.entries(record.tenses || DEFAULT_TENSES).map(([key, value]) => (
         <Box key={key}>
           <Controller
-            render={({ onChange, ref }) => {
+            render={({ field: { onChange, ref } }) => {
               const label = capitalize(key.replace(/([A-Z])/g, ' $1'));
               return (
                 <Box>

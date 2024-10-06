@@ -7,8 +7,8 @@ import WordTags from 'src/backend/shared/constants/WordTags';
 import FormHeader from '../FormHeader';
 import TagsInterface from './TagsFormInterface';
 
-const TagsForm = ({ errors, control }: TagsInterface): ReactElement => {
-  const tags = get(control.getValues(), 'tags');
+const TagsForm = ({ errors, control, getValues }: TagsInterface): ReactElement => {
+  const tags = get(getValues(), 'tags');
 
   return (
     <Box className="flex flex-col w-full">
@@ -16,9 +16,7 @@ const TagsForm = ({ errors, control }: TagsInterface): ReactElement => {
         <FormHeader title="Tags" tooltip="Select tags that are associated with the document." />
         <Box className="w-full" data-test="tags-input-container">
           <Controller
-            render={({ onChange, ref }) => (
-              <Select ref={ref} onChange={onChange} options={Object.values(WordTags)} value={tags} isMulti />
-            )}
+            render={({ field: props }) => <Select options={Object.values(WordTags)} value={tags} isMulti {...props} />}
             name="tags"
             control={control}
           />

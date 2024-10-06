@@ -28,9 +28,8 @@ const generateIPALabel = (word = '') => {
   );
 };
 
-const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInterface): ReactElement => {
+const HeadwordForm = ({ errors, control, getValues, record, watch, onChange }: HeadwordInterface): ReactElement => {
   const [flags, setFlags] = useState({});
-  const { getValues } = control;
   const isHeadwordAccented = (record.word || '').normalize('NFD').match(/(?!\u0323)[\u0300-\u036f]/g);
   const isAsCompleteAsPossible = determineIsAsCompleteAsPossible(record);
   const watchedWord = watch('word');
@@ -53,7 +52,7 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
           color={Object.values(flags).length ? 'orange.600' : ''}
         />
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <Input
               {...props}
               onChange={(e) => {
@@ -73,6 +72,7 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
           record={record}
           errors={errors}
           control={control}
+          getValues={getValues}
           isHeadwordAccented={!!isHeadwordAccented?.length}
           isAsCompleteAsPossible={isAsCompleteAsPossible}
           isConstructedPollTerm={isConstructedPollTerm}
@@ -89,7 +89,7 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
             Headword pronunciation spelling:{' '}
           </chakra.span>
           <Controller
-            render={(props) => (
+            render={({ field: props }) => (
               <Input
                 {...props}
                 placeholder="Spelling of headword pronunciation, i.e. ụgbaala"
@@ -102,7 +102,7 @@ const HeadwordForm = ({ errors, control, record, watch, onChange }: HeadwordInte
           />
           {generateIPALabel(watchedWordPronunciation)}
           <Controller
-            render={(props) => (
+            render={({ field: props }) => (
               <Input
                 {...props}
                 placeholder="Conceptual spelling of headword using dashes , i.e. isi-agụ"

@@ -11,7 +11,7 @@ import FormHeader from '../../../FormHeader';
 import ExamplesFormInterface from './ExamplesFormInterface';
 import Example from './Example';
 
-const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
+const ExamplesForm = ({ control, setValue, getValues }: ExamplesFormInterface): ReactElement => {
   const {
     fields: examples,
     append,
@@ -20,7 +20,6 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
     control,
     name: 'examples',
   });
-  const { setValue } = control;
   const archivedExamples = examples.filter(({ archived = false }) => archived);
 
   return (
@@ -49,6 +48,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
                     index={index}
                     control={control}
                     setValue={setValue}
+                    getValues={getValues}
                   />
                 ))
               ) : (

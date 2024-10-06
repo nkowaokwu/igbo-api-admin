@@ -73,7 +73,11 @@ const DataDump = (): ReactElement => {
     },
   };
 
-  const { control, errors, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       title: '',
       description: '',
@@ -206,7 +210,7 @@ const DataDump = (): ReactElement => {
                 <Controller
                   name="language"
                   control={control}
-                  render={(props) => (
+                  render={({ field: props }) => (
                     <Select
                       {...props}
                       className="w-full"

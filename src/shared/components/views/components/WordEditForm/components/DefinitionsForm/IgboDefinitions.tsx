@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormGetValues } from 'react-hook-form';
 import { Box, IconButton } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { Textarea } from 'src/shared/primitives';
@@ -10,6 +10,7 @@ const IgboDefinitions = ({
   definitions,
   groupIndex,
   control,
+  getValues,
   errors,
   handleDeleteGroupIgboDefinition,
   handleAddGroupIgboDefinition,
@@ -17,6 +18,7 @@ const IgboDefinitions = ({
   definitions: { id: string; igbo: string; nsibidi: string; nsibidiCharacters: [] }[];
   groupIndex: number;
   control: Control;
+  getValues: UseFormGetValues<any>;
   handleDeleteGroupIgboDefinition: (index: number) => void;
   handleAddGroupIgboDefinition: () => void;
   errors: any;
@@ -28,7 +30,7 @@ const IgboDefinitions = ({
           <h3 className="text-xl text-gray-600 mr-2">{`${igboDefinitionIndex + 1}.`}</h3>
           <Box className="flex flex-col space-y-2 w-full">
             <Controller
-              render={(props) => (
+              render={({ field: props }) => (
                 <Textarea
                   {...props}
                   rows={3}
@@ -44,6 +46,7 @@ const IgboDefinitions = ({
             />
             <NsibidiForm
               control={control}
+              getValues={getValues}
               name={`definitions[${groupIndex}].igboDefinitions[${igboDefinitionIndex}].nsibidi`}
               placeholder="Definition in Nsịbịdị"
               data-test={`nested-definitions-nsibidi-${igboDefinitionIndex}-input`}

@@ -86,7 +86,14 @@ const WordEditForm = ({
     record.examples.sort((prev, next) => prev.source?.text?.localeCompare?.(next.source?.text));
   }
 
-  const { handleSubmit, getValues, setValue, control, errors, watch } = useForm({
+  const {
+    handleSubmit,
+    getValues,
+    setValue,
+    control,
+    formState: { errors },
+    watch,
+  } = useForm({
     defaultValues: createDefaultWordFormValues(record || { id: '' }),
     ...WordEditFormResolver(),
     mode: 'onChange',
@@ -214,11 +221,12 @@ const WordEditForm = ({
               errors={errors}
               control={control}
               record={record}
+              getValues={getValues}
               watch={watch}
               onChange={handleWarningMessage}
             />
             <TagsForm errors={errors} control={control} />
-            <FrequencyForm errors={errors} control={control} record={record} />
+            <FrequencyForm errors={errors} control={control} record={record} getValues={getValues} />
           </Box>
           <Box className="w-full lg:w-1/2 flex flex-col">
             <Controller
@@ -241,6 +249,8 @@ const WordEditForm = ({
               record={record}
               originalRecord={originalRecord}
               control={control}
+              getValues={getValues}
+              setValue={setValue}
               setDialects={setDialects}
               dialects={dialects}
             />
@@ -250,9 +260,9 @@ const WordEditForm = ({
           </Box>
         </Box>
       </Box>
-      <DefinitionsForm errors={errors} control={control} record={record} />
+      <DefinitionsForm errors={errors} control={control} record={record} getValues={getValues} />
       {isAnyDefinitionGroupAVerb ? <TensesForm record={record} errors={errors} control={control} /> : null}
-      <ExamplesForm control={control} />
+      <ExamplesForm control={control} setValue={setValue} getValues={getValues} />
       <Box
         className={
           'flex ' +
@@ -277,13 +287,15 @@ const WordEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
+          render={({ field: props }) => (
+            <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />
+          )}
           name="editorsNotes"
           defaultValue={record.editorsNotes || getValues().editorsNotes || ''}
           control={control}
         />
         <Controller
-          render={(props) => <input {...props} style={{ pointerEvents: 'none', visibility: 'hidden' }} />}
+          render={({ field: props }) => <input {...props} style={{ pointerEvents: 'none', visibility: 'hidden' }} />}
           name="twitterPollId"
           defaultValue={record.twitterPollId || ''}
           control={control}

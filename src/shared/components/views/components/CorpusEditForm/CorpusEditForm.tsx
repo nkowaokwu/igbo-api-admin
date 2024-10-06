@@ -27,7 +27,14 @@ const CorpusEditForm = ({
   history,
   isPreExistingSuggestion,
 }: EditFormProps): ReactElement => {
-  const { getValues, setValue, control, errors, register, watch } = useForm({
+  const {
+    getValues,
+    setValue,
+    control,
+    formState: { errors },
+    register,
+    watch,
+  } = useForm({
     defaultValues: {
       ...record,
     },
@@ -171,7 +178,7 @@ const CorpusEditForm = ({
         ) : null}
         <FormHeader title="Title" tooltip="The name of this corpus" />
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <Input {...props} placeholder="Title of corpus" data-test="title-input" className="mb-2" />
           )}
           name="title"
@@ -210,7 +217,9 @@ const CorpusEditForm = ({
           Leave your name on your comment!`}
         />
         <Controller
-          render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
+          render={({ field: props }) => (
+            <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />
+          )}
           name="editorsNotes"
           defaultValue={record.editorsNotes || ''}
           control={control}

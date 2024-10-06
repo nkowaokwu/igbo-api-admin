@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Button, VStack, HStack, Input } from '@chakra-ui/react';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import { Control, Controller, useFieldArray, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { get } from 'lodash';
 import Select from 'react-select';
 import { LuPlus } from 'react-icons/lu';
@@ -16,12 +16,16 @@ const ExampleTranslationsForm = ({
   uid,
   errors,
   control,
+  setValue,
+  getValues,
 }: {
   record: Record;
   originalRecord: Record;
   uid: string;
   errors: any;
   control: Control;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
 }): ReactElement => {
   const languageOptions = Object.values(LanguageLabels).filter(({ value }) => value !== LanguageEnum.UNSPECIFIED);
   const { fields: translations, append } = useFieldArray({
@@ -54,7 +58,7 @@ const ExampleTranslationsForm = ({
               gap={2}
             >
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <Input
                     {...props}
                     placeholder="Translation text in selected language"
@@ -66,13 +70,11 @@ const ExampleTranslationsForm = ({
                 name={`translations.${index}.text`}
                 control={control}
                 defaultValue={
-                  get(record, `translations.${index}.text`) ||
-                  get(control.getValues(), `translations.${index}.text`) ||
-                  ''
+                  get(record, `translations.${index}.text`) || get(getValues(), `translations.${index}.text`) || ''
                 }
               />
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <Select
                     {...props}
                     options={languageOptions}
@@ -91,6 +93,8 @@ const ExampleTranslationsForm = ({
               originalRecord={originalRecord}
               uid={uid}
               name={`translations.${index}`}
+              setValue={setValue}
+              getValues={getValues}
             />
           </VStack>
         ))}
