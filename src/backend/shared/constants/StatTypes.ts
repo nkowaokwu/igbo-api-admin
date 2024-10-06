@@ -1,4 +1,5 @@
 enum StatTypes {
+  // Dashboard
   SUFFICIENT_WORDS = 'sufficient_words',
   COMPLETE_WORDS = 'complete_words',
   SUFFICIENT_EXAMPLES = 'sufficient_examples',
@@ -15,6 +16,10 @@ enum StatTypes {
   TOTAL_EXAMPLE_AUDIO = 'total_example_audio',
   TOTAL_EXAMPLE_SUGGESTION_AUDIO = 'total_example_suggestion_audio',
   TOTAL_USERS = 'total_users',
+
+  // User
+  RECORDINGS = 'recordings',
+  TRANSLATIONS = 'translations',
 }
 
 export default StatTypes;

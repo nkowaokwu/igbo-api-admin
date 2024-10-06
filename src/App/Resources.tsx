@@ -78,7 +78,7 @@ export enum ResourceGroup {
 export const ResourceGroupLabels = {
   [ResourceGroup.UNSPECIFIED]: '',
   [ResourceGroup.GET_STARTED]: 'Get started',
-  [ResourceGroup.LEXICAL]: 'Published data',
+  [ResourceGroup.LEXICAL]: 'Finalized data',
   [ResourceGroup.DATA_COLLECTION]: 'Draft data',
   [ResourceGroup.SETTINGS]: 'Project',
   [ResourceGroup.PLATFORM_ADMIN]: 'Platform admin',

@@ -31,8 +31,8 @@ export const REPORT_USER_NOTIFICATION = config?.sendgrid?.report_user_notificati
 export const AUDIO_PRONUNCIATION_DELETION_NOTIFICATION = config?.sendgrid?.audio_pronunciation_deletion_notification;
 export const MEMBER_INVITE = config?.sendgrid?.member_invite;
 export const MEMBER_ACCEPTED_INVITE = config?.sendgrid?.member_accepted_invite;
-export const API_FROM_EMAIL = config?.sendgrid?.sender_email;
-export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email;
+export const API_FROM_EMAIL = config?.sendgrid?.sender_email || 'api_from_email@nkowaokwu.com';
+export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email || 'nkowaokwu_from_email@nkowaokwu.com';
 
 // AWS
 export const AWS_ACCESS_KEY = config?.aws?.access_key;

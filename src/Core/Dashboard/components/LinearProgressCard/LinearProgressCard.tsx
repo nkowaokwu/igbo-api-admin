@@ -21,7 +21,7 @@ const LinearProgressCard = ({
       gap={2}
       p={5}
     >
-      <VStack width="full" gap={1}>
+      <VStack width="full" gap={1} alignItems="start">
         <Heading fontSize="lg" fontFamily="Silka">
           {heading}
         </Heading>

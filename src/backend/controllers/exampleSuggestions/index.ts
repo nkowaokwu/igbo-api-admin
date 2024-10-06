@@ -23,8 +23,6 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import findExampleSuggestions from 'src/backend/controllers/exampleSuggestions/helpers/findExampleSuggestions';
 import automaticallyMergeExampleSuggestion from 'src/backend/controllers/utils/automaticallyMergeExampleSuggestion';
-import leanPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/leanPronunciation';
-import isEligibleAudioPronunciation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleAudioPronunciation';
 import createExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/createExampleSuggestion';
 import updateExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/updateExampleSuggestion';
 import removeExampleSuggestion from 'src/backend/controllers/exampleSuggestions/helpers/removeExampleSuggestion';
@@ -34,6 +32,7 @@ import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import isEligibleTranslation from 'src/backend/controllers/exampleSuggestions/helpers/validation/isEligibleTranslation';
 import leanTranslation from 'src/backend/controllers/exampleSuggestions/helpers/leanTranslation';
 import handleReviewingResources from 'src/backend/controllers/exampleSuggestions/helpers/handleReviewingResources';
+import handleSentenceRecordingCount from 'src/backend/controllers/exampleSuggestions/helpers/handleSentenceRecordingCount';
 
 const NO_LIMIT = 20000;
 const TIMESTAMP_FORMAT = 'MMM, YYYY';
@@ -545,21 +544,8 @@ export const getUserExampleSuggestionRecordings = async (
   const { projectId } = req.query;
   const uid = uidQuery || user.uid;
   const query = searchTotalRecordedExampleSuggestionsForUser({ uid, projectId });
-
-  const incrementCount = ({
-    pronunciation: dbPronunciation,
-    final,
-  }: {
-    pronunciation: Interfaces.PronunciationSchema;
-    final: { [key: string]: number };
-  }) => {
-    const pronunciationMonth = moment(dbPronunciation.updatedAt).startOf('month').format(TIMESTAMP_FORMAT);
-    const pronunciation = leanPronunciation(dbPronunciation);
-    const isEligible = isEligibleAudioPronunciation({ pronunciation, uid });
-    if (!final[pronunciationMonth]) {
-      final[pronunciationMonth] = 0;
-    }
-    final[pronunciationMonth] += Number(isEligible);
+  const timestampedExampleSuggestions = {
+    [moment().startOf('month').format(TIMESTAMP_FORMAT)]: { count: 0, bytes: 0 },
   };
 
   try {
@@ -568,26 +554,34 @@ export const getUserExampleSuggestionRecordings = async (
       limit: NO_LIMIT,
       mongooseConnection,
     })
-      .then((exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
-        const timestampedExampleSuggestions = exampleSuggestions.reduce(
-          (finalTimestampedExampleSuggestions, exampleSuggestion) => {
-            exampleSuggestion.source.pronunciations.forEach((pronunciation) => {
-              incrementCount({
-                pronunciation,
-                final: finalTimestampedExampleSuggestions,
-              });
-            });
-            exampleSuggestion.translations.forEach((translation) => {
-              translation.pronunciations.forEach((pronunciation) => {
-                incrementCount({
+      .then(async (exampleSuggestions: Interfaces.ExampleSuggestion[]) => {
+        await Promise.all(
+          exampleSuggestions.map(async (exampleSuggestion) => {
+            await Promise.all(
+              exampleSuggestion.source.pronunciations.map(async (pronunciation) => {
+                await handleSentenceRecordingCount({
                   pronunciation,
-                  final: finalTimestampedExampleSuggestions,
+                  uid,
+                  final: timestampedExampleSuggestions,
+                  mongooseConnection,
                 });
-              });
-            });
-            return finalTimestampedExampleSuggestions;
-          },
-          { [moment().startOf('month').format(TIMESTAMP_FORMAT)]: 0 },
+              }),
+            );
+            await Promise.all(
+              exampleSuggestion.translations.map(async (translation) => {
+                await Promise.all(
+                  translation.pronunciations.map(async (pronunciation) => {
+                    await handleSentenceRecordingCount({
+                      pronunciation,
+                      uid,
+                      final: timestampedExampleSuggestions,
+                      mongooseConnection,
+                    });
+                  }),
+                );
+              }),
+            );
+          }),
         );
         res.send({ timestampedExampleSuggestions });
       })

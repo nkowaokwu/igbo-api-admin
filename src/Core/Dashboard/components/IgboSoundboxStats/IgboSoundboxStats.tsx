@@ -1,12 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import moment from 'moment';
-import { isNaN } from 'lodash';
+import { entries, isNaN } from 'lodash';
 import { Box, Button, Text, chakra } from '@chakra-ui/react';
+import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { usePermissions } from 'react-admin';
 import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import { PRICE_PER_RECORDING, PRICE_PER_REVIEW } from 'src/Core/constants';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
-import { ArrowBackIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { FetchedStats } from 'src/Core/Dashboard/components/UserStat/UserStatInterfaces';
+import StatTypes from 'src/backend/shared/constants/StatTypes';
 import LinearProgressCard from '../LinearProgressCard';
 
 /** Calculates the payment for the provided count */
@@ -26,21 +28,55 @@ export const calculatePayment = (recordings: number, reviews: number): string =>
 
   return `$${(recordingsPrice + reviewsPrice).toFixed(2)}`;
 };
+const BYTES_TO_SECONDS = 43800;
+const transformBytesToTime = (bytes: number) => {
+  const seconds = Math.floor(bytes / BYTES_TO_SECONDS);
 
-const IgboSoundboxStats = ({
-  stats,
-}: {
-  stats: Record<string, { stats: Record<string, number>; heading: string; description: string }>;
-}): ReactElement => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds
+    .toString()
+    .padStart(2, '0')}`;
+
+  return formattedTime;
+};
+
+const IgboSoundboxStats = ({ stats }: { stats: FetchedStats }): ReactElement => {
   const permissions = usePermissions();
   const isIgboAPIProject = useIsIgboAPIProject();
   const showPaymentCalculations = isIgboAPIProject && hasAdminPermissions(permissions?.permissions, true);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
-  const contributedStats = Object.values(stats).map((statInfo) => ({
-    totalCount: statInfo.stats[currentMonth],
-    heading: statInfo.heading,
-    description: statInfo.description,
-  }));
+  const contributedStats = entries(stats).flatMap(
+    ([key, statInfo]: [StatTypes, FetchedStats[StatTypes.RECORDINGS] | FetchedStats[StatTypes.TRANSLATIONS]]) => {
+      switch (key) {
+        case StatTypes.RECORDINGS:
+          return [
+            {
+              totalCount: (statInfo as FetchedStats[StatTypes.RECORDINGS]).stats[currentMonth]?.count || 0,
+              heading: 'Recorded sentences',
+              description: 'The number of sentence audio you have recorded',
+            },
+            {
+              totalCount: transformBytesToTime(
+                (statInfo as FetchedStats[StatTypes.RECORDINGS]).stats[currentMonth]?.bytes || 0,
+              ),
+              heading: 'Total time of recordings',
+              description: 'The amount of time recorded',
+            },
+          ];
+        case StatTypes.TRANSLATIONS:
+          return {
+            totalCount: statInfo.stats[currentMonth] || 0,
+            heading: 'Translated sentences',
+            description: 'The number of sentence translations you have created',
+          };
+        default:
+          return [];
+      }
+    },
+  );
 
   const handlePreviousMonth = () => {
     setCurrentMonth(moment(currentMonth).subtract(1, 'month').startOf('month').format('MMM, YYYY'));
@@ -54,7 +90,7 @@ const IgboSoundboxStats = ({
       <Box className="w-full">
         <Box className="space-y-2" mb={2}>
           <Box className="flex flex-row justify-between items-center w-full">
-            <Button onClick={handlePreviousMonth} leftIcon={<ArrowBackIcon />}>
+            <Button onClick={handlePreviousMonth} isDisabled={!contributedStats.length} leftIcon={<ArrowBackIcon />}>
               Previous month
             </Button>
             <Button
@@ -72,7 +108,7 @@ const IgboSoundboxStats = ({
         <Box className="flex flex-col lg:flex-row space-y-3 lg:space-x-3 lg:space-y-0">
           <LinearProgressCard
             heading="Contributions"
-            description="Contributions that you have made on the platform"
+            description="Contributions that you have made to this project"
             stats={contributedStats}
             isLoaded
           >

@@ -47,8 +47,12 @@ export const getUserStats = async (): Promise<{ [key: string]: number }> => {
 
 // User Stats on Profile
 
-export const getUserExampleSuggestionRecordings = async (uid: string): Promise<{ [key: string]: number }> => {
-  const { data: result } = await request<{ timestampedExampleSuggestions: { [key: string]: number } }>({
+export const getUserExampleSuggestionRecordings = async (
+  uid: string,
+): Promise<{ [key: string]: { count: number; bytes: number } }> => {
+  const { data: result } = await request<{
+    timestampedExampleSuggestions: { [key: string]: { count: number; bytes: number } };
+  }>({
     method: 'GET',
     url: `${Collection.STATS}/users/${uid}/${Collection.EXAMPLE_SUGGESTIONS}/recorded`,
     params: { uid },
