@@ -9,9 +9,7 @@ const CustomArrayInput = ({ source, label, individualLabel }: ArrayInputProps): 
     <>
       <Box className="flex justify-between items-center">
         <Box>
-          <h1 className="text-2xl mt-5">
-            {`${label} - ${isArrayView ? 'Array View' : 'String View'}`}
-          </h1>
+          <h1 className="text-2xl mt-5">{`${label} - ${isArrayView ? 'Array View' : 'String View'}`}</h1>
           {isArrayView ? (
             <p className="text-gray-600">Adding and deleting too slow? Switch to String View to make faster edits</p>
           ) : (
@@ -20,7 +18,9 @@ const CustomArrayInput = ({ source, label, individualLabel }: ArrayInputProps): 
             </p>
           )}
         </Box>
-        <Button color="secondary" onClick={() => setIsArrayView(!isArrayView)}>Toggle View</Button>
+        <Button color="secondary" onClick={() => setIsArrayView(!isArrayView)}>
+          Toggle View
+        </Button>
       </Box>
 
       {isArrayView ? (
@@ -29,7 +29,9 @@ const CustomArrayInput = ({ source, label, individualLabel }: ArrayInputProps): 
             <TextInput source="" label={individualLabel} />
           </SimpleFormIterator>
         </ArrayInput>
-      ) : <TextInput multiline source={source} />}
+      ) : (
+        <TextInput multiline source={source} />
+      )}
     </>
   );
 };
