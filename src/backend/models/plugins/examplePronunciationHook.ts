@@ -99,28 +99,27 @@ export const uploadExamplePronunciation = (schema: mongoose.Schema<Interfaces.Ex
   schema.pre('save', async function (next) {
     try {
       const id = (this._id || this.id).toString();
-      const currentDocument = await this.model().findById(this.id);
+      const currentDocument = this.isNew
+        ? { source: { pronunciations: [] }, translations: [] }
+        : await this.model().findById(this.id);
 
-      if (!this.skipPronunciationHook) {
-        await Promise.all(
-          await handleUploadingAudio(id, this.source.pronunciations, currentDocument.source.pronunciations, this.isNew),
-        );
-        await Promise.all(
-          this.translations.map(async ({ pronunciations }, index) =>
-            Promise.all(
-              await handleUploadingAudio(
-                id,
-                pronunciations,
-                currentDocument.translations[index].pronunciations || [],
-                this.isNew,
-              ),
+      await Promise.all(
+        await handleUploadingAudio(id, this.source.pronunciations, currentDocument.source.pronunciations, this.isNew),
+      );
+      await Promise.all(
+        this.translations.map(async ({ pronunciations }, index) =>
+          Promise.all(
+            await handleUploadingAudio(
+              id,
+              pronunciations,
+              currentDocument.translations[index]?.pronunciations || [],
+              this.isNew,
             ),
           ),
-        );
-      }
+        ),
+      );
 
-      next();
-      return this;
+      return next();
     } catch (err) {
       this.invalidate('source.pronunciations', err.message);
       return null;
