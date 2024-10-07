@@ -1,11 +1,11 @@
 import { customAlphabet } from 'nanoid';
-import { adminEmailList, prodAdminEmailList } from 'src/shared/constants/emailList';
+import { adminEmailList } from 'src/shared/constants/emailList';
 import UserRoles from '../shared/constants/UserRoles';
 
 export const assignUserRole = (user: { email?: string }): { role: UserRoles } => {
   if (process.env.NODE_ENV === 'production') {
     return {
-      role: prodAdminEmailList.includes(user.email) ? UserRoles.ADMIN : UserRoles.CROWDSOURCER,
+      role: UserRoles.CROWDSOURCER,
     };
   }
 

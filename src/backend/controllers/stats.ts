@@ -1,19 +1,15 @@
 import { Response, NextFunction } from 'express';
 import { Model } from 'mongoose';
-import { compact, times } from 'lodash';
-import moment from 'moment';
+import { compact } from 'lodash';
 import { audioPronunciationSchema } from 'src/backend/models/AudioPronunciation';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
-import { MINIMUM_APPROVALS, MINIMUM_DENIALS } from 'src/backend/shared/constants/Review';
-import getExampleSuggestionUpdateAt from 'src/backend/controllers/exampleSuggestions/helpers/getExampleSuggestionUpdateAt';
+import { IGBO_API_PROJECT_ID } from 'src/backend/config';
 import { exampleSchema } from '../models/Example';
 import { wordSchema } from '../models/Word';
 import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { statSchema } from '../models/Stat';
 import {
-  searchApprovedExampleSuggestionAudioPronunciations,
-  searchDeniedExampleSuggestionAudioPronunciations,
   searchForAllWordsWithAudioPronunciations,
   searchForAllWordsWithIsStandardIgbo,
   searchForAllWordsWithNsibidi,
@@ -30,15 +26,6 @@ import SentenceTypeEnum from '../shared/constants/SentenceTypeEnum';
 import Author from '../shared/constants/Author';
 
 const BYTES_TO_SECONDS = 43800;
-const WORD_SUGGESTION_QUERY_LIMIT = 3000;
-const EXAMPLE_SUGGESTION_QUERY_LIMIT = 5000;
-const TWELVE_WEEKS = 12;
-const threeMonthsAgo = new Date(
-  moment()
-    .subtract(TWELVE_WEEKS - 1, 'weeks')
-    .startOf('week')
-    .toISOString(),
-);
 
 const findStat = async ({ type, authorId = Author.SYSTEM, Stat }) => {
   let stat = await Stat.findOne({ type, authorId });
@@ -66,14 +53,18 @@ const calculateTotalHeadwordsWithAudioPronunciations = async (
   Word,
   Stat,
 ): Promise<{ audioPronunciationWords: number } | void> => {
-  const audioPronunciationWords = await Word.countDocuments(searchForAllWordsWithAudioPronunciations());
+  const audioPronunciationWords = await Word.countDocuments(
+    searchForAllWordsWithAudioPronunciations({ projectId: IGBO_API_PROJECT_ID }),
+  );
   await updateStat({ type: StatTypes.HEADWORD_AUDIO_PRONUNCIATIONS, value: audioPronunciationWords, Stat });
   return { audioPronunciationWords };
 };
 
 /* Returns all the Words that's in Standard Igbo */
 const calculateTotalWordsInStandardIgbo = async (Word, Stat): Promise<{ isStandardIgboWords: number } | void> => {
-  const isStandardIgboWords = await Word.countDocuments(searchForAllWordsWithIsStandardIgbo());
+  const isStandardIgboWords = await Word.countDocuments(
+    searchForAllWordsWithIsStandardIgbo({ projectId: IGBO_API_PROJECT_ID }),
+  );
   await updateStat({ type: StatTypes.STANDARD_IGBO, value: isStandardIgboWords, Stat });
   return { isStandardIgboWords };
 };
@@ -286,6 +277,7 @@ export const getUserStats = async (
       params: { uid },
       mongooseConnection,
     } = req;
+    const { projectId } = req.query;
     const userId = uid || user.uid;
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
@@ -301,6 +293,7 @@ export const getUserStats = async (
           { mergedBy: userId },
           { userInteractions: { $in: [userId] } },
         ],
+        projectId,
       }),
       ExampleSuggestion.find({
         $or: [
@@ -310,6 +303,7 @@ export const getUserStats = async (
           { mergedBy: userId },
           { userInteractions: { $in: [userId] } },
         ],
+        projectId,
       }),
     ]);
 
@@ -366,180 +360,6 @@ export const getUserStats = async (
   }
 };
 
-export const getUserMergeStats = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response | void> => {
-  try {
-    const {
-      params: { uid },
-      mongooseConnection,
-    } = req;
-    const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-    const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-      'ExampleSuggestion',
-      exampleSuggestionSchema,
-    );
-    // console.time(`Querying user merge stat example suggestions for ${uid}`);
-    const exampleSuggestions = (await ExampleSuggestion.find({
-      authorId: uid,
-      mergedBy: { $ne: null },
-      updatedAt: { $gt: threeMonthsAgo },
-    }).limit(EXAMPLE_SUGGESTION_QUERY_LIMIT)) as Interfaces.ExampleSuggestion[];
-    // console.timeEnd(`Querying user merge stat example suggestions for ${uid}`);
-    // console.time(`Querying user merge stat word suggestions for ${uid}`);
-    const wordSuggestions = (await WordSuggestion.find({
-      mergedBy: { $ne: null },
-      'dialects.editor': uid,
-      updatedAt: { $gt: threeMonthsAgo },
-    }).limit(WORD_SUGGESTION_QUERY_LIMIT)) as Interfaces.WordSuggestion[];
-    // console.timeEnd(`Querying user merge stat word suggestions for ${uid}`);
-    const defaultMerges = {};
-    const isoWeekToDateMap = {};
-    times(TWELVE_WEEKS, (index) => {
-      const weekDate = moment().subtract(index, 'weeks').startOf('week');
-
-      const week = weekDate.toISOString();
-      const isoWeek = weekDate.isoWeek();
-      defaultMerges[week] = 0;
-      isoWeekToDateMap[isoWeek] = week;
-    });
-    const currentMonthMerges = {
-      exampleSuggestions: 0,
-      dialectalVariations: 0,
-    };
-    // console.time(`Example suggestion merge creation for ${uid}`);
-    const exampleSuggestionMerges = exampleSuggestions.reduce(
-      (finalData, exampleSuggestion) => {
-        const exampleSuggestionUpdateDate = moment(exampleSuggestion.updatedAt);
-        const exampleSuggestionUpdateIsoWeek = exampleSuggestionUpdateDate.startOf('week').isoWeek();
-        const dateOfIsoWeek = isoWeekToDateMap[exampleSuggestionUpdateIsoWeek];
-        const isSameMonth =
-          moment().isSame(exampleSuggestionUpdateDate, 'month') ||
-          moment().isSame(exampleSuggestion.updatedAt, 'month');
-        if (isSameMonth) {
-          currentMonthMerges.exampleSuggestions += 1;
-        }
-        if (dateOfIsoWeek) {
-          finalData[dateOfIsoWeek] += 1;
-        } else {
-          /* console.log(
-            'No dateOfIsoWeek found for the following exampleSuggestion timestamp:',
-            exampleSuggestion.updatedAt,
-            exampleSuggestionUpdateIsoWeek,
-          ); */
-        }
-        return finalData;
-      },
-      { ...defaultMerges },
-    );
-    // console.timeEnd(`Example suggestion merge creation for ${uid}`);
-    // console.time(`Dialectal variation merge creation for ${uid}`);
-    const dialectalVariationMerges = wordSuggestions.reduce(
-      (finalData, wordSuggestion) => {
-        const wordSuggestionUpdateDate = moment(wordSuggestion.updatedAt);
-        const wordSuggestionUpdateIsoWeek = wordSuggestionUpdateDate.startOf('week').isoWeek();
-        const dateOfIsoWeek = isoWeekToDateMap[wordSuggestionUpdateIsoWeek];
-        const isSameMonth =
-          moment().isSame(wordSuggestionUpdateDate, 'month') || moment().isSame(wordSuggestion.updatedAt, 'month');
-        const countedHeadword = !wordSuggestion.originalWordId && wordSuggestion.authorId === uid ? 1 : 0;
-        const dialectEditorCount = wordSuggestion.dialects.filter(({ editor }) => editor === uid).length;
-        if (isSameMonth) {
-          currentMonthMerges.dialectalVariations += countedHeadword + dialectEditorCount;
-        }
-        if (dateOfIsoWeek) {
-          finalData[dateOfIsoWeek] += countedHeadword + dialectEditorCount;
-        } else {
-          /* console.log(
-            'No dateOfIsoWeek found for the following wordSuggestion timestamp:',
-            wordSuggestion.updatedAt,
-            wordSuggestionUpdateIsoWeek,
-          ); */
-        }
-        return finalData;
-      },
-      { ...defaultMerges },
-    );
-    // console.timeEnd(`Dialectal variation merge creation for ${uid}`);
-
-    return res.send({ exampleSuggestionMerges, dialectalVariationMerges, currentMonthMerges });
-  } catch (err) {
-    return next(err);
-  }
-};
-
-/**
- * Gets the audio stats related to the user
- */
-export const getUserAudioStats = async (
-  req: Interfaces.EditorRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<Response<any> | void> => {
-  const {
-    mongooseConnection,
-    params: { uid },
-  } = req;
-  try {
-    const ExampleSuggestion = await mongooseConnection.model<Interfaces.ExampleSuggestion>(
-      'ExampleSuggestion',
-      exampleSuggestionSchema,
-    );
-    const approvedQuery = searchApprovedExampleSuggestionAudioPronunciations(uid);
-    const deniedQuery = searchDeniedExampleSuggestionAudioPronunciations(uid);
-    const [approvedExampleSuggestionAudios, deniedExampleSuggestionAudios] = await Promise.all([
-      ExampleSuggestion.find(approvedQuery),
-      ExampleSuggestion.find(deniedQuery),
-    ]);
-    const timestampedAudioApprovals = approvedExampleSuggestionAudios.reduce(
-      (finalTimestampedAudioApprovals, exampleSuggestion) => {
-        // Gets the date and month of Example Suggestion
-        const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
-        const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
-
-        if (!finalTimestampedAudioApprovals[exampleSuggestionMonth]) {
-          finalTimestampedAudioApprovals[exampleSuggestionMonth] = 0;
-        }
-
-        exampleSuggestion.pronunciations.forEach(({ speaker, approvals }) => {
-          if (speaker === uid && approvals.length === MINIMUM_APPROVALS) {
-            finalTimestampedAudioApprovals[exampleSuggestionMonth] += 1;
-          }
-        });
-        return finalTimestampedAudioApprovals;
-      },
-      {},
-    );
-
-    const timestampedAudioDenials = deniedExampleSuggestionAudios.reduce(
-      (finalTimestampedAudioDenials, exampleSuggestion) => {
-        // Gets the date and month of Example Suggestion
-        const exampleSuggestionDate = getExampleSuggestionUpdateAt(exampleSuggestion);
-        const exampleSuggestionMonth = moment(exampleSuggestionDate).startOf('month').format('MMM, YYYY');
-
-        if (!finalTimestampedAudioDenials[exampleSuggestionMonth]) {
-          finalTimestampedAudioDenials[exampleSuggestionMonth] = 0;
-        }
-
-        exampleSuggestion.pronunciations.forEach(({ speaker, denials }) => {
-          if (speaker === uid && denials.length === MINIMUM_DENIALS) {
-            finalTimestampedAudioDenials[exampleSuggestionMonth] += 1;
-          }
-        });
-        return finalTimestampedAudioDenials;
-      },
-      {},
-    );
-    return res.send({
-      timestampedAudioApprovals,
-      timestampedAudioDenials,
-    });
-  } catch (err) {
-    return next(err);
-  }
-};
-
 /* Gets all stats for the entire platform */
 export const getStats = async (
   req: Interfaces.EditorRequest,
@@ -587,7 +407,6 @@ export const onUpdateDashboardStats = async (): Promise<void> => {
     await disconnectDatabase();
   } catch (err) {
     await disconnectDatabase();
-    // console.log(err);
   }
 };
 
@@ -617,7 +436,6 @@ export const onUpdateTotalAudioDashboardStats = async (): Promise<
     return result;
   } catch (err) {
     await disconnectDatabase();
-    // console.log(err);
     return null;
   }
 };
@@ -654,7 +472,6 @@ export const incrementTotalUserStat = async (): Promise<any> => {
     const Stat = connection.model<Interfaces.Stat>('Stat', statSchema);
     const stat = await Stat.findOne({ type: StatTypes.TOTAL_USERS });
     if (!stat) {
-      // console.log('There is no total user stat');
       return null;
     }
     stat.value = (stat?.value ?? 0) + 1;

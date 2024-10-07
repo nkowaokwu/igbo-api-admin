@@ -10,8 +10,7 @@ const EmptyExamples = ({
   setIsDirty?: React.Dispatch<React.SetStateAction<boolean>>;
 }): ReactElement => {
   const goHome = () => {
-    window.location.search = '';
-    window.location.hash = '#/';
+    window.location.href = '#/';
   };
 
   useEffect(() => {
@@ -27,8 +26,8 @@ const EmptyExamples = ({
       className="space-y-12 h-full"
     >
       <Box className="space-y-4">
-        <Heading textAlign="center">{`There are no examples to ${recording ? 'record' : 'review'}`}</Heading>
-        <Text textAlign="center">Please check back later for more examples to be added</Text>
+        <Heading textAlign="center">{`There are no sentences to ${recording ? 'record' : 'review'}`}</Heading>
+        <Text textAlign="center">Please check back later for more sentences to be added</Text>
       </Box>
       <Box className="space-x-3">
         <Button colorScheme="gray" borderRadius="full" fontFamily="Silka" fontWeight="bold" onClick={goHome}>

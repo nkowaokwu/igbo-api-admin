@@ -16,7 +16,7 @@ describe('IgboSoundboxStats', () => {
         <IgboSoundboxStats />
       </TestContext>,
     );
-    await findByText('Igbo Soundbox Contributions');
+    await findByText('Contributions');
     await findByText('Community Reviews');
     await findByText('Contributions that you have made on the platform');
     await findByText('Other platform contributors reviewing your audio');

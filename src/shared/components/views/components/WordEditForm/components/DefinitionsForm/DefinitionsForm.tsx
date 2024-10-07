@@ -39,7 +39,7 @@ const DefinitionsForm = ({ errors, control, record }: DefinitionsFormInterface):
              specific part of speech for the headword"
         />
         <Button
-          colorScheme="purple"
+          variant="primary"
           aria-label="Add Definition Group"
           onClick={handleAddDefinitionGroup}
           leftIcon={<AddIcon />}

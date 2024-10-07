@@ -9,7 +9,7 @@
       "src": ["./src"]
     },
     "lib": ["esnext", "DOM"],
-    "types": ["cypress", "@testing-library/cypress", "jest"],
+    "types": ["jest"],
     "allowJs": true,
     "noImplicitAny": false,
     "moduleResolution": "node",

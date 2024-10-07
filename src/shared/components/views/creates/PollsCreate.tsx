@@ -107,29 +107,17 @@ const PollsCreate = (): ReactElement => {
 
   return (
     <form onSubmit={handlePostingPoll}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <Box className="flex flex-col-reverse lg:flex-row justify-between lg:items-center">
           <Heading>Create a new Constructed Term Poll</Heading>
           <Box className="flex flex-row space-x-4 items-center">
             <Tooltip label="This will authorize the @nkowaokwu Twitter account to post on your behalf" placement="top">
-              <Button
-                type="submit"
-                colorScheme="purple"
-                variant="outline"
-                className="mb-4 lg:mb-0"
-                onClick={handleAccountAuthorization}
-              >
+              <Button type="submit" variant="outline" className="mb-4 lg:mb-0" onClick={handleAccountAuthorization}>
                 Authorize account
               </Button>
             </Tooltip>
             <Tooltip label="This poll will be posted on the public @nkowaokwu Twitter account" placement="top">
-              <Button
-                type="submit"
-                colorScheme="purple"
-                variant="solid"
-                isLoading={isSubmitting}
-                className="mb-4 lg:mb-0"
-              >
+              <Button type="submit" variant="primary" isLoading={isSubmitting} className="mb-4 lg:mb-0">
                 Post poll
               </Button>
             </Tooltip>
@@ -174,7 +162,7 @@ const PollsCreate = (): ReactElement => {
                 </Heading>
                 {pollOptions.length < MAXIMUM_POLL_OPTIONS ? (
                   <IconButton
-                    colorScheme="purple"
+                    variant="primary"
                     aria-label="Add poll option"
                     icon={<AddIcon />}
                     onClick={handleAddPollOption}

@@ -20,7 +20,6 @@ export interface FormattedUser {
   email: string;
   displayName: string;
   role: string;
-  editingGroup: string;
   lastSignInTime: string;
   creationTime: string;
 }

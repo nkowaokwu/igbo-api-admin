@@ -16,7 +16,7 @@ describe('ExamplesForm', () => {
     );
 
     await findByText('Examples (0)');
-    await findByText('No examples');
+    await findByText('No sentences');
     await findByText('Add Example');
     await findByText('Attach Existing Example');
   });

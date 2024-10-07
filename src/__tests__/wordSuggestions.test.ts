@@ -41,7 +41,6 @@ describe('MongoDB Word Suggestions', () => {
   beforeAll(() => {
     jest.mock('src/backend/config', () => ({
       isAWSProduction: false,
-      isCypress: false,
       TEST_MONGO_URI: 'mongodb://127.0.0.1:27017/test_igbo_api',
       AWS_BUCKET: 'test_bucket',
       AWS_REGION: 'test_region',
@@ -383,10 +382,10 @@ describe('MongoDB Word Suggestions', () => {
       expect(res.body.error).not.toEqual(undefined);
     });
 
-    it('should throw an error for providing a source field', async () => {
+    it('should throw an error for providing a origin field', async () => {
       const wordRes = await suggestNewWord(wordSuggestionData);
       const res = await updateWordSuggestion(
-        { ...wordRes.body, source: SuggestionSourceEnum.COMMUNITY },
+        { ...wordRes.body, origin: SuggestionSourceEnum.COMMUNITY },
         { cleanData: false },
       );
       expect(res.status).toEqual(400);

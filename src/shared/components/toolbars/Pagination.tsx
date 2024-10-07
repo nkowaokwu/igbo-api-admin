@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { useListContext } from 'react-admin';
 import { Box, Button, Menu, MenuButton, MenuList, MenuItem, Text, IconButton } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import numberWithCommas from 'src/utils/numberWithCommas';
 
 const Pagination = (): ReactElement => {
   const { page, perPage, total, setPage, setPerPage } = useListContext();
@@ -17,7 +18,7 @@ const Pagination = (): ReactElement => {
       >
         <Box className="flex flex-row justify-start items-center space-x-3 my-4 px-3">
           <IconButton
-            colorScheme="purple"
+            variant="primary"
             key="prev"
             isDisabled={page <= 1}
             onClick={() => setPage(page - 1)}
@@ -25,18 +26,18 @@ const Pagination = (): ReactElement => {
             icon={<ChevronLeftIcon />}
           />
           {page !== 1 ? <Button onClick={() => setPage(1)}>1</Button> : null}
-          {page > 2 ? <Button onClick={() => setPage(page - 1)}>{page - 1}</Button> : null}
+          {page > 2 ? <Button onClick={() => setPage(page - 1)}>{numberWithCommas(page - 1)}</Button> : null}
           <Box
             data-test="pagination-current-page"
             className={`flex justify-center items-center px-4 h-10 border 
           border-gray-500 border-solid rounded-lg text-bold`}
           >
-            {page}
+            {numberWithCommas(page)}
           </Box>
-          {page + 1 < nbPages ? <Button onClick={() => setPage(page + 1)}>{page + 1}</Button> : null}
-          {page !== nbPages ? <Button onClick={() => setPage(nbPages)}>{nbPages}</Button> : null}
+          {page + 1 < nbPages ? <Button onClick={() => setPage(page + 1)}>{numberWithCommas(page + 1)}</Button> : null}
+          {page !== nbPages ? <Button onClick={() => setPage(nbPages)}>{numberWithCommas(nbPages)}</Button> : null}
           <IconButton
-            colorScheme="purple"
+            variant="primary"
             key="next"
             isDisabled={page === nbPages}
             onClick={() => setPage(page + 1)}
@@ -61,7 +62,9 @@ const Pagination = (): ReactElement => {
             )}
           </Menu>
         </Box>
-        <Text>{`${perPage * (page - 1) + 1} - ${perPage * page > total ? total : perPage * page} of ${total}`}</Text>
+        <Text>{`${numberWithCommas(perPage * (page - 1) + 1)} - ${
+          perPage * page > total ? numberWithCommas(total) : numberWithCommas(perPage * page)
+        } of ${numberWithCommas(total)}`}</Text>
       </Box>
     )
   );

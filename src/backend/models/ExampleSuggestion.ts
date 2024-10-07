@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins/index';
-import { uploadExamplePronunciation } from './plugins/examplePronunciationHook';
+import { removeAudioPronunciations, uploadExamplePronunciation } from './plugins/examplePronunciationHook';
 import { normalizeIgbo } from './plugins/normalizationHooks';
 import CrowdsourcingType from '../shared/constants/CrowdsourcingType';
 
@@ -20,6 +21,22 @@ const audioPronunciationSuggestionSchema = new Schema(
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
+
+const translationSchema = new Schema(
+  {
+    language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
+    text: { type: String, default: '', trim: true },
+    pronunciations: {
+      type: [{ type: audioPronunciationSuggestionSchema }],
+      default: [],
+    },
+    approvals: { type: [{ type: String }], default: [] },
+    denials: { type: [{ type: String }], default: [] },
+    authorId: { type: String, default: '' },
+  },
+  { toObject: toObjectPlugin, timestamps: true },
+);
+
 export const exampleSuggestionSchema = new Schema(
   {
     originalExampleId: {
@@ -33,8 +50,8 @@ export const exampleSuggestionSchema = new Schema(
       enum: Object.values(SentenceTypeEnum),
       default: SentenceTypeEnum.DEFAULT,
     },
-    igbo: { type: String, default: '', trim: true },
-    english: { type: String, default: '', trim: true },
+    source: { type: translationSchema, default: { language: LanguageEnum.UNSPECIFIED, text: '' } },
+    translations: { type: [{ type: translationSchema }], default: [] },
     meaning: { type: String, default: '', trim: true },
     nsibidi: { type: String, default: '' },
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
@@ -45,10 +62,6 @@ export const exampleSuggestionSchema = new Schema(
     },
     associatedWords: { type: [{ type: Types.ObjectId }], default: [], index: true },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
-    pronunciations: {
-      type: [{ type: audioPronunciationSuggestionSchema }],
-      default: [],
-    },
     exampleForSuggestion: { type: Boolean, default: false },
     editorsNotes: { type: String, default: '' },
     userComments: { type: String, default: '' },
@@ -56,7 +69,7 @@ export const exampleSuggestionSchema = new Schema(
     authorId: { type: String, default: '' },
     approvals: { type: [{ type: String }], default: [] },
     denials: { type: [{ type: String }], default: [] },
-    source: { type: String, default: SuggestionSourceEnum.INTERNAL },
+    origin: { type: String, default: SuggestionSourceEnum.INTERNAL },
     merged: { type: Types.ObjectId, ref: 'Example', default: null },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [] },
@@ -75,12 +88,14 @@ export const exampleSuggestionSchema = new Schema(
         {},
       ),
     },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
 
 toJSONPlugin(exampleSuggestionSchema);
 uploadExamplePronunciation(exampleSuggestionSchema);
+removeAudioPronunciations(exampleSuggestionSchema);
 normalizeIgbo(exampleSuggestionSchema);
 
 exampleSuggestionSchema.index({

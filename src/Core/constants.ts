@@ -2,7 +2,12 @@
 export const IGBO_API_VOLUNTEER_HOME_BASE = 'https://editor.igboapi.com/gettingstarted';
 export const DICTIONARY_EDITING_STANDARDS_URL = 'https://editor.igboapi.com/checklist';
 export const DICTIONARY_APP_URL = 'https://nkowaokwu.com';
+export const NKOWAOKWU_EMAIL = 'kedu@nkowaokwu.com';
 export const TWITTER_APP_URL = 'https://twitter.com/nkowaokwu/status';
+export const REQUEST_DEMO_URL = 'https://forms.gle/mkt1NQDRfpWdVU2B8';
+export const JOIN_SLACK_URL = 'https://join.slack.com/t/igboapi/shared_invite/zt-p33cwdpw-LgoFkgIqV_~CwF64oQG5Hw';
+
+export const IGBO_API_PROJECT_ID = '66de0ffee848d30f37403402';
 
 export const BUG_REPORT_URL = 'https://notionforms.io/forms/bug-reports-llbpnk';
 export const FEATURE_REQUEST_FORM_URL =

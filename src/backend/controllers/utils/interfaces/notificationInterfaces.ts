@@ -43,6 +43,22 @@ export interface AudioPronunciationDeletionNotification {
   deletedAudioPronunciation: string;
 }
 
+export interface MemberInvite {
+  to: string;
+  projectId: string;
+  permissionId: string;
+  acceptUrl: string;
+  projectTitle: string;
+  grantingAdmin: string;
+}
+
+export interface MemberAcceptedInvite {
+  to: string[];
+  projectId: string;
+  projectTitle: string;
+  userEmail: string;
+}
+
 export interface DocumentUpdateNotification {
   author: string;
   to: string;

@@ -54,7 +54,7 @@ describe('WordSuggestions', () => {
         word: 'community',
         definitions: [],
         pronunciation: 'pronunciation',
-        source: SuggestionSourceEnum.COMMUNITY,
+        origin: SuggestionSourceEnum.COMMUNITY,
         createdAt: moment().subtract(2, 'year'),
       });
       const wordSuggestion = new WordSuggestion({

@@ -172,12 +172,7 @@ describe('Stats', () => {
         send: jest.fn(),
       };
       const mockNext = jest.fn();
-      await getUserAudioStats(
-        // @ts-expect-error
-        { mongooseConnection, user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } },
-        mockRes,
-        mockNext,
-      );
+      await getUserAudioStats({ mongooseConnection, user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } }, mockRes, mockNext);
       expect(mockRes.send).toHaveBeenCalledWith({
         timestampedAudioApprovals: { [moment().format('MMM, YYYY')]: 1 },
         timestampedAudioDenials: {},
@@ -219,7 +214,6 @@ describe('Stats', () => {
           mongooseConnection,
           params: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
         }),
-        // @ts-expect-error
         mockRes,
         mockNext,
       );
@@ -263,7 +257,6 @@ describe('Stats', () => {
         {
           mongooseConnection,
           params: { uid: AUTH_TOKEN.MERGER_AUTH_TOKEN },
-          // @ts-expect-error
           user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },
         },
         mockRes,
@@ -277,7 +270,6 @@ describe('Stats', () => {
     });
   });
 
-  // TODO: write test for network request getUserMergeStats
   describe('Stats Network', () => {
     beforeEach(async () => {
       // Clear out database to start with a clean slate

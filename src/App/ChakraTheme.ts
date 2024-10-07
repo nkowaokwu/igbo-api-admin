@@ -1,7 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
 import { createBreakpoints } from '@chakra-ui/theme-tools';
 
-const primaryColor = '#149E46';
 const primaryExtraLightColor = '#EBF6F0';
 const grayColor = '#4F4F4F';
 const lightGrayColor = '#F7FAFC';
@@ -21,7 +20,7 @@ const breakpoints = createBreakpoints({
 export default extendTheme({
   breakpoints,
   colors: {
-    primary: primaryColor,
+    primary: 'black',
     teal: {
       50: '#E6FFFA',
       100: '#F2F9FF',
@@ -112,7 +111,7 @@ export default extendTheme({
       50: '#F0FFF4',
       100: '#F0FCF6',
       200: '#E0EBE5',
-      300: primaryColor,
+      300: '#149E46',
       400: '#366145',
       500: '#38A169',
       600: '#2F855A',
@@ -186,22 +185,11 @@ export default extendTheme({
     Input: {
       baseStyle: {
         field: {
+          boxShadow: 'sm',
           backgroundColor: 'white',
           transition: 'all .2s ease',
-          borderColor: 'gray.200',
+          borderColor: 'gray.400',
           borderWidth: '1px',
-          ':focus': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
-          ':active': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
-          ':hover': {
-            borderColor: 'green.200',
-            borderWidth: '1px',
-          },
           '::placeholder': {
             color: 'gray.400',
           },
@@ -235,27 +223,30 @@ export default extendTheme({
     },
     Button: {
       baseStyle: {
+        borderWidth: '1px',
+        borderColor: 'gray.400',
         fontFamily: 'heading',
+        boxShadow: 'sm',
+      },
+      variants: {
+        ghost: {
+          borderWidth: '0px',
+          boxShadow: 'none',
+        },
+        primary: {
+          backgroundColor: 'black',
+          color: 'white',
+          borderColor: 'gray.900',
+        },
       },
     },
     Textarea: {
       baseStyle: {
+        boxShadow: 'sm',
         backgroundColor: 'white',
         transition: 'all .2s ease',
-        borderColor: 'gray.200',
+        borderColor: 'gray.400',
         borderWidth: '1px',
-        ':focus': {
-          borderColor: 'gray.200',
-          borderWidth: '1px',
-        },
-        ':active': {
-          borderColor: 'gray.200',
-          borderWidth: '1px',
-        },
-        ':hover': {
-          borderColor: 'green.200',
-          borderWidth: '1px',
-        },
         '::placeholder': {
           color: 'gray.400',
         },
@@ -265,7 +256,6 @@ export default extendTheme({
         variant: '',
       },
     },
-    Toast: {},
     Icon: {
       baseStyle: {
         ':hover': {
@@ -298,6 +288,16 @@ export default extendTheme({
             borderRadius: 'md',
           },
         },
+      },
+    },
+    Divider: {
+      baseStyle: {
+        borderColor: 'gray.400',
+      },
+    },
+    StackDivider: {
+      baseStyle: {
+        borderColor: 'gray.400',
       },
     },
   },

@@ -60,7 +60,8 @@ const AudioRecorder = ({
 
   /* Grabbing the default pronunciation value for the word or example document */
   useEffect(() => {
-    const recordHasPronunciationField = has(record, 'pronunciation') || has(record, 'pronunciations');
+    const recordHasPronunciationField =
+      has(record, 'pronunciation') || has(record, 'source') || has(record, 'translations');
 
     if (recordHasPronunciationField && !pronunciationValue) {
       setPronunciationValue(get(record, valuePath));

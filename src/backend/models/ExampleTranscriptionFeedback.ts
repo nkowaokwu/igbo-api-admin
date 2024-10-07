@@ -24,6 +24,7 @@ export const exampleTranscriptionFeedbackSchema = new Schema(
     denials: { type: [{ type: String }], default: [] },
     source: { type: String, default: SuggestionSourceEnum.INTERNAL },
     userInteractions: { type: [{ type: String }], default: [] },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

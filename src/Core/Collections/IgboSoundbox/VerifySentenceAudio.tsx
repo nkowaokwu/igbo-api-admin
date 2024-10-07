@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactElement } from 'react';
 import { compact, cloneDeep, noop } from 'lodash';
-import { Box, Heading, Link, Text, Tooltip, useToast } from '@chakra-ui/react';
+import { Box, Heading, Link, Text, useToast } from '@chakra-ui/react';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import pluralize from 'pluralize';
 import ResourceNavigationController from 'src/Core/Collections/components/ResourceNavigationController';
@@ -11,19 +11,20 @@ import {
 import Spinner from 'src/shared/primitives/Spinner';
 import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
-import CrowdsourcingType from 'src/backend/shared/constants/CrowdsourcingType';
 import { RECORDING_AUDIO_STANDARDS_DOC } from 'src/Core/constants';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
 import { Card } from 'src/shared/primitives';
 import { API_ROUTE } from 'src/shared/constants';
 import Collections from 'src/shared/constants/Collection';
 import Views from 'src/shared/constants/Views';
-import SubmitBatchButton from 'src/Core/Collections/components/SubmitBatchButton';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
 import SandboxAudioReviewer from './SandboxAudioReviewer';
 import Completed from '../components/Completed';
 import EmptyExamples from './EmptyExamples';
-import { SentenceVerification } from './types/SentenceVerification';
+import { SentenceVerification } from './types/SoundboxInterfaces';
 
-const DEFAULT_CURRENT_EXAMPLE = { igbo: '', pronunciations: [] };
+const DEFAULT_CURRENT_EXAMPLE = { source: { text: '', language: LanguageEnum.UNSPECIFIED, pronunciations: [] } };
 
 const VerifySentenceAudio = ({
   setIsDirty,
@@ -40,6 +41,7 @@ const VerifySentenceAudio = ({
   const isCompleteEnabled =
     !isUploading && reviews.some(({ reviews }) => compact(Object.values(reviews)).length) && visitedLastReviewIndex;
   const toast = useToast();
+  const userProjectPermission = React.useContext(UserProjectPermissionContext);
   const currentExample = Array.isArray(examples)
     ? examples[exampleIndex] || DEFAULT_CURRENT_EXAMPLE
     : DEFAULT_CURRENT_EXAMPLE;
@@ -85,21 +87,11 @@ const VerifySentenceAudio = ({
       setIsLoading(true);
       await putReviewForRandomExampleSuggestions(payload);
       toast({
-        title: 'Gained points 🎉',
+        title: 'Completed 🎉',
         position: 'top-right',
         variant: 'left-accent',
         description: `You have reviewed ${pluralize('audio recording', totalReviewCount, true)}`,
         status: 'success',
-        duration: 4000,
-        isClosable: true,
-      });
-    } catch (err) {
-      toast({
-        title: 'Unable to save points',
-        position: 'top-right',
-        variant: 'left-accent',
-        description: 'Unable to upload example sentence reviews.',
-        status: 'error',
         duration: 4000,
         isClosable: true,
       });
@@ -116,7 +108,7 @@ const VerifySentenceAudio = ({
     } catch (err) {
       toast({
         title: 'An error occurred',
-        description: 'Unable to complete verifying example sentences.',
+        description: 'Unable to complete verifying sentence audio.',
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -131,7 +123,9 @@ const VerifySentenceAudio = ({
       setIsLoading(true);
       (async () => {
         try {
-          const { data: randomExamples } = await getRandomExampleSuggestionsToReview();
+          const { data: randomExamples } = await getRandomExampleSuggestionsToReview({
+            languages: userProjectPermission.languages,
+          });
           setExamples(randomExamples);
           setExampleIndex(0);
 
@@ -187,9 +181,9 @@ const VerifySentenceAudio = ({
           </Link>{' '}
           document.
         </Text>
-        <Card text={currentExample.igbo} href={currentExampleHref}>
+        <Card text={currentExample.source.text} href={currentExampleHref}>
           <SandboxAudioReviewer
-            pronunciations={currentExample.pronunciations}
+            pronunciations={currentExample.source.pronunciations}
             onApprove={handleOnApprove}
             onDeny={handleOnDeny}
             review={reviews[exampleIndex]}
@@ -197,30 +191,27 @@ const VerifySentenceAudio = ({
         </Card>
       </Box>
       <Box data-test="editor-recording-options" className="flex flex-col justify-center items-center space-y-4 w-full">
-        <Tooltip label="Review all sentences before completing.">
-          <Box>
-            <SubmitBatchButton
-              isLoading={isLoading}
-              isClickEnabled={isCompleteEnabled}
-              onClick={handleComplete}
-              isDisabled={!isCompleteEnabled}
-              aria-label="Complete recordings"
-            />
-          </Box>
-        </Tooltip>
         <ResourceNavigationController
           index={exampleIndex}
           resources={reviews}
           onBack={handleBack}
           onNext={handleNext}
           onSkip={noop}
+          onComplete={handleComplete}
+          isCompleteEnabled={isCompleteEnabled}
+          isLoading={isLoading}
         />
       </Box>
     </Box>
   ) : noExamples ? (
     <EmptyExamples setIsDirty={setIsDirty} />
   ) : isComplete ? (
-    <Completed type={CrowdsourcingType.VERIFY_EXAMPLE_AUDIO} setIsComplete={setIsComplete} setIsDirty={setIsDirty} />
+    <Completed
+      type={ProjectType.TEXT_AUDIO_ANNOTATION}
+      isVerifying
+      setIsComplete={setIsComplete}
+      setIsDirty={setIsDirty}
+    />
   ) : (
     <Spinner />
   );

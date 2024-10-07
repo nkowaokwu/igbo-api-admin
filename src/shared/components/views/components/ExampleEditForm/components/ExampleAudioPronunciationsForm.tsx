@@ -1,13 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import { assign, get } from 'lodash';
-import { Box, Text, chakra } from '@chakra-ui/react';
+import { Box, Text, chakra, HStack } from '@chakra-ui/react';
 import { Record, usePermissions } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
 import { Controller, Control, useFieldArray } from 'react-hook-form';
+import { LuArchive } from 'react-icons/lu';
 import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
-import SummaryList from 'src/shared/components/views/shows/components/SummaryList';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
 import AddAudioPronunciationButton from './AddAudioPronunciationButton';
 import FormHeader from '../../FormHeader';
 import AudioRecorder from '../../AudioRecorder';
@@ -17,12 +18,16 @@ const ExampleAudioPronunciationsForm = ({
   record,
   originalRecord,
   uid,
+  name = '',
 }: {
   control: Control;
   record: Record;
   originalRecord: Record | null;
   uid: string;
+  name?: string;
 }): ReactElement => {
+  const prependedName = name ? `${name}.` : '';
+  const formName = `${prependedName}pronunciations`;
   const [isLoadingSpeakers, setIsLoadingSpeakers] = useState(false);
   const [, setInternalPronunciations] = useState([]);
   const {
@@ -31,7 +36,7 @@ const ExampleAudioPronunciationsForm = ({
     remove,
   } = useFieldArray({
     control,
-    name: 'pronunciations',
+    name: formName,
   });
   const permissions = usePermissions();
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
@@ -64,100 +69,107 @@ const ExampleAudioPronunciationsForm = ({
       const currentPronunciations = assign(pronunciations);
       currentPronunciation.archived = true;
       currentPronunciations[index] = currentPronunciation;
-      setValue(`pronunciations[${index}]`, currentPronunciation);
+      setValue(`${formName}[${index}]`, currentPronunciation);
       setInternalPronunciations(currentPronunciations);
     } else {
       remove(index);
     }
   };
   return (
-    <Box>
+    <Box width="full">
       <FormHeader
-        title="Igbo Sentence Recordings"
+        title="Sentence Recordings"
         tooltip="An example can have multiple audio recorded for it. One on unique
         speaker can record a version for this sentence."
       />
-      {pronunciations?.length ? (
-        pronunciations.map((pronunciation, index) => {
-          const isExistingPronunciation = get(record, `pronunciations[${index}].audio`);
-          const deleteMessage = generateDeleteMessage(isExistingPronunciation);
-          return (
-            <Box className="flex flex-col" key={isExistingPronunciation}>
-              {pronunciation.archived ? (
-                <Text fontSize="sm" fontStyle="italic" color="orange.700">
-                  This example pronunciation will <chakra.span fontWeight="bold">NOT</chakra.span> be deleted. It will
-                  be saved and archived
-                </Text>
-              ) : null}
-              <Box
-                className={`flex flex-row justify-between items-center p-4 rounded ${
-                  pronunciation.archived ? 'bg-orange-200 pointer' : ''
-                }`}
-              >
-                <Controller
-                  render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].audio`}
-                  control={control}
-                  defaultValue={pronunciation.audio}
+      <AddAudioPronunciationButton onClick={handleAppend} />
+      <Box mb={4} width="full">
+        {pronunciations?.length ? (
+          pronunciations.map((pronunciation, index) => {
+            const isExistingPronunciation = get(record, `${formName}[${index}].audio`);
+            const deleteMessage = generateDeleteMessage(isExistingPronunciation);
+            return (
+              <Box className="flex flex-col" key={isExistingPronunciation}>
+                {pronunciation.archived ? (
+                  <Text fontSize="sm" fontStyle="italic" color="orange.700">
+                    This example pronunciation will <chakra.span fontWeight="bold">NOT</chakra.span> be deleted. It will
+                    be saved and archived.
+                  </Text>
+                ) : null}
+                <Box
+                  className="flex flex-row justify-between items-center rounded"
+                  backgroundColor={pronunciation.archived ? 'orange.200' : ''}
+                  cursor={pronunciation.archived ? 'pointer' : ''}
+                  p={2}
+                >
+                  <Controller
+                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    name={`${formName}[${index}].audio`}
+                    control={control}
+                    defaultValue={pronunciation.audio}
+                  />
+                  <Controller
+                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    name={`${formName}[${index}].speaker`}
+                    control={control}
+                    defaultValue={pronunciation.speaker}
+                  />
+                  <Controller
+                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    name={`${formName}[${index}].archived`}
+                    control={control}
+                    defaultValue={pronunciation.archived}
+                  />
+                  <AudioRecorder
+                    path={`${formName}.${index}.audio`}
+                    getFormValues={() => get(getValues(), `${formName}.${index}.audio`)}
+                    setPronunciation={(_, value) => {
+                      setValue(`${formName}[${index}].audio`, value);
+                      setValue(`${formName}[${index}].speaker`, uid);
+                    }}
+                    record={record}
+                    originalRecord={originalRecord}
+                    formTitle=""
+                    formTooltip=""
+                  />
+                  <ResourceConnectionButton
+                    tooltip={deleteMessage}
+                    shouldArchive={isExistingPronunciation}
+                    onClick={handleArchivePronunciation(!!isExistingPronunciation, index)}
+                  />
+                </Box>
+              </Box>
+            );
+          })
+        ) : (
+          <Box className="flex w-full justify-center mb-2">
+            <Text className="italic text-gray-700" fontFamily="Silka">
+              No audio pronunciations
+            </Text>
+          </Box>
+        )}
+      </Box>
+      {archivedPronunciations.length ? (
+        <ShowTextRenderer title="Archived pronunciations" icon={<LuArchive />}>
+          {archivedPronunciations.map((archivedPronunciation, archivedPronunciationIndex) => (
+            <HStack gap={0} justifyContent="start">
+              <Text color="gray.600" mr={3}>{`${archivedPronunciationIndex + 1}.`}</Text>
+              <Box>
+                <ReactAudioPlayer
+                  src={archivedPronunciation.audio}
+                  style={{ height: '40px', width: '250px' }}
+                  controls
                 />
-                <Controller
-                  render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].speaker`}
-                  control={control}
-                  defaultValue={pronunciation.speaker}
-                />
-                <Controller
-                  render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
-                  name={`pronunciations[${index}].archived`}
-                  control={control}
-                  defaultValue={pronunciation.archived}
-                />
-                <AudioRecorder
-                  path={`pronunciations.${index}.audio`}
-                  getFormValues={() => get(getValues(), `pronunciations.${index}.audio`)}
-                  setPronunciation={(_, value) => {
-                    setValue(`pronunciations[${index}].audio`, value);
-                    setValue(`pronunciations[${index}].speaker`, uid);
-                  }}
-                  record={record}
-                  originalRecord={originalRecord}
-                  formTitle=""
-                  formTooltip=""
-                />
-                <ResourceConnectionButton
-                  tooltip={deleteMessage}
-                  shouldArchive={isExistingPronunciation}
-                  onClick={handleArchivePronunciation(!!isExistingPronunciation, index)}
+                <SpeakerNameManager
+                  isLoading={isLoadingSpeakers}
+                  speakers={speakers}
+                  index={archivedPronunciationIndex}
                 />
               </Box>
-            </Box>
-          );
-        })
-      ) : (
-        <Box className="flex w-full justify-center mb-2">
-          <Text className="italic text-gray-700" fontFamily="Silka">
-            No audio pronunciations
-          </Text>
-        </Box>
-      )}
-      <AddAudioPronunciationButton onClick={handleAppend} />
-      <SummaryList
-        items={archivedPronunciations}
-        title="Archived Example Pronunciations 🗄"
-        render={(archivedPronunciation, archivedPronunciationIndex) => (
-          <>
-            <Text color="gray.600" mr={3}>{`${archivedPronunciationIndex + 1}.`}</Text>
-            <Box>
-              <ReactAudioPlayer src={archivedPronunciation.audio} style={{ height: '40px', width: '250px' }} controls />
-              <SpeakerNameManager
-                isLoading={isLoadingSpeakers}
-                speakers={speakers}
-                index={archivedPronunciationIndex}
-              />
-            </Box>
-          </>
-        )}
-      />
+            </HStack>
+          ))}
+        </ShowTextRenderer>
+      ) : null}
     </Box>
   );
 };

@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 import removeAccents from 'src/backend/utils/removeAccents';
-import { isAWSProduction, isCypress } from 'src/backend/config';
+import { isAWSProduction } from 'src/backend/config';
 import AudioEventType from 'src/backend/shared/constants/AudioEventType';
 import { handleAudioPronunciation } from 'src/backend/controllers/utils/MediaAPIs/utils';
 import initializeAPI from './initializeAPI';
@@ -18,7 +18,7 @@ export const createAudioPronunciation = (id: string, pronunciationData: string):
       throw new Error('id and pronunciation must be provided');
     }
     const audioId = removeAccents.remove(id);
-    if (isCypress || !isAWSProduction) {
+    if (!isAWSProduction) {
       const Key = `${dummyUriPath}${audioId}`;
       return handleAudioPronunciation({ key: Key, size: DEFAULT_CONTENT_LENGTH, event: AudioEventType.POST }).then(() =>
         resolve(Key),
@@ -41,7 +41,6 @@ export const createAudioPronunciation = (id: string, pronunciationData: string):
         const data = await s3
           .headObject(pick(params, ['Bucket', 'Key']))
           .promise()
-          // console.log(`Unable to to get head of S3 object: ${err.message}`, params);
           .catch(() => resolve(Location));
         if (data && typeof data.ContentLength === 'number') {
           await handleAudioPronunciation({ key: params.Key, size: data.ContentLength, event: AudioEventType.POST });
@@ -61,7 +60,7 @@ export const deleteAudioPronunciation = (id: string, isMp3 = false): Promise<any
     }
     try {
       const audioId = removeAccents.remove(id);
-      if (isCypress || !isAWSProduction) {
+      if (!isAWSProduction) {
         const Key = `${dummyUriPath}${audioId}`;
         return handleAudioPronunciation({ key: Key, event: AudioEventType.DELETE }).then(() => resolve(Key));
       }
@@ -100,7 +99,7 @@ export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3
     const oldAudioId = removeAccents.remove(oldDocId);
     const newAudioId = removeAccents.remove(newDocId);
     try {
-      if (isCypress || !isAWSProduction) {
+      if (!isAWSProduction) {
         const Key = `${dummyUriPath}${newAudioId}`;
         return handleAudioPronunciation({
           key: Key,
@@ -157,7 +156,7 @@ export const copyAudioPronunciation = (oldDocId: string, newDocId: string, isMp3
 
 /* Takes an old and new pronunciation id and renames it (copies and deletes) */
 export const renameAudioPronunciation = async (oldDocId: string, newDocId: string, isMp3 = false): Promise<string> => {
-  if (isCypress || !isAWSProduction) {
+  if (!isAWSProduction) {
     if (!oldDocId) {
       return '';
     }

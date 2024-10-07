@@ -1,10 +1,25 @@
 import React from 'react';
+import { FiHome, FiBarChart, FiBook, FiBookOpen, FiFolder } from 'react-icons/fi';
+import {
+  LuSettings,
+  LuHardDriveUpload,
+  LuFileStack,
+  LuFileEdit,
+  LuUserCheck,
+  LuCamera,
+  LuText,
+  LuVote,
+} from 'react-icons/lu';
+
 import {
   hasAdminPermissions,
   hasEditorPermissions,
   hasAtLeastCrowdsourcerPermissions,
   hasAccessToPlatformPermissions,
+  hasPlatformAdminPermissions,
 } from 'src/shared/utils/permissions';
+import Home from 'src/Core/Home';
+import Pricing from 'src/Core/Pricing';
 import withLastRoute from './withLastRoute';
 
 const WordList = React.lazy(() => import('src/Core/Collections/Words/WordList'));
@@ -40,7 +55,7 @@ const PollList = React.lazy(() => import('src/Core/Collections/Polls/PollList'))
 const PollCreate = React.lazy(() => import('src/Core/Collections/Polls/PollCreate'));
 const UserList = React.lazy(() => import('src/Core/Collections/Users/UserList'));
 const UserShow = React.lazy(() => import('src/Core/Collections/Users/UserShow'));
-// const Leaderboard = React.lazy(() => import('src/Core/Collections/Leaderboard'));
+const ProjectSettings = React.lazy(() => import('src/Core/Collections/ProjectSettings'));
 const IgboSoundbox = React.lazy(() => import('src/Core/Collections/IgboSoundbox'));
 const IgboDefinitions = React.lazy(() => import('src/Core/Collections/IgboDefinitions'));
 const IgboTextImages = React.lazy(() => import('src/Core/Collections/TextImages'));
@@ -49,19 +64,24 @@ const DataDump = React.lazy(() => import('src/Core/Collections/DataDump'));
 const Profile = React.lazy(() => import('src/Core/Profile'));
 const Stats = React.lazy(() => import('src/Core/Stats'));
 const TranslateIgboSentences = React.lazy(() => import('src/Core/TranslateIgboSentences'));
+const ProjectList = React.lazy(() => import('src/Core/Collections/Projects/ProjectList'));
 
 export enum ResourceGroup {
   UNSPECIFIED = 'UNSPECIFIED',
+  GET_STARTED = 'GET_STARTED',
   LEXICAL = 'LEXICAL',
   DATA_COLLECTION = 'DATA_COLLECTION',
   SETTINGS = 'SETTINGS',
+  PLATFORM_ADMIN = 'PLATFORM_ADMIN',
 }
 
 export const ResourceGroupLabels = {
   [ResourceGroup.UNSPECIFIED]: '',
+  [ResourceGroup.GET_STARTED]: 'Get started',
   [ResourceGroup.LEXICAL]: 'Published data',
   [ResourceGroup.DATA_COLLECTION]: 'Draft data',
-  [ResourceGroup.SETTINGS]: 'Settings',
+  [ResourceGroup.SETTINGS]: 'Project',
+  [ResourceGroup.PLATFORM_ADMIN]: 'Platform admin',
 };
 
 export interface Resource {
@@ -74,6 +94,7 @@ export interface Resource {
   show: Promise<React.ReactElement>;
   icon: React.ReactElement;
   group: ResourceGroup;
+  generalProject?: boolean; // Routes visible for any general project
 }
 
 const defaultRoutes = (permissions) =>
@@ -81,9 +102,10 @@ const defaultRoutes = (permissions) =>
     {
       name: '#',
       options: { label: 'Dashboard' },
-      icon: () => <>🏠</>,
+      icon: () => <FiHome />,
       exact: true,
       group: ResourceGroup.UNSPECIFIED,
+      generalProject: true,
     },
   ]) || [];
 
@@ -93,7 +115,7 @@ const editorRoutes = (permissions) =>
       name: 'stats',
       key: 'stats',
       list: withLastRoute(Stats),
-      icon: () => <>📈</>,
+      icon: () => <FiBarChart />,
       group: ResourceGroup.UNSPECIFIED,
     },
     {
@@ -101,16 +123,18 @@ const editorRoutes = (permissions) =>
       key: 'words',
       list: withLastRoute(WordList),
       show: withLastRoute(WordShow),
-      icon: () => <>📗</>,
+      icon: () => <FiBook />,
       group: ResourceGroup.LEXICAL,
     },
     {
       name: 'examples',
       key: 'examples',
+      options: { label: 'Sentences' },
       list: withLastRoute(ExampleList),
       show: withLastRoute(ExampleShow),
-      icon: () => <>📘</>,
+      icon: () => <FiBookOpen />,
       group: ResourceGroup.LEXICAL,
+      generalProject: true,
     },
     {
       name: 'nsibidiCharacters',
@@ -130,41 +154,44 @@ const editorRoutes = (permissions) =>
       list: withLastRoute(CorpusList),
       show: withLastRoute(CorpusShow),
       create: null,
-      icon: () => <>📚</>,
+      icon: () => <LuFileStack />,
       group: ResourceGroup.LEXICAL,
+      generalProject: false,
     },
     {
       name: 'wordSuggestions',
       key: 'wordSuggestions',
-      options: { label: 'Word Suggestions' },
+      options: { label: 'Word Drafts' },
       list: withLastRoute(WordSuggestionList),
       edit: withLastRoute(WordSuggestionEdit),
       create: withLastRoute(WordSuggestionCreate),
       show: withLastRoute(WordSuggestionShow),
-      icon: () => <>📒</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
     },
     {
       name: 'exampleSuggestions',
       key: 'exampleSuggestions',
-      options: { label: 'Example Suggestions' },
+      options: { label: 'Sentence Drafts' },
       list: withLastRoute(ExampleSuggestionList),
       edit: withLastRoute(ExampleSuggestionEdit),
       create: withLastRoute(ExampleSuggestionCreate),
       show: withLastRoute(ExampleSuggestionShow),
-      icon: () => <>📕</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: true,
     },
     {
       name: 'corpusSuggestions',
       key: 'corpusSuggestions',
-      options: { label: 'Corpus Suggestions' },
+      options: { label: 'Corpus Drafts' },
       list: withLastRoute(CorpusSuggestionList),
       edit: withLastRoute(CorpusSuggestionEdit),
       create: withLastRoute(CorpusSuggestionCreate),
       show: withLastRoute(CorpusSuggestionShow),
-      icon: () => <>📓</>,
+      icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: false,
     },
     {
       name: 'polls',
@@ -172,35 +199,64 @@ const editorRoutes = (permissions) =>
       options: { label: 'Constructed Term Polls' },
       list: withLastRoute(PollList),
       create: withLastRoute(PollCreate),
-      icon: () => <>🗳</>,
+      icon: () => <LuVote />,
       group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
 
-const adminRoutes = (permissions) =>
+const getStartedRoutes = (permissions) =>
   hasAdminPermissions(permissions, [
-    {
-      name: 'users',
-      key: 'users',
-      list: withLastRoute(UserList),
-      show: withLastRoute(UserShow),
-      icon: () => <>👩🏾</>,
-      group: ResourceGroup.SETTINGS,
-    },
     {
       name: 'dataDump',
       key: 'dataDump',
-      options: { label: 'Data Dump' },
+      options: { label: 'Import Data' },
       list: withLastRoute(DataDump),
-      icon: () => <>🏋🏾‍♂️</>,
-      group: ResourceGroup.DATA_COLLECTION,
+      icon: () => <LuHardDriveUpload />,
+      group: ResourceGroup.GET_STARTED,
+      generalProject: true,
+    },
+  ]) || [];
+
+const platformAdminRoutes = (permissions) =>
+  hasPlatformAdminPermissions(permissions, [
+    {
+      name: 'projects',
+      key: 'projects',
+      options: { label: 'Projects' },
+      list: withLastRoute(ProjectList),
+      icon: () => <FiFolder />,
+      group: ResourceGroup.PLATFORM_ADMIN,
+      generalProject: true,
+    },
+  ]) || [];
+
+const settingsRoutes = (permissions) =>
+  hasAdminPermissions(permissions, [
+    {
+      name: 'settings',
+      key: 'settings',
+      noLayout: true,
+      list: withLastRoute(ProjectSettings),
+      icon: () => <LuSettings />,
+      group: ResourceGroup.SETTINGS,
+      generalProject: true,
+    },
+    {
+      name: 'users',
+      key: 'users',
+      options: { label: 'Members' },
+      list: withLastRoute(UserList),
+      show: withLastRoute(UserShow),
+      icon: () => <LuUserCheck />,
+      group: ResourceGroup.SETTINGS,
+      generalProject: true,
     },
     {
       name: 'textImages',
       key: 'textImages',
       options: { label: 'Igbo Text Images' },
       list: withLastRoute(TextImageList),
-      icon: () => <>📸</>,
+      icon: () => <LuCamera />,
       group: ResourceGroup.DATA_COLLECTION,
     },
     {
@@ -208,23 +264,23 @@ const adminRoutes = (permissions) =>
       key: 'igboTextImages',
       options: { label: 'Upload Igbo Text Images' },
       list: withLastRoute(IgboTextImages),
-      icon: () => <>📸</>,
+      icon: () => <LuCamera />,
       group: ResourceGroup.DATA_COLLECTION,
     },
-    // {
-    //   name: 'igboSoundbox',
-    //   key: 'igboSoundbox',
-    //   options: { label: 'Igbo Soundbox' },
-    //   list: withLastRoute(IgboSoundbox),
-    //   icon: () => <>🔊</>,
-    //   group: ResourceGroup.DATA_COLLECTION,
-    // },
+    /* {
+      name: 'soundbox',
+      key: 'soundbox',
+      options: { label: 'Igbo Soundbox' },
+      list: withLastRoute(IgboSoundbox),
+      icon: () => <>🔊</>,
+      group: ResourceGroup.DATA_COLLECTION,
+    }, */
     {
       name: 'igboDefinitions',
       key: 'igboDefinitions',
       options: { label: 'Igbo Definitions' },
       list: withLastRoute(IgboDefinitions),
-      icon: () => <>✍🏾</>,
+      icon: () => <LuText />,
       group: ResourceGroup.DATA_COLLECTION,
     },
   ]) || [];
@@ -243,23 +299,43 @@ const crowdsourcerRoutes = (permissions) =>
 
 export const getResourceObjects = (permissions: any): Resource[] => [
   ...defaultRoutes(permissions),
+  ...getStartedRoutes(permissions),
   ...editorRoutes(permissions),
-  ...adminRoutes(permissions),
+  ...settingsRoutes(permissions),
   ...crowdsourcerRoutes(permissions),
+  ...platformAdminRoutes(permissions),
 ];
 
 export const getCustomRouteObjects = (): any => [
   {
     exact: true,
+    path: '/home',
+    component: () => <Home />,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
+    generalProject: true,
+  },
+  {
+    exact: true,
+    path: '/pricing',
+    component: () => <Pricing />,
+    group: ResourceGroup.UNSPECIFIED,
+    noLayout: true,
+    generalProject: true,
+  },
+  {
+    exact: true,
     path: '/profile',
     component: withLastRoute(Profile),
     group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
   },
   {
     exact: true,
     path: '/translate',
     component: withLastRoute(TranslateIgboSentences),
     group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
   },
   {
     exact: true,
@@ -268,9 +344,10 @@ export const getCustomRouteObjects = (): any => [
     group: ResourceGroup.UNSPECIFIED,
   },
   {
-    path: '/igboSoundbox',
+    path: '/soundbox',
     component: withLastRoute(IgboSoundbox),
     group: ResourceGroup.UNSPECIFIED,
+    generalProject: true,
   },
   {
     path: '/igboDefinitions',

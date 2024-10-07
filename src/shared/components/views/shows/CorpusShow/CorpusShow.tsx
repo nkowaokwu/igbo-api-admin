@@ -1,14 +1,15 @@
 import React, { ReactElement, useState, useEffect } from 'react';
 import { ShowProps, useShowController } from 'react-admin';
-import { Box, Heading, Skeleton } from '@chakra-ui/react';
+import { Box, Skeleton } from '@chakra-ui/react';
+import { LuFileAudio, LuFileType } from 'react-icons/lu';
 import diff from 'deep-diff';
 import ReactPlayer from 'react-player';
 import { DEFAULT_WORD_RECORD } from 'src/shared/constants';
 import View from 'src/shared/constants/Views';
 import Collection from 'src/shared/constants/Collection';
 import { getWord } from 'src/shared/API';
-import SourceField from 'src/shared/components/SourceField';
 import DocumentStats from 'src/shared/components/views/edits/components/DocumentStats';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
 import { EditDocumentTopBar, ShowDocumentStats, Comments } from '../../components';
 import DiffField from '../diffFields/DiffField';
 
@@ -40,7 +41,7 @@ const CorpusShow = (props: ShowProps): ReactElement => {
 
   record = record || DEFAULT_WORD_RECORD;
 
-  const { id, author, title, editorsNotes, userComments, merged, media, approvals, denials, originalWordId } = record;
+  const { id, title, editorsNotes, userComments, media, originalWordId } = record;
 
   const resourceTitle = {
     [Collection.CORPUS_SUGGESTIONS]: 'Corpus Suggestion',
@@ -69,100 +70,76 @@ const CorpusShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading}>
-      <Box className="shadow-sm p-4 lg:p-10 mt-10">
+      <Box className="shadow-sm p-4 lg:p-10">
         <EditDocumentTopBar
           record={record}
           resource={resource}
           view={View.SHOW}
           id={id}
           permissions={permissions}
-          title={`${resourceTitle[resource]} Document Details`}
+          title={resourceTitle[resource]}
         />
-        <Box className="flex flex-col lg:flex-row mb-1">
-          <Box className="flex flex-col flex-auto justify-between items-start space-y-4 mr-4">
-            <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
-              <DocumentStats
-                collection={Collection.WORDS}
-                originalId={originalWordId}
-                record={record}
-                id={id}
-                title="Parent Word Id:"
-              />
-            </Box>
-            <Box className="flex flex-col mt-5">
-              <Heading fontSize="lg" className="text-xl text-gray-600">
-                Title
-              </Heading>
-              <DiffField path="title" diffRecord={diffRecord} fallbackValue={title} />
-            </Box>
-            <Box className="w-full flex flex-col space-y-3">
-              <Box className="flex flex-col">
-                <Heading fontSize="lg" className="text-xl text-gray-600">
-                  Media
-                </Heading>
-                {/* TODO: check this part! */}
-                <DiffField
-                  path="word"
-                  diffRecord={diffRecord}
-                  fallbackValue={
-                    media ? (
-                      <ReactPlayer
-                        url={media}
-                        controls
-                        width="50%"
-                        height="50px"
-                        style={{
-                          overflow: 'hidden',
-                          height: '50px !important',
-                        }}
-                        config={{
-                          file: {
-                            forceAudio: true,
-                          },
-                        }}
-                      />
-                    ) : (
-                      <span>No media</span>
-                    )
-                  }
-                  renderNestedObject={() => (
-                    <ReactPlayer
-                      url={media}
-                      controls
-                      width="50%"
-                      height="50px"
-                      style={{
-                        overflow: 'hidden',
-                        height: '50px !important',
-                      }}
-                      config={{
-                        file: {
-                          forceAudio: true,
-                        },
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-            </Box>
-            {resource !== Collection.CORPORA ? (
-              <Comments editorsNotes={editorsNotes} userComments={userComments} showUserComments={false} />
-            ) : null}
+        <ShowDocumentStats record={record} collection={Collection.CORPORA} showFull={resource !== Collection.CORPORA} />
+        <Box className="flex flex-col flex-auto justify-between items-start space-y-4 mr-4">
+          <Box className="w-full flex flex-col lg:flex-row justify-between items-center">
+            <DocumentStats
+              collection={Collection.WORDS}
+              originalId={originalWordId}
+              record={record}
+              id={id}
+              title="Parent Word Id:"
+            />
           </Box>
-          <Box className="mb-10 lg:mb-0 space-y-3 flex flex-col items-start">
-            {resource !== Collection.CORPORA && (
-              <>
-                <SourceField record={record} source="source" />
-                <ShowDocumentStats
-                  approvals={approvals}
-                  denials={denials}
-                  merged={merged}
-                  author={author}
-                  collection={Collection.CORPORA}
+          <ShowTextRenderer title="Title" icon={<LuFileType />}>
+            <DiffField path="title" diffRecord={diffRecord} fallbackValue={title} />
+          </ShowTextRenderer>
+          <ShowTextRenderer title="Media" icon={<LuFileAudio />}>
+            <DiffField
+              path="word"
+              diffRecord={diffRecord}
+              fallbackValue={
+                media ? (
+                  <ReactPlayer
+                    url={media}
+                    controls
+                    width="50%"
+                    height="50px"
+                    style={{
+                      overflow: 'hidden',
+                      height: '50px !important',
+                    }}
+                    config={{
+                      file: {
+                        forceAudio: true,
+                      },
+                    }}
+                  />
+                ) : (
+                  <span>No media</span>
+                )
+              }
+              renderNestedObject={() => (
+                <ReactPlayer
+                  url={media}
+                  controls
+                  width="50%"
+                  height="50px"
+                  style={{
+                    overflow: 'hidden',
+                    height: '50px !important',
+                  }}
+                  config={{
+                    file: {
+                      forceAudio: true,
+                    },
+                  }}
                 />
-              </>
-            )}
-          </Box>
+              )}
+            />
+          </ShowTextRenderer>
+          {resource !== Collection.CORPORA ? (
+            <Comments editorsNotes={editorsNotes} userComments={userComments} showUserComments={false} />
+          ) : null}
         </Box>
       </Box>
     </Skeleton>

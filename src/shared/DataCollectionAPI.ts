@@ -2,11 +2,16 @@
 import { BULK_UPLOAD_LIMIT } from 'src/Core/constants';
 import ReviewActions from 'src/backend/shared/constants/ReviewActions';
 import LeaderboardType from 'src/backend/shared/constants/LeaderboardType';
-import { UserRanking } from 'src/backend/controllers/utils/interfaces';
+import { ExampleSuggestion, Translation, UserRanking } from 'src/backend/controllers/utils/interfaces';
 import LeaderboardTimeRange from 'src/backend/shared/constants/LeaderboardTimeRange';
 import Collections from 'src/shared/constants/Collection';
 import { DataPayload } from 'src/backend/controllers/utils/types/mediaTypes';
 import uploadToS3 from 'src/shared/utils/uploadToS3';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import {
+  SentenceTranslationPayload,
+  SentenceTranslationVerificationPayload,
+} from 'src/Core/Collections/IgboSoundbox/types/SoundboxInterfaces';
 import { request } from './utils/request';
 
 interface ExampleAudioPayload {
@@ -17,39 +22,64 @@ interface ExampleReviewsPayload {
   id: any;
   reviews: { [pronunciationId: string]: ReviewActions };
 }
-interface TranslationPayload {
-  id: string;
-  english: string;
-}
 
-export const getRandomExampleSuggestionsToTranslate = (count = 5): Promise<any> =>
-  request({
+export const getRandomExampleSuggestionsToTranslate = async (count = 5): Promise<ExampleSuggestion[]> => {
+  const { data: result } = await request<{ exampleSuggestions: ExampleSuggestion[] }>({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/translate`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/translate`,
     params: {
       range: `[0, ${count - 1}]`,
     },
   });
-export const putRandomExampleSuggestionsToTranslate = (rawData: TranslationPayload[]): Promise<any> =>
+  return result.exampleSuggestions;
+};
+
+export const putRandomExampleSuggestionsToTranslate = (rawData: SentenceTranslationPayload[]): Promise<any> =>
   request({
     method: 'PUT',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/translate`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/translate`,
     data: rawData,
+  }).catch((err) => {
+    throw new Error(err.response.data.error);
   });
 
-export const getRandomExampleSuggestionsToRecord = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionForTranslationReview = async (count = 5): Promise<ExampleSuggestion[]> => {
+  const { data: result } = await request<{ exampleSuggestions: ExampleSuggestion[] }>({
+    method: 'GET',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/translate/review`,
+    params: {
+      range: `[0, ${count - 1}]`,
+    },
+  });
+  return result.exampleSuggestions;
+};
+
+export const putRandomExampleSuggestionReviewsForTranslation = async (
+  data: SentenceTranslationVerificationPayload[],
+): Promise<ExampleSuggestion[]> => {
+  const { data: result } = await request<{ exampleSuggestions: ExampleSuggestion[] }>({
+    method: 'PUT',
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/translate/review`,
+    data,
+  });
+  return result.exampleSuggestions;
+};
+
+export const getRandomExampleSuggestionsToRecord = (
+  { count = 5, languages }: { count?: number; languages: LanguageEnum[] } = { count: 5, languages: [] },
+): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/audio?languages=${languages}`,
     params: {
       range: `[0, ${count - 1}]`,
     },
   });
 
-export const getRandomExampleSuggestionsToReview = (count = 5): Promise<any> =>
+export const getRandomExampleSuggestionsToReview = ({ count = 5 }: { count?: number } = { count: 5 }): Promise<any> =>
   request({
     method: 'GET',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/review`,
     params: {
       range: `[0, ${count - 1}]`,
     },
@@ -62,7 +92,7 @@ export const putAudioForRandomExampleSuggestions = (rawData: ExampleAudioPayload
   }));
   return request({
     method: 'PUT',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/audio`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/audio`,
     data,
   });
 };
@@ -70,12 +100,12 @@ export const putAudioForRandomExampleSuggestions = (rawData: ExampleAudioPayload
 export const putReviewForRandomExampleSuggestions = (data: ExampleReviewsPayload[]): Promise<any> =>
   request({
     method: 'PUT',
-    url: `${Collections.EXAMPLE_SUGGESTIONS}/random/review`,
+    url: `${Collections.EXAMPLE_SUGGESTIONS}/review`,
     data,
   });
 
 export const bulkUploadExampleSuggestions = async (
-  payload: { sentences: { igbo: string }[]; isExample: boolean },
+  payload: { sentences: { source: Pick<Translation, 'text' | 'language'> }[]; isExample: boolean },
   onProgressSuccess: (value: any) => void,
   onProgressFailure: (err: Error) => void,
 ): Promise<any> => {
@@ -90,7 +120,7 @@ export const bulkUploadExampleSuggestions = async (
     dataChunks.push(dataChunk);
     chunkIndex += groupSize;
   }
-  // console.time(`Bulk upload time for ${dataChunks.length} chunks`);
+
   const result = await dataChunks.reduce(
     (chain, dataChunk) =>
       chain
@@ -105,31 +135,8 @@ export const bulkUploadExampleSuggestions = async (
         .catch(onProgressFailure),
     Promise.resolve(),
   );
-  // console.timeEnd(`Bulk upload time for ${dataChunks.length} chunks`);
   return result;
 };
-
-export const getTotalRecordedExampleSuggestions = async (
-  uid?: string,
-): Promise<{ timestampedRecordedExampleSuggestions: { [key: string]: number } }> =>
-  (
-    await request({
-      method: 'GET',
-      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/recorded`,
-      params: { uid },
-    })
-  ).data;
-
-export const getTotalMergedRecordedExampleSuggestions = async (
-  uid?: string,
-): Promise<{ timestampedExampleSuggestions: { [key: string]: number } }> =>
-  (
-    await request({
-      method: 'GET',
-      url: `${Collections.EXAMPLE_SUGGESTIONS}/random/stats/recorded/merged`,
-      params: { uid },
-    })
-  ).data;
 
 export const getTotalReviewedExampleSuggestions = async (
   uid?: string | null,

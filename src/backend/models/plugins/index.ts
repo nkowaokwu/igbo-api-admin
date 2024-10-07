@@ -4,24 +4,26 @@ import mongoose from 'mongoose';
 
 /* Replaces the _id key with id */
 export const toJSONPlugin = (schema: mongoose.Schema): void => {
-  const toJSON = schema.methods.toJSON || mongoose.Document.prototype.toJSON;
+  const toJSON = schema.methods?.toJSON || mongoose.Document.prototype.toJSON;
   schema.set('toJSON', {
     virtuals: true,
   });
-  schema.methods.toJSON = function () {
-    const json = toJSON.apply(this);
-    delete json._id;
-    delete json.__t;
-    delete json.__v;
-    return json;
-  };
+  if (schema.methods) {
+    schema.methods.toJSON = function () {
+      const json = toJSON.apply(this);
+      delete json._id;
+      delete json.__t;
+      delete json.__v;
+      return json;
+    };
+  }
 };
 
-export const toObjectPlugin = ({
+export const toObjectPlugin = {
   transform: (doc: mongoose.Document, ret: mongoose.Document): void => {
     // remove the _id and __v of every document before returning the result
     ret.id = doc.id.toString();
     delete ret._id;
     delete ret.__v;
   },
-});
+};

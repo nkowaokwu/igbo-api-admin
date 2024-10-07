@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { noop } from 'lodash';
-import { Box, Heading, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Tooltip } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 const FormHeader = ({
@@ -30,17 +30,15 @@ const FormHeader = ({
       my={title ? 2 : 0}
     >
       <Box>
-        <Heading
-          as="h2"
+        <Text
           className={`form-header${onClick ? ' hover:underline' : ''}`}
-          fontSize="xl"
-          fontWeight="normal"
+          fontWeight="medium"
           color={color}
           width="min-content"
           m={0}
         >
           {title}
-        </Heading>
+        </Text>
         {subtitle ? (
           <Text fontSize="sm" color="gray.400" fontStyle="italic">
             {subtitle}

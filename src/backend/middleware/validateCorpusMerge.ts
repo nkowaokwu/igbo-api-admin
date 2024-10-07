@@ -20,7 +20,8 @@ export default async (
   next: NextFunction,
 ): Promise<Response<any> | void> => {
   const { body: finalData, user, mongooseConnection } = req;
-  const suggestionDoc: any = (await findCorpusSuggestionById(finalData.id, mongooseConnection));
+  const { projectId } = req.query;
+  const suggestionDoc: any = await findCorpusSuggestionById(finalData.id, projectId, mongooseConnection);
   req.suggestionDoc = suggestionDoc;
 
   if (!user || (user && !user.uid)) {

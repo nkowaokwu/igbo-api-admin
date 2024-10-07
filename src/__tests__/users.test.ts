@@ -29,6 +29,7 @@ describe('Users', () => {
 
     it('should return an error with malformed auth token', async () => {
       const res = await getUsers({ token: 'invalid auth token' });
+      console.log(res.body);
       expect(res.status).toEqual(403);
       expect(res.body.error).not.toEqual(undefined);
     });

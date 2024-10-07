@@ -1,72 +1,57 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading } from '@chakra-ui/react';
-import Views from 'src/shared/constants/Views';
+import { Box, Heading, VStack, Text } from '@chakra-ui/react';
 import DataEntryFlow from 'src/Core/Dashboard/components/DataEntryFlow';
+import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import generateGreetings from 'src/Core/Dashboard/components/utils/generateGreetings';
+import { DataEntryFlowGroup } from 'src/Core/Dashboard/components/utils/DataEntryFlowOptionInterface';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
+import { getDashboardOptions } from 'src/Core/Dashboard/utils/getDashboardOptions';
+import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
+import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 
-interface LexicographerOption {
-  icon: string | ReactElement;
-  title: string;
-  subtitle: string;
-  hash: string;
-  buttonLabel: string;
-}
+export const DataEntryFlowGroupLabels = {
+  [DataEntryFlowGroup.GET_STARTED]: {
+    title: 'Get started',
+    subtitle: 'Visit these section to get your project set up',
+  },
+  [DataEntryFlowGroup.CREATE_DATA]: {
+    title: 'Create data',
+    subtitle: 'Use these options to add ad-hoc data after your initial data import',
+  },
+  [DataEntryFlowGroup.EDIT_DATA]: {
+    title: 'Edit data',
+    subtitle: 'Use these sections to update and make edits to your existing data',
+  },
+};
 
-const lexicographerOptions: LexicographerOption[] = [
-  {
-    icon: '💬',
-    title: 'Create a New Word',
-    subtitle: "Don't see a word in our database? Create a new word here. All words follow Igbo Izugbe standards.",
-    hash: `#/wordSuggestions/${Views.CREATE}`,
-    buttonLabel: 'Create word',
-  },
-  {
-    icon: '📄',
-    title: 'Create a New Example Sentence',
-    subtitle: 'Create a new example Igbo sentence. Each sentence includes Igbo and English.',
-    hash: `#/exampleSuggestions/${Views.CREATE}`,
-    buttonLabel: 'Create example sentence',
-  },
-  {
-    icon: '🈷️',
-    title: 'Create a New Nsịbịdị Character',
-    subtitle: 'Create a new Nsịbịdị character. Nsịbịdị characters represent a unique concept.',
-    hash: `#/nsibidiCharacters/${Views.CREATE}`,
-    buttonLabel: 'Create Nsịbịdị character',
-  },
-  {
-    icon: '✍🏾',
-    title: 'Edit an Existing Word',
-    subtitle: 'See a typo in a definition? Want to add a new dialect? Search for a word and edit it.',
-    hash: `#/words/${Views.LIST}`,
-    buttonLabel: 'Search for word',
-  },
-  {
-    icon: '✍🏾',
-    title: 'Edit an Existing Example Sentence',
-    subtitle: 'See a mistake in a translation? Want to add more metadata? Search for a sentence and edit it.',
-    hash: `#/examples/${Views.LIST}`,
-    buttonLabel: 'Search for example',
-  },
-  {
-    icon: '✍🏾',
-    title: 'Edit an Existing Nsịbịdị Character',
-    subtitle: 'Want to add more information to an existing character? Search for an Nsịbịdị character and edit it.',
-    hash: `#/nsibidiCharacters/${Views.LIST}`,
-    buttonLabel: 'Search for Nsịbịdị character',
-  },
-];
+const getShouldShowSelfIdentify = (userProjectPermission: UserProjectPermission) =>
+  !userProjectPermission.languages ||
+  !userProjectPermission.languages.length ||
+  userProjectPermission.gender === null ||
+  userProjectPermission.gender === GenderEnum.UNSPECIFIED;
 
-const ProgressManager = (): ReactElement => (
-  <Box p={3}>
-    <Heading as="h1" className="mb-3">
-      Dashboard
-    </Heading>
-    <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      {lexicographerOptions.map((option) => (
-        <DataEntryFlow key={option.title} {...option} />
-      ))}
-    </Box>
-  </Box>
-);
+const ProgressManager = ({ permissions }: { permissions: { permissions?: { role: UserRoles } } }): ReactElement => {
+  const userProjectPermission = React.useContext(UserProjectPermissionContext);
+  const isIgboAPIProject = useIsIgboAPIProject();
+  const showSelfIdentify = getShouldShowSelfIdentify(userProjectPermission);
+  const options = getDashboardOptions({ permissions, isIgboAPIProject, showSelfIdentify });
+
+  return (
+    <VStack py={6} px={{ base: 6, md: 12 }} gap={4} alignItems="start">
+      <VStack alignItems="left">
+        <Heading as="h1">{generateGreetings()}</Heading>
+        <Text fontWeight="medium" color="gray.500" fontFamily="Silka">
+          Here&apos;s an overview of your available tasks
+        </Text>
+      </VStack>
+      <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" width="full">
+        {options.map((option) => (
+          <DataEntryFlow key={option.title} {...option} />
+        ))}
+      </Box>
+    </VStack>
+  );
+};
 
 export default ProgressManager;

@@ -1,12 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { omit, times } from 'lodash';
-import { Types } from 'mongoose';
 import {
   putReviewForRandomExampleSuggestions,
   putRandomExampleSuggestionsToTranslate,
   getRandomExampleSuggestionsToTranslate,
-  getTotalRecordedExampleSuggestions,
-  getTotalMergedRecordedExampleSuggestions,
   getRandomExampleSuggestionsToReview,
   postBulkUploadExampleSuggestions,
 } from 'src/backend/controllers/exampleSuggestions';
@@ -20,7 +17,6 @@ import { getExampleSuggestion, suggestNewExample } from 'src/__tests__/shared/co
 import { AUTH_TOKEN } from 'src/__tests__/shared/constants';
 import { exampleSuggestionData } from 'src/__tests__/__mocks__/documentData';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
-import moment from 'moment';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import createRequestObject from 'src/__tests__/shared/createRequestObject';
 import { getRandomExampleSuggestionsToRecord } from '..';
@@ -298,7 +294,6 @@ describe('exampleSuggestions controller', () => {
       times(5, async () =>
         suggestNewExample({
           ...exampleSuggestionData,
-          english: '',
           pronunciations: [
             {
               audio: 'first audio',
@@ -335,110 +330,7 @@ describe('exampleSuggestions controller', () => {
     });
   });
 
-  describe('Get Total Merged Recorded Example Suggestions', () => {
-    it('gets the total merged recorded example suggestions by month', async () => {
-      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
-      const mongooseConnection = await connectDatabase();
-      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-        'ExampleSuggestion',
-        exampleSuggestionSchema,
-      );
-      const unsavedExampleSuggestion = new ExampleSuggestion({
-        ...exampleSuggestionData,
-        pronunciations: [
-          {
-            denials: [],
-            approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
-            audio: 'https://',
-            speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
-            review: true,
-          },
-        ],
-        type: SentenceTypeEnum.DATA_COLLECTION,
-        merged: new Types.ObjectId(),
-        mergedBy: AUTH_TOKEN.MERGER_AUTH_TOKEN,
-      });
-
-      const exampleSuggestion = await unsavedExampleSuggestion.save();
-      await getTotalMergedRecordedExampleSuggestions(reqMock, resMock, nextMock);
-
-      expect(resMock.send).toHaveBeenCalledWith({
-        timestampedExampleSuggestions: {
-          [moment(exampleSuggestion.updatedAt).startOf('month').format('MMM, YYYY')]: 1,
-        },
-      });
-    });
-  });
-
   describe('Get Total Recorded Example Suggestions', () => {
-    it('gets the total recorded example suggestions', async () => {
-      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
-      const mongooseConnection = await connectDatabase();
-      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-        'ExampleSuggestion',
-        exampleSuggestionSchema,
-      );
-      await Promise.all(
-        times(10, async () => {
-          const unsavedExampleSuggestion = new ExampleSuggestion({
-            ...exampleSuggestionData,
-            pronunciations: [
-              {
-                denials: [],
-                approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
-                audio: 'https://',
-                speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
-                review: true,
-              },
-            ],
-            type: SentenceTypeEnum.DATA_COLLECTION,
-          });
-
-          await unsavedExampleSuggestion.save();
-        }),
-      );
-      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
-
-      expect(resMock.send).toHaveBeenCalledWith({
-        timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
-      });
-    });
-
-    it('gets the total recorded example suggestions with merged example suggestions', async () => {
-      const { reqMock, resMock, nextMock } = await createRequestObject({ query: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN } });
-      const mongooseConnection = await connectDatabase();
-      const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
-        'ExampleSuggestion',
-        exampleSuggestionSchema,
-      );
-      await Promise.all(
-        times(10, async () => {
-          const unsavedExampleSuggestion = new ExampleSuggestion({
-            ...exampleSuggestionData,
-            pronunciations: [
-              {
-                denials: [],
-                approvals: [AUTH_TOKEN.ADMIN_AUTH_TOKEN, AUTH_TOKEN.EDITOR_AUTH_TOKEN],
-                audio: 'https://',
-                speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
-                review: true,
-              },
-            ],
-            type: SentenceTypeEnum.DATA_COLLECTION,
-            merged: new Types.ObjectId(),
-            mergedBy: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
-          });
-
-          await unsavedExampleSuggestion.save();
-        }),
-      );
-      await getTotalRecordedExampleSuggestions(reqMock, resMock, nextMock);
-
-      expect(resMock.send).toHaveBeenCalledWith({
-        timestampedRecordedExampleSuggestions: { [moment().format('MMM, YYYY')]: 10 },
-      });
-    });
-
     it('returns example suggestions not already recorded by current user', async () => {
       const { reqMock, resMock, nextMock } = await createRequestObject({
         user: { uid: AUTH_TOKEN.ADMIN_AUTH_TOKEN },

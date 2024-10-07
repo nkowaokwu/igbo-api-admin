@@ -6,21 +6,32 @@ import { withRouter } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Text } from '@chakra-ui/react';
 import { getResourceObjects, Resource, ResourceGroup, ResourceGroupLabels } from 'src/App/Resources';
+import UserSection from 'src/Core/Layout/components/Sidebar/components/UserSection';
+import { IGBO_API_PROJECT_ID } from 'src/Core/constants';
+import { ProjectContext } from 'src/App/contexts/ProjectContext';
 
 const Menu = ({ onMenuClick }: MenuProps) => {
   const permissions = usePermissions();
+  const project = React.useContext(ProjectContext);
+  const isIgboAPIProject = project?.id?.toString() === IGBO_API_PROJECT_ID;
   const isOpen = useSelector((state) => state.admin.ui.sidebarOpen);
   const resourceRoutes = useMemo(
-    () => getResourceObjects(permissions?.permissions ? permissions.permissions : permissions),
-    [permissions],
+    () =>
+      getResourceObjects(permissions?.permissions ? permissions.permissions : permissions).filter(
+        (resource) => isIgboAPIProject || (!isIgboAPIProject && resource.generalProject),
+      ),
+    [permissions, isIgboAPIProject],
   );
-  const routesByResourceGroups = resourceRoutes.reduce((finalGroupedRoutes, route) => {
-    if (!finalGroupedRoutes[route.group]) {
-      finalGroupedRoutes[route.group] = [];
-    }
-    finalGroupedRoutes[route.group].push(route);
-    return finalGroupedRoutes;
-  }, {} as { [key in ResourceGroup]: Resource[] });
+
+  const groupedResourceRoutes = Object.entries(
+    resourceRoutes.reduce((finalGroupedRoutes, route) => {
+      if (!finalGroupedRoutes[route.group]) {
+        finalGroupedRoutes[route.group] = [];
+      }
+      finalGroupedRoutes[route.group].push(route);
+      return finalGroupedRoutes;
+    }, {} as { [key in ResourceGroup]: Resource[] }),
+  );
 
   return (
     <motion.div
@@ -28,20 +39,34 @@ const Menu = ({ onMenuClick }: MenuProps) => {
       hidden={!isOpen}
       initial={false}
       animate={{ width: isOpen ? '' : 0 }}
-      style={{ minWidth: '280px' }}
+      style={{
+        height: 'cal(100% - 67px - var(--chakra-sizes-2))',
+        minWidth: '280px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        overflowY: 'auto',
+      }}
     >
-      <Accordion defaultIndex={[0, 1]} allowMultiple>
-        {Object.entries(routesByResourceGroups).map(([key, routes], index) => (
-          <AccordionItem borderTopWidth={index ? '1px' : '0px'}>
+      <Accordion
+        defaultIndex={[0, 1, 2]}
+        allowMultiple
+        borderColor="transparent"
+        height="full"
+        overflowY="visible"
+        pb={16}
+      >
+        {groupedResourceRoutes.map(([key, routes], index) => (
+          <AccordionItem borderTopWidth={0} key={key}>
             <Box className="flex flex-row justify-between items-center" position={index ? '' : 'absolute'}>
               <AccordionButton width="full" pointerEvents={index ? 'auto' : 'none'} height={index ? '' : 0}>
                 <Text fontWeight="bold" width="full" textAlign="left" fontFamily="Silka">
                   {ResourceGroupLabels[key]}
                 </Text>
+                {index ? <AccordionIcon ml={2} mr={0} /> : null}
               </AccordionButton>
-              {index ? <AccordionIcon mx={2} /> : null}
             </Box>
-            <AccordionPanel padding={index ? '' : '0px'}>
+            <AccordionPanel p={2}>
               {routes.map(({ name, options = { label: '' }, icon, exact = false }) => (
                 <MenuItemLink
                   key={name}
@@ -57,6 +82,7 @@ const Menu = ({ onMenuClick }: MenuProps) => {
           </AccordionItem>
         ))}
       </Accordion>
+      <UserSection />
     </motion.div>
   );
 };

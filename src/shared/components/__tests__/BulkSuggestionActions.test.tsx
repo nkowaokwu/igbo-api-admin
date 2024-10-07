@@ -4,28 +4,28 @@ import TestContext from 'src/__tests__/components/TestContext';
 import BulkSuggestionActions from '../BulkSuggestionActions';
 
 describe('BulkSuggestionActions', () => {
-  it('renders the Merge and Delete buttons', async () => {
+  it('renders the Finalize and Delete buttons', async () => {
     const { findByText } = render(
       <TestContext>
         <BulkSuggestionActions />
       </TestContext>,
     );
 
-    await findByText('Merge');
+    await findByText('Finalize');
     await findByText('Delete');
   });
 
-  it('renders Merge confirmation modal', async () => {
+  it('renders Finalize confirmation modal', async () => {
     const { findByText, findAllByText } = render(
       <TestContext>
         <BulkSuggestionActions />
       </TestContext>,
     );
 
-    fireEvent.click(await findByText('Merge'));
-    await findByText('Merge Document');
+    fireEvent.click(await findByText('Finalize'));
+    await findByText('Finalize Document');
     await findByText('Are you sure you want to merge this document?');
-    await findAllByText('Merge');
+    await findAllByText('Finalize');
   });
 
   it('renders Delete confirmation modal', async () => {

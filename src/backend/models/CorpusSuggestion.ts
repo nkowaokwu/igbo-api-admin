@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import WordTagEnum from '../shared/constants/WordTagEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import WordTagEnum from 'src/backend/shared/constants/WordTagEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 import AnnotationSchema from './Annotation';
 
@@ -26,6 +27,8 @@ export const corpusSuggestionSchema = new Schema(
     merged: { type: Types.ObjectId, ref: 'Corpus', default: null },
     mergedBy: { type: String, default: null },
     userInteractions: { type: [{ type: String }], default: [] },
+    languages: { type: [{ type: String, enum: Object.values(LanguageEnum) }], default: [] },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

@@ -25,7 +25,8 @@ export default (word: WordData | Record): boolean =>
     Array.isArray(word.examples) &&
     word.examples.length &&
     word.examples.every(
-      ({ pronunciations }) => pronunciations.length && pronunciations.every((pronunciation) => !!pronunciation?.audio),
+      ({ source = { pronunciations: [] } }) =>
+        source.pronunciations.length && source.pronunciations.every((pronunciation) => !!pronunciation?.audio),
     ) &&
     word.dialects &&
     typeof word.dialects === 'object' &&

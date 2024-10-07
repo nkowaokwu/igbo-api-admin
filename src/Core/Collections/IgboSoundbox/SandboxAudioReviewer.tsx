@@ -1,13 +1,14 @@
 import React, { ReactElement, useState } from 'react';
 import { noop } from 'lodash';
-import { Box } from '@chakra-ui/react';
+import { Box, chakra } from '@chakra-ui/react';
 import { usePermissions } from 'react-admin';
-import { ExampleSuggestion } from 'src/backend/controllers/utils/interfaces';
+import ReactAudioPlayer from 'react-audio-player';
+import { PronunciationSchema } from 'src/backend/controllers/utils/interfaces';
 import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
 import useFetchSpeakers from 'src/hooks/useFetchSpeakers';
-import AudioPlayback from './components/AudioPlayback';
-import { SentenceVerification } from './types/SentenceVerification';
+import ResourceReviewer from './components/ResourceReviewer';
+import { SentenceVerification } from './types/SoundboxInterfaces';
 
 const SandboxAudioReviewer = ({
   pronunciations,
@@ -15,7 +16,7 @@ const SandboxAudioReviewer = ({
   onApprove,
   onDeny,
 }: {
-  pronunciations: ExampleSuggestion['pronunciations'];
+  pronunciations: PronunciationSchema[];
   review?: SentenceVerification;
   onApprove?: (pronunciationId: string) => void;
   onDeny?: (pronunciationId: string) => void;
@@ -34,13 +35,25 @@ const SandboxAudioReviewer = ({
             <Box key={`soundbox-audio-reviewer-${_id}`}>
               {review && !approvals.includes(uid) && !denials.includes(uid) ? (
                 <>
-                  <AudioPlayback
-                    pronunciationValue={audio}
-                    isRecording={false}
+                  <ResourceReviewer
                     onApprove={onApprove ? () => onApprove(_id.toString()) : noop}
                     onDeny={onDeny ? () => onDeny(_id.toString()) : noop}
                     reviewAction={exampleReview.reviews[_id.toString()]}
-                  />
+                  >
+                    {audio ? (
+                      <ReactAudioPlayer
+                        style={{
+                          height: '40px',
+                          width: '250px',
+                        }}
+                        id="audio"
+                        src={audio}
+                        controls
+                      />
+                    ) : (
+                      <chakra.span className="text-green-500 mt-2">New pronunciation recorded</chakra.span>
+                    )}
+                  </ResourceReviewer>
                   <SpeakerNameManager isLoading={isLoadingSpeakers} speakers={speakers} index={index} />
                 </>
               ) : null}

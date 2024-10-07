@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { noop } from 'lodash';
-import { PrimaryButton } from 'src/shared/primitives';
+import { Button } from '@chakra-ui/react';
+import { LuSend } from 'react-icons/lu';
 
 const SubmitBatchButton = ({
   isLoading,
@@ -15,14 +16,16 @@ const SubmitBatchButton = ({
   isDisabled: boolean;
   'aria-label': string;
 }): ReactElement => (
-  <PrimaryButton
+  <Button
     onClick={isLoading ? noop : isClickEnabled ? onClick : noop}
+    variant="primary"
     aria-label={ariaLabel}
     isDisabled={isDisabled}
     isLoading={isLoading}
+    rightIcon={<LuSend />}
   >
     Submit
-  </PrimaryButton>
+  </Button>
 );
 
 export default SubmitBatchButton;

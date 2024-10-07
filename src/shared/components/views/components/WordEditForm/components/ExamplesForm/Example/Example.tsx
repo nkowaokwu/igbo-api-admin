@@ -9,6 +9,8 @@ import useFirebaseUid from 'src/hooks/useFirebaseUid';
 import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import getRecordLanguages from 'src/shared/utils/getRecordLanguages';
 import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
@@ -17,8 +19,8 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
   const [originalRecord, setOriginalRecord] = useState(null);
   const uid = useFirebaseUid();
   const {
-    igbo = '',
-    english = '',
+    source = { language: LanguageEnum.UNSPECIFIED, text: '' },
+    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '' }],
     meaning = '',
     pronunciations = [],
     nsibidi = '',
@@ -27,6 +29,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
     originalExampleId,
   } = example;
   const [isExistingExample, setIsExistingExample] = useState(!!originalExampleId);
+  const { sourceLanguage, destinationLanguage } = getRecordLanguages(example);
   const deleteMessage = isExistingExample
     ? `This is an existing example suggestion that is being updated. Clicking this button will NOT
     permanently delete the example sentence, rather it will be archived (saved) but hidden.`
@@ -45,7 +48,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
   }, []);
 
   return originalRecord ? (
-    <Box className="list-container" key={`${exampleId}-${igbo}-${english}`}>
+    <Box className="list-container" key={`${exampleId}-${get(source, 'text')}-${get(translations, '0.text')}`}>
       <Box
         data-example-id={exampleId}
         data-original-example-id={originalExampleId}
@@ -64,16 +67,16 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           defaultValue={exampleId}
           control={control}
         />
-        <h3 className="text-gray-700">Igbo:</h3>
+        <h3 className="text-gray-700">{`${sourceLanguage}:`}</h3>
         <Controller
           render={(props) => (
-            <Input {...props} placeholder="Example in Igbo" data-test={`examples-${index}-igbo-input`} />
+            <Input {...props} placeholder={`Example in ${sourceLanguage}`} data-test={`examples-${index}-igbo-input`} />
           )}
-          name={`examples[${index}].igbo`}
-          defaultValue={igbo}
+          name={`examples[${index}].source.text`}
+          defaultValue={get(source, 'text')}
           control={control}
         />
-        <h3 className="text-gray-700">English:</h3>
+        <h3 className="text-gray-700">{`${destinationLanguage}:`}</h3>
         <Controller
           render={(props) => (
             <Input
@@ -82,8 +85,8 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
               data-test={`examples-${index}-english-input`}
             />
           )}
-          name={`examples[${index}].english`}
-          defaultValue={english}
+          name={`examples[${index}].translations.0.text`}
+          defaultValue={get(source, 'translations.0.text')}
           control={control}
         />
         <h3 className="text-gray-700">Meaning:</h3>

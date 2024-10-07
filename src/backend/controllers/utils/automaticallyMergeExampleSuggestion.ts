@@ -75,8 +75,8 @@ const automaticallyMergeExampleSuggestion = async ({
 }): Promise<Example | null> => {
   if (
     !exampleSuggestion.exampleForSuggestion &&
-    (exampleSuggestion.source === SuggestionSourceEnum.BBC ||
-      exampleSuggestion.source === SuggestionSourceEnum.IGBO_WIKIMEDIANS) &&
+    (exampleSuggestion.origin === SuggestionSourceEnum.BBC ||
+      exampleSuggestion.origin === SuggestionSourceEnum.IGBO_WIKIMEDIANS) &&
     (exampleSuggestion.type === SentenceTypeEnum.DATA_COLLECTION ||
       exampleSuggestion.type === SentenceTypeEnum.BIBLICAL) &&
     exampleSuggestion.pronunciations.every(({ review, audio, approvals, denials }) => {

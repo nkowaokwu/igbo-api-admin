@@ -8,4 +8,4 @@ export interface WordSuggestionData extends WordData, SuggestionData {
   examples?: ExampleSuggestionData[];
 }
 
-export interface WordSuggestion extends Document<WordSuggestionData, any, any> {}
+export interface WordSuggestion extends Document, WordSuggestionData {}

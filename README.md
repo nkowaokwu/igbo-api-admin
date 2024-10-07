@@ -6,9 +6,9 @@ The Igbo API Editor Platform is the admin platform used by our Igbo lexicographe
 
 The platform is deployed at [https://editor.igboapi.com](https://editor.igboapi.com/)
 
-### Contributing
+### Join our Community
 
-Contributions are always welcome. Please first join the Nkọwa okwu volunteer community before jumping in: [join here](https://nkowaokwu.com/volunteer)
+Would you like to contribute with a team? Join our Slack community: [join here](https://nkowaokwu.com/volunteer)
 
 ## Get Started
 
@@ -109,7 +109,7 @@ You should now be able to access the editor platform at [http://localhost:3030](
 
 **Note**: This will spin up a local version of the Firebase project `igbo-api-admin-staging` which
 is used for development purposes. Only Firebase Functions are getting emulated, so that means
-that any users that create accounts and log in are stored in the project real Authentication.
+that any users that create accounts and login are stored in the project real Authentication.
 
 ### Common Error
 
@@ -167,45 +167,6 @@ which can be used for production. It's not recommended to develop in this enviro
 is helpful to use for local testing purposes.
 
 You should now be able to access the editor platform at [http://localhost:3030](http://localhost:3030)
-
-## Cypress Testing
-
-This project uses [Cypress](https://cypress.io) for frontend tests.
-
-Start the frontend and backend server by running:
-
-```bash
-yarn dev:cypress
-```
-
-Running `yarn dev:cypress` will start th development server with Cypress in mind, which will mock audio URIs and bypass approval minimums.
-
-Run the Igbo API locally:
-
-```bash
-cd igbo_api
-yarn dev
-```
-
-### Option 1: Cypress Open Mode
-
-If you would like to watch your Cypress tests run in browser, run:
-
-```
-yarn cypress:open
-```
-
-### Option 2: Cypress Headless Mode
-
-If you want your Cypress tests to run in the terminal, run:
-
-```bash
-yarn cypress:run
-```
-
-[`http://localhost:8081`](http://localhost:8081) - The test result **Dashboard** to show all passing and failing tests
-
-**All tests run against a built development project, make sure that you've built your project with `yarn build:dev` when testing.**
 
 ## Jest Testing
 

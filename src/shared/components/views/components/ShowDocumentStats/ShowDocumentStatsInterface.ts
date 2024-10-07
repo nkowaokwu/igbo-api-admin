@@ -1,9 +1,9 @@
+import { Record } from 'react-admin';
+
 interface DocumentStats {
-  approvals: string[] | { displayName: string, email: string }[],
-  denials: string[] | { displayName: string, email: string }[],
-  author?: { [key: string]: string },
-  merged?: string,
-  collection?: string,
-};
+  record: Record;
+  collection?: string;
+  showFull: boolean;
+}
 
 export default DocumentStats;

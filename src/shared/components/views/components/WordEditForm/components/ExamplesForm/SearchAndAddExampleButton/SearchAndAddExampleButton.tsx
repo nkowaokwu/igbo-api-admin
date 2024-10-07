@@ -37,8 +37,7 @@ const SearchAndAddExampleButton = ({
       <Tooltip label="Attach an existing example to this word suggestion">
         <Button
           width="full"
-          colorScheme="purple"
-          variant="outline"
+          variant="primary"
           aria-label="Search and Add Example"
           onClick={handleToggleSearching}
           leftIcon={<AddIcon />}

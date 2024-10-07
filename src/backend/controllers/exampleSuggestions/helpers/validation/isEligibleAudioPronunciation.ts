@@ -25,7 +25,6 @@ const isEligibleAudioPronunciation = ({
 
   const validation = pronunciationSchema.validate(pronunciation, { abortEarly: false });
   if (validation.error) {
-    // console.log(validation.error);
     return false;
   }
   return true;

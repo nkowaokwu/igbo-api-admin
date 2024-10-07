@@ -12,7 +12,7 @@ export const normalizeHeadword = (schema: mongoose.Schema<Interfaces.WordSuggest
 
 export const normalizeIgbo = (schema: mongoose.Schema<Interfaces.ExampleSuggestion>): void => {
   schema.pre('save', async function (next) {
-    this.igbo = (this.igbo || '').normalize('NFD');
+    this.source.text = (this.source?.text || '').normalize('NFD');
     next();
     return this;
   });

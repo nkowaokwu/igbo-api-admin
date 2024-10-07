@@ -22,11 +22,8 @@ export const handleAudioPronunciation = async ({
     let savedAudioPronunciation = null;
     // Handles DELETE events
     if (event === AudioEventType.DELETE) {
-      // console.log('Deleting audio pronunciation');
       await AudioPronunciation.deleteOne({ objectId: key });
     } else {
-      // console.log('Creating or updating audio pronunciation');
-
       const existingAudioPronunciation = await AudioPronunciation.findOne({ objectId: key });
 
       // Handles PUT and COPY events
@@ -49,7 +46,6 @@ export const handleAudioPronunciation = async ({
     await disconnectDatabase();
     return savedAudioPronunciation;
   } catch (err) {
-    // console.log(`An error occurred: ${err.message}`);
     await disconnectDatabase();
     return null;
   }

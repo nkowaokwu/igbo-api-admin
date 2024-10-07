@@ -8,12 +8,25 @@ import { FileDataType } from 'src/Core/Collections/TextImages/types';
 const ACCEPT_TYPE = {
   image: 'image/png,image/jpg,image/jpeg',
   media: 'video/wav,video/mp4,audio/wav,audio/mp3',
+  text: 'text/plain',
 };
 
 const getBase64 = (file): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = (error) => {
+      reject(`Error: ${error}`); // eslint-disable-line
+    };
+  });
+
+const getFileContent = (file): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
     reader.onload = () => {
       resolve(reader.result);
     };
@@ -51,7 +64,7 @@ const FilePicker = ({
   seekTime?: number;
   register?: (value: string) => any;
   name: string;
-  type: 'image' | 'media';
+  type: 'image' | 'media' | 'text';
   errors?: Record<string, unknown>;
   multiple?: boolean;
   fileLimit?: number;
@@ -67,19 +80,21 @@ const FilePicker = ({
   const handleFile = async (file: File, index: number): Promise<FileDataType | null> => {
     try {
       if (!file) {
-        // console.log('Failed to get file');
+        console.log('Failed to get file');
       }
       if (index >= fileLimit) {
         return null;
       }
       const filePath = URL.createObjectURL(file);
       const base64 = await getBase64(file);
+      const fileContent = await getFileContent(file);
       setLocalFile(file);
       setLocalFilePath(filePath);
       return {
         file,
         filePath,
         base64,
+        fileContent,
         ...(type === 'media' ? { duration: mediaRef.current.getDuration() } : {}),
       };
     } catch (err) {
@@ -121,13 +136,15 @@ const FilePicker = ({
     }
   }, [seekTime]);
 
+  const isFilePresent = url || localFile;
   return (
     <Box
-      className={`flex flex-col space-y-3 p-12 ${!localFile ? 'border-dashed border-2 border-gray-300' : ''} 
+      className={`flex flex-col space-y-3 ${!localFile ? 'border-dashed border-2 border-gray-300' : ''} 
        rounded-md file-picker ${!localFile && isDragging ? 'drag-active' : ''} ${className}`}
       onDragOver={handleDrag}
       onDragLeave={handleDrag}
       onDrop={handleDrop}
+      p={isFilePresent ? 0 : 12}
     >
       <Box width="full">
         <Box
@@ -139,7 +156,7 @@ const FilePicker = ({
           alignItems="center"
           my={4}
         >
-          {(url || localFile) && type === 'media' ? (
+          {isFilePresent && type === 'media' ? (
             <Box className="space-y-4 w-full">
               <ReactPlayer
                 url={url || localFilePath}
@@ -160,11 +177,15 @@ const FilePicker = ({
               />
               {showFileName ? <FileName fileName={title || localFile.name} /> : null}
             </Box>
-          ) : (url || localFile) && type === 'image' ? (
+          ) : isFilePresent && type === 'image' ? (
             <>
               <Image src={url || localFilePath} maxWidth="580px" width="full" />
               {showFileName ? <FileName fileName={title || localFile.name} /> : null}
             </>
+          ) : isFilePresent && type === 'text' ? (
+            <Box backgroundColor="gray.100" p={4} borderRadius="md" width="full">
+              <Text fontWeight="bold">{localFile.name}</Text>
+            </Box>
           ) : (
             <Box className="space-y-4 flex flex-col justify-center items-center">
               <DriveFolderUploadIcon fontSize="large" color="disabled" />

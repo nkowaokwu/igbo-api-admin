@@ -14,7 +14,6 @@ describe('Emails', () => {
 
   it('fails to send audio pronunciation deletion notification due to missing to field', async () => {
     emailUtils
-      // @ts-expect-error no to field
       .sendAudioPronunciationDeletionNotification({
         firstDenierEmail: 'first@gmail.com',
         secondDenierEmail: 'second@gmail.com',
@@ -24,5 +23,27 @@ describe('Emails', () => {
       .catch((err) => {
         expect(err).toBeTruthy();
       });
+  });
+
+  it('send invite email to member', async () => {
+    const response = await emailUtils.sendMemberInvite({
+      to: 'first@gmail.com',
+      projectId: 'projectId',
+      permissionId: 'permissionId',
+      acceptUrl: 'acceptUrl',
+      projectTitle: 'projectTitle',
+      grantingAdmin: 'grantingAdmin',
+    });
+    expect(response).toEqual(true);
+  });
+
+  it('send notification to admins about member accepting invites', async () => {
+    const response = await emailUtils.sendMemberAcceptedInviteAdmin({
+      to: ['first@gmail.com'],
+      projectId: 'projectId',
+      projectTitle: 'projectTitle',
+      userEmail: 'user@gmail.com',
+    });
+    expect(response).toEqual(true);
   });
 });

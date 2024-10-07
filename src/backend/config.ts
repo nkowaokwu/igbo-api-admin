@@ -3,10 +3,9 @@ import * as functions from 'firebase-functions';
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;
 export const isProduction = config?.runtime?.env === 'production' || NODE_ENV === 'production';
-export const isCypress = config?.runtime?.env === 'cypress';
 export const isJest = config?.runtime?.env === 'jest' || NODE_ENV === 'jest';
 export const isTest = config?.runtime?.env === 'test' || NODE_ENV === 'test';
-export const isTesting = isCypress || isJest || isTest;
+export const isTesting = isJest || isTest;
 export const isDevelopment = config?.runtime?.env === 'development' || isTesting;
 export const isAWSProduction = isProduction;
 
@@ -16,7 +15,7 @@ export const IGBO_API_ROOT =
 
 // Igbo API Editor Platform
 export const IGBO_API_EDITOR_PLATFORM_ROOT =
-  !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://127.0.0.1:3030';
+  !isTesting && isProduction ? 'https://editor.igboapi.com' : 'http://localhost:3030';
 
 // SendGrid API
 export const SENDGRID_API_KEY = config?.sendgrid?.api_key;
@@ -30,6 +29,8 @@ export const DOCUMENT_DELETION_REQUEST_NOTIFICATION = config?.sendgrid?.document
 export const DOCUMENT_UPDATE_NOTIFICATION = config?.sendgrid?.document_update_notification;
 export const REPORT_USER_NOTIFICATION = config?.sendgrid?.report_user_notification;
 export const AUDIO_PRONUNCIATION_DELETION_NOTIFICATION = config?.sendgrid?.audio_pronunciation_deletion_notification;
+export const MEMBER_INVITE = config?.sendgrid?.member_invite;
+export const MEMBER_ACCEPTED_INVITE = config?.sendgrid?.member_accepted_invite;
 export const API_FROM_EMAIL = config?.sendgrid?.sender_email;
 export const NKOWAOKWU_FROM_EMAIL = config?.sendgrid?.sender_email;
 
@@ -75,8 +76,9 @@ export const GET_MAIN_KEY = (): string => {
   if (config?.runtime?.env === 'production') {
     return config?.env?.main_key;
   }
-  return CI || config?.runtime?.env === 'cypress' || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
+  return CI || NODE_ENV !== 'production' ? 'main_key' : config?.env?.main_key;
 };
+export const IGBO_API_PROJECT_ID = '66de0ffee848d30f37403402';
 
 // Twitter API
 export const TWITTER_CLIENT_ID = config?.twitter?.client_id;

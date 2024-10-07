@@ -1,6 +1,7 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { Box, Button, Input, IconButton, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Input, IconButton, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
 import { FiFilter } from 'react-icons/fi';
+import { LuPlus } from 'react-icons/lu';
 import { sanitizeListRestProps, TopToolbar, useListContext, usePermissions } from 'react-admin';
 import queryString from 'query-string';
 import Collections from 'src/shared/constants/Collection';
@@ -15,6 +16,8 @@ import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import DeleteOldWordSuggestionsButton from 'src/shared/components/actions/components/DeleteOldWordSuggestionsButton';
 import FiltersDrawer from 'src/shared/components/FiltersDrawer';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
+import { postMemberInvite } from 'src/shared/InviteAPI';
+import InviteMembersModal from 'src/shared/components/InviteMembersModal';
 import Filter from '../Filter';
 
 const ListActions = (props: CustomListActionProps): ReactElement => {
@@ -22,9 +25,16 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const { basePath } = useListContext();
   const [jumpToPage, setJumpToPage] = useState('');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    isOpen: isInviteMembersModalOpen,
+    onOpen: onOpenInviteMemberModal,
+    onClose: onCloseInviteMembersModal,
+  } = useDisclosure();
   const permissions = usePermissions();
   const isAdminOrMerger = hasAdminOrMergerPermissions(permissions?.permissions, true);
   const isAdmin = hasAdminPermissions(permissions?.permissions, true);
+  const toast = useToast();
 
   const isSuggestionResource =
     resource === Collections.WORD_SUGGESTIONS ||
@@ -35,6 +45,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
   const isPollResource = resource === Collections.POLLS;
   const isNotificationResource = resource === Collections.NOTIFICATIONS;
   const isNsibidiResource = resource === Collections.NSIBIDI_CHARACTERS;
+  const isUserResource = resource === Collections.USERS;
 
   /* Jumps to user-specified page */
   const handleJumpToPage = (e) => {
@@ -114,6 +125,31 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     return filterCategories;
   };
 
+  const onInviteMember = async ({ email }: { email: string }) => {
+    setIsLoading(true);
+    try {
+      await postMemberInvite({ email });
+      toast({
+        title: 'Success',
+        description: 'Your invitation has been sent to your teammate.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+      });
+      onCloseInviteMembersModal();
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'Unable to send invitation to your teammate.',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   /* Insert page value into input whenever window location changes */
   useEffect(() => {
     const parsedHashQueries = queryString.parse(window.location.hash);
@@ -131,6 +167,12 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         onClose={() => setIsFiltersOpen(false)}
         filterCategories={constructFilterCategories()}
       />
+      <InviteMembersModal
+        isOpen={isInviteMembersModalOpen}
+        onClose={onCloseInviteMembersModal}
+        onInviteMember={onInviteMember}
+        isLoading={isLoading}
+      />
       <TopToolbar
         className={`${className} ${
           isSuggestionResource ? 'space-x-2' : ''
@@ -140,7 +182,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         {isPollResource || isNotificationResource || isNsibidiResource ? null : <Filter {...props} />}
         <Box
           className="flex flex-row justify-end items-end
-        lg:items-center space-y-2 lg:space-y-0 space-x-3"
+        lg:items-center space-y-0 space-x-3"
         >
           <Tooltip label="Filter entries">
             <Box className="flex flex-row items-center space-x-3">
@@ -158,13 +200,19 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
                   onChange={handleOnJumpToPageChange}
                   placeholder="Page #"
                   name="page"
+                  variant="primary"
                 />
-                <Button type="submit" className="px-3" minWidth={24} colorScheme="purple">
+                <Button type="submit" className="px-3" minWidth={24}>
                   Jump to page
                 </Button>
               </Box>
             </form>
           )}
+          {isUserResource && isAdmin ? (
+            <Button rightIcon={<LuPlus />} onClick={onOpenInviteMemberModal} variant="primary">
+              Invite Member
+            </Button>
+          ) : null}
           {isSuggestionResource ||
           (isPollResource && isAdminOrMerger) ||
           resource === Collections.NSIBIDI_CHARACTERS ? (

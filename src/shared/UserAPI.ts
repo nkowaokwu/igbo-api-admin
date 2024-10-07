@@ -1,9 +1,8 @@
-import { getAuth, updateProfile } from 'firebase/auth';
-import { camelCase, merge, pick } from 'lodash';
+import { getAuth, updateProfile, User } from 'firebase/auth';
+import { camelCase, pick } from 'lodash';
 import network from 'src/Core/Dashboard/network';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
-import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import StatTypes from 'src/backend/shared/constants/StatTypes';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
@@ -17,27 +16,19 @@ export const getUserProfile = async (userId: string): Promise<UserProfile> => {
 };
 
 export const updateUserProfile = async ({
-  userId,
   userProfile,
 }: {
-  userId: string;
-  userProfile: {
+  userProfile: Partial<{
     displayName: string;
     age: Date;
     dialects: DialectEnum[];
-    gender: GenderEnum;
-  };
-}): Promise<UserProfile> => {
+  }>;
+}): Promise<User> => {
   const auth = getAuth();
   const firebaseProfile = pick(userProfile, ['displayName']);
   await updateProfile(auth.currentUser, firebaseProfile);
 
-  const { data: result } = await request({
-    method: 'PUT',
-    url: `${Collection.USERS}/${userId}`,
-    data: userProfile,
-  });
-  return merge(userProfile, result);
+  return auth.currentUser;
 };
 
 export const getUserStats = async (): Promise<{ [key: string]: number }> => {
@@ -52,4 +43,24 @@ export const getUserStats = async (): Promise<{ [key: string]: number }> => {
     {} as { [key: string]: number },
   );
   return stats;
+};
+
+// User Stats on Profile
+
+export const getUserExampleSuggestionRecordings = async (uid: string): Promise<{ [key: string]: number }> => {
+  const { data: result } = await request<{ timestampedExampleSuggestions: { [key: string]: number } }>({
+    method: 'GET',
+    url: `${Collection.STATS}/users/${uid}/${Collection.EXAMPLE_SUGGESTIONS}/recorded`,
+    params: { uid },
+  });
+  return result.timestampedExampleSuggestions;
+};
+
+export const getUserExampleSuggestionTranslations = async (uid: string): Promise<{ [key: string]: number }> => {
+  const { data: result } = await request<{ timestampedExampleSuggestions: { [key: string]: number } }>({
+    method: 'GET',
+    url: `${Collection.STATS}/users/${uid}/${Collection.EXAMPLE_SUGGESTIONS}/translated`,
+    params: { uid },
+  });
+  return result.timestampedExampleSuggestions;
 };

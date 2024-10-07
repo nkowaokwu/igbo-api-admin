@@ -40,7 +40,7 @@ const Error = ({ errorInfo }: { errorInfo: any }): ReactElement => (
         </Accordion>
       )}
       <Box>
-        <Button onClick={() => window.history.go(-1)} leftIcon={<RepeatClockIcon />} colorScheme="purple">
+        <Button onClick={() => window.history.go(-1)} leftIcon={<RepeatClockIcon />} variant="primary">
           Go back
         </Button>
       </Box>

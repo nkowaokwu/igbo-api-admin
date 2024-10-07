@@ -11,7 +11,7 @@ const StandardIgboPreview = ({
   <Box data-test="standard-igbo-cell" className="flex w-full justify-center items-center cursor-default">
     {record.attributes.isStandardIgbo ? (
       <Tooltip label="This term is in Standard Igbo">
-        <Tag colorScheme="purple" className="text-center">
+        <Tag variant="primary" className="text-center">
           Standard Igbo
         </Tag>
       </Tooltip>

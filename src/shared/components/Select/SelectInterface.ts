@@ -10,6 +10,7 @@ interface Select {
   resource: string;
   push: (value: string) => any;
   view?: Views;
+  showButtonLabels: boolean;
 }
 
 export default Select;

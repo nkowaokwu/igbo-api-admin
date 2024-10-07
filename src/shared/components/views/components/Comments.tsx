@@ -1,25 +1,25 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Text, VStack } from '@chakra-ui/react';
 import { CommentsProps } from 'src/shared/interfaces';
 import NewLineText from 'src/shared/components/NewLineText';
+import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
+import { LuMessageCircle } from 'react-icons/lu';
 
 const Comments = ({ editorsNotes, userComments, showUserComments = true }: CommentsProps): ReactElement => (
-  <Box className="flex flex-col mt-12 space-y-6">
-    <Box>
-      <Heading as="h2" fontSize="xl" className="text-gray-600 mb-3">{'Editor\'s Note'}</Heading>
+  <VStack alignItems="start" width="full" gap={2} className="flex flex-col mt-12 space-y-6">
+    <ShowTextRenderer title="Editor's notes" icon={<LuMessageCircle />}>
       <Text className={editorsNotes ? 'text-gray-600' : 'text-gray-500 italic'}>
         {editorsNotes || 'No editor notes'}
       </Text>
-    </Box>
+    </ShowTextRenderer>
     {showUserComments ? (
-      <Box>
-        <Heading as="h2" fontSize="xl" className="text-gray-600 mb-3 mt-2">{'User\'s comments'}</Heading>
+      <ShowTextRenderer title="User's comments" icon={<LuMessageCircle />}>
         <Text className={userComments ? 'text-gray-600' : 'text-gray-500 italic'}>
           {userComments ? <NewLineText text={userComments} /> : 'No user comments'}
         </Text>
-      </Box>
+      </ShowTextRenderer>
     ) : null}
-  </Box>
+  </VStack>
 );
 
 export default Comments;

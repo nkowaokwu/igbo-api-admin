@@ -60,7 +60,7 @@ const BulkSuggestionActions = ({
         } catch (err) {
           toast({
             title: 'Error',
-            description: 'Unable to merge documents',
+            description: 'Unable to finalize documents',
             status: 'error',
             position: 'top-right',
             variant: 'left-accent',
@@ -118,10 +118,10 @@ const BulkSuggestionActions = ({
   return (
     <Box className="flex flex-row items-center space-x-3 mb-3">
       <Text>Bulk actions</Text>
-      <Button data-test="bulk-merge-button" onClick={handleBulkMerge}>
-        Merge
+      <Button data-test="bulk-merge-button" color="black" onClick={handleBulkMerge}>
+        Finalize
       </Button>
-      <Button data-test="bulk-merge-button" onClick={handleBulkDelete}>
+      <Button data-test="bulk-merge-button" color="black" onClick={handleBulkDelete}>
         Delete
       </Button>
       <ConfirmModal

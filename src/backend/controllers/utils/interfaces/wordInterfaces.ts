@@ -32,10 +32,9 @@ export interface WordClientData extends Word {
   examples?: ExampleClientData[];
 }
 
-export interface Word extends Document<WordData, any, any> {}
+export interface Word extends Document, WordData {}
 
 export interface WordData {
-  id: string;
   word: string;
   wordPronunciation: string;
   conceptualWord: string;

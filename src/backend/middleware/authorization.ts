@@ -1,22 +1,29 @@
-import { Response, NextFunction } from 'express';
+import { Response, NextFunction, RequestHandler } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { GET_MAIN_KEY } from 'src/backend/config';
 import UserRoles from '../shared/constants/UserRoles';
 
 /* Determines API permission levels based on user role */
-const authorization =
+const authorization: (value?: UserRoles[]) => RequestHandler =
   (permittedRoles = []) =>
-  (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
-    const { user = {} } = req;
+  (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Promise<void> | void => {
+    const { user } = req;
+
+    if (!user) {
+      res.status(404).send({ message: 'No user exists on this request.' });
+      return;
+    }
 
     /* As long as the user has a valid Firebase uid then they have access */
     if (!permittedRoles.length && user.uid) {
-      return next();
+      next();
+      return;
     }
 
     /** Admins are granted all access */
     if (user.role === UserRoles.ADMIN) {
-      return next();
+      next();
+      return;
     }
 
     /**
@@ -24,7 +31,8 @@ const authorization =
      * the user is granted access
      */
     if (user && permittedRoles.includes(user.role)) {
-      return next();
+      next();
+      return;
     }
 
     /**
@@ -33,10 +41,11 @@ const authorization =
      */
     if (req.get('x-api-key') === GET_MAIN_KEY()) {
       // A request is being made on behalf of an official app
-      return next();
+      next();
+      return;
     }
 
-    return res.status(403).send({ error: 'Unauthorized. Invalid user permissions.' });
+    res.status(403).send({ error: 'Unauthorized. Invalid user permissions.' });
   };
 
 export default authorization;

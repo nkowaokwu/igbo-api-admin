@@ -1,4 +1,5 @@
 import { ExampleData, NsibidiCharacter, WordData } from 'src/backend/controllers/utils/interfaces';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import WordAttributes from 'src/backend/shared/constants/WordAttributes';
 import WordClassEnum from 'src/backend/shared/constants/WordClassEnum';
 
@@ -45,23 +46,23 @@ export const DEFAULT_WORD_RECORD: WordData = {
 
 export const DEFAULT_EXAMPLE_RECORD: ExampleData = {
   id: '',
-  igbo: '',
-  english: '',
+  source: { language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] },
+  translations: [{ language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] }],
   meaning: '',
   nsibidi: '',
   type: undefined,
   style: undefined,
-  pronunciations: [],
   nsibidiCharacters: [],
   associatedWords: [],
   associatedDefinitionsSchemas: [],
   updatedAt: new Date(),
+  editorsNotes: '',
+  userComments: '',
 };
 
 export const DEFAULT_NSIBIDI_CHARACTER_RECORD: NsibidiCharacter = {
   id: '',
   nsibidi: '',
-  pronunciation: '',
   definitions: [],
   wordClass: WordClassEnum.NNC,
 };

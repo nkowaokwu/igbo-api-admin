@@ -4,6 +4,8 @@ import { Record } from 'react-admin';
 import { Example } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
+import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 
 export default async (
   record: Example | Record,
@@ -15,16 +17,15 @@ export default async (
   const {
     associatedWords = [],
     style = '',
-    pronunciations = [],
-    igbo = '',
-    english = '',
+    source = { language: LanguageEnum.UNSPECIFIED, pronunciations: [], text: '' },
+    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] }],
     meaning = '',
     archived = false,
   } = record;
 
   const isAudioAvailable = await new Promise((resolve) => {
     if (!skipAudioCheck) {
-      pronunciations.forEach(({ audio }) => {
+      source.pronunciations.forEach(({ audio }) => {
         axios
           .get(audio)
           .then(() => resolve(true))
@@ -36,19 +37,20 @@ export default async (
           });
       });
     }
-    return resolve(pronunciations[0]?.audio?.startsWith('https://'));
+    return resolve(source.pronunciations[0]?.audio?.startsWith('https://'));
   });
 
   const sufficientExampleRequirements = compact([
-    !igbo && 'Igbo is needed',
-    !english && 'English is needed',
+    !source?.text && `${LanguageLabels[source?.language].label} is needed`,
+    !translations?.[0].text && `${LanguageLabels[translations?.[0]?.text].label} is needed`,
     !associatedWords.length && 'At least one associated word is needed',
     archived && 'Sentence must not be archived',
   ]);
 
   const completeExampleRequirements = compact([
     ...sufficientExampleRequirements,
-    (pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) || !pronunciations.length) &&
+    (source.pronunciations.some((pronunciation) => !pronunciation || !isAudioAvailable) ||
+      !source.pronunciations.length) &&
       'An audio pronunciation is needed',
     style === ExampleStyle[ExampleStyleEnum.PROVERB].value && !meaning && 'Meaning is required for proverb',
   ]);

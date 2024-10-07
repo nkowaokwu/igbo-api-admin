@@ -7,7 +7,6 @@ import { wordSuggestionSchema } from '../models/WordSuggestion';
 import { exampleSuggestionSchema } from '../models/ExampleSuggestion';
 import { packageResponse, handleQueries, populateFirebaseUsers } from './utils';
 import {
-  searchForLastWeekQuery,
   searchPreExistingWordSuggestionsRegexQuery,
   searchWordSuggestionsOlderThanAYear,
   searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth,
@@ -42,6 +41,7 @@ export const createWordSuggestion = async ({
   mongooseConnection: Connection;
 }): Promise<Interfaces.WordSuggestion> => {
   let wordSuggestion;
+  const { projectId } = req.query;
   try {
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     data.authorId = user.uid;
@@ -50,6 +50,7 @@ export const createWordSuggestion = async ({
       compareData: word,
       userId: user.uid,
     });
+    data = assign(data, { projectId });
     const clientExamples = getExamplesFromClientData(data);
     const newWordSuggestion = new WordSuggestion(data);
     wordSuggestion = (await newWordSuggestion.save()) as Interfaces.WordSuggestion;
@@ -78,7 +79,8 @@ export const postWordSuggestion = async (
 ): Promise<Response | void> => {
   try {
     const { body: rawData, word, user, mongooseConnection } = req;
-    const data = rawData;
+    const { projectId } = req.query;
+    const data = { ...rawData, projectId };
 
     const savedWordSuggestion = await createWordSuggestion({
       data,
@@ -96,18 +98,20 @@ export const postWordSuggestion = async (
 
 export const findWordSuggestionById = (
   id: string | Types.ObjectId,
+  projectId: string,
   mongooseConnection: Connection,
 ): Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-  return WordSuggestion.findById(id);
+  return WordSuggestion.findOne({ _id: id, projectId });
 };
 
 export const deleteWordSuggestionsByOriginalWordId = (
   id: string | Types.ObjectId,
+  projectId: string,
   mongooseConnection: Connection,
 ): Query<any, Document<Interfaces.WordSuggestion>> => {
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-  return WordSuggestion.deleteMany({ originalWordId: id });
+  return WordSuggestion.deleteMany({ originalWordId: id, projectId });
 };
 
 /* Grabs WordSuggestions */
@@ -138,13 +142,14 @@ export const putWordSuggestion = (
     const {
       body: rawData,
       params: { id },
+      query: { projectId },
       user,
       mongooseConnection,
     } = req;
     let data = rawData;
     const clientExamples = getExamplesFromClientData(data);
 
-    return findWordSuggestionById(id, mongooseConnection)
+    return findWordSuggestionById(id, projectId, mongooseConnection)
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
           throw new Error("Word suggestion doesn't exist");
@@ -201,7 +206,8 @@ export const getWordSuggestions = (
 ): Promise<Response | void> | void => {
   try {
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
-    const regexMatch = searchPreExistingWordSuggestionsRegexQuery(user.uid, regexKeyword, filters);
+    const { projectId } = req.query;
+    const regexMatch = searchPreExistingWordSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
     // console.time('Get word suggestions');
@@ -242,23 +248,25 @@ export const getWordSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-    const populatedWordSuggestion: Document<Interfaces.WordSuggestion> = await WordSuggestion.findById(id).then(
-      async (wordSuggestion: Interfaces.WordSuggestion) => {
-        if (!wordSuggestion) {
-          throw new Error(`No word suggestion exists with the provided id: ${id}`);
-        }
-        const wordSuggestionWithExamples = await placeExampleSuggestionsOnSuggestionDoc(
-          wordSuggestion,
-          mongooseConnection,
-        );
-        const populatedUsersWordSuggestionWithExamples = await populateFirebaseUsers(wordSuggestionWithExamples, [
-          'approvals',
-          'denials',
-        ]);
-        return populatedUsersWordSuggestionWithExamples;
-      },
-    );
+    const populatedWordSuggestion: Document<Interfaces.WordSuggestion> = await WordSuggestion.findOne({
+      _id: id,
+      projectId,
+    }).then(async (wordSuggestion: Interfaces.WordSuggestion) => {
+      if (!wordSuggestion) {
+        throw new Error(`No word suggestion exists with the provided id: ${id}`);
+      }
+      const wordSuggestionWithExamples = await placeExampleSuggestionsOnSuggestionDoc(
+        wordSuggestion,
+        mongooseConnection,
+      );
+      const populatedUsersWordSuggestionWithExamples = await populateFirebaseUsers(wordSuggestionWithExamples, [
+        'approvals',
+        'denials',
+      ]);
+      return populatedUsersWordSuggestionWithExamples;
+    });
     return res.send(populatedWordSuggestion);
   } catch (err) {
     return next(err);
@@ -336,12 +344,13 @@ export const deleteWordSuggestion = async (
   try {
     const { mongooseConnection } = req;
     const { id } = req.params;
+    const { projectId } = req.query;
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
-    const result = await WordSuggestion.findOneAndDelete({ _id: id, merged: null })
+    const result = await WordSuggestion.findOneAndDelete({ _id: id, projectId, merged: null })
       .then(async (wordSuggestion: Interfaces.WordSuggestion) => {
         if (!wordSuggestion) {
           throw new Error('No word suggestion exists with the provided id.');
@@ -366,13 +375,14 @@ export const bulkDeleteWordSuggestions = async (
 ): Promise<Response | void> => {
   try {
     const { mongooseConnection } = req;
+    const { projectId } = req.query;
     const ids = req.body;
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
       exampleSuggestionSchema,
     );
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-    const result = await WordSuggestion.find({ _id: { $in: ids }, merged: null })
+    const result = await WordSuggestion.find({ _id: { $in: ids }, projectId, merged: null })
       .then(async (wordSuggestions: Interfaces.WordSuggestion[]) => {
         if (!wordSuggestions) {
           throw new Error('No word suggestions exist with the provided id.');
@@ -399,8 +409,9 @@ export const deleteOldWordSuggestions = async (
 ): Promise<Response<{ success: boolean; result: any }> | void> => {
   try {
     const { mongooseConnection } = req;
+    const { projectId } = req.query;
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-    const query = searchWordSuggestionsOlderThanAYear();
+    const query = searchWordSuggestionsOlderThanAYear({ projectId });
 
     const result = await WordSuggestion.deleteMany(query);
 
@@ -410,17 +421,6 @@ export const deleteOldWordSuggestions = async (
   }
 };
 
-/* Returns all the WordSuggestions from last week */
-export const getWordSuggestionsFromLastWeek = (mongooseConnection: Connection): Promise<any> => {
-  const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-  return WordSuggestion.find(searchForLastWeekQuery()).lean().exec();
-};
-
-export const getNonMergedWordSuggestions = (mongooseConnection: Connection): Promise<any> => {
-  const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
-  return WordSuggestion.find({ merged: null }).lean().exec();
-};
-
 export const approveWordSuggestion = async (
   req: Interfaces.EditorRequest,
   res: Response,
@@ -428,13 +428,14 @@ export const approveWordSuggestion = async (
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {
   const {
     params: { id },
+    query: { projectId },
     user,
     mongooseConnection,
   } = req;
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
-    const wordSuggestion = await WordSuggestion.findById(id);
+    const wordSuggestion = await WordSuggestion.findOne({ _id: id, projectId });
     if (!wordSuggestion) {
       throw new Error("Word suggestion doesn't exist");
     }
@@ -457,13 +458,14 @@ export const denyWordSuggestion = async (
 ): Promise<Response<Interfaces.WordSuggestion> | void> => {
   const {
     params: { id },
+    query: { projectId },
     user,
     mongooseConnection,
   } = req;
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
-    const wordSuggestion = await WordSuggestion.findById(id);
+    const wordSuggestion = await WordSuggestion.findOne({ _id: id, projectId });
     if (!wordSuggestion) {
       throw new Error("Word suggestion doesn't exist");
     }
@@ -488,7 +490,8 @@ export const getRandomWordSuggestions = async (
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion[]> | void> => {
   const { mongooseConnection } = req;
-  const query = searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth();
+  const { projectId } = req.query;
+  const query = searchWordSuggestionsWithoutIgboDefinitionsFromLastMonth({ projectId });
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
@@ -506,13 +509,14 @@ export const putRandomWordSuggestions = async (
   next: NextFunction,
 ): Promise<Response<Interfaces.WordSuggestion[]> | void> => {
   const { mongooseConnection, body: igboDefinitions } = req;
+  const { projectId } = req.query;
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
   try {
     const savedWordSuggestionIds = compact(
       await Promise.all(
         igboDefinitions.map(async ({ id, igboDefinition }) => {
-          const wordSuggestion = await WordSuggestion.findById(id);
+          const wordSuggestion = await WordSuggestion.findOne({ _id: id, projectId });
           if (!wordSuggestion) {
             console.error('Silent failure: Word suggestion does not exist. Unable to update Igbo definition.');
             return null;
@@ -545,6 +549,7 @@ export const postRandomWordSuggestionsForIgboDefinitions = async (
   next: NextFunction,
 ): Promise<Response<{ message: boolean }> | void> => {
   const { mongooseConnection, body: data = {} } = req;
+  const { projectId } = req.query;
   const Word = mongooseConnection.model<Interfaces.Word>('Word', wordSchema);
   const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
@@ -560,7 +565,7 @@ export const postRandomWordSuggestionsForIgboDefinitions = async (
     const systemUser = {
       uid: Author.SYSTEM,
     };
-    const query = searchWordsWithoutIgboDefinitions();
+    const query = searchWordsWithoutIgboDefinitions({ projectId });
     // Gets all Words in the database
     const words = await Word.find(query);
 
@@ -577,8 +582,9 @@ export const postRandomWordSuggestionsForIgboDefinitions = async (
           }
           const wordData = omit(assign(word), OMIT_WORD_KEYS) as Interfaces.WordSuggestion;
           wordData.originalWordId = word.id;
+          wordData.projectId = projectId;
           // Checks to see if an existing Word Suggestion exists for the Word
-          const existingWordSuggestion = await WordSuggestion.findOne({ originalWordId: word.id });
+          const existingWordSuggestion = await WordSuggestion.findOne({ originalWordId: word.id, projectId });
 
           // If a Word Suggestion already exists, a new Word Suggestion will not be created from this Word
           if (existingWordSuggestion?.id) {

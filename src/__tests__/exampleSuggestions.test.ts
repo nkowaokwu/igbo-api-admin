@@ -11,6 +11,7 @@ import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import { connectDatabase } from 'src/backend/utils/database';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import {
   approveExampleSuggestion,
   suggestNewExample,
@@ -26,7 +27,6 @@ import {
   createExample,
   getWords,
   getTotalReviewedExampleSuggestions,
-  getTotalRecordedExampleSuggestions,
   putAudioForRandomExampleSuggestions,
   putReviewForRandomExampleSuggestions,
 } from './shared/commands';
@@ -239,9 +239,9 @@ describe('MongoDB Example Suggestions', () => {
             speaker: AUTH_TOKEN.ADMIN_AUTH_TOKEN,
           },
         ],
-        source: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
+        origin: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
         type: SentenceTypeEnum.DATA_COLLECTION,
-        igbo: 'updated igbo for test',
+        source: { language: LanguageEnum.IGBO, text: 'updated igbo for test' },
         authorId: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
       });
 
@@ -292,9 +292,9 @@ describe('MongoDB Example Suggestions', () => {
       );
       const unsavedExampleSuggestion = new ExampleSuggestion({
         ...exampleSuggestionData,
-        source: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
+        origin: SuggestionSourceEnum.IGBO_WIKIMEDIANS,
         type: SentenceTypeEnum.DATA_COLLECTION,
-        igbo: 'updated igbo for test',
+        source: { language: LanguageEnum.IGBO, text: 'updated igbo for test' },
         pronunciations: [{ audio: 'first audio' }],
         authorId: AUTH_TOKEN.EDITOR_AUTH_TOKEN,
       });
@@ -743,15 +743,6 @@ describe('MongoDB Example Suggestions', () => {
       expect(
         verifiedRes.body.timestampedReviewedExampleSuggestions[moment().format('MMM, YYYY')],
       ).toBeGreaterThanOrEqual(2);
-    });
-
-    it('should show all example suggestion stats for user', async () => {
-      const verifiedRes = await getTotalReviewedExampleSuggestions();
-      const recordedRes = await getTotalRecordedExampleSuggestions();
-      expect(verifiedRes.status).toEqual(200);
-      expect(recordedRes.status).toEqual(200);
-      expect(verifiedRes.body.timestampedReviewedExampleSuggestions).toEqual({});
-      expect(recordedRes.body.timestampedRecordedExampleSuggestions).toEqual({});
     });
   });
 

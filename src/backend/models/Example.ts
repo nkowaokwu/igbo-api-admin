@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
+import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import { toJSONPlugin, toObjectPlugin } from './plugins';
 
 const { Schema, Types } = mongoose;
@@ -14,10 +15,23 @@ const audioPronunciationSchema = new Schema(
   },
   { toObject: toObjectPlugin, timestamps: true },
 );
+
+const translationSchema = new Schema(
+  {
+    language: { type: String, enum: Object.values(LanguageEnum), default: LanguageEnum.UNSPECIFIED },
+    text: { type: String, default: '', trim: true },
+    pronunciations: {
+      type: [{ type: audioPronunciationSchema }],
+      default: [],
+    },
+  },
+  { toObject: toObjectPlugin, timestamps: true },
+);
+
 export const exampleSchema = new Schema(
   {
-    igbo: { type: String, default: '', trim: true },
-    english: { type: String, default: '', trim: true },
+    source: { type: translationSchema, default: { language: LanguageEnum.UNSPECIFIED, text: '' } },
+    translations: { type: [{ type: translationSchema }], default: [] },
     meaning: { type: String, default: '', trim: true },
     nsibidi: { type: String, default: '' },
     nsibidiCharacters: { type: [{ type: Types.ObjectId, ref: 'NsibidiCharacter' }], default: [] },
@@ -33,12 +47,9 @@ export const exampleSchema = new Schema(
     },
     associatedWords: { type: [{ type: Types.ObjectId, ref: 'Word' }], default: [] },
     associatedDefinitionsSchemas: { type: [{ type: Types.ObjectId }], default: [] },
-    pronunciations: {
-      type: [{ type: audioPronunciationSchema }],
-      default: [],
-    },
     archived: { type: Boolean, default: false },
-    source: { type: String, default: SuggestionSourceEnum.INTERNAL },
+    origin: { type: String, default: SuggestionSourceEnum.INTERNAL },
+    projectId: { type: Types.ObjectId, ref: 'Project', required: true },
   },
   { toObject: toObjectPlugin, timestamps: true },
 );

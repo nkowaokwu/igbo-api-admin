@@ -2,7 +2,6 @@ import { Connection } from 'mongoose';
 import { assign, omit } from 'lodash';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 import { exampleSuggestionSchema } from 'src/backend/models/ExampleSuggestion';
-import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/utils/handleExampleSuggestionAudioPronunciations';
 
 /**
  * Helper function that updates an Example Suggestion
@@ -11,10 +10,12 @@ import handleExampleSuggestionAudioPronunciations from 'src/backend/controllers/
  */
 const updateExampleSuggestion = ({
   id,
+  projectId,
   data: clientData,
   mongooseConnection,
 }: {
   id: string;
+  projectId: string;
   data: Partial<Interfaces.ExampleClientData>;
   mongooseConnection: Connection;
 }): Promise<(Interfaces.ExampleSuggestion & Omit<Partial<Interfaces.ExampleClientData>, 'crowdsourcing'>) | void> => {
@@ -24,7 +25,7 @@ const updateExampleSuggestion = ({
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
-  const exampleSuggestion = ExampleSuggestion.findById(id).then(
+  const exampleSuggestion = ExampleSuggestion.findOne({ _id: id, projectId }).then(
     async (exampleSuggestion: Interfaces.ExampleSuggestion) => {
       if (!exampleSuggestion) {
         throw new Error("Example suggestion doesn't exist");
@@ -32,8 +33,6 @@ const updateExampleSuggestion = ({
       if (exampleSuggestion.merged) {
         throw new Error('Unable to edit a merged example suggestion');
       }
-
-      await handleExampleSuggestionAudioPronunciations({ exampleSuggestion, data });
 
       // Properly handle merging
       Object.entries(data?.crowdsourcing || {}).forEach(([key, value]) => {
