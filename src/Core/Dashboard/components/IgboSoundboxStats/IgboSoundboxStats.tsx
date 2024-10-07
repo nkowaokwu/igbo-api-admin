@@ -62,7 +62,7 @@ const IgboSoundboxStats = ({ stats }: { stats: FetchedStats }): ReactElement => 
               totalCount: transformBytesToTime(
                 (statInfo as FetchedStats[StatTypes.RECORDINGS]).stats[currentMonth]?.bytes || 0,
               ),
-              heading: 'Total time of recordings',
+              heading: 'Total audio recorded',
               description: 'The amount of time recorded',
             },
           ];
