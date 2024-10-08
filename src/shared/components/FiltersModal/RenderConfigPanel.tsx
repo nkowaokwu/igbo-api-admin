@@ -29,7 +29,7 @@ const RenderConfigPanel = ({
         </VStack>
         {currentConfig.icon}
       </HStack>
-      {currentConfig.sections.map(({ title, key, type, placeholder, options, optionsFormatter, fetch }) => (
+      {currentConfig.sections.map(({ title, key, type, placeholder, options, fetch }) => (
         <>
           <Heading fontSize="md" fontFamily="body" p={0} textAlign="left" color="gray.600">
             {title}
@@ -52,7 +52,7 @@ const RenderConfigPanel = ({
                     cacheOptions
                     styles={{ container: (styles) => ({ ...styles, width: '100%' }) }}
                     onChange={(value) => onChange({ key, value })}
-                    value={optionsFormatter(values[key] || [])}
+                    value={values[key] || []}
                     noOptionsMessage={() => <></>}
                   />
                 );
@@ -63,7 +63,7 @@ const RenderConfigPanel = ({
                     options={options || []}
                     styles={{ container: (styles) => ({ ...styles, width: '100%' }) }}
                     onChange={(value) => onChange({ key, value })}
-                    value={optionsFormatter(values[key] || [])}
+                    value={values[key] || []}
                   />
                 );
               case FilterConfigType.SINGLE_SELECT:

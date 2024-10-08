@@ -6,7 +6,7 @@ import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import SuggestionSourceLabels from 'src/backend/shared/constants/SuggestionSourceLabels';
 import { FilterConfig } from 'src/shared/components/FiltersModal/configs/filterConfigInterfaces';
-import { getUsersByName } from 'src/shared/UserAPI';
+import { getUserProfile, getUsersByName } from 'src/shared/UserAPI';
 
 const fetchUsers = async (displayName: string): Promise<{ value: string; label: string }[]> => {
   const users = await getUsersByName(displayName);
@@ -43,7 +43,15 @@ const ExampleSuggestionFilterConfig = (isIgboAPIProject: boolean): FilterConfig[
           key: 'source.pronunciations.speaker',
           type: FilterConfigType.ASYNC_MULTI_SELECT,
           fetch: fetchUsers,
-          optionsFormatter: (rawValues) => rawValues.map((value) => (value?.value ? value : { label: value, value })),
+          optionsFormatter: (rawValues) =>
+            Promise.all(
+              rawValues.map(async (value) => {
+                if (value?.value) return value;
+
+                const user = await getUserProfile(value);
+                return { value: user.firebaseId, label: user.displayName };
+              }),
+            ),
         },
       ],
     },
@@ -73,7 +81,15 @@ const ExampleSuggestionFilterConfig = (isIgboAPIProject: boolean): FilterConfig[
           key: 'translations.pronunciations.speaker',
           type: FilterConfigType.ASYNC_MULTI_SELECT,
           fetch: fetchUsers,
-          optionsFormatter: (rawValues) => rawValues.map((value) => (value?.value ? value : { label: value, value })),
+          optionsFormatter: (rawValues) =>
+            Promise.all(
+              rawValues.map(async (value) => {
+                if (value?.value) return value;
+
+                const user = await getUserProfile(value);
+                return { value: user.firebaseId, label: user.displayName };
+              }),
+            ),
         },
       ],
     },

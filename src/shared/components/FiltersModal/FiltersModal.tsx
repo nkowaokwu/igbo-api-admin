@@ -89,8 +89,30 @@ const FiltersModal = ({
     onClose();
   };
 
+  const convertFilterValuesToLocalFilter = async (fv) => {
+    const updatedFilterValues = { ...fv };
+    await Promise.all(
+      Object.entries(fv).map(async ([key, value]) => {
+        if (Array.isArray(updatedFilterValues[key])) {
+          const currentConfig = config.find((c) => c.sections.find((section) => section.key === key)) || {
+            sections: [],
+          };
+          const currentSection = currentConfig.sections.find(({ key: sectionKey }) => key === sectionKey);
+          if (currentSection) {
+            updatedFilterValues[key] = await currentSection.optionsFormatter(value);
+          }
+        }
+      }),
+    );
+    return updatedFilterValues;
+  };
+
   useEffect(() => {
-    setLocalFilter(filterValues);
+    if (isOpen) {
+      (async () => {
+        setLocalFilter(await convertFilterValuesToLocalFilter(filterValues));
+      })();
+    }
   }, [isOpen]);
 
   return (
@@ -185,7 +207,7 @@ const FiltersModal = ({
         >
           <HStack width="full" justifyContent="flex-end" p={4}>
             <HStack gap={4}>
-              <Button>Cancel</Button>
+              <Button onClick={onClose}>Cancel</Button>
               <Button variant="primary" onClick={handleApplyFilters}>
                 Apply filters
               </Button>

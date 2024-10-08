@@ -8,7 +8,7 @@ export interface FilterConfig {
     key: string;
     type: FilterConfigType;
     options?: any[];
-    optionsFormatter?: (rawValues: any) => any[];
+    optionsFormatter?: (rawValues: any) => Promise<any[]>;
     placeholder?: string;
     fetch?: <T extends unknown>() => Promise<T>;
   }[];
