@@ -15,7 +15,6 @@ import {
   PollsCreate,
 } from './views/creates';
 import { CorpusSuggestionEdit, ExampleSuggestionEdit, NsibidiCharacterEdit, WordSuggestionEdit } from './views/edits';
-import Filter from './Filter';
 import HeadwordField from './HeadwordField';
 import IdField from './IdField';
 import ArrayPreview from './ArrayPreview';
@@ -50,7 +49,6 @@ export {
   ExampleSuggestionEdit,
   NsibidiCharacterEdit,
   WordSuggestionEdit,
-  Filter,
   ArrayPreview,
   ReviewPreview,
   EditToolbar,

@@ -59,6 +59,7 @@ const ExampleTranslationsForm = ({
                     {...props}
                     placeholder="Translation text in selected language"
                     data-test={`translation-input-${index}`}
+                    minWidth="40px"
                     flex={8}
                   />
                 )}

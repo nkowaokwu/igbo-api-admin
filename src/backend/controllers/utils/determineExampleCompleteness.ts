@@ -5,7 +5,6 @@ import { Example } from 'src/backend/controllers/utils/interfaces';
 import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
-import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 
 export default async (
   record: Example | Record,
@@ -41,8 +40,8 @@ export default async (
   });
 
   const sufficientExampleRequirements = compact([
-    !source?.text && `${LanguageLabels[source?.language].label} is needed`,
-    !translations?.[0].text && `${LanguageLabels[translations?.[0]?.text].label} is needed`,
+    !source?.text && 'Source text is needed',
+    !translations?.[0].text && 'Translation text is needed',
     !associatedWords.length && 'At least one associated word is needed',
     archived && 'Sentence must not be archived',
   ]);

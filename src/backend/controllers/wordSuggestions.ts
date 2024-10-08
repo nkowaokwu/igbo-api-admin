@@ -207,7 +207,7 @@ export const getWordSuggestions = (
   try {
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
     const { projectId } = req.query;
-    const regexMatch = searchPreExistingWordSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
+    const regexMatch = searchPreExistingWordSuggestionsRegexQuery(regexKeyword, projectId, filters);
     const WordSuggestion = mongooseConnection.model<Interfaces.WordSuggestion>('WordSuggestion', wordSuggestionSchema);
 
     // console.time('Get word suggestions');

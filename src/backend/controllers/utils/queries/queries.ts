@@ -3,12 +3,8 @@ import moment from 'moment';
 import { Types } from 'mongoose';
 import createRegExp from 'src/backend/shared/utils/createRegExp';
 import SuggestionSourceEnum from 'src/backend/shared/constants/SuggestionSourceEnum';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
-import SentenceTypeEnum from 'src/backend/shared/constants/SentenceTypeEnum';
 import Tense from 'src/backend/shared/constants/Tense';
 import { SearchRegExp } from 'src/backend/controllers/utils/interfaces';
-import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
 import LanguageEnum from 'src/backend/shared/constants/LanguageEnum';
 
 const EXAMPLE_PRONUNCIATION_LIMIT = 3;
@@ -34,117 +30,58 @@ type Filters = {
   merged?: boolean;
 };
 
-export const generateSearchFilters = (filters: { [key: string]: string }, uid: string): { [key: string]: any } => {
+export const generateSearchFilters = (filters: { [key: string]: string }): { [key: string]: any } => {
   let searchFilters: Filters = filters
     ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
         allFilters.$or = allFilters.$or || [];
         switch (key) {
-          case WordAttributeEnum.IS_STANDARD_IGBO:
-            allFilters[`attributes.${WordAttributeEnum.IS_STANDARD_IGBO}`] = { $eq: !!value };
+          // Examples
+          case 'source.text':
+            allFilters['source.text'] = { $eq: value };
             break;
-          case 'pronunciation':
-            if (value) {
-              allFilters.$or = [
-                ...allFilters.$or,
-                { pronunciation: { $exists: true, $type: 'string', $ne: '' } },
-                { 'pronunciations.0.audio': { $exists: true, $type: 'string', $ne: '' } },
-              ];
-            } else {
-              allFilters.$or = [
-                ...allFilters.$or,
-                { pronunciation: { $eq: null } },
-                { pronunciation: { $eq: '' } },
-                { 'pronunciations.0.audio': { $eq: null } },
-                { 'pronunciations.0.audio': { $eq: '' } },
-              ];
-            }
+          case 'source.language':
+            allFilters['source.language'] = { $in: value };
             break;
-          case 'nsibidi':
-            if (value) {
-              allFilters.$and = [{ 'definitions.nsibidi': { $ne: null } }, { 'definitions.nsibidi': { $ne: '' } }];
-            } else {
-              allFilters.$or = [
-                ...allFilters.$or,
-                { 'definitions.nsibidi': { $eq: null } },
-                { 'definitions.nsibidi': { $eq: '' } },
-              ];
-            }
+          case 'source.pronunciations.speaker':
+            allFilters['source.pronunciations.speaker'] = { $in: value };
             break;
-          case WordAttributeEnum.IS_CONSTRUCTED_TERM:
-            allFilters[`attributes.${WordAttributeEnum.IS_CONSTRUCTED_TERM}`] = { $eq: !!value };
+          case 'translations.text':
+            allFilters['translations.text'] = { $eq: value };
             break;
-          case SuggestionSourceEnum.COMMUNITY:
-            allFilters.$or = [
-              ...allFilters.$or,
-              { origin: { $eq: SuggestionSourceEnum.COMMUNITY } },
-              { origin: { $exists: false } },
-            ];
+          case 'translations.language':
+            allFilters['translations.language'] = { $in: value };
             break;
-          case SuggestionSourceEnum.INTERNAL:
-            allFilters.$or = [
-              ...allFilters.$or,
-              { origin: { $eq: SuggestionSourceEnum.INTERNAL } },
-              { origin: { $exists: false } },
-            ];
+          case 'translations.pronunciations.speaker':
+            allFilters['translations.pronunciations.speaker'] = { $in: value };
             break;
-          case SuggestionSourceEnum.IGBO_SPEECH:
-            allFilters.$or = [
-              ...allFilters.$or,
-              { origin: { $eq: SuggestionSourceEnum.IGBO_SPEECH } },
-              { origin: { $exists: false } },
-            ];
+          case 'origin':
+            allFilters.origin = { $in: value };
             break;
-          case SuggestionSourceEnum.IGBO_WIKIMEDIANS:
-            allFilters.$or = [
-              ...allFilters.$or,
-              { origin: { $eq: SuggestionSourceEnum.IGBO_WIKIMEDIANS } },
-              { origin: { $exists: false } },
-            ];
+
+          // Words
+          case 'word':
+            allFilters.word = { $eq: value };
             break;
-          case SuggestionSourceEnum.BBC:
-            allFilters.$or = [
-              ...allFilters.$or,
-              { origin: { $eq: SuggestionSourceEnum.BBC } },
-              { origin: { $exists: false } },
-            ];
+          case 'definitions.nsibidi':
+            allFilters['definitions.nsibidi'] = { $exists: value };
             break;
-          case 'authorId':
-            allFilters.authorId = { $eq: value };
-            break;
-          case 'mergedBy':
-            allFilters.mergedBy = { $ne: null };
-            break;
-          case 'merger':
-            allFilters.mergedBy = { $eq: uid };
-            break;
-          case 'example':
-            allFilters.$or = [
-              ...allFilters.$or,
-              { 'source.text': new RegExp(value) },
-              { 'translations.0.text': new RegExp(value) },
-            ];
-            break;
-          case ExampleStyleEnum.PROVERB:
-            allFilters.style = { $eq: ExampleStyle[ExampleStyleEnum.PROVERB].value };
-            break;
-          case SentenceTypeEnum.DATA_COLLECTION:
-            allFilters.type = { $eq: SentenceTypeEnum.DATA_COLLECTION };
-            break;
-          case SentenceTypeEnum.BIBLICAL:
-            allFilters.type = { $eq: SentenceTypeEnum.BIBLICAL };
-            break;
-          case 'wordClass':
+          case 'definitions.wordClass':
             allFilters['definitions.wordClass'] = { $in: value };
             break;
-          case 'userInteractions':
-            allFilters.userInteractions = { $in: value };
-            delete allFilters.merged;
+          case 'authorId':
+            allFilters.authorId = { $in: value };
             break;
-          case 'approvals':
-            allFilters.approvals = { $in: value };
+          case 'definitions.definitions':
+            allFilters['definitions.definitions'] = { $eq: value };
             break;
-          case 'denials':
-            allFilters.denials = { $in: value };
+          case 'definitions.igboDefinitions.igbo':
+            allFilters['definitions.igboDefinitions.igbo'] = { $eq: value };
+            break;
+          case 'pronunciation':
+            allFilters.pronunciation = { $exists: value };
+            break;
+          case 'merged':
+            allFilters.merged = value === 'true' ? { $ne: null } : { $eq: null };
             break;
           default:
             return allFilters;
@@ -186,7 +123,6 @@ const hostsQuery = (host: string): { hosts: { $in: [string] } } => ({ hosts: { $
 
 /* Regex match query used to later to defined the Content-Range response header */
 export const searchExamplesRegexQuery = (
-  uid: string,
   regex: SearchRegExp,
   filters: { [key: string]: string },
   projectId: string,
@@ -194,11 +130,10 @@ export const searchExamplesRegexQuery = (
   $or: [{ 'source.text': regex.wordReg }, { 'translations.text': regex.definitionsReg }],
   archived: { $ne: true },
   projectId: { $eq: projectId },
-  ...(filters ? generateSearchFilters(filters, uid) : {}),
+  ...(filters ? generateSearchFilters(filters) : {}),
 });
 
 export const searchExampleSuggestionsRegexQuery = (
-  uid: string,
   regex: SearchRegExp,
   projectId: string,
   filters: { [key: string]: string },
@@ -212,7 +147,7 @@ export const searchExampleSuggestionsRegexQuery = (
   exampleForSuggestion: false,
   merged: null,
   projectId: { $eq: projectId },
-  ...(filters ? generateSearchFilters(filters, uid) : {}),
+  ...(filters ? generateSearchFilters(filters) : {}),
 });
 
 /**
@@ -416,7 +351,6 @@ export const searchPreExistingExampleSuggestionsRegexQuery = ({
   merged: null,
 });
 export const searchPreExistingWordSuggestionsRegexQuery = (
-  uid: string,
   regex: SearchRegExp,
   projectId: string,
   filters?: { [key: string]: string },
@@ -429,10 +363,9 @@ export const searchPreExistingWordSuggestionsRegexQuery = (
   $or: [wordQuery(regex), variationsQuery(regex)],
   merged: null,
   projectId: { $eq: projectId },
-  ...(filters ? generateSearchFilters(filters, uid) : {}),
+  ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchPreExistingCorpusSuggestionsRegexQuery = (
-  uid: string,
   regex: SearchRegExp,
   projectId: string,
   filters?: { [key: string]: string },
@@ -444,7 +377,7 @@ export const searchPreExistingCorpusSuggestionsRegexQuery = (
   $or: [titleQuery(regex), bodyQuery(regex)],
   merged: null,
   projectId: { $eq: projectId },
-  ...(filters ? generateSearchFilters(filters, uid) : {}),
+  ...(filters ? generateSearchFilters(filters) : {}),
 });
 export const searchCorpusTextSearch = (
   keyword: string,
@@ -464,15 +397,14 @@ export const searchCorpusTextSearch = (
   ],
 });
 export const searchIgboTextSearch = (
-  uid: string,
   keyword: string,
   regex: SearchRegExp,
   projectId: string,
   filters?: { [key: string]: string | Types.ObjectId },
 ): { [key: string]: any } => ({
   ...fullTextSearchQuery(keyword, regex),
-  ...(filters ? generateSearchFilters(filters, uid) : {}),
-  projectId: { $eq: projectId },
+  ...(filters ? generateSearchFilters(filters) : {}),
+  projectId: { $eq: new Types.ObjectId(projectId) },
 });
 /* Since the word field is not non-accented yet,
  * a strict regex search for words has to be used as a workaround */

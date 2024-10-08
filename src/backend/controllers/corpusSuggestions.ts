@@ -107,7 +107,7 @@ export const getCorpusSuggestions = (
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
     const { projectId } = req.query;
     const CorpusSuggestion = mongooseConnection.model('CorpusSuggestion', corpusSuggestionSchema);
-    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
+    const regexMatch = searchPreExistingCorpusSuggestionsRegexQuery(regexKeyword, projectId, filters);
     return findCorpusSuggestions({
       regexMatch,
       skip,

@@ -27,7 +27,7 @@ const sourceFieldConfig = {
     color: 'orange',
   },
   [SuggestionSourceEnum.INTERNAL]: {
-    badge: 'Igbo API Editor',
+    badge: 'Igbo API Editor Platform',
     description: 'This suggestion came from the internal Igbo API Editor Platform',
     color: 'gray',
   },

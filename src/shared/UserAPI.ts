@@ -7,6 +7,18 @@ import StatTypes from 'src/backend/shared/constants/StatTypes';
 import Collection from './constants/Collection';
 import { request } from './utils/request';
 
+export const getUsersByName = async (displayName: string): Promise<UserProfile[]> => {
+  const { data: result } = await request<UserProfile[]>({
+    method: 'GET',
+    url: `${Collection.USERS}`,
+    params: {
+      displayName,
+    },
+  });
+
+  return result;
+};
+
 export const getUserProfile = async (userId: string): Promise<UserProfile> => {
   const { data: result } = await request({
     method: 'GET',

@@ -138,7 +138,7 @@ export const getExampleSuggestions = (
   try {
     const { regexKeyword, skip, limit, filters, user, mongooseConnection, ...rest } = handleQueries(req);
     const { projectId } = req.query;
-    const query = searchExampleSuggestionsRegexQuery(user.uid, regexKeyword, projectId, filters);
+    const query = searchExampleSuggestionsRegexQuery(regexKeyword, projectId, filters);
 
     const ExampleSuggestion = mongooseConnection.model<Interfaces.ExampleSuggestion>(
       'ExampleSuggestion',
