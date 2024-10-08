@@ -1,10 +1,9 @@
 import React, { ReactElement, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import { User } from '@firebase/auth';
 import Select from 'react-select';
 import { assign, compact, pick, flow } from 'lodash';
 // import DatePicker from 'react-date-picker';
-import { ContextUserProjectPermission } from 'src/backend/controllers/utils/interfaces';
+import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import SettingsLayout from 'src/Core/components/SettingsLayout';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 import Gender from 'src/backend/shared/constants/Gender';
@@ -15,13 +14,7 @@ import { putUserProjectPermission } from 'src/shared/ProjectAPI';
 
 // <DatePicker onChange={setBirthday} value={birthday} />
 
-const AccountSettings = ({
-  user,
-  userProjectPermission,
-}: {
-  user: User;
-  userProjectPermission: ContextUserProjectPermission;
-}): ReactElement => {
+const AccountSettings = ({ user, triggerRefetch }: { user: UserProfile; triggerRefetch: () => void }): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const formOptions = [
@@ -35,7 +28,7 @@ const AccountSettings = ({
       name: 'languages',
       title: 'Languages',
       subtitle: 'Select all the languages you speak',
-      defaultValue: userProjectPermission?.languages?.map?.((language) => LanguageLabels[language]),
+      defaultValue: user?.languages?.map?.((language) => LanguageLabels[language]),
       CustomComponent: (props) => (
         <Select
           {...props}
@@ -54,7 +47,7 @@ const AccountSettings = ({
       name: 'gender',
       title: 'Gender',
       subtitle: 'Select your gender',
-      defaultValue: Gender[userProjectPermission?.gender] || Gender.UNSPECIFIED,
+      defaultValue: Gender[user?.gender] || Gender.UNSPECIFIED,
       CustomComponent: (props) => (
         <Select
           {...props}
@@ -95,7 +88,7 @@ const AccountSettings = ({
     }
     try {
       await putUserProjectPermission(cleanedUserProjectPermissionPayload);
-      await userProjectPermission.triggerRefetch();
+      await triggerRefetch();
       toast({
         title: 'Success',
         position: 'top-right',

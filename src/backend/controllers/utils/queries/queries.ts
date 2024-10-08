@@ -195,7 +195,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   // @ts-expect-error
   [`source.pronunciations.${EXAMPLE_PRONUNCIATION_LIMIT}.audio`]: { $exists: false };
   'source.pronunciations.speaker': { $nin: [string] };
-  projectId: { $eq: string };
+  projectId: { $eq: Types.ObjectId };
 } => ({
   merged: null,
   exampleForSuggestion: { $ne: true },
@@ -207,7 +207,7 @@ export const searchRandomExampleSuggestionsToRecordRegexQuery = (
   updatedAt: { $gte: moment('2023-01-01').toDate() },
   // Returns an example where the user hasn't approved or denied an audio pronunciation
   'source.pronunciations.speaker': { $nin: [uid] },
-  projectId: { $eq: projectId },
+  projectId: { $eq: new Types.ObjectId(projectId) },
 });
 
 /**

@@ -14,7 +14,7 @@ const SettingTabs = ({
         <Tab key={tabLabel}>{tabLabel}</Tab>
       ))}
     </TabList>
-    <TabIndicator mt="-1.5px" height="2px" bg="green.500" borderRadius="1px" />
+    <TabIndicator mt="-1.5px" height="2px" bg="blue.500" borderRadius="1px" />
     <TabPanels backgroundColor="white">
       {tabPanels.map((tabPanel) => (
         <TabPanel>{tabPanel}</TabPanel>
