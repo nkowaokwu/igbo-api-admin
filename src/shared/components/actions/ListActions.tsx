@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect } from 'react';
-import { Box, Button, Input, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, HStack, Input, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
 import { FiFilter } from 'react-icons/fi';
 import { LuPlus } from 'react-icons/lu';
 import { sanitizeListRestProps, TopToolbar, useListContext, usePermissions } from 'react-admin';
@@ -18,7 +18,7 @@ import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 
 const ListActions = (props: CustomListActionProps): ReactElement => {
   const { className, exporter, resource, ...rest } = props;
-  const { basePath } = useListContext();
+  const { basePath, filterValues } = useListContext();
   const [jumpToPage, setJumpToPage] = useState('');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -124,48 +124,51 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
         } TopToolbar w-full flex-col md:flex-row space-x-3`}
         {...sanitizeListRestProps(rest)}
       >
-        <Box
-          className="flex flex-row justify-end items-end
-        lg:items-center space-y-0 space-x-3"
-        >
-          {ResourceToFilterConfig[resource]?.length ? (
-            <Tooltip label="Filter entries">
-              <Box className="flex flex-row items-center space-x-3">
-                <Button aria-label="Filter button" leftIcon={<FiFilter />} onClick={() => setIsFiltersOpen(true)}>
-                  Filter
-                </Button>
-              </Box>
-            </Tooltip>
-          ) : null}
-          {isPollResource ? null : (
-            <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
-              <Box className="flex flex-row space-x-2">
-                <Input
-                  width={16}
-                  value={jumpToPage}
-                  type="number"
-                  data-test="jump-to-page-input"
-                  onChange={handleOnJumpToPageChange}
-                  placeholder="Page #"
-                  name="page"
-                  variant="primary"
-                />
-                <Button type="submit" className="px-3" minWidth={24}>
-                  Jump to page
-                </Button>
-              </Box>
-            </form>
-          )}
-          {isUserResource && isAdmin ? (
-            <Button rightIcon={<LuPlus />} onClick={onOpenInviteMemberModal} variant="primary">
-              Invite Member
-            </Button>
-          ) : null}
-          {isSuggestionResource || (isPollResource && isAdminOrMerger) || resource === Collection.NSIBIDI_CHARACTERS ? (
-            <CreateButton basePath={basePath} />
-          ) : null}
-          {isAdmin && isWordResource && isSuggestionResource ? <DeleteOldWordSuggestionsButton /> : null}
-        </Box>
+        <HStack width="full" justifyContent="space-between">
+          <HStack gap={2}>
+            {ResourceToFilterConfig[resource]?.length ? (
+              <Tooltip label="Filter entries">
+                <Box className="flex flex-row items-center space-x-3">
+                  <Button aria-label="Filter button" leftIcon={<FiFilter />} onClick={() => setIsFiltersOpen(true)}>
+                    {Object.values(filterValues).length ? 'Filter applied' : 'Filter'}
+                  </Button>
+                </Box>
+              </Tooltip>
+            ) : null}
+            {isPollResource ? null : (
+              <form onSubmit={handleJumpToPage} className="flex flex-col lg:flex-row">
+                <Box className="flex flex-row space-x-2">
+                  <Input
+                    width={16}
+                    value={jumpToPage}
+                    type="number"
+                    data-test="jump-to-page-input"
+                    onChange={handleOnJumpToPageChange}
+                    placeholder="Page #"
+                    name="page"
+                    variant="primary"
+                  />
+                  <Button type="submit" className="px-3" minWidth={24}>
+                    Jump to page
+                  </Button>
+                </Box>
+              </form>
+            )}
+          </HStack>
+          <HStack gap={2}>
+            {isUserResource && isAdmin ? (
+              <Button rightIcon={<LuPlus />} onClick={onOpenInviteMemberModal} variant="primary">
+                Invite Member
+              </Button>
+            ) : null}
+            {isSuggestionResource ||
+            (isPollResource && isAdminOrMerger) ||
+            resource === Collection.NSIBIDI_CHARACTERS ? (
+              <CreateButton basePath={basePath} />
+            ) : null}
+            {isAdmin && isWordResource && isSuggestionResource ? <DeleteOldWordSuggestionsButton /> : null}
+          </HStack>
+        </HStack>
       </TopToolbar>
     </>
   );

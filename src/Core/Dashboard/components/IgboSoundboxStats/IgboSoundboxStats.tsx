@@ -48,7 +48,7 @@ const IgboSoundboxStats = ({ stats }: { stats: FetchedStats }): ReactElement => 
   const isIgboAPIProject = useIsIgboAPIProject();
   const showPaymentCalculations = isIgboAPIProject && hasAdminPermissions(permissions?.permissions, true);
   const [currentMonth, setCurrentMonth] = useState(moment().startOf('month').format('MMM, YYYY'));
-  const contributedStats = entries(stats).flatMap(
+  const contributedStats = entries(stats || {}).flatMap(
     ([key, statInfo]: [StatTypes, FetchedStats[StatTypes.RECORDINGS] | FetchedStats[StatTypes.TRANSLATIONS]]) => {
       switch (key) {
         case StatTypes.RECORDINGS:
