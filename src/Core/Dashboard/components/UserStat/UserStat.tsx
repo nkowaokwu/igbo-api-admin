@@ -6,18 +6,13 @@ import { User } from '@firebase/auth';
 import UserCard from 'src/shared/components/UserCard';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import ProjectType from 'src/backend/shared/constants/ProjectType';
+import { FetchedStats } from 'src/Core/Dashboard/components/UserStat/UserStatInterfaces';
 import IgboSoundboxStats from '../IgboSoundboxStats';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-interface StatInfo {
-  stats: Record<string, number>;
-  heading: string;
-  description: string;
-}
-
 const UserStat = ({ user }: { user: User; dialectalVariations: number; completeExamples: number }): ReactElement => {
-  const [stats, setStats] = useState<Record<string, StatInfo>>({});
+  const [stats, setStats] = useState<FetchedStats>({});
   const [isLoading, setIsLoading] = useState(true);
   const project = React.useContext(ProjectContext);
   const toast = useToast();
@@ -26,23 +21,20 @@ const UserStat = ({ user }: { user: User; dialectalVariations: number; completeE
     (async () => {
       try {
         const { uid } = user;
-        const fetchedStats: Record<string, StatInfo> = {};
+        const fetchedStats: FetchedStats = {};
+
         await Promise.all(
           project.types.map(async (type) => {
             switch (type) {
               case ProjectType.TEXT_AUDIO_ANNOTATION:
                 fetchedStats.recordings = {
                   stats: await getUserExampleSuggestionRecordings(uid),
-                  heading: 'Recorded sentences',
-                  description: 'The number of sentence audio you have recorded',
                 };
 
                 break;
               case ProjectType.TRANSLATION:
                 fetchedStats.translations = {
                   stats: await getUserExampleSuggestionTranslations(uid),
-                  heading: 'Translated sentences',
-                  description: 'The number of sentence translations you have created',
                 };
                 break;
               default:

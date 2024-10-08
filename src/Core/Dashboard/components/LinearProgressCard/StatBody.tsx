@@ -9,7 +9,7 @@ const StatBody = ({
   heading,
   leftIcon = null,
 }: {
-  totalCount: number;
+  totalCount: number | number;
   description: string;
   heading: string;
   leftIcon?: ReactElement;
@@ -22,7 +22,7 @@ const StatBody = ({
           {heading}
         </Text>
       </HStack>
-      <Text>{numberWithCommas(totalCount ?? 0)}</Text>
+      <Text>{typeof totalCount === 'number' ? numberWithCommas(totalCount ?? 0) : totalCount}</Text>
     </HStack>
     <Box>
       <Divider backgroundColor="gray.100" />

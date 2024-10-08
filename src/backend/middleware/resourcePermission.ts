@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
-import UserRoles from '../shared/constants/UserRoles';
+import { adminRoles } from 'src/backend/shared/constants/RolePermissions';
 
 /* Checks if the provided uid's resources can be accessed by the current requesting user */
 const resourcePermission = (req: Interfaces.EditorRequest, res: Response, next: NextFunction): Response | void => {
@@ -18,7 +18,7 @@ const resourcePermission = (req: Interfaces.EditorRequest, res: Response, next: 
   }
 
   // The request user is an admin attempt to request another user's resources
-  if (uidQuery && user.uid !== uidQuery && user.role === UserRoles.ADMIN) {
+  if (uidQuery && user.uid !== uidQuery && adminRoles.includes(user.role)) {
     return next();
   }
 
