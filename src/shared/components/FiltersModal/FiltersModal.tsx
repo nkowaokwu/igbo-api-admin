@@ -42,9 +42,6 @@ const ResourceFilterLabel = {
   [Collection.WORD_SUGGESTIONS]: 'Word drafts',
   [Collection.EXAMPLES]: 'Sentences',
   [Collection.EXAMPLE_SUGGESTIONS]: 'Sentence drafts',
-  [Collection.CORPORA]: 'Corpora',
-  [Collection.CORPUS_SUGGESTIONS]: 'Corpora drafts',
-  [Collection.NSIBIDI_CHARACTERS]: 'Nsịbịdị characters',
 };
 
 const FiltersModal = ({
