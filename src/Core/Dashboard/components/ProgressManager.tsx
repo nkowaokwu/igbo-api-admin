@@ -11,7 +11,7 @@ import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
 import { FiDownloadCloud } from 'react-icons/fi';
 import ExportModal from 'src/Core/Dashboard/components/ExportModal';
-import { hasAdminPermissions } from 'src/shared/utils/permissions';
+import { hasPlatformAdminPermissions } from 'src/shared/utils/permissions';
 
 export const DataEntryFlowGroupLabels = {
   [DataEntryFlowGroup.GET_STARTED]: {
@@ -52,7 +52,7 @@ const ProgressManager = ({ permissions }: { permissions: { permissions?: { role:
               Here&apos;s an overview of your available tasks
             </Text>
           </VStack>
-          {hasAdminPermissions(
+          {hasPlatformAdminPermissions(
             permissions?.permissions,
             <Button variant="primary" leftIcon={<FiDownloadCloud />} onClick={onOpen}>
               Export
