@@ -2,13 +2,10 @@ import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import DialectEnum from 'src/backend/shared/constants/DialectEnum';
 import { UserInfo } from 'firebase-functions/v1/auth';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
+import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces/userProjectPermissionInterfaces';
 
-export interface UserProfile extends UserInfo, FormattedUser {
-  age: number;
-  createdAt: string;
+export interface UserProfile extends UserInfo, FormattedUser, UserProjectPermission {
   dialects: DialectEnum[];
-  firebaseId: string;
-  gender: GenderEnum;
   updatedAt: Date;
   referralCode: string;
 }

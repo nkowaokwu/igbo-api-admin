@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { Box, Heading, Skeleton, useToast } from '@chakra-ui/react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { getUserExampleSuggestionRecordings, getUserExampleSuggestionTranslations } from 'src/shared/UserAPI';
-import { User } from '@firebase/auth';
+import { UserProfile } from 'src/backend/controllers/utils/interfaces';
 import UserCard from 'src/shared/components/UserCard';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import ProjectType from 'src/backend/shared/constants/ProjectType';
@@ -11,7 +11,7 @@ import IgboSoundboxStats from '../IgboSoundboxStats';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const UserStat = ({ user }: { user: User; dialectalVariations: number; completeExamples: number }): ReactElement => {
+const UserStat = ({ user }: { user: UserProfile }): ReactElement => {
   const [stats, setStats] = useState<FetchedStats>({});
   const [isLoading, setIsLoading] = useState(true);
   const project = React.useContext(ProjectContext);
@@ -60,7 +60,7 @@ const UserStat = ({ user }: { user: User; dialectalVariations: number; completeE
   return (
     <Box m={4}>
       <Skeleton isLoaded={Boolean(user?.firebaseId || user?.uid)}>
-        <UserCard {...user} />
+        <UserCard user={user} />
       </Skeleton>
       <Box className="flex flex-col lg:flex-row space-x-0 lg:space-x-4 space-y-4 lg:space-y-0">
         <Box className="w-full">
