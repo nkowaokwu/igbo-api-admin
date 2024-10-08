@@ -68,11 +68,7 @@ const FiltersModal = ({
   };
 
   const handleOnChange = ({ key, value }: { key: string; value: any }) => {
-    let finalValue = value;
-    if (Array.isArray(finalValue)) {
-      finalValue = finalValue.map(({ value }) => value);
-    }
-    setLocalFilter({ ...localFilter, [key]: finalValue });
+    setLocalFilter({ ...localFilter, [key]: value });
   };
 
   const onClearFilters = () => {
@@ -80,7 +76,16 @@ const FiltersModal = ({
   };
 
   const handleApplyFilters = () => {
-    setFilters(localFilter, []);
+    const finalLocalFilter = { ...localFilter };
+
+    // Simplifies array values to only include the value
+    Object.keys(finalLocalFilter).forEach((key) => {
+      if (Array.isArray(finalLocalFilter[key])) {
+        finalLocalFilter[key] = finalLocalFilter[key].map(({ value }) => value);
+      }
+    });
+
+    setFilters(finalLocalFilter, []);
     onClose();
   };
 

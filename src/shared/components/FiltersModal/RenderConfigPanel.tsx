@@ -1,5 +1,4 @@
 import { Heading, HStack, Input, Text, VStack } from '@chakra-ui/react';
-import { debounce } from 'lodash';
 import React, { ReactElement } from 'react';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -49,11 +48,11 @@ const RenderConfigPanel = ({
                 return (
                   <AsyncSelect
                     isMulti
-                    loadOptions={debounce<any>(fetch, 500)}
+                    loadOptions={fetch}
                     cacheOptions
                     styles={{ container: (styles) => ({ ...styles, width: '100%' }) }}
                     onChange={(value) => onChange({ key, value })}
-                    value={values[key] || []}
+                    value={optionsFormatter(values[key] || [])}
                     noOptionsMessage={() => <></>}
                   />
                 );

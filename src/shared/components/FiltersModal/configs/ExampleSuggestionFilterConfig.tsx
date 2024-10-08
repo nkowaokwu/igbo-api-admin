@@ -30,18 +30,20 @@ const ExampleSuggestionFilterConfig = (isIgboAPIProject: boolean): FilterConfig[
         },
         {
           title: 'Languages',
-          key: 'source.languages',
+          key: 'source.language',
           type: FilterConfigType.MULTI_SELECT,
           options: Object.values(LanguageLabels).filter(({ value }) => value !== LanguageEnum.UNSPECIFIED),
           optionsFormatter: (rawValues) =>
-            rawValues.map((rawValue) => LanguageLabels[rawValue]).filter((option) => option),
+            rawValues
+              .map((rawValue) => (rawValue?.value ? rawValue : LanguageLabels[rawValue]))
+              .filter((option) => option),
         },
         {
           title: 'Speakers',
           key: 'source.pronunciations.speaker',
           type: FilterConfigType.ASYNC_MULTI_SELECT,
           fetch: fetchUsers,
-          optionsFormatter: () => [],
+          optionsFormatter: (rawValues) => rawValues.map((value) => (value?.value ? value : { label: value, value })),
         },
       ],
     },
@@ -58,18 +60,20 @@ const ExampleSuggestionFilterConfig = (isIgboAPIProject: boolean): FilterConfig[
         },
         {
           title: 'Languages',
-          key: 'translations.languages',
+          key: 'translations.language',
           type: FilterConfigType.MULTI_SELECT,
           options: Object.values(LanguageLabels).filter(({ value }) => value !== LanguageEnum.UNSPECIFIED),
           optionsFormatter: (rawValues) =>
-            rawValues.map((rawValue) => LanguageLabels[rawValue]).filter((option) => option),
+            rawValues
+              .map((rawValue) => (rawValue?.value ? rawValue : LanguageLabels[rawValue]))
+              .filter((option) => option),
         },
         {
           title: 'Speakers',
           key: 'translations.pronunciations.speaker',
           type: FilterConfigType.ASYNC_MULTI_SELECT,
           fetch: fetchUsers,
-          optionsFormatter: () => [],
+          optionsFormatter: (rawValues) => rawValues.map((value) => (value?.value ? value : { label: value, value })),
         },
       ],
     },
@@ -85,7 +89,9 @@ const ExampleSuggestionFilterConfig = (isIgboAPIProject: boolean): FilterConfig[
               type: FilterConfigType.MULTI_SELECT,
               options: Object.values(SuggestionSourceLabels),
               optionsFormatter: (rawValues) =>
-                rawValues.map((rawValue) => SuggestionSourceLabels[rawValue]).filter((option) => option),
+                rawValues
+                  .map((rawValue) => (rawValue?.value ? rawValue : SuggestionSourceLabels[rawValue]))
+                  .filter((option) => option),
             },
           ],
         }

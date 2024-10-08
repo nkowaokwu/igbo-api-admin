@@ -39,8 +39,8 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
           case 'source.text':
             allFilters['source.text'] = { $eq: value };
             break;
-          case 'source.languages':
-            allFilters['source.languages'] = { $in: value };
+          case 'source.language':
+            allFilters['source.language'] = { $in: value };
             break;
           case 'source.pronunciations.speaker':
             allFilters['source.pronunciations.speaker'] = { $in: value };
@@ -48,8 +48,8 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
           case 'translations.text':
             allFilters['translations.text'] = { $eq: value };
             break;
-          case 'translations.languages':
-            allFilters['translations.languages'] = { $in: value };
+          case 'translations.language':
+            allFilters['translations.language'] = { $in: value };
             break;
           case 'translations.pronunciations.speaker':
             allFilters['translations.pronunciations.speaker'] = { $in: value };
