@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Box, Heading, VStack, Text } from '@chakra-ui/react';
+import { Box, Heading, VStack, Text, HStack, Button, useDisclosure } from '@chakra-ui/react';
 import DataEntryFlow from 'src/Core/Dashboard/components/DataEntryFlow';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import generateGreetings from 'src/Core/Dashboard/components/utils/generateGreetings';
@@ -9,6 +9,9 @@ import { getDashboardOptions } from 'src/Core/Dashboard/utils/getDashboardOption
 import { UserProjectPermissionContext } from 'src/App/contexts/UserProjectPermissionContext';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import { UserProjectPermission } from 'src/backend/controllers/utils/interfaces';
+import { FiDownloadCloud } from 'react-icons/fi';
+import ExportModal from 'src/Core/Dashboard/components/ExportModal';
+import { hasPlatformAdminPermissions } from 'src/shared/utils/permissions';
 
 export const DataEntryFlowGroupLabels = {
   [DataEntryFlowGroup.GET_STARTED]: {
@@ -36,21 +39,33 @@ const ProgressManager = ({ permissions }: { permissions: { permissions?: { role:
   const isIgboAPIProject = useIsIgboAPIProject();
   const showSelfIdentify = getShouldShowSelfIdentify(userProjectPermission);
   const options = getDashboardOptions({ permissions, isIgboAPIProject, showSelfIdentify });
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <VStack py={6} px={{ base: 6, md: 12 }} gap={4} alignItems="start">
-      <VStack alignItems="left">
-        <Heading as="h1">{generateGreetings()}</Heading>
-        <Text fontWeight="medium" color="gray.500" fontFamily="Silka">
-          Here&apos;s an overview of your available tasks
-        </Text>
+    <>
+      <ExportModal isOpen={isOpen} onClose={onClose} />
+      <VStack py={6} px={{ base: 6, md: 12 }} gap={4} alignItems="start">
+        <HStack width="full" justifyContent="space-between">
+          <VStack alignItems="left">
+            <Heading as="h1">{generateGreetings()}</Heading>
+            <Text fontWeight="medium" color="gray.500" fontFamily="Silka">
+              Here&apos;s an overview of your available tasks
+            </Text>
+          </VStack>
+          {hasPlatformAdminPermissions(
+            permissions?.permissions,
+            <Button variant="primary" leftIcon={<FiDownloadCloud />} onClick={onOpen}>
+              Export
+            </Button>,
+          )}
+        </HStack>
+        <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" width="full">
+          {options.map((option) => (
+            <DataEntryFlow key={option.title} {...option} />
+          ))}
+        </Box>
       </VStack>
-      <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" width="full">
-        {options.map((option) => (
-          <DataEntryFlow key={option.title} {...option} />
-        ))}
-      </Box>
-    </VStack>
+    </>
   );
 };
 

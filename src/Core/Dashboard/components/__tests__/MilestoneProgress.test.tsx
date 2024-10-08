@@ -9,8 +9,8 @@ it('MilestoneProgress', async () => {
       <MilestoneProgress />
     </TestContext>,
   );
-  await findByText('Community Milestone Statistics');
-  await findByText('Track the total progress of the Igbo API.');
+  await findByText('Project Stats');
+  await findByText('Track the total progress of the project.');
   await findByText('Word Stats');
   await findByText('Nsịbịdị Stats');
   await findByText('Example Stats');

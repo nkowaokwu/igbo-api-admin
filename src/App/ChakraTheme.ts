@@ -300,6 +300,13 @@ export default extendTheme({
         borderColor: 'gray.400',
       },
     },
+    Modal: {
+      baseStyle: {
+        header: {
+          fontFamily: 'heading',
+        },
+      },
+    },
   },
   fonts: {
     heading: 'Silka',

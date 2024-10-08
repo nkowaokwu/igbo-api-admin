@@ -11,7 +11,7 @@ describe('MilestoneProgress', () => {
       </TestContext>,
     );
 
-    await findByText('Community Milestone Statistics');
+    await findByText('Project Stats');
     await findByText('Audio Stats');
     await findByText('Word Stats');
     await findByText('Nsịbịdị Stats');

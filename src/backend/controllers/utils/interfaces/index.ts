@@ -1,5 +1,6 @@
 export * from './corpusInterfaces';
 export * from './corpusSuggestionInterfaces';
+export * from './datasetExportInterfaces';
 export * from './emailInterfaces';
 export * from './exampleInterfaces';
 export * from './exampleSuggestionInterfaces';

@@ -17,8 +17,7 @@ const createExampleSuggestion = async (
     'ExampleSuggestion',
     exampleSuggestionSchema,
   );
-  const queryData = { igbo: data.igbo || '', merged: null };
-  const query = searchPreExistingExampleSuggestionsRegexQuery(queryData);
+  const query = searchPreExistingExampleSuggestionsRegexQuery({ text: data.source.text });
   const identicalExampleSuggestions = await ExampleSuggestion.find(query);
 
   if (identicalExampleSuggestions.length) {
@@ -28,9 +27,11 @@ const createExampleSuggestion = async (
   }
 
   const newExampleSuggestion = new ExampleSuggestion(data) as Interfaces.ExampleSuggestion;
-  return newExampleSuggestion.save().catch(() => {
-    throw new Error('An error has occurred while saving, double check your provided data');
+  const savedExampleSuggestion = await newExampleSuggestion.save().catch(() => {
+    throw new Error('An error has occurred while saving sentence, double check your provided data');
   });
+
+  return savedExampleSuggestion;
 };
 
 export default createExampleSuggestion;

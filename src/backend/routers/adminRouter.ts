@@ -10,6 +10,7 @@ import { cancelMemberInvite, inviteMember } from 'src/backend/controllers/invite
 import validateMemberInviteBody from 'src/backend/middleware/validateMemberInviteBody';
 import { putUserProjectPermissionAsAdmin } from 'src/backend/controllers/userProjectPermissions';
 import validatePutUserRoleBody from 'src/backend/middleware/validatePutUserRoleBody';
+import { postExport } from 'src/backend/controllers/exports';
 import { getUsers, testGetUsers } from '../controllers/users';
 import { putProject } from '../controllers/projects';
 import { onSubmitConstructedTermPoll } from '../controllers/polls';
@@ -36,5 +37,8 @@ adminRouter.put(`/${Collection.PROJECTS}/:id`, validId, validateProjectBody, put
 // Invite Members
 adminRouter.post(`/${Collection.INVITES}`, validateMemberInviteBody, inviteMember);
 adminRouter.delete(`/${Collection.INVITES}/cancel`, validateMemberInviteBody, cancelMemberInvite);
+
+// Export Data
+adminRouter.post(`/exports`, postExport);
 
 export default adminRouter;

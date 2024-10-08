@@ -159,9 +159,9 @@ const MilestoneProgress = ({
       <Box borderRadius="md" borderWidth="1" borderColor="gray.200" backgroundColor="white" p={3}>
         <Box className="my-5">
           <Text fontSize="xl" fontWeight="bold" fontFamily="Silka">
-            Community Milestone Statistics
+            Project Stats
           </Text>
-          <Text fontFamily="Silka">Track the total progress of the Igbo API.</Text>
+          <Text fontFamily="Silka">Track the total progress of the project.</Text>
         </Box>
         <Box className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <LinearProgressCard heading="Audio Stats" stats={audioStats} isLoaded={isAudioStatsLoaded} />

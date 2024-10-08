@@ -13,6 +13,9 @@ const s3 = (() => {
     accessKeyId: AWS_ACCESS_KEY,
     secretAccessKey: AWS_SECRET_ACCESS_KEY,
     region,
+    httpOptions: {
+      timeout: 60 * 10 * 1000, // 10 minutes
+    },
   });
 
   return new AWS.S3();

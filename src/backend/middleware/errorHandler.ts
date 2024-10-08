@@ -1,4 +1,3 @@
-import { logger } from 'firebase-functions';
 import { isProduction } from 'src/backend/config';
 import { disconnectDatabase } from '../utils/database';
 
