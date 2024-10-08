@@ -63,7 +63,6 @@ const searchWordUsingIgbo = async ({
 }): Promise<Interfaces.Word[]> => {
   const Word = mongooseConnection.model('Word', wordSchema);
   const words: Interfaces.Word[] = await findWordsWithMatch({ match: query, Word, ...rest });
-  console.log('please tell me');
   return sortDocsBy(searchWord, words, 'word');
 };
 
@@ -102,7 +101,7 @@ export const getWords = async (
       text?: any;
       definitions?: any;
     } = !strict
-      ? searchIgboTextSearch(user.uid, searchWord, regexKeyword, projectId, filters)
+      ? searchIgboTextSearch(searchWord, regexKeyword, projectId, filters)
       : strictSearchIgboQuery(searchWord, projectId);
 
     const words = await searchWordUsingIgbo({ query, mongooseConnection, ...searchQueries });
