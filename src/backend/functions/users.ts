@@ -53,7 +53,7 @@ const handleCreateDefaultUserProjectPermission = async ({
   firebaseId: string;
   email: string;
 }): Promise<void> => {
-  if (!isProduction) {
+  if (isProduction) {
     return;
   }
   try {
