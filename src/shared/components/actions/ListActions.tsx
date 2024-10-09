@@ -8,7 +8,6 @@ import Collection from 'src/shared/constants/Collection';
 import { CustomListActionProps } from 'src/shared/interfaces';
 import { CreateButton } from 'src/shared/primitives';
 import { hasAdminOrMergerPermissions, hasAdminPermissions } from 'src/shared/utils/permissions';
-import DeleteOldWordSuggestionsButton from 'src/shared/components/actions/components/DeleteOldWordSuggestionsButton';
 import FiltersModal from 'src/shared/components/FiltersModal';
 import { postMemberInvite } from 'src/shared/InviteAPI';
 import InviteMembersModal from 'src/shared/components/InviteMembersModal';
@@ -44,7 +43,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     resource === Collection.WORD_SUGGESTIONS ||
     resource === Collection.EXAMPLE_SUGGESTIONS ||
     resource === Collection.CORPUS_SUGGESTIONS;
-  const isWordResource = resource === Collection.WORD_SUGGESTIONS || resource === Collection.WORDS;
   const isPollResource = resource === Collection.POLLS;
   const isUserResource = resource === Collection.USERS;
 
@@ -166,7 +164,6 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
             resource === Collection.NSIBIDI_CHARACTERS ? (
               <CreateButton basePath={basePath} />
             ) : null}
-            {isAdmin && isWordResource && isSuggestionResource ? <DeleteOldWordSuggestionsButton /> : null}
           </HStack>
         </HStack>
       </TopToolbar>

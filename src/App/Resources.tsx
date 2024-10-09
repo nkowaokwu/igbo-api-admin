@@ -14,12 +14,13 @@ import {
 import {
   hasAdminPermissions,
   hasEditorPermissions,
-  hasAtLeastCrowdsourcerPermissions,
   hasAccessToPlatformPermissions,
   hasPlatformAdminPermissions,
 } from 'src/shared/utils/permissions';
 import Home from 'src/Core/Home';
 import Pricing from 'src/Core/Pricing';
+import ProjectType from 'src/backend/shared/constants/ProjectType';
+import UserRoles from 'src/backend/shared/constants/UserRoles';
 import withLastRoute from './withLastRoute';
 
 const WordList = React.lazy(() => import('src/Core/Collections/Words/WordList'));
@@ -95,9 +96,10 @@ export interface Resource {
   icon: React.ReactElement;
   group: ResourceGroup;
   generalProject?: boolean; // Routes visible for any general project
+  projectTypes?: ProjectType[];
 }
 
-const defaultRoutes = (permissions) =>
+const defaultRoutes = (permissions: { role?: UserRoles }) =>
   hasAccessToPlatformPermissions(permissions, [
     {
       name: '#',
@@ -106,10 +108,11 @@ const defaultRoutes = (permissions) =>
       exact: true,
       group: ResourceGroup.UNSPECIFIED,
       generalProject: true,
+      projectTypes: Object.values(ProjectType),
     },
   ]) || [];
 
-const editorRoutes = (permissions) =>
+const editorRoutes = (permissions: { role?: UserRoles }) =>
   hasEditorPermissions(permissions, [
     {
       name: 'stats',
@@ -125,6 +128,8 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(WordShow),
       icon: () => <FiBook />,
       group: ResourceGroup.LEXICAL,
+      generalProject: true,
+      projectTypes: [ProjectType.LEXICAL],
     },
     {
       name: 'examples',
@@ -135,6 +140,7 @@ const editorRoutes = (permissions) =>
       icon: () => <FiBookOpen />,
       group: ResourceGroup.LEXICAL,
       generalProject: true,
+      projectTypes: [ProjectType.TEXT_AUDIO_ANNOTATION, ProjectType.TRANSLATION],
     },
     {
       name: 'nsibidiCharacters',
@@ -156,7 +162,6 @@ const editorRoutes = (permissions) =>
       create: null,
       icon: () => <LuFileStack />,
       group: ResourceGroup.LEXICAL,
-      generalProject: false,
     },
     {
       name: 'wordSuggestions',
@@ -168,6 +173,8 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(WordSuggestionShow),
       icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
+      generalProject: true,
+      projectTypes: [ProjectType.LEXICAL],
     },
     {
       name: 'exampleSuggestions',
@@ -180,6 +187,7 @@ const editorRoutes = (permissions) =>
       icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
       generalProject: true,
+      projectTypes: [ProjectType.TEXT_AUDIO_ANNOTATION, ProjectType.TRANSLATION],
     },
     {
       name: 'corpusSuggestions',
@@ -191,7 +199,6 @@ const editorRoutes = (permissions) =>
       show: withLastRoute(CorpusSuggestionShow),
       icon: () => <LuFileEdit />,
       group: ResourceGroup.DATA_COLLECTION,
-      generalProject: false,
     },
     {
       name: 'polls',
@@ -204,7 +211,7 @@ const editorRoutes = (permissions) =>
     },
   ]) || [];
 
-const getStartedRoutes = (permissions) =>
+const getStartedRoutes = (permissions: { role?: UserRoles }) =>
   hasAdminPermissions(permissions, [
     {
       name: 'dataDump',
@@ -214,10 +221,11 @@ const getStartedRoutes = (permissions) =>
       icon: () => <LuHardDriveUpload />,
       group: ResourceGroup.GET_STARTED,
       generalProject: true,
+      projectTypes: Object.values(ProjectType),
     },
   ]) || [];
 
-const platformAdminRoutes = (permissions) =>
+const platformAdminRoutes = (permissions: { role?: UserRoles }) =>
   hasPlatformAdminPermissions(permissions, [
     {
       name: 'projects',
@@ -227,10 +235,11 @@ const platformAdminRoutes = (permissions) =>
       icon: () => <FiFolder />,
       group: ResourceGroup.PLATFORM_ADMIN,
       generalProject: true,
+      projectTypes: Object.values(ProjectType),
     },
   ]) || [];
 
-const settingsRoutes = (permissions) =>
+const settingsRoutes = (permissions: { role?: UserRoles }) =>
   hasAdminPermissions(permissions, [
     {
       name: 'settings',
@@ -240,6 +249,7 @@ const settingsRoutes = (permissions) =>
       icon: () => <LuSettings />,
       group: ResourceGroup.SETTINGS,
       generalProject: true,
+      projectTypes: Object.values(ProjectType),
     },
     {
       name: 'users',
@@ -250,6 +260,7 @@ const settingsRoutes = (permissions) =>
       icon: () => <LuUserCheck />,
       group: ResourceGroup.SETTINGS,
       generalProject: true,
+      projectTypes: Object.values(ProjectType),
     },
     {
       name: 'textImages',
@@ -267,14 +278,6 @@ const settingsRoutes = (permissions) =>
       icon: () => <LuCamera />,
       group: ResourceGroup.DATA_COLLECTION,
     },
-    /* {
-      name: 'soundbox',
-      key: 'soundbox',
-      options: { label: 'Igbo Soundbox' },
-      list: withLastRoute(IgboSoundbox),
-      icon: () => <>🔊</>,
-      group: ResourceGroup.DATA_COLLECTION,
-    }, */
     {
       name: 'igboDefinitions',
       key: 'igboDefinitions',
@@ -285,24 +288,11 @@ const settingsRoutes = (permissions) =>
     },
   ]) || [];
 
-const crowdsourcerRoutes = (permissions) =>
-  hasAtLeastCrowdsourcerPermissions(permissions, [
-    // {
-    //   name: 'leaderboard',
-    //   key: 'leaderboard',
-    //   options: { label: 'Leaderboard' },
-    //   list: withLastRoute(Leaderboard),
-    //   icon: () => <>🏆</>,
-    //   group: ResourceGroup.DATA_COLLECTION,
-    // },
-  ]) || [];
-
-export const getResourceObjects = (permissions: any): Resource[] => [
+export const getResourceObjects = (permissions: { role?: UserRoles }): Resource[] => [
   ...defaultRoutes(permissions),
   ...getStartedRoutes(permissions),
   ...editorRoutes(permissions),
   ...settingsRoutes(permissions),
-  ...crowdsourcerRoutes(permissions),
   ...platformAdminRoutes(permissions),
 ];
 

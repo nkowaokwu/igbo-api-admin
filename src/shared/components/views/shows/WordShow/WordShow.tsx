@@ -394,24 +394,26 @@ const WordShow = (props: ShowProps): ReactElement => {
             </VStack>
           </VStack>
         </Box>
-        <ShowTextRenderer title="Archived sentences" icon={<LuArchive />}>
-          {archivedExamples.map((archivedExample, archivedExampleIndex) => (
-            <>
-              <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
-              <Box>
-                <Text>{get(archivedExample, 'source.text')}</Text>
-                <Text>{get(archivedExample, 'translations.0.text')}</Text>
-                <Text>{archivedExample.nsibidi}</Text>
-                <Text>{archivedExample.meaning}</Text>
-                <ReactAudioPlayer
-                  src={get(archivedExample, 'source.pronunciations[0].audio')}
-                  style={{ height: '40px', width: '250px' }}
-                  controls
-                />
-              </Box>
-            </>
-          ))}
-        </ShowTextRenderer>
+        {archivedExamples.length ? (
+          <ShowTextRenderer title="Archived sentences" icon={<LuArchive />}>
+            {archivedExamples.map((archivedExample, archivedExampleIndex) => (
+              <>
+                <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+                <Box>
+                  <Text>{get(archivedExample, 'source.text')}</Text>
+                  <Text>{get(archivedExample, 'translations.0.text')}</Text>
+                  <Text>{archivedExample.nsibidi}</Text>
+                  <Text>{archivedExample.meaning}</Text>
+                  <ReactAudioPlayer
+                    src={get(archivedExample, 'source.pronunciations[0].audio')}
+                    style={{ height: '40px', width: '250px' }}
+                    controls
+                  />
+                </Box>
+              </>
+            ))}
+          </ShowTextRenderer>
+        ) : null}
         {resource !== Collection.WORDS ? <Comments editorsNotes={editorsNotes} userComments={userComments} /> : null}
       </Box>
     </Skeleton>

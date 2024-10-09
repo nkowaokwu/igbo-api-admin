@@ -17,7 +17,7 @@ const Loading = ({ setPermissions }: { setPermissions: React.Dispatch<React.SetS
   return (
     <Box height="100vh" width="100vw" display="flex" justifyContent="center" alignItems="center">
       <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" className="space-y-6">
-        <Spinner color="black" size="xl" />
+        <Spinner size="xl" />
         <Text>Loading the page, please wait a moment</Text>
       </Box>
     </Box>

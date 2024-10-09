@@ -65,7 +65,7 @@ const UserShow = (props: ShowProps): ReactElement => {
 
   return (
     <Skeleton isLoaded={!isLoading} minHeight="100vh">
-      <Box className="bg-white shadow-sm px-10">
+      <Box className="bg-white shadow-sm px-4">
         {user.uid && !isLoading ? <UserStat user={user} {...stats} /> : null}
       </Box>
     </Skeleton>

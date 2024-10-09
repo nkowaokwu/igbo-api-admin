@@ -17,7 +17,13 @@ const Resources = memo(() => {
   const project = React.useContext(ProjectContext);
   const isIgboAPIProject = project?.id?.toString() === IGBO_API_PROJECT_ID;
   const resources = getResourceObjects(permissions)
-    .filter((resource) => isIgboAPIProject || (!isIgboAPIProject && resource.generalProject))
+    .filter(
+      (resource) =>
+        isIgboAPIProject ||
+        (!isIgboAPIProject &&
+          resource.generalProject &&
+          Boolean(project.types.filter((type) => resource.projectTypes.includes(type)).length)),
+    )
     .map((resource) => <Resource key={resource.name} {...resource} />);
 
   const customRoutes = getCustomRouteObjects()

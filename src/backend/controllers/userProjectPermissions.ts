@@ -165,18 +165,20 @@ export const getUserProjectPermissionsByProjectHelper = async ({
   skip: number;
   limit: number;
   status?: EntityStatus;
-}): Promise<Document<UserProjectPermission, any, UserProjectPermission>[]> => {
+}): Promise<Document<unknown, any, Interfaces.UserProjectPermission>> => {
   const UserProjectPermission = mongooseConnection.model<Interfaces.UserProjectPermission>(
     'UserProjectPermission',
     userProjectPermissionSchema,
   );
-  return UserProjectPermission.find({
-    projectId,
+  const userProjectPermission = await UserProjectPermission.find({
+    projectId: { $eq: new Types.ObjectId(projectId) },
     firebaseId: uids?.length ? { $in: uids } : { $exists: true },
     ...(status === EntityStatus.UNSPECIFIED ? {} : { status }),
   })
     .skip(skip)
     .limit(limit);
+
+  return userProjectPermission;
 };
 
 /**

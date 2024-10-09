@@ -8,6 +8,8 @@ import { CreateButton } from 'src/shared/primitives';
 import Collection from 'src/shared/constants/Collection';
 
 const emptyMap = {
+  [Collection.WORDS]: 'Words',
+  [Collection.WORD_SUGGESTIONS]: 'Word Drafts',
   [Collection.EXAMPLES]: 'Sentences',
   [Collection.EXAMPLE_SUGGESTIONS]: 'Sentence Drafts',
 };

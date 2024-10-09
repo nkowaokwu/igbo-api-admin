@@ -162,6 +162,11 @@ export default extendTheme({
         endColor: 'gray.200',
       },
     },
+    Spinner: {
+      baseStyle: {
+        color: 'black',
+      },
+    },
     Heading: {
       sizes: {
         '2xl': {

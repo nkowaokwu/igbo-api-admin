@@ -14,7 +14,13 @@ import Empty from '../../Empty';
 export const WordList = (props: ListProps): ReactElement => {
   const { permissions } = props;
   return (
-    <List {...props} actions={<ListActions />} bulkActionButtons={false} pagination={<Pagination />} empty={<Empty />}>
+    <List
+      {...props}
+      actions={<ListActions />}
+      bulkActionButtons={false}
+      pagination={<Pagination />}
+      empty={<Empty showCreate={false} />}
+    >
       <Responsive
         small={
           <Datagrid>
