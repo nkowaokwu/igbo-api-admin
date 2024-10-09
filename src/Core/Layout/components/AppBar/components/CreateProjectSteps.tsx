@@ -79,12 +79,12 @@ const CreateProjectSteps = (): ReactElement => {
         <VStack alignItems="start" gap={4}>
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Title</Text>
-            <Input name="title" ref={register} />
+            <Input name="title" {...register('title')} />
             {errors.title && <Text className="error">Project title is required</Text>}
           </VStack>
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Description</Text>
-            <Textarea name="description" ref={register} />
+            <Textarea name="description" {...register('description')} />
           </VStack>
           {errors.description && <Text className="error">Project description is required</Text>}
           <VStack alignItems="start" width="full" gap={2}>

@@ -5,10 +5,10 @@ import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
 
 const omitPronunciationFields = (pronunciation) => pick(pronunciation, ['audio', 'speaker', 'archived']);
 
-const createDefaultExampleFormValues = (record: Record): any => {
+const createDefaultExampleFormValues = (record: Record = { id: '' }): any => {
   const data = assign(pick(record, ['associatedDefinitionsSchemas', 'editorsNotes', 'meaning', 'nsibidi']), {
     source: {
-      text: record.source.text,
+      text: record.source?.text,
       language: LanguageLabels[record.source?.language] || LanguageLabels.UNSPECIFIED,
       pronunciations: (record.source?.pronunciations || []).map(omitPronunciationFields),
     },

@@ -56,7 +56,7 @@ const SettingsLayout = ({
                   render={({ onChange, ref }) => CustomComponent({ ref, name, onChange, defaultValue })}
                 />
               ) : (
-                <Input flex={1} placeholder="Full name" defaultValue={defaultValue} ref={register} name={name} />
+                <Input flex={1} placeholder="Full name" defaultValue={defaultValue} {...register(name)} />
               )}
             </HStack>
             <Divider />

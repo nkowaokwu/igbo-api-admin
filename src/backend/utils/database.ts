@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { MONGO_URI } from 'src/backend/services/initializeAdmin';
 
 const config = functions.config();
