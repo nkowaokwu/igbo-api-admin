@@ -37,10 +37,10 @@ const ProjectLabels = {
   //   value: ProjectType.NAMED_ENTITY_RECOGNITION,
   //   label: 'Named Entity Recognition',
   // },
-  // [ProjectType.LEXICAL]: {
-  //   value: ProjectType.LEXICAL,
-  //   label: 'Lexical Dictionary',
-  // },
+  [ProjectType.LEXICAL]: {
+    value: ProjectType.LEXICAL,
+    label: 'Lexical Dictionary',
+  },
 };
 
 export default ProjectLabels;

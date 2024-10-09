@@ -16,8 +16,8 @@ enum ProjectType {
   // SENTIMENT_ANALYSIS = 'TEXT_CLASSIFICATION',
   // ⭐️ The provided dataset is a bunch of sentences that we want to label entities of
   // NAMED_ENTITY_RECOGNITION = 'NAMED_ENTITY_RECOGNITION',
-  // ⭐️ The provided dataset is a bunch of words that we want to add more lexically dense information
-  // LEXICAL = 'LEXICAL',
+  // The provided dataset is a bunch of words that we want to add more lexically dense information
+  LEXICAL = 'LEXICAL',
 }
 
 export default ProjectType;
