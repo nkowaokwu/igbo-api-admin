@@ -11,7 +11,6 @@ import {
   useBreakpointValue,
   VStack,
 } from '@chakra-ui/react';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import { usePermissions } from 'react-admin';
 import copyToClipboard from 'src/shared/utils/copyToClipboard';
 import { UserProfile } from 'src/backend/controllers/utils/interfaces';
@@ -19,13 +18,15 @@ import { hasAdminPermissions } from 'src/shared/utils/permissions';
 import Gender from 'src/backend/shared/constants/Gender';
 import GenderEnum from 'src/backend/shared/constants/GenderEnum';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import { LuCopy } from 'react-icons/lu';
+import UserRoleLabels from 'src/backend/shared/constants/UserRoleLabels';
 
 const UserCard = ({ user }: { user: UserProfile }): ReactElement => {
   const permissions = usePermissions();
   const toast = useToast();
   const isAdmin = hasAdminPermissions(permissions.permissions, true);
   const avatarSize = useBreakpointValue({ base: 'lg', lg: 'xl' });
-  const { email, displayName, photoURL, gender, languages } = user || {
+  const { email, displayName, photoURL, gender, languages, role } = user || {
     email: '',
     displayName: '',
     photoURL: '',
@@ -52,8 +53,12 @@ const UserCard = ({ user }: { user: UserProfile }): ReactElement => {
         size={avatarSize}
         bgGradient="linear(to-br, yellow.200, orange.500)"
       />
-      <Box>
-        <Heading className={!displayName ? 'text-gray-500' : ''} fontSize={{ base: '2xl', lg: '3xl' }}>
+      <VStack width="full" alignItems="start">
+        <Heading
+          color={!displayName ? 'gray.500' : ''}
+          fontSize={{ base: '2xl', lg: '3xl' }}
+          textAlign={{ base: 'center', md: 'left' }}
+        >
           {displayName || 'No display name'}
         </Heading>
         <Box className="my-2">
@@ -82,6 +87,16 @@ const UserCard = ({ user }: { user: UserProfile }): ReactElement => {
                 </chakra.span>
               )}
             </Text>
+            <Text textAlign="left">
+              <chakra.span mr={1} fontWeight="medium">
+                Role:
+              </chakra.span>
+              {UserRoleLabels[role]?.label || (
+                <chakra.span fontStyle="italic" color="gray.400">
+                  No role
+                </chakra.span>
+              )}
+            </Text>
             <Text>
               <chakra.span mr={1} fontWeight="medium">
                 Email:
@@ -89,15 +104,17 @@ const UserCard = ({ user }: { user: UserProfile }): ReactElement => {
               <Link color="blue.500" href={`mailto:${email}`}>
                 {email}
               </Link>
+              {isAdmin ? (
+                <Tooltip label={`Copy ${displayName}'s email`}>
+                  <chakra.span ml={1} cursor="pointer">
+                    <LuCopy className="inline" onClick={handleCopyId} />
+                  </chakra.span>
+                </Tooltip>
+              ) : null}
             </Text>
-            {isAdmin ? (
-              <Tooltip label={`Copy ${displayName}'s email`}>
-                <FileCopyIcon className="cursor-pointer" style={{ height: 20 }} onClick={handleCopyId} />
-              </Tooltip>
-            ) : null}
           </VStack>
         </Box>
-      </Box>
+      </VStack>
     </Box>
   );
 };

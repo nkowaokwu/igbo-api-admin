@@ -26,7 +26,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
   return (
     <>
       <Box display="flex" flexDirection="row" justifyContent="space-between" alignItems="center">
-        <FormHeader title="Examples" tooltip="Example sentences should ideally in Standard Igbo." />
+        <FormHeader title="Sentences" tooltip="Example sentences should ideally in Standard Igbo." />
       </Box>
       <Box className="flex items-center my-5 w-full justify-between">
         <Accordion defaultIndex={[0]} allowMultiple className="w-full">
@@ -34,7 +34,7 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
             <h2>
               <AccordionButton>
                 <Box flex="1" textAlign="left">
-                  <Text fontFamily="Silka">{`Examples (${examples.length})`}</Text>
+                  <Text fontFamily="Silka">{`Sentences (${examples.length})`}</Text>
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
@@ -66,24 +66,26 @@ const ExamplesForm = ({ control }: ExamplesFormInterface): ReactElement => {
         <AddExampleButton append={append} />
         <SearchAndAddExampleButton append={append} />
       </Box>
-      <ShowTextRenderer title="Archived sentences" icon={<LuArchive />}>
-        {archivedExamples.map((archivedExample, archivedExampleIndex) => (
-          <>
-            <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
-            <Box>
-              <Text>{get(archivedExample, 'source.text')}</Text>
-              <Text>{get(archivedExample, 'translations.0.text')}</Text>
-              <Text>{archivedExample.nsibidi}</Text>
-              <Text>{archivedExample.meaning}</Text>
-              <ReactAudioPlayer
-                src={archivedExample.pronunciation}
-                style={{ height: '40px', width: '250px' }}
-                controls
-              />
-            </Box>
-          </>
-        ))}
-      </ShowTextRenderer>
+      {archivedExamples.length ? (
+        <ShowTextRenderer title="Archived sentences" icon={<LuArchive />}>
+          {archivedExamples.map((archivedExample, archivedExampleIndex) => (
+            <>
+              <Text color="gray.600" mr={3}>{`${archivedExampleIndex + 1}.`}</Text>
+              <Box>
+                <Text>{get(archivedExample, 'source.text')}</Text>
+                <Text>{get(archivedExample, 'translations.0.text')}</Text>
+                <Text>{archivedExample.nsibidi}</Text>
+                <Text>{archivedExample.meaning}</Text>
+                <ReactAudioPlayer
+                  src={archivedExample.pronunciation}
+                  style={{ height: '40px', width: '250px' }}
+                  controls
+                />
+              </Box>
+            </>
+          ))}
+        </ShowTextRenderer>
+      ) : null}
     </>
   );
 };

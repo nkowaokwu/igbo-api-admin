@@ -18,7 +18,11 @@ const Menu = ({ onMenuClick }: MenuProps) => {
   const resourceRoutes = useMemo(
     () =>
       getResourceObjects(permissions?.permissions ? permissions.permissions : permissions).filter(
-        (resource) => isIgboAPIProject || (!isIgboAPIProject && resource.generalProject),
+        (resource) =>
+          isIgboAPIProject ||
+          (!isIgboAPIProject &&
+            resource.generalProject &&
+            Boolean(project.types.filter((type) => resource.projectTypes.includes(type)).length)),
       ),
     [permissions, isIgboAPIProject],
   );

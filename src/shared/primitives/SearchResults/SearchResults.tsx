@@ -42,7 +42,7 @@ const SearchResults = ({
     >
       {isSearchingAutoCompleteResults ? (
         <Box width="full" display="flex" justifyContent="center" py={4}>
-          <Spinner color="primary" />
+          <Spinner />
         </Box>
       ) : (
         autoCompleteResults.map((result, index) => (

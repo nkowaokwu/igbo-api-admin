@@ -38,11 +38,11 @@ const SearchAndAddExampleButton = ({
         <Button
           width="full"
           variant="primary"
-          aria-label="Search and Add Example"
+          aria-label="Search and Add Sentence"
           onClick={handleToggleSearching}
           leftIcon={<AddIcon />}
         >
-          Attach Existing Example
+          Attach Existing Sentence
         </Button>
       </Tooltip>
     </Box>

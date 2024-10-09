@@ -16,6 +16,7 @@ enum ActionTypes {
   DELETE = 'Delete',
   BULK_DELETE = 'BulkDelete',
   COMBINE = 'Combine',
+  CONVERT = 'Convert',
   REQUEST_DELETE = 'Send Delete Request',
   DELETE_POLL = 'Delete Poll',
   DELETE_USER = 'DeleteUser',

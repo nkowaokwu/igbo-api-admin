@@ -139,7 +139,7 @@ const IgboDefinitions = (): ReactElement => {
           </Card>
         ) : isLoading ? (
           <Box minHeight="md" className="flex flex-row justify-center items-center">
-            <Spinner color="green" />
+            <Spinner />
           </Box>
         ) : null}
       </Box>
