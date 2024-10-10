@@ -42,7 +42,13 @@ const ExampleEditForm = ({
     Object.values(ExampleStyle).find(({ value }) => value === record.style),
     ['value', 'label'],
   ) || { value: '', label: '' };
-  const { errors, handleSubmit, getValues, control } = useForm({
+  const {
+    handleSubmit,
+    getValues,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
     defaultValues: createDefaultExampleFormValues(record),
     ...ExampleEditFormResolver,
     mode: 'onChange',
@@ -190,7 +196,7 @@ const ExampleEditForm = ({
               gap={2}
             >
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <Input {...props} placeholder={`Text in ${sourceLanguage}`} data-test="igbo-input" flex={8} />
                 )}
                 name="source.text"
@@ -198,7 +204,7 @@ const ExampleEditForm = ({
                 defaultValue={get(record, 'source.text') || get(getValues(), 'source.text') || ''}
               />
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <Select
                     {...props}
                     options={languageOptions}
@@ -215,6 +221,8 @@ const ExampleEditForm = ({
               originalRecord={originalRecord}
               uid={uid}
               name="source"
+              setValue={setValue}
+              getValues={getValues}
             />
             {get(errors, 'source.pronunciations') ? (
               <p className="error">{get(errors, 'source.pronunciations.message')}</p>
@@ -237,7 +245,7 @@ const ExampleEditForm = ({
                 </Tooltip>
                 <Button
                   variant="ghost"
-                  onClick={() => control.setValue('igbo', exampleTranscriptionFeedback.humanTranscription)}
+                  onClick={() => setValue('igbo', exampleTranscriptionFeedback.humanTranscription)}
                   _hover={{
                     backgroundColor: 'transparent',
                   }}
@@ -264,6 +272,8 @@ const ExampleEditForm = ({
           uid={uid}
           errors={errors}
           control={control}
+          setValue={setValue}
+          getValues={getValues}
         />
         {isIgboAPIProject ? (
           <Box className="flex flex-col">
@@ -272,7 +282,7 @@ const ExampleEditForm = ({
               tooltip="This field showcases the meaning of the sentence - typically for proverbs"
             />
             <Controller
-              render={(props) => (
+              render={({ field: props }) => (
                 <Input {...props} placeholder="Conceptual meaning of the original text" data-test="meaning-input" />
               )}
               name="meaning"
@@ -294,7 +304,7 @@ const ExampleEditForm = ({
               />
               <Box data-test="sentence-style-input-container">
                 <Controller
-                  render={(props) => <Select {...props} options={options} />}
+                  render={({ field: props }) => <Select {...props} options={options} />}
                   name="style"
                   control={control}
                   defaultValue={style}
@@ -305,7 +315,7 @@ const ExampleEditForm = ({
           </Box>
         ) : null}
         <Box className="flex flex-col">
-          <NsibidiForm control={control} errors={errors} name="nsibidi" />
+          <NsibidiForm control={control} errors={errors} name="nsibidi" getValues={getValues} />
           <Box className="mt-2">
             <AssociatedWordsForm errors={errors} control={control} record={record} />
           </Box>
@@ -318,7 +328,9 @@ const ExampleEditForm = ({
           Leave your name on your comment!`}
               />
               <Controller
-                render={(props) => <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />}
+                render={({ field: props }) => (
+                  <Textarea {...props} className="form-textarea" placeholder="Comments" rows={4} />
+                )}
                 name="editorsNotes"
                 defaultValue={record.editorsNotes || ''}
                 control={control}

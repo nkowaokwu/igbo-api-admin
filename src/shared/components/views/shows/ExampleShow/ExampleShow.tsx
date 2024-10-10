@@ -26,6 +26,7 @@ import { PronunciationData, Translation } from 'src/backend/controllers/utils/in
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
 import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumentStats/component/ShowTextRenderer';
 import LanguageLabels from 'src/backend/shared/constants/LanguageLabels';
+import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
 import DiffField from '../diffFields/DiffField';
 import ArrayDiffField from '../diffFields/ArrayDiffField';
 import ArrayDiff from '../diffFields/ArrayDiff';
@@ -279,7 +280,7 @@ const ExampleShow = (props: ShowProps): ReactElement => {
                   path="style"
                   diffRecord={diffRecord}
                   fallbackValue={style}
-                  renderNestedObject={(value) => <span>{String(value || false)}</span>}
+                  renderNestedObject={(value) => <span>{ExampleStyle[value]?.label || 'No Style'}</span>}
                 />
               </ShowTextRenderer>
             </>

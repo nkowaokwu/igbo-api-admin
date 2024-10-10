@@ -36,7 +36,7 @@ const VariationsForm = ({ control }: VariationsFormInterface): ReactElement => {
         variations.map(({ text, id }, index) => (
           <Box className="list-container" key={id}>
             <Controller
-              render={(props) => <Input {...props} data-test={`variation-${index}-input`} />}
+              render={({ field: props }) => <Input {...props} data-test={`variation-${index}-input`} />}
               name={`variations[${index}].text`}
               control={control}
               defaultValue={text}

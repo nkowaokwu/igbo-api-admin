@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Box, Checkbox, chakra } from '@chakra-ui/react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormGetValues } from 'react-hook-form';
 import NsibidiCharacterAttributeEnum from 'src/backend/shared/constants/NsibidiCharacterAttributeEnum';
 import NsibidiCharacterAttributes from 'src/backend/shared/constants/NsibidiCharacterAttributes';
 import { Record } from 'react-admin';
@@ -11,13 +11,13 @@ const CharacterAttributesForm = ({
   control,
 }: {
   record: Record;
-  getValues: () => any;
+  getValues: UseFormGetValues<any>;
   control: Control;
 }): ReactElement => (
   <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4">
     {Object.values(NsibidiCharacterAttributeEnum).map((nsibidiCharacterAttribute) => (
       <Controller
-        render={({ onChange, value, ref }) => (
+        render={({ field: { onChange, value, ref } }) => (
           <Checkbox
             onChange={(e) => onChange(e.target.checked)}
             isChecked={value}

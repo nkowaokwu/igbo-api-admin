@@ -1,7 +1,9 @@
-import { Control } from 'react-hook-form';
+import { Control, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 interface ExamplesFormInterface {
-  control: Control,
-};
+  control: Control;
+  getValues: UseFormGetValues<any>;
+  setValue: UseFormSetValue<any>;
+}
 
 export default ExamplesFormInterface;

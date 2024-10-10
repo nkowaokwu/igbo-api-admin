@@ -242,22 +242,22 @@ const platformAdminRoutes = (permissions: { role?: UserRoles }) =>
 const settingsRoutes = (permissions: { role?: UserRoles }) =>
   hasAdminPermissions(permissions, [
     {
-      name: 'settings',
-      key: 'settings',
-      noLayout: true,
-      list: withLastRoute(ProjectSettings),
-      icon: () => <LuSettings />,
-      group: ResourceGroup.SETTINGS,
-      generalProject: true,
-      projectTypes: Object.values(ProjectType),
-    },
-    {
       name: 'users',
       key: 'users',
       options: { label: 'Members' },
       list: withLastRoute(UserList),
       show: withLastRoute(UserShow),
       icon: () => <LuUserCheck />,
+      group: ResourceGroup.SETTINGS,
+      generalProject: true,
+      projectTypes: Object.values(ProjectType),
+    },
+    {
+      name: 'settings',
+      key: 'settings',
+      noLayout: true,
+      list: withLastRoute(ProjectSettings),
+      icon: () => <LuSettings />,
       group: ResourceGroup.SETTINGS,
       generalProject: true,
       projectTypes: Object.values(ProjectType),

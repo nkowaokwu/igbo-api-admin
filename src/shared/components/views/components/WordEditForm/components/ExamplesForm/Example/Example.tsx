@@ -15,17 +15,16 @@ import AudioRecorder from '../../../../AudioRecorder';
 import ExamplesInterface from './ExamplesInterface';
 import NsibidiInput from '../../NsibidiForm/NsibidiInput';
 
-const Example = ({ example, index, remove, control, setValue }: ExamplesInterface): ReactElement => {
+const Example = ({ example, index, remove, control, setValue, getValues }: ExamplesInterface): ReactElement => {
   const [originalRecord, setOriginalRecord] = useState(null);
   const uid = useFirebaseUid();
   const {
-    source = { language: LanguageEnum.UNSPECIFIED, text: '' },
-    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '' }],
+    source = { language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] },
+    translations = [{ language: LanguageEnum.UNSPECIFIED, text: '', pronunciations: [] }],
     meaning = '',
-    pronunciations = [],
     nsibidi = '',
-    exampleId = '',
     associatedWords = [],
+    exampleId = '',
     originalExampleId,
   } = example;
   const [isExistingExample, setIsExistingExample] = useState(!!originalExampleId);
@@ -56,7 +55,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
         className="flex flex-col w-full space-y-3"
       >
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <input
               {...props}
               style={{ opacity: 0, pointerEvents: 'none', position: 'absolute' }}
@@ -69,7 +68,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
         />
         <h3 className="text-gray-700">{`${sourceLanguage}:`}</h3>
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <Input {...props} placeholder={`Example in ${sourceLanguage}`} data-test={`examples-${index}-igbo-input`} />
           )}
           name={`examples[${index}].source.text`}
@@ -78,7 +77,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
         />
         <h3 className="text-gray-700">{`${destinationLanguage}:`}</h3>
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <Input
               {...props}
               placeholder="Example in English (literal)"
@@ -91,7 +90,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
         />
         <h3 className="text-gray-700">Meaning:</h3>
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <Input
               {...props}
               placeholder="Example in English (meaning)"
@@ -104,7 +103,7 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
         />
         <h3 className="text-gray-700">Nsịbịdị:</h3>
         <Controller
-          render={(props) => (
+          render={({ field: props }) => (
             <NsibidiInput
               {...props}
               placeholder="Example in Nsịbịdị"
@@ -129,20 +128,20 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
           ref={control.register}
           defaultValue={get(example, 'style.label') || ExampleStyle[ExampleStyleEnum.NO_STYLE].label}
         />
-        {pronunciations?.length ? (
-          pronunciations.map((_, pronunciationIndex) => (
+        {source.pronunciations?.length ? (
+          source.pronunciations.map((_, pronunciationIndex) => (
             <>
               <input
                 style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-                name={`examples[${index}].pronunciations[${pronunciationIndex}].audio`}
+                name={`examples[${index}].source.pronunciations[${pronunciationIndex}].audio`}
                 ref={control.register}
-                defaultValue={pronunciations[pronunciationIndex]?.audio}
+                defaultValue={source.pronunciations[pronunciationIndex]?.audio}
               />
               <input
                 style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
-                name={`examples[${index}].pronunciations[${pronunciationIndex}].speaker`}
+                name={`examples[${index}].source.pronunciations[${pronunciationIndex}].speaker`}
                 ref={control.register}
-                defaultValue={pronunciations[pronunciationIndex]?.speaker}
+                defaultValue={source.pronunciations[pronunciationIndex]?.speaker}
               />
             </>
           ))
@@ -152,22 +151,22 @@ const Example = ({ example, index, remove, control, setValue }: ExamplesInterfac
               style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
               name={`examples[${index}].pronunciations[0].audio`}
               ref={control.register}
-              defaultValue={pronunciations[0]?.audio}
+              defaultValue={source.pronunciations[0]?.audio}
             />
             <input
               style={{ position: 'absolute', pointerEvents: 'none', opacity: 0 }}
               name={`examples[${index}].pronunciations[0].speaker`}
               ref={control.register}
-              defaultValue={pronunciations[0]?.speaker}
+              defaultValue={source.pronunciations[0]?.speaker}
             />
           </>
         )}
         {/* Only updates the first audio in the example's pronunciation array */}
         <AudioRecorder
           path="pronunciations[0].audio"
-          getFormValues={() => get(control.getValues(), `examples[${index}].pronunciations[0].audio`)}
+          getFormValues={() => get(getValues(), `examples[${index}].pronunciations[0].audio`)}
           setPronunciation={(_, value) => {
-            if (!get(control.getValues(), `examples[${index}].pronunciations[0]`)) {
+            if (!get(getValues(), `examples[${index}].pronunciations[0]`)) {
               setValue(`examples[${index}].pronunciations`, [{ audio: value, speaker: uid }]);
             } else {
               setValue(`examples[${index}].pronunciations[0].audio`, value);

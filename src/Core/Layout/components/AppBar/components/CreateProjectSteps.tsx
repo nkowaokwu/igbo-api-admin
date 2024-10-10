@@ -24,7 +24,12 @@ const injectDefaultValues = (data) =>
 
 const CreateProjectSteps = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(false);
-  const { register, control, errors, handleSubmit } = useForm({
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       title: '',
       description: '',
@@ -74,12 +79,12 @@ const CreateProjectSteps = (): ReactElement => {
         <VStack alignItems="start" gap={4}>
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Title</Text>
-            <Input name="title" ref={register} />
+            <Input name="title" {...register('title')} />
             {errors.title && <Text className="error">Project title is required</Text>}
           </VStack>
           <VStack alignItems="start" width="full" gap={2}>
             <Text fontWeight="medium">Description</Text>
-            <Textarea name="description" ref={register} />
+            <Textarea name="description" {...register('description')} />
           </VStack>
           {errors.description && <Text className="error">Project description is required</Text>}
           <VStack alignItems="start" width="full" gap={2}>
@@ -87,7 +92,7 @@ const CreateProjectSteps = (): ReactElement => {
             <Controller
               name="types"
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Select
                   {...props}
                   isMulti
@@ -107,7 +112,7 @@ const CreateProjectSteps = (): ReactElement => {
             <Controller
               name="languages"
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Select
                   {...props}
                   isMulti
@@ -134,7 +139,7 @@ const CreateProjectSteps = (): ReactElement => {
             <Controller
               name="license"
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Select
                   {...props}
                   className="w-full"

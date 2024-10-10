@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 
 const config = functions.config();
 export const { CI, NODE_ENV, PORT = 8080 } = process.env;

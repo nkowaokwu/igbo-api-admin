@@ -1,4 +1,4 @@
-import { Control } from 'react-hook-form';
+import { Control, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { Example } from 'src/backend/controllers/utils/interfaces';
 
 interface ExamplesFormInterface {
@@ -6,7 +6,8 @@ interface ExamplesFormInterface {
   index: number;
   remove: (index?: number | number[]) => void;
   control: Control;
-  setValue: (key: string, value: any) => void;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
 }
 
 export default ExamplesFormInterface;

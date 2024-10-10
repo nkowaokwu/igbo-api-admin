@@ -13,12 +13,13 @@ const DialectForm = ({
   record,
   errors,
   control,
+  getValues,
+  setValue,
   setDialects,
   dialects,
   originalRecord,
 }: DialectFormInterface): ReactElement => {
   const [warningMessage, setWarningMessage] = useState('');
-  const { getValues, setValue } = control;
   const dialect = dialects[index];
   const defaultDialectsValue = (dialect.dialects || []).map((value) => ({ label: Dialects[value].label, value }));
   const error = errors.dialects
@@ -66,7 +67,7 @@ const DialectForm = ({
             </Tooltip>
           </Box>
           <Controller
-            render={({ onChange }) => (
+            render={({ field: { onChange } }) => (
               <Input
                 onChange={(e) => {
                   handleWarningMessage(e);
@@ -116,7 +117,7 @@ const DialectForm = ({
         </Heading>
         <Box flex={1} data-test={`dialects-input-container-${index}`}>
           <Controller
-            render={({ onChange }) => (
+            render={({ field: { onChange } }) => (
               <Select
                 isMulti
                 options={Object.values(Dialects)}

@@ -1,13 +1,13 @@
 import { Record } from 'react-admin';
-import { omit, pick } from 'lodash';
+import { omit } from 'lodash';
 import WordClass from 'src/backend/shared/constants/WordClass';
 import WordAttributeEnum from 'src/backend/shared/constants/WordAttributeEnum';
 import WordTags from 'src/backend/shared/constants/WordTags';
-import ExampleStyleEnum from 'src/backend/shared/constants/ExampleStyleEnum';
-import ExampleStyle from 'src/backend/shared/constants/ExampleStyle';
+import createDefaultExampleFormValues from 'src/shared/components/views/components/WordEditForm/utils/createDefaultExampleFormValues';
 
 const createDefaultWordFormValues = (record: Record): any => {
   const defaultValues = {
+    word: record?.word,
     definitions: (record?.definitions || []).map((definition) =>
       omit(
         {
@@ -24,14 +24,11 @@ const createDefaultWordFormValues = (record: Record): any => {
     ),
     dialects: record?.dialects || [],
     examples: record?.examples
-      ? record.examples.map(({ id, ...example }) => ({
-          ...example,
-          nsibidiCharacters: (example.nsibidiCharacters || []).map((nsibidiCharacterId) => ({
-            id: nsibidiCharacterId,
-          })),
-          style: pick(ExampleStyle[example?.style] || ExampleStyle[ExampleStyleEnum.NO_STYLE], ['value', 'label']),
-          exampleId: id,
-        }))
+      ? record.examples.map((example) => {
+          const defaultExample = createDefaultExampleFormValues(example);
+          defaultExample.exampleId = example.id;
+          return defaultExample;
+        })
       : [],
     tags: (record?.tags || []).map((tag) => WordTags[tag]),
     variations: (record?.variations || []).map((variation) => ({ text: variation })),

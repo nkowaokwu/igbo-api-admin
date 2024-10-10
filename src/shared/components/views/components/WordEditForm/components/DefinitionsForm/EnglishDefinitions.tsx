@@ -12,22 +12,20 @@ const EnglishDefinitions = ({
   control,
   handleDeleteGroupDefinition,
   handleAddGroupDefinition,
-} : {
-  definitions: { id: string, text: string }[],
-  groupIndex: number,
-  control: Control,
-  handleDeleteGroupDefinition: (index: number) => void,
-  handleAddGroupDefinition: () => void,
+}: {
+  definitions: { id: string; text: string }[];
+  groupIndex: number;
+  control: Control;
+  handleDeleteGroupDefinition: (index: number) => void;
+  handleAddGroupDefinition: () => void;
 }): ReactElement => (
   <Box className="w-full">
     {definitions.map((nestedDefinition, nestedDefinitionIndex) => (
       <Box key={nestedDefinition}>
         <Box className="list-container">
-          <h3 className="text-xl text-gray-600 mr-2">
-            {`${nestedDefinitionIndex + 1}.`}
-          </h3>
+          <h3 className="text-xl text-gray-600 mr-2">{`${nestedDefinitionIndex + 1}.`}</h3>
           <Controller
-            render={(props) => (
+            render={({ field: props }) => (
               <Textarea
                 {...props}
                 rows={3}
@@ -52,14 +50,11 @@ const EnglishDefinitions = ({
               aria-label="Delete"
               icon={<DeleteIcon />}
             />
-          ) : null }
+          ) : null}
         </Box>
       </Box>
     ))}
-    <AddSection
-      label="Add English Definition"
-      onClick={handleAddGroupDefinition}
-    />
+    <AddSection label="Add English Definition" onClick={handleAddGroupDefinition} />
   </Box>
 );
 

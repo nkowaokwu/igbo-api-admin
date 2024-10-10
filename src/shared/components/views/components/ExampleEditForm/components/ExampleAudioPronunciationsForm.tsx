@@ -3,7 +3,7 @@ import { assign, get } from 'lodash';
 import { Box, Text, chakra, HStack } from '@chakra-ui/react';
 import { Record, usePermissions } from 'react-admin';
 import ReactAudioPlayer from 'react-audio-player';
-import { Controller, Control, useFieldArray } from 'react-hook-form';
+import { Controller, Control, useFieldArray, UseFormSetValue, UseFormGetValues } from 'react-hook-form';
 import { LuArchive } from 'react-icons/lu';
 import ResourceConnectionButton from 'src/shared/components/buttons/ResourceConnectionButton';
 import SpeakerNameManager from 'src/Core/Collections/components/SpeakerNameManager/SpeakerNameManager';
@@ -19,12 +19,16 @@ const ExampleAudioPronunciationsForm = ({
   originalRecord,
   uid,
   name = '',
+  setValue,
+  getValues,
 }: {
   control: Control;
   record: Record;
   originalRecord: Record | null;
   uid: string;
   name?: string;
+  setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>;
 }): ReactElement => {
   const prependedName = name ? `${name}.` : '';
   const formName = `${prependedName}pronunciations`;
@@ -42,17 +46,13 @@ const ExampleAudioPronunciationsForm = ({
   const speakerIds = pronunciations.map(({ speaker: speakerId }) => speakerId);
   const speakers = useFetchSpeakers({ permissions, setIsLoading: setIsLoadingSpeakers, speakerIds });
 
-  const { getValues, setValue } = control;
   const archivedPronunciations = pronunciations.filter(({ archived = false }) => archived);
 
   const handleAppend = () =>
     append({
       audio: '',
       speaker: uid,
-      approvals: [],
-      denials: [],
       archived: false,
-      review: true,
     });
 
   const generateDeleteMessage = (archiving: boolean) =>
@@ -103,19 +103,25 @@ const ExampleAudioPronunciationsForm = ({
                   p={2}
                 >
                   <Controller
-                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    render={({ field: props }) => (
+                      <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />
+                    )}
                     name={`${formName}[${index}].audio`}
                     control={control}
                     defaultValue={pronunciation.audio}
                   />
                   <Controller
-                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    render={({ field: props }) => (
+                      <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />
+                    )}
                     name={`${formName}[${index}].speaker`}
                     control={control}
                     defaultValue={pronunciation.speaker}
                   />
                   <Controller
-                    render={(props) => <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />}
+                    render={({ field: props }) => (
+                      <input style={{ position: 'absolute', visibility: 'hidden' }} {...props} />
+                    )}
                     name={`${formName}[${index}].archived`}
                     control={control}
                     defaultValue={pronunciation.archived}

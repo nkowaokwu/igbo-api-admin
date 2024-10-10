@@ -35,8 +35,10 @@ import { handleUserResult } from '../utils/handleUserResult';
 
 const auth = getAuth();
 auth.useDeviceLanguage();
+
 const createRecaptchaVerifier = () =>
   new RecaptchaVerifier(
+    auth,
     'recaptcha-container',
     {
       size: 'invisible',

@@ -22,13 +22,17 @@ import { onCancel } from '../utils';
 import FormHeader from '../FormHeader';
 
 const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }: EditFormProps): ReactElement => {
-  const { handleSubmit, control, getValues, errors, formState } = useForm({
+  const {
+    handleSubmit,
+    control,
+    getValues,
+    formState: { isDirty, errors },
+  } = useForm({
     defaultValues: createDefaultNsibidiCharacterFormValues(record),
     ...NsibidiCharacterEditFormResolver(),
     mode: 'onChange',
     reValidateMode: 'onChange',
   });
-  const { isDirty } = formState;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const notify = useNotify();
@@ -94,7 +98,7 @@ const NsibidiCharacterEditForm = ({ view, record, save, resource = '', history }
         <Box className="flex flex-col flex-1">
           <CharacterAttributesForm record={record} getValues={getValues} control={control} />
           <Controller
-            render={(props) => (
+            render={({ field: props }) => (
               <NsibidiInput
                 {...props}
                 control={control}

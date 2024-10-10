@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 import { compact } from 'lodash';
 import { UpdatePermissions } from 'src/shared/constants/firestore-types';
@@ -8,6 +8,7 @@ import Collections from 'src/shared/constants/Collection';
 import { isProduction, IGBO_API_PROJECT_ID } from 'src/backend/config';
 import { postUserProjectPermissionHelper } from 'src/backend/controllers/userProjectPermissions';
 import Author from 'src/backend/shared/constants/Author';
+import EntityStatus from 'src/backend/shared/constants/EntityStatus';
 import { sendNewUserNotification } from '../controllers/email';
 import { incrementTotalUserStat, decrementTotalUserStat } from '../controllers/stats';
 import { findUsers } from '../controllers/users';
@@ -56,6 +57,7 @@ const handleCreateDefaultUserProjectPermission = async ({
   if (isProduction) {
     return;
   }
+
   try {
     const mongooseConnection = await connectDatabase();
     // Create a UserProjectPermission on the fly based on user role
@@ -67,6 +69,7 @@ const handleCreateDefaultUserProjectPermission = async ({
         email,
         role: determineUserRoleFromEmail(email),
         grantingAdmin: Author.SYSTEM,
+        status: EntityStatus.ACTIVE,
       },
     });
   } catch (err) {
@@ -82,7 +85,7 @@ export const onCreateUserAccount = functions.auth.user().onCreate(async (user) =
     await admin.auth().setCustomUserClaims(user.uid, role);
     await sendNewUserNotification({ newUserEmail: user.email });
     await incrementTotalUserStat();
-    await handleCreateDefaultUserProjectPermission();
+    await handleCreateDefaultUserProjectPermission({ firebaseId: user.uid, email: user.email });
 
     return successResponse({ uid: user.uid });
   } catch (err) {

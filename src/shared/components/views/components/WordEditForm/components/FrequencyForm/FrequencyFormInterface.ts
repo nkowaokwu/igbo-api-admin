@@ -1,13 +1,13 @@
-import { Control } from 'react-hook-form';
+import { Control, UseFormGetValues } from 'react-hook-form';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';
 
 interface FrequencyForm {
-  errors: any,
-  control: Control,
-  record: Interfaces.Word,
-  watch: any,
-  getValues: (key?: string) => any,
-  onChange: (value?: any) => void,
-};
+  errors: any;
+  control: Control;
+  record: Interfaces.Word;
+  watch: any;
+  getValues: UseFormGetValues<any>;
+  onChange: (value?: any) => void;
+}
 
 export default FrequencyForm;

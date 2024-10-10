@@ -10,6 +10,8 @@ const CurrentDialectsForms = ({
   record,
   originalRecord,
   control,
+  getValues,
+  setValue,
   setDialects,
   dialects,
 }: CurrentDialectFormsInterface): ReactElement => (
@@ -35,6 +37,8 @@ const CurrentDialectsForms = ({
               index={index}
               record={record}
               control={control}
+              getValues={getValues}
+              setValue={setValue}
               setDialects={setDialects}
               dialects={dialects}
               originalRecord={originalRecord}

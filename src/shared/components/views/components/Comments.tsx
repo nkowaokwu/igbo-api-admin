@@ -6,7 +6,7 @@ import ShowTextRenderer from 'src/shared/components/views/components/ShowDocumen
 import { LuMessageCircle } from 'react-icons/lu';
 
 const Comments = ({ editorsNotes, userComments, showUserComments = true }: CommentsProps): ReactElement => (
-  <VStack alignItems="start" width="full" gap={2} className="flex flex-col mt-12 space-y-6">
+  <VStack alignItems="start" width="full" gap={2}>
     <ShowTextRenderer title="Editor's notes" icon={<LuMessageCircle />}>
       <Text className={editorsNotes ? 'text-gray-600' : 'text-gray-500 italic'}>
         {editorsNotes || 'No editor notes'}

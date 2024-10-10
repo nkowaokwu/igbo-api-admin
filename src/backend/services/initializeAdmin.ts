@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 import { TEST_MONGO_URI, LOCAL_MONGO_URI, PROD_MONGO_URI } from 'src/backend/config';
 

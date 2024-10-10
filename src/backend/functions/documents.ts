@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { get } from 'lodash';
 import Collections from 'src/shared/constants/Collection';
 import * as Interfaces from 'src/backend/controllers/utils/interfaces';

@@ -1,10 +1,11 @@
 import { Record } from 'react-admin';
-import { Control } from 'react-hook-form';
+import { Control, UseFormGetValues } from 'react-hook-form';
 
 interface DefinitionsForm {
-  errors: any,
-  control: Control,
-  record: Record,
-};
+  errors: any;
+  control: Control;
+  record: Record;
+  getValues: UseFormGetValues<any>;
+}
 
 export default DefinitionsForm;
