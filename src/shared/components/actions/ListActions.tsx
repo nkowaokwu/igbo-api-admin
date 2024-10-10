@@ -14,6 +14,7 @@ import InviteMembersModal from 'src/shared/components/InviteMembersModal';
 import ExampleSuggestionFilterConfig from 'src/shared/components/FiltersModal/configs/ExampleSuggestionFilterConfig';
 import WordSuggestionFilterConfig from 'src/shared/components/FiltersModal/configs/WordSuggestionFilterConfig';
 import useIsIgboAPIProject from 'src/hooks/useIsIgboAPIProject';
+import UserFilterConfig from 'src/shared/components/FiltersModal/configs/UserFilterConfig';
 
 const ListActions = (props: CustomListActionProps): ReactElement => {
   const { className, exporter, resource, ...rest } = props;
@@ -37,6 +38,7 @@ const ListActions = (props: CustomListActionProps): ReactElement => {
     [Collection.WORD_SUGGESTIONS]: WordSuggestionFilterConfig,
     [Collection.EXAMPLES]: ExampleSuggestionFilterConfig(isIgboAPIProject),
     [Collection.EXAMPLE_SUGGESTIONS]: ExampleSuggestionFilterConfig(isIgboAPIProject),
+    [Collection.USERS]: UserFilterConfig,
   };
 
   const isSuggestionResource =
