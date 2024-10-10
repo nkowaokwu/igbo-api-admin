@@ -42,6 +42,10 @@ const theme = createTheme({
       root: {
         width: '100vw',
       },
+      rounded: {
+        border: '1px solid var(--chakra-colors-gray-300) !important',
+        boxShadow: 'none !important',
+      },
     },
     MuiPopover: {
       paper: {
@@ -52,9 +56,7 @@ const theme = createTheme({
     },
     MuiTableRow: {
       root: {
-        '&:hover': {
-          backgroundColor: 'transparent !important',
-        },
+        backgroundColor: 'transparent !important',
       },
     },
     MuiMenuItem: {
@@ -83,11 +85,18 @@ const theme = createTheme({
         },
       },
     },
+    MuiTableHead: {
+      root: {
+        backgroundColor: 'var(--chakra-colors-white) !important',
+      },
+    },
     MuiTableCell: {
       root: {
+        backgroundColor: 'var(--chakra-colors-white) !important',
         fontFamily: silkaFontFamily,
       },
       head: {
+        backgroundColor: 'var(--chakra-colors-white)',
         fontWeight: 'var(--chakra-fontWeights-bold)',
       },
     },
@@ -128,6 +137,11 @@ const theme = createTheme({
         boxShadow: 'none',
       },
     },
+    RaList: {
+      root: {
+        backgroundColor: 'var(--chakra-colors-white) !important',
+      },
+    },
     RaLayout: {
       root: {
         backgroundColor: 'var(--chakra-colors-white)',
@@ -138,7 +152,7 @@ const theme = createTheme({
       content: {
         backgroundColor: 'var(--chakra-colors-white) !important',
         marginLeft: 'var(--chakra-sizes-0)',
-        padding: '0 0 var(--chakra-sizes-12) 0 !important',
+        padding: '0 var(--chakra-sizes-4) var(--chakra-sizes-12) !important',
         overflowY: 'scroll',
         height: '100vh',
       },
