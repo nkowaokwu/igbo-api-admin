@@ -34,10 +34,11 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
   let searchFilters: Filters = filters
     ? Object.entries(filters).reduce((allFilters: Filters, [key, value]) => {
         allFilters.$or = allFilters.$or || [];
+
         switch (key) {
           // Examples
           case 'source.text':
-            allFilters['source.text'] = { $eq: value };
+            allFilters['source.text'] = { $regex: value };
             break;
           case 'source.language':
             allFilters['source.language'] = { $in: value };
@@ -46,7 +47,7 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
             allFilters['source.pronunciations.speaker'] = { $in: value };
             break;
           case 'translations.text':
-            allFilters['translations.text'] = { $eq: value };
+            allFilters['translations.text'] = { $regex: value };
             break;
           case 'translations.language':
             allFilters['translations.language'] = { $in: value };
@@ -60,7 +61,7 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
 
           // Words
           case 'word':
-            allFilters.word = { $eq: value };
+            allFilters.word = { $regex: value };
             break;
           case 'definitions.nsibidi':
             allFilters['definitions.nsibidi'] = { $exists: value };
@@ -72,10 +73,10 @@ export const generateSearchFilters = (filters: { [key: string]: string }): { [ke
             allFilters.authorId = { $in: value };
             break;
           case 'definitions.definitions':
-            allFilters['definitions.definitions'] = { $eq: value };
+            allFilters['definitions.definitions'] = { $regex: value };
             break;
           case 'definitions.igboDefinitions.igbo':
-            allFilters['definitions.igboDefinitions.igbo'] = { $eq: value };
+            allFilters['definitions.igboDefinitions.igbo'] = { $regex: value };
             break;
           case 'pronunciation':
             allFilters.pronunciation = { $exists: value };
