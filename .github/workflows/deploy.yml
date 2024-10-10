@@ -20,7 +20,7 @@ jobs:
       - name: Install Project Dependencies
         run: |
           yarn install
-          npm install -g firebase-tools@12.9.1
+          npm install -g firebase-tools@13.20.2
       - name: Build Staging Project
         if: ${{ github.event_name == 'pull_request' }}
         run: |
