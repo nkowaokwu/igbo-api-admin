@@ -59,11 +59,17 @@ const ProgressManager = ({ permissions }: { permissions: { permissions?: { role:
             </Button>,
           )}
         </HStack>
-        <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" width="full">
-          {options.map((option) => (
-            <DataEntryFlow key={option.title} {...option} />
-          ))}
-        </Box>
+        {options.length ? (
+          <Box className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4" width="full">
+            {options.map((option) => (
+              <DataEntryFlow key={option.title} {...option} />
+            ))}
+          </Box>
+        ) : (
+          <VStack alignItems="start" width="full">
+            <Heading color="gray.400">No tasks available</Heading>
+          </VStack>
+        )}
       </VStack>
     </>
   );

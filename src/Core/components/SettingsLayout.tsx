@@ -53,7 +53,9 @@ const SettingsLayout = ({
                   name={name}
                   control={control}
                   defaultValue={defaultValue}
-                  render={({ onChange, ref }) => CustomComponent({ ref, name, onChange, defaultValue })}
+                  render={({ field: { onChange, value, ref } }) =>
+                    CustomComponent({ name, onChange, defaultValue, value, ref })
+                  }
                 />
               ) : (
                 <Input flex={1} placeholder="Full name" defaultValue={defaultValue} {...register(name)} />

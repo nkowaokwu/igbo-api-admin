@@ -1,4 +1,5 @@
 import React from 'react';
+import { compact } from 'lodash';
 import { ProjectContext } from 'src/App/contexts/ProjectContext';
 import UserRoles from 'src/backend/shared/constants/UserRoles';
 import { DataEntryFlowOption } from 'src/Core/Dashboard/components/utils/DataEntryFlowOptionInterface';
@@ -24,8 +25,8 @@ export const getDashboardOptions = ({
     case UserRoles.ADMIN:
     case UserRoles.MERGER:
     case UserRoles.EDITOR:
-      return getEditingOptions({ isIgboAPIProject });
+      return compact(getEditingOptions({ isIgboAPIProject }));
     default:
-      return options.concat(getCrowdsourcingOptions({ types: project.types || [] }));
+      return compact(options.concat(getCrowdsourcingOptions({ types: project.types || [] })));
   }
 };
